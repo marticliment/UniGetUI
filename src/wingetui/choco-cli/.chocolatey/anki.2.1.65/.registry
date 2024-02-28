@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<registrySnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <user>S-1-5-21-488745884-1937945551-345288892-1001</user>
+  <keys>
+    <key installerType="Unknown" displayName="Anki" displayVersion="2.1.65">
+      <RegistryView>Registry64</RegistryView>
+      <KeyPath>HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Anki</KeyPath>
+      <DefaultValue />
+      <InstallLocation><![CDATA[]]></InstallLocation>
+      <UninstallString><![CDATA["C:\Users\marti\AppData\Local\Programs\Anki\uninstall.exe"]]></UninstallString>
+      <HasQuietUninstall>false</HasQuietUninstall>
+      <Publisher><![CDATA[]]></Publisher>
+      <InstallDate />
+      <InstallSource><![CDATA[]]></InstallSource>
+      <Language />
+      <Version />
+      <VersionMajor />
+      <VersionMinor />
+      <SystemComponent>false</SystemComponent>
+      <WindowsInstaller>false</WindowsInstaller>
+      <NoRemove>false</NoRemove>
+      <NoModify>true</NoModify>
+      <NoRepair>true</NoRepair>
+      <ReleaseType />
+      <ParentKeyName />
+    </key>
+  </keys>
+</registrySnapshot>

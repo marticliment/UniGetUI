@@ -2,178 +2,185 @@ import json
 import os
 import sys
 import time
-
 import tolgee_requests
-
-root_dir = os.path.join(os.path.dirname(__file__), "..")
-os.chdir(root_dir) # move to root project
-
-sys.path.append("./")
-
-from wingetui.Core.Languages.LangData import *
-
-# Update contributors
-os.system("python scripts/get_contributors.py")
-
-countOfChanges = len(os.popen("git status -s").readlines())
-
-isAutoCommit = False
-isSomeChanges = False
-
-if len(sys.argv)>1:
-    if (sys.argv[1] == "--autocommit"):
-        isAutoCommit = True
-    else:
-        print("nocommit")
-        print(sys.argv[1])
-
-
+from Languages.LangData import *
 import glob
 import zipfile
 
-os.chdir(os.path.normpath(os.path.join(root_dir, "wingetui/Core/Languages")))
+try:
 
-print()
-print("-------------------------------------------------------")
-print()
-print("  Downloading updated translations...")
+    root_dir = os.path.join(os.path.dirname(__file__), "..")
+    os.chdir(root_dir)  # move to root project
 
+    sys.path.append("./")
 
-response = tolgee_requests.export()
-if (not response.ok):
-    statusCode = response.status_code
-    print(f"  Error {statusCode}: {response.text}")
-    if (statusCode == 403):
-        print("  APIKEY is probably wrong!")
-    exit(1)
-with open("langs.zip", "wb") as f:
-    f.write(response.content)
-    langArchiveName = f.name
+    # Update contributors
+    os.system("python scripts/get_contributors.py")
 
+    countOfChanges = len(os.popen("git status -s").readlines())
 
-print("  Download complete!")
-print()
-print("-------------------------------------------------------")
-print()
-print("  Extracting language files...")
+    isAutoCommit = False
+    isSomeChanges = False
 
+    if len(sys.argv) > 1:
+        if (sys.argv[1] == "--autocommit"):
+            isAutoCommit = True
+        else:
+            print("nocommit")
+            print(sys.argv[1])
 
+    os.chdir(os.path.normpath(os.path.join(root_dir, "src/wingetui/Assets/Languages")))
 
-downloadedLanguages = []
-zip_file = zipfile.ZipFile(langArchiveName)
+    print()
+    print("-------------------------------------------------------")
+    print()
+    print("  Downloading updated translations...")
 
-for file in glob.glob('lang_*.json'): # If the downloaded zip file is valid, delete old language files and extract the new ones
-    os.remove(file)
+    response = tolgee_requests.export()
+    if (not response.ok):
+        statusCode = response.status_code
+        print(f"  Error {statusCode}: {response.text}")
+        if (statusCode == 403):
+            print("  APIKEY is probably wrong!")
+        exit(1)
+    with open("langs.zip", "wb") as f:
+        f.write(response.content)
+        langArchiveName = f.name
 
-for name in zip_file.namelist():
-    lang = os.path.splitext(name)[0]
-    if (lang in languageRemap):
-        lang = languageRemap[lang]
-    newFilename = f"lang_{lang}.json"
-    downloadedLanguages.append(lang)
+    print("  Download complete!")
+    print()
+    print("-------------------------------------------------------")
+    print()
+    print("  Extracting language files...")
 
-    try:
-        zip_file.extract(name, "./")
-        os.replace(name, newFilename)
+    downloadedLanguages = []
+    zip_file = zipfile.ZipFile(langArchiveName)
 
-        print(f"  Extracted {newFilename}")
-    except KeyError as e:
-        print(type(name))
-        f = input(f"  The file {name} was not expected to be in here. Please write the name for the file. It should follow the following structure: lang_[CODE].json: ")
-        zip_file.extract(f, "./")
-        os.replace(f, newFilename)
-        print(f"  Extracted {f}")
-zip_file.close()
-downloadedLanguages.sort()
-os.remove("langs.zip")
+    for file in glob.glob('lang_*.json'):  # If the downloaded zip file is valid, delete old language files and extract the new ones
+        os.remove(file)
 
+    for name in zip_file.namelist():
+        lang = os.path.splitext(name)[0]
+        if (lang in languageRemap):
+            lang = languageRemap[lang]
+        newFilename = f"lang_{lang}.json"
+        downloadedLanguages.append(lang)
 
-print("  Process complete!")
-print()
-print("-------------------------------------------------------")
-print()
-print("  Generating translations file...")
+        try:
+            zip_file.extract(name, "./")
+            os.replace(name, newFilename)
+            print(f"  Extracted {newFilename}")
 
+        except KeyError:
+            print(type(name))
+            f = input(f"  The file {name} was not expected to be in here. Please write the name for the file. It should follow the following structure: lang_[CODE].json: ")
+            zip_file.extract(f, "./")
+            os.replace(f, newFilename)
+            print(f"  Extracted {f}")
+    zip_file.close()
+    downloadedLanguages.sort()
+    os.remove("langs.zip")
 
-langPerc = {}
-langCredits = {}
+    print("  Process complete!")
+    print()
+    print("-------------------------------------------------------")
+    print()
+    print("  Generating translations file...")
 
-for lang in downloadedLanguages:
-    with open(f"lang_{lang}.json", "r", encoding='utf-8') as f:
-        data = json.load(f)
-    c = 0
-    a = 0
-    for key, value in data.items():
-        c += 1
-        if (value != None):
-            a += 1
-    credits = []
-    try:
-        credits = getTranslatorsFromCredits(data["{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)"])
-    except KeyError as e:
-        print(e)
-        print("Can't get translator list!")
-    langCredits[lang] = credits
-    percNum = a / c
-    perc = f"{percNum:.0%}"
-    if (perc == "100%" and percNum < 1):
-        perc = "99%"
-    if (perc == "100%" or lang == "en"):
-        continue
-    langPerc[lang] = perc
+    langPerc = {}
+    langCredits = {}
 
-if (isAutoCommit):
-    os.system("git add .")
-countOfChanges = len(os.popen("git status -s").readlines()) - countOfChanges
-isSomeChanges = True if countOfChanges > 0 else False
+    for lang in downloadedLanguages:
+        with open(f"lang_{lang}.json", "r", encoding='utf-8') as f:
+            data = dict(json.load(f))
+        c = 0
+        a = 0
+        for key, value in data.items():
+            c += 1
+            if (value is not None):
+                a += 1
+        credits = []
+        try:
+            if ("0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" in data.keys()):
+                credits = getTranslatorsFromCredits(data["0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry"])
+            else:
+                credits = getTranslatorsFromCredits(data["{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)"])
+        except KeyError as e:
+            print(e)
+            print("Can't get translator list!")
+        langCredits[lang] = credits
+        percNum = a / c
+        perc = f"{percNum:.0%}"
+        if (perc == "100%" and percNum < 1):
+            perc = "99%"
+        if (perc == "100%" or lang == "en"):
+            continue
+        langPerc[lang] = perc
 
-outputString = f"""
-# Autogenerated file, do not modify it!!!
+    if (isAutoCommit):
+        os.system("git add .")
+    countOfChanges = len(os.popen("git status -s").readlines()) - countOfChanges
+    isSomeChanges = True if countOfChanges > 0 else False
 
-untranslatedPercentage = {json.dumps(langPerc, indent=2, ensure_ascii=False)}
+    if not isAutoCommit:
+        isSomeChanges = True
 
-languageCredits = {json.dumps(langCredits, indent=2, ensure_ascii=False)}
-"""
+    # outputString = f"""
+    # Autogenerated file, do not modify it!!!
 
-translations_filepath = os.path.normpath(os.path.join(root_dir, "wingetui/Core/Data/Translations.py"))
-with open(translations_filepath, "w", encoding="utf-8") as f:
-    f.write(outputString.strip())
+    # untranslatedPercentage = {json.dumps(langPerc, indent=2, ensure_ascii=False)}
 
+    # languageCredits = {json.dumps(langCredits, indent=2, ensure_ascii=False)}
+    # """
 
-print("  Process complete!")
-print()
-print("-------------------------------------------------------")
-print()
-print("  Updating README.md...")
+    with open(os.path.join(root_dir, "src/wingetui/Assets/Data/Translators.json"), "w") as f:
+        f.write(json.dumps(langCredits, indent=2, ensure_ascii=False))
 
+    with open(os.path.join(root_dir, "src/wingetui/Assets/Data/TranslatedPercentages.json"), "w") as f:
+        f.write(json.dumps(langPerc, indent=2, ensure_ascii=False))
 
-# Generate language table
-readmeFilename = os.path.join(root_dir, "README.md")
+    # translations_filepath = os.path.normpath(os.path.join(root_dir, "wingetui/Core/Data/Translations.py"))
+    # with open(translations_filepath, "w", encoding="utf-8") as f:
+    #     f.write(outputString.strip())
 
-with open(readmeFilename, "r+", encoding="utf-8") as f:
-    skip = False
-    data = ""
-    for line in f.readlines():
-        if (line.startswith("<!-- Autogenerated translations -->")):
-            data += f'{line}{getMarkdownSupportLangs()}\nLast updated: {str(time.ctime(time.time()))}\n'
-            print("  Text modified")
-            skip = True
-        if (line.startswith("<!-- END Autogenerated translations -->")):
-            skip = False
-        if (not skip): data += line
-    if (isSomeChanges):
-        f.seek(0)
-        f.write(data)
-        f.truncate()
+    print("  Process complete!")
+    print()
+    print("-------------------------------------------------------")
+    print()
+    print("  Updating README.md...")
 
+    # Generate language table
+    readmeFilename = os.path.join(root_dir, "README.md")
 
-print("  Process complete!")
-print()
-print("-------------------------------------------------------")
-print()
+    with open(readmeFilename, "r+", encoding="utf-8") as f:
+        skip = False
+        data = ""
+        for line in f.readlines():
+            if "<!-- Autogenerated translations -->" in line:
+                data += f'{line}{getMarkdownSupportLangs()}\nLast updated: {str(time.ctime(time.time()))}\n'
+                print("  Text modified")
+                skip = True
+            if "<!-- END Autogenerated translations -->" in line:
+                skip = False
+            if (not skip):
+                data += line
+        if (isSomeChanges):
+            f.seek(0)
+            f.write(data)
+            f.truncate()
 
-if (isAutoCommit):
-    if (not isSomeChanges):
-        os.system("git reset --hard") # prevent clean
-else:
+    print("  Process complete!")
+    print()
+    print("-------------------------------------------------------")
+    print()
+
+    if (isAutoCommit):
+        if (not isSomeChanges):
+            os.system("git reset --hard")  # prevent clean
+    else:
+        os.system("pause")
+
+except Exception as e:
+    print(e)
+    print(e.__traceback__.tb_lineno)
     os.system("pause")

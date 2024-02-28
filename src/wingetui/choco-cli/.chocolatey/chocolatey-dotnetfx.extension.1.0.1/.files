@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<fileSnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <files>
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-dotnetfx.extension\chocolatey-dotnetfx.extension.nupkg" checksum="C94F915AE9E4FA8968333E16BACC821A" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-dotnetfx.extension\chocolatey-dotnetfx.extension.nuspec" checksum="48A1A2A18FC69C1C424A859281417341" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-dotnetfx.extension\extensions\chocolatey-dotnetfx.psm1" checksum="EB3390C12D196E2B30ADD9E3D3DD8970" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-dotnetfx.extension\extensions\DotNetFrameworkHelpers.ps1" checksum="05B46577AE99165315D27A14D35C0D88" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-dotnetfx.extension\extensions\Get-DefaultChocolateyLocalFilePath.ps1" checksum="AB780CC05180E1F57D5635EDC8CC38BE" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-dotnetfx.extension\extensions\Get-NativeInstallerExitCode.ps1" checksum="A8DA12DDEFC9C6A077E7F59FB47C3CEC" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-dotnetfx.extension\extensions\Install-ChocolateyInstallPackageAndHandleExitCode.ps1" checksum="32FF55F93B0BEEFE1967C6E52289666D" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-dotnetfx.extension\extensions\Set-PowerShellExitCode.ps1" checksum="58F9F443A2415DB881C5FB711C6D445A" />
+  </files>
+</fileSnapshot>

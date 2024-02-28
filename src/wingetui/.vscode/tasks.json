@@ -1,0 +1,15 @@
+{
+	"tasks": [
+		{
+			"type": "dotnet",
+			"task": "build y:\\WingetUI-Store\\src\\wingetui-interface\\wingetui-interface.csproj --debug",
+			"file": "y:\\WingetUI-Store\\src\\wingetui-interface\\wingetui-interface.csproj",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"label": "dotnet: build y:\\WingetUI-Store\\src\\wingetui-interface\\wingetui-interface.csproj"
+		}
+	]
+}

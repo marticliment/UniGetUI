@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34407.89
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wingetui", "wingetui\wingetui.csproj", "{80305A17-2534-48DC-8F75-41F70FCCEAAF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Debug|Any CPU.Build.0 = Debug|x64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Debug|ARM64.Build.0 = Debug|ARM64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Debug|x64.ActiveCfg = Debug|x64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Debug|x64.Build.0 = Debug|x64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Debug|x64.Deploy.0 = Debug|x64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Debug|x86.ActiveCfg = Debug|x86
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Debug|x86.Build.0 = Debug|x86
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Debug|x86.Deploy.0 = Debug|x86
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Release|Any CPU.ActiveCfg = Release|x64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Release|Any CPU.Build.0 = Release|x64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Release|ARM64.ActiveCfg = Release|ARM64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Release|ARM64.Build.0 = Release|ARM64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Release|ARM64.Deploy.0 = Release|ARM64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Release|x64.ActiveCfg = Release|x64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Release|x64.Build.0 = Release|x64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Release|x64.Deploy.0 = Release|x64
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Release|x86.ActiveCfg = Release|x86
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Release|x86.Build.0 = Release|x86
+		{80305A17-2534-48DC-8F75-41F70FCCEAAF}.Release|x86.Deploy.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D044BB14-0B37-47E5-A579-8B30FCBA1F9F}
+	EndGlobalSection
+EndGlobal

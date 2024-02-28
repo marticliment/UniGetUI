@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<fileSnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <files>
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-compatibility.extension\chocolatey-compatibility.extension.nupkg" checksum="FA277C3720AB0DA4947D11272DAB96A8" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-compatibility.extension\chocolatey-compatibility.extension.nuspec" checksum="E4F76BE29CB79EF59D3238F490BA92E2" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-compatibility.extension\extensions\chocolatey-compatibility.psm1" checksum="D6BED48F1A2055D2CC8A7E65A3B9B653" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-compatibility.extension\extensions\helpers\Get-PackageParameters.ps1" checksum="71D1214302A8DCEDBC514DDD1A4C8B02" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-compatibility.extension\extensions\helpers\Get-UninstallRegistryKey.ps1" checksum="BEF350705A6096C5A6D5008674F81A0A" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-compatibility.extension\extensions\helpers\Install-ChocolateyDesktopLink.ps1" checksum="507F2FBE3B0E4E7026FF318F57D11629" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-compatibility.extension\extensions\helpers\Write-ChocolateyFailure.ps1" checksum="62F5761ED276CC6E52D7B7A57F50B669" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-compatibility.extension\extensions\helpers\Write-ChocolateySuccess.ps1" checksum="F2D4D28C6EAA6D52E827761700BFC366" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-compatibility.extension\extensions\helpers\Write-FileUpdateLog.ps1" checksum="96B9E7F714A968AE4CD62E3749C3E5EC" />
+  </files>
+</fileSnapshot>

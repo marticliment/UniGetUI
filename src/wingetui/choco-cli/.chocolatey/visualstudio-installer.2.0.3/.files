@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<fileSnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <files>
+    <file path="C:\ProgramData\chocolatey\lib\visualstudio-installer\visualstudio-installer.nupkg" checksum="802F4204F2CF4E389F1D5829F28CD5DD" />
+    <file path="C:\ProgramData\chocolatey\lib\visualstudio-installer\visualstudio-installer.nuspec" checksum="B13A20A9AD7B26DB6D588AEFE55C8A01" />
+    <file path="C:\ProgramData\chocolatey\lib\visualstudio-installer\tools\ChocolateyInstall.ps1" checksum="8E1D285E979D06AFE55C52D5CB404903" />
+    <file path="C:\ProgramData\chocolatey\lib\visualstudio-installer\tools\ChocolateyUninstall.ps1" checksum="F45CB9F2E9439412401DD939F7CCA8DE" />
+  </files>
+</fileSnapshot>

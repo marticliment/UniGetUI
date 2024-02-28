@@ -1,54 +1,45 @@
-import requests
-import time
-import json
-import os
+import requests, time
 
-def write_invalid_url(file_path, url):
-    with open(file_path, "a") as f:
-        f.write(url + "\n")
+try:
+    import os, sys, json
+    
+    urls = []
 
-def get_icon_url(package_data):
-    return package_data.get("icon", "")
+    #with open("invalid_urls.txt", "w") as f:
+    #    f.write("")
 
-def get_status_code_for_url(url):
-    try:
-        response = requests.get(url)
-        return response.status_code
-    except requests.exceptions.ConnectionError:
-        time.sleep(0.1)  # If a ConnectionError occurs, wait and try again
-        return get_status_code_for_url(url)
+    with open("screenshot-database-v2.json") as f:
+        data = json.load(f)
+        for package in data["icons_and_screenshots"]:
+            try:
+                if package <= "nosqlworkbench":
+                    continue
+                if data["icons_and_screenshots"][package]["icon"] != "":
+                    print("Package:", package, data["icons_and_screenshots"][package]["icon"])
+                    response = requests.get(data["icons_and_screenshots"][package]["icon"])
+                    if response.status_code == 404:
+                        print("Package failed:", package, data["icons_and_screenshots"][package]["icon"])
+                        with open("invalid_urls.txt", "a") as f:
+                            f.write(data["icons_and_screenshots"][package]["icon"] + "\n")
+                    elif response.status_code != 200 and response.status_code != 403:
+                        print(response.status_code, "failed for:", data["icons_and_screenshots"][package]["icon"])
 
-def package_failed(status_code):
-    return status_code == 404
+            except requests.exceptions.ConnectionError:
+                time.sleep(0.1)
+                try:
+                    if data["icons_and_screenshots"][package]["icon"] != "":
+                        response = requests.get(data["icons_and_screenshots"][package]["icon"])
+                        if response.status_code == 403 or response.status_code == 404:
+                            print("Package failed:", package, data["icons_and_screenshots"][package]["icon"])
+                        elif response.status_code != 200:
+                            response = requests.get(data["icons_and_screenshots"][package]["icon"])
+                            if response.status_code != 200:
+                                print("Failed to resolve DNS for:", data["icons_and_screenshots"][package]["icon"])
+                except requests.exceptions.ConnectionError as e:
+                    print(type(e))
 
-def check_icons_and_screenshots(data, filepath, start_after_package):
-    for package, contents in data["icons_and_screenshots"].items():
-        if package <= start_after_package:
-            continue
-        
-        icon_url = get_icon_url(contents)
-        if icon_url:
-            status_code = get_status_code_for_url(icon_url)
-            
-            if package_failed(status_code):
-                print(f"Package failed: {package} {icon_url}")
-                write_invalid_url(filepath, icon_url)
-            elif not is_valid_response(status_code):
-                print(f"{status_code} failed for: {icon_url}")
 
-def is_valid_response(status_code):
-    return status_code == 200
 
-if __name__ == "__main__":
-    invalid_urls_filepath = "invalid_urls.txt"
-    json_filepath = "screenshot-database-v2.json"
-    start_after_package = "nosqlworkbench"
-
-    try:
-        with open(json_filepath, 'r') as json_file:
-            data = json.load(json_file)
-        check_icons_and_screenshots(data, invalid_urls_filepath, start_after_package)
-    except Exception as e:
-        print(e)
-    finally:
-        os.system("pause")
+except Exception as e:
+    print(e)
+os.system("pause")

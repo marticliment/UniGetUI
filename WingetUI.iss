@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "2.2.0"
+#define MyAppVersion "3.0-beta0"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/marticliment/WingetUI"
 #define MyAppExeName "WingetUI.exe"
@@ -19,7 +19,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL='https://www.marticliment.com/'
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-VersionInfoVersion=2.2.0.0
+VersionInfoVersion=2.9.9.9
 DefaultDirName="{autopf64}\WingetUI"
 DisableProgramGroupPage=yes
 DisableDirPage=no
@@ -31,13 +31,13 @@ PrivilegesRequiredOverridesAllowed=dialog
 OutputBaseFilename=WingetUI Installer
 OutputDir=.     
 MinVersion=10.0
-SetupIconFile=wingetui\resources\icon.ico
+SetupIconFile=src\wingetui-interface\Assets\Images\icon.ico
 UninstallDisplayIcon={app}\WingetUI.exe
 Compression=lzma
 SolidCompression=yes
 WizardStyle=classic
-WizardImageFile=INSTALLER.BMP
-WizardSmallImageFile=wingetui\resources\icon.bmp
+WizardImageFile=InstallerExtras\INSTALLER.BMP
+WizardSmallImageFile=src\wingetui-interface\Assets\Images\icon.bmp
 DisableWelcomePage=no
 AllowUNCPath=no
 UsePreviousTasks=yes
@@ -75,48 +75,51 @@ Name: "Turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
 Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl" 
 
 ; Include installer's messages
-#include "CustomMessages.iss"
+#include "InstallerExtras\CustomMessages.iss"
 
 [InstallDelete]
-;[InstallDelete]
-;Type: files; Name: "{userdesktop}\WingetUI.lnk"
-;Type: files; Name: "{userstartmenu}\WingetUI.lnk"
-
-;Type: filesandordirs; Name: "{userpf}\WingetUI\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
-;Type: filesandordirs; Name: "{userpf}\WingetUI\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
-;Type: filesandordirs; Name: "{userpf}\WingetUI\clr_loader\*";
-;Type: filesandordirs; Name: "{userpf}\WingetUI\components\*";
-;Type: filesandordirs; Name: "{userpf}\WingetUI\data\*";
-;Type: filesandordirs; Name: "{userpf}\WingetUI\lang\*";
-;Type: filesandordirs; Name: "{userpf}\WingetUI\markupsafe\*";
-;Type: filesandordirs; Name: "{userpf}\WingetUI\PackageManagers\*";
-;Type: filesandordirs; Name: "{userpf}\WingetUI\PySide6\*";
-;Type: filesandordirs; Name: "{userpf}\WingetUI\pythonnet\*";
-;Type: filesandordirs; Name: "{userpf}\WingetUI\pywin32_system32\*";
-;Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*";
-;Type: filesandordirs; Name: "{userpf}\WingetUI\shiboken6\*";
-;Type: filesandordirs; Name: "{userpf}\WingetUI\winsdk\*";
-;Type: filesandordirs; Name: "{userpf}\WingetUI\pip-23.1.2.dist-info";
-;Type: filesandordirs; Name: "{userpf}\WingetUI\setuptools-65.5.0.dist-info";   
-;Type: filesandordirs; Name: "{userpf}\WingetUI\sudo\*";
-;Type: filesandordirs; Name: "{userpf}\WingetUI\winget-cli\*";      
-;Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*";   
-;Type: filesandordirs; Name: "{userpf}\WingetUI\resources\*.pyd";  
-;Type: filesandordirs; Name: "{userpf}\WingetUI\resources\api-ms-win*.dll";  
-;Type: filesandordirs; Name: "{userpf}\WingetUI\resources\python*.dll";  
-;Type: filesandordirs; Name: "{userpf}\WingetUI\resources\wingetui.exe";  
 Type: filesandordirs; Name: "{app}\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
 Type: filesandordirs; Name: "{app}\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+Type: filesandordirs; Name: "{app}\wingetui\*";                                                                          
+Type: filesandordirs; Name: "{app}\toasts_winrt\*";
+Type: filesandordirs; Name: "{app}\shiboken6\*";
+Type: filesandordirs; Name: "{app}\pythonnet\*";
+Type: filesandordirs; Name: "{app}\clr_loader\*";
+Type: filesandordirs; Name: "{app}\markupsafe\*";
+Type: filesandordirs; Name: "{app}\flask*\*";
+Type: filesandordirs; Name: "{app}\yaml\*";
 Type: filesandordirs; Name: "{app}\pip-23.0.dist-info";
 Type: filesandordirs; Name: "{app}\pip-23.1.2.dist-info";
 Type: filesandordirs; Name: "{app}\setuptools-65.5.0.dist-info";   
+Type: filesandordirs; Name: "{app}\*.dll";                          
+Type: filesandordirs; Name: "{app}\*.pyd";            
+Type: filesandordirs; Name: "{app}\*.zip";          
 Type: filesandordirs; Name: "{app}\sudo";
 Type: filesandordirs; Name: "{app}\winget-cli\*";      
-Type: filesandordirs; Name: "{app}\resources\*";     
+Type: filesandordirs; Name: "{app}\:\*";     
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{userpf}\WingetUI\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');   
 Type: filesandordirs; Name: "{app}\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
+Type: filesandordirs; Name: "{app}\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+Type: filesandordirs; Name: "{app}\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+Type: filesandordirs; Name: "{app}\wingetui\*";                                                                          
+Type: filesandordirs; Name: "{app}\toasts_winrt\*";
+Type: filesandordirs; Name: "{app}\shiboken6\*";
+Type: filesandordirs; Name: "{app}\pythonnet\*";
+Type: filesandordirs; Name: "{app}\clr_loader\*";
+Type: filesandordirs; Name: "{app}\markupsafe\*";
+Type: filesandordirs; Name: "{app}\flask*\*";
+Type: filesandordirs; Name: "{app}\yaml\*";
+Type: filesandordirs; Name: "{app}\pip-23.0.dist-info";
+Type: filesandordirs; Name: "{app}\pip-23.1.2.dist-info";
+Type: filesandordirs; Name: "{app}\setuptools-65.5.0.dist-info";   
+Type: filesandordirs; Name: "{app}\*.dll";                          
+Type: filesandordirs; Name: "{app}\*.pyd";            
+Type: filesandordirs; Name: "{app}\*.zip";          
+Type: filesandordirs; Name: "{app}\sudo";
+Type: filesandordirs; Name: "{app}\winget-cli\*";      
+Type: filesandordirs; Name: "{app}\:\*"; 
 
 [Code]
 procedure InitializeWizard;
@@ -236,13 +239,15 @@ Name: "regularinstall\desktopicon"; Description: "{cm:RegDesktopIcon}"; GroupDes
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue; Tasks: regularinstall
 
 [Files]
-Source: "wingetuiBin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
-Source: "wingetuiBin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
-Source: "wingetuiBin\choco-cli\*"; DestDir: "{userpf}\WingetUI\choco-cli"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall
+Source: "src\wingetui-interface\bin\x64\Release\net8.0-windows10.0.19041.0\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
+Source: "src\wingetui-interface\bin\x64\Release\net8.0-windows10.0.19041.0\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
+Source: "src\wingetui-interface\bin\x64\Release\net8.0-windows10.0.19041.0\choco-cli\*"; DestDir: "{userpf}\WingetUI\choco-cli"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall
 
 ; MSVC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
-Source: "vcredist.exe"; DestDir: {tmp}; Flags: dontcopy
-Source: "SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe UI Variable"; Flags: onlyifdoesntexist uninsneveruninstall
+Source: "InstallerExtras\vcredist.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+Source: "InstallerExtras\appsdk.exe"; DestDir: {tmp}; Flags: deleteafterinstall    
+Source: "InstallerExtras\net8.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+Source: "InstallerExtras\SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe UI Variable"; Flags: onlyifdoesntexist uninsneveruninstall
 
 [Icons]
 ; Yes, they do have a space. This has been done in purpose for the updater to handle properly the new shortcuts
@@ -250,7 +255,9 @@ Name: "{autostartmenu}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks:
 Name: "{autodesktop}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\desktopicon
 
 [Run]
-Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall;
+Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall;     
+Filename: "{tmp}\net8.exe"; Flags: runhidden; Parameters: "/silent"; StatusMsg: "Installing .NET 8 Runtime (x64)";
+Filename: "{tmp}\appsdk.exe"; Flags: runhidden; Parameters: "--force"; StatusMsg: "Installing Windows App Sdk (x64)";  
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall;
 ; Check: not CmdLineParamExists('/NoAutoStart');
 ; Autostart is required to finish installation properly from an update, hence autostart will be obligatory

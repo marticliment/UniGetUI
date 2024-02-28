@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<fileSnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <files>
+    <file path="C:\SomePrograms\WingetUI-Store\wingetui\choco-cli\lib\dllexp\dllexp-x64.zip.txt" checksum="44D618FD46DA34616633537A97EE5A40" />
+    <file path="C:\SomePrograms\WingetUI-Store\wingetui\choco-cli\lib\dllexp\dllexp.nupkg" checksum="99A6F568D3C0CBA6A0F9322BCA0CE4A7" />
+    <file path="C:\SomePrograms\WingetUI-Store\wingetui\choco-cli\lib\dllexp\dllexp.nuspec" checksum="0A3BF95F8DABBB80F40849C918CED87C" />
+    <file path="C:\SomePrograms\WingetUI-Store\wingetui\choco-cli\lib\dllexp\tools\chocolateyInstall.ps1" checksum="B233AFEDDCA4094A1BFAC5922AFC9FD1" />
+    <file path="C:\SomePrograms\WingetUI-Store\wingetui\choco-cli\lib\dllexp\tools\dllexp.chm" checksum="07CA131E54CAF19E14DA2CED96CBE02F" />
+    <file path="C:\SomePrograms\WingetUI-Store\wingetui\choco-cli\lib\dllexp\tools\dllexp.exe" checksum="CA598F8C5EE2140679620BD1D97E4114" />
+    <file path="C:\SomePrograms\WingetUI-Store\wingetui\choco-cli\lib\dllexp\tools\dllexp.exe.gui" checksum="D41D8CD98F00B204E9800998ECF8427E" />
+    <file path="C:\SomePrograms\WingetUI-Store\wingetui\choco-cli\lib\dllexp\tools\readme.txt" checksum="1406E1F9B4A1EBC0C8CD122C3A81CFEA" />
+  </files>
+</fileSnapshot>
