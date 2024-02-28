@@ -17,7 +17,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="80"/>
             </Grid.ColumnDefinitions>
-            <RichTextBlock x:Name="_textblock" Grid.Column="0" Grid.Row="0"></RichTextBlock>
+            <RichTextBlock x:Name="_textblock" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
             <Image x:Name="_image" Grid.Column="1" Grid.Row="0" Width="80" Height="80"></Image>
         </Grid>
     </Grid>

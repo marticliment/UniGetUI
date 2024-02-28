@@ -32,7 +32,7 @@
             <StackPanel x:Name="MainLayout" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Orientation="Vertical" Spacing="8" Margin="0,0,0,20">
                 <widgets:Announcer
                     x:Name="SettingsAnnouncer"
-                    Url="https://www.marticliment.com/resources/wingetui.announcement"
+                    Url="https://marticliment.com/resources/annoucements/wingetui"
                     />
                 <widgets:TranslatedTextBlock FontSize="40" FontWeight="Bold" WrappingMode="NoWrap" Text="WingetUI Settings" Suffix="                                                          ." HorizontalAlignment="Stretch"/>
                 <widgets:SettingsEntry

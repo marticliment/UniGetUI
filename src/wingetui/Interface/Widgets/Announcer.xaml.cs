@@ -1,9 +1,12 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Shapes;
 using ModernWindow.Structures;
 using System;
+using Windows.ApplicationModel.Email;
 using Windows.UI.Text;
 using Windows.Web.Http;
 
@@ -38,6 +41,9 @@ namespace ModernWindow.Interface.Widgets
             InitializeComponent();
             DefaultStyleKey = typeof(Announcer);
             BringIntoViewRequested += (s, e) => { LoadAnnouncements(); };
+
+            PointerPressed += (s, e) => { LoadAnnouncements(); };
+
             SetText(binder.Translate("Fetching latest announcements, please wait..."));
             _textblock.TextWrapping = TextWrapping.Wrap;
         }
@@ -53,9 +59,12 @@ namespace ModernWindow.Interface.Widgets
                 HttpResponseMessage response = await NetClient.GetAsync(announcement_url);
                 if (response.IsSuccessStatusCode)
                 {
-                    string text = response.Content.ToString().Split("////")[0];
-                    Uri imageUrl = new(response.Content.ToString().Split("////")[1]);
-                    SetText(text);
+                    string title = response.Content.ToString().Split("////")[0].Trim().Trim('\n').Trim();
+                    string body = response.Content.ToString().Split("////")[1].Trim().Trim('\n').Trim();
+                    string linkId = response.Content.ToString().Split("////")[2].Trim().Trim('\n').Trim();
+                    string linkName = response.Content.ToString().Split("////")[3].Trim().Trim('\n').Trim();
+                    Uri imageUrl = new(response.Content.ToString().Split("////")[4].Trim().Trim('\n').Trim());
+                    SetText(title, body, linkId, linkName);
                     SetImage(imageUrl);
                 }
                 else
@@ -74,26 +83,42 @@ namespace ModernWindow.Interface.Widgets
             }
         }
 
-        public void SetText_Safe(string text)
+        public void SetText_Safe(string title, string body, string linkId, string linkName)
         {
             ((MainApp)Application.Current).MainWindow.DispatcherQueue.TryEnqueue(() =>
             {
-                SetText(text);
+                SetText(title, body, linkId, linkName);
             });
         }
 
-        public void SetText(string text)
+        public void SetText(string title, string body, string linkId, string linkName)
         {
             Paragraph paragraph = new();
-            foreach (string line in text.Split("\n"))
+            paragraph.Inlines.Add(new Run() { Text = title, FontSize = 24, FontWeight = new FontWeight(700), FontFamily = new FontFamily("Segoe UI Variable Display") });
+            _textblock.Blocks.Clear();
+            _textblock.Blocks.Add(paragraph);
+
+            paragraph = new();
+            foreach (string line in body.Split("\n"))
             {
-                if (line.Contains("<h1>"))
-                    paragraph.Inlines.Add(new Run() { Text = line.Replace("<h1>", "").Replace("</h1>", ""), FontSize = 24, FontWeight = new FontWeight(650) });
-                else
-                    paragraph.Inlines.Add(new Run() { Text = line.Replace("<p>", "").Replace("</p>", "").Replace("<br>", "") });
-
+                paragraph.Inlines.Add(new Run() { Text = line + " " });
                 paragraph.Inlines.Add(new LineBreak());
+            }
+            Hyperlink link = new();
+            link.Inlines.Add(new Run() { Text = linkName });
+            link.NavigateUri = new Uri("https://marticliment.com/redirect?" + linkId);
+            paragraph.Inlines[^1] = link;
 
+            _textblock.Blocks.Add(paragraph);
+        }
+
+        public void SetText(string body)
+        {
+            Paragraph paragraph = new();
+            foreach (string line in body.Split("\n"))
+            {
+                paragraph.Inlines.Add(new Run() { Text = line });
+                paragraph.Inlines.Add(new LineBreak());
             }
             _textblock.Blocks.Clear();
             _textblock.Blocks.Add(paragraph);
