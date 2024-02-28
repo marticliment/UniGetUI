@@ -2,7 +2,7 @@ import json
 import os
 
 root_dir = os.path.join(os.path.dirname(__file__), "..")
-os.chdir(root_dir) # move to root project
+os.chdir(root_dir)  # move to root project
 
 print("Getting contributors...")
 

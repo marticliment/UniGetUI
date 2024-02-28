@@ -29,6 +29,7 @@
     <Page Remove="Intereface\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Assets\Languages\Contributors.list" />
     <None Remove="Interface\AboutWingetUI.xaml" />
     <None Remove="Interface\Dialogs\HelpInterface.xaml" />
     <None Remove="Interface\Dialogs\InstallOptions.xaml" />
