@@ -1,9 +1,10 @@
-.vscode/
-wingetui/__pycache__
-wingetui/lang/__pycache__/*
-wingetui/build/
-wingetui/dist/
-wingetui/winget-cli.1.2.0/
+/.vscode/
+src/.vscode/
+src/wingetui-old-project/__pycache__
+src/wingetui-old-project/lang/__pycache__/*
+src/wingetui-old-project/build/
+src/wingetui-old-project/dist/
+src/wingetui-old-project/winget-cli.1.2.0/
 "WingetUI Store.exe"
 WingetUI Store Installer.exe
 WingetUI Installer.exe

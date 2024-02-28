@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<registrySnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <user>S-1-5-21-488745884-1937945551-345288892-1001</user>
+  <keys>
+    <key installerType="Unknown" displayName="Visual Studio Build Tools 2022 (2)" displayVersion="17.6.3">
+      <RegistryView>Registry32</RegistryView>
+      <KeyPath>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\3b47a565</KeyPath>
+      <DefaultValue />
+      <InstallLocation><![CDATA[C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools]]></InstallLocation>
+      <UninstallString><![CDATA["C:\Program Files (x86)\Microsoft Visual Studio\Installer\setup.exe" uninstall --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools"]]></UninstallString>
+      <HasQuietUninstall>false</HasQuietUninstall>
+      <Publisher><![CDATA[Microsoft Corporation]]></Publisher>
+      <InstallDate>20230617</InstallDate>
+      <InstallSource><![CDATA[]]></InstallSource>
+      <Language />
+      <Version />
+      <VersionMajor />
+      <VersionMinor />
+      <SystemComponent>false</SystemComponent>
+      <WindowsInstaller>false</WindowsInstaller>
+      <NoRemove>false</NoRemove>
+      <NoModify>false</NoModify>
+      <NoRepair>false</NoRepair>
+      <ReleaseType />
+      <ParentKeyName />
+    </key>
+    <key installerType="Msi" displayName="Microsoft HTML Help Workshop Package" displayVersion="4.74.8702">
+      <RegistryView>Registry32</RegistryView>
+      <KeyPath>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{49F425DD-2A94-4C75-94BE-4EFF866E608B}</KeyPath>
+      <DefaultValue />
+      <InstallLocation><![CDATA[]]></InstallLocation>
+      <UninstallString><![CDATA[MsiExec.exe /I{49F425DD-2A94-4C75-94BE-4EFF866E608B}]]></UninstallString>
+      <HasQuietUninstall>false</HasQuietUninstall>
+      <Publisher><![CDATA[Microsoft Corporation]]></Publisher>
+      <InstallDate>20230617</InstallDate>
+      <InstallSource><![CDATA[C:\ProgramData\Microsoft\VisualStudio\Packages\Microsoft.VisualCpp.HTMLHelpWorkshop.Msi,version=4.74.8702.1\]]></InstallSource>
+      <Language>1033</Language>
+      <Version>71967230</Version>
+      <VersionMajor>4</VersionMajor>
+      <VersionMinor>74</VersionMinor>
+      <SystemComponent>true</SystemComponent>
+      <WindowsInstaller>true</WindowsInstaller>
+      <NoRemove>false</NoRemove>
+      <NoModify>false</NoModify>
+      <NoRepair>false</NoRepair>
+      <ReleaseType />
+      <ParentKeyName />
+      <LocalPackage><![CDATA[C:\WINDOWS\Installer\1edd54.msi]]></LocalPackage>
+    </key>
+  </keys>
+</registrySnapshot>

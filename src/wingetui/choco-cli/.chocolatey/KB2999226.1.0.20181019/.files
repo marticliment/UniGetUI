@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<fileSnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <files>
+    <file path="C:\ProgramData\chocolatey\lib\KB2999226\KB2999226.nupkg" checksum="00FEDCC92100C0472BFC7001E3111764" />
+    <file path="C:\ProgramData\chocolatey\lib\KB2999226\KB2999226.nuspec" checksum="3B26D2573FD5896D91076740B666E12C" />
+    <file path="C:\ProgramData\chocolatey\lib\KB2999226\README.md" checksum="89AA036EDA6211A4524DC9ADCB1B34CB" />
+    <file path="C:\ProgramData\chocolatey\lib\KB2999226\tools\chocolateyinstall.ps1" checksum="DE3EBDADD4B400BFDCACEF22A64D7E4F" />
+  </files>
+</fileSnapshot>

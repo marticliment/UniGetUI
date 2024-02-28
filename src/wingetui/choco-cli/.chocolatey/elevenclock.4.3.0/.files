@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<fileSnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <files>
+    <file path="C:\ProgramData\chocolatey\lib\elevenclock\elevenclock.nupkg" checksum="8E44967A82E5D3E1EC73A822BF96DEAF" />
+    <file path="C:\ProgramData\chocolatey\lib\elevenclock\elevenclock.nuspec" checksum="A42B7E32BB81D00D8C88721FF73C696F" />
+    <file path="C:\ProgramData\chocolatey\lib\elevenclock\tools\chocolateyinstall.ps1" checksum="4E4D9226C5E07D2A3EF0DACA4DDE34B3" />
+    <file path="C:\ProgramData\chocolatey\lib\elevenclock\tools\chocolateyuninstall.ps1" checksum="5E2FB88CC02A187D778E2B1C7857CD51" />
+  </files>
+</fileSnapshot>

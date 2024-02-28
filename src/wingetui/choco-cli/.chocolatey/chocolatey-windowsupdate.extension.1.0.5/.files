@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<fileSnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <files>
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-windowsupdate.extension\chocolatey-windowsupdate.extension.nupkg" checksum="A08CB4D9F0B4FBBDB20387C8C32D91E3" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-windowsupdate.extension\chocolatey-windowsupdate.extension.nuspec" checksum="B70EFF5545B66A584A05AB0AFBBD05A1" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-windowsupdate.extension\extensions\chocolatey-windowsupdate.psm1" checksum="6743F625A65587991A230D8D965908F6" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-windowsupdate.extension\extensions\Get-NativeInstallerExitCode.ps1" checksum="A8DA12DDEFC9C6A077E7F59FB47C3CEC" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-windowsupdate.extension\extensions\Get-WindowsUpdateErrorDescription.ps1" checksum="1E302C5D745B2A3C87DCFE76709A5C7F" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-windowsupdate.extension\extensions\Install-ChocolateyPackageAndHandleExitCode.ps1" checksum="C8D8BF533EFAD990E7E9D0671F7DF685" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-windowsupdate.extension\extensions\Install-WindowsUpdate.ps1" checksum="091E970C08F59F92829CAD5C63AD265D" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-windowsupdate.extension\extensions\Set-PowerShellExitCode.ps1" checksum="58F9F443A2415DB881C5FB711C6D445A" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-windowsupdate.extension\extensions\Test-WindowsUpdate.ps1" checksum="13E44CF74C3FB18BAE02AA65FD95D1DE" />
+  </files>
+</fileSnapshot>

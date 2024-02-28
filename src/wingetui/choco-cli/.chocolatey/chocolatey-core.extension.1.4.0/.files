@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<fileSnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <files>
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-core.extension\chocolatey-core.extension.nupkg" checksum="0CA0F8AA17B974343E7967B1820D0D9C" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-core.extension\chocolatey-core.extension.nuspec" checksum="B2C1C3F82AA3D894AD8E5547FF7B1688" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-core.extension\extensions\chocolatey-core.psm1" checksum="2A0DE2FF529CFC02FDF540ACBEE99EE1" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-core.extension\extensions\Get-AppInstallLocation.ps1" checksum="D19FCAF1650F0EE327666CA8823F3731" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-core.extension\extensions\Get-AvailableDriveLetter.ps1" checksum="FF3C638BD18B2D3A563753960F6DD323" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-core.extension\extensions\Get-EffectiveProxy.ps1" checksum="2584085C65E44561A8D8A78F617AFD3E" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-core.extension\extensions\Get-PackageCacheLocation.ps1" checksum="77A378E5C659E5A53D2D64E276159B62" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-core.extension\extensions\Get-WebContent.ps1" checksum="57D013E581EFEA3D4D8366183C9A5797" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-core.extension\extensions\Register-Application.ps1" checksum="D2853E569DAC9A341642BA76EC4FB411" />
+    <file path="C:\ProgramData\chocolatey\lib\chocolatey-core.extension\extensions\Remove-Process.ps1" checksum="9A56AD3B71FD44CB8D0EA2C1ADB023B2" />
+  </files>
+</fileSnapshot>
