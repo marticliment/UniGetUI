@@ -1,5 +1,6 @@
 {
   "(Number {0} in the queue)" : "(شماره {0} در صف)",
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : " @Mahdi-Hazrati, @smsi2001, @itsarian ",
   "0 packages found" : "بسته ای پیدا نشد",
   "0 updates found" : "به‌روزرسانی ای پیدا نشد",
   "1 day" : "۱ روز",
@@ -439,7 +440,6 @@
   "{0} succeeded" : "{0} مورد موفق بود",
   "{0} update" : "{0} به روزرسانی",
   "{0} was {1} successfully!" : "{0} {1} با موفقیت انجام شد!",
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : " @Mahdi-Hazrati, @smsi2001, @itsarian ",
   "{0} {1} failed" : "ناموفق بود {1} {0}",
   "{pm} could not be found" : "{pm} پیدا نشد",
   "{pm} found: {state}" : "پیدا شد {pm}: {state}\n",

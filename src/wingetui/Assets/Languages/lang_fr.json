@@ -1,5 +1,6 @@
 {
   "(Number {0} in the queue)" : "(Numéro {0} dans la file d'attente)",
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : "Evans Costa, Rémi Guerrero, @W1L7dev",
   "0 packages found" : "Aucun paquet trouvé",
   "0 updates found" : "Aucune mise à jour trouvée",
   "1 day" : "1 jour",
@@ -437,9 +438,8 @@
   "{0} packages found" : "{0} paquets trouvés",
   "{0} packages were found" : "{0} paquets ont été trouvés",
   "{0} succeeded" : "{0} réussie",
-  "{0} update" : "{0} mises à jour",
+  "{0} update" : "Mise à jour de {0}",
   "{0} was {1} successfully!" : "{0} a été {1} avec succès !",
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "Evans Costa, Rémi Guerrero, @W1L7dev",
   "{0} {1} failed" : "{0} {1}  a échoué",
   "{pm} could not be found" : "{pm} n'a pas pu être trouvé",
   "{pm} found: {state}" : "{pm} a trouvé : {state}",

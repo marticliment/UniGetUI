@@ -1,5 +1,6 @@
 {
   "(Number {0} in the queue)" : "(Broj {0} u redu čekanja)",
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : "Stjepan Treger",
   "0 packages found" : "0 pronađenih paketa",
   "0 updates found" : "0 ažuriranja pronađeno",
   "1 day" : "1 dan",
@@ -439,7 +440,6 @@
   "{0} succeeded" : "{0} uspješnih",
   "{0} update" : "{0} ažuriranje",
   "{0} was {1} successfully!" : "{0} je {1} uspješno!",
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "Stjepan Treger",
   "{0} {1} failed" : "{0} {1} nije uspjelo",
   "{pm} could not be found" : null,
   "{pm} found: {state}" : "{pm} pronađeno: {state}",

@@ -1,5 +1,6 @@
 {
   "(Number {0} in the queue)" : "(Número {0} en la cola)",
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : "@rubnium, @JMoreno97, @dalbitresb12, @marticliment, @apazga, @evaneliasyoung, @guplem, @uKER",
   "0 packages found" : "0 paquetes encontrados",
   "0 updates found" : "0 actualizaciones encontradas",
   "1 day" : "1 día",
@@ -439,7 +440,6 @@
   "{0} succeeded" : "{0} realizado correctamente",
   "{0} update" : "Actualización de {0}",
   "{0} was {1} successfully!" : "{0} se ha {1} correctamente.",
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "@rubnium, @JMoreno97, @dalbitresb12, @marticliment, @apazga, @evaneliasyoung, @guplem, @uKER",
   "{0} {1} failed" : "{0} {1} ha fallado",
   "{pm} could not be found" : "{pm} no se encontró",
   "{pm} found: {state}" : "{pm} encontrado: {state}",

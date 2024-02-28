@@ -1,5 +1,6 @@
 {
   "(Number {0} in the queue)" : "(Número {0} a la cua)",
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : "@marticliment",
   "0 packages found" : "Cap paquet trobat",
   "0 updates found" : "No s'han trobat actualitzacions",
   "1 day" : "1 dia",
@@ -36,7 +37,7 @@
   "Ask only once for administrator privileges (not recommended)" : "Demana només un cop per a drets d'administrador (no recomanat)",
   "Attention required" : "Es requereix atenció",
   "Author" : "Autor/a",
-  "Automatically save a list of all your installed packages to easily restore them." : "Des automàticament una llista de tots els paquets instal·lats per a restaurar-los fàcilment.",
+  "Automatically save a list of all your installed packages to easily restore them." : "Desa automàticament una llista de tots els paquets instal·lats per a restaurar-los fàcilment.",
   "Automatically save a list of your installed packages on your computer." : "Desa una llista dels paquets instal·lats al vostre ordinador de forma automàtica",
   "Autostart WingetUI in the notifications area" : "Inicia el WingetUI a l'àrea de notificacions",
   "Available updates: {0}" : "Actualitzacions disponibles: {0}",
@@ -439,7 +440,6 @@
   "{0} succeeded" : "{0} satisfactòria",
   "{0} update" : "actualització del {0}",
   "{0} was {1} successfully!" : "{0} s'ha {1} correctament!",
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "@marticliment",
   "{0} {1} failed" : "La {1} de {0} ha fallat",
   "{pm} could not be found" : "El {pm} no s'ha pogut trobar",
   "{pm} found: {state}" : "{pm} trobat: {state}",

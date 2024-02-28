@@ -1,5 +1,6 @@
 {
   "(Number {0} in the queue)" : "(Број {0} во редицата)",
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : "LordDeatHunter",
   "0 packages found" : "Пронајдени се 0 пакети",
   "0 updates found" : "Пронајдени се 0 ажурирања",
   "1 day" : "1 ден",
@@ -439,7 +440,6 @@
   "{0} succeeded" : "{0} успеа",
   "{0} update" : "{0} ажурирање",
   "{0} was {1} successfully!" : "{0} беше успешно {1}!",
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "LordDeatHunter",
   "{0} {1} failed" : null,
   "{pm} could not be found" : "Не можеше да се најде {pm}",
   "{pm} found: {state}" : "Пронајдено {pm}: {state}",

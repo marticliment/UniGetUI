@@ -1,5 +1,6 @@
 {
   "(Number {0} in the queue)" : null,
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : "lasersPew",
   "0 packages found" : "Walang nakitang package",
   "0 updates found" : "Walang nakitang kailangang iupdate",
   "1 day" : "isang araw",
@@ -439,7 +440,6 @@
   "{0} succeeded" : "{0} ang nagtagumpay",
   "{0} update" : "{0} ang iuupdate",
   "{0} was {1} successfully!" : "{0} ay {1} nang tuluyan",
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "lasersPew",
   "{0} {1} failed" : "Ang package na {0} ay nabigong i-{1}",
   "{pm} could not be found" : null,
   "{pm} found: {state}" : null,

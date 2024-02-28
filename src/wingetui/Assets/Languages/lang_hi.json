@@ -1,5 +1,6 @@
 {
   "(Number {0} in the queue)" : "(कतार में संख्या {0})",
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : "@satanarious, @atharva_xoxo",
   "0 packages found" : "\n0 पैकेज मिले",
   "0 updates found" : "0 अपडेट मिले",
   "1 day" : "1 दिन",
@@ -439,7 +440,6 @@
   "{0} succeeded" : "{0} सफल हुआ",
   "{0} update" : "{0} अपडेट करें",
   "{0} was {1} successfully!" : "\n{0} सफलतापूर्वक {1} हुआ!",
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "@satanarious, @atharva_xoxo",
   "{0} {1} failed" : "{0} {1} असफल रहा",
   "{pm} could not be found" : null,
   "{pm} found: {state}" : "{pm} मिले: {state}",

@@ -1,5 +1,6 @@
 {
   "(Number {0} in the queue)" : "({0} a várósorban)",
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : "@gidano",
   "0 packages found" : "0 csomag található",
   "0 updates found" : "0 talált frissítés",
   "1 day" : "1 nap",
@@ -439,7 +440,6 @@
   "{0} succeeded" : "{0} sikeres",
   "{0} update" : "{0} frissítés",
   "{0} was {1} successfully!" : "{0} sikeresen {1}!",
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "@gidano",
   "{0} {1} failed" : "{0} {1} sikertelen",
   "{pm} could not be found" : "{pm} nem található",
   "{pm} found: {state}" : "{pm} találat: {state}",

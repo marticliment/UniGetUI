@@ -1,5 +1,6 @@
 {
   "(Number {0} in the queue)" : "(מספר {0} בתור)",
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : "Oryan",
   "0 packages found" : "לא נמצאו חבילות",
   "0 updates found" : "לא נמצאו עדכונים",
   "1 day" : "יום",
@@ -439,7 +440,6 @@
   "{0} succeeded" : "{0} הצליח/ה",
   "{0} update" : "עדכון של {0}",
   "{0} was {1} successfully!" : null,
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "Oryan",
   "{0} {1} failed" : "נכשל {0} {1}",
   "{pm} could not be found" : "לא ניתן למצוא את {pm}",
   "{pm} found: {state}" : null,

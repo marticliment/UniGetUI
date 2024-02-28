@@ -1,5 +1,6 @@
 {
   "(Number {0} in the queue)" : "({0} позиция в очереди)",
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : "Sergey, sklart, @flatron4eg, @bropines, @katrovsky",
   "0 packages found" : "Найдено 0 пакетов",
   "0 updates found" : "Найдено 0 обновлений",
   "1 day" : "1 день",
@@ -439,7 +440,6 @@
   "{0} succeeded" : "{0} выполнено успешно",
   "{0} update" : "Обновление {0}",
   "{0} was {1} successfully!" : "{0} успешно {1}!",
-  "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)" : "Sergey, sklart, @flatron4eg, @bropines, @katrovsky",
   "{0} {1} failed" : "{0} {1} не удалось",
   "{pm} could not be found" : null,
   "{pm} found: {state}" : "{pm} найдено: {state}",
