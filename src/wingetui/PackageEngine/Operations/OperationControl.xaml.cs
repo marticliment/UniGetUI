@@ -296,7 +296,7 @@ namespace ModernWindow.PackageEngine
             while (currentIndex != 0)
             {
                 if (Status == OperationStatus.Cancelled)
-                    return; // If th operation has been cancelled
+                    return; // If the operation has been cancelled
 
                 currentIndex = Tools.OperationQueue.IndexOf(this);
                 if (currentIndex != oldIndex)
@@ -317,6 +317,10 @@ namespace ModernWindow.PackageEngine
         {
             try
             {
+
+                if (Status == OperationStatus.Cancelled)
+                    return; // If the operation was cancelled, do nothing.
+
                 Tools.TooltipStatus.OperationsInProgress = Tools.TooltipStatus.OperationsInProgress + 1;
 
                 Status = OperationStatus.Running;

@@ -70,8 +70,10 @@ namespace ModernWindow.PackageEngine.Operations
             while (currentIndex != 0)
             {
                 if (Status == OperationStatus.Cancelled)
+                {
+                    Package.Tag = PackageTag.Default;
                     return; // If th operation has been cancelled
-
+                }
                 currentIndex = Tools.OperationQueue.IndexOf(this);
                 if (currentIndex != oldIndex)
                 {
