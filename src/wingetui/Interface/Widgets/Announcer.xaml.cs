@@ -76,7 +76,7 @@ namespace ModernWindow.Interface.Widgets
 
         public void SetText_Safe(string text)
         {
-            ((MainApp)Application.Current).mainWindow.DispatcherQueue.TryEnqueue(() =>
+            ((MainApp)Application.Current).MainWindow.DispatcherQueue.TryEnqueue(() =>
             {
                 SetText(text);
             });

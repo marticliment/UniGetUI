@@ -96,7 +96,7 @@ namespace ModernWindow.Interface
                 await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
             }
 
-            foreach(var package in AppTools.Instance.App.mainWindow.NavigationPage.InstalledPage.Packages)
+            foreach(var package in AppTools.Instance.App.MainWindow.NavigationPage.InstalledPage.Packages)
                 if(package.Id == Id && Manager == package.Manager) {
                     package.SetTag(PackageTag.Default);
                     break;

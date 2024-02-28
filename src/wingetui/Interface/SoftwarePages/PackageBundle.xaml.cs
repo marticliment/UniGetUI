@@ -91,7 +91,7 @@ namespace ModernWindow.Interface
 
             PackageList.DoubleTapped += (s, e) =>
             {
-                _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
+                _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
             };
 
             PackageList.RightTapped += (s, e) =>
@@ -121,7 +121,7 @@ namespace ModernWindow.Interface
                     if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down))
                         (PackageList.SelectedItem as BundledPackage).ShowOptions(s, e);
                     else
-                        _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
+                        _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
                 }
                 else if (e.Key == Windows.System.VirtualKey.A && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                 {
@@ -215,7 +215,7 @@ namespace ModernWindow.Interface
             RootNodeForManager.Clear();
             NodesForSources.Clear();
             LocalPackagesNode.Children.Clear();
-            AppTools.Instance.App.mainWindow.NavigationPage.BundleBadge.Visibility = Visibility.Collapsed;
+            AppTools.Instance.App.MainWindow.NavigationPage.BundleBadge.Visibility = Visibility.Collapsed;
             FilterPackages("");
             BackgroundText.Text = "No packages have been added yet";
             BackgroundText.Visibility = Visibility.Visible;
@@ -357,8 +357,8 @@ namespace ModernWindow.Interface
         public void UpdateCount()
         {
             BackgroundText.Visibility = Packages.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-            Tools.App.mainWindow.NavigationPage.BundleBadge.Value = Packages.Count;
-            Tools.App.mainWindow.NavigationPage.BundleBadge.Visibility = Packages.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
+            Tools.App.MainWindow.NavigationPage.BundleBadge.Value = Packages.Count;
+            Tools.App.MainWindow.NavigationPage.BundleBadge.Visibility = Packages.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public void GenerateToolBar()
@@ -441,10 +441,10 @@ namespace ModernWindow.Interface
             PackageDetails.Click += (s, e) =>
             {
                 if (PackageList.SelectedItem != null)
-                    _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
+                    _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
             };
 
-            HelpButton.Click += (s, e) => { Tools.App.mainWindow.NavigationPage.ShowHelp(); };
+            HelpButton.Click += (s, e) => { Tools.App.MainWindow.NavigationPage.ShowHelp(); };
 
             NewBundle.Click += (s, e) =>
             {
@@ -464,7 +464,7 @@ namespace ModernWindow.Interface
 
             InstallPackages.Click += async (s, e) =>
             {
-                Tools.App.mainWindow.ShowLoadingDialog(Tools.Translate("Preparing packages, please wait..."));
+                Tools.App.MainWindow.ShowLoadingDialog(Tools.Translate("Preparing packages, please wait..."));
                 foreach (BundledPackage package in FilteredPackages.ToArray())
                     if (package.IsChecked && package.IsValid)
                     {
@@ -478,7 +478,7 @@ namespace ModernWindow.Interface
                     }
 
 
-                Tools.App.mainWindow.HideLoadingDialog();
+                Tools.App.MainWindow.HideLoadingDialog();
 
                 foreach (BundledPackage package in FilteredPackages.ToArray())
                     if (package.IsChecked && package.IsValid)
@@ -498,7 +498,7 @@ namespace ModernWindow.Interface
                 SaveFile();
             };
 
-            SharePackage.Click += (s, e) => { Tools.App.mainWindow.SharePackage((PackageList.SelectedItem as BundledPackage).Package); };
+            SharePackage.Click += (s, e) => { Tools.App.MainWindow.SharePackage((PackageList.SelectedItem as BundledPackage).Package); };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
@@ -517,14 +517,14 @@ namespace ModernWindow.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null || !(PackageList.SelectedItem as BundledPackage).IsValid)
                 return;
-            Tools.App.mainWindow.SharePackage(((PackageList.SelectedItem as BundledPackage).Package));
+            Tools.App.MainWindow.SharePackage(((PackageList.SelectedItem as BundledPackage).Package));
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs package)
         {
             if (!Initialized || PackageList.SelectedItem == null || !(PackageList.SelectedItem as BundledPackage).IsValid)
                 return;
-            _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
+            _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
         }
 
 
@@ -561,7 +561,7 @@ namespace ModernWindow.Interface
 
         public async Task AddPackages(IEnumerable<Package> packages)
         {
-            Tools.App.mainWindow.ShowLoadingDialog(Tools.Translate("Preparing packages, please wait..."));
+            Tools.App.MainWindow.ShowLoadingDialog(Tools.Translate("Preparing packages, please wait..."));
             var bundled = new List<BundledPackage>();
             foreach (var pkg in packages)
             {
@@ -573,7 +573,7 @@ namespace ModernWindow.Interface
 
             foreach (var pkg in bundled)
                 AddPackage(pkg);
-            Tools.App.mainWindow.HideLoadingDialog();
+            Tools.App.MainWindow.HideLoadingDialog();
 
         }
 
@@ -582,8 +582,8 @@ namespace ModernWindow.Interface
             Packages.Add(package);
             AddPackageToSourcesList(package.Package);
             BackgroundText.Visibility = Packages.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-            Tools.App.mainWindow.NavigationPage.BundleBadge.Value = Packages.Count;
-            Tools.App.mainWindow.NavigationPage.BundleBadge.Visibility = Packages.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
+            Tools.App.MainWindow.NavigationPage.BundleBadge.Value = Packages.Count;
+            Tools.App.MainWindow.NavigationPage.BundleBadge.Visibility = Packages.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
             FilterPackages(QueryBlock.Text.Trim());
         }
 
@@ -593,12 +593,12 @@ namespace ModernWindow.Interface
             try
             {
                 // Select file
-                var picker = new Pickers.FileOpenPicker(Tools.App.mainWindow.GetWindowHandle());
+                var picker = new Pickers.FileOpenPicker(Tools.App.MainWindow.GetWindowHandle());
                 var file = picker.Show(new List<string>() {"*.json", "*.yaml", "*.xml" });
                 if (file == String.Empty)
                     return;
 
-                Tools.App.mainWindow.ShowLoadingDialog(Tools.Translate("Loading packages, please wait..."));
+                Tools.App.MainWindow.ShowLoadingDialog(Tools.Translate("Loading packages, please wait..."));
 
                 // Read file
                 BundleFormatType formatType;
@@ -614,13 +614,13 @@ namespace ModernWindow.Interface
                 // Import packages to list
                 await AddPackagesFromBundleString(fileContent, formatType);
 
-                Tools.App.mainWindow.HideLoadingDialog();
+                Tools.App.MainWindow.HideLoadingDialog();
 
             }
             catch (Exception ex)
             {
                 AppTools.Log(ex);
-                Tools.App.mainWindow.HideLoadingDialog();
+                Tools.App.MainWindow.HideLoadingDialog();
             }
         }
         public async Task AddPackagesFromBundleString(string content, BundleFormatType format)
@@ -756,11 +756,11 @@ namespace ModernWindow.Interface
             {
                 // Get file 
                 // Save file
-                var file = (new Pickers.FileSavePicker(Tools.App.mainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, "WingetUI package bundle.json") ;
+                var file = (new Pickers.FileSavePicker(Tools.App.MainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, "WingetUI package bundle.json") ;
                 if (file != String.Empty)
                 {
                     // Loading dialog
-                    Tools.App.mainWindow.ShowLoadingDialog(Tools.Translate("Saving packages, please wait..."));
+                    Tools.App.MainWindow.ShowLoadingDialog(Tools.Translate("Saving packages, please wait..."));
 
                     List<BundledPackage> packages = new();
                     foreach (BundledPackage package in Packages)
@@ -778,7 +778,7 @@ namespace ModernWindow.Interface
                     // Save serialized data
                     await File.WriteAllTextAsync(file, await GetBundleStringFromPackages(packages.ToArray(), formatType));
 
-                    Tools.App.mainWindow.HideLoadingDialog();
+                    Tools.App.MainWindow.HideLoadingDialog();
 
                     // Launch file
                     Process.Start(new ProcessStartInfo()
@@ -791,7 +791,7 @@ namespace ModernWindow.Interface
             }
             catch (Exception ex)
             {
-                Tools.App.mainWindow.HideLoadingDialog();
+                Tools.App.MainWindow.HideLoadingDialog();
                 AppTools.Log(ex);
             }
         }

@@ -161,7 +161,7 @@ namespace ModernWindow.Interface.Dialogs
 
         private void SelectDir_Click(object sender, RoutedEventArgs e)
         {
-            var openPicker = new Pickers.FolderPicker(Tools.App.mainWindow.GetWindowHandle());
+            var openPicker = new Pickers.FolderPicker(Tools.App.MainWindow.GetWindowHandle());
             string folder = openPicker.Show();
             if (folder != String.Empty)
                 CustomInstallLocation.Text = folder;

@@ -184,8 +184,8 @@ namespace ModernWindow.PackageEngine
                 if (!IsDialogOpen)
                     return;
 
-                LiveOutputScrollBar.MinWidth = Tools.App.mainWindow.NavigationPage.ActualWidth - 400;
-                LiveOutputScrollBar.MinHeight = Tools.App.mainWindow.NavigationPage.ActualHeight - 200;
+                LiveOutputScrollBar.MinWidth = Tools.App.MainWindow.NavigationPage.ActualWidth - 400;
+                LiveOutputScrollBar.MinHeight = Tools.App.MainWindow.NavigationPage.ActualHeight - 200;
             };
 
             OutputDialog.Content = LiveOutputScrollBar;
@@ -237,7 +237,7 @@ namespace ModernWindow.PackageEngine
             LiveOutputTextBlock.Blocks.Add(p);
             IsDialogOpen = true;
 
-            if (await Tools.App.mainWindow.ShowDialog(OutputDialog) == ContentDialogResult.Secondary)
+            if (await Tools.App.MainWindow.ShowDialogAsync(OutputDialog) == ContentDialogResult.Secondary)
             {
                 LiveOutputScrollBar.ScrollToVerticalOffset(LiveOutputScrollBar.ScrollableHeight);
                 Clipboard.WindowsClipboard.SetText(string.Join('\n', ProcessOutput.ToArray()));
@@ -455,9 +455,9 @@ namespace ModernWindow.PackageEngine
                 await Task.Delay(1000);
 
             RemoveFromQueue();
-            if (Tools.App.mainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
+            if (Tools.App.MainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
             {
-                Tools.App.mainWindow.NavigationPage.OperationStackPanel.Children.Remove(this);
+                Tools.App.MainWindow.NavigationPage.OperationStackPanel.Children.Remove(this);
             }
         }
 

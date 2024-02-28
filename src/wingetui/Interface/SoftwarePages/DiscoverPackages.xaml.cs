@@ -84,7 +84,7 @@ namespace ModernWindow.Interface
 
             PackageList.DoubleTapped += (s, e) =>
             {
-                _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Install);
+                _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Install);
             };
 
             PackageList.RightTapped += (s, e) =>
@@ -115,13 +115,13 @@ namespace ModernWindow.Interface
                 {
                     if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down))
                     {
-                        if (await Tools.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Install))
+                        if (await Tools.App.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Install))
                             Tools.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as Package));
                     }
                     else if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                         Tools.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as Package));
                     else
-                        _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Install);
+                        _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Install);
                 }
                 else if (e.Key == Windows.System.VirtualKey.A && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                 {
@@ -537,13 +537,13 @@ namespace ModernWindow.Interface
             foreach (AppBarButton toolButton in Icons.Keys)
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
-            PackageDetails.Click += (s, e) => { _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Install); };
+            PackageDetails.Click += (s, e) => { _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Install); };
             ExportSelection.Click += ExportSelection_Click;
-            HelpButton.Click += (s, e) => { Tools.App.mainWindow.NavigationPage.ShowHelp(); };
+            HelpButton.Click += (s, e) => { Tools.App.MainWindow.NavigationPage.ShowHelp(); };
 
             InstallationSettings.Click += async (s, e) =>
             {
-                if (PackageList.SelectedItem != null && await Tools.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Install))
+                if (PackageList.SelectedItem != null && await Tools.App.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Install))
                     Tools.AddOperationToList(new InstallPackageOperation(PackageList.SelectedItem as Package));
             };
 
@@ -574,7 +574,7 @@ namespace ModernWindow.Interface
                             new InstallationOptions(package) { InteractiveInstallation = true }));
             };
 
-            SharePackage.Click += (s, e) => { Tools.App.mainWindow.SharePackage(PackageList.SelectedItem as Package); };
+            SharePackage.Click += (s, e) => { Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
@@ -583,22 +583,22 @@ namespace ModernWindow.Interface
 
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
-            Tools.App.mainWindow.NavigationPage.BundlesNavButton.ForceClick();
-            await Tools.App.mainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.ToArray().Where(x => x.IsChecked));
+            Tools.App.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
+            await Tools.App.MainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.ToArray().Where(x => x.IsChecked));
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs e)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Install);
+            _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Install);
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs e)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            Tools.App.mainWindow.SharePackage(PackageList.SelectedItem as Package);
+            Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package);
         }
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
@@ -647,7 +647,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            if (await Tools.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Install))
+            if (await Tools.App.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Install))
                 Tools.AddOperationToList(new InstallPackageOperation(PackageList.SelectedItem as Package));
         }
 
@@ -668,7 +668,7 @@ namespace ModernWindow.Interface
 
         public void ShowSharedPackage_ThreadSafe(string pId, string pSource)
         {
-            Tools.App.mainWindow.DispatcherQueue.TryEnqueue(() => { ShowSharedPackage(pId, pSource); });
+            Tools.App.MainWindow.DispatcherQueue.TryEnqueue(() => { ShowSharedPackage(pId, pSource); });
         }
 
         private async void ShowSharedPackage(string pId, string pSource)
@@ -678,18 +678,18 @@ namespace ModernWindow.Interface
 
             AppTools.Log("Showing shared package...");
 
-            Tools.App.mainWindow.Activate();
+            Tools.App.MainWindow.Activate();
 
-            Tools.App.mainWindow.ShowLoadingDialog(Tools.Translate("Please wait...").Replace("{0}", pId));
+            Tools.App.MainWindow.ShowLoadingDialog(Tools.Translate("Please wait...").Replace("{0}", pId));
             QueryIdRadio.IsChecked = true;
             QueryBlock.Text = pId;
             await FilterPackages(pId);
             QueryBothRadio.IsChecked = true;
-            Tools.App.mainWindow.HideLoadingDialog();
+            Tools.App.MainWindow.HideLoadingDialog();
             if (FilteredPackages.Count == 1)
             {
                 AppTools.Log("Only one package was found for pId=" + pId + ", showing it.");
-                await Tools.App.mainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
+                await Tools.App.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
             }
             else if (FilteredPackages.Count > 1)
             {
@@ -698,11 +698,11 @@ namespace ModernWindow.Interface
                     if (match.Source.Manager.Name == managerName)
                     {
                         AppTools.Log("Equivalent package for id=" + pId + " and source=" + pSource + " found: " + match.ToString());
-                        await Tools.App.mainWindow.NavigationPage.ShowPackageDetails(match, OperationType.Install);
+                        await Tools.App.MainWindow.NavigationPage.ShowPackageDetails(match, OperationType.Install);
                         return;
                     }
                 AppTools.Log("No package found with the exact same manager, showing the first one.");
-                await Tools.App.mainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
+                await Tools.App.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
             }
             else
             {
@@ -714,7 +714,7 @@ namespace ModernWindow.Interface
                 c.Content = Tools.Translate("The package {0} from {1} was not found.").Replace("{0}", pId).Replace("{1}", pSource);
                 c.PrimaryButtonText = Tools.Translate("OK");
                 c.DefaultButton = ContentDialogButton.Primary;
-                await Tools.App.mainWindow.ShowDialog(c);
+                await Tools.App.MainWindow.ShowDialogAsync(c);
             }
         }
 

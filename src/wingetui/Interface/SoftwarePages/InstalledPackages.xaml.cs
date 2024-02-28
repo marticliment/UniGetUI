@@ -90,7 +90,7 @@ namespace ModernWindow.Interface
 
             PackageList.DoubleTapped += (s, e) =>
             {
-                _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
+                _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
             };
 
             PackageList.RightTapped += (s, e) =>
@@ -121,13 +121,13 @@ namespace ModernWindow.Interface
                 {
                     if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down))
                     {
-                        if (await Tools.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
+                        if (await Tools.App.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
                             Tools.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as Package));
                     }
                     else if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                         ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
                     else
-                        _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
+                        _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
                 }
                 else if (e.Key == Windows.System.VirtualKey.A && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                 {
@@ -558,19 +558,19 @@ namespace ModernWindow.Interface
             foreach (AppBarButton toolButton in Icons.Keys)
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
-            PackageDetails.Click += (s, e) => { _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall); };
+            PackageDetails.Click += (s, e) => { _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall); };
             ExportSelection.Click += ExportSelection_Click;
-            HelpButton.Click += (s, e) => { Tools.App.mainWindow.NavigationPage.ShowHelp(); };
+            HelpButton.Click += (s, e) => { Tools.App.MainWindow.NavigationPage.ShowHelp(); };
 
 
             InstallationSettings.Click += async (s, e) =>
             {
-                if (PackageList.SelectedItem != null && await Tools.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
+                if (PackageList.SelectedItem != null && await Tools.App.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
                     ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
             };
 
 
-            ManageIgnored.Click += async (s, e) => { await Tools.App.mainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
+            ManageIgnored.Click += async (s, e) => { await Tools.App.MainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
             IgnoreSelected.Click += async (s, e) =>
             {
                 foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
@@ -581,7 +581,7 @@ namespace ModernWindow.Interface
             UninstallAsAdmin.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), AsAdmin: true); };
             UninstallInteractive.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), Interactive: true); };
 
-            SharePackage.Click += (s, e) => { Tools.App.mainWindow.SharePackage(PackageList.SelectedItem as Package); };
+            SharePackage.Click += (s, e) => { Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
@@ -590,8 +590,8 @@ namespace ModernWindow.Interface
 
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
-            Tools.App.mainWindow.NavigationPage.BundlesNavButton.ForceClick();
-            await Tools.App.mainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.ToArray().Where(x => x.IsChecked));
+            Tools.App.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
+            await Tools.App.MainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.ToArray().Where(x => x.IsChecked));
         }
 
         public async void ConfirmAndUninstall(Package package, InstallationOptions options)
@@ -606,7 +606,7 @@ namespace ModernWindow.Interface
             dialog.DefaultButton = ContentDialogButton.Primary;
             dialog.Content = Tools.Translate("Do you really want to uninstall {0}?").Replace("{0}", package.Name);
 
-            if (await Tools.App.mainWindow.ShowDialog(dialog) == ContentDialogResult.Secondary)
+            if (await Tools.App.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary)
                 Tools.AddOperationToList(new UninstallPackageOperation(package, options));
 
         }
@@ -641,7 +641,7 @@ namespace ModernWindow.Interface
 
             dialog.Content = p;
 
-            if (await Tools.App.mainWindow.ShowDialog(dialog) == ContentDialogResult.Secondary)
+            if (await Tools.App.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary)
                 foreach (Package package in packages)
                     Tools.AddOperationToList(new UninstallPackageOperation(package, new InstallationOptions(package)
                     {
@@ -709,14 +709,14 @@ namespace ModernWindow.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            Tools.App.mainWindow.SharePackage((PackageList.SelectedItem as Package));
+            Tools.App.MainWindow.SharePackage((PackageList.SelectedItem as Package));
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs package)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            _ = Tools.App.mainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
+            _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
         }
 
 
@@ -734,7 +734,7 @@ namespace ModernWindow.Interface
         private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
             if (PackageList.SelectedItem as Package != null
-                && await Tools.App.mainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
+                && await Tools.App.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
             {
                 ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
             }

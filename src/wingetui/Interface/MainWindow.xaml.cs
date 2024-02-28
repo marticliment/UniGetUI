@@ -61,12 +61,12 @@ namespace ModernWindow
             ContentRoot = __content_root;
             ApplyTheme();
 
+            AppWindow.SetIcon(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
+
             LoadingSthDalog = new ContentDialog();
             LoadingSthDalog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             LoadingSthDalog.Title = Tools.Translate("Please wait");
             LoadingSthDalog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
-
-
         }
 
         public void HandleNotificationActivation(ToastArguments args, ValueSet input)
@@ -99,7 +99,7 @@ namespace ModernWindow
                     d.SecondaryButtonText = Tools.Translate("Cancel");
                     d.DefaultButton = ContentDialogButton.Secondary;
 
-                    var result = await ShowDialog(d);
+                    var result = await ShowDialogAsync(d);
                     if (result == ContentDialogResult.Primary)
                         Tools.App.DisposeAndQuit();
                 }
@@ -254,7 +254,7 @@ namespace ModernWindow
         }
 
 
-        public async Task SwitchToInterface()
+        public void SwitchToInterface()
         {
             SetTitleBar(__app_titlebar);
             ContentRoot = __content_root;
@@ -264,8 +264,6 @@ namespace ModernWindow
             Grid.SetRow(NavigationPage, 2);
             Grid.SetColumn(NavigationPage, 0);
             MainContentGrid.Children.Add(NavigationPage);
-
-            //await DoExitTextAnimation();
 
             ColumnDefinition ContentColumn = __content_root.ColumnDefinitions[1];
             ContentColumn.Width = new GridLength(1, GridUnitType.Star);
@@ -356,7 +354,7 @@ namespace ModernWindow
             return WinRT.Interop.WindowNative.GetWindowHandle(this);
         }
 
-        public async Task<ContentDialogResult> ShowDialog(ContentDialog dialog, bool HighPriority = false)
+        public async Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog, bool HighPriority = false)
         {
             try
             {
@@ -380,7 +378,7 @@ namespace ModernWindow
             }
         }
 
-        public async Task DoEntryTextAnimation()
+        public async Task DoEntryTextAnimationAsync()
         {
             InAnimation_Border.Start();
             InAnimation_Text.Start();
@@ -388,7 +386,7 @@ namespace ModernWindow
             LoadingIndicator.Visibility = Visibility.Visible;
         }
 
-        public async Task DoExitTextAnimation()
+        public async Task DoExitTextAnimationAsync()
         {
             await Task.Delay(1000);
             LoadingIndicator.Visibility = Visibility.Collapsed;

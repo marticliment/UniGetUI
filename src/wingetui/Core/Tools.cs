@@ -28,13 +28,13 @@ namespace ModernWindow.Structures
         public class __tooltip_options
         {
             private int _errors_occurred = 0;
-            public int ErrorsOccurred { get { return _errors_occurred; } set { _errors_occurred = value; AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus(); } }
+            public int ErrorsOccurred { get { return _errors_occurred; } set { _errors_occurred = value; AppTools.Instance.App.MainWindow.UpdateSystemTrayStatus(); } }
             private bool _restart_required = false;
-            public bool RestartRequired { get { return _restart_required; } set { _restart_required = value; AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus(); } }
+            public bool RestartRequired { get { return _restart_required; } set { _restart_required = value; AppTools.Instance.App.MainWindow.UpdateSystemTrayStatus(); } }
             private int _operations_in_progress = 0;
-            public int OperationsInProgress { get { return _operations_in_progress; } set { _operations_in_progress = value; AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus(); } }
+            public int OperationsInProgress { get { return _operations_in_progress; } set { _operations_in_progress = value; AppTools.Instance.App.MainWindow.UpdateSystemTrayStatus(); } }
             private int _available_updates = 0;
-            public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; AppTools.Instance.App.mainWindow.UpdateSystemTrayStatus(); } }
+            public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; AppTools.Instance.App.MainWindow.UpdateSystemTrayStatus(); } }
         }
 
 
@@ -188,7 +188,7 @@ namespace ModernWindow.Structures
 
         public void AddOperationToList(AbstractOperation operation)
         {
-            App.mainWindow.NavigationPage.OperationStackPanel.Children.Add(operation);
+            App.MainWindow.NavigationPage.OperationStackPanel.Children.Add(operation);
         }
 
         public static void Log(string s)
@@ -310,7 +310,7 @@ Crash Traceback:
                     Log("Current version: " + CoreData.VersionNumber.ToString(CultureInfo.InvariantCulture));
                     Log("Latest version : " + LatestVersion.ToString(CultureInfo.InvariantCulture));
 
-                    banner = App.mainWindow.UpdatesBanner;
+                    banner = App.MainWindow.UpdatesBanner;
                     banner.Title= Translate("WingetUI version {0} is being downloaded.").Replace("{0}", LatestVersion.ToString(CultureInfo.InvariantCulture));
                     banner.Message = Translate("This may take a minute or two");
                     banner.Severity = InfoBarSeverity.Informational;
@@ -339,15 +339,15 @@ Crash Traceback:
                         banner.Message = Translate("The update will be installed upon closing WingetUI");
                         banner.ActionButton = new Button();
                         banner.ActionButton.Content = Translate("Update now");
-                        banner.ActionButton.Click += (sender, args) => { Instance.App.mainWindow.HideWindow(); };
+                        banner.ActionButton.Click += (sender, args) => { Instance.App.MainWindow.HideWindow(); };
                         banner.Severity = InfoBarSeverity.Success;
                         banner.IsOpen = true;
                         banner.IsClosable = true;
 
-                        if (Instance.App.mainWindow.Visible)
+                        if (Instance.App.MainWindow.Visible)
                             Log("Waiting for mainWindow to be hidden");
 
-                        while (Instance.App.mainWindow.Visible)
+                        while (Instance.App.MainWindow.Visible)
                             await Task.Delay(100);
 
                         Log("Hash ok, starting update");

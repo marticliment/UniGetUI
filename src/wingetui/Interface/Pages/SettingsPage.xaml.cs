@@ -300,7 +300,7 @@ namespace ModernWindow.Interface
 
         public MainWindow GetWindow()
         {
-            return Tools.App.mainWindow;
+            return Tools.App.MainWindow;
         }
         public int GetHwnd()
         {
@@ -365,7 +365,7 @@ namespace ModernWindow.Interface
 
         private void ThemeSelector_ValueChanged(object sender, Interface.Widgets.ComboCardEventArgs e)
         {
-            ((MainApp)Application.Current).mainWindow.ApplyTheme();
+            ((MainApp)Application.Current).MainWindow.ApplyTheme();
         }
 
         private void ResetBackupPath_Click(object sender, dynamic e)
@@ -378,7 +378,7 @@ namespace ModernWindow.Interface
         private async void ChangeBackupDirectory_Click(object sender, dynamic e)
         {
 
-            var openPicker = new Pickers.FolderPicker(Tools.App.mainWindow.GetWindowHandle());
+            var openPicker = new Pickers.FolderPicker(Tools.App.MainWindow.GetWindowHandle());
             string folder = openPicker.Show();
             if (folder != String.Empty)
             {
@@ -447,9 +447,9 @@ namespace ModernWindow.Interface
 
         private async void DoBackup_Click(object sender, ButtonCardEventArgs e)
         {
-            Tools.App.mainWindow.ShowLoadingDialog(Tools.Translate("Performing backup, please wait..."));
-            await Tools.App.mainWindow.NavigationPage.InstalledPage.BackupPackages();
-            Tools.App.mainWindow.HideLoadingDialog();
+            Tools.App.MainWindow.ShowLoadingDialog(Tools.Translate("Performing backup, please wait..."));
+            await Tools.App.MainWindow.NavigationPage.InstalledPage.BackupPackages();
+            Tools.App.MainWindow.HideLoadingDialog();
         }
     }
 }

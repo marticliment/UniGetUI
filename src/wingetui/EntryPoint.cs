@@ -92,7 +92,7 @@ namespace ModernWindow
                     keyInstance.Activated += async (s, e) =>
                     {
                         MainApp AppInstance = MainApp.Current as MainApp;
-                        await AppInstance.ShowMainWindow_FromRedirect();
+                        await AppInstance.ShowMainWindowFromRedirectAsync();
                     };
                 }
                 else

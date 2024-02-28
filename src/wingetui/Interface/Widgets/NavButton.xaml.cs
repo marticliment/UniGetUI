@@ -74,7 +74,7 @@ namespace ModernWindow.Interface.Widgets
                 new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { IconBlock.Glyph = (string)e.NewValue; }))
             );
 
-            Tools.App.mainWindow.NavButtonList.Add(this);
+            Tools.App.MainWindow.NavButtonList.Add(this);
         }
         private void ToggleButton_Click(object sender, RoutedEventArgs e)
         {

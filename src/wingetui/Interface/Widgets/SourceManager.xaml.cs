@@ -102,7 +102,7 @@ namespace ModernWindow.Interface.Widgets
                     d.SecondaryButtonText = Tools.Translate("Cancel");
                     d.DefaultButton = ContentDialogButton.Primary;
 
-                    if (await Tools.App.mainWindow.ShowDialog(d) == ContentDialogResult.Primary)
+                    if (await Tools.App.MainWindow.ShowDialogAsync(d) == ContentDialogResult.Primary)
                     {
                         AddSourceOperation op;
                         if (Tools.Translate("Other") != SourcesCombo.SelectedValue.ToString())
@@ -121,7 +121,7 @@ namespace ModernWindow.Interface.Widgets
                     d.Title = Tools.Translate("An error occurred");
                     d.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
                     d.Content = Tools.Translate("An error occurred when adding the source: ") + ex.Message;
-                    _ = Tools.App.mainWindow.ShowDialog(d, HighPriority: true);
+                    _ = Tools.App.MainWindow.ShowDialogAsync(d, HighPriority: true);
                     d.PrimaryButtonText = Tools.Translate("Close");
                     AppTools.Log(ex);
                 }

@@ -23,12 +23,12 @@ namespace ModernWindow
         public Pip Pip;
         public Npm Npm;
         public Dotnet Dotnet;
-        public PowerShell Powershell;
+        public PowerShell PowerShell;
 
-        private readonly List<PackageManager> _packageManagerList = new();
+        public readonly List<PackageManager> PackageManagerList = new();
 
         public Interface.SettingsInterface settings;
-        public MainWindow mainWindow;
+        public MainWindow MainWindow;
 
         private const string WebViewFolder = "WingetUI\\WebView";
         private readonly string _webViewPath = Path.Join(Path.GetTempPath(), WebViewFolder);
@@ -41,8 +41,8 @@ namespace ModernWindow
             RegisterErrorHandling();
             SetUpWebViewUserDataFolder();
             InitializeMainWindow();
-            ClearNotificationHistory();
-            RegisterNotificationActivationEvent();
+            ClearNotificationHistory_Safe();
+            RegisterNotificationActivationEvent_Safe();
 
             LoadComponentsAsync().ConfigureAwait(false);
         }
@@ -62,33 +62,34 @@ namespace ModernWindow
         private void SetUpWebViewUserDataFolder()
         {
             if (!Directory.Exists(_webViewPath))
-            {
                 Directory.CreateDirectory(_webViewPath);
-            }
             Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", _webViewPath);
         }
 
+        /// <summary>
+        /// Initialize the main window
+        /// </summary>
         private void InitializeMainWindow()
         {
-            mainWindow = new MainWindow
+            MainWindow = new MainWindow
             {
                 BlockLoading = true
             };
-            mainWindow.Closed += (sender, args) => DisposeAndQuit(0);
-
-            RedirectMainWindowCloseEvent();
-        }
-
-        private void RedirectMainWindowCloseEvent()
-        {
-            var hWnd = mainWindow.GetWindowHandle();
+            MainWindow.Closed += (sender, args) => DisposeAndQuit(0);
+            
+            var hWnd = MainWindow.GetWindowHandle();
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
-            appWindow?.Closing += mainWindow.HandleClosingEvent;
+            if(appWindow != null)
+                appWindow.Closing += MainWindow.HandleClosingEvent;
         }
 
-        private void ClearNotificationHistory()
+
+        /// <summary>
+        /// Clear the notification history, if possible
+        /// </summary>
+        private void ClearNotificationHistory_Safe()
         {
             try
             {
@@ -100,20 +101,34 @@ namespace ModernWindow
             }
         }
 
-        private void RegisterNotificationActivationEvent()
+        /// <summary>
+        /// Register the notification activation event
+        /// </summary>
+        private void RegisterNotificationActivationEvent_Safe()
         {
-            ToastNotificationManagerCompat.OnActivated += toastArgs =>
+            try
             {
-                var args = ToastArguments.Parse(toastArgs.Argument);
-                var userInput = toastArgs.UserInput;
-
-                mainWindow.DispatcherQueue.TryEnqueue(() =>
+                ToastNotificationManagerCompat.OnActivated += toastArgs =>
                 {
-                    mainWindow.HandleNotificationActivation(args, userInput);
-                });
-            };
+                    var args = ToastArguments.Parse(toastArgs.Argument);
+                    var userInput = toastArgs.UserInput;
+
+                    MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        MainWindow.HandleNotificationActivation(args, userInput);
+                    });
+                };
+            }
+            catch (Exception ex)
+            {
+                AppTools.Log(ex);
+            }
         }
 
+        /// <summary>
+        /// Background component loader 
+        /// </summary>
+        /// <returns></returns>
         private async Task LoadComponentsAsync()
         {
             try
@@ -121,13 +136,13 @@ namespace ModernWindow
                 InitializePackageManagers();
 
                 // Run other initializations asynchronously
-                var updateWingetUITask = Task.Run(AppTools.Instance.UpdateWingetUIIfPossible);
-                var loadIconAndScreenshotsTask = Task.Run(CoreData.LoadIconAndScreenshotsDatabase);
+                var updateWingetUITask = Task.Run(() => { AppTools.Instance.UpdateWingetUIIfPossible(); });
+                var loadIconAndScreenshotsTask = Task.Run(() => { _ = CoreData.LoadIconAndScreenshotsDatabase(); });
 
                 await Task.WhenAll(updateWingetUITask, loadIconAndScreenshotsTask, InitializeAllManagersAsync());
 
-                Debug.WriteLine("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
-                await mainWindow.SwitchToInterfaceAsync();
+                AppTools.Log("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
+                MainWindow.SwitchToInterface();
             }
             catch (Exception e)
             {
@@ -137,15 +152,23 @@ namespace ModernWindow
 
         private void InitializePackageManagers()
         {
-            _packageManagerList.AddRange(new PackageManager[]
+            Winget = new Winget();
+            Scoop = new Scoop();
+            Choco = new Chocolatey();
+            Pip = new Pip();
+            Npm = new Npm();
+            Dotnet = new Dotnet();
+            PowerShell = new PowerShell();
+
+            PackageManagerList.AddRange(new PackageManager[]
             {
-                new Winget(),
-                new Scoop(),
-                new Chocolatey(),
-                new Pip(),
-                new Npm(),
-                new Dotnet(),
-                new PowerShell()
+                Winget,
+                Scoop,
+                Choco,
+                Pip,
+                Npm,
+                Dotnet,
+                PowerShell
             });
         }
 
@@ -153,14 +176,17 @@ namespace ModernWindow
         {
             var initializeTasks = new List<Task>();
 
-            foreach (var manager in _packageManagerList)
+            foreach (var manager in PackageManagerList)
             {
                 initializeTasks.Add(manager.InitializeAsync());
             }
 
-            if (await Task.WhenAll(initializeTasks).WaitAsync(TimeSpan.FromMilliseconds(ManagerLoadTimeout)) == false)
+
+            var ManagersMetaTask = Task.WhenAll(initializeTasks);
+            await ManagersMetaTask.WaitAsync(TimeSpan.FromMilliseconds(ManagerLoadTimeout));
+            if (ManagersMetaTask.IsCompletedSuccessfully == false)
             {
-                Debug.WriteLine("Timeout: Not all package managers have finished initializing.");
+                AppTools.Log("Timeout: Not all package managers have finished initializing.");
             }
         }
 
@@ -174,20 +200,20 @@ namespace ModernWindow
             CoreData.IsDaemon = false;
         }
 
-        private async Task ShowMainWindowFromRedirectAsync()
+        public async Task ShowMainWindowFromRedirectAsync()
         {
-            while (mainWindow == null)
+            while (MainWindow == null)
             {
                 await Task.Delay(100);
             }
 
-            mainWindow.DispatcherQueue.TryEnqueue(mainWindow.Activate);
+            MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);
         }
 
         public void DisposeAndQuit(int outputCode = 0)
         {
             AppTools.Log("Quitting...");
-            mainWindow?.Close();
+            MainWindow?.Close();
             Environment.Exit(outputCode);
         }
     }

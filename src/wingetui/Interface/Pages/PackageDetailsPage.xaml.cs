@@ -202,7 +202,7 @@ namespace ModernWindow.Interface.Dialogs
                     Tools.AddOperationToList(new InstallPackageOperation(Package, InstallOptionsPage.Options));
                     break;
                 case OperationType.Uninstall:
-                    Tools.App.mainWindow.NavigationPage.InstalledPage.ConfirmAndUninstall(Package, InstallOptionsPage.Options);
+                    Tools.App.MainWindow.NavigationPage.InstalledPage.ConfirmAndUninstall(Package, InstallOptionsPage.Options);
                     break;
                 case OperationType.Update:
                     Tools.AddOperationToList(new UpdatePackageOperation(Package, InstallOptionsPage.Options));
@@ -212,7 +212,7 @@ namespace ModernWindow.Interface.Dialogs
 
         public void ShareButton_Click(object sender, RoutedEventArgs e)
         {
-            Tools.App.mainWindow.SharePackage(Package);
+            Tools.App.MainWindow.SharePackage(Package);
         }
 
         public async void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)
@@ -224,7 +224,7 @@ namespace ModernWindow.Interface.Dialogs
 
                 ErrorOutput.Text = "";
                 FileSavePicker savePicker = new();
-                MainWindow window = Tools.App.mainWindow;
+                MainWindow window = Tools.App.MainWindow;
                 IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;

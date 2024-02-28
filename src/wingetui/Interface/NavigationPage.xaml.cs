@@ -91,7 +91,7 @@ namespace ModernWindow.Interface
         private void MoreNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
 
-            foreach (NavButton button in Tools.App.mainWindow.NavButtonList)
+            foreach (NavButton button in Tools.App.MainWindow.NavButtonList)
                 button.ToggleButton.IsChecked = false;
             MoreNavButton.ToggleButton.IsChecked = true;
 
@@ -100,7 +100,7 @@ namespace ModernWindow.Interface
 
             MoreNavButtonMenu.Closed += (s, e) =>
             {
-                foreach (NavButton button in Tools.App.mainWindow.NavButtonList)
+                foreach (NavButton button in Tools.App.MainWindow.NavButtonList)
                     button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage]);
             };
         }
@@ -119,13 +119,13 @@ namespace ModernWindow.Interface
             AboutDialog.Resources["ContentDialogMaxHeight"] = 1000;
             AboutDialog.Content = AboutPage;
             AboutDialog.PrimaryButtonText = Tools.Translate("Close");
-            foreach (NavButton button in Tools.App.mainWindow.NavButtonList)
+            foreach (NavButton button in Tools.App.MainWindow.NavButtonList)
                 button.ToggleButton.IsChecked = false;
 
-            await Tools.App.mainWindow.ShowDialog(AboutDialog);
+            await Tools.App.MainWindow.ShowDialogAsync(AboutDialog);
 
             AboutDialog.Content = null;
-            foreach (NavButton button in Tools.App.mainWindow.NavButtonList)
+            foreach (NavButton button in Tools.App.MainWindow.NavButtonList)
                 button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage]);
             AboutDialog = null;
         }
@@ -145,7 +145,7 @@ namespace ModernWindow.Interface
             UpdatesDialog.Content = IgnoredUpdatesPage;
 
             _ = IgnoredUpdatesPage.UpdateData();
-            await Tools.App.mainWindow.ShowDialog(UpdatesDialog);
+            await Tools.App.MainWindow.ShowDialogAsync(UpdatesDialog);
 
             UpdatesDialog.Content = null;
             UpdatesDialog = null;
@@ -173,7 +173,7 @@ namespace ModernWindow.Interface
             OptionsDialog.Title = Tools.Translate("{0} installation options").Replace("{0}", package.Name);
             OptionsDialog.Content = OptionsPage;
 
-            ContentDialogResult result = await Tools.App.mainWindow.ShowDialog(OptionsDialog);
+            ContentDialogResult result = await Tools.App.MainWindow.ShowDialogAsync(OptionsDialog);
             OptionsPage.SaveToDisk();
 
             OptionsDialog.Content = null;
@@ -197,7 +197,7 @@ namespace ModernWindow.Interface
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
             OptionsDialog.Title = Tools.Translate("{0} installation options").Replace("{0}", package.Name);
             OptionsDialog.Content = OptionsPage;
-            await Tools.App.mainWindow.ShowDialog(OptionsDialog);
+            await Tools.App.MainWindow.ShowDialogAsync(OptionsDialog);
 
             OptionsDialog.Content = null;
             OptionsDialog = null;
@@ -218,7 +218,7 @@ namespace ModernWindow.Interface
                 Grid.SetRow(TargetPage, 0);
                 MainContentPresenterGrid.Children.Add(TargetPage);
             }
-            foreach (NavButton button in Tools.App.mainWindow.NavButtonList)
+            foreach (NavButton button in Tools.App.MainWindow.NavButtonList)
             {
 
                 button.ToggleButton.IsChecked = (button == PageButtonReference[TargetPage]);
@@ -248,7 +248,7 @@ namespace ModernWindow.Interface
                 notes.MinHeight = ActualHeight - 200;
             };
 
-            await Tools.App.mainWindow.ShowDialog(NotesDialog);
+            await Tools.App.MainWindow.ShowDialogAsync(NotesDialog);
 
             NotesDialog = null;
         }
@@ -274,7 +274,7 @@ namespace ModernWindow.Interface
 
             DetailsPage.Close += (s, e) => { DetailsDialog.Hide(); };
 
-            await Tools.App.mainWindow.ShowDialog(DetailsDialog);
+            await Tools.App.MainWindow.ShowDialogAsync(DetailsDialog);
 
             DetailsDialog.Content = null;
             DetailsDialog = null;

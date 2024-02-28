@@ -30,7 +30,7 @@ namespace ModernWindow.PackageEngine.Classes
         /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.
         /// </summary>
         /// <returns></returns>
-        public async Task Initialize()
+        public async Task InitializeAsync()
         {
             try
             {

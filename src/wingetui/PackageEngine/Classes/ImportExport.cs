@@ -154,14 +154,14 @@ namespace ModernWindow.PackageEngine.Classes
 
         public async virtual void ShowOptions(object sender, RoutedEventArgs e)
         {
-            InstallOptions = await Tools.App.mainWindow.NavigationPage.UpdateInstallationSettings(Package, InstallOptions);
+            InstallOptions = await Tools.App.MainWindow.NavigationPage.UpdateInstallationSettings(Package, InstallOptions);
         }
 
         public void RemoveFromList(object sender, RoutedEventArgs e)
         {
-            Tools.App.mainWindow.NavigationPage.BundlesPage.Packages.Remove(this);
-            Tools.App.mainWindow.NavigationPage.BundlesPage.FilteredPackages.Remove(this);
-            Tools.App.mainWindow.NavigationPage.BundlesPage.UpdateCount();
+            Tools.App.MainWindow.NavigationPage.BundlesPage.Packages.Remove(this);
+            Tools.App.MainWindow.NavigationPage.BundlesPage.FilteredPackages.Remove(this);
+            Tools.App.MainWindow.NavigationPage.BundlesPage.UpdateCount();
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)

@@ -275,7 +275,7 @@ namespace ModernWindow.PackageEngine.Classes
                 IgnoredUpdatesJson.Remove(IgnoredId);
             IgnoredUpdatesJson.Add(IgnoredId, version);
             await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
-            Tools.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(this);
+            Tools.App.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(this);
 
             GetInstalledPackage()?.SetTag(PackageTag.Pinned);
         }
@@ -348,7 +348,7 @@ namespace ModernWindow.PackageEngine.Classes
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetInstalledPackage()
         {
-            foreach (var package in Tools.App.mainWindow.NavigationPage.InstalledPage.Packages)
+            foreach (var package in Tools.App.MainWindow.NavigationPage.InstalledPage.Packages)
                 if (package.Equals(this))
                     return package;
             return null;
@@ -360,7 +360,7 @@ namespace ModernWindow.PackageEngine.Classes
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetAvailablePackage()
         {
-            foreach (var package in Tools.App.mainWindow.NavigationPage.DiscoverPage.Packages)
+            foreach (var package in Tools.App.MainWindow.NavigationPage.DiscoverPage.Packages)
                 if (package.Equals(this))
                     return package;
             return null;
@@ -372,7 +372,7 @@ namespace ModernWindow.PackageEngine.Classes
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetUpgradablePackage()
         {
-            foreach (var package in Tools.App.mainWindow.NavigationPage.UpdatesPage.Packages)
+            foreach (var package in Tools.App.MainWindow.NavigationPage.UpdatesPage.Packages)
                 if (package.Equals(this))
                     return package;
             return null;
@@ -453,7 +453,7 @@ namespace ModernWindow.PackageEngine.Classes
         /// <returns></returns>
         public bool NewVersionIsInstalled()
         {
-            foreach (Package package in Tools.App.mainWindow.NavigationPage.InstalledPage.Packages)
+            foreach (Package package in Tools.App.MainWindow.NavigationPage.InstalledPage.Packages)
                 if (package.Manager == Manager && package.Id == Id && package.Version == NewVersion && package.Source.Name == Source.Name)
                     return true;
             return false;

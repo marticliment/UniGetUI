@@ -99,9 +99,9 @@ namespace ModernWindow.PackageEngine.Operations
                 OpenLiveViewDialog();
             };
 
-            ContentDialogResult result = await Tools.App.mainWindow.ShowDialog(dialog);
+            ContentDialogResult result = await Tools.App.MainWindow.ShowDialogAsync(dialog);
             while (result == ContentDialogResult.Secondary)
-                result = await Tools.App.mainWindow.ShowDialog(dialog, HighPriority: true);
+                result = await Tools.App.MainWindow.ShowDialogAsync(dialog, HighPriority: true);
 
             if (result == ContentDialogResult.Primary)
                 return AfterFinshAction.Retry;
@@ -209,9 +209,9 @@ namespace ModernWindow.PackageEngine.Operations
                 OpenLiveViewDialog();
             };
 
-            ContentDialogResult result = await Tools.App.mainWindow.ShowDialog(dialog);
+            ContentDialogResult result = await Tools.App.MainWindow.ShowDialogAsync(dialog);
             while (result == ContentDialogResult.Secondary)
-                result = await Tools.App.mainWindow.ShowDialog(dialog, HighPriority: true);
+                result = await Tools.App.MainWindow.ShowDialogAsync(dialog, HighPriority: true);
 
             if (result == ContentDialogResult.Primary)
                 return AfterFinshAction.Retry;

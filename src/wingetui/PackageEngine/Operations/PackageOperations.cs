@@ -168,9 +168,9 @@ namespace ModernWindow.PackageEngine.Operations
                 OpenLiveViewDialog();
             };
 
-            ContentDialogResult result = await Tools.App.mainWindow.ShowDialog(dialog);
+            ContentDialogResult result = await Tools.App.MainWindow.ShowDialogAsync(dialog);
             while (result == ContentDialogResult.Secondary)
-                result = await Tools.App.mainWindow.ShowDialog(dialog, HighPriority: true);
+                result = await Tools.App.MainWindow.ShowDialogAsync(dialog, HighPriority: true);
 
             if (result == ContentDialogResult.Primary)
                 return AfterFinshAction.Retry;
@@ -183,7 +183,7 @@ namespace ModernWindow.PackageEngine.Operations
             LineInfoText = Tools.Translate("{package} was installed successfully").Replace("{package}", Package.Name);
 
             Package.SetTag(PackageTag.AlreadyInstalled);
-            Tools.App.mainWindow.NavigationPage.InstalledPage.AddInstalledPackage(Package);
+            Tools.App.MainWindow.NavigationPage.InstalledPage.AddInstalledPackage(Package);
 
             if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
                 
@@ -289,9 +289,9 @@ namespace ModernWindow.PackageEngine.Operations
                 OpenLiveViewDialog();
             };
 
-            ContentDialogResult result = await Tools.App.mainWindow.ShowDialog(dialog);
+            ContentDialogResult result = await Tools.App.MainWindow.ShowDialogAsync(dialog);
             while (result == ContentDialogResult.Secondary)
-                result = await Tools.App.mainWindow.ShowDialog(dialog, HighPriority: true);
+                result = await Tools.App.MainWindow.ShowDialogAsync(dialog, HighPriority: true);
 
             if (result == ContentDialogResult.Primary)
                 return AfterFinshAction.Retry;
@@ -305,7 +305,7 @@ namespace ModernWindow.PackageEngine.Operations
 
             Package.GetInstalledPackage()?.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
-            Tools.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
+            Tools.App.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
             
             if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try{new ToastContentBuilder()
@@ -414,9 +414,9 @@ namespace ModernWindow.PackageEngine.Operations
                 OpenLiveViewDialog();
             };
 
-            ContentDialogResult result = await Tools.App.mainWindow.ShowDialog(dialog);
+            ContentDialogResult result = await Tools.App.MainWindow.ShowDialogAsync(dialog);
             while (result == ContentDialogResult.Secondary)
-                result = await Tools.App.mainWindow.ShowDialog(dialog, HighPriority: true);
+                result = await Tools.App.MainWindow.ShowDialogAsync(dialog, HighPriority: true);
 
             if (result == ContentDialogResult.Primary)
                 return AfterFinshAction.Retry;
@@ -429,8 +429,8 @@ namespace ModernWindow.PackageEngine.Operations
             LineInfoText = Tools.Translate("{package} was uninstalled successfully").Replace("{package}", Package.Name);
 
             Package.GetAvailablePackage()?.SetTag(PackageTag.Default);
-            Tools.App.mainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
-            Tools.App.mainWindow.NavigationPage.InstalledPage.RemoveCorrespondingPackages(Package);
+            Tools.App.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
+            Tools.App.MainWindow.NavigationPage.InstalledPage.RemoveCorrespondingPackages(Package);
 
             if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try{new ToastContentBuilder()

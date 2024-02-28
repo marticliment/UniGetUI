@@ -60,7 +60,7 @@ namespace ModernWindow.Interface.Pages
         {
             FileSavePicker savePicker = new();
             savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            WinRT.Interop.InitializeWithWindow.Initialize(savePicker, WinRT.Interop.WindowNative.GetWindowHandle(AppTools.Instance.App.mainWindow));
+            WinRT.Interop.InitializeWithWindow.Initialize(savePicker, WinRT.Interop.WindowNative.GetWindowHandle(AppTools.Instance.App.MainWindow));
             savePicker.FileTypeChoices.Add(AppTools.Instance.Translate("Text"), new List<string>() { ".txt" });
             savePicker.SuggestedFileName = AppTools.Instance.Translate("WingetUI Log");
 

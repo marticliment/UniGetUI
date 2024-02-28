@@ -100,11 +100,11 @@ namespace ModernWindow.Interface
 
                     AppTools.Log(Request.Query.@pid);
 
-                    while (AppTools.Instance.App.mainWindow is null) await Task.Delay(100);
-                    while (AppTools.Instance.App.mainWindow.NavigationPage is null) await Task.Delay(100);
-                    while (AppTools.Instance.App.mainWindow.NavigationPage.DiscoverPage is null) await Task.Delay(100);
+                    while (AppTools.Instance.App.MainWindow is null) await Task.Delay(100);
+                    while (AppTools.Instance.App.MainWindow.NavigationPage is null) await Task.Delay(100);
+                    while (AppTools.Instance.App.MainWindow.NavigationPage.DiscoverPage is null) await Task.Delay(100);
 
-                    AppTools.Instance.App.mainWindow.NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Request.Query.@pid.ToString(), Request.Query.@psource.ToString());
+                    AppTools.Instance.App.MainWindow.NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Request.Query.@pid.ToString(), Request.Query.@psource.ToString());
 
                     return "{\"status\": \"success\"}";
                 }
@@ -145,7 +145,7 @@ namespace ModernWindow.Interface
                     return 401;
 
                 string packages = "";
-                foreach(var package in AppTools.Instance.App.mainWindow.NavigationPage.UpdatesPage.Packages)
+                foreach(var package in AppTools.Instance.App.MainWindow.NavigationPage.UpdatesPage.Packages)
                 {
                     if(package.Tag == PackageEngine.Classes.PackageTag.OnQueue || package.Tag == PackageEngine.Classes.PackageTag.BeingProcessed)
                         continue; // Do not show already processed packages on queue 
@@ -169,7 +169,7 @@ namespace ModernWindow.Interface
                 if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))
                     return 401;
 
-                AppTools.Instance.App.mainWindow.DispatcherQueue.TryEnqueue(() => { AppTools.Instance.App.mainWindow.Activate(); });
+                AppTools.Instance.App.MainWindow.DispatcherQueue.TryEnqueue(() => { AppTools.Instance.App.MainWindow.Activate(); });
                 return 200;
             });
 
@@ -179,9 +179,9 @@ namespace ModernWindow.Interface
                 if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))
                     return 401;
 
-                AppTools.Instance.App.mainWindow.DispatcherQueue.TryEnqueue(() => {
-                    AppTools.Instance.App.mainWindow.NavigationPage.UpdatesNavButton.ForceClick();
-                    AppTools.Instance.App.mainWindow.Activate();
+                AppTools.Instance.App.MainWindow.DispatcherQueue.TryEnqueue(() => {
+                    AppTools.Instance.App.MainWindow.NavigationPage.UpdatesNavButton.ForceClick();
+                    AppTools.Instance.App.MainWindow.Activate();
                 });
                 return 200;
             });
@@ -195,9 +195,9 @@ namespace ModernWindow.Interface
                 if(Request.Query.@id == "")
                     return 400;
 
-                AppTools.Instance.App.mainWindow.DispatcherQueue.TryEnqueue(() =>
+                AppTools.Instance.App.MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
-                    AppTools.Instance.App.mainWindow.NavigationPage.UpdatesPage.UpdatePackageForId(Request.Query.@id);
+                    AppTools.Instance.App.MainWindow.NavigationPage.UpdatesPage.UpdatePackageForId(Request.Query.@id);
                 });
                 return 200;
             });
@@ -208,9 +208,9 @@ namespace ModernWindow.Interface
                 if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))
                     return 401;
 
-                AppTools.Instance.App.mainWindow.DispatcherQueue.TryEnqueue(() =>
+                AppTools.Instance.App.MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
-                    AppTools.Instance.App.mainWindow.NavigationPage.UpdatesPage.UpdateAllPackages();
+                    AppTools.Instance.App.MainWindow.NavigationPage.UpdatesPage.UpdateAllPackages();
                 });
                 return 200;
             });
@@ -224,9 +224,9 @@ namespace ModernWindow.Interface
                 if (Request.Query.@source == "")
                     return 400;
 
-                AppTools.Instance.App.mainWindow.DispatcherQueue.TryEnqueue(() =>
+                AppTools.Instance.App.MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
-                    AppTools.Instance.App.mainWindow.NavigationPage.UpdatesPage.UpdateAllPackagesForManager(Request.Query.@source);
+                    AppTools.Instance.App.MainWindow.NavigationPage.UpdatesPage.UpdateAllPackagesForManager(Request.Query.@source);
                 });
                 return 200;
             });
