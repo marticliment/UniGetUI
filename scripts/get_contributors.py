@@ -12,7 +12,7 @@ except ImportError:
     os.system("pip install requests")
     import requests
 
-response = requests.get("https://api.github.com/repos/marticliment/WingetUI/contributors?anon=1")
+response = requests.get("https://api.github.com/repos/marticliment/WingetUI/contributors?anon=1&per_page=100")
 
 contributors = []
 contributorsInfo = []
