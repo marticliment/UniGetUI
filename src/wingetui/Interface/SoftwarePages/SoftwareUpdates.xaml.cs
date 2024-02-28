@@ -790,15 +790,17 @@ namespace ModernWindow.Interface
         {
             AppTools.Log("Updating all packages");
             foreach (UpgradablePackage package in Packages)
-                Tools.AddOperationToList(new UpdatePackageOperation(package));
+                if(package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
+                    Tools.AddOperationToList(new UpdatePackageOperation(package));
         }
 
         public void UpdateAllPackagesForManager(string manager)
         {
             AppTools.Log("Updating all packages");
             foreach (UpgradablePackage package in Packages)
-                if (package.Manager.Name == manager)
-                    Tools.AddOperationToList(new UpdatePackageOperation(package));
+                if(package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
+                    if (package.Manager.Name == manager)
+                        Tools.AddOperationToList(new UpdatePackageOperation(package));
         }
     }
 }
