@@ -32,6 +32,7 @@ namespace ModernWindow
 
         private const string WebViewFolder = "WingetUI\\WebView";
         private readonly string _webViewPath = Path.Join(Path.GetTempPath(), WebViewFolder);
+        private BackgroundApiRunner BackgroundApi = new BackgroundApiRunner();
 
         private const int ManagerLoadTimeout = 10000; // 10 seconds timeout for Package Managers initialization
 
@@ -138,8 +139,11 @@ namespace ModernWindow
                 // Run other initializations asynchronously
                 var updateWingetUITask = Task.Run(() => { AppTools.Instance.UpdateWingetUIIfPossible(); });
                 var loadIconAndScreenshotsTask = Task.Run(() => { _ = CoreData.LoadIconAndScreenshotsDatabase(); });
+                
+                if(!AppTools.Instance.GetSettings("DisableApi"))
+                    _ = BackgroundApi.Start();
 
-                await Task.WhenAll(updateWingetUITask, loadIconAndScreenshotsTask, InitializeAllManagersAsync());
+                await InitializeAllManagersAsync();
 
                 AppTools.Log("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();
@@ -214,6 +218,7 @@ namespace ModernWindow
         {
             AppTools.Log("Quitting...");
             MainWindow?.Close();
+            BackgroundApi?.Stop();
             Environment.Exit(outputCode);
         }
     }
