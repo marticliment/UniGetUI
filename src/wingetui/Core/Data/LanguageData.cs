@@ -16,15 +16,15 @@ namespace ModernWindow.Core.Data
     public static class LanguageData
     {
         public static string TranslatorsJSON = File.ReadAllText(
-            Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Languages", "Translators.json")
+            Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Data", "Translators.json")
         );
 
         public static Dictionary<string, string> LanguageList = (JsonObject.Parse(
-            File.ReadAllText(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Languages", "LanguagesReference.json"))
+            File.ReadAllText(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Data", "LanguagesReference.json"))
         ) as JsonObject).ToDictionary(x => x.Key, x => x.Value.ToString());
 
         public static Dictionary<string, string> TranslatedPercentages = (JsonObject.Parse(
-            File.ReadAllText(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Languages", "TranslatedPercentages.json"))
+            File.ReadAllText(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Data", "TranslatedPercentages.json"))
         ) as JsonObject).ToDictionary(x => x.Key, x => x.Value.ToString());
     }
 

@@ -386,6 +386,9 @@
     <Content Remove="Assets\youtube.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="Assets\Data\LanguagesReference.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Images\admin_color.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
