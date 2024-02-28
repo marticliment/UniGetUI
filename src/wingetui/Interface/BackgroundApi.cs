@@ -147,6 +147,9 @@ namespace ModernWindow.Interface
                 string packages = "";
                 foreach(var package in AppTools.Instance.App.mainWindow.NavigationPage.UpdatesPage.Packages)
                 {
+                    if(package.Tag == PackageEngine.Classes.PackageTag.OnQueue || package.Tag == PackageEngine.Classes.PackageTag.BeingProcessed)
+                        continue; // Do not show already processed packages on queue 
+
                     var icon = package.GetIconUrl().ToString();
                     if(icon == "ms-appx:///Assets/Images/package_color.png")
                         icon = "https://marticliment.com/resources/widgets/package_color.png";
