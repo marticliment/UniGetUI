@@ -1,2 +1,2 @@
-src/wingetui-interface/choco-cli/** linguist-vendored
-src/wingetui-interface/ExternalLibraries/** linguist-vendored
+src/wingetui/choco-cli/** linguist-vendored
+src/wingetui/ExternalLibraries/** linguist-vendored
