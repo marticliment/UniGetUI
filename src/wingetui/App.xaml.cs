@@ -136,7 +136,6 @@ namespace ModernWindow
             { 
                 InitializePackageManagers();
 
-
                 // Run other initializations asynchronously
                 var updateWingetUITask = Task.Run(() => { AppTools.Instance.UpdateWingetUIIfPossible(); });
                 var loadIconAndScreenshotsTask = Task.Run(() => { _ = CoreData.LoadIconAndScreenshotsDatabase(); });
