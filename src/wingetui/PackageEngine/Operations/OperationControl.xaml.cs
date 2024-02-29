@@ -9,6 +9,7 @@ using ModernWindow.PackageEngine.Classes;
 using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -440,7 +441,19 @@ namespace ModernWindow.PackageEngine
                 ProcessOutput.Add("");
                 ProcessOutput.Add("");
                 ProcessOutput.Add("");
-                Tools.SetSettingsValue("OperationHistory", String.Join('\n', ProcessOutput.ToArray()) + Tools.GetSettingsValue("OperationHistory"));
+
+                var oldHistory = Tools.GetSettingsValue("OperationHistory").Split("\n");
+
+                if(oldHistory.Length > 1000)
+                {
+                    oldHistory = oldHistory.Take(1000).ToArray();
+                }
+
+                var newHistory = new List<string>();
+                newHistory.AddRange(ProcessOutput);
+                newHistory.AddRange(oldHistory);
+
+                Tools.SetSettingsValue("OperationHistory", String.Join('\n', newHistory));
             }
             catch (Exception e)
             {
