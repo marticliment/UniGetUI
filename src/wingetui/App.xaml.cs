@@ -133,15 +133,17 @@ namespace ModernWindow
         private async Task LoadComponentsAsync()
         {
             try
-            {
+            { 
                 InitializePackageManagers();
+
 
                 // Run other initializations asynchronously
                 var updateWingetUITask = Task.Run(() => { AppTools.Instance.UpdateWingetUIIfPossible(); });
                 var loadIconAndScreenshotsTask = Task.Run(() => { _ = CoreData.LoadIconAndScreenshotsDatabase(); });
-                
                 if(!AppTools.Instance.GetSettings("DisableApi"))
                     _ = BackgroundApi.Start();
+
+                _ = MainWindow.DoEntryTextAnimationAsync();
 
                 await InitializeAllManagersAsync();
 
@@ -154,6 +156,9 @@ namespace ModernWindow
             }
         }
 
+        /// <summary>
+        /// Constructs Package Manager objects
+        /// </summary>
         private void InitializePackageManagers()
         {
             Winget = new Winget();
@@ -176,6 +181,10 @@ namespace ModernWindow
             });
         }
 
+        /// <summary>
+        /// Initializes Package Manager objects (asynchronously)
+        /// </summary>
+        /// <returns></returns>
         private async Task InitializeAllManagersAsync()
         {
             var initializeTasks = new List<Task>();
