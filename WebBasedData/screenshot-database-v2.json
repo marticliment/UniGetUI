@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11698,
-        "done": 4996,
-        "packages_with_icon": 4996,
-        "packages_with_screenshot": 534,
-        "total_screenshots": 1694
+        "total": 11699,
+        "done": 5020,
+        "packages_with_icon": 5020,
+        "packages_with_screenshot": 538,
+        "total_screenshots": 1697
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -192,8 +192,10 @@
             "images": []
         },
         "3dmark": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.ibb.co/zrwxXrq/download.png",
+            "images": [
+                "http://cooltown2.hattara.fuma.fi/static/images/screenshots/ul-procyon-ai-inference-windows-result-part-1.png"
+            ]
         },
         "3dxware-10": {
             "icon": "",
@@ -212,8 +214,10 @@
             "images": []
         },
         "4k-video-downloader": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/ZKVs8Jf2/4k-video-downloader-icon.png",
+            "images": [
+                "https://i.postimg.cc/ncHw9X1q/4k-video-downloader-1.png"
+            ]
         },
         "4k-video-to-mp3": {
             "icon": "https://community.chocolatey.org/content/packageimages/4k-video-to-mp3.3.0.1.png",
@@ -333,7 +337,7 @@
             ]
         },
         "7zip-commandline": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/Wprhq34p/7-Zip-icon.png",
             "images": []
         },
         "7zip-zstd": {
@@ -16730,10 +16734,6 @@
             "images": []
         },
         "google-chat-linux": {
-            "icon": "",
-            "images": []
-        },
-        "google-chat-linux": {
             "icon": "https://dashboard.snapcraft.io/site_media/appmedia/2021/01/scalable.svg.png",
             "images": []
         },
@@ -16848,14 +16848,6 @@
             "images": []
         },
         "googlejapaneseinput": {
-            "icon": "",
-            "images": []
-        },
-        "googlephotos": {
-            "icon": "",
-            "images": []
-        },
-        "googleplaymusicdeskto\u2026": {
             "icon": "",
             "images": []
         },
@@ -46788,7 +46780,7 @@
             "images": []
         },
         "wingetui": {
-            "icon": "https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/resources/icon.png",
+            "icon": "https://raw.githubusercontent.com/marticliment/WingetUI/main/src/wingetui/Assets/Images/icon.png",
             "images": [
                 "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_1.png",
                 "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_2.png",
@@ -46802,7 +46794,7 @@
             ]
         },
         "wingetuistore": {
-            "icon": "https://raw.githubusercontent.com/marticliment/WingetUI/main/wingetui/resources/icon.png",
+            "icon": "https://raw.githubusercontent.com/marticliment/WingetUI/main/src/wingetui/Assets/Images/icon.png",
             "images": [
                 "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_1.png",
                 "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_2.png",
