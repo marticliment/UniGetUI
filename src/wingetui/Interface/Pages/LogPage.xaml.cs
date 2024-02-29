@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using ModernWindow.Core.Data;
 using ModernWindow.Structures;
 using System;
@@ -35,25 +36,41 @@ namespace ModernWindow.Interface.Pages
             LoadLog();
         }
 
+        public void SetText(string body)
+        {
+            Paragraph paragraph = new();
+            foreach(var line in body.Split("\n"))
+            {
+                if (line.Replace("\r", "").Replace("\n", "").Trim() == "")
+                    continue;
+                paragraph.Inlines.Add(new Run() { Text = line.Replace("\r", "").Replace("\n", "")});
+                paragraph.Inlines.Add(new LineBreak());
+            }
+            LogTextBox.Blocks.Clear();
+            LogTextBox.Blocks.Add(paragraph);
+        }
+
         public void LoadLog()
         {
             if (LogType == LogType.WingetUILog)
             {
-                LogTextBox.Text = CoreData.WingetUILog;
+                SetText(CoreData.WingetUILog);
             }
             else if (LogType == LogType.ManagerLogs)
             {
-                LogTextBox.Text = CoreData.ManagerLogs;
+                SetText(CoreData.ManagerLogs);
             }
             else if (LogType == LogType.OperationHistory)
             {
-                LogTextBox.Text = AppTools.GetSettingsValue_Static("OperationHistory");
+                SetText(AppTools.GetSettingsValue_Static("OperationHistory"));
             }
         }
 
         public void CopyButton_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.WindowsClipboard.SetText(LogTextBox.Text);
+            LogTextBox.SelectAll();
+            Clipboard.WindowsClipboard.SetText(LogTextBox.SelectedText);
+            LogTextBox.Select(LogTextBox.SelectionStart, LogTextBox.SelectionStart);
         }
 
         public async void ExportButton_Click(object sender, RoutedEventArgs e)
@@ -67,7 +84,9 @@ namespace ModernWindow.Interface.Pages
             StorageFile file = await savePicker.PickSaveFileAsync();
             if (file != null)
             {
-                await File.WriteAllTextAsync(file.Path, LogTextBox.Text);
+                LogTextBox.SelectAll();
+                await File.WriteAllTextAsync(file.Path, LogTextBox.SelectedText);
+                LogTextBox.Select(LogTextBox.SelectionStart, LogTextBox.SelectionStart);
                 Process.Start(new ProcessStartInfo()
                 {
                     FileName = "explorer.exe",
