@@ -8,6 +8,7 @@ using ModernWindow.Core.Data;
 using ModernWindow.Interface.Widgets;
 using ModernWindow.PackageEngine.Classes;
 using ModernWindow.Structures;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -309,47 +310,71 @@ namespace ModernWindow.Interface
 
         private void OpenWelcomeWizard(object sender, Interface.Widgets.ButtonCardEventArgs e)
         {
-            // TODO: Implement
         }
 
-        private async void ImportSettings(object sender, Interface.Widgets.ButtonCardEventArgs e)
+        private void ImportSettings(object sender, Interface.Widgets.ButtonCardEventArgs e)
         {
-            FileOpenPicker openPicker = new();
+            var picker = new Pickers.FileOpenPicker(Tools.App.MainWindow.GetWindowHandle());
+            var file = picker.Show(new List<string> { "*.json" });
 
-            openPicker.ViewMode = PickerViewMode.List;
-            openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            WinRT.Interop.InitializeWithWindow.Initialize(openPicker, (IntPtr)GetHwnd());
-
-            openPicker.FileTypeFilter.Add(".conf");
-
-            StorageFile file = await openPicker.PickSingleFileAsync();
-            if (file != null)
+            if (file != string.Empty)
             {
-                // TODO: Import Settings
+                ResetWingetUI(sender, e);
+                var settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file));
+                foreach(var entry in settings)
+                    Tools.SetSettingsValue(entry.Key, entry.Value);
+
                 GeneralSettingsExpander.ShowRestartRequiredBanner();
             }
         }
 
         private async void ExportSettings(object sender, Interface.Widgets.ButtonCardEventArgs e)
         {
-
-            FileSavePicker savePicker = new();
-            savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            WinRT.Interop.InitializeWithWindow.Initialize(savePicker, (IntPtr)GetHwnd());
-            savePicker.FileTypeChoices.Add(Tools.Translate("WingetUI Settings File"), new List<string>() { ".conf" });
-            savePicker.SuggestedFileName = Tools.Translate("Exported Settings");
-
-            StorageFile file = await savePicker.PickSaveFileAsync();
-            if (file != null)
+            try
             {
-                // TODO: Export settings
+                var picker = new Pickers.FileSavePicker(Tools.App.MainWindow.GetWindowHandle());
+                var file = picker.Show(new List<string> { "*.json" }, "WingetUI Settings.json");
+
+                if (file != String.Empty)
+                {
+                    Tools.App.MainWindow.ShowLoadingDialog(Tools.Translate("Please wait..."));
+
+                    var IgnoredSettings = new string[] { "OperationHistory", "CurrentSessionToken", "OldWindowGeometry" };
+
+                    Dictionary<string, string> settings = new();
+                    foreach (var path in Directory.EnumerateFiles(CoreData.WingetUIDataDirectory))
+                    {
+                        if (Path.GetFileName(path).Contains('.') || IgnoredSettings.Contains(Path.GetFileName(path)))
+                            continue;
+                        settings.Add(Path.GetFileName(path), await File.ReadAllTextAsync(path));
+                    }
+
+                    await File.WriteAllTextAsync(file, JsonConvert.SerializeObject(settings));
+
+                    Tools.App.MainWindow.HideLoadingDialog();
+                }
+            }
+            catch (Exception ex)
+            {
+                Tools.App.MainWindow.HideLoadingDialog();
+                AppTools.Log(ex);
             }
 
         }
 
         private void ResetWingetUI(object sender, Interface.Widgets.ButtonCardEventArgs e)
         {
-            // TODO: Reset Settings
+            try
+            {
+                foreach (var path in Directory.EnumerateFiles(CoreData.WingetUIDataDirectory))
+                {
+                    File.Delete(path);
+                }
+            }
+            catch (Exception ex)
+            {
+                AppTools.Log(ex);
+            }
             GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
