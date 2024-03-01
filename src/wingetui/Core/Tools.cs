@@ -102,16 +102,22 @@ namespace ModernWindow.Structures
 
         public static void SetSettings_Static(string setting, bool value)
         {
-            EnsureTempDir();
-            if (value)
-            {
-                if (!File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
-                    File.WriteAllText(Path.Join(CoreData.WingetUIDataDirectory, setting), "");
+            try { 
+                EnsureTempDir();
+                if (value)
+                {
+                    if (!File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
+                        File.WriteAllText(Path.Join(CoreData.WingetUIDataDirectory, setting), "");
+                }
+                else
+                {
+                    if (File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
+                        File.Delete(Path.Join(CoreData.WingetUIDataDirectory, setting));
+                }
             }
-            else
+            catch (Exception e)
             {
-                if (File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
-                    File.Delete(Path.Join(CoreData.WingetUIDataDirectory, setting));
+                Log($"CRITICAL ERROR: CANNOT SET SETTING FOR setting={setting} enabled={value}: " + e.Message);
             }
         }
         public string GetSettingsValue(string setting)
@@ -129,8 +135,15 @@ namespace ModernWindow.Structures
 
         public static void SetSettingsValue_Static(string setting, string value)
         {
-            EnsureTempDir();
-            File.WriteAllText(Path.Join(CoreData.WingetUIDataDirectory, setting), value);
+            try
+            {
+                EnsureTempDir();
+                File.WriteAllText(Path.Join(CoreData.WingetUIDataDirectory, setting), value);
+            }
+            catch (Exception e)
+            {
+                Log($"CRITICAL ERROR: CANNOT SET SETTING VALUE FOR setting={setting} value={value}: " + e.Message);
+            }
         }
 
         public string Translate(string text)
