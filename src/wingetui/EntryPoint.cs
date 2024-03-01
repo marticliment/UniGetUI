@@ -115,7 +115,6 @@ namespace ModernWindow
         /// </summary>
         private static void UninstallPreps()
         {
-            //TODO: Make the uninstaller call WingetUI with the argument --uninstall-wingetui
             try
             {
                 ToastNotificationManagerCompat.Uninstall();

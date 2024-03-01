@@ -263,5 +263,7 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 ; Autostart is required to finish installation properly from an update, hence autostart will be obligatory
 
 
-[UninstallRun]
+[UninstallRun]    
+; Remove WingetUI Notification registries
+Filename: "{app}\{#MyAppExeName}"; Parameters: "--uninstall-wingetui"; Flags: skipifdoesntexist runhidden;
 Filename: {sys}\taskkill.exe; Parameters: "/f /im WingetUI.exe"; Flags: skipifdoesntexist runhidden;
