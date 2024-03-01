@@ -451,5 +451,18 @@ namespace ModernWindow.Interface
             await Tools.App.MainWindow.NavigationPage.InstalledPage.BackupPackages();
             Tools.App.MainWindow.HideLoadingDialog();
         }
+
+        private void EditAutostartSettings_Click(object sender, ButtonCardEventArgs e)
+        {
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = "cmd.exe",
+                Arguments = "/c start ms-settings:startupapps",
+                UseShellExecute = true,
+                CreateNoWindow = true
+            };
+            p.Start();
+        }
     }
 }

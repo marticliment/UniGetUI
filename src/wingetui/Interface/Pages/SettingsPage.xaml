@@ -52,6 +52,7 @@
                             Text="Open the welcome wizard"
                             ButtonText="Open"
                             Click="OpenWelcomeWizard"
+                            IsEnabled="False"
                         />
                         <widgets:CheckboxCard
                             Text="Update WingetUI automatically"
@@ -100,10 +101,11 @@
                         UnderText="WingetUI autostart behaviour, application launch settings"
                         Icon="launch">
                     <Toolkit:SettingsExpander.Items>
-                        <widgets:CheckboxCard
-                            Text="Autostart WingetUI in the notifications area"
-                            SettingName="DisableAutostart"
-                            />
+                        <widgets:ButtonCard
+                            Text="Manage WingetUI Autostart behaviour from the Settings app"
+                            ButtonText="Open"
+                            Click="EditAutostartSettings_Click"
+                        />
                         <widgets:CheckboxCard
                             Text="Update package indexes on launch"
                             SettingName="DisableUpdateIndexes"
@@ -119,14 +121,6 @@
                         UnderText="Action when double-clicking packages, hide successful installations"
                         Icon="interactive">
                     <Toolkit:SettingsExpander.Items>
-                        <widgets:CheckboxCard
-                            Text="Directly install when double-clicking an item on the Discover Packages tab"
-                            SettingName="InstallOnDoubleClick"
-                            />
-                        <widgets:CheckboxCard
-                            Text="Show details when double-clicking a package on the Software Updates tab"
-                            SettingName="DoNotUpdateOnDoubleClick"
-                            />
                         <widgets:CheckboxCard
                             Text="Do not remove successful installs/uninstalls/updates from the installation list"
                             SettingName="MaintainSuccessfulInstalls"
@@ -229,13 +223,6 @@
                             SettingName="DoCacheAdminRightsForBatches"
                             StateChanged="DoCacheAdminRights_StateChanged"
                             />
-
-                        <widgets:CheckboxCard
-                            x:Name="UseSystemGSudo"
-                            Text="Use installed GSudo instead of the bundled one"
-                            SettingName="UseUserGSudo"
-                            StateChanged="UseSystemGSudo_StateChanged"
-                            />
                     </Toolkit:SettingsExpander.Items>
                 </widgets:SettingsEntry>
                 <widgets:SettingsEntry
@@ -279,13 +266,6 @@
                             HelpUrl="https://www.marticliment.com/wingetui/help/icons-and-screenshots#custom-source"
                             ValueChanged="TextboxCard_ValueChanged"
                             />
-                        <widgets:ButtonCard
-                            x:Name="ResetIconCache"
-                            Text="Reset WingetUI icon and screenshot cache"
-                            ButtonText="Reset"
-                            Click="ResetIconCache_Click"
-                            />
-
                     </Toolkit:SettingsExpander.Items>
                 </widgets:SettingsEntry>
                 <widgets:TranslatedTextBlock Margin="0,50,0,0" FontSize="30" WrappingMode="Wrap" FontWeight="Bold" Text="Package Managers" HorizontalAlignment="Stretch"/>

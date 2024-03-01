@@ -368,7 +368,7 @@ namespace ModernWindow.Interface
                 try
                 {
                     waitTime = long.Parse(Tools.GetSettingsValue("UpdatesCheckInterval"));
-                    AppTools.Log("St")
+                    AppTools.Log($"Starting check for updates wait interval with waitTime={waitTime}");
                 }
                 catch
                 {
