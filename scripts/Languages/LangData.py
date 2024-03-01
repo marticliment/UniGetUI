@@ -31,7 +31,7 @@ else:
     untranslatedPercentage = {}
 
 if os.path.exists("../src/wingetui/Assets/Data/LanguagesReference.json"):
-    f = open("../src/wingetui/Assets/Data/LanguagesReference.json", "r")
+    f = open("../src/wingetui/Assets/Data/LanguagesReference.json", "r", encoding="utf-8")
     languageReference = json.load(f)
 else:
     print("No translated percent file!")
@@ -40,6 +40,7 @@ else:
 languageRemap = {
     "pt-BR": "pt_BR",
     "pt-PT": "pt_PT",
+    "nn-NO": "nn",
     "uk": "ua",
     "zh-Hans": "zh_CN",
     "zh-Hant": "zh_TW",
