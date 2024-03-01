@@ -1,7 +1,10 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
 using ModernWindow.Core.Data;
+using ModernWindow.Interface.Widgets;
 using ModernWindow.PackageEngine.Classes;
 using ModernWindow.Structures;
 using System;
@@ -87,21 +90,40 @@ namespace ModernWindow.PackageEngine.Operations
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             dialog.XamlRoot = XamlRoot;
+            dialog.Resources["ContentDialogMaxWidth"] = 750;
+            dialog.Resources["ContentDialogMaxHeight"] = 1000;
             dialog.Title = Tools.Translate("Source addition failed");
-            dialog.Content = Tools.Translate("Could not add source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name) + ". " + Tools.Translate("Please click the More Details button or refer to the Operation History for further information about the issue.");
+
+            StackPanel panel = new StackPanel() { Spacing = 16 };
+            panel.Children.Add(new TextBlock() { TextWrapping = TextWrapping.WrapWholeWords, Text = Tools.Translate("Could not add source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name) + ". " + Tools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
+
+            Expander expander = new Expander() { CornerRadius = new CornerRadius(8) };
+
+            StackPanel HeaderPanel = new StackPanel() { Orientation = Orientation.Horizontal, Spacing = 8 };
+            HeaderPanel.Children.Add(new LocalIcon("console") { VerticalAlignment = VerticalAlignment.Center, Height = 24, Width = 24, HorizontalAlignment = HorizontalAlignment.Left });
+            HeaderPanel.Children.Add(new TextBlock() { Text = Tools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
+
+            expander.Header = HeaderPanel;
+            expander.HorizontalAlignment = HorizontalAlignment.Stretch;
+            panel.Children.Add(expander);
+
+            RichTextBlock output = new RichTextBlock() { FontFamily = new FontFamily("Consolas"), TextWrapping = TextWrapping.Wrap };
+            ScrollViewer sv = new ScrollViewer();
+            sv.MaxHeight = 500;
+            Paragraph par = new Paragraph();
+            foreach (var line in ProcessOutput)
+                par.Inlines.Add(new Run() { Text = line + "\x0a" });
+            output.Blocks.Add(par);
+
+            sv.Content = output;
+            expander.Content = sv;
+
+            dialog.Content = panel;
             dialog.PrimaryButtonText = Tools.Translate("Retry");
-            dialog.SecondaryButtonText = Tools.Translate("More details");
             dialog.CloseButtonText = Tools.Translate("Close");
             dialog.DefaultButton = ContentDialogButton.Primary;
 
-            dialog.SecondaryButtonClick += (s, e) =>
-            {
-                OpenLiveViewDialog();
-            };
-
             ContentDialogResult result = await Tools.App.MainWindow.ShowDialogAsync(dialog);
-            while (result == ContentDialogResult.Secondary)
-                result = await Tools.App.MainWindow.ShowDialogAsync(dialog, HighPriority: true);
 
             if (result == ContentDialogResult.Primary)
                 return AfterFinshAction.Retry;
@@ -197,21 +219,40 @@ namespace ModernWindow.PackageEngine.Operations
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             dialog.XamlRoot = XamlRoot;
+            dialog.Resources["ContentDialogMaxWidth"] = 750;
+            dialog.Resources["ContentDialogMaxHeight"] = 1000;
             dialog.Title = Tools.Translate("Source removal failed");
-            dialog.Content = Tools.Translate("Could not remove source {source} from {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name) + ". " + Tools.Translate("Please click the More Details button or refer to the Operation History for further information about the issue.");
+
+            StackPanel panel = new StackPanel() { Spacing = 16 };
+            panel.Children.Add(new TextBlock() { TextWrapping = TextWrapping.WrapWholeWords, Text = Tools.Translate("Could not remove source {source} from {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name) + ". " + Tools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
+
+            Expander expander = new Expander() { CornerRadius = new CornerRadius(8) };
+
+            StackPanel HeaderPanel = new StackPanel() { Orientation = Orientation.Horizontal, Spacing = 8 };
+            HeaderPanel.Children.Add(new LocalIcon("console") { VerticalAlignment = VerticalAlignment.Center, Height = 24, Width = 24, HorizontalAlignment = HorizontalAlignment.Left });
+            HeaderPanel.Children.Add(new TextBlock() { Text = Tools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
+
+            expander.Header = HeaderPanel;
+            expander.HorizontalAlignment = HorizontalAlignment.Stretch;
+            panel.Children.Add(expander);
+
+            RichTextBlock output = new RichTextBlock() { FontFamily = new FontFamily("Consolas"), TextWrapping = TextWrapping.Wrap };
+            ScrollViewer sv = new ScrollViewer();
+            sv.MaxHeight = 500;
+            Paragraph par = new Paragraph();
+            foreach (var line in ProcessOutput)
+                par.Inlines.Add(new Run() { Text = line + "\x0a" });
+            output.Blocks.Add(par);
+
+            sv.Content = output;
+            expander.Content = sv;
+
+            dialog.Content = panel;
             dialog.PrimaryButtonText = Tools.Translate("Retry");
-            dialog.SecondaryButtonText = Tools.Translate("More details");
             dialog.CloseButtonText = Tools.Translate("Close");
             dialog.DefaultButton = ContentDialogButton.Primary;
 
-            dialog.SecondaryButtonClick += (s, e) =>
-            {
-                OpenLiveViewDialog();
-            };
-
             ContentDialogResult result = await Tools.App.MainWindow.ShowDialogAsync(dialog);
-            while (result == ContentDialogResult.Secondary)
-                result = await Tools.App.MainWindow.ShowDialogAsync(dialog, HighPriority: true);
 
             if (result == ContentDialogResult.Primary)
                 return AfterFinshAction.Retry;
