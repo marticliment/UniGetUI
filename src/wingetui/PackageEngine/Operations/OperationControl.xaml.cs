@@ -362,7 +362,7 @@ namespace ModernWindow.PackageEngine
                     }
                 }
 
-                foreach (string errorLine in (await Process.StandardError.ReadToEndAsync()).Split(' '))
+                foreach (string errorLine in (await Process.StandardError.ReadToEndAsync()).Split('\n'))
                     if (errorLine.Trim() != "")
                         ProcessOutput.Add("ERR | " + errorLine);
 
