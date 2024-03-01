@@ -62,6 +62,11 @@ namespace ModernWindow
             ApplyTheme();
 
             AppWindow.SetIcon(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
+            if (Tools.IsAdministrator())
+            {
+                Title = "WingetUI " + Tools.Translate("[RAN AS ADMINISTRATOR]");
+                AppTitle.Text = Title;
+            }
 
             LoadingSthDalog = new ContentDialog();
             LoadingSthDalog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -204,30 +209,30 @@ namespace ModernWindow
         public void UpdateSystemTrayStatus()
         {
             string modifier = "_empty";
-            string tooltip = Tools.Translate("Everything is up to date") + " - WingetUI";
+            string tooltip = Tools.Translate("Everything is up to date") + " - " + Title;
 
             if (Tools.TooltipStatus.OperationsInProgress > 0)
             {
                 modifier = "_blue";
-                tooltip = Tools.Translate("Operation in progress") + " - WingetUI";
+                tooltip = Tools.Translate("Operation in progress") + " - " + Title;
             }
             else if (Tools.TooltipStatus.ErrorsOccurred > 0)
             {
                 modifier = "_orange";
-                tooltip = Tools.Translate("Attention required") + " - WingetUI";
+                tooltip = Tools.Translate("Attention required") + " - " + Title ;
             }
             else if (Tools.TooltipStatus.RestartRequired)
             {
                 modifier = "_turquoise";
-                tooltip = Tools.Translate("Restart required") + " - WingetUI";
+                tooltip = Tools.Translate("Restart required") + " - " + Title;
             }
             else if (Tools.TooltipStatus.AvailableUpdates > 0)
             {
                 modifier = "_green";
                 if (Tools.TooltipStatus.AvailableUpdates == 1)
-                    tooltip = Tools.Translate("1 update is available") + " - WingetUI";
+                    tooltip = Tools.Translate("1 update is available") + " - " + Title;
                 else
-                    tooltip = Tools.Translate("{0} updates are available").Replace("{0}", Tools.TooltipStatus.AvailableUpdates.ToString()) + " - WingetUI";
+                    tooltip = Tools.Translate("{0} updates are available").Replace("{0}", Tools.TooltipStatus.AvailableUpdates.ToString()) + " - " + Title;
             }
 
             TrayIcon.ToolTipText = tooltip;
