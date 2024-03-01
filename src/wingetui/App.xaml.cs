@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
 using YamlDotNet.Serialization;
@@ -195,11 +196,16 @@ namespace ModernWindow
 
 
             var ManagersMetaTask = Task.WhenAll(initializeTasks);
-            await ManagersMetaTask.WaitAsync(TimeSpan.FromMilliseconds(ManagerLoadTimeout));
-            if (ManagersMetaTask.IsCompletedSuccessfully == false)
+            try
             {
-                AppTools.Log("Timeout: Not all package managers have finished initializing.");
+                await ManagersMetaTask.WaitAsync(TimeSpan.FromMilliseconds(ManagerLoadTimeout));
             }
+            catch (Exception e)
+            {
+                AppTools.Log(e);
+            }
+            if (ManagersMetaTask.IsCompletedSuccessfully == false)
+                AppTools.Log("Timeout: Not all package managers have finished initializing.");
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
