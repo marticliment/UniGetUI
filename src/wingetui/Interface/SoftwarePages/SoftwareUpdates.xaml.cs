@@ -143,7 +143,7 @@ namespace ModernWindow.Interface
 
             GenerateToolBar();
             LoadInterface();
-            _ = LoadPackages();
+            _ = LoadPackages(ManualCheck: false);
         }
 
         protected void AddPackageToSourcesList(UpgradablePackage package)
@@ -209,7 +209,7 @@ namespace ModernWindow.Interface
          * 
          */
 
-        public async Task LoadPackages()
+        public async Task LoadPackages(bool ManualCheck = true)
         {
             if (!Initialized)
                 return;
@@ -362,7 +362,21 @@ namespace ModernWindow.Interface
                 }
             }
 
-            // TODO: wait interval and check again
+            if (!Tools.GetSettings("DisableAutoCheckforUpdates") && !ManualCheck)
+            {
+                long waitTime = 3600;
+                try
+                {
+                    waitTime = long.Parse(Tools.GetSettingsValue("UpdatesCheckInterval"));
+                    AppTools.Log("St")
+                }
+                catch
+                {
+                    AppTools.Log("Invalid value for UpdatesCheckInterval, using default value of 3600 seconds");
+                }
+                await Task.Delay(TimeSpan.FromSeconds(waitTime));
+                _ = LoadPackages(ManualCheck: false);
+            }
         }
 
         public void UpdateAll()
