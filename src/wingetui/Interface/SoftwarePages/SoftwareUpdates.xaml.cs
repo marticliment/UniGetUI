@@ -33,7 +33,7 @@ namespace ModernWindow.Interface
         protected AppTools Tools = AppTools.Instance;
 
         protected TranslatedTextBlock MainTitle;
-        protected TranslatedTextBlock MainSubtitle;
+        protected TextBlock MainSubtitle;
         protected ListView PackageList;
         protected ProgressBar LoadingProgressBar;
         protected MenuFlyout ContextMenu;
@@ -41,6 +41,8 @@ namespace ModernWindow.Interface
         private bool IsDescending = true;
         private bool Initialized = false;
         private bool AllSelected = true;
+
+        private DateTime LastChecked = DateTime.Now;
 
 
         public string InstantSearchSettingString = "DisableInstantSearchUpdatesTab";
@@ -217,7 +219,7 @@ namespace ModernWindow.Interface
             if (LoadingProgressBar.Visibility == Visibility.Visible)
                 return; // If already loading, don't load again
 
-            MainSubtitle.Text = "Loading...";
+            MainSubtitle.Text = Tools.Translate("Loading...");
             BackgroundText.Text = "Loading...";
             BackgroundText.Visibility = Visibility.Visible;
             LoadingProgressBar.Visibility = Visibility.Visible;
@@ -280,10 +282,10 @@ namespace ModernWindow.Interface
                 }
             }
 
+            LastChecked = DateTime.Now;
+
             FilterPackages(QueryBlock.Text);
             LoadingProgressBar.Visibility = Visibility.Collapsed;
-
-
 
             if (Packages.Count > 0)
             {
@@ -469,14 +471,14 @@ namespace ModernWindow.Interface
                     if (Packages.Count() == 0)
                     {
                         BackgroundText.Text = SourcesPlaceholderText.Text = "Hooray! No updates were found.";
-                        SourcesPlaceholderText.Text = "Everything is up to date";
-                        MainSubtitle.Text = "Everything is up to date";
+                        SourcesPlaceholderText.Text = Tools.Translate("Everything is up to date");
+                        MainSubtitle.Text = Tools.Translate("Everything is up to date") + " " + Tools.Translate("(Last checked: {0})").Replace("{0}", LastChecked.ToString());
                     }
                     else
                     {
                         BackgroundText.Text = "No results were found matching the input criteria";
                         SourcesPlaceholderText.Text = "No packages were found";
-                        MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
+                        MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString()) + " " + Tools.Translate("(Last checked: {0})").Replace("{0}", LastChecked.ToString());
                     }
                     BackgroundText.Visibility = Visibility.Visible;
                 }
@@ -485,7 +487,7 @@ namespace ModernWindow.Interface
             else
             {
                 BackgroundText.Visibility = Visibility.Collapsed;
-                MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
+                MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString()) + " " + Tools.Translate("(Last checked: {0})").Replace("{0}", LastChecked.ToString());
             }
 
             Tools.App.MainWindow.NavigationPage.UpdatesBadge.Visibility = Packages.Count() == 0 ? Visibility.Collapsed : Visibility.Visible;

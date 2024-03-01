@@ -624,7 +624,7 @@
                 HorizontalAlignment="Left"
                 FontWeight="Bold"  FontFamily="Segoe UI Variable Display"
                 />
-            <widgets:TranslatedTextBlock Grid.Column="1" Grid.Row="2" 
+            <TextBlock Grid.Column="1" Grid.Row="2" 
                 Text="MAINSUBTITLE" FontSize="11" x:Name="__main_subtitle"
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 FontWeight="Normal" Foreground="{StaticResource AppBarItemDisabledForegroundThemeBrush}"
