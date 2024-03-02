@@ -25,7 +25,7 @@
                 <StackPanel Orientation="Vertical" Padding="0,8,0,0" Spacing="4">
 
                     <widgets:TranslatedTextBlock x:Name="AboutHeader" Text="About WingetUI" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
-                    <widgets:TranslatedTextBlock Text="WingetUI is an application that makes manaing your software easier, by providing an all-in-one graphical interface for your command-line package managers."/>
+                    <widgets:TranslatedTextBlock Text="WingetUI is an application that makes managing your software easier, by providing an all-in-one graphical interface for your command-line package managers."/>
                     <TextBlock Margin="0,10,0,10" x:Name="VersionText" Text="" FontWeight="SemiBold" FontSize="15"/>
                     <InfoBar Margin="0,10,0,10" Severity="Warning" Name="DisclaimerBanner" IsOpen="True" IsClosable="False" Title="Disclaimer" Message="WingetUI is not affiliated or related with Winget, Microsoft, nor any other package manager."/>
 
@@ -58,7 +58,7 @@
                     <widgets:TranslatedTextBlock Text="Using WingetUI implies the acceptation of the GNU Lesser General Public License v2.1 License"/>
                     <TextBlock/>
                     <widgets:TranslatedTextBlock Text="Third-party licenses" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
-                    <widgets:TranslatedTextBlock Text="WingetUI Uses the following libraries. Without them, WingetUI wouldn't have been possible."/>
+                    <widgets:TranslatedTextBlock Text="WingetUI uses the following libraries. Without them, WingetUI wouldn't have been possible."/>
                     <ListView ItemsSource="{x:Bind Licenses}" SelectionMode="None">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="local:LibraryLicense">
@@ -132,7 +132,7 @@
             <ScrollView Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
                 <StackPanel Orientation="Vertical" Padding="0,16,0,0">
                     <widgets:TranslatedTextBlock Text="Translators" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
-                    <widgets:TranslatedTextBlock Text="WingetUI has been translated to more than 40 languages thaks to the volunteer translators. Thank you 🤝"/>
+                    <widgets:TranslatedTextBlock Text="WingetUI has been translated to more than 40 languages thanks to the volunteer translators. Thank you 🤝"/>
                     <HyperlinkButton Grid.Column="2" NavigateUri="https://github.com/marticliment/WingetUI/wiki#translating-wingetui"  VerticalAlignment="Center" Margin="0,4,0,4" HorizontalAlignment="Stretch" >
                     <widgets:TranslatedTextBlock Text="Become a translator"/>
                     </HyperlinkButton>
@@ -178,7 +178,7 @@
             <ScrollView Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
                 <StackPanel Orientation="Vertical" Padding="0,16,0,0" Spacing="4">
                     <widgets:TranslatedTextBlock Text="Support the developer" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
-                    <widgets:TranslatedTextBlock Text="Do you find WingetUI useful? If you can, you may want to support my work, so I can continue making WingetUI the ultimate package maniaging interface."/>
+                    <widgets:TranslatedTextBlock Text="Do you find WingetUI useful? If you can, you may want to support my work, so I can continue making WingetUI the ultimate package managing interface."/>
                     <widgets:TranslatedTextBlock Text="WingetUI is free, and it will be free forever. No ads, no credit card, no premium version. 100% free, forever."/>
                     <widgets:TranslatedTextBlock Text="Thank you ❤"/>
                     <TextBlock/>
