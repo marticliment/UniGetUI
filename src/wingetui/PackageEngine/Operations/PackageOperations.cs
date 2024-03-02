@@ -425,7 +425,7 @@ namespace ModernWindow.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = Tools.Translate("{package} uninstallation failed").Replace("{package}", Package.Name);
+            LineInfoText = Tools.Translate("{package} uninstall failed").Replace("{package}", Package.Name);
 
             Package.SetTag(PackageTag.Failed);
 
@@ -433,7 +433,7 @@ namespace ModernWindow.PackageEngine.Operations
                 try{new ToastContentBuilder()
                     .AddArgument("action", "openWingetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                    .AddText(Tools.Translate("Uninstallation failed"))
+                    .AddText(Tools.Translate("Uninstall failed"))
                     .AddText(Tools.Translate("{package} could not be uninstalled").Replace("{package}", Package.Name)).Show();
 
                 }
@@ -447,7 +447,7 @@ namespace ModernWindow.PackageEngine.Operations
             dialog.XamlRoot = XamlRoot;
             dialog.Resources["ContentDialogMaxWidth"] = 750;
             dialog.Resources["ContentDialogMaxHeight"] = 1000;
-            dialog.Title = Tools.Translate("{package} uninstallation failed").Replace("{package}", Package.Name);
+            dialog.Title = Tools.Translate("{package} uninstall failed").Replace("{package}", Package.Name);
 
             StackPanel panel = new StackPanel() { Spacing = 16 };
             panel.Children.Add(new TextBlock() { TextWrapping = TextWrapping.WrapWholeWords, Text = Tools.Translate("{package} could not be uninstalled").Replace("{package}", Package.Name) + ". " + Tools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
@@ -512,7 +512,7 @@ namespace ModernWindow.PackageEngine.Operations
 
         protected override void Initialize()
         {
-            OperationTitle = Tools.Translate("{package} Uninstallation").Replace("{package}", Package.Name);
+            OperationTitle = Tools.Translate("{package} Uninstall").Replace("{package}", Package.Name);
             IconSource = Package.GetIconUrl();
         }
     }

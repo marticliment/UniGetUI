@@ -298,7 +298,7 @@ namespace ModernWindow.Interface
                     if (Packages.Count == 1)
                     {
                         title = Tools.Translate("An update was found!");
-                        body = Tools.Translate("{0} is being updates to version {1}").Replace("{0}", Packages[0].Name).Replace("{1}", Packages[0].NewVersion);
+                        body = Tools.Translate("{0} is being updated to version {1}").Replace("{0}", Packages[0].Name).Replace("{1}", Packages[0].NewVersion);
                         attribution = Tools.Translate("You have currently version {0} installed").Replace("{0}", Packages[0].Version);
                     }
                     else

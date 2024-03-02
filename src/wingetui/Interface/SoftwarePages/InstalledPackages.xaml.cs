@@ -519,7 +519,7 @@ namespace ModernWindow.Interface
               // Their texts will be used as the tooltip
                 { UninstallSelected,      "Uninstall selected packages" },
                 { UninstallAsAdmin,       " Uninstall as administrator" },
-                { UninstallInteractive,   " Interactive uninstallation" },
+                { UninstallInteractive,   " Interactive uninstall" },
                 { InstallationSettings,   " Installation options" },
                 { PackageDetails,         " Package details" },
                 { SharePackage,           " Share" },

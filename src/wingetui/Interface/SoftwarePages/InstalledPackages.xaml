@@ -819,7 +819,7 @@
                                 Click="MenuAsAdmin_Invoked"
                                 IconName="runasadmin"/>
                             <widgets:BetterMenuItem x:Name="MenuInteractive"
-                                Text="{x:Bind Tools.Translate('Interactive uninstallation')}" 
+                                Text="{x:Bind Tools.Translate('Interactive uninstall')}" 
                                 Click="MenuInteractive_Invoked" 
                                 IconName="interactive"/>
                             <widgets:BetterMenuItem x:Name="MenuRemoveData" 
