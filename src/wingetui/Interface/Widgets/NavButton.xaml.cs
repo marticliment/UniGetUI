@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using ModernWindow.Structures;
 using System;
+using System.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -47,12 +48,13 @@ namespace ModernWindow.Interface.Widgets
                 typeof(NavButton),
                 new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
                 {
-                    string val = (string)e.NewValue;
-                    if (val.Contains(" "))
+                    string val = Tools.Translate((string)e.NewValue);
+                    int count = val.Count(x => x == ' ');
+                    /*if (count > 0)
                     {
-                        Height = 58 + 14;
-                        VariableGrid.RowDefinitions[1].Height = new GridLength(26 + 14);
-                        TextBlock.Height = 18 + 14;
+                        Height = 58 + 14*count;
+                        VariableGrid.RowDefinitions[1].Height = new GridLength(26 + 14 * count);
+                        TextBlock.Height = 18 + 14 * count;
                         TextBlock.HorizontalAlignment = HorizontalAlignment.Center;
                         TextBlock.VerticalAlignment = VerticalAlignment.Center;
                         TextBlock.TextAlignment = TextAlignment.Center;
@@ -62,8 +64,8 @@ namespace ModernWindow.Interface.Widgets
                         Height = 58;
                         TextBlock.Height = 18;
                         VariableGrid.RowDefinitions[1].Height = new GridLength(26);
-                    }
-                    TextBlock.Text = Tools.Translate(val).Replace(" ", "\x0a");
+                    }*/
+                    TextBlock.Text = val.Replace(" ", "\x0a");
                 }))
             );
 
