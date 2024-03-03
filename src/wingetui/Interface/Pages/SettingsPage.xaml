@@ -256,7 +256,7 @@
                         <widgets:CheckboxCard
                             x:Name="DisableDownloadingNewTranslations"
                             Text="Do not download new app translations from GitHub automatically"
-                            SettingName="EnableArmWinget"
+                            SettingName="DisableLangAutoUpdater"
                             StateChanged="DisableDownloadingNewTranslations_StateChanged"
                             />
                         <widgets:TextboxCard
