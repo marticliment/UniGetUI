@@ -102,7 +102,7 @@
                         Icon="launch">
                     <Toolkit:SettingsExpander.Items>
                         <widgets:ButtonCard
-                            Text="Manage WingetUI Autostart behaviour from the Settings app"
+                            Text="Manage WingetUI autostart behaviour from the Settings app"
                             ButtonText="Open"
                             Click="EditAutostartSettings_Click"
                         />
@@ -122,7 +122,7 @@
                         Icon="interactive">
                     <Toolkit:SettingsExpander.Items>
                         <widgets:CheckboxCard
-                            Text="Do not remove successful installs/uninstalls/updates from the installation list"
+                            Text="Do not remove successful operations from the list automatically"
                             SettingName="MaintainSuccessfulInstalls"
                             />
                     </Toolkit:SettingsExpander.Items>

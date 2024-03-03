@@ -829,52 +829,52 @@
                     <ListView.ContextFlyout>
                         <widgets:BetterMenu x:Name="PackageContextMenu">
                             <widgets:BetterMenuItem x:Name="MenuInstall" 
-                                Text="{x:Bind Tools.Translate('Update')}"
+                                Text="Update"
                                 Click="MenuInstall_Invoked" KeyboardAcceleratorTextOverride="Ctrl+Enter"
                                 IconName="menu_updates"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuInstallSettings" 
-                                Text="{x:Bind Tools.Translate('Installation options')}" 
+                                Text="Installation options" 
                                 Click="MenuInstallSettings_Invoked" KeyboardAcceleratorTextOverride="Alt+Enter"
                                 IconName="options"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuAsAdmin" 
-                                Text="{x:Bind Tools.Translate('Update as administrator')}" 
+                                Text="Update as administrator" 
                                 Click="MenuAsAdmin_Invoked"
                                 IconName="runasadmin"/>
                             <widgets:BetterMenuItem x:Name="MenuInteractive" 
-                                Text="{x:Bind Tools.Translate('Interactive update')}" 
+                                Text="Interactive update" 
                                 Click="MenuInteractive_Invoked"
                                 IconName="interactive"/>
                             <widgets:BetterMenuItem x:Name="MenuskipHash" 
-                                Text="{x:Bind Tools.Translate('Skip hash check')}" 
+                                Text="Skip hash check" 
                                 Click="MenuSkipHash_Invoked"
                                 IconName="checksum"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuUpdateAfterUninstall" 
-                                Text="{x:Bind Tools.Translate('Uninstall package, then update it')}" 
+                                Text="Uninstall package, then update it" 
                                 Click="MenuUpdateAfterUninstall_Invoked"
                                 IconName="undelete"/>
                             <widgets:BetterMenuItem x:Name="MenuUninstall" 
-                                Text="{x:Bind Tools.Translate('Uninstall package')}" 
+                                Text="Uninstall package" 
                                 Click="MenuUninstall_Invoked"
                                 IconName="menu_uninstall"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuIgnorePackage" 
-                                Text="{x:Bind Tools.Translate('Ignore updates for this package')}" 
+                                Text="Ignore updates for this package" 
                                 Click="MenuIgnorePackage_Invoked"
                                 IconName="pin"/>
                             <widgets:BetterMenuItem x:Name="MenuSkipVersion" 
-                                Text="{x:Bind Tools.Translate('Skip this version')}" 
+                                Text="Skip this version" 
                                 Click="MenuSkipVersion_Invoked"
                                 IconName="skip"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuShare" 
-                                Text="{x:Bind Tools.Translate('Share this package')}" 
+                                Text="Share this package" 
                                 Click="MenuShare_Invoked"
                                 IconName="share"/>
                             <widgets:BetterMenuItem x:Name="MenuDetails" 
-                                Text="{x:Bind Tools.Translate('Package details')}" 
+                                Text="Package details" 
                                 Click="MenuDetails_Invoked" KeyboardAcceleratorTextOverride="Enter"
                                 IconName="info"/>
                         </widgets:BetterMenu>

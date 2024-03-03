@@ -37,16 +37,32 @@ def get_all_strings():
                     translation_strings.append(match.encode('raw_unicode_escape').decode('unicode_escape'))
 
     # Find XAML translation strings
-    regex = r'<[a-zA-Z]+:TranslatedTextBlock[ a-zA-Z0-9=\"\']+Text=["\'].+["\'][ a-zA-Z0-9=\"\']*\/?>'
-    for (dirpath, _dirnames, filenames) in os.walk(".", topdown=True):
-        for file in filenames:
-            _file_name, file_ext = os.path.splitext(file)
-            if (file_ext != ".xaml"):
-                continue
-            with open(os.path.join(dirpath, file), "r", encoding="utf-8") as f:
-                matches: list[str] = re.findall(regex, f.read())
-                for match in matches:
-                    translation_strings.append(match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'))
+
+    regex_data = {
+        r'<[a-zA-Z0-9]+:TranslatedTextBlock(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])+Text=["\'].+["\'](?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:ButtonCard(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])+Text=["\'].+["\'](?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:ButtonCard(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])+ButtonText=["\'].+["\'](?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])*\/?>': lambda match: match.split(" ButtonText=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:CheckboxCard(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])+Text=["\'].+["\'](?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:ComboboxCard(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])+Text=["\'].+["\'](?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:BetterMenuItem(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])+Text=["\'].+["\'](?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:NavButton(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])+Text=["\'].+["\'](?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:SettingsEntry(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])+Text=["\'].+["\'](?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:SettingsEntry(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])+UnderText=["\'].+["\'](?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])*\/?>': lambda match: match.split(" UnderText=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:SourceManager(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])+Text=["\'].+["\'](?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:TextboxCard(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])+Text=["\'].+["\'](?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:TextboxCard(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])+Placeholder=["\'].+["\'](?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_])*\/?>': lambda match: match.split(" Placeholder=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+    }
+
+    for regex in regex_data.keys():
+        for (dirpath, _dirnames, filenames) in os.walk(".", topdown=True):
+            for file in filenames:
+                _file_name, file_ext = os.path.splitext(file)
+                if (file_ext != ".xaml"):
+                    continue
+                with open(os.path.join(dirpath, file), "r", encoding="utf-8") as f:
+                    matches: list[str] = re.findall(regex, f.read())
+                    for match in matches:
+                        translation_strings.append(regex_data[regex](match.replace("\n", " ").replace("\t", " ")))
 
     translation_strings = list(set(translation_strings))  # uniq
     translation_strings.sort(key=lambda x: (remove_special_chars(x.lower()), x))
