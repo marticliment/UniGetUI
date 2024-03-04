@@ -115,10 +115,10 @@ namespace ModernWindow.Interface
             }
 
 
-            ButtonCard Winget_ResetSources = new() { Text = Tools.AutoTranslated("Reset Winget sources (might help if no packages are listed"), ButtonText = Tools.AutoTranslated("Reset") };
+            ButtonCard Winget_ResetSources = new() { Text = Tools.AutoTranslated("Reset Winget sources (might help if no packages are listed)"), ButtonText = Tools.AutoTranslated("Reset") };
             Winget_ResetSources.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), Tools.AutoTranslated("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
+                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), Tools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
             };
 
             ExtraSettingsCards[Tools.App.Winget].Add(Winget_ResetSources);
@@ -126,19 +126,19 @@ namespace ModernWindow.Interface
             ButtonCard Scoop_Install = new() { Text = Tools.AutoTranslated("Install Scoop"), ButtonText = Tools.AutoTranslated("Install") };
             Scoop_Install.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"), Tools.AutoTranslated("Scoop Installer - WingetUI"));
+                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"), Tools.Translate("Scoop Installer - WingetUI"));
                 PackageManagerExpanders[Tools.App.Scoop].ShowRestartRequiredBanner();
             };
-            ButtonCard Scoop_Uninstall = new() { Text = Tools.AutoTranslated("Uninstall Scoop (and its packages)"), ButtonText = "Uninstall" };
+            ButtonCard Scoop_Uninstall = new() { Text = Tools.AutoTranslated("Uninstall Scoop (and its packages)"), ButtonText = Tools.AutoTranslated("Uninstall") };
             Scoop_Uninstall.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"), Tools.AutoTranslated("Scoop Uninstaller - WingetUI"));
+                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"), Tools.Translate("Scoop Uninstaller - WingetUI"));
                 PackageManagerExpanders[Tools.App.Scoop].ShowRestartRequiredBanner();
             };
-            ButtonCard Scoop_ResetAppCache = new() { Text = Tools.AutoTranslated("Run cleanup and clear cache"), ButtonText = "Run" };
+            ButtonCard Scoop_ResetAppCache = new() { Text = Tools.AutoTranslated("Run cleanup and clear cache"), ButtonText = Tools.AutoTranslated("Run") };
             Scoop_ResetAppCache.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"), Tools.Translate("Clearing scoop cache - WingetUI"), RunAsAdmin: true);
+                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"), Tools.Translate("Clearing Scoop cache - WingetUI"), RunAsAdmin: true);
             };
 
             ExtraSettingsCards[Tools.App.Scoop].Add(Scoop_Install);

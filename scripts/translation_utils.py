@@ -33,10 +33,11 @@ def get_all_strings():
             if (file_ext != ".cs"):
                 continue
             with open(os.path.join(dirpath, file), "r", encoding="utf-8") as f:
-                matches: list[str] = re.findall(regex1, f.read())
+                file_data = f.read()
+                matches: list[str] = re.findall(regex1, file_data)
                 for match in matches:
                     translation_strings.append(match.encode('raw_unicode_escape').decode('unicode_escape'))
-                matches: list[str] = re.findall(regex2, f.read())
+                matches: list[str] = re.findall(regex2, file_data)
                 for match in matches:
                     translation_strings.append(match.encode('raw_unicode_escape').decode('unicode_escape'))
 
