@@ -756,7 +756,7 @@ namespace ModernWindow.Interface
 
         private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            if (!Initialized || (PackageList.SelectedItem as UpgradablePackage) == null)
                 return;
 
             if (await Tools.App.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as UpgradablePackage, OperationType.Update))
