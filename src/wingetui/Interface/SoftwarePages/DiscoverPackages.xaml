@@ -605,12 +605,12 @@
                 x:Name="HeaderIcon" FontSize="50" FontWeight="Normal" Height="60" Width="60"/>
             <widgets:TranslatedTextBlock x:Name="__main_title"
                 Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" 
-                Text="TITLE" FontSize="30" Height="48"
+                Text="" FontSize="30" Height="48"
                 HorizontalAlignment="Left"
                 FontWeight="Bold"  FontFamily="Segoe UI Variable Display"
                 />
             <widgets:TranslatedTextBlock Grid.Column="1" Grid.Row="2" 
-                Text="MAINSUBTITLE" FontSize="11" x:Name="__main_subtitle"
+                Text="" FontSize="11" x:Name="__main_subtitle"
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 FontWeight="Normal" Foreground="{StaticResource AppBarItemDisabledForegroundThemeBrush}"
                 />
