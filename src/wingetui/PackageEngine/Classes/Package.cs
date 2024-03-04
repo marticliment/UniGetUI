@@ -269,15 +269,22 @@ namespace ModernWindow.PackageEngine.Classes
         /// <returns></returns>
         public async Task AddToIgnoredUpdatesAsync(string version = "*")
         {
-            string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-            JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
-            if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
-                IgnoredUpdatesJson.Remove(IgnoredId);
-            IgnoredUpdatesJson.Add(IgnoredId, version);
-            await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
-            Tools.App.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(this);
+            try
+            {
+                string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
+                JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+                if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
+                    IgnoredUpdatesJson.Remove(IgnoredId);
+                IgnoredUpdatesJson.Add(IgnoredId, version);
+                await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
+                Tools.App.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(this);
 
-            GetInstalledPackage()?.SetTag(PackageTag.Pinned);
+                GetInstalledPackage()?.SetTag(PackageTag.Pinned);
+            }
+            catch (Exception ex)
+            {
+                AppTools.Log(ex);
+            }
         }
 
         /// <summary>
@@ -286,17 +293,24 @@ namespace ModernWindow.PackageEngine.Classes
         /// <returns></returns>
         public async Task RemoveFromIgnoredUpdatesAsync()
         {
-            string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-            JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
-            if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
+            try
             {
-                IgnoredUpdatesJson.Remove(IgnoredId);
-                await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
+
+                string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
+                JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+                if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
+                {
+                    IgnoredUpdatesJson.Remove(IgnoredId);
+                    await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
+                }
+
+                GetInstalledPackage()?.SetTag(PackageTag.Default);
             }
-
-            GetInstalledPackage()?.SetTag(PackageTag.Default);
-
-        }
+            catch (Exception ex)
+            {
+                AppTools.Log(ex);
+            }
+}
 
         /// <summary>
         /// Returns true if the package's updates are ignored. If the version parameter
@@ -308,12 +322,20 @@ namespace ModernWindow.PackageEngine.Classes
         /// <returns></returns>
         public async Task<bool> HasUpdatesIgnoredAsync(string Version = "*")
         {
-            string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-            JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
-            if (IgnoredUpdatesJson.ContainsKey(IgnoredId) && (IgnoredUpdatesJson[IgnoredId].ToString() == "*" || IgnoredUpdatesJson[IgnoredId].ToString() == Version))
-                return true;
-            else
+            try
+            {
+                string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
+                JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+                if (IgnoredUpdatesJson.ContainsKey(IgnoredId) && (IgnoredUpdatesJson[IgnoredId].ToString() == "*" || IgnoredUpdatesJson[IgnoredId].ToString() == Version))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                AppTools.Log(ex);
                 return false;
+            }
             
         }
 
@@ -325,12 +347,20 @@ namespace ModernWindow.PackageEngine.Classes
         /// <returns></returns>
         public async Task<string> GetIgnoredUpdatesVersionAsync()
         {
-            string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-            JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
-            if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
-                return IgnoredUpdatesJson[IgnoredId].ToString();
-            else
+            try 
+            { 
+                string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
+                JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+                if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
+                    return IgnoredUpdatesJson[IgnoredId].ToString();
+                else
+                    return "";
+            }
+            catch (Exception ex)
+            {
+                AppTools.Log(ex);
                 return "";
+            }
         }
 
         /// <summary>
