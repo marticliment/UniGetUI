@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
@@ -57,7 +58,10 @@ namespace ModernWindow
                 var stackTrace = $"Stack Trace: \n{e.Exception.StackTrace}";
                 AppTools.Log(message);
                 AppTools.Log(stackTrace);
-                AppTools.ReportFatalException(e.Exception);
+                if(Environment.GetCommandLineArgs().Contains("--report-all-errors"))
+                    AppTools.ReportFatalException(e.Exception);
+                e.Handled = true;
+                // TODO: show a message box to the user ?
             };
         }
 

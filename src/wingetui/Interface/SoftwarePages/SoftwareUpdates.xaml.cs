@@ -622,9 +622,12 @@ namespace ModernWindow.Interface
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
 
-            PackageDetails.Click += (s, e) => { _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update); };
+            PackageDetails.Click += (s, e) => {
+                if (PackageList.SelectedItem != null) 
+                    _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update); 
+            };
+            
             HelpButton.Click += (s, e) => { Tools.App.MainWindow.NavigationPage.ShowHelp(); };
-
 
             InstallationSettings.Click += async (s, e) =>
             {
@@ -663,7 +666,10 @@ namespace ModernWindow.Interface
                             new InstallationOptions(package) { InteractiveInstallation = true }));
             };
 
-            SharePackage.Click += (s, e) => { Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); };
+            SharePackage.Click += (s, e) => { 
+                if (PackageList.SelectedItem != null) 
+                    Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); 
+            };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };

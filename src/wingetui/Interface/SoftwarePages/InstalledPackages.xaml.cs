@@ -558,7 +558,11 @@ namespace ModernWindow.Interface
             foreach (AppBarButton toolButton in Icons.Keys)
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
-            PackageDetails.Click += (s, e) => { _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall); };
+            PackageDetails.Click += (s, e) => { 
+                if (PackageList.SelectedItem != null) 
+                    _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall); 
+            };
+            
             ExportSelection.Click += ExportSelection_Click;
             HelpButton.Click += (s, e) => { Tools.App.MainWindow.NavigationPage.ShowHelp(); };
 
@@ -581,7 +585,10 @@ namespace ModernWindow.Interface
             UninstallAsAdmin.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), AsAdmin: true); };
             UninstallInteractive.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), Interactive: true); };
 
-            SharePackage.Click += (s, e) => { Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); };
+            SharePackage.Click += (s, e) => { 
+                if(PackageList.SelectedItem != null) 
+                    Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); 
+            };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };

@@ -482,7 +482,6 @@ namespace ModernWindow.Interface
 
                 foreach (BundledPackage package in FilteredPackages.ToArray())
                     if (package.IsChecked && package.IsValid)
-                        // Install packages
                         Tools.AddOperationToList(new InstallPackageOperation(package.Package));
 
             };
@@ -498,7 +497,10 @@ namespace ModernWindow.Interface
                 SaveFile();
             };
 
-            SharePackage.Click += (s, e) => { Tools.App.MainWindow.SharePackage((PackageList.SelectedItem as BundledPackage).Package); };
+            SharePackage.Click += (s, e) => {
+                Tools.App.MainWindow.SharePackage((null as BundledPackage).Package);
+                if (PackageList.SelectedItem as BundledPackage != null)
+                    Tools.App.MainWindow.SharePackage((PackageList.SelectedItem as BundledPackage).Package); };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
