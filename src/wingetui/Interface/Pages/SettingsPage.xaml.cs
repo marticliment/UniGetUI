@@ -71,9 +71,9 @@ namespace ModernWindow.Interface
             }
             UpdatesCheckIntervalSelector.ShowAddedItems();
 
-            ThemeSelector.AddItem("Light", "light");
-            ThemeSelector.AddItem("Dark", "dark");
-            ThemeSelector.AddItem("Follow system color scheme", "auto");
+            ThemeSelector.AddItem(Tools.AutoTranslated("Light"), "light");
+            ThemeSelector.AddItem(Tools.AutoTranslated("Dark"), "dark");
+            ThemeSelector.AddItem(Tools.AutoTranslated("Follow system color scheme"), "auto");
             ThemeSelector.ShowAddedItems();
 
             // Backup Section
@@ -115,37 +115,37 @@ namespace ModernWindow.Interface
             }
 
 
-            ButtonCard Winget_ResetSources = new() { Text = "Reset Winget sources (might help if no packages are listed", ButtonText = "Reset" };
+            ButtonCard Winget_ResetSources = new() { Text = Tools.AutoTranslated("Reset Winget sources (might help if no packages are listed"), ButtonText = Tools.AutoTranslated("Reset") };
             Winget_ResetSources.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), "Resetting Winget sources - WingetUI", RunAsAdmin: true);
+                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), Tools.AutoTranslated("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
             };
 
             ExtraSettingsCards[Tools.App.Winget].Add(Winget_ResetSources);
 
-            ButtonCard Scoop_Install = new() { Text = "Install Scoop", ButtonText = "Install" };
+            ButtonCard Scoop_Install = new() { Text = Tools.AutoTranslated("Install Scoop"), ButtonText = Tools.AutoTranslated("Install") };
             Scoop_Install.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"), "Scoop Installer - WingetUI");
+                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"), Tools.AutoTranslated("Scoop Installer - WingetUI"));
                 PackageManagerExpanders[Tools.App.Scoop].ShowRestartRequiredBanner();
             };
-            ButtonCard Scoop_Uninstall = new() { Text = "Uninstall Scoop (and its packages)", ButtonText = "Uninstall" };
+            ButtonCard Scoop_Uninstall = new() { Text = Tools.AutoTranslated("Uninstall Scoop (and its packages)"), ButtonText = "Uninstall" };
             Scoop_Uninstall.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"), "Scoop Uninstaller - WingetUI");
+                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"), Tools.AutoTranslated("Scoop Uninstaller - WingetUI"));
                 PackageManagerExpanders[Tools.App.Scoop].ShowRestartRequiredBanner();
             };
-            ButtonCard Scoop_ResetAppCache = new() { Text = "Run cleanup and clear cache", ButtonText = "Run" };
+            ButtonCard Scoop_ResetAppCache = new() { Text = Tools.AutoTranslated("Run cleanup and clear cache"), ButtonText = "Run" };
             Scoop_ResetAppCache.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"), "Clearing scoop cache - WingetUI", RunAsAdmin: true);
+                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"), Tools.Translate("Clearing scoop cache - WingetUI"), RunAsAdmin: true);
             };
 
             ExtraSettingsCards[Tools.App.Scoop].Add(Scoop_Install);
             ExtraSettingsCards[Tools.App.Scoop].Add(Scoop_Uninstall);
             ExtraSettingsCards[Tools.App.Scoop].Add(Scoop_ResetAppCache);
 
-            CheckboxCard Chocolatey_SystemChoco = new() { Text = "Use system Chocolatey", SettingName = "UseSystemChocolatey" };
+            CheckboxCard Chocolatey_SystemChoco = new() { Text = Tools.AutoTranslated("Use system Chocolatey"), SettingName = "UseSystemChocolatey" };
             Chocolatey_SystemChoco.StateChanged += (s, e) =>
             {
                 PackageManagerExpanders[Tools.App.Choco].ShowRestartRequiredBanner();
@@ -262,7 +262,7 @@ namespace ModernWindow.Interface
 
                 CheckboxCard AdminCard = new()
                 {
-                    Text = "Always run {pm} operations with administrator rights",
+                    Text = Tools.AutoTranslated("Always run {pm} operations with administrator rights"),
                     SettingName = "AlwaysElevate" + Manager.Name,
                 };
                 AdminCard._checkbox.Content = AdminCard._checkbox.Content.ToString().Replace("{pm}", Manager.Name);
@@ -270,7 +270,7 @@ namespace ModernWindow.Interface
 
                 CheckboxCard ParallelCard = new()
                 {
-                    Text = "Allow {pm} operations to be performed in parallel",
+                    Text = Tools.AutoTranslated("Allow {pm} operations to be performed in parallel"),
                     SettingName = "AlwaysElevate" + Manager.Name,
                 };
                 ParallelCard._checkbox.Content = ParallelCard._checkbox.Content.ToString().Replace("{pm}", Manager.Name);
@@ -333,7 +333,7 @@ namespace ModernWindow.Interface
             try
             {
                 var picker = new Pickers.FileSavePicker(Tools.App.MainWindow.GetWindowHandle());
-                var file = picker.Show(new List<string> { "*.json" }, "WingetUI Settings.json");
+                var file = picker.Show(new List<string> { "*.json" }, Tools.Translate("WingetUI Settings") + ".json");
 
                 if (file != String.Empty)
                 {
@@ -400,7 +400,7 @@ namespace ModernWindow.Interface
             ResetBackupDirectory.IsEnabled = false;
         }
 
-        private async void ChangeBackupDirectory_Click(object sender, dynamic e)
+        private void ChangeBackupDirectory_Click(object sender, dynamic e)
         {
 
             var openPicker = new Pickers.FolderPicker(Tools.App.MainWindow.GetWindowHandle());

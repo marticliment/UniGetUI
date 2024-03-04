@@ -114,7 +114,7 @@ namespace ModernWindow.Interface
                 }
             };
 
-            PackageList.KeyUp += async (s, e) =>
+            PackageList.KeyUp += (s, e) =>
             {
                 if (e.Key == Windows.System.VirtualKey.Enter && PackageList.SelectedItem != null)
                 {
@@ -217,7 +217,7 @@ namespace ModernWindow.Interface
             LocalPackagesNode.Children.Clear();
             AppTools.Instance.App.MainWindow.NavigationPage.BundleBadge.Visibility = Visibility.Collapsed;
             FilterPackages("");
-            BackgroundText.Text = "No packages have been added yet";
+            BackgroundText.Text = Tools.AutoTranslated("No packages have been added yet");
             BackgroundText.Visibility = Visibility.Visible;
         }
 
@@ -299,14 +299,14 @@ namespace ModernWindow.Interface
                 {
                     if (Packages.Count() == 0)
                     {
-                        BackgroundText.Text = SourcesPlaceholderText.Text = "We couldn't find any package";
-                        SourcesPlaceholderText.Text = "No sources found";
-                        MainSubtitle.Text = "No packages found";
+                        BackgroundText.Text = SourcesPlaceholderText.Text = Tools.AutoTranslated("We couldn't find any package");
+                        SourcesPlaceholderText.Text = Tools.AutoTranslated("No packages found");
+                        MainSubtitle.Text = Tools.AutoTranslated("No packages found");
                     }
                     else
                     {
-                        BackgroundText.Text = "No results were found matching the input criteria";
-                        SourcesPlaceholderText.Text = "No packages were found";
+                        BackgroundText.Text = Tools.AutoTranslated("No results were found matching the input criteria");
+                        SourcesPlaceholderText.Text = Tools.AutoTranslated("No packages were found");
                         MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
                     }
                     BackgroundText.Visibility = Visibility.Visible;
@@ -339,7 +339,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            MainTitle.Text = "Package Bundles";
+            MainTitle.Text = Tools.AutoTranslated("Package Bundles");
             HeaderIcon.Glyph = "\uF133";
             CheckboxHeader.Content = " ";
             NameHeader.Content = Tools.Translate("Package Name");
@@ -401,16 +401,16 @@ namespace ModernWindow.Interface
             Dictionary<AppBarButton, string> Labels = new()
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
-                { NewBundle,              "New bundle" },
-                { InstallPackages,        "Install selection" },
-                { OpenBundle,             "Open existing bundle" },
-                { RemoveSelected,         "Remove selection from bundle" },
-                { ExportBundle,           "Save bundle as" },
-                { PackageDetails,         " Package details" },
-                { SharePackage,           " Share" },
-                { SelectAll,              " Select all" },
-                { SelectNone,             " Clear selection" },
-                { HelpButton,             "Help" }
+                { NewBundle,              Tools.Translate("New bundle") },
+                { InstallPackages,        Tools.Translate("Install selection") },
+                { OpenBundle,             Tools.Translate("Open existing bundle") },
+                { RemoveSelected,         Tools.Translate("Remove selection from bundle") },
+                { ExportBundle,           Tools.Translate("Save bundle as") },
+                { PackageDetails,         " " + Tools.Translate("Package details") },
+                { SharePackage,           " " + Tools.Translate("Share") },
+                { SelectAll,              " " + Tools.Translate("Select all") },
+                { SelectNone,             " " + Tools.Translate("Clear selection") },
+                { HelpButton,             Tools.Translate("Help") }
             };
 
             foreach (AppBarButton toolButton in Labels.Keys)
@@ -418,7 +418,7 @@ namespace ModernWindow.Interface
                 toolButton.IsCompact = Labels[toolButton][0] == ' ';
                 if (toolButton.IsCompact)
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
-                toolButton.Label = Tools.Translate(Labels[toolButton].Trim());
+                toolButton.Label = Labels[toolButton].Trim();
             }
 
             Dictionary<AppBarButton, string> Icons = new()
@@ -724,7 +724,7 @@ namespace ModernWindow.Interface
                     exportable.packages.Add(package.AsSerializable());
 
             AppTools.Log("Finished loading serializable objects. Serializing with format " + formatType.ToString());
-            string ExportableData = "";
+            string ExportableData;
 
             if (formatType == BundleFormatType.JSON)
                 ExportableData = JsonSerializer.Serialize<SerializableBundle_v1>(exportable, new JsonSerializerOptions() { WriteIndented = true });
@@ -756,7 +756,7 @@ namespace ModernWindow.Interface
             {
                 // Get file 
                 // Save file
-                var file = (new Pickers.FileSavePicker(Tools.App.MainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, "WingetUI package bundle.json") ;
+                var file = (new Pickers.FileSavePicker(Tools.App.MainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, Tools.Translate("Package bundle") + ".json") ;
                 if (file != String.Empty)
                 {
                     // Loading dialog

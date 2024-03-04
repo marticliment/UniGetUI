@@ -25,14 +25,18 @@ def get_all_strings():
     translation_strings: list[str] = []
 
     # Find c# translation strings
-    regex = r'(?<=Translate\(["\']).+?(?=["\']\))'
+    regex1 = r'(?<=Translate\(["\']).+?(?=["\']\))'
+    regex2 = r'(?<=AutoTranslated\(["\']).+?(?=["\']\))'
     for (dirpath, _dirnames, filenames) in os.walk(".", topdown=True):
         for file in filenames:
             _file_name, file_ext = os.path.splitext(file)
             if (file_ext != ".cs"):
                 continue
             with open(os.path.join(dirpath, file), "r", encoding="utf-8") as f:
-                matches: list[str] = re.findall(regex, f.read())
+                matches: list[str] = re.findall(regex1, f.read())
+                for match in matches:
+                    translation_strings.append(match.encode('raw_unicode_escape').decode('unicode_escape'))
+                matches: list[str] = re.findall(regex2, f.read())
                 for match in matches:
                     translation_strings.append(match.encode('raw_unicode_escape').decode('unicode_escape'))
 

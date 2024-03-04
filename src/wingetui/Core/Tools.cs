@@ -146,9 +146,24 @@ namespace ModernWindow.Structures
             }
         }
 
+        /// <summary>
+        /// Translate a string to the current language
+        /// </summary>
+        /// <param name="text">The string to translate</param>
+        /// <returns>The translated string if available, the original string otherwise</returns>
         public string Translate(string text)
         {
             return LanguageEngine.Translate(text);
+        }
+
+        /// <summary>
+        /// Dummy function to capture the strings that need to be translated but the translation is handled by a custom widget
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public string AutoTranslated(string text)
+        {
+            return text;
         }
 
         public void RestartApp()

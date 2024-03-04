@@ -595,7 +595,7 @@
   "{pcName} installed packages" : "Paquets instal·lats de {pcName}",
   "{pm} could not be found" : "El {pm} no s'ha pogut trobar",
   "{pm} found: {state}" : "{pm} trobat: {state}",
-  "{pm} is disabled" : "{0} està desactivat",
+  "{pm} is disabled" : "{pm} està desactivat",
   "{pm} is enabled and ready to go" : "{pm} està activat i llest",
   "{pm} package manager specific preferences" : "Preferències específiques de l'administrador de paquets {pm}",
   "{pm} preferences" : "Preferències del {pm}",
