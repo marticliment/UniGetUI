@@ -12,7 +12,7 @@ def get_icon_url(package_data):
 
 def get_status_code_for_url(url):
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=60)
         return response.status_code
     except requests.exceptions.ConnectionError:
         time.sleep(0.1)  # If a ConnectionError occurs, wait and try again
