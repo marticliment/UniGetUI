@@ -227,6 +227,7 @@ To mitigate the risks of downloading malware, Microsoft has implemented a few ch
 `--daemon`: Start WingetUI without spawnign a new window. WingetUI will run minimized on the system tray. WingetUI is called with this parameter when launched at startup. **Autostart WingetUI in the notifications area** must be enabled in order for this paramater to work.<br>
 `--welcomewizard` (or simply `--welcome`): Show a window to choose which package managers to use.<br>
 `--updateapps`: Enable automatic install of available updates.
+`--report-all-errors`: May help debug crashes (WingetUI 3.0 and newer)
 
 ### Installer command-line parameters:
 The installer is inno-setup based, so it supports regular Inno Setup command-line parameters. Additionally, it does also support the following ones:
