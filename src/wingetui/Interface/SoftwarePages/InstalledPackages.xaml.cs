@@ -623,7 +623,7 @@ namespace ModernWindow.Interface
                 return;
             if (packages.Length == 1)
             {
-                ConfirmAndUninstall(packages[0], new InstallationOptions(packages[0]));
+                ConfirmAndUninstall(packages[0], new InstallationOptions(packages[0]) { RunAsAdministrator = AsAdmin, InteractiveInstallation = Interactive, RemoveDataOnUninstall = RemoveData });
                 return;
             }
 
