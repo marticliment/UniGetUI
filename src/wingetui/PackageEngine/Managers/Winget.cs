@@ -124,6 +124,10 @@ namespace ModernWindow.PackageEngine.Managers
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 output += line + "\n";
+
+                if (line.Contains("have pins"))
+                    continue;
+                
                 if (!DashesPassed && line.Contains("---"))
                 {
                     string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
