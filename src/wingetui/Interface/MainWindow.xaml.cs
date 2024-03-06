@@ -1,5 +1,7 @@
 using CommunityToolkit.WinUI.Notifications;
 using H.NotifyIcon;
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -299,6 +301,20 @@ namespace ModernWindow
                 ContentRoot.RequestedTheme = ElementTheme.Default;
             }
 
+            if (AppWindowTitleBar.IsCustomizationSupported())
+            {
+                if (Tools.ThemeListener.CurrentTheme == ApplicationTheme.Light)
+                    AppWindow.TitleBar.ButtonForegroundColor = Colors.Black;
+                else
+                    AppWindow.TitleBar.ButtonForegroundColor = Colors.White;
+            }
+            else
+            {
+                AppTools.Log("Taskbar foreground color customization is not available");
+            }
+
+
+
         }
 
         public void ShowLoadingDialog(string text)
@@ -370,6 +386,7 @@ namespace ModernWindow
 
                 while (DialogQueue[0] != dialog)
                     await Task.Delay(100);
+                dialog.RequestedTheme = ContentRoot.RequestedTheme;
                 ContentDialogResult result = await dialog.ShowAsync();
                 DialogQueue.Remove(dialog);
                 return result;
