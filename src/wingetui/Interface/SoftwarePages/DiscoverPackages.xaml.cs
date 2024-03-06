@@ -222,7 +222,7 @@ namespace ModernWindow.Interface
 
             if (QueryBlock.Text == null || QueryBlock.Text.Length < 3)
             {
-                MainSubtitle.Text = "Found packages: " + Packages.Count().ToString();
+                MainSubtitle.Text = Tools.AutoTranslated("Found packages: ") + Packages.Count().ToString();
                 LoadingProgressBar.Visibility = Visibility.Collapsed;
                 Packages.Clear();
                 FilteredPackages.Clear();
@@ -245,12 +245,12 @@ namespace ModernWindow.Interface
                 if (InitialQuery != QueryBlock.Text.Trim())
                     return;
 
-                MainSubtitle.Text = "Loading...";
-                BackgroundText.Text = "Loading...";
+                MainSubtitle.Text = Tools.AutoTranslated("Loading...");
+                BackgroundText.Text = Tools.AutoTranslated("Loading...");
                 LoadingProgressBar.Visibility = Visibility.Visible;
                 SourcesPlaceholderText.Visibility = Visibility.Visible;
                 SourcesTreeViewGrid.Visibility = Visibility.Collapsed;
-                SourcesPlaceholderText.Text = "Loading...";
+                SourcesPlaceholderText.Text = Tools.AutoTranslated("Loading...");
 
                 Packages.Clear();
                 FilteredPackages.Clear();
@@ -400,16 +400,16 @@ namespace ModernWindow.Interface
                 if (!StillLoading)
                 {
                     if (QueryBlock.Text == "")
-                        BackgroundText.Text = SourcesPlaceholderText.Text = "Search for packages to start";
+                        BackgroundText.Text = SourcesPlaceholderText.Text = Tools.AutoTranslated("Search for packages to start");
                     else if (QueryBlock.Text.Length < 3)
                     {
-                        BackgroundText.Text = "Please enter at least 3 characters";
-                        SourcesPlaceholderText.Text = "Search for packages to start";
+                        BackgroundText.Text = Tools.AutoTranslated("Please enter at least 3 characters");
+                        SourcesPlaceholderText.Text = Tools.AutoTranslated("Search for packages to start");
                     }
                     else
                     {
-                        BackgroundText.Text = "No results were found matching the input criteria";
-                        SourcesPlaceholderText.Text = "No packages were found";
+                        BackgroundText.Text = Tools.AutoTranslated("No results were found matching the input criteria");
+                        SourcesPlaceholderText.Text = Tools.AutoTranslated("No packages were found");
                         MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (MatchingList.Length - HiddenPackagesDueToSource).ToString());
                     }
                     BackgroundText.Visibility = Visibility.Visible;
@@ -441,7 +441,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            MainTitle.Text = "Discover Packages";
+            MainTitle.Text = Tools.AutoTranslated("Discover Packages");
             HeaderIcon.Glyph = "\uF6FA";
             CheckboxHeader.Content = " ";
             NameHeader.Content = Tools.Translate("Package Name");
@@ -498,17 +498,17 @@ namespace ModernWindow.Interface
             Dictionary<AppBarButton, string> Labels = new()
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
-                { InstallSelected,      "Install selected packages" },
-                { InstallAsAdmin,       " Install as administrator" },
-                { InstallSkipHash,      " Skip integrity checks" },
-                { InstallInteractive,   " Interactive installation" },
-                { InstallationSettings, "Installation options" },
-                { PackageDetails,       " Package details" },
-                { SharePackage,         " Share" },
-                { SelectAll,            " Select all" },
-                { SelectNone,           " Clear selection" },
-                { ExportSelection,      "Add selection to bundle" },
-                { HelpButton,           "Help" }
+                { InstallSelected,        Tools.Translate("Install selected packages") },
+                { InstallAsAdmin,         " " + Tools.Translate("Install as administrator") },
+                { InstallSkipHash,        " " + Tools.Translate("Skip integrity checks") },
+                { InstallInteractive,     " " + Tools.Translate("Interactive installation") },
+                { InstallationSettings,   Tools.Translate("Installation options") },
+                { PackageDetails,         " " + Tools.Translate("Package details") },
+                { SharePackage,           " " + Tools.Translate("Share") },
+                { SelectAll,              " " + Tools.Translate("Select all") },
+                { SelectNone,             " " + Tools.Translate("Clear selection") },
+                { ExportSelection,        Tools.Translate("Add selection to bundle") },
+                { HelpButton,             Tools.Translate("Help") }
             };
 
             foreach (AppBarButton toolButton in Labels.Keys)
@@ -516,7 +516,7 @@ namespace ModernWindow.Interface
                 toolButton.IsCompact = Labels[toolButton][0] == ' ';
                 if (toolButton.IsCompact)
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
-                toolButton.Label = Tools.Translate(Labels[toolButton].Trim());
+                toolButton.Label = Labels[toolButton].Trim();
             }
 
             Dictionary<AppBarButton, string> Icons = new()
@@ -537,7 +537,11 @@ namespace ModernWindow.Interface
             foreach (AppBarButton toolButton in Icons.Keys)
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
-            PackageDetails.Click += (s, e) => { _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Install); };
+            PackageDetails.Click += (s, e) => { 
+                if (PackageList.SelectedItem != null) 
+                    _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Install);
+            };
+            
             ExportSelection.Click += ExportSelection_Click;
             HelpButton.Click += (s, e) => { Tools.App.MainWindow.NavigationPage.ShowHelp(); };
 
@@ -574,7 +578,10 @@ namespace ModernWindow.Interface
                             new InstallationOptions(package) { InteractiveInstallation = true }));
             };
 
-            SharePackage.Click += (s, e) => { Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); };
+            SharePackage.Click += (s, e) => {
+                if (PackageList.SelectedItem != null) 
+                    Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); 
+            };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };

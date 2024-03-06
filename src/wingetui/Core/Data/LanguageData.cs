@@ -61,25 +61,34 @@ namespace ModernWindow.Core.Data
 
         public Dictionary<string, string> LoadLanguageFile(string LangKey, bool ForceBundled = false)
         {
-            Dictionary<string, string> LangDict = new();
-            string LangFileToLoad = Path.Join(CoreData.WingetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
-            AppTools.Log(LangFileToLoad);
-
-            if (!File.Exists(LangFileToLoad) || AppTools.GetSettings_Static("DisableLangAutoUpdater"))
-                ForceBundled = true;
-
-            if (ForceBundled)
+            try
             {
-                LangFileToLoad = Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
+                Dictionary<string, string> LangDict = new();
+                string LangFileToLoad = Path.Join(CoreData.WingetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
                 AppTools.Log(LangFileToLoad);
+
+                if (!File.Exists(LangFileToLoad) || AppTools.GetSettings_Static("DisableLangAutoUpdater"))
+                    ForceBundled = true;
+
+                if (ForceBundled)
+                {
+                    LangFileToLoad = Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
+                    AppTools.Log(LangFileToLoad);
+                }
+
+                LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject).ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
+
+                if (!AppTools.GetSettings_Static("DisableLangAutoUpdater"))
+                    _ = UpdateLanguageFile(LangKey);
+
+                return LangDict;
             }
-
-            LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject).ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
-
-            if (!AppTools.GetSettings_Static("DisableLangAutoUpdater"))
-                _ = UpdateLanguageFile(LangKey);
-
-            return LangDict;
+            catch (Exception e)
+            {
+                AppTools.Log($"LoadLanguageFile Failed for LangKey={LangKey}, ForceBundled={ForceBundled}");
+                AppTools.Log(e);
+                return new Dictionary<string, string>();
+            }
         }
 
         public async Task UpdateLanguageFile(string LangKey)

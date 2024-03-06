@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Height="72" Width="64"
+    Height="Auto" Width="64"
     xmlns:widgets="using:ModernWindow.Interface.Widgets" xmlns:animations="using:CommunityToolkit.WinUI.Animations">
 
 
@@ -149,7 +149,7 @@
             <Grid Margin="0" Padding="0" Name="VariableGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
-                    <RowDefinition Height="26"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <FontIcon 
                 Grid.Row="0" x:Name="IconBlock"
@@ -157,9 +157,10 @@
                 <TextBlock
                     x:Name="TextBlock"
                     FontSize="11" Grid.Row="1" 
-                    Height="32" VerticalAlignment="Center"
+                    MinHeight="28" VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    TextWrapping="Wrap" Padding="2,0,2,0"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" Padding="2,4,2,4"
                 />
             </Grid>
         </ToggleButton>

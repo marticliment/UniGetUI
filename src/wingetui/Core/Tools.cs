@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -101,16 +102,22 @@ namespace ModernWindow.Structures
 
         public static void SetSettings_Static(string setting, bool value)
         {
-            EnsureTempDir();
-            if (value)
-            {
-                if (!File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
-                    File.WriteAllText(Path.Join(CoreData.WingetUIDataDirectory, setting), "");
+            try { 
+                EnsureTempDir();
+                if (value)
+                {
+                    if (!File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
+                        File.WriteAllText(Path.Join(CoreData.WingetUIDataDirectory, setting), "");
+                }
+                else
+                {
+                    if (File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
+                        File.Delete(Path.Join(CoreData.WingetUIDataDirectory, setting));
+                }
             }
-            else
+            catch (Exception e)
             {
-                if (File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
-                    File.Delete(Path.Join(CoreData.WingetUIDataDirectory, setting));
+                Log($"CRITICAL ERROR: CANNOT SET SETTING FOR setting={setting} enabled={value}: " + e.Message);
             }
         }
         public string GetSettingsValue(string setting)
@@ -128,13 +135,35 @@ namespace ModernWindow.Structures
 
         public static void SetSettingsValue_Static(string setting, string value)
         {
-            EnsureTempDir();
-            File.WriteAllText(Path.Join(CoreData.WingetUIDataDirectory, setting), value);
+            try
+            {
+                EnsureTempDir();
+                File.WriteAllText(Path.Join(CoreData.WingetUIDataDirectory, setting), value);
+            }
+            catch (Exception e)
+            {
+                Log($"CRITICAL ERROR: CANNOT SET SETTING VALUE FOR setting={setting} value={value}: " + e.Message);
+            }
         }
 
+        /// <summary>
+        /// Translate a string to the current language
+        /// </summary>
+        /// <param name="text">The string to translate</param>
+        /// <returns>The translated string if available, the original string otherwise</returns>
         public string Translate(string text)
         {
             return LanguageEngine.Translate(text);
+        }
+
+        /// <summary>
+        /// Dummy function to capture the strings that need to be translated but the translation is handled by a custom widget
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public string AutoTranslated(string text)
+        {
+            return text;
         }
 
         public void RestartApp()
@@ -403,5 +432,11 @@ Crash Traceback:
                 UpdateWingetUIIfPossible(round + 1);
             }
         }
+        public bool IsAdministrator()
+        {
+            return (new WindowsPrincipal(WindowsIdentity.GetCurrent()))
+                      .IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
     }
 }

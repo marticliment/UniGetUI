@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
 using YamlDotNet.Serialization;
@@ -56,7 +58,10 @@ namespace ModernWindow
                 var stackTrace = $"Stack Trace: \n{e.Exception.StackTrace}";
                 AppTools.Log(message);
                 AppTools.Log(stackTrace);
-                AppTools.ReportFatalException(e.Exception);
+                if(Environment.GetCommandLineArgs().Contains("--report-all-errors"))
+                    AppTools.ReportFatalException(e.Exception);
+                e.Handled = true;
+                // TODO: show a message box to the user ?
             };
         }
 
@@ -195,11 +200,16 @@ namespace ModernWindow
 
 
             var ManagersMetaTask = Task.WhenAll(initializeTasks);
-            await ManagersMetaTask.WaitAsync(TimeSpan.FromMilliseconds(ManagerLoadTimeout));
-            if (ManagersMetaTask.IsCompletedSuccessfully == false)
+            try
             {
-                AppTools.Log("Timeout: Not all package managers have finished initializing.");
+                await ManagersMetaTask.WaitAsync(TimeSpan.FromMilliseconds(ManagerLoadTimeout));
             }
+            catch (Exception e)
+            {
+                AppTools.Log(e);
+            }
+            if (ManagersMetaTask.IsCompletedSuccessfully == false)
+                AppTools.Log("Timeout: Not all package managers have finished initializing.");
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs args)

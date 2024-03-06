@@ -74,7 +74,7 @@ namespace ModernWindow.PackageEngine.Managers
                     StartInfo = new ProcessStartInfo()
                     {
                         FileName = path,
-                        Arguments = Properties.ExecutableCallArgs + " install dotnet-tools-outdated.exe",
+                        Arguments = Properties.ExecutableCallArgs + " install --global dotnet-tools-outdated",
                         UseShellExecute = true,
                         CreateNoWindow = true,
                     }

@@ -23,7 +23,7 @@
             <widgets:BetterMenuItem Text="Operation history" IconName="list" Name="OperationHistoryMenu" Click="OperationHistoryMenu_Click" />
             <MenuFlyoutSeparator Height="5"/>
             <widgets:BetterMenuItem x:Name="VersionMenuItem" IconName="info" IsEnabled="False" />
-            <widgets:BetterMenuItem Text="Release Notes" IconName="megaphone" Name="ReleaseNotesMenu" Click="ReleaseNotesMenu_Click" />
+            <widgets:BetterMenuItem Text="Release notes" IconName="megaphone" Name="ReleaseNotesMenu" Click="ReleaseNotesMenu_Click" />
             <MenuFlyoutSeparator Height="5"/>
             <widgets:BetterMenuItem Text="Quit WingetUI" IconName="menu_close" Name="QuitWingetUI" Click="QuitWingetUI_Click" />
         </widgets:BetterMenu>

@@ -33,7 +33,7 @@ namespace ModernWindow.Interface
         protected AppTools Tools = AppTools.Instance;
 
         protected TranslatedTextBlock MainTitle;
-        protected TranslatedTextBlock MainSubtitle;
+        protected TextBlock MainSubtitle;
         protected ListView PackageList;
         protected ProgressBar LoadingProgressBar;
         protected MenuFlyout ContextMenu;
@@ -41,6 +41,8 @@ namespace ModernWindow.Interface
         private bool IsDescending = true;
         private bool Initialized = false;
         private bool AllSelected = true;
+
+        private DateTime LastChecked = DateTime.Now;
 
 
         public string InstantSearchSettingString = "DisableInstantSearchUpdatesTab";
@@ -143,7 +145,7 @@ namespace ModernWindow.Interface
 
             GenerateToolBar();
             LoadInterface();
-            _ = LoadPackages();
+            _ = LoadPackages(ManualCheck: false);
         }
 
         protected void AddPackageToSourcesList(UpgradablePackage package)
@@ -209,7 +211,7 @@ namespace ModernWindow.Interface
          * 
          */
 
-        public async Task LoadPackages()
+        public async Task LoadPackages(bool ManualCheck = true)
         {
             if (!Initialized)
                 return;
@@ -217,12 +219,12 @@ namespace ModernWindow.Interface
             if (LoadingProgressBar.Visibility == Visibility.Visible)
                 return; // If already loading, don't load again
 
-            MainSubtitle.Text = "Loading...";
-            BackgroundText.Text = "Loading...";
+            MainSubtitle.Text = Tools.Translate("Loading...");
+            BackgroundText.Text = Tools.AutoTranslated("Loading...");
             BackgroundText.Visibility = Visibility.Visible;
             LoadingProgressBar.Visibility = Visibility.Visible;
             SourcesPlaceholderText.Visibility = Visibility.Visible;
-            SourcesPlaceholderText.Text = "Loading...";
+            SourcesPlaceholderText.Text = Tools.AutoTranslated("Loading...");
             SourcesTreeViewGrid.Visibility = Visibility.Collapsed;
 
             Packages.Clear();
@@ -280,10 +282,10 @@ namespace ModernWindow.Interface
                 }
             }
 
+            LastChecked = DateTime.Now;
+
             FilterPackages(QueryBlock.Text);
             LoadingProgressBar.Visibility = Visibility.Collapsed;
-
-
 
             if (Packages.Count > 0)
             {
@@ -296,7 +298,7 @@ namespace ModernWindow.Interface
                     if (Packages.Count == 1)
                     {
                         title = Tools.Translate("An update was found!");
-                        body = Tools.Translate("{0} is being updates to version {1}").Replace("{0}", Packages[0].Name).Replace("{1}", Packages[0].NewVersion);
+                        body = Tools.Translate("{0} is being updated to version {1}").Replace("{0}", Packages[0].Name).Replace("{1}", Packages[0].NewVersion);
                         attribution = Tools.Translate("You have currently version {0} installed").Replace("{0}", Packages[0].Version);
                     }
                     else
@@ -362,7 +364,21 @@ namespace ModernWindow.Interface
                 }
             }
 
-            // TODO: wait interval and check again
+            if (!Tools.GetSettings("DisableAutoCheckforUpdates") && !ManualCheck)
+            {
+                long waitTime = 3600;
+                try
+                {
+                    waitTime = long.Parse(Tools.GetSettingsValue("UpdatesCheckInterval"));
+                    AppTools.Log($"Starting check for updates wait interval with waitTime={waitTime}");
+                }
+                catch
+                {
+                    AppTools.Log("Invalid value for UpdatesCheckInterval, using default value of 3600 seconds");
+                }
+                await Task.Delay(TimeSpan.FromSeconds(waitTime));
+                _ = LoadPackages(ManualCheck: false);
+            }
         }
 
         public void UpdateAll()
@@ -454,15 +470,15 @@ namespace ModernWindow.Interface
                 {
                     if (Packages.Count() == 0)
                     {
-                        BackgroundText.Text = SourcesPlaceholderText.Text = "Hooray! No updates were found.";
-                        SourcesPlaceholderText.Text = "Everything is up to date";
-                        MainSubtitle.Text = "Everything is up to date";
+                        BackgroundText.Text = SourcesPlaceholderText.Text = Tools.AutoTranslated("Hooray! No updates were found.");
+                        SourcesPlaceholderText.Text = Tools.Translate("Everything is up to date");
+                        MainSubtitle.Text = Tools.Translate("Everything is up to date") + " " + Tools.Translate("(Last checked: {0})").Replace("{0}", LastChecked.ToString());
                     }
                     else
                     {
-                        BackgroundText.Text = "No results were found matching the input criteria";
-                        SourcesPlaceholderText.Text = "No packages were found";
-                        MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
+                        BackgroundText.Text = Tools.AutoTranslated("No results were found matching the input criteria");
+                        SourcesPlaceholderText.Text = Tools.AutoTranslated("No packages were found");
+                        MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString()) + " " + Tools.Translate("(Last checked: {0})").Replace("{0}", LastChecked.ToString());
                     }
                     BackgroundText.Visibility = Visibility.Visible;
                 }
@@ -471,7 +487,7 @@ namespace ModernWindow.Interface
             else
             {
                 BackgroundText.Visibility = Visibility.Collapsed;
-                MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
+                MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString()) + " " + Tools.Translate("(Last checked: {0})").Replace("{0}", LastChecked.ToString());
             }
 
             Tools.App.MainWindow.NavigationPage.UpdatesBadge.Visibility = Packages.Count() == 0 ? Visibility.Collapsed : Visibility.Visible;
@@ -502,7 +518,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            MainTitle.Text = "Software Updates";
+            MainTitle.Text = Tools.AutoTranslated("Software Updates");
             HeaderIcon.Glyph = "\uE895";
             HeaderIcon.FontWeight = new Windows.UI.Text.FontWeight(700);
             CheckboxHeader.Content = " ";
@@ -564,18 +580,18 @@ namespace ModernWindow.Interface
             Dictionary<AppBarButton, string> Labels = new()
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
-                { UpdateSelected,      "Update selected packages" },
-                { UpdateAsAdmin,       " Update as administrator" },
-                { UpdateSkipHash,      " Skip integrity checks" },
-                { UpdateInteractive,   " Interactive update" },
-                { InstallationSettings, " Installation options" },
-                { PackageDetails,       " Package details" },
-                { SharePackage,         " Share" },
-                { SelectAll,            " Select all" },
-                { SelectNone,           " Clear selection" },
-                { IgnoreSelected,       "Ignore selected packages" },
-                { ManageIgnored,        "Manage ignored updates" },
-                { HelpButton,           "Help" }
+                { UpdateSelected,       Tools.Translate("Update selected packages") },
+                { UpdateAsAdmin,        " " + Tools.Translate("Update as administrator") },
+                { UpdateSkipHash,       " " + Tools.Translate("Skip integrity checks") },
+                { UpdateInteractive,    " " + Tools.Translate("Interactive update") },
+                { InstallationSettings, " " + Tools.Translate("Installation options") },
+                { PackageDetails,       " " + Tools.Translate("Package details") },
+                { SharePackage,         " " + Tools.Translate("Share") },
+                { SelectAll,            " " + Tools.Translate("Select all") },
+                { SelectNone,           " " + Tools.Translate("Clear selection") },
+                { IgnoreSelected,       Tools.Translate("Ignore selected packages") },
+                { ManageIgnored,        Tools.Translate("Manage ignored updates") },
+                { HelpButton,           Tools.Translate("Help") }
             };
 
             foreach (AppBarButton toolButton in Labels.Keys)
@@ -583,15 +599,15 @@ namespace ModernWindow.Interface
                 toolButton.IsCompact = Labels[toolButton][0] == ' ';
                 if (toolButton.IsCompact)
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
-                toolButton.Label = Tools.Translate(Labels[toolButton].Trim());
+                toolButton.Label = Labels[toolButton].Trim();
             }
 
             Dictionary<AppBarButton, string> Icons = new()
             {
-                { UpdateSelected,      "menu_updates" },
-                { UpdateAsAdmin,       "runasadmin" },
-                { UpdateSkipHash,      "checksum" },
-                { UpdateInteractive,   "interactive" },
+                { UpdateSelected,       "menu_updates" },
+                { UpdateAsAdmin,        "runasadmin" },
+                { UpdateSkipHash,       "checksum" },
+                { UpdateInteractive,    "interactive" },
                 { InstallationSettings, "options" },
                 { PackageDetails,       "info" },
                 { SharePackage,         "share" },
@@ -606,9 +622,12 @@ namespace ModernWindow.Interface
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
 
-            PackageDetails.Click += (s, e) => { _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update); };
+            PackageDetails.Click += (s, e) => {
+                if (PackageList.SelectedItem != null) 
+                    _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update); 
+            };
+            
             HelpButton.Click += (s, e) => { Tools.App.MainWindow.NavigationPage.ShowHelp(); };
-
 
             InstallationSettings.Click += async (s, e) =>
             {
@@ -647,7 +666,10 @@ namespace ModernWindow.Interface
                             new InstallationOptions(package) { InteractiveInstallation = true }));
             };
 
-            SharePackage.Click += (s, e) => { Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); };
+            SharePackage.Click += (s, e) => { 
+                if (PackageList.SelectedItem != null) 
+                    Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); 
+            };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
@@ -740,7 +762,7 @@ namespace ModernWindow.Interface
 
         private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            if (!Initialized || (PackageList.SelectedItem as UpgradablePackage) == null)
                 return;
 
             if (await Tools.App.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as UpgradablePackage, OperationType.Update))

@@ -177,7 +177,6 @@ namespace ModernWindow.PackageEngine
 
             OutputDialog.Title = Tools.Translate("Live output");
             OutputDialog.CloseButtonText = Tools.Translate("Close");
-            OutputDialog.SecondaryButtonText = Tools.Translate("Copy and close");
 
 
             OutputDialog.SizeChanged += (s, e) =>

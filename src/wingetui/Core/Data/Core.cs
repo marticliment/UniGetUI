@@ -83,6 +83,9 @@ namespace ModernWindow.Core.Data
                         Directory.CreateDirectory(Path.GetDirectoryName(IconsAndScreenshotsFile));
 
                 Uri DownloadUrl = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/WebBasedData/screenshot-database-v2.json");
+                if (AppTools.GetSettings_Static("IconDataBaseURL"))
+                    DownloadUrl = new Uri(AppTools.GetSettingsValue_Static("IconDataBaseURL"));
+
                 using (WebClient client = new())
                 {
                     string fileContents = await client.DownloadStringTaskAsync(DownloadUrl);

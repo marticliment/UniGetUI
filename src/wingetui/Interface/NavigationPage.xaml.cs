@@ -10,6 +10,7 @@ using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.Graphics.DirectX.Direct3D11;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -66,6 +67,12 @@ namespace ModernWindow.Interface
             PageButtonReference.Add(BundlesPage, BundlesNavButton);
 
             DiscoverNavButton.ForceClick();
+
+            if (Tools.IsAdministrator() && !Tools.GetSettings("AlreadyWarnedAboutAdmin"))
+            {
+                Tools.SetSettings("AlreadyWarnedAboutAdmin", true);
+                WarnAboutAdminRights();
+            }
         }
 
         private void DiscoverNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
@@ -150,6 +157,27 @@ namespace ModernWindow.Interface
             UpdatesDialog.Content = null;
             UpdatesDialog = null;
         }
+
+        public async void WarnAboutAdminRights()
+        {
+            ContentDialog AdminDialog = new();
+            AdminDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+
+            while(this.XamlRoot == null)
+            {
+                await Task.Delay(100);
+            }
+
+            AdminDialog.XamlRoot = this.XamlRoot;
+            AdminDialog.PrimaryButtonText = Tools.Translate("I understand");
+            AdminDialog.DefaultButton = ContentDialogButton.Primary;
+            AdminDialog.Title = Tools.Translate("Administrator privileges");
+            AdminDialog.SecondaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
+            AdminDialog.Content = Tools.Translate("WingetUI has been ran as administrator, which is not recommended. When running WingetUI as administrator, EVERY operation launched from WingetUI will have administrator privileges. You can still use the program, but we highly recommend not running WingetUI with administrator privileges.");
+
+            await Tools.App.MainWindow.ShowDialogAsync(AdminDialog);
+        }
+
 
         public async Task<bool> ShowInstallationSettingsForPackageAndContinue(Package package, OperationType Operation)
         {

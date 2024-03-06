@@ -29,6 +29,12 @@ namespace ModernWindow.Interface
         {
             try
             {
+                if(AppTools.Instance.GetSettings("DisableWidgetsApi"))
+                {
+                    AppTools.Log("Widgets API is disabled");
+                    return;
+                }
+
                 __running = true;
                 NancyHost host;
                 try

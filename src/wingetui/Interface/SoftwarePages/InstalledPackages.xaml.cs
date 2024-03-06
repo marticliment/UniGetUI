@@ -224,13 +224,13 @@ namespace ModernWindow.Interface
             if (LoadingProgressBar.Visibility == Visibility.Visible)
                 return; // If already loading, don't load again
 
-            MainSubtitle.Text = "Loading...";
-            BackgroundText.Text = "Loading...";
+            MainSubtitle.Text = Tools.AutoTranslated("Loading...");
+            BackgroundText.Text = Tools.AutoTranslated("Loading...");
             BackgroundText.Visibility = Visibility.Visible;
             LoadingProgressBar.Visibility = Visibility.Visible;
             SourcesPlaceholderText.Visibility = Visibility.Visible;
             SourcesTreeViewGrid.Visibility = Visibility.Collapsed;
-            SourcesPlaceholderText.Text = "Loading...";
+            SourcesPlaceholderText.Text = Tools.AutoTranslated("Loading...");
 
             Packages.Clear();
             FilteredPackages.Clear();
@@ -418,14 +418,14 @@ namespace ModernWindow.Interface
                 {
                     if (Packages.Count() == 0)
                     {
-                        BackgroundText.Text = SourcesPlaceholderText.Text = "We couldn't find any package";
-                        SourcesPlaceholderText.Text = "No sources found";
-                        MainSubtitle.Text = "No packages found";
+                        BackgroundText.Text = SourcesPlaceholderText.Text = Tools.AutoTranslated("We couldn't find any package");
+                        SourcesPlaceholderText.Text = Tools.AutoTranslated("No sources found");
+                        MainSubtitle.Text = Tools.AutoTranslated("No packages found");
                     }
                     else
                     {
-                        BackgroundText.Text = "No results were found matching the input criteria";
-                        SourcesPlaceholderText.Text = "No packages were found";
+                        BackgroundText.Text = Tools.AutoTranslated("No results were found matching the input criteria");
+                        SourcesPlaceholderText.Text = Tools.AutoTranslated("No packages were found");
                         MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
                     }
                     BackgroundText.Visibility = Visibility.Visible;
@@ -458,7 +458,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized)
                 return;
-            MainTitle.Text = "Installed Packages";
+            MainTitle.Text = Tools.AutoTranslated("Installed Packages");
             HeaderIcon.Glyph = "\uE977";
             CheckboxHeader.Content = " ";
             NameHeader.Content = Tools.Translate("Package Name");
@@ -517,18 +517,18 @@ namespace ModernWindow.Interface
             Dictionary<AppBarButton, string> Labels = new()
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
-                { UninstallSelected,      "Uninstall selected packages" },
-                { UninstallAsAdmin,       " Uninstall as administrator" },
-                { UninstallInteractive,   " Interactive uninstallation" },
-                { InstallationSettings,   " Installation options" },
-                { PackageDetails,         " Package details" },
-                { SharePackage,           " Share" },
-                { SelectAll,              " Select all" },
-                { SelectNone,             " Clear selection" },
-                { IgnoreSelected,         "Ignore selected packages" },
-                { ManageIgnored,          "Manage ignored updates" },
-                { ExportSelection,        "Add selection to bundle" },
-                { HelpButton,             "Help" }
+                { UninstallSelected,    Tools.Translate("Uninstall selected packages") },
+                { UninstallAsAdmin,     " " + Tools.Translate("Uninstall as administrator") },
+                { UninstallInteractive, " " + Tools.Translate("Interactive uninstall") },
+                { InstallationSettings, " " + Tools.Translate("Installation options") },
+                { PackageDetails,       " " + Tools.Translate("Package details") },
+                { SharePackage,         " " + Tools.Translate("Share") },
+                { SelectAll,            " " + Tools.Translate("Select all") },
+                { SelectNone,           " " + Tools.Translate("Clear selection") },
+                { IgnoreSelected,       Tools.Translate("Ignore selected packages") },
+                { ManageIgnored,        Tools.Translate("Manage ignored updates") },
+                { ExportSelection,      Tools.Translate("Add selection to bundle") },
+                { HelpButton,           Tools.Translate("Help") }
             };
 
             foreach (AppBarButton toolButton in Labels.Keys)
@@ -536,7 +536,7 @@ namespace ModernWindow.Interface
                 toolButton.IsCompact = Labels[toolButton][0] == ' ';
                 if (toolButton.IsCompact)
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
-                toolButton.Label = Tools.Translate(Labels[toolButton].Trim());
+                toolButton.Label = Labels[toolButton].Trim();
             }
 
             Dictionary<AppBarButton, string> Icons = new()
@@ -544,21 +544,25 @@ namespace ModernWindow.Interface
                 { UninstallSelected,      "menu_uninstall" },
                 { UninstallAsAdmin,       "runasadmin" },
                 { UninstallInteractive,   "interactive" },
-                { InstallationSettings, "options" },
-                { PackageDetails,       "info" },
-                { SharePackage,         "share" },
-                { SelectAll,            "selectall" },
-                { SelectNone,           "selectnone" },
-                { IgnoreSelected,       "pin" },
-                { ManageIgnored,        "blacklist" },
-                { ExportSelection,      "add_to" },
-                { HelpButton,           "help" }
+                { InstallationSettings,   "options" },
+                { PackageDetails,         "info" },
+                { SharePackage,           "share" },
+                { SelectAll,              "selectall" },
+                { SelectNone,             "selectnone" },
+                { IgnoreSelected,         "pin" },
+                { ManageIgnored,          "blacklist" },
+                { ExportSelection,        "add_to" },
+                { HelpButton,             "help" }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
-            PackageDetails.Click += (s, e) => { _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall); };
+            PackageDetails.Click += (s, e) => { 
+                if (PackageList.SelectedItem != null) 
+                    _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall); 
+            };
+            
             ExportSelection.Click += ExportSelection_Click;
             HelpButton.Click += (s, e) => { Tools.App.MainWindow.NavigationPage.ShowHelp(); };
 
@@ -581,7 +585,10 @@ namespace ModernWindow.Interface
             UninstallAsAdmin.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), AsAdmin: true); };
             UninstallInteractive.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), Interactive: true); };
 
-            SharePackage.Click += (s, e) => { Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); };
+            SharePackage.Click += (s, e) => { 
+                if(PackageList.SelectedItem != null) 
+                    Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); 
+            };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
@@ -616,7 +623,7 @@ namespace ModernWindow.Interface
                 return;
             if (packages.Length == 1)
             {
-                ConfirmAndUninstall(packages[0], new InstallationOptions(packages[0]));
+                ConfirmAndUninstall(packages[0], new InstallationOptions(packages[0]) { RunAsAdministrator = AsAdmin, InteractiveInstallation = Interactive, RemoveDataOnUninstall = RemoveData });
                 return;
             }
 
