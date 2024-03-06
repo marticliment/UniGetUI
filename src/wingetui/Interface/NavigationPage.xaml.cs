@@ -1,6 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media.Imaging;
 using ModernWindow.Core.Data;
 using ModernWindow.Interface.Dialogs;
 using ModernWindow.Interface.Pages;
@@ -8,6 +10,7 @@ using ModernWindow.Interface.Widgets;
 using ModernWindow.PackageEngine.Classes;
 using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Graphics.DirectX.Direct3D11;
@@ -73,6 +76,13 @@ namespace ModernWindow.Interface
                 Tools.SetSettings("AlreadyWarnedAboutAdmin", true);
                 WarnAboutAdminRights();
             }
+
+            if (!Tools.GetSettings("AlreadyWarnedAboutNameChange"))
+            {
+                Tools.SetSettings("AlreadyWarnedAboutNameChange", true);
+                WarnAboutNewName();
+            }
+
         }
 
         private void DiscoverNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
@@ -174,6 +184,45 @@ namespace ModernWindow.Interface
             AdminDialog.Title = Tools.Translate("Administrator privileges");
             AdminDialog.SecondaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
             AdminDialog.Content = Tools.Translate("WingetUI has been ran as administrator, which is not recommended. When running WingetUI as administrator, EVERY operation launched from WingetUI will have administrator privileges. You can still use the program, but we highly recommend not running WingetUI with administrator privileges.");
+
+            await Tools.App.MainWindow.ShowDialogAsync(AdminDialog);
+        }
+
+        public async void WarnAboutNewName()
+        {
+            ContentDialog AdminDialog = new();
+            AdminDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+
+            while (this.XamlRoot == null)
+            {
+                await Task.Delay(100);
+            }
+
+            string NEW_NAME = "UnigetUI";
+
+            AdminDialog.XamlRoot = this.XamlRoot;
+            AdminDialog.PrimaryButtonText = Tools.Translate("I understand");
+            AdminDialog.DefaultButton = ContentDialogButton.Primary;
+            AdminDialog.SecondaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
+            StackPanel p = new StackPanel() { Spacing = 16 };
+            AdminDialog.Content = p;
+
+            p.Children.Add(new Image() { Source = new BitmapImage() { UriSource = new Uri("ms-appx:///Assets/Images/icon.png") }, Height = 96 });
+
+            var par = new Paragraph();
+            par.Inlines.Add(new Run() { Text = Tools.Translate("WingetUI will become {newname} soon!").Replace("{newname}", NEW_NAME), FontSize = 24, FontWeight = new Windows.UI.Text.FontWeight(700), FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI Variable Display Bold") });
+            par.Inlines.Add(new LineBreak());
+            par.Inlines.Add(new LineBreak());
+            par.Inlines.Add(new Run() { Text = Tools.Translate("WingetUI will soon be named {newname}. This will not represent any change in the application. I (the developer) will continue the development of this project as I am doing right now, but under a different name.").Replace("{newname}", NEW_NAME) });
+            par.Inlines.Add(new LineBreak());
+            par.Inlines.Add(new LineBreak());
+            par.Inlines.Add(new Run() { Text = Tools.Translate("WingetUI is being renamed in order to emphasize the difference between WingetUI (the interface you are using right now) and Winget (a package manager developed by Microsoft with which I am not related)"), FontSize = 12, FontStyle = Windows.UI.Text.FontStyle.Italic });
+            par.Inlines.Add(new LineBreak());
+            par.Inlines.Add(new Run() { Text = Tools.Translate("While Winget can be used within WingetUI, WingetUI can be used with other package managers, which can be confusing. In the past, WingetUI was designed to work only with Winget, but this is not true anymore, and therefore WingetUI does not represent what this project aims to become."), FontSize = 12, FontStyle = Windows.UI.Text.FontStyle.Italic });
+
+            var text = new RichTextBlock();
+            text.Blocks.Add(par);
+            p.Children.Add(text);
 
             await Tools.App.MainWindow.ShowDialogAsync(AdminDialog);
         }
