@@ -91,7 +91,15 @@ namespace ModernWindow
             {
                 args.Cancel = true;
                 RecentlyActivated = false;
-                this.Hide();
+                try
+                {
+                    this.Hide();
+                }
+                catch (Exception ex)
+                {
+                    AppTools.Log(ex);
+                    this.Hide(enableEfficiencyMode: false);
+                }
             }
             else
             {
