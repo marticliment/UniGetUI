@@ -255,7 +255,7 @@
                             />
                         <widgets:CheckboxCard
                             x:Name="DisableDownloadingNewTranslations"
-                            Text="Do not download new app translations from GitHub automatically"
+                            Text="Download updated language files from GitHub automatically"
                             SettingName="DisableLangAutoUpdater"
                             StateChanged="DisableDownloadingNewTranslations_StateChanged"
                             />

@@ -68,7 +68,9 @@ namespace ModernWindow.Core.Data
                 AppTools.Log(LangFileToLoad);
 
                 if (!File.Exists(LangFileToLoad) || AppTools.GetSettings_Static("DisableLangAutoUpdater"))
+                {
                     ForceBundled = true;
+                }
 
                 if (ForceBundled)
                 {
