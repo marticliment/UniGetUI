@@ -380,17 +380,16 @@ public class Scoop : PackageManagerWithSources
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.StandardInputEncoding = System.Text.Encoding.UTF8;
 
-            List<string> output = new();
             List<ManagerSource> sources = new();
 
             process.Start();
 
-            var output = "";
+            var _output = "";
 
             string line;
             while ((line = await process.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                _output += line + "\n";
                 try
                 {
                     string[] elements = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
@@ -402,8 +401,8 @@ public class Scoop : PackageManagerWithSources
                     Debug.WriteLine(e);
                 }
             }
-            output += await process.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, process, output);
+            _output += await process.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, process, _output);
 
             await process.WaitForExitAsync();
 

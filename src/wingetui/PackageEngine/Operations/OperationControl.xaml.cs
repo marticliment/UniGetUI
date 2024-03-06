@@ -436,8 +436,8 @@ namespace ModernWindow.PackageEngine
                         break;
                 }
 
+                ProcessOutput.Insert(0, "                           ");
                 ProcessOutput.Insert(0, "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄");
-                ProcessOutput.Insert(0, "\t\t\t\t\t");
                 ProcessOutput.Add("");
                 ProcessOutput.Add("");
                 ProcessOutput.Add("");
@@ -453,7 +453,7 @@ namespace ModernWindow.PackageEngine
                 newHistory.AddRange(ProcessOutput);
                 newHistory.AddRange(oldHistory);
 
-                Tools.SetSettingsValue("OperationHistory", String.Join('\n', newHistory));
+                Tools.SetSettingsValue("OperationHistory", String.Join('\n', newHistory).Replace(" | ", " ║ "));
             }
             catch (Exception e)
             {
