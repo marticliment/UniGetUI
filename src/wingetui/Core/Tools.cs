@@ -236,16 +236,16 @@ namespace ModernWindow.Structures
         public static void LogManagerOperation(PackageManager manager, Process process, string output)
         {
             output = Regex.Replace(output, "\n.{0,6}\n", "\n");
-            CoreData.ManagerLogs += $"=========================================\n";
-            CoreData.ManagerLogs += $"[{DateTime.Now}] {manager.Name} - Arguments: {process.StartInfo.Arguments}\n";
-            CoreData.ManagerLogs += $"       Executable: {process.StartInfo.FileName}\n";
+            CoreData.ManagerLogs += $"\n▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄";
+            CoreData.ManagerLogs += $"\n█▀▀▀▀▀▀▀▀▀ [{DateTime.Now}] {manager.Name} ▀▀▀▀▀▀▀▀▀▀▀";
+            CoreData.ManagerLogs += $"\n█  Executable: {process.StartInfo.FileName}";
+            CoreData.ManagerLogs += $"\n█  Arguments: {process.StartInfo.Arguments}";
             CoreData.ManagerLogs += "\n";
             CoreData.ManagerLogs += output;
             CoreData.ManagerLogs += "\n";
             CoreData.ManagerLogs += $"[{DateTime.Now}] Exit Code: {process.ExitCode}";
             CoreData.ManagerLogs += "\n";
             CoreData.ManagerLogs += "\n";
-            CoreData.ManagerLogs += $"=========================================\n";
         }
 
         public static void ReportFatalException(Exception e)

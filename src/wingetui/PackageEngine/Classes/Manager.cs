@@ -4,6 +4,7 @@ using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -61,8 +62,29 @@ namespace ModernWindow.PackageEngine.Classes
                         (this as PackageManagerWithSources).Sources = (this as PackageManagerWithSources).KnownSources;
                     }
                 }
-                Debug.WriteLine("Manager " + Name + " loaded");
                 ManagerReady = true;
+
+                string LogData = "\n▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄" +
+                                 "\n█▀▀▀▀▀▀▀▀▀▀▀▀▀ MANAGER LOADED ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀" +
+                                 "\n█ Name: " + Name +
+                                 "\n█ Enabled: " + IsEnabled().ToString() +
+                                    ((IsEnabled())? (
+                                 "\n█ Found: " + Status.Found.ToString() +
+                                    ((Status.Found)? (
+                                 "\n█ Fancye exe name: " + Properties.ExecutableFriendlyName +
+                                 "\n█ Executable path: " + Status.ExecutablePath +
+                                 "\n█ Call arguments: " + Properties.ExecutableCallArgs +
+                                 "\n█ Version: \n" + "█   " + Status.Version.Replace("\n", "\n█   "))
+                                    :
+                                 "\n█ THE MANAGER WAS NOT FOUND. PERHAPS IT IS NOT " + 
+                                 "\n█ INSTALLED OR IT HAS BEEN MISCONFIGURED "
+                                    ))
+                                    : 
+                                 "\n█ THE MANAGER IS DISABLED"
+                                    ) +
+                                 "\n▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀\n";
+                
+                AppTools.Log(LogData);
             }
             catch (Exception e)
             {

@@ -91,7 +91,7 @@ namespace ModernWindow
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        public async void HandleClosingEvent(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
+        public async void HandleClosingEvent(AppWindow sender, AppWindowClosingEventArgs args)
         {
             if (!Tools.GetSettings("DisableSystemTray"))
             {
