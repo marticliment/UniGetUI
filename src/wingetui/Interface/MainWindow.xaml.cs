@@ -85,6 +85,12 @@ namespace ModernWindow
             AppTools.Log("Notification activated: " + args.ToString() + " " + input.ToString());
         }
 
+
+        /// <summary>
+        /// Handle the window closing event, and divert it when the window must be hidden.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         public async void HandleClosingEvent(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
         {
             if (!Tools.GetSettings("DisableSystemTray"))
@@ -93,10 +99,11 @@ namespace ModernWindow
                 RecentlyActivated = false;
                 try
                 {
-                    this.Hide();
+                    this.Hide(enableEfficiencyMode: true);
                 }
                 catch (Exception ex)
                 {
+                    // Somewhere, Sometimes, MS Window Efficiency mode just crashes
                     AppTools.Log(ex);
                     this.Hide(enableEfficiencyMode: false);
                 }
