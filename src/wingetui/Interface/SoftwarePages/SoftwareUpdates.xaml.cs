@@ -724,7 +724,7 @@ namespace ModernWindow.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            _ = (PackageList.SelectedItem as UpgradablePackage).AddToIgnoredUpdatesAsync((PackageList.SelectedItem as UpgradablePackage).Version);
+            _ = (PackageList.SelectedItem as UpgradablePackage).AddToIgnoredUpdatesAsync((PackageList.SelectedItem as UpgradablePackage).NewVersion);
         }
 
         private void SelectAllSourcesButton_Click(object sender, RoutedEventArgs e)
