@@ -436,7 +436,8 @@ namespace ModernWindow.PackageEngine
                         break;
                 }
 
-                ProcessOutput.Insert(0, "----------------------------------------------");
+                ProcessOutput.Insert(0, "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄");
+                ProcessOutput.Insert(0, "\t\t\t\t\t");
                 ProcessOutput.Add("");
                 ProcessOutput.Add("");
                 ProcessOutput.Add("");

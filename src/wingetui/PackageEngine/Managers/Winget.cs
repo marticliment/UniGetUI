@@ -11,6 +11,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Storage.Streams;
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -670,9 +671,11 @@ namespace ModernWindow.PackageEngine.Managers
             process.Start();
 
             bool dashesPassed = false;
+            string output = "";
             string line;
             while ((line = await process.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 try
                 {
                     if (string.IsNullOrEmpty(line))
@@ -694,6 +697,10 @@ namespace ModernWindow.PackageEngine.Managers
                     AppTools.Log(e);
                 }
             }
+
+            output += await process.StandardError.ReadToEndAsync(); 
+            AppTools.LogManagerOperation(this, process, output);
+
             await process.WaitForExitAsync();
             return sources.ToArray();
         }

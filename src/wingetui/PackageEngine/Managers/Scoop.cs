@@ -385,9 +385,12 @@ public class Scoop : PackageManagerWithSources
 
             process.Start();
 
+            var output = "";
+
             string line;
             while ((line = await process.StandardOutput.ReadLineAsync()) != null)
             {
+                output += line + "\n";
                 try
                 {
                     string[] elements = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
@@ -399,8 +402,12 @@ public class Scoop : PackageManagerWithSources
                     Debug.WriteLine(e);
                 }
             }
+            output += await process.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, process, output);
 
             await process.WaitForExitAsync();
+
+
             return sources.ToArray();
         }
     }
