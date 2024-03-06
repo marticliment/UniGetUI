@@ -27,6 +27,8 @@ namespace ModernWindow
         public Dotnet Dotnet;
         public PowerShell PowerShell;
 
+        public bool RaiseExceptionAsFatal = true;
+
         public readonly List<PackageManager> PackageManagerList = new();
 
         public Interface.SettingsInterface settings;
@@ -58,10 +60,11 @@ namespace ModernWindow
                 var stackTrace = $"Stack Trace: \n{e.Exception.StackTrace}";
                 AppTools.Log(message);
                 AppTools.Log(stackTrace);
-                if(Environment.GetCommandLineArgs().Contains("--report-all-errors"))
+                if(Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal)
                     AppTools.ReportFatalException(e.Exception);
-                e.Handled = true;
-                // TODO: show a message box to the user ?
+                else
+                    e.Handled = true;
+                    // TODO: show a message box to the user ?
             };
         }
 
@@ -153,6 +156,7 @@ namespace ModernWindow
 
                 AppTools.Log("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();
+                RaiseExceptionAsFatal = false;
             }
             catch (Exception e)
             {
