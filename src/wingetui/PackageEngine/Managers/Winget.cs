@@ -225,7 +225,7 @@ namespace ModernWindow.PackageEngine.Managers
                 else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
                 {
                     int offset = 0; // Account for non-unicode character length
-                    while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
+                    while (((IdIndex - offset) <= line.Length && line[IdIndex - offset - 1] != ' ') || offset > (IdIndex - 5))
                         offset++;
                     string name = line[..(IdIndex - offset)].Trim();
                     string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
