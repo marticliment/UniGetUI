@@ -845,7 +845,7 @@
                             <widgets:BetterMenuItem x:Name="MenuInteractive" 
                                 Text="Interactive update" 
                                 Click="MenuInteractive_Invoked"
-                                IconName="&#xE7C9;"/>
+                                IconName="interactive"/>
                             <widgets:BetterMenuItem x:Name="MenuskipHash" 
                                 Text="Skip hash check" 
                                 Click="MenuSkipHash_Invoked"

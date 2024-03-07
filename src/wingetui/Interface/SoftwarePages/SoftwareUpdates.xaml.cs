@@ -615,22 +615,25 @@ namespace ModernWindow.Interface
 
             Dictionary<AppBarButton, string> Icons = new()
             {
-                { UpdateSelected,       "menu_updates" },
+                { UpdateSelected,       "\uE895" },
                 { UpdateAsAdmin,        "runasadmin" },
                 { UpdateSkipHash,       "checksum" },
                 { UpdateInteractive,    "interactive" },
-                { InstallationSettings, "options" },
-                { PackageDetails,       "info" },
+                { InstallationSettings, "\uE9E9" },
+                { PackageDetails,       "\uE946" },
                 { SharePackage,         "share" },
-                { SelectAll,            "selectall" },
-                { SelectNone,           "selectnone" },
-                { IgnoreSelected,       "pin" },
-                { ManageIgnored,        "blacklist" },
+                { SelectAll,            "\uF16C" },
+                { SelectNone,           "\uF16B" },
+                { IgnoreSelected,       "\uE718" },
+                { ManageIgnored,        "\uF0E3" },
                 { HelpButton,           "help" }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)
-                toolButton.Icon = new LocalIcon(Icons[toolButton]);
+                if (Icons[toolButton].Length == 1)
+                    toolButton.Icon = new FontIcon() { Glyph = Icons[toolButton], Margin = new Thickness(2), FontWeight = new Windows.UI.Text.FontWeight(300) };
+                else
+                    toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
 
             PackageDetails.Click += (s, e) => {

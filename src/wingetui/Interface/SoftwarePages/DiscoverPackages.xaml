@@ -817,7 +817,7 @@
                             <widgets:BetterMenuItem x:Name="MenuInstall" 
                                 Text="Install"
                                 Click="MenuInstall_Invoked" KeyboardAcceleratorTextOverride="Ctrl+Enter"
-                                IconName="&#xE896;"/>
+                                IconName="newversion"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuInstallSettings" 
                                 Text="Installation options" 
@@ -831,7 +831,7 @@
                             <widgets:BetterMenuItem x:Name="MenuInteractive" 
                                 Text="Interactive installation" 
                                 Click="MenuInteractive_Invoked"
-                                IconName="&#xE7C9;"/>
+                                IconName="interactive"/>
                             <widgets:BetterMenuItem x:Name="MenuskipHash" 
                                 Text="Skip hash check" 
                                 Click="MenuSkipHash_Invoked"
