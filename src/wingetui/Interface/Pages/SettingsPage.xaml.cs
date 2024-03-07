@@ -40,6 +40,13 @@ namespace ModernWindow.Interface
 
             // General Settings Section
             Dictionary<string, string> lang_dict = LanguageData.LanguageList;
+
+            foreach(var key in lang_dict.Keys)
+            {
+                if(LanguageData.TranslatedPercentages.ContainsKey(key) && key != "en")
+                    lang_dict[key] = lang_dict[key] + " (" + LanguageData.TranslatedPercentages[key] + ")";
+            }
+
             bool isFirst = true;
             foreach (KeyValuePair<string, string> entry in lang_dict)
             {

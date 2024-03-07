@@ -47,7 +47,20 @@
                             Text="WingetUI display language:"
                             SettingName="PreferredLanguage"
                             ValueChanged="LanguageSelector_ValueChanged"
-                            />
+                            >
+
+                            <Toolkit:SettingsCard.Description>
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <widgets:TranslatedTextBlock Text="Is your language missing or incomplete?" Opacity=".8" VerticalAlignment="Center"/>
+                                    <HyperlinkButton
+                                    Padding="0"
+                                        NavigateUri="https://github.com/marticliment/WingetUI/wiki#translating-wingetui"
+                                    >
+                                        <widgets:TranslatedTextBlock Text="Become a translator"/>
+                                    </HyperlinkButton>
+                                </StackPanel>
+                            </Toolkit:SettingsCard.Description>
+                        </widgets:ComboboxCard>
                         <widgets:ButtonCard
                             Text="Open the welcome wizard"
                             ButtonText="Open"
