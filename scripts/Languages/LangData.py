@@ -10,21 +10,21 @@ import os
 import json
 
 if os.path.exists("../src/wingetui/Assets/Data/Contributors.list"):
-    f = open("../src/wingetui/Assets/Data/Contributors.list", "r")
+    f = open("../src/wingetui/Assets/Data/Contributors.list", "r", encoding="utf-8")
     contributors = f.readlines()
 else:
     print("No contributors file!")
     contributors = []
 
 if os.path.exists("../src/wingetui/Assets/Data/Translators.json"):
-    f = open("../src/wingetui/Assets/Data/Translators.json", "r")
+    f = open("../src/wingetui/Assets/Data/Translators.json", "r", encoding="utf-8")
     languageCredits = json.load(f)
 else:
     print("No translators file!")
     languageCredits = {}
 
 if os.path.exists("../src/wingetui/Assets/Data/TranslatedPercentages.json"):
-    f = open("../src/wingetui/Assets/Data/TranslatedPercentages.json", "r")
+    f = open("../src/wingetui/Assets/Data/TranslatedPercentages.json", "r", encoding="utf-8")
     untranslatedPercentage = json.load(f)
 else:
     print("No translated percent file!")
