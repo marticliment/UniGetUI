@@ -1,5 +1,6 @@
-using CommunityToolkit.WinUI.Notifications;
+﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using ModernWindow.Core.Data;
 using ModernWindow.Interface;
 using ModernWindow.PackageEngine.Classes;
@@ -58,13 +59,32 @@ namespace ModernWindow
             {
                 var message = $"Unhandled Exception raised: {e.Message}";
                 var stackTrace = $"Stack Trace: \n{e.Exception.StackTrace}";
+                AppTools.Log(" -");
+                AppTools.Log(" -");
+                AppTools.Log("  ⚠️⚠️⚠️ START OF UNHANDLED ERROR TRACE ⚠️⚠️⚠️");
                 AppTools.Log(message);
                 AppTools.Log(stackTrace);
-                if(Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal)
+                AppTools.Log("  ⚠️⚠️⚠️  END OF UNHANDLED ERROR TRACE  ⚠️⚠️⚠️");
+                AppTools.Log(" -");
+                AppTools.Log(" -");
+                if (Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal || MainWindow == null)
                     AppTools.ReportFatalException(e.Exception);
                 else
+                {
+                    MainWindow.ErrorBanner.Title = AppTools.Instance.Translate("Something went wrong");
+                    MainWindow.ErrorBanner.Message = AppTools.Instance.Translate("An interal error occurred. Please view the log for further details.");
+                    MainWindow.ErrorBanner.IsOpen = true;
+                    var button = new Button()
+                    {
+                        Content = AppTools.Instance.Translate("WingetUI log"),
+                    };
+                    button.Click += (sender, args) =>
+                    {
+                        MainWindow.NavigationPage.WingetUILogs_Click(sender, args);
+                    };
+                    MainWindow.ErrorBanner.ActionButton = button;
                     e.Handled = true;
-                    // TODO: show a message box to the user ?
+                }
             };
         }
 

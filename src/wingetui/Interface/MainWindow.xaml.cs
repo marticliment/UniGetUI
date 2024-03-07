@@ -283,7 +283,7 @@ namespace ModernWindow
 
 
             NavigationPage = new NavigationPage();
-            Grid.SetRow(NavigationPage, 2);
+            Grid.SetRow(NavigationPage, 3);
             Grid.SetColumn(NavigationPage, 0);
             MainContentGrid.Children.Add(NavigationPage);
 

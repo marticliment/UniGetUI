@@ -368,7 +368,7 @@ namespace ModernWindow.Interface
             NavigateToPage(new LogPage(LogType.ManagerLogs));
         }
 
-        private void WingetUILogs_Click(object sender, RoutedEventArgs e)
+        public void WingetUILogs_Click(object sender, RoutedEventArgs e)
         {
             NavigateToPage(new LogPage(LogType.WingetUILog));
         }
