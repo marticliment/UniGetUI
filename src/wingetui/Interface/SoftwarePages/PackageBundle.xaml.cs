@@ -52,6 +52,8 @@ namespace ModernWindow.Interface
         public PackageBundlePage()
         {
             InitializeComponent();
+            QueryBothRadio.IsChecked = true;
+            QueryOptionsGroup.SelectedIndex = 2;
             MainTitle = __main_title;
             MainSubtitle = __main_subtitle;
             PackageList = __package_list;

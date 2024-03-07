@@ -728,7 +728,7 @@
                                         <widgets:TranslatedTextBlock Text="Ignore special characters" WrappingMode="Wrap"/>
                                     </CheckBox.Content>
                                 </CheckBox>
-                                <RadioButtons Margin="0,16,0,8" SelectionChanged="FilterOptionsChanged" CharacterSpacing="0">
+                                <RadioButtons Name="QueryOptionsGroup" Margin="0,16,0,8" SelectionChanged="FilterOptionsChanged" CharacterSpacing="0">
                                     <RadioButtons.Header>
                                         <widgets:TranslatedTextBlock Text="Search mode:" WrappingMode="Wrap" FontSize="15" FontWeight="Bold"/>
                                     </RadioButtons.Header>
