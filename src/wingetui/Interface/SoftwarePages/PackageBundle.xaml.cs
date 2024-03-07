@@ -39,7 +39,7 @@ namespace ModernWindow.Interface
 
         protected TranslatedTextBlock MainTitle;
         protected TranslatedTextBlock MainSubtitle;
-        protected ListView PackageList;
+        public ListView PackageList;
         protected ProgressBar LoadingProgressBar;
         protected MenuFlyout ContextMenu;
 
@@ -135,6 +135,14 @@ namespace ModernWindow.Interface
                 else if (e.Key == Windows.System.VirtualKey.Space && PackageList.SelectedItem != null)
                 {
                     ((PackageList.SelectedItem as BundledPackage).Package).IsChecked = !((PackageList.SelectedItem as BundledPackage).Package).IsChecked;
+                }
+                else if (e.Key == Windows.System.VirtualKey.F1)
+                {
+                    Tools.App.MainWindow.NavigationPage.ShowHelp();
+                }
+                else if (e.Key == Windows.System.VirtualKey.F && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
+                {
+                    QueryBlock.Focus(FocusState.Programmatic);
                 }
             };
 

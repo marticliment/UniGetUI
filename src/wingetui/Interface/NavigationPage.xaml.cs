@@ -1,3 +1,4 @@
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -12,8 +13,10 @@ using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Threading.Tasks;
 using Windows.Graphics.DirectX.Direct3D11;
+using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -83,6 +86,44 @@ namespace ModernWindow.Interface
                 WarnAboutNewName();
             }
 
+            var NextPageReference = new Dictionary<Page, NavButton>
+            {
+                { DiscoverPage, UpdatesNavButton },
+                { UpdatesPage, InstalledNavButton },
+                { InstalledPage, BundlesNavButton },
+                { BundlesPage, SettingsNavButton },
+                { SettingsPage, DiscoverNavButton },
+            };
+
+            var PreviousTabReference = new Dictionary<Page, NavButton>
+            {
+                { DiscoverPage, SettingsNavButton },
+                { UpdatesPage, DiscoverNavButton },
+                { InstalledPage, UpdatesNavButton },
+                { BundlesPage, InstalledNavButton },
+                { SettingsPage, BundlesNavButton },
+            };
+
+            KeyUp += (s, e) =>
+            {
+                if (e.Key == Windows.System.VirtualKey.Tab && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
+                {
+                    if (!InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
+                    {
+                        if (NextPageReference.ContainsKey(CurrentPage))
+                            NextPageReference[CurrentPage].ForceClick();
+                        else
+                            DiscoverNavButton.ForceClick();
+                    }
+                    else
+                    {
+                        if (NextPageReference.ContainsKey(CurrentPage))
+                            PreviousTabReference[CurrentPage].ForceClick();
+                        else
+                            DiscoverNavButton.ForceClick();
+                        }
+                }
+            };
         }
 
         private void DiscoverNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
@@ -305,6 +346,15 @@ namespace ModernWindow.Interface
                 page.Visibility = (page == TargetPage) ? Visibility.Visible : Visibility.Collapsed;
 
             CurrentPage = TargetPage;
+
+            if (CurrentPage == DiscoverPage)
+                DiscoverPage.PackageList.Focus(FocusState.Programmatic);
+            else if (CurrentPage == UpdatesPage)
+                UpdatesPage.PackageList.Focus(FocusState.Programmatic);
+            else if (CurrentPage == InstalledPage)
+                InstalledPage.PackageList.Focus(FocusState.Programmatic);
+            else if (CurrentPage == BundlesPage)
+                BundlesPage.PackageList.Focus(FocusState.Programmatic);
         }
 
         private async void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
