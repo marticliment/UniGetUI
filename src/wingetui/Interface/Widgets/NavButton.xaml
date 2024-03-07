@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Height="Auto" Width="64"
+    Height="Auto" Width="70" 
     xmlns:widgets="using:ModernWindow.Interface.Widgets" xmlns:animations="using:CommunityToolkit.WinUI.Animations">
 
 
@@ -17,6 +17,11 @@
     </animations:Implicit.ShowAnimations>
 
     <Grid>
+        <!--Border Width="4" BorderThickness="2,0,0,0" BorderBrush="{ThemeResource AccentAAFillColorDefaultBrush}" CornerRadius="4,0,0,4" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="1,1,0,1" Visibility="{x:Bind ToggleButton.IsChecked, Mode=OneWay}">
+            <animations:Implicit.ShowAnimations>
+                <animations:OpacityAnimation Duration="0:0:0.25" From="0" To="1"/>
+            </animations:Implicit.ShowAnimations>
+        </Border-->
         <ToggleButton x:Name="ToggleButton"
             x:FieldModifier="public"
             Click="ToggleButton_Click">
@@ -146,7 +151,7 @@
                     </Setter>
                 </Style>
             </ToggleButton.Style>
-            <Grid Margin="0" Padding="0" Name="VariableGrid">
+            <Grid Margin="1,0,1,0" Padding="0" Name="VariableGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="Auto"/>

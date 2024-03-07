@@ -31,7 +31,7 @@
 
     <Grid RowSpacing="4" ColumnSpacing="0">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="72"/>
+            <ColumnDefinition Width="76"/>
             <ColumnDefinition Width="10000*"/>
         </Grid.ColumnDefinitions>
 
@@ -59,7 +59,7 @@
                 <RowDefinition Height="*" MinHeight="305"/>
                 <RowDefinition Height="*" MinHeight="185"/>
             </Grid.RowDefinitions>
-            <StackPanel Width="64" Grid.Row="0" Grid.Column="0"
+            <StackPanel Width="70" Grid.Row="0" Grid.Column="0"
             Spacing="4" Orientation="Vertical" VerticalAlignment="Top">
                 <widgets:NavButton x:Name="DiscoverNavButton"
                     x:FieldModifier="public"
@@ -91,7 +91,7 @@
 
             <StackPanel
                 Grid.Row="1" Grid.Column="0"
-                Width="64"
+                Width="70"
                 Spacing="4" Orientation="Vertical" VerticalAlignment="Bottom">
                 <widgets:NavButton
                     Text="About" x:Name="AboutNavButton"
