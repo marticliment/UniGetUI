@@ -79,6 +79,7 @@ namespace ModernWindow.Interface
                             SourcesTreeView.SelectedNodes.Remove(node);
                         else
                             SourcesTreeView.SelectedNodes.Add(node);
+                        FilterPackages(QueryBlock.Text.Trim());
                     }
                     else
                     {
@@ -168,7 +169,7 @@ namespace ModernWindow.Interface
             {
                 UsedManagers.Add(source.Manager);
                 TreeViewNode Node;
-                Node = new TreeViewNode() { Content = source.Manager.Name + " ", IsExpanded = false };
+                Node = new TreeViewNode() { Content = source.Manager.Name + "                                          .", IsExpanded = false };
                 SourcesTreeView.RootNodes.Add(Node);
                 SourcesTreeView.SelectedNodes.Add(Node);
                 RootNodeForManager.Add(source.Manager, Node);
@@ -180,7 +181,7 @@ namespace ModernWindow.Interface
             if ((!UsedSourcesForManager.ContainsKey(source.Manager) || !UsedSourcesForManager[source.Manager].Contains(source)) && source.Manager.Capabilities.SupportsCustomSources)
             {
                 UsedSourcesForManager[source.Manager].Add(source);
-                TreeViewNode item = new() { Content = source.Name + " " };
+                TreeViewNode item = new() { Content = source.Name + "                                          ." };
                 NodesForSources.Add(source, item);
                 RootNodeForManager[source.Manager].Children.Add(item);
 
