@@ -16,16 +16,16 @@
 
     <UserControl.Resources>
         <widgets:BetterMenu x:Name="MoreNavButtonMenu" Placement="Right">
-            <widgets:BetterMenuItem Text="Help" IconName="help" Name="HelpMenu" Click="HelpMenu_Click" />
+            <widgets:BetterMenuItem Text="Help" IconName="&#xE897;" Name="HelpMenu" Click="HelpMenu_Click" />
             <MenuFlyoutSeparator Height="5"/>
-            <widgets:BetterMenuItem Text="WingetUI log" IconName="buggy" Name="WingetUILogs" Click="WingetUILogs_Click" />
-            <widgets:BetterMenuItem Text="Package Manager logs" IconName="console" Name="ManagerLogsMenu" Click="ManagerLogsMenu_Click" />
-            <widgets:BetterMenuItem Text="Operation history" IconName="list" Name="OperationHistoryMenu" Click="OperationHistoryMenu_Click" />
+            <widgets:BetterMenuItem Text="WingetUI log" IconName="&#xEBE8;" Name="WingetUILogs" Click="WingetUILogs_Click" />
+            <widgets:BetterMenuItem Text="Package Manager logs" IconName="&#xE756;" Name="ManagerLogsMenu" Click="ManagerLogsMenu_Click" />
+            <widgets:BetterMenuItem Text="Operation history" IconName="&#xE81C;" Name="OperationHistoryMenu" Click="OperationHistoryMenu_Click" />
             <MenuFlyoutSeparator Height="5"/>
-            <widgets:BetterMenuItem x:Name="VersionMenuItem" IconName="info" IsEnabled="False" />
-            <widgets:BetterMenuItem Text="Release notes" IconName="megaphone" Name="ReleaseNotesMenu" Click="ReleaseNotesMenu_Click" />
+            <widgets:BetterMenuItem x:Name="VersionMenuItem" IconName="&#xE946;" IsEnabled="False" />
+            <widgets:BetterMenuItem Text="Release notes" IconName="&#xE789;" Name="ReleaseNotesMenu" Click="ReleaseNotesMenu_Click" />
             <MenuFlyoutSeparator Height="5"/>
-            <widgets:BetterMenuItem Text="Quit WingetUI" IconName="menu_close" Name="QuitWingetUI" Click="QuitWingetUI_Click" />
+            <widgets:BetterMenuItem Text="Quit WingetUI" IconName="&#xE8BB;" Name="QuitWingetUI" Click="QuitWingetUI_Click" />
         </widgets:BetterMenu>
     </UserControl.Resources>
 

@@ -689,8 +689,8 @@
                         Padding="4,4,4,8" HorizontalContentAlignment="Stretch">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <widgets:LocalIcon IconName="provider" Height="24"/>
-                                <widgets:TranslatedTextBlock Text="Sources" VerticalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE74C;" FontSize="20"/>
+                                <widgets:TranslatedTextBlock Text="Sources" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Expander.Header>
                         <Expander.Content>
@@ -723,8 +723,8 @@
                         Padding="16,8,16,8" HorizontalContentAlignment="Stretch">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <widgets:LocalIcon IconName="edit_filters" Height="24"/>
-                                <widgets:TranslatedTextBlock Text="Filters" VerticalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE71C;" FontSize="20"/>
+                                <widgets:TranslatedTextBlock Text="Filters" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Expander.Header>
                         <Expander.Content>
@@ -831,12 +831,12 @@
                             <widgets:BetterMenuItem x:Name="MenuInstall" 
                                 Text="Update"
                                 Click="MenuInstall_Invoked" KeyboardAcceleratorTextOverride="Ctrl+Enter"
-                                IconName="menu_updates"/>
+                                IconName="&#xE895;"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuInstallSettings" 
                                 Text="Installation options" 
                                 Click="MenuInstallSettings_Invoked" KeyboardAcceleratorTextOverride="Alt+Enter"
-                                IconName="options"/>
+                                IconName="&#xE9E9;"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuAsAdmin" 
                                 Text="Update as administrator" 
@@ -845,7 +845,7 @@
                             <widgets:BetterMenuItem x:Name="MenuInteractive" 
                                 Text="Interactive update" 
                                 Click="MenuInteractive_Invoked"
-                                IconName="interactive"/>
+                                IconName="&#xE7C9;"/>
                             <widgets:BetterMenuItem x:Name="MenuskipHash" 
                                 Text="Skip hash check" 
                                 Click="MenuSkipHash_Invoked"
@@ -858,16 +858,16 @@
                             <widgets:BetterMenuItem x:Name="MenuUninstall" 
                                 Text="Uninstall package" 
                                 Click="MenuUninstall_Invoked"
-                                IconName="menu_uninstall"/>
+                                IconName="&#xE74D;"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuIgnorePackage" 
                                 Text="Ignore updates for this package" 
                                 Click="MenuIgnorePackage_Invoked"
-                                IconName="pin"/>
+                                IconName="&#xE718;"/>
                             <widgets:BetterMenuItem x:Name="MenuSkipVersion" 
                                 Text="Skip this version" 
                                 Click="MenuSkipVersion_Invoked"
-                                IconName="skip"/>
+                                IconName="&#xEB9D;"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuShare" 
                                 Text="Share this package" 
@@ -876,7 +876,7 @@
                             <widgets:BetterMenuItem x:Name="MenuDetails" 
                                 Text="Package details" 
                                 Click="MenuDetails_Invoked" KeyboardAcceleratorTextOverride="Enter"
-                                IconName="info"/>
+                                IconName="&#xE946;"/>
                         </widgets:BetterMenu>
                     </ListView.ContextFlyout>
                 </ListView>
