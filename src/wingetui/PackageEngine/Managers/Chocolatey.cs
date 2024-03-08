@@ -221,7 +221,7 @@ namespace ModernWindow.PackageEngine.Managers
             if (options.CustomParameters != null)
                 parameters.AddRange(options.CustomParameters);
 
-            if (!options.InteractiveInstallation)
+            if (options.InteractiveInstallation)
                 parameters.Add("--notsilent");
 
             return parameters.ToArray();
