@@ -1,4 +1,4 @@
-name: Build and TestRun
+name: Build and Run
 
 on:
   pull_request:
@@ -9,11 +9,6 @@ on:
 jobs:
 
   build:
-
-    strategy:
-      matrix:
-        configuration: [Debug, Release]
-
     runs-on: windows-latest  # For a list of available runner types, refer to
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 
@@ -38,10 +33,18 @@ jobs:
     #  run: dotnet test
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: build
-      run: mkdir out 
-           msbuild src/wingetui/wingetui.csproj /noLogo /property:Configuration=Release /property:Platform=x64 /restore:True /interactive:False /property:OutputPath=.\out
-           cd out
-           wingetui.exe --load-and-quit
-           exit %ERRORLEVEL%
+
+    - name: Setup App Sdk
+      run: |
+        cd InstallerExtras
+        ./appsdk.exe
+        cd ..
+
+    - name: build and run
+      run: |
+        mkdir out
+        msbuild src/wingetui/wingetui.csproj /noLogo /property:Configuration=Release /property:Platform=x64 /restore:True /interactive:False /property:OutputPath=.\out
+        cd out
+        wingetui.exe --load-and-quit
+        exit %ERRORLEVEL%
       
