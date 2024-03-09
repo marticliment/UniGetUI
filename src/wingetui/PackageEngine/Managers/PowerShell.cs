@@ -33,6 +33,7 @@ namespace ModernWindow.PackageEngine.Managers
             };
 
             p.Start();
+            await p.StandardInput.WriteLineAsync("");
             string line;
             List<Package> Packages = new();
             bool DashesPassed = false;
