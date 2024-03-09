@@ -49,6 +49,6 @@ jobs:
         cd out
         pwd
         dir
-        wingetui.exe --load-and-quit
+        .\wingetui.exe --load-and-quit
         exit $LASTEXITCODE
       
