@@ -42,7 +42,7 @@
   "An error occurred while processing this package" : "이 패키지를 처리하는 동안 오류가 발생했습니다.",
   "An interal error occurred. Please view the log for further details." : null,
   "An unexpected error occurred:" : null,
-  "An update was found!" : null,
+  "An update was found!" : "업데이트가 발견되었습니다!",
   "Android Subsystem" : "안드로이드 하위 시스템",
   "Another source" : "다른 소스",
   "App Name" : "앱 이름",
