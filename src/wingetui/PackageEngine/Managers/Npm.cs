@@ -354,7 +354,7 @@ namespace ModernWindow.PackageEngine.Managers
                 InstallVerb = "install",
                 UninstallVerb = "uninstall",
                 UpdateVerb = "install",
-                ExecutableCallArgs = "-NoProfile -ExecutionPolicy Bypass -Command npm",
+                ExecutableCallArgs = " -NoProfile -ExecutionPolicy Bypass -Command npm",
 
             };
             return properties;
