@@ -2,7 +2,6 @@ using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ModernWindow.Structures;
-using System.Text.RegularExpressions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -56,10 +55,7 @@ namespace ModernWindow.Interface.Widgets
             typeof(CheckboxCard),
             new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
             {
-                if (e.NewValue.ToString().Length == 1)
-                    HeaderIcon = new FontIcon() { Glyph = e.NewValue.ToString(), Margin = new Thickness(2)};
-                else
-                    HeaderIcon = new LocalIcon((string)e.NewValue);
+                HeaderIcon = new LocalIcon((string)e.NewValue);
             })));
 
 

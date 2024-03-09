@@ -35,13 +35,11 @@
                     Url="https://marticliment.com/resources/annoucements/wingetui"
                     />
                 <widgets:TranslatedTextBlock FontSize="40" FontWeight="Bold" WrappingMode="NoWrap" Text="WingetUI Settings" Suffix="                                                          ." HorizontalAlignment="Stretch"/>
-                
-                <!-- General Settings -->
                 <widgets:SettingsEntry
                     x:Name="GeneralSettingsExpander"
                     Text="General preferences"
                     UnderText="Language, theme and other miscellaneous preferences"
-                    Icon="&#xE713;"
+                    Icon="settings"
                     >
                     <Toolkit:SettingsExpander.Items>
                         <widgets:ComboboxCard
@@ -111,12 +109,10 @@
                         />
                     </Toolkit:SettingsExpander.Items>
                 </widgets:SettingsEntry>
-                
-                <!-- Startup Options -->
                 <widgets:SettingsEntry
                         Text="Startup options"
                         UnderText="WingetUI autostart behaviour, application launch settings"
-                        Icon="&#xE8A7;">
+                        Icon="launch">
                     <Toolkit:SettingsExpander.Items>
                         <widgets:ButtonCard
                             Text="Manage WingetUI autostart behaviour from the Settings app"
@@ -133,12 +129,10 @@
                             />
                     </Toolkit:SettingsExpander.Items>
                 </widgets:SettingsEntry>
-                
-                <!-- User Interface preferences -->
                 <widgets:SettingsEntry
                         Text="User interface preferences"
                         UnderText="Action when double-clicking packages, hide successful installations"
-                        Icon="&#xE7C9;">
+                        Icon="interactive">
                     <Toolkit:SettingsExpander.Items>
                         <widgets:CheckboxCard
                             Text="Do not remove successful operations from the list automatically"
@@ -146,8 +140,6 @@
                             />
                     </Toolkit:SettingsExpander.Items>
                 </widgets:SettingsEntry>
-                
-                <!-- Package Backup -->
                 <widgets:SettingsEntry
                         Text="Notification tray options"
                         UnderText="WingetUI tray application preferences"
