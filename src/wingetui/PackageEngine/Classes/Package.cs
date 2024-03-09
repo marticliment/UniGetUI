@@ -627,15 +627,6 @@ namespace ModernWindow.PackageEngine.Classes
         }
 
         /// <summary>
-        /// Returns a string containing the JSON representation with the options of the current instance.
-        /// </summary>
-        /// <returns></returns>
-        public string GetJsonString()
-        {
-            return JsonSerializer.Serialize(Serialized());
-        }
-
-        /// <summary>
         /// Returns a SerializableInstallationOptions_v1 object containing the options of the current instance.
         /// </summary>
         /// <returns></returns>
@@ -656,6 +647,12 @@ namespace ModernWindow.PackageEngine.Classes
             return options;
         }
 
+        private FileInfo GetPackageOptionsFile()
+        {
+            var optionsFileName = Package.Manager.Name + "." + Package.Id + ".json";
+            return new FileInfo(Path.Join(CoreData.WingetUIInstallationOptionsDirectory, optionsFileName));
+        }
+
         /// <summary>
         /// Saves the current options to disk.
         /// </summary>
@@ -663,9 +660,12 @@ namespace ModernWindow.PackageEngine.Classes
         {
             try
             {
-                string JSON = GetJsonString();
-                string filename = Path.Join(CoreData.WingetUIInstallationOptionsDirectory, Package.Manager.Name + "." + Package.Id + ".json");
-                File.WriteAllText(filename, JSON);
+                var optionsFile = GetPackageOptionsFile();
+                if (optionsFile.Directory?.Exists == false)
+                    optionsFile.Directory.Create();
+                
+                using var outputStream = optionsFile.OpenWrite();
+                JsonSerializer.Serialize(outputStream, Serialized());
             }
             catch (Exception ex)
             {
@@ -680,9 +680,12 @@ namespace ModernWindow.PackageEngine.Classes
         {
             try
             {
-                string JSON = GetJsonString();
-                string filename = Path.Join(CoreData.WingetUIInstallationOptionsDirectory, Package.Manager.Name + "." + Package.Id + ".json");
-                await File.WriteAllTextAsync(filename, JSON);
+                var optionsFile = GetPackageOptionsFile();
+                if (optionsFile.Directory?.Exists == false)
+                    optionsFile.Directory.Create();
+
+                await using var outputStream = optionsFile.OpenWrite();
+                await JsonSerializer.SerializeAsync(outputStream, Serialized());
             }
             catch (Exception ex)
             {
@@ -697,15 +700,17 @@ namespace ModernWindow.PackageEngine.Classes
         {
             try
             {
-                string filename = Path.Join(CoreData.WingetUIInstallationOptionsDirectory, Package.Manager.Name + "." + Package.Id + ".json");
-                if (!File.Exists(filename))
+                var optionsFile = GetPackageOptionsFile();
+                if (!optionsFile.Exists)
                     return;
-                SerializableInstallationOptions_v1 options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(File.ReadAllText(filename));
+
+                using var inputStream = optionsFile.OpenRead();
+                var options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(inputStream);
                 FromSerialized(options);
             }
             catch (Exception e)
             {
-                AppTools.Log(e.ToString());
+                AppTools.Log(e);
             }
         }
 
@@ -716,15 +721,17 @@ namespace ModernWindow.PackageEngine.Classes
         {
             try
             {
-                string filename = Path.Join(CoreData.WingetUIInstallationOptionsDirectory, Package.Manager.Name + "." + Package.Id + ".json");
-                if (!File.Exists(filename))
+                var optionsFile = GetPackageOptionsFile();
+                if (!optionsFile.Exists)
                     return;
-                SerializableInstallationOptions_v1 options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(await File.ReadAllTextAsync(filename));
+                
+                await using var inputStream = optionsFile.OpenRead();
+                var options = await JsonSerializer.DeserializeAsync<SerializableInstallationOptions_v1>(inputStream);
                 FromSerialized(options);
             }
             catch (Exception e)
             {
-                AppTools.Log(e.ToString());
+                AppTools.Log(e);
             }
         }
 
