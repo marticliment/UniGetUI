@@ -552,26 +552,23 @@ namespace ModernWindow.Interface
 
             Dictionary<AppBarButton, string> Icons = new()
             {
-                { UninstallSelected,      "\uE74D" },
+                { UninstallSelected,      "menu_uninstall" },
                 { UninstallAsAdmin,       "runasadmin" },
                 { UninstallInteractive,   "interactive" },
-                { InstallationSettings,   "\uE9E9" },
-                { PackageDetails,         "\uE946" },
+                { InstallationSettings,   "options" },
+                { PackageDetails,         "info" },
                 { SharePackage,           "share" },
-                { SelectAll,              "\uF16C" },
-                { SelectNone,             "\uF16B" },
-                { IgnoreSelected,         "\uE718" },
-                { ManageIgnored,          "\uF0E3" },
+                { SelectAll,              "selectall" },
+                { SelectNone,             "selectnone" },
+                { IgnoreSelected,         "pin" },
+                { ManageIgnored,          "blacklist" },
                 { ExportSelection,        "add_to" },
                 { HelpButton,             "help" }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)
-                if (Icons[toolButton].Length == 1)
-                    toolButton.Icon = new FontIcon() { Glyph = Icons[toolButton], Margin = new Thickness(2), FontWeight = new Windows.UI.Text.FontWeight(300) };
-                else
-                    toolButton.Icon = new LocalIcon(Icons[toolButton]);
-            
+                toolButton.Icon = new LocalIcon(Icons[toolButton]);
+
             PackageDetails.Click += (s, e) => { 
                 if (PackageList.SelectedItem != null) 
                     _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall); 

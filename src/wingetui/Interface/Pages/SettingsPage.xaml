@@ -138,7 +138,7 @@
                 <widgets:SettingsEntry
                         Text="User interface preferences"
                         UnderText="Action when double-clicking packages, hide successful installations"
-                        Icon="interactive">
+                        Icon="&#xE7C9;">
                     <Toolkit:SettingsExpander.Items>
                         <widgets:CheckboxCard
                             Text="Do not remove successful operations from the list automatically"

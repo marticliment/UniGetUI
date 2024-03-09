@@ -821,7 +821,7 @@
                             <widgets:BetterMenuItem x:Name="MenuInteractive"
                                 Text="Interactive uninstall" 
                                 Click="MenuInteractive_Invoked" 
-                                IconName="interactive"/>
+                                IconName="&#xE7C9;"/>
                             <widgets:BetterMenuItem x:Name="MenuRemoveData" 
                                 Text="Uninstall and remove data" 
                                 Click="MenuRemoveData_Invoked"

@@ -47,7 +47,7 @@ namespace ModernWindow.Interface.Widgets
                     if (e.NewValue.ToString().Length == 1)
                         Icon = new FontIcon() { Glyph = e.NewValue.ToString(), Margin = new Thickness(1) };
                     else
-                        Icon = new LocalIcon(e.NewValue as string) { Height = 32, Margin = new Thickness(0) };
+                        Icon = new LocalIcon(e.NewValue as string);
                 })));
 
             TextProperty = DependencyProperty.Register(
@@ -125,7 +125,7 @@ namespace ModernWindow.Interface.Widgets
                     if (e.NewValue.ToString().Length == 1)
                         Icon = new FontIcon() { Glyph = e.NewValue.ToString(), Margin = new Thickness(1) };
                     else
-                        Icon = new LocalIcon(e.NewValue as string) { Height = 32, Margin = new Thickness(0) };
+                        Icon = new LocalIcon(e.NewValue as string);
                 })));
 
             Click += (s, e) => { Invoked?.Invoke(this, Package); };

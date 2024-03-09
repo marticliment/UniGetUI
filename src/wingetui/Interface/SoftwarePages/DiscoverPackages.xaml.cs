@@ -536,20 +536,17 @@ namespace ModernWindow.Interface
                 { InstallAsAdmin,       "runasadmin" },
                 { InstallSkipHash,      "checksum" },
                 { InstallInteractive,   "interactive" },
-                { InstallationSettings, "\uE9E9" },
-                { PackageDetails,       "\uE946" },
+                { InstallationSettings, "options" },
+                { PackageDetails,       "info" },
                 { SharePackage,         "share" },
-                { SelectAll,            "\uF16C" },
-                { SelectNone,           "\uF16B" },
+                { SelectAll,            "selectall" },
+                { SelectNone,           "selectnone" },
                 { ExportSelection,      "add_to" },
                 { HelpButton,           "help" }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)
-                if(Icons[toolButton].Length == 1)
-                    toolButton.Icon = new FontIcon() { Glyph = Icons[toolButton], Margin = new Thickness(2), FontWeight = new Windows.UI.Text.FontWeight(300) };
-                else
-                    toolButton.Icon = new LocalIcon(Icons[toolButton]);
+                toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
             PackageDetails.Click += (s, e) => { 
                 if (PackageList.SelectedItem != null) 

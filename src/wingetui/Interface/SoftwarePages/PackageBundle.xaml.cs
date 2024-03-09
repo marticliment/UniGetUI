@@ -436,21 +436,18 @@ namespace ModernWindow.Interface
             {
                 { NewBundle,              "add_to" },
                 { InstallPackages,        "newversion" },
-                { OpenBundle,             "\uE838" },
-                { RemoveSelected,         "\uE74D" },
-                { ExportBundle,           "\uE792" },
-                { PackageDetails,         "\uE946" },
+                { OpenBundle,             "openfolder" },
+                { RemoveSelected,         "menu_uninstall" },
+                { ExportBundle,           "save" },
+                { PackageDetails,         "info" },
                 { SharePackage,           "share" },
-                { SelectAll,              "\uF16C" },
-                { SelectNone,             "\uF16B" },
+                { SelectAll,              "selectall" },
+                { SelectNone,             "selectnone" },
                 { HelpButton,             "help" }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)
-                if (Icons[toolButton].Length == 1)
-                    toolButton.Icon = new FontIcon() { Glyph = Icons[toolButton], Margin = new Thickness(2), FontWeight = new Windows.UI.Text.FontWeight(300) };
-                else
-                    toolButton.Icon = new LocalIcon(Icons[toolButton]);
+                toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
             PackageDetails.Click += (s, e) =>
             {
