@@ -385,6 +385,7 @@ public class Scoop : PackageManagerWithSources
             process.Start();
 
             var _output = "";
+            bool DashesPassed = false;
 
             string line;
             while ((line = await process.StandardOutput.ReadLineAsync()) != null)
@@ -392,13 +393,25 @@ public class Scoop : PackageManagerWithSources
                 _output += line + "\n";
                 try
                 {
-                    string[] elements = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
-                    if (elements.Length >= 5)
-                        sources.Add(new ManagerSource(this, elements[0].Trim(), new Uri(elements[1].Trim()), int.Parse(elements[4].Trim()), elements[2].Trim() + " " + elements[3].Trim()));
+                    if (!DashesPassed)
+                    {
+                        if (line.Contains("---"))
+                            DashesPassed = true;
+                    }
+                    else if (line.Trim() != "")
+                    {
+                        string[] elements = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
+                        if (elements.Length >= 5)
+                        {
+                            if (!elements[1].Contains("http://"))
+                                elements[1] = "https://scoop.sh/"; // If the URI is invalid, we'll use the main website
+                            sources.Add(new ManagerSource(this, elements[0].Trim(), new Uri(elements[1].Trim()), int.Parse(elements[4].Trim()), elements[2].Trim() + " " + elements[3].Trim()));
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(e);
+                    AppTools.Log(e);
                 }
             }
             _output += await process.StandardError.ReadToEndAsync();
