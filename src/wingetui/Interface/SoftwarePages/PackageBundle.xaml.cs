@@ -437,7 +437,7 @@ namespace ModernWindow.Interface
                 { NewBundle,              "add_to" },
                 { InstallPackages,        "newversion" },
                 { OpenBundle,             "openfolder" },
-                { RemoveSelected,         "menu_uninstall" },
+                { RemoveSelected,         "trash" },
                 { ExportBundle,           "save" },
                 { PackageDetails,         "info" },
                 { SharePackage,           "share" },

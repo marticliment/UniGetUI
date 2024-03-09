@@ -552,7 +552,7 @@ namespace ModernWindow.Interface
 
             Dictionary<AppBarButton, string> Icons = new()
             {
-                { UninstallSelected,      "menu_uninstall" },
+                { UninstallSelected,      "trash" },
                 { UninstallAsAdmin,       "runasadmin" },
                 { UninstallInteractive,   "interactive" },
                 { InstallationSettings,   "options" },
@@ -561,7 +561,7 @@ namespace ModernWindow.Interface
                 { SelectAll,              "selectall" },
                 { SelectNone,             "selectnone" },
                 { IgnoreSelected,         "pin" },
-                { ManageIgnored,          "blacklist" },
+                { ManageIgnored,          "clipboard_list" },
                 { ExportSelection,        "add_to" },
                 { HelpButton,             "help" }
             };

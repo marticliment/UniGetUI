@@ -625,7 +625,7 @@ namespace ModernWindow.Interface
                 { SelectAll,            "selectall" },
                 { SelectNone,           "selectnone" },
                 { IgnoreSelected,       "pin" },
-                { ManageIgnored,        "blacklist" },
+                { ManageIgnored,        "clipboard_list" },
                 { HelpButton,           "help" }
             };
 

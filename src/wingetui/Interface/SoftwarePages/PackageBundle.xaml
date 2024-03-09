@@ -572,7 +572,7 @@
                     <widgets:LocalIcon IconName="options"/>
                 </Button>
                 <Button Grid.Column="10" VerticalAlignment="Stretch" Width="32" Padding="3" x:Name="RemoveButton" Click="{x:Bind RemoveFromList}">
-                    <widgets:LocalIcon IconName="menu_uninstall"/>
+                    <widgets:LocalIcon IconName="trash"/>
                 </Button>
             </Grid>
         </DataTemplate>
@@ -675,8 +675,8 @@
                         Padding="4,4,4,8" HorizontalContentAlignment="Stretch">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <widgets:LocalIcon IconName="provider" Height="24"/>
-                                <widgets:TranslatedTextBlock Text="Sources" VerticalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE74C;" FontSize="20"/>
+                                <widgets:TranslatedTextBlock Text="Sources" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Expander.Header>
                         <Expander.Content>
@@ -708,8 +708,8 @@
                         Padding="16,8,16,8" HorizontalContentAlignment="Stretch">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <widgets:LocalIcon IconName="edit_filters" Height="24"/>
-                                <widgets:TranslatedTextBlock Text="Filters" VerticalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE71C;" FontSize="20"/>
+                                <widgets:TranslatedTextBlock Text="Filters" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Expander.Header>
                         <Expander.Content>
@@ -813,7 +813,7 @@
                             <widgets:BetterMenuItem x:Name="MenuRemoveData" 
                                 Text="Remove from list" 
                                 Click="MenuRemoveFromList_Invoked"
-                                IconName="menu_uninstall"/>
+                                IconName="trash"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuShare" 
                                 Text="Share this package" 
