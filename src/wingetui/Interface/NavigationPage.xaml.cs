@@ -195,11 +195,11 @@ namespace ModernWindow.Interface
             UpdatesDialog.XamlRoot = XamlRoot;
             UpdatesDialog.Resources["ContentDialogMaxWidth"] = 1200;
             UpdatesDialog.Resources["ContentDialogMaxHeight"] = 1000;
-            UpdatesDialog.PrimaryButtonText = Tools.Translate("Close");
-            UpdatesDialog.SecondaryButtonText = Tools.Translate("Reset");
-            UpdatesDialog.DefaultButton = ContentDialogButton.Primary;
+            UpdatesDialog.SecondaryButtonText = Tools.Translate("Close");
+            UpdatesDialog.PrimaryButtonText = Tools.Translate("Reset");
+            UpdatesDialog.DefaultButton = ContentDialogButton.Secondary;
             UpdatesDialog.Title = Tools.Translate("Manage ignored updates");
-            UpdatesDialog.SecondaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
+            UpdatesDialog.PrimaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
             UpdatesDialog.Content = IgnoredUpdatesPage;
 
             _ = IgnoredUpdatesPage.UpdateData();
