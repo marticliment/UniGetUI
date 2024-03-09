@@ -44,7 +44,11 @@ jobs:
       run: |
         mkdir out
         msbuild src/wingetui/wingetui.csproj /noLogo /property:Configuration=Release /property:Platform=x64 /restore:True /interactive:False /property:OutputPath=.\out
+        dir
+        pwd
         cd out
+        pwd
+        dir
         wingetui.exe --load-and-quit
-        exit %ERRORLEVEL%
+        exit $LASTEXITCODE
       
