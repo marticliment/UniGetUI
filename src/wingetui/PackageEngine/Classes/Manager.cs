@@ -27,6 +27,10 @@ namespace ModernWindow.PackageEngine.Classes
         public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
         public bool ManagerReady { get; set; } = false;
 
+        private Dictionary<string, Package> __known_installed_packages = new();
+        private Dictionary<string, Package> __known_available_packages = new();
+        private Dictionary<string, UpgradablePackage> __known_upgradable_packages = new();
+
         /// <summary>
         /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.
         /// </summary>
@@ -128,7 +132,17 @@ namespace ModernWindow.PackageEngine.Classes
         {
             try
             {
-                return await FindPackages_UnSafe(query);
+                var packages = await FindPackages_UnSafe(query);
+                for (int i = 0; i < packages.Length; i++)
+                {
+                    if (!__known_available_packages.ContainsKey(packages[i].GetHash()))
+                        __known_available_packages.Add(packages[i].GetHash(), packages[i]);
+                    else
+                    {
+                        packages[i] = __known_available_packages[packages[i].GetHash()];
+                    }
+                }
+                return packages;
             }
             catch (Exception e)
             {
@@ -147,7 +161,17 @@ namespace ModernWindow.PackageEngine.Classes
         {
             try
             {
-                return await GetAvailableUpdates_UnSafe();
+                var packages = await GetAvailableUpdates_UnSafe();
+                for (int i = 0; i < packages.Length; i++)
+                {
+                    if (!__known_upgradable_packages.ContainsKey(packages[i].GetHash()))
+                        __known_upgradable_packages.Add(packages[i].GetHash(), packages[i]);
+                    else
+                    {
+                        packages[i] = __known_upgradable_packages[packages[i].GetHash()];
+                    }
+                }
+                return packages;
             }
             catch (Exception e)
             {
@@ -165,7 +189,17 @@ namespace ModernWindow.PackageEngine.Classes
         {
             try
             {
-                return await GetInstalledPackages_UnSafe();
+                var packages = await GetInstalledPackages_UnSafe();
+                for (int i = 0; i < packages.Length; i++)
+                {
+                    if (!__known_installed_packages.ContainsKey(packages[i].GetHash()))
+                        __known_installed_packages.Add(packages[i].GetHash(), packages[i]);
+                    else
+                    {
+                        packages[i] = __known_installed_packages[packages[i].GetHash()];
+                    }
+                }
+                return packages;
             }
             catch (Exception e)
             {

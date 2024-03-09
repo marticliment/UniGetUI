@@ -51,6 +51,7 @@ namespace ModernWindow.PackageEngine.Classes
         private PackageTag __tag;
         private float __opacity;
         private bool __show_icon_highlight;
+        private string __hash;
 
         public PackageTag Tag
         {
@@ -185,7 +186,14 @@ namespace ModernWindow.PackageEngine.Classes
             NewVersion = "";
             VersionAsFloat = GetFloatVersion();
             Tag = PackageTag.Default;
+            __hash = Manager.Name + "\\" + Source.Name + "\\" + Id;
         }
+
+        public string GetHash()
+        {
+            return __hash ;
+        }
+
 
         /// <summary>
         /// Internal method
@@ -197,7 +205,7 @@ namespace ModernWindow.PackageEngine.Classes
             if (!(obj is Package))
                 return false;
             else
-                return Source == (obj as Package).Source && Id == (obj as Package).Id;
+                return (obj as Package).GetHash() == GetHash();
         }
 
         /// <summary>
@@ -426,6 +434,8 @@ namespace ModernWindow.PackageEngine.Classes
         public float NewVersionAsFloat { get; }
         public override bool IsUpgradable { get; } = true;
 
+        private new string __hash;
+
         /// <summary>
         /// Creates an UpgradablePackage object representing a package that can be upgraded; given its name, id, installed version, new version, source and manager, and an optional scope.
         /// </summary>
@@ -441,6 +451,12 @@ namespace ModernWindow.PackageEngine.Classes
             NewVersion = new_version;
             IsChecked = true;
             NewVersionAsFloat = GetFloatNewVersion();
+
+            __hash = Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version + "->" + NewVersion;
+        }
+        public new string GetHash()
+        {
+            return __hash;
         }
 
         /// <summary>
