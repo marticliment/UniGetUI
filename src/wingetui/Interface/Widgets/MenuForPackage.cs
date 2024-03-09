@@ -44,10 +44,7 @@ namespace ModernWindow.Interface.Widgets
                 typeof(CheckboxCard),
                 new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
                 {
-                    if (e.NewValue.ToString().Length == 1)
-                        Icon = new FontIcon() { Glyph = e.NewValue.ToString(), Margin = new Thickness(1) };
-                    else
-                        Icon = new LocalIcon(e.NewValue as string);
+                    Icon = new LocalIcon(e.NewValue as string);
                 })));
 
             TextProperty = DependencyProperty.Register(
@@ -122,10 +119,7 @@ namespace ModernWindow.Interface.Widgets
                 typeof(CheckboxCard),
                 new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
                 {
-                    if (e.NewValue.ToString().Length == 1)
-                        Icon = new FontIcon() { Glyph = e.NewValue.ToString(), Margin = new Thickness(1) };
-                    else
-                        Icon = new LocalIcon(e.NewValue as string);
+                    Icon = new LocalIcon(e.NewValue as string);
                 })));
 
             Click += (s, e) => { Invoked?.Invoke(this, Package); };

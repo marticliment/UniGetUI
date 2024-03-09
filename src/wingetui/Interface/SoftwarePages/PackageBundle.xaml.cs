@@ -553,7 +553,7 @@ namespace ModernWindow.Interface
 
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            if (PackageList.SelectedItem as BundledPackage != null)
+            if ((PackageList.SelectedItem as BundledPackage).Package != null)
                 (PackageList.SelectedItem as BundledPackage).ShowOptions(sender, e);
         }
 

@@ -19,10 +19,10 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid ColumnSpacing="0">
+        <Grid ColumnSpacing="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -31,19 +31,19 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Name="BackButton" Click="BackButton_Click" Height="35" Width="35" Padding="5" CornerRadius="4,0,0,4">
-                <FontIcon Glyph="&#xE76B;" FontSize="20"/>
+            <Button Grid.Column="0" Name="BackButton" Click="BackButton_Click" Height="30" Width="30" Padding="5" CornerRadius="4">
+                <widgets:LocalIcon IconName="left"/>
             </Button>
-            <Button Grid.Column="1" Name="RightButton" Click="RightButton_Click" Height="35" Width="35" Padding="5" CornerRadius="0">
-                <FontIcon Glyph="&#xE76C;" FontSize="20"/>
+            <Button Grid.Column="1" Name="RightButton" Click="RightButton_Click" Height="30" Width="30" Padding="5" CornerRadius="4">
+                <widgets:LocalIcon IconName="right"/>
             </Button>
-            <Button Grid.Column="2" Name="HomeButton" Click="HomeButton_Click"  Height="35" Width="35" Padding="5" CornerRadius="0">
-                <FontIcon Glyph="&#xE80F;" FontSize="16"/>
+            <Button Grid.Column="2" Name="HomeButton" Click="HomeButton_Click"  Height="30" Width="30" Padding="5" CornerRadius="4">
+                <widgets:LocalIcon IconName="home"/>
             </Button>
-            <Button Grid.Column="3" Name="ReloadButton" Click="ReloadButton_Click" Height="35" Width="35" Padding="5" CornerRadius="0,4,4,0">
-                <FontIcon Glyph="&#xE72C;" FontSize="16"/>
+            <Button Grid.Column="3" Name="ReloadButton" Click="ReloadButton_Click" Height="30" Width="30" Padding="5" CornerRadius="4">
+                <widgets:LocalIcon IconName="reload"/>
             </Button>
-            <Button Grid.Column="5" Name="BrowserButton" Click="BrowserButton_Click" Height="35">
+            <Button Grid.Column="5" Name="BrowserButton" Click="BrowserButton_Click" Height="30">
                 <widgets:TranslatedTextBlock Text="View page on browser"/> 
             </Button>
         </Grid>
