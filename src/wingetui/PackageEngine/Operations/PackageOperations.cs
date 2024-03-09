@@ -48,7 +48,7 @@ namespace ModernWindow.PackageEngine.Operations
     public abstract class PackageOperation : AbstractOperation
     {
 
-        protected Package Package;
+        public Package Package;
         protected InstallationOptions Options;
         public PackageOperation(Package package, InstallationOptions options)
         {

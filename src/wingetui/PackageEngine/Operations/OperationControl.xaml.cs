@@ -271,6 +271,10 @@ namespace ModernWindow.PackageEngine
             RemoveFromQueue();
             Status = OperationStatus.Cancelled;
             LineInfoText = Tools.Translate("Operation cancelled");
+
+            if (this is PackageOperation)
+                (this as PackageOperation).Package.Tag = PackageTag.Default;
+
             if (OldStatus == OperationStatus.Running)
             {
                 Process.Kill();
