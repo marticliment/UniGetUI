@@ -177,6 +177,9 @@ namespace ModernWindow
                 AppTools.Log("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();
                 RaiseExceptionAsFatal = false;
+
+                if (Environment.GetCommandLineArgs().Contains("--load-and-quit"))
+                    DisposeAndQuit(0);
             }
             catch (Exception e)
             {
