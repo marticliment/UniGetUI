@@ -105,7 +105,7 @@ namespace ModernWindow.PackageEngine.Classes
                         break;
 
                     case PackageTag.Failed:
-                        ListedIconId = "warning";
+                        ListedIconId = "stop";
                         ListIconShowHighlight = true;
                         ListedOpacity = 1;
                         ListedNameTooltip = Tools.Translate("An error occurred while processing this package") + " - " + Name;

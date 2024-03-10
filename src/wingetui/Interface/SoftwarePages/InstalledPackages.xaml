@@ -524,8 +524,8 @@
                     />
                 <Canvas Grid.Column="1" Grid.Row="0" Height="24" Width="24">
                     <Border Background="{ThemeResource AccentAAFillColorTertiaryBrush}" 
-                            Height="20" Width="20" 
-                            Canvas.Top="2" Canvas.Left="2"
+                            Height="18" Width="18" 
+                            Canvas.Top="3" Canvas.Left="3"
                             CornerRadius="12" Visibility="{x:Bind ListIconShowHighlight, Mode=OneWay}"/>
                     <widgets:LocalIcon
                             IconName="{x:Bind ListedIconId, Mode=OneWay}"
