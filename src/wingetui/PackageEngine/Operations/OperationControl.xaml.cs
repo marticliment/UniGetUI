@@ -43,7 +43,7 @@ namespace ModernWindow.PackageEngine
         private string __line_info_text = "Please wait...";
         private Uri __icon_source = new("ms-appx://wingetui/resources/package_color.png");
         private string __operation_description = "$Package Install";
-        private Color? __progressbar_color = null;
+        private SolidColorBrush? __progressbar_color = null;
         private OperationStatus __status = OperationStatus.Pending;
         private bool IsDialogOpen = false;
 
@@ -99,10 +99,10 @@ namespace ModernWindow.PackageEngine
             get { return __operation_description; }
             set { __operation_description = value; if (InfoTextBlock != null) InfoTextBlock.Text = __operation_description; }
         }
-        protected Color? ProgressBarColor
+        protected SolidColorBrush? ProgressBarColor
         {
             get { return __progressbar_color; }
-            set { __progressbar_color = value; if (ProgressIndicator != null) ProgressIndicator.Foreground = (__progressbar_color != null) ? new SolidColorBrush((Color)__progressbar_color) : null; }
+            set { __progressbar_color = value; if (ProgressIndicator != null) ProgressIndicator.Foreground = (__progressbar_color != null) ? __progressbar_color : null; }
         }
 
         protected event EventHandler<OperationCancelledEventArgs> CancelRequested;
@@ -122,33 +122,49 @@ namespace ModernWindow.PackageEngine
                 __status = value;
                 switch (__status)
                 {
+
+                    /*
+                     * 
+                     * 
+        <SolidColorBrush x:Key="ProgressWaiting" Color="{ThemeResource SystemFillColorNeutralBrush}"/>
+        <SolidColorBrush x:Key="ProgressRunning" Color="{ThemeResource SystemFillColorAttentionBrush}"/>
+        <SolidColorBrush x:Key="ProgressSucceeded" Color="{ThemeResource SystemFillColorSuccessBrush}"/>
+        <SolidColorBrush x:Key="ProgressFailed" Color="{ThemeResource SystemFillColorCriticalBrush}"/>
+        <SolidColorBrush x:Key="ProgressCanceled" Color="{ThemeResource SystemFillColorCautionBrush}"/>
+                     * */
                     case OperationStatus.Pending:
-                        ProgressIndicator.IsIndeterminate = true;
-                        ProgressBarColor = Colors.Gray;
+                        ProgressIndicator.IsIndeterminate = false;
+                        ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBrush"];
+                        MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBackgroundBrush"];
                         ButtonText = Tools.Translate("Cancel");
                         break;
 
                     case OperationStatus.Running:
                         ProgressIndicator.IsIndeterminate = true;
-                        ProgressBarColor = new Windows.UI.ViewManagement.UISettings().GetColorValue(Windows.UI.ViewManagement.UIColorType.AccentLight1);
+                        ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorAttentionBrush"];
+                        MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorAttentionBackgroundBrush"];
+
                         ButtonText = Tools.Translate("Cancel");
                         break;
 
                     case OperationStatus.Succeeded:
-                        ProgressBarColor = CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor("#11945a");
+                        ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorSuccessBrush"];
+                        MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBackgroundBrush"];
                         ProgressIndicator.IsIndeterminate = false;
                         ButtonText = Tools.Translate("Close");
                         break;
 
                     case OperationStatus.Failed:
                         ProgressIndicator.IsIndeterminate = false;
-                        ProgressBarColor = CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor("#fe890b");
+                        ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorCriticalBrush"];
+                        MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorCriticalBackgroundBrush"];
                         ButtonText = Tools.Translate("Close");
                         break;
 
                     case OperationStatus.Cancelled:
                         ProgressIndicator.IsIndeterminate = false;
-                        ProgressBarColor = CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor("#fec10b");
+                        ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorCautionBrush"];
+                        MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBackgroundBrush"];
                         ButtonText = Tools.Translate("Close");
                         break;
                 }

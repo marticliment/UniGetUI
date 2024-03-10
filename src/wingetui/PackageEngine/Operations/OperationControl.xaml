@@ -32,17 +32,19 @@
             <ResourceDictionary>
                 <Style TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
                     <Setter Property="Height" Value="32"/>
-                    <Setter Property="CornerRadius" Value="4"/>
+                    <Setter Property="CornerRadius" Value="2"/>
                     <Setter Property="BorderThickness" Value="0"/>
                 </Style>
             </ResourceDictionary>
         </Grid.Resources>
         <Image Grid.Column="0" VerticalAlignment="Center" Name="PackageIcon" Width="32" Height="24" Margin="0"/>
         <TextBlock Name="InfoTextBlock" Grid.Column="1" VerticalAlignment="Center"/>
-        <ProgressBar Name="ProgressIndicator" IsIndeterminate="True" Grid.Column="2" VerticalAlignment="Bottom" CornerRadius="0,0,4,4" Height="4" Maximum="100" Value="100"/>
         <Button Grid.Column="2" VerticalAlignment="Center" Name="OutputViewewBlock" HorizontalAlignment="Stretch"
-            FontFamily="Consolas" HorizontalContentAlignment="Left"/>
-        <Button Grid.Column="3" VerticalAlignment="Center" Name="ActionButton" HorizontalAlignment="Stretch"/>
+            FontFamily="Consolas" HorizontalContentAlignment="Left" CornerRadius="5"/>
+        <Border Grid.Column="2" Margin="0,0,0,0" Height="12" VerticalAlignment="Bottom" CornerRadius="0,0,6,6">
+            <ProgressBar Name="ProgressIndicator" IsIndeterminate="True" VerticalAlignment="Bottom" Margin="0,0,0,-2" CornerRadius="0,0,6,6" Height="6" Maximum="100" Value="100"/>
+        </Border>
+        <Button Grid.Column="3" VerticalAlignment="Center" Name="ActionButton" HorizontalAlignment="Stretch" CornerRadius="5"/>
         
     </Grid>
 </UserControl>
