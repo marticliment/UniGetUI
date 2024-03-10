@@ -1,8 +1,10 @@
-﻿using ModernWindow.PackageEngine.Classes;
+﻿using Microsoft.UI.Xaml.Controls;
+using ModernWindow.PackageEngine.Classes;
 using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -90,14 +92,6 @@ namespace ModernWindow.PackageEngine.Managers
 
             p.Start();
 
-            ManagerSource[] sources = await GetSources();
-
-            string SourceDict = "{";
-            foreach (ManagerSource source in sources)
-            {
-                SourceDict += "\"" + source.Name + "\" = \"" + source.Url.ToString() + "\";";
-            }
-            SourceDict += "}";
             await p.StandardInput.WriteLineAsync(@"
                 function Test-GalleryModuleUpdate {
                     param (
@@ -107,12 +101,13 @@ namespace ModernWindow.PackageEngine.Managers
                         [switch] $NeedUpdateOnly
                     )
                     process {
-                        $URLs = @" + SourceDict + @"
+                        $URLs = @{}
+                        @(Get-PSRepository).ForEach({$URLs[$_.Name] = $_.SourceLocation})
                         $page = Invoke-WebRequest -Uri ($URLs[$Repository] + ""/package/$Name"") -UseBasicParsing -Maximum 0 -ea Ignore
                         [version]$latest = Split-Path -Path ($page.Headers.Location -replace ""$Name."" -replace "".nupkg"") -Leaf
                         $needsupdate = $Latest -gt $Version
                         if ($needsupdate) {
-                            Write-Output ($Name + ""|"" + $Version.ToString() + ""|"" + $Latest.ToString() + ""|"" + $Repository)
+                                Write-Output($Name + ""|"" + $Version.ToString() + ""|"" + $Latest.ToString() + ""|"" + $Repository)
                         }
                     }
                 }
