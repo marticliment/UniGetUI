@@ -214,6 +214,7 @@
   "Interactive uninstall" : "Interaktivní odinstalace",
   "Interactive update" : "Interaktivní aktualizace",
   "Is this package missing the icon?" : "Chybí tomuto balíčku ikonka?",
+  "Is your language missing or incomplete?" : null,
   "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"{showDetails}\" to see why." : "Vypadá to, že jste WingetUI spustili jako správce, což se nedoporučuje. Program můžete používat i nadále, ale důrazně doporučujeme nespouštět WingetUI s právy správce. Kliknutím na \"{showDetails}\" zjistíte proč.",
   "Language, theme and other miscellaneous preferences" : "Lokalizace, motivy a další různé vlastnosti",
   "Last updated:" : "Poslední aktualizace:",

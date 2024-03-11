@@ -214,6 +214,7 @@
   "Interactive uninstall" : "Gỡ cài đặt tương tác",
   "Interactive update" : "Cập nhật tương tác",
   "Is this package missing the icon?" : "Gói này có bị thiếu biểu tượng không?",
+  "Is your language missing or incomplete?" : null,
   "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"{showDetails}\" to see why." : "Có vẻ như bạn đã chạy WingetUI với tư cách quản trị viên, điều này không được khuyến khích. Bạn vẫn có thể sử dụng chương trình nhưng chúng tôi khuyên bạn không nên chạy WingetUI với quyền quản trị viên. Nhấp vào \"{showDetails}\" để xem lý do.",
   "Language, theme and other miscellaneous preferences" : "Ngôn ngữ, chủ đề và các cài đặt khác",
   "Last updated:" : "Lần cuối cập nhật: ",

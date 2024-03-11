@@ -214,6 +214,7 @@
   "Interactive uninstall" : "حدف برنامه به صورت تعاملی",
   "Interactive update" : "نصب تعاملی",
   "Is this package missing the icon?" : " این پکیج بدون ایکون است؟",
+  "Is your language missing or incomplete?" : null,
   "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"{showDetails}\" to see why." : "به نظر می رسد شما WingetUI را به عنوان سرپرست اجرا کرده اید، که توصیه نمی شود. همچنان می توانید از این برنامه استفاده کنید، اما ما به شدت توصیه می کنیم WingetUI را با امتیازات مدیر اجرا نکنید. برای دیدن دلیل روی \"{showDetails}\" کلیک کنید.",
   "Language, theme and other miscellaneous preferences" : "زبان، تم و تنظیمات گوناگون دیگر ",
   "Last updated:" : "اخرین به روز رسانی:",

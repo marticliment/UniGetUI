@@ -214,6 +214,7 @@
   "Interactive uninstall" : null,
   "Interactive update" : null,
   "Is this package missing the icon?" : null,
+  "Is your language missing or incomplete?" : null,
   "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"{showDetails}\" to see why." : null,
   "Language, theme and other miscellaneous preferences" : null,
   "Last updated:" : null,
