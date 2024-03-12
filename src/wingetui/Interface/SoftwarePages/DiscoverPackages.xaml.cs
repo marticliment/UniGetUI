@@ -158,6 +158,7 @@ namespace ModernWindow.Interface
             }
             catch
             {
+                Tools.SetSettingsValue("SidepanelWidthDiscoverPage", "250");
             }
             BodyGrid.ColumnDefinitions.ElementAt(0).Width = new GridLength(width);
                 
@@ -748,11 +749,11 @@ namespace ModernWindow.Interface
 
         private void SidepanelWidth_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (e.NewSize.Width == lastSavedWidth / 10)
+            if (e.NewSize.Width == ((int)(e.NewSize.Width / 10)) || e.NewSize.Width == 25)
                 return;
 
-            lastSavedWidth = (int)(e.NewSize.Width) / 10;
-            Tools.SetSettingsValue("SidepanelWidthDiscoverPage", (e.NewSize.Width / 10).ToString());
+            lastSavedWidth = ((int)(e.NewSize.Width / 10));
+            Tools.SetSettingsValue("SidepanelWidthDiscoverPage", ((int)e.NewSize.Width).ToString());
             foreach(var control in SidePanelGrid.Children)
             {
                 control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;
