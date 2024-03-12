@@ -214,6 +214,7 @@
   "Interactive uninstall" : "交互式卸载（非自动）",
   "Interactive update" : "交互式更新（非自动）",
   "Is this package missing the icon?" : "这个软件包缺失图标？",
+  "Is your language missing or incomplete?" : null,
   "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"{showDetails}\" to see why." : "看来您在以管理员身份运行 WingetUI，非常不建议这样做。 您仍然可以使用该程序，但是我们强烈建议不要使用管理员权限运行 WingetUI。 点击“ {showDetails}”来了解原因。",
   "Language, theme and other miscellaneous preferences" : "语言、主题和其他杂项设置",
   "Last updated:" : "最近更新：",

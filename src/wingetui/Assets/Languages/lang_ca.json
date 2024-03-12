@@ -214,6 +214,7 @@
   "Interactive uninstall" : "Desinstal·lació interactiva",
   "Interactive update" : "Actualització interactiva",
   "Is this package missing the icon?" : "A aquest paquet li falta la icona?",
+  "Is your language missing or incomplete?" : "Falta el vostre idioma o la traducció està incompleta?",
   "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"{showDetails}\" to see why." : "Sembla que heu executat el WingetUI com a administrador, fet que no es recomana. Podeu seguir utilitzant el programa, però no recomanem executar el WingetUI amb drets d'administrador. Cliqueu a \"{showDetails}\" per a veure el perquè.",
   "Language, theme and other miscellaneous preferences" : "Idioma, tema i altres preferències miscel·lànies",
   "Last updated:" : "Actualitzat per darrer cop:",

@@ -214,6 +214,7 @@
   "Interactive uninstall" : "הסרת התקנה אינטרקטיבית",
   "Interactive update" : "עדכון אינטרקטיבי",
   "Is this package missing the icon?" : "האם לחבילה זו חסר סמל?",
+  "Is your language missing or incomplete?" : null,
   "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"{showDetails}\" to see why." : "נראה שהפעלת את WingetUI כמנהל מערכת, דבר שאינו מומלץ. אתה עדיין יכול להשתמש בתוכנית, אבל אנחנו מאוד ממליצים לא להפעיל WingetUI עם הרשאות מנהל. לחץ על \"{showDetails}\" כדי לראות מדוע.",
   "Language, theme and other miscellaneous preferences" : "שפה, ערכת נושא והעדפות שונות אחרות",
   "Last updated:" : "עודכן לאחרונה:",
