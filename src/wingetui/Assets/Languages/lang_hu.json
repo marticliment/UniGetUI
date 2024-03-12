@@ -214,6 +214,7 @@
   "Interactive uninstall" : "Interaktív eltávolítás",
   "Interactive update" : "Interaktív frissítés",
   "Is this package missing the icon?" : "Hiányzik ebből a csomagból az ikon?",
+  "Is your language missing or incomplete?" : "Hiányzik vagy hiányos az Ön nyelve?",
   "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"{showDetails}\" to see why." : "Úgy tűnik, a WingetUI-t rendszergazdaként futtatta, ami nem ajánlott. A programot továbbra is használhatja de javasoljuk, hogy a WingetUI-t ne futtassa rendszergazdai jogosultságokkal. Kattintson a \"{showDetails}\" gombra, hogy megtudja miért.\n",
   "Language, theme and other miscellaneous preferences" : "Nyelv, téma és más egyéb beállítások",
   "Last updated:" : "Utolsó frissítés:",

@@ -214,6 +214,7 @@
   "Interactive uninstall" : "Pencopotan interaktif",
   "Interactive update" : "Pembaruan interaktif",
   "Is this package missing the icon?" : "Apakah paket ini kehilangan ikon?",
+  "Is your language missing or incomplete?" : null,
   "It looks like you ran WingetUI as administrator, which is not recommended. You can still use the program, but we highly recommend not running WingetUI with administrator privileges. Click on \"{showDetails}\" to see why." : "Sepertinya Anda menjalankan WingetUI sebagai administrator, dan itu tidak disarankan. Anda masih dapat menggunakan program ini, tetapi kami sangat menyarankan untuk tidak menjalankan WingetUI dengan hak administrator. Klik \"{showDetails}\" untuk mengetahui alasannya.",
   "Language, theme and other miscellaneous preferences" : "Bahasa, tema dan pereferensi lainnya",
   "Last updated:" : "Terakhir diperbaharui:",
