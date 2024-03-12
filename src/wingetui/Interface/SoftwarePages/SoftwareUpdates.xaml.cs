@@ -358,7 +358,7 @@ namespace ModernWindow.Interface
                     {
 
                         ToastContentBuilder toast = new();
-                        toast.AddArgument("action", "openWingetUI");
+                        toast.AddArgument("action", "openWingetUIOnUpdatesTab");
                         toast.AddArgument("notificationId", CoreData.UpdatesAvailableNotificationId);
                         toast.AddText(title);
                         toast.AddText(body);
@@ -367,7 +367,7 @@ namespace ModernWindow.Interface
                         {
                             toast.AddButton(new ToastButton()
                                 .SetContent(Tools.Translate("Open WingetUI"))
-                                .AddArgument("action", "openWingetUI")
+                                .AddArgument("action", "openWingetUIOnUpdatesTab")
                                 .SetBackgroundActivation());
                             toast.AddButton(new ToastButton()
                                 .SetContent(Tools.Translate("Update all"))

@@ -14,6 +14,7 @@ using ModernWindow.PackageEngine.Classes;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -80,6 +81,11 @@ namespace ModernWindow
         {
             if (args.Contains("action") && args["action"] == "updateAll")
                 NavigationPage.UpdatesPage.UpdateAll();
+            else if (args.Contains("action") && args["action"] == "openWingetUIOnUpdatesTab")
+            {
+                NavigationPage.UpdatesNavButton.ForceClick();
+                Activate();
+            }
             else
                 Activate();
             AppTools.Log("Notification activated: " + args.ToString() + " " + input.ToString());
