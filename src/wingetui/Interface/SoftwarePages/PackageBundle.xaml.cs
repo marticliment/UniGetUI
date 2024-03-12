@@ -47,6 +47,7 @@ namespace ModernWindow.Interface
         private bool Initialized = false;
         private bool AllSelected = false;
         TreeViewNode LocalPackagesNode;
+        int lastSavedWidth = 0;
 
         public string InstantSearchSettingString = "DisableInstantSearchInstalledTab";
         public PackageBundlePage()
@@ -146,6 +147,17 @@ namespace ModernWindow.Interface
                     QueryBlock.Focus(FocusState.Programmatic);
                 }
             };
+
+            int width = 250;
+            try
+            {
+                width = int.Parse(Tools.GetSettingsValue("SidepanelWidthBundlesPage"));
+            }
+            catch
+            {
+            }
+            BodyGrid.ColumnDefinitions.ElementAt(0).Width = new GridLength(width);
+
 
             GenerateToolBar();
             LoadInterface();
@@ -807,6 +819,19 @@ namespace ModernWindow.Interface
                 AppTools.Log(ex);
             }
         }
+        private void SidepanelWidth_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width == lastSavedWidth / 10)
+                return;
+
+            lastSavedWidth = (int)(e.NewSize.Width) / 10;
+            Tools.SetSettingsValue("SidepanelWidthBundlesPage", (e.NewSize.Width / 10).ToString());
+            foreach (var control in SidePanelGrid.Children)
+            {
+                control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
 
     }
 }

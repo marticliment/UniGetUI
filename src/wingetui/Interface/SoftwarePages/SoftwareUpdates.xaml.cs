@@ -43,7 +43,7 @@ namespace ModernWindow.Interface
         private bool AllSelected = true;
 
         private DateTime LastChecked = DateTime.Now;
-
+        int lastSavedWidth = 0;
 
         public string InstantSearchSettingString = "DisableInstantSearchUpdatesTab";
         public SoftwareUpdatesPage()
@@ -152,6 +152,16 @@ namespace ModernWindow.Interface
                     QueryBlock.Focus(FocusState.Programmatic);
                 }
             };
+
+            int width = 250;
+            try
+            {
+                width = int.Parse(Tools.GetSettingsValue("SidepanelWidthUpdatesPage"));
+            }
+            catch
+            {
+            }
+            BodyGrid.ColumnDefinitions.ElementAt(0).Width = new GridLength(width);
 
 
             GenerateToolBar();
@@ -842,5 +852,19 @@ namespace ModernWindow.Interface
                     if (package.Manager.Name == manager)
                         Tools.AddOperationToList(new UpdatePackageOperation(package));
         }
+
+        private void SidepanelWidth_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width == lastSavedWidth / 10)
+                return;
+
+            lastSavedWidth = (int)(e.NewSize.Width) / 10;
+            Tools.SetSettingsValue("SidepanelWidthUpdatesPage", (e.NewSize.Width / 10).ToString());
+            foreach (var control in SidePanelGrid.Children)
+            {
+                control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
     }
 }

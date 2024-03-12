@@ -25,7 +25,7 @@ namespace ModernWindow.Interface
 {
     public sealed partial class NavigationPage : UserControl
     {
-        public static AppTools Tools = AppTools.Instance;
+        public AppTools Tools = AppTools.Instance;
         public SettingsInterface SettingsPage;
         public DiscoverPackagesPage DiscoverPage;
         public SoftwareUpdatesPage UpdatesPage;
