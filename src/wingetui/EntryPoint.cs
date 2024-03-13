@@ -45,6 +45,10 @@ namespace ModernWindow
             try
             {
 
+                AppTools.Log("Welcome to WingetUI Version " + CoreData.VersionName);
+                AppTools.Log("               Version Code " + CoreData.VersionNumber.ToString());
+                AppTools.Log("              ");
+
                 // WinRT single-instance fancy stuff
                 WinRT.ComWrappersSupport.InitializeComWrappers();
                 bool isRedirect = await DecideRedirection();
