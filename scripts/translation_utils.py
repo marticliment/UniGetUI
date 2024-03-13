@@ -46,6 +46,7 @@ def get_all_strings():
     MAIN_WILDCARD = r'(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_\.\,\:\;\{\}])'
 
     regex_data = {
+        r'(?<=Translate\(["\']).+?(?=["\']\))': lambda match: match.encode('raw_unicode_escape').decode('unicode_escape'),
         r'<[a-zA-Z0-9]+:TranslatedTextBlock' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
         r'<[a-zA-Z0-9]+:ButtonCard' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
         r'<[a-zA-Z0-9]+:ButtonCard' + MAIN_WILDCARD + r'+ButtonText=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" ButtonText=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
