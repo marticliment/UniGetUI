@@ -173,7 +173,10 @@ namespace ModernWindow.Interface
             _ = LoadPackages();
         }
 
-
+        public void ReloadPackages()
+        {
+            _ = LoadPackages();
+        }
         protected void AddPackageToSourcesList(Package package)
         {
             if (!Initialized)

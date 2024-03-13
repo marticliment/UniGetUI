@@ -71,10 +71,18 @@ namespace ModernWindow
                 AppTitle.Text = Title;
             }
 
+            Activated += MainWindow_Activated;
+
             LoadingSthDalog = new ContentDialog();
             LoadingSthDalog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             LoadingSthDalog.Title = Tools.Translate("Please wait");
             LoadingSthDalog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
+        }
+
+        private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+        {
+            if (NavigationPage != null && NavigationPage.InstalledPage != null)
+                NavigationPage.InstalledPage.ReloadPackages();
         }
 
         public void HandleNotificationActivation(ToastArguments args, ValueSet input)
