@@ -71,18 +71,10 @@ namespace ModernWindow
                 AppTitle.Text = Title;
             }
 
-            Activated += MainWindow_Activated;
-
             LoadingSthDalog = new ContentDialog();
             LoadingSthDalog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             LoadingSthDalog.Title = Tools.Translate("Please wait");
             LoadingSthDalog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
-        }
-
-        private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
-        {
-            if (NavigationPage != null && NavigationPage.InstalledPage != null)
-                NavigationPage.InstalledPage.ReloadPackages();
         }
 
         public void HandleNotificationActivation(ToastArguments args, ValueSet input)
@@ -92,10 +84,18 @@ namespace ModernWindow
             else if (args.Contains("action") && args["action"] == "openWingetUIOnUpdatesTab")
             {
                 NavigationPage.UpdatesNavButton.ForceClick();
+
+                if (NavigationPage != null && NavigationPage.InstalledPage != null)
+                    NavigationPage.InstalledPage.ReloadPackages();
                 Activate();
             }
             else
+            {
+
+                if (NavigationPage != null && NavigationPage.InstalledPage != null)
+                    NavigationPage.InstalledPage.ReloadPackages();
                 Activate();
+            }
             AppTools.Log("Notification activated: " + args.ToString() + " " + input.ToString());
         }
 
@@ -140,6 +140,14 @@ namespace ModernWindow
                         Tools.App.DisposeAndQuit();
                 }
             }
+        }
+
+        public new void Activate()
+        {
+            if (NavigationPage != null && NavigationPage.InstalledPage != null)
+                NavigationPage.InstalledPage.ReloadPackages();
+
+            (this as Window).Activate();
         }
 
         public void HideWindow()
