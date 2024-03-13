@@ -367,7 +367,7 @@
   "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "ค้นหาซอฟต์แวร์สำหรับเดสก์ท็อป แจ้งเตือนเมื่อมีอัปเดต และไม่ทำสิ่งที่ซับซ้อนเกินไป ฉันไม่อยากให้ WingetUI มีความซับซ้อน แต่ต้องการให้ WingetUI เป็นเพียง <b>ซอฟต์แวร์สโตร์</b> ที่ใช้งานได้ง่าย",
   "Search for packages" : "ค้นหาแพ็กเกจ",
   "Search for packages to start" : "ค้นหาแพ็กเกจเพื่อเริ่มต้น",
-  "Search mode:" : null,
+  "Search mode" : null,
   "Search on available updates" : "ค้นหาจากอัปเดต",
   "Search on your software" : "ค้นหาจากซอฟต์แวร์ของคุณ",
   "Searching for installed packages..." : "กำลังค้นหาแพ็กเกจที่ถูกติดตั้ง...",

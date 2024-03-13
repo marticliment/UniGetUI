@@ -367,7 +367,7 @@
   "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "搜尋桌面套件，並且在有可用更新時提醒我，不要做討厭的事情。我不希望 WingetUI 過於複雜，我只想要一個簡單的<b>套件市集</b>",
   "Search for packages" : "搜尋套件",
   "Search for packages to start" : "搜尋套件來開始",
-  "Search mode:" : null,
+  "Search mode" : null,
   "Search on available updates" : "在可用的更新中搜尋",
   "Search on your software" : "在已安裝的套件中搜尋",
   "Searching for installed packages..." : "正在搜尋已安裝的套件...",

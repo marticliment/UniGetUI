@@ -367,7 +367,7 @@
   "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "Cerca programari d'escriptori, avisa'm quan hi hagi actualitzacions disponibles i no facis coses massa tècniques. No vull que WingetUI es compliqui massa, només vull una <b>botiga de programari</b> senzilla.",
   "Search for packages" : "Cerqueu paquets",
   "Search for packages to start" : "Cerqueu paquets per a començar",
-  "Search mode:" : "Mode de cerca:",
+  "Search mode" : "Mode de cerca",
   "Search on available updates" : "Cerqueu a les actualitzacions trobades",
   "Search on your software" : "Cercqueu al vostre programari",
   "Searching for installed packages..." : "Cerqueu al programari instal·lat...",

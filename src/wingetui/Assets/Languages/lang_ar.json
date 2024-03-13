@@ -367,7 +367,7 @@
   "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "ابحث عن برامج سطح المكتب ، وحذرني عندما تكون التحديثات متاحة ولا تفعل أشياء غير مألوفة. لا أرغب في زيادة تعقيد WingetUI ، أريد فقط <b> متجر برامج </ b> بسيطًا",
   "Search for packages" : "البحث عن حزم",
   "Search for packages to start" : "ابحث عن الحزم للبدء",
-  "Search mode:" : null,
+  "Search mode" : null,
   "Search on available updates" : "البحث عن التحديثات المتاحة",
   "Search on your software" : "البحث عن برنامجك",
   "Searching for installed packages..." : "يتم البحث عن الحزم المثبتة...",

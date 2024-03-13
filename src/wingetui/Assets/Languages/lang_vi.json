@@ -367,7 +367,7 @@
   "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "Tìm kiếm phần mềm dành cho máy tính để bàn, thông báo cho tôi khi có bản cập nhật và không làm những việc ngớ ngẩn. Tôi không muốn WingetUI quá phức tạp, tôi chỉ muốn một <b>cửa hàng phần mềm</b> đơn giản thôi",
   "Search for packages" : "Tìm kiếm các gói",
   "Search for packages to start" : "Tìm kiếm các gói để bắt đầu",
-  "Search mode:" : null,
+  "Search mode" : null,
   "Search on available updates" : "Tìm kiếm trên các bản cập nhật có sẵn",
   "Search on your software" : "Tìm kiếm trên phần mềm của bạn",
   "Searching for installed packages..." : "Đang tìm kiếm các gói đã cài đặt...",

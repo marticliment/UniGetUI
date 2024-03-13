@@ -367,7 +367,7 @@
   "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "Masaüstü yazılımı ara, güncellemeler geldiğinde beni uyar ve karmaşık şeyler yapma. WingetUI'nin aşırı karmaşık olmasını istemiyorum, sadece basit bir <b>yazılım mağazası</b> istiyorum",
   "Search for packages" : "Paket ara",
   "Search for packages to start" : "Başlamak için paket ara",
-  "Search mode:" : null,
+  "Search mode" : null,
   "Search on available updates" : "Mevcut güncellemeleri kontrol et",
   "Search on your software" : "Kurulu yazılım ara",
   "Searching for installed packages..." : "Kurulu paketler aranıyor...",

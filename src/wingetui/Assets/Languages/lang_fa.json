@@ -367,7 +367,7 @@
   "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : null,
   "Search for packages" : "جستجوی بسته(ها)",
   "Search for packages to start" : null,
-  "Search mode:" : null,
+  "Search mode" : null,
   "Search on available updates" : "جستجو در مورد بروزرسانی های موجود",
   "Search on your software" : "جستجو در مورد برنامه ",
   "Searching for installed packages..." : "در حال جستجو برای بسته های نصب شده...",

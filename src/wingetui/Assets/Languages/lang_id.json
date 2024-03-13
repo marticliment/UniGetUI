@@ -367,7 +367,7 @@
   "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "Cari perangkat lunak desktop, peringatkan saya ketika pembaruan tersedia dan jangan melakukan hal-hal aneh. Saya tidak ingin WingetUI terlalu rumit, saya hanya ingin <b>toko perangkat lunak</b> yang sederhana",
   "Search for packages" : "Cari paket",
   "Search for packages to start" : "Cari paket untuk memulai",
-  "Search mode:" : null,
+  "Search mode" : null,
   "Search on available updates" : "Cari di pembaruan yang tersedia",
   "Search on your software" : "Cari di software anda",
   "Searching for installed packages..." : "Mencari paket yang diinstal...",
