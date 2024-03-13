@@ -108,6 +108,7 @@ namespace ModernWindow.Interface.Widgets
             link.Inlines.Add(new Run() { Text = linkName });
             link.NavigateUri = new Uri("https://marticliment.com/redirect?" + linkId);
             paragraph.Inlines[^1] = link;
+            paragraph.Inlines.Add(new LineBreak());
 
             _textblock.Blocks.Add(paragraph);
         }
