@@ -5,7 +5,7 @@
 - [ ] **Have you tested that the committed code can be executed without errors?**
 
 
-### DO NOT publish garbage PRs to farm Crypto AirDrops. Any user suspected of this actions will get banned. Submitting broken code wastes the time of the contributors, who have to spend their free time reviewing, fixing and testing code that does not even compile, does break other functionality or does not introduce any changes at all.
+### DO NOT publish garbage PRs to farm Crypto AirDrops. Any user suspected of this action will get banned. Submitting broken code wastes the time of the contributors, who have to spend their free time reviewing, fixing and testing code that does not even compile, breaks other features or does not introduce any changes.
 
 
 -----
