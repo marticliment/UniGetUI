@@ -9,7 +9,7 @@ body:
       label: Please confirm these before moving forward
       description: Please confirm the following before posting your issue.
       options:
-        - label: I have searched for my feature proposal and not found a work-in-progress/duplicate/resolved/discarded issue.
+        - label: I have searched for my feature proposal and have not found a work-in-progress/duplicate/resolved/discarded issue.
           required: true
         - label: This improvement refers to an existing feature. If you want to suggest a new feature, please use [this template](https://github.com/marticliment/WingetUI/issues/new?assignees=marticliment&labels=new-feature&projects=&template=feature-request.yml&title=%5BFEATURE+REQUEST%5D+%28Enter+your+description+here%29)
           required: true
@@ -18,7 +18,7 @@ body:
   - type: textarea
     attributes:
       label: Describe the improvement
-      placeholder: Explain how do you see this enhancement, providing as much details as possible about it
+      placeholder: Explain how you see this enhancement, providing as many details as possible about it
     validations:
       required: true
   - type: textarea
