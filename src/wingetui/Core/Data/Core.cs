@@ -13,8 +13,8 @@ namespace ModernWindow.Core.Data
 {
     public static class CoreData
     {
-        public static string VersionName =  "3.0.0-beta1"; // Do not modify this line, use file scripts/apply_versions.py
-        public static double VersionNumber =  2.99; // Do not modify this line, use file scripts/apply_versions.py
+        public static string VersionName =  "3.0.0"; // Do not modify this line, use file scripts/apply_versions.py
+        public static double VersionNumber =  3.0; // Do not modify this line, use file scripts/apply_versions.py
 
         private static string __ignored_updates_database_file = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui", "IgnoredPackageUpdates.json");
         public static string IgnoredUpdatesDatabaseFile
