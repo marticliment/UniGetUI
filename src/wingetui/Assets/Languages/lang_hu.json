@@ -367,7 +367,7 @@
   "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "Keressen asztali szoftvereket, figyelmeztessen, ha frissítések állnak rendelkezésre, és ne csináljon kocka dolgokat. Nem akarom, hogy a WingetUI túlbonyolítsa, csak egy egyszerű <b>szoftvertárolót</b> szeretnék.",
   "Search for packages" : "Csomagok keresése",
   "Search for packages to start" : "Csomagok keresése a kezdéshez",
-  "Search mode:" : "Keresési mód:",
+  "Search mode" : "Keresési mód",
   "Search on available updates" : "Keresés az elérhető frissítések között",
   "Search on your software" : "Keresés a saját szoftverek között",
   "Searching for installed packages..." : "Telepített csomagok keresése...",

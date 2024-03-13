@@ -367,7 +367,7 @@
   "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "Претражите десктоп софтвер, обавестите ме када су доступна ажурирања и не радите чудачке ствари. Не желим да WingetUI постане компликован, желим једноставан <b>софтверски магазин</b>",
   "Search for packages" : "Претражите пакете",
   "Search for packages to start" : "Претражите пакете за почетак",
-  "Search mode:" : null,
+  "Search mode" : null,
   "Search on available updates" : "Претражите доступна ажурирања",
   "Search on your software" : "Претражите свој софтвер",
   "Searching for installed packages..." : "Претрага инсталираних пакета...",

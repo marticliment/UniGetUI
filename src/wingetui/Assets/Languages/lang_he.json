@@ -367,7 +367,7 @@
   "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "חפש תוכנת שולחן עבודה, הזהר אותי כאשר עדכונים זמינים ואל תעשה דברים חנוניים. אני לא רוצה ש-WingetUI תסבך יתר על המידה, אני רק רוצה <b>חנות אפליקציות</b> פשוטה",
   "Search for packages" : "חַפֵּש חבילות",
   "Search for packages to start" : "חַפֵּש חבילות כדי להתחיל",
-  "Search mode:" : null,
+  "Search mode" : null,
   "Search on available updates" : "חפש עדכונים זמינים",
   "Search on your software" : "חפש ביישומים שלך",
   "Searching for installed packages..." : "מחפש חבילות מותקנות...",

@@ -367,7 +367,7 @@
   "Search for desktop software, warn me when updates are available and do not do nerdy things. I don't want WingetUI to overcomplicate, I just want a simple <b>software store</b>" : "Søk etter skrivebordsprogramvare, advar meg når oppdateringer er tilgjengelige og ikke gjør nerdete ting. Jeg vil ikke at WingetUI skal overkomplisere, jeg vil bare ha en enkel <b>programvarebehandler</b>",
   "Search for packages" : "Søk etter pakker",
   "Search for packages to start" : "Søk etter en eller flere pakker for å starte",
-  "Search mode:" : null,
+  "Search mode" : null,
   "Search on available updates" : "Søk etter tilgjengelige oppdateringer",
   "Search on your software" : "Søk i din programvare",
   "Searching for installed packages..." : "Søker etter installerte pakker...",
