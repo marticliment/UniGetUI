@@ -11,9 +11,9 @@ body:
       options:
         - label: I have searched for my feature proposal and not found a work-in-progress/duplicate/resolved/discarded issue.
           required: true
-        - label: This improvements refers to an existing feature. If you want to suggest a new feature, please use [this template](https://github.com/marticliment/WingetUI/issues/new?assignees=marticliment&labels=new-feature&projects=&template=feature-request.yml&title=%5BFEATURE+REQUEST%5D+%28Enter+your+description+here%29)
+        - label: This improvement refers to an existing feature. If you want to suggest a new feature, please use [this template](https://github.com/marticliment/WingetUI/issues/new?assignees=marticliment&labels=new-feature&projects=&template=feature-request.yml&title=%5BFEATURE+REQUEST%5D+%28Enter+your+description+here%29)
           required: true
-        - label: This improvements is not a bug. If you want to report a bug, please use [this template](https://github.com/marticliment/WingetUI/issues/new?assignees=marticliment&labels=bug&projects=&template=bug-issue.yml&title=%5BBUG%5D+%28Enter+your+description+here%29)
+        - label: This improvement is not a bug. If you want to report a bug, please use [this template](https://github.com/marticliment/WingetUI/issues/new?assignees=marticliment&labels=bug&projects=&template=bug-issue.yml&title=%5BBUG%5D+%28Enter+your+description+here%29)
           required: true
   - type: textarea
     attributes:
