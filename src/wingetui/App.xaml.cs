@@ -165,8 +165,8 @@ namespace ModernWindow
                 InitializePackageManagers();
 
                 // Run other initializations asynchronously
-                var updateWingetUITask = Task.Run(() => { AppTools.Instance.UpdateWingetUIIfPossible(); });
-                var loadIconAndScreenshotsTask = Task.Run(() => { _ = CoreData.LoadIconAndScreenshotsDatabase(); });
+                AppTools.Instance.UpdateWingetUIIfPossible();
+                _ = CoreData.LoadIconAndScreenshotsDatabase();
                 if(!AppTools.Instance.GetSettings("DisableApi"))
                     _ = BackgroundApi.Start();
 
