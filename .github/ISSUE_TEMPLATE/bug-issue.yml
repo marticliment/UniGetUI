@@ -9,7 +9,7 @@ body:
       label: Please confirm these before moving forward
       description: Please confirm the following before posting your issue.
       options:
-        - label: I have searched for my issue and not found a work-in-progress/duplicate/resolved issue.
+        - label: I have searched for my issue and have not found a work-in-progress/duplicate/resolved issue.
           required: true
         - label: I have tested that this issue has not been fixed in the latest [(beta or stable) release](https://github.com/marticliment/WingetUI/releases/).
           required: true
@@ -20,7 +20,7 @@ body:
   - type: textarea
     attributes:
       label: Describe your issue
-      placeholder: Explain the issue you are experiencing, providing as much details as possible about it
+      placeholder: Explain the issue you are experiencing, providing as many details as possible about it
     validations:
       required: true
   - type: textarea
@@ -40,13 +40,13 @@ body:
     attributes:
       label: Package Managers Logs
       render: "text"
-      placeholder: Paste here your Package Manager logs. Click the button on the top-right corner of WingetUI -> Package manager logs
+      placeholder: Paste here your Package Manager logs. Click the button on the top-right corner of WingetUI -> Package Manager logs
     validations:
       required: true
   - type: textarea
     attributes:
       label: Relevant information
-      placeholder: Other relevant information about this issue. Perhaps if you have some special settings enabled, or any other detail that could be related.
+      placeholder: Other relevant information about this issue. Perhaps if you have some special settings enabled or any other detail that could be related.
     validations:
       required: false
   - type: textarea
