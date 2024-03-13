@@ -1,5 +1,7 @@
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using ModernWindow.Core.Data;
+using ModernWindow.Interface.Pages.AboutPages;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
@@ -14,90 +16,49 @@ namespace ModernWindow.Interface
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public class LibraryLicense
-    {
-        public string Name { get; set; }
-        public string License { get; set; }
-        public Uri LicenseURL { get; set; }
-        public string HomepageText { get; set; }
-        public Uri HomepageUrl { get; set; }
-    }
-    public class Person
-    {
-        public string Name { get; set; }
-        public Uri? ProfilePicture;
-        public Uri? GitHubUrl;
-        public bool HasPicture = false;
-        public bool HasGithubProfile = false;
-        public string Language = "";
-    }
 
     public sealed partial class AboutWingetUI : Page
     {
 
         AppTools Tools = AppTools.Instance;
-        public ObservableCollection<LibraryLicense> Licenses = new();
-        public ObservableCollection<Person> Contributors = new();
-        public ObservableCollection<Person> Translators = new();
+
+        int previousSelectedIndex = 0;
         public AboutWingetUI()
         {
             InitializeComponent();
-            foreach (string license in LicenseData.LicenseNames.Keys)
+        }
+
+        private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+        {
+            SelectorBarItem selectedItem = sender.SelectedItem;
+            int currentSelectedIndex = sender.Items.IndexOf(selectedItem);
+            System.Type pageType;
+
+            switch (currentSelectedIndex)
             {
-                Licenses.Add(new LibraryLicense()
-                {
-                    Name = license,
-                    License = LicenseData.LicenseNames[license],
-                    LicenseURL = LicenseData.LicenseURLs[license],
-                    HomepageUrl = LicenseData.HomepageUrls[license],
-                    HomepageText = Tools.Translate("{0} homepage").Replace("{0}", license)
-                });
+                case 0:
+                    pageType = typeof(Pages.AboutPages.AboutWingetUI);
+                    break;
+                case 1:
+                    pageType = typeof(ThirdPartyLicenses);
+                    break;
+                case 2:
+                    pageType = typeof(Contributors);
+                    break;
+                case 3:
+                    pageType = typeof(Translators);
+                    break;
+                default:
+                    pageType = typeof(SupportMe);
+                    break;
             }
 
-            foreach (string contributor in ContributorsData.Contributors)
-            {
-                Person person = new()
-                {
-                    Name = "@" + contributor,
-                    ProfilePicture = new Uri("https://github.com/" + contributor + ".png"),
-                    GitHubUrl = new Uri("https://github.com/" + contributor),
-                    HasPicture = true,
-                    HasGithubProfile = true,
-                };
-                Contributors.Add(person);
-            }
+            var slideNavigationTransitionEffect = currentSelectedIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
 
-            JsonObject TranslatorsInfo = JsonNode.Parse(LanguageData.TranslatorsJSON).AsObject();
+            ContentFrame.Navigate(pageType, null, new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect });
 
-            VersionText.Text = Tools.Translate("You have installed WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
+            previousSelectedIndex = currentSelectedIndex;
 
-            foreach (KeyValuePair<string, JsonNode> langKey in TranslatorsInfo)
-            {
-                if(!LanguageData.LanguageList.ContainsKey(langKey.Key))
-                {
-                    AppTools.Log($"Language {langKey.Key} not in list, maybe has not been added yet?");
-                    continue;
-                }
-                JsonArray TranslatorsForLang = langKey.Value.AsArray();
-                bool LangShown = false;
-                foreach (JsonNode translator in TranslatorsForLang)
-                {
-                    Uri? url = null;
-                    if (translator["link"].ToString() != "")
-                        url = new Uri(translator["link"].ToString());
-                    Person person = new()
-                    {
-                        Name = (url != null ? "@" : "") + translator["name"].ToString(),
-                        HasPicture = url != null,
-                        HasGithubProfile = url != null,
-                        GitHubUrl = url != null ? url : new Uri("https://github.com/"),
-                        ProfilePicture = url != null ? new Uri(url.ToString() + ".png") : new Uri("https://github.com/"),
-                        Language = !LangShown ? LanguageData.LanguageList[langKey.Key] : "",
-                    };
-                    LangShown = true;
-                    Translators.Add(person);
-                }
-            }
         }
     }
 }

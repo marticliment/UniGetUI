@@ -39,6 +39,11 @@
     <None Remove="Interface\IgnoredUpdates.xaml" />
     <None Remove="Interface\InstalledPackages.xaml" />
     <None Remove="Interface\NavigationPage.xaml" />
+    <None Remove="Interface\Pages\AboutPages\AboutWingetUI.xaml" />
+    <None Remove="Interface\Pages\AboutPages\Contributors.xaml" />
+    <None Remove="Interface\Pages\AboutPages\SupportMe.xaml" />
+    <None Remove="Interface\Pages\AboutPages\ThirdPartyLicenses.xaml" />
+    <None Remove="Interface\Pages\AboutPages\Translators.xaml" />
     <None Remove="Interface\Pages\LogPage.xaml" />
     <None Remove="Interface\Pages\PackageBundle.xaml" />
     <None Remove="Interface\SoftwareUpdates.xaml" />
@@ -1664,6 +1669,21 @@
     <None Update="choco-cli\tools\shimgen.license.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Page Update="Interface\Pages\AboutPages\SupportMe.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Interface\Pages\AboutPages\Translators.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Interface\Pages\AboutPages\Contributors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Interface\Pages\AboutPages\ThirdPartyLicenses.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Interface\Pages\AboutPages\AboutWingetUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <None Update="PackageEngine\Managers\winget-cli_arm64\AppInstallerBackgroundTasks.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
