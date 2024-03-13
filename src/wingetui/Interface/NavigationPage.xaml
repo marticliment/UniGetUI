@@ -10,8 +10,8 @@
     xmlns:widgets="using:ModernWindow.Interface.Widgets"
     xmlns:engine="using:ModernWindow.PackageEngine"
     mc:Ignorable="d"
-    MinHeight="500"
-    MinWidth="500"
+    MinHeight="200"
+    MinWidth="200"
     >
 
     <UserControl.Resources>
@@ -34,6 +34,9 @@
             <ColumnDefinition Width="77"/>
             <ColumnDefinition Width="10000*"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
         <Grid Name="MainContentPresenterGrid" RowSpacing="8" Grid.Row="0" Grid.Column="1" Margin="0,0,8,8">
             <Grid.ColumnDefinitions>
@@ -54,61 +57,65 @@
             </ScrollView>
         </Grid>
 
-        <Grid Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch" Margin="4,0,4,4">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" MinHeight="305"/>
-                <RowDefinition Height="*" MinHeight="185"/>
-            </Grid.RowDefinitions>
-            <StackPanel Width="70" Grid.Row="0" Grid.Column="0"
-            Spacing="4" Orientation="Vertical" VerticalAlignment="Top">
-                <widgets:NavButton x:Name="DiscoverNavButton"
-                    x:FieldModifier="public"
-                    Text="Discover Packages"
-                    Glyph="&#xF6FA;" Click="DiscoverNavButton_Click"
+        <ScrollViewer HorizontalScrollMode="Disabled" Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch" Margin="4,0,4,4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Width="70" Grid.Row="0" Grid.Column="0"
+                Spacing="4" Orientation="Vertical" VerticalAlignment="Top">
+                    <widgets:NavButton x:Name="DiscoverNavButton"
+                        x:FieldModifier="public"
+                        Text="Discover Packages"
+                        Glyph="&#xF6FA;" Click="DiscoverNavButton_Click"
+                        />
+                    <Grid>
+                        <widgets:NavButton x:Name="UpdatesNavButton"
+                            x:FieldModifier="public"
+                            Text="Software Updates"
+                            Glyph="&#xE895;" Click="UpdatesNavButton_Click"
+                        />
+                        <InfoBadge Value="0" Name="__updates_count_badge" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,1.5,1.5,0"/>
+                    </Grid>
+                    <widgets:NavButton x:Name="InstalledNavButton"
+                        x:FieldModifier="public"
+                        Text="Installed Packages"
+                        Glyph="&#xE977;" Click="InstalledNavButton_Click"
                     />
-                <Grid>
-                    <widgets:NavButton x:Name="UpdatesNavButton"
-                    x:FieldModifier="public"
-                    Text="Software Updates"
-                    Glyph="&#xE895;" Click="UpdatesNavButton_Click"
-                    />
-                    <InfoBadge Value="0" Name="__updates_count_badge" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,1.5,1.5,0"/>
-                </Grid>
-                <widgets:NavButton x:Name="InstalledNavButton"
-                    x:FieldModifier="public"
-                    Text="Installed Packages"
-                    Glyph="&#xE977;" Click="InstalledNavButton_Click"
-                />
-                <Grid>
-                <widgets:NavButton x:Name="BundlesNavButton"
-                    x:FieldModifier="public"
-                    Text="Package Bundles"
-                    Glyph="&#xF133;" Click="BundlesNavButton_Click"
-                />
-                    <InfoBadge Value="0" Name="__bundle_count_badge" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,1.5,1.5,0"/>
-                </Grid>
-            </StackPanel>
+                    <Grid>
+                        <widgets:NavButton x:Name="BundlesNavButton"
+                            x:FieldModifier="public"
+                            Text="Package Bundles"
+                            Glyph="&#xF133;" Click="BundlesNavButton_Click"
+                        />
+                        <InfoBadge Value="0" Name="__bundle_count_badge" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,1.5,1.5,0"/>
+                    </Grid>
+                </StackPanel>
 
-            <StackPanel
-                Grid.Row="1" Grid.Column="0"
-                Width="70"
-                Spacing="4" Orientation="Vertical" VerticalAlignment="Bottom">
-                <widgets:NavButton
-                    Text="About" x:Name="AboutNavButton"
-                    x:FieldModifier="public"
-                    Glyph="&#xE946;" Click="AboutNavButton_Click"
-                    />
-                <widgets:NavButton
-                    Text="Settings" x:Name="SettingsNavButton"
-                    x:FieldModifier="public"
-                    Glyph="&#xE713;" Click="SettingsNavButton_Click"
-                    />
-                <widgets:NavButton
-                    Text="More" x:Name="MoreNavButton"
-                    x:FieldModifier="public"
-                    Glyph="&#xE712;" Click="MoreNavButton_Click"
-                    />
-            </StackPanel>
-        </Grid>
+                <StackPanel
+                    Grid.Row="2" Grid.Column="0"
+                    Width="70"
+                    Spacing="4" Orientation="Vertical" VerticalAlignment="Bottom">
+                    <widgets:NavButton
+                        Text="About" x:Name="AboutNavButton"
+                        x:FieldModifier="public"
+                        Glyph="&#xE946;" Click="AboutNavButton_Click"
+                        />
+                    <widgets:NavButton
+                        Text="Settings" x:Name="SettingsNavButton"
+                        x:FieldModifier="public"
+                        Glyph="&#xE713;" Click="SettingsNavButton_Click"
+                        />
+                    <widgets:NavButton
+                        Text="More" x:Name="MoreNavButton"
+                        x:FieldModifier="public"
+                        Glyph="&#xE712;" Click="MoreNavButton_Click"
+                        />
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+
     </Grid>
 </UserControl>
