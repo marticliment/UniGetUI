@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.Storage.Search;
+using System.Net.Http;
 
 namespace ModernWindow.Core.Data
 {
@@ -86,9 +87,9 @@ namespace ModernWindow.Core.Data
                 if (AppTools.GetSettings_Static("IconDataBaseURL"))
                     DownloadUrl = new Uri(AppTools.GetSettingsValue_Static("IconDataBaseURL"));
 
-                using (WebClient client = new())
+                using (HttpClient client = new())
                 {
-                    string fileContents = await client.DownloadStringTaskAsync(DownloadUrl);
+                    string fileContents = await client.GetStringAsync(DownloadUrl);
                     await File.WriteAllTextAsync(IconsAndScreenshotsFile, fileContents);
                 }
 

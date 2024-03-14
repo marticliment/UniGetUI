@@ -15,6 +15,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
@@ -322,10 +323,10 @@ Crash Traceback:
                 AppTools.Log("Starting update check");
 
                 string fileContents = "";
-                using (WebClient client = new())
-                {
-                    fileContents = await client.DownloadStringTaskAsync("https://www.marticliment.com/versions/wingetui.ver");
-                }
+
+                using (HttpClient client = new())
+                    fileContents = await client.GetStringAsync("https://www.marticliment.com/versions/wingetui.ver");
+
 
                 if (!fileContents.Contains("///"))
                     throw new FormatException("The updates file does not follow the FloatVersion///Sha256Hash format");
@@ -349,9 +350,11 @@ Crash Traceback:
                     Uri DownloadUrl = new Uri("https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe");
                     string InstallerPath = Path.Join(Directory.CreateTempSubdirectory().FullName, "wingetui-updater.exe");
 
-                    using (WebClient client = new WebClient())
+                    using (HttpClient client = new())
                     {
-                        await Task.Run(() => client.DownloadFile(DownloadUrl, InstallerPath));
+                        var result = await client.GetAsync(DownloadUrl);
+                        using (var fs = new FileStream(InstallerPath, FileMode.CreateNew))
+                            await result.Content.CopyToAsync(fs);
                     }
 
                     string Hash = "";

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -285,10 +286,9 @@ namespace ModernWindow.PackageEngine.Managers
                 details.ManifestUrl = new Uri("https://www.nuget.org/packages/" + package.Id);
                 string url = $"http://www.nuget.org/api/v2/Packages(Id='{package.Id}',Version='')";
 
-                using (WebClient client = new())
+                using (HttpClient client = new())
                 {
-                    Task<string> task = Task<string>.Factory.StartNew(() => { return client.DownloadString(url); });
-                    string apiContents = await task;
+                    string apiContents = await client.GetStringAsync(url);
 
                     details.InstallerUrl = new Uri($"https://globalcdn.nuget.org/packages/{package.Id}.{package.Version}.nupkg");
                     details.InstallerType = Tools.Translate("NuPkg (zipped manifest)");

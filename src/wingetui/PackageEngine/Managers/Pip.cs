@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -252,11 +253,8 @@ namespace ModernWindow.PackageEngine.Managers
             AppTools.Log("Getting package details for " + package.Id);
 
             string JsonString;
-            using (WebClient client = new())
-            {
-                Task<string> task = Task<string>.Factory.StartNew(() => { return client.DownloadString(new Uri($"https://pypi.org/pypi/{package.Id}/json")); });
-                JsonString = await task;
-            }
+            HttpClient client = new();
+            JsonString = await client.GetStringAsync($"https://pypi.org/pypi/{package.Id}/json");
 
             JsonObject RawInfo = JsonObject.Parse(JsonString) as JsonObject;
 
