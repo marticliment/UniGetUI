@@ -147,8 +147,8 @@ namespace ModernWindow.Interface.Dialogs
                 await Package.AddToIgnoredUpdatesAsync(version: "*");
             else
             {
-                if (await Package.GetIgnoredUpdatesVersionAsync() == "*") ;
-                await Package.RemoveFromIgnoredUpdatesAsync();
+                if (await Package.GetIgnoredUpdatesVersionAsync() == "*")
+                    await Package.RemoveFromIgnoredUpdatesAsync();
             }
             return Options;
         }

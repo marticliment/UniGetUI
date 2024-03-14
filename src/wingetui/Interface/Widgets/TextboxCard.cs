@@ -22,7 +22,6 @@ namespace ModernWindow.Interface.Widgets
         private TextBox _textbox;
         private HyperlinkButton _helpbutton;
         private static AppTools Tools = AppTools.Instance;
-        private static string _text;
 
         public string SettingName
         {

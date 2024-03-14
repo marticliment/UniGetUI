@@ -52,7 +52,7 @@ namespace ModernWindow.Interface.Pages.AboutPages
                     {
                         Name = (url != null ? "@" : "") + translator["name"].ToString(),
                         HasPicture = url != null,
-                        HasGithubProfile = url != null,
+                        HasGitHubProfile = url != null,
                         GitHubUrl = url != null ? url : new Uri("https://github.com/"),
                         ProfilePicture = url != null ? new Uri(url.ToString() + ".png") : new Uri("https://github.com/"),
                         Language = !LangShown ? LanguageData.LanguageList[langKey.Key] : "",

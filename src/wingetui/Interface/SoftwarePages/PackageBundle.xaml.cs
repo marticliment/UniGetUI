@@ -43,7 +43,6 @@ namespace ModernWindow.Interface
         protected ProgressBar LoadingProgressBar;
         protected MenuFlyout ContextMenu;
 
-        private bool IsDescending = true;
         private bool Initialized = false;
         private bool AllSelected = false;
         TreeViewNode LocalPackagesNode;

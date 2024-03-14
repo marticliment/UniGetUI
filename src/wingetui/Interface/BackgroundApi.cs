@@ -42,7 +42,7 @@ namespace ModernWindow.Interface
                     host = new NancyHost(new HostConfiguration() { RewriteLocalhost = false, }, new Uri("http://localhost:7058/"));
                     host.Start();
                 }
-                catch (Exception e)
+                catch
                 {
 
                     host = new NancyHost(new Uri("http://localhost:7058/"));

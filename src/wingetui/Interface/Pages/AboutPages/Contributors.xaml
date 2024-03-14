@@ -31,7 +31,7 @@
                                 </Image>
                             </Border>
                             <TextBlock Grid.Column="1" Text="{x:Bind Name}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                            <HyperlinkButton Grid.Column="2" NavigateUri="{x:Bind GitHubUrl}" Visibility="{x:Bind HasGithubProfile}" VerticalAlignment="Center" HorizontalAlignment="Left">
+                            <HyperlinkButton Grid.Column="2" NavigateUri="{x:Bind GitHubUrl}" Visibility="{x:Bind HasGitHubProfile}" VerticalAlignment="Center" HorizontalAlignment="Left">
                                 <widgets:TranslatedTextBlock Text="View GitHub Profile"/>
                             </HyperlinkButton>
                         </Grid>
