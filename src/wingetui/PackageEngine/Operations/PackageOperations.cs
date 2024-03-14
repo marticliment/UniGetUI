@@ -111,7 +111,7 @@ namespace ModernWindow.PackageEngine.Operations
                     p.WaitForExit();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\"" + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+                startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
 
             }
             else
@@ -253,7 +253,7 @@ namespace ModernWindow.PackageEngine.Operations
                     p.WaitForExit();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\"" + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
+                startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
             }
             else
             {
@@ -395,7 +395,7 @@ namespace ModernWindow.PackageEngine.Operations
                     p.WaitForExit();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\"" + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUninstallParameters(Package, Options));
+                startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUninstallParameters(Package, Options));
             }
             else
             {

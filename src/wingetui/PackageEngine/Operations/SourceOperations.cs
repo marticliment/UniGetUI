@@ -43,7 +43,7 @@ namespace ModernWindow.PackageEngine.Operations
                     p.WaitForExit();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\"" + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", (Source.Manager as PackageManagerWithSources).GetAddSourceParameters(Source));
+                startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", (Source.Manager as PackageManagerWithSources).GetAddSourceParameters(Source));
 
             }
             else
@@ -179,7 +179,7 @@ namespace ModernWindow.PackageEngine.Operations
                     p.WaitForExit();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\"" + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", (Source.Manager as PackageManagerWithSources).GetRemoveSourceParameters(Source));
+                startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", (Source.Manager as PackageManagerWithSources).GetRemoveSourceParameters(Source));
 
             }
             else
