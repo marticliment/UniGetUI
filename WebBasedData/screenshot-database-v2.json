@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 11699,
-        "done": 5024,
-        "packages_with_icon": 5024,
+        "total": 11700,
+        "done": 5026,
+        "packages_with_icon": 5026,
         "packages_with_screenshot": 538,
         "total_screenshots": 1697
     },
@@ -2477,6 +2477,10 @@
                 "https://anytxt.net/wp-content/uploads/2021/05/20210529193239-1-768x449.png",
                 "https://anytxt.net/wp-content/uploads/2021/05/20210529193408-768x451.png"
             ]
+        },
+        "anytype": {
+            "icon": "https://community-static.anytype.io/optimized/2X/1/1b350d4c2b5d324e5bdfd837ba7ec4057c5ee3e6_2_499x500.png",
+            "images": []
         },
         "anyvideoconverter": {
             "icon": "https://community.chocolatey.org/content/packageimages/anyvideoconverter.6.0.0.png",
@@ -5931,7 +5935,7 @@
             "images": []
         },
         "bulkcrapuninstaller": {
-            "icon": "https://i.imgur.com/tVYTWHz.png",
+            "icon": "https://www.techspot.com/images2/downloads/topdownload/2022/02/2022-02-07-ts3_thumbs-067.png",
             "images": [
                 "https://www.bcuninstaller.com/assets/1.png",
                 "https://www.bcuninstaller.com/assets/3.png",
@@ -14038,7 +14042,7 @@
             "images": []
         },
         "fileconverter": {
-            "icon": "https://file-converter.org/images/application-icon.png",
+            "icon": "https://file-converter.io/images/application-icon.png",
             "images": [
                 "https://i.postimg.cc/CK1Yn290/ss2.png",
                 "https://file-converter.org/images/screenshot3.png"
@@ -20261,16 +20265,16 @@
             "icon": "",
             "images": []
         },
-        "jellyfin": {
-            "icon": "https://community.chocolatey.org/content/packageimages/jellyfin.10.7.7.png",
-            "images": []
-        },
         "jellyfin-media-player": {
             "icon": "",
             "images": []
         },
         "jellyfin-mpv-shim": {
             "icon": "",
+            "images": []
+        },
+        "jellyfin-server": {
+            "icon": "https://community.chocolatey.org/content/packageimages/jellyfin.10.7.7.png",
             "images": []
         },
         "jellyfinmediaplayer": {
@@ -33667,7 +33671,7 @@
             "images": []
         },
         "rclone": {
-            "icon": "",
+            "icon": "https://cdn.icon-icons.com/icons2/2699/PNG/512/rclone_logo_icon_168876.png",
             "images": []
         },
         "rclone-browser": {
