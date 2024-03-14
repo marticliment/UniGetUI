@@ -434,7 +434,7 @@ namespace ModernWindow.PackageEngine.Managers
                 InstallVerb = "Install-Module",
                 UninstallVerb = "Uninstall-Module",
                 UpdateVerb = "Update-Module",
-                ExecutableCallArgs = "-NoProfile -Command",
+                ExecutableCallArgs = " -NoProfile -Command",
 
             };
             return properties;
