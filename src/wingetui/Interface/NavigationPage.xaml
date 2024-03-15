@@ -57,7 +57,7 @@
             </ScrollView>
         </Grid>
 
-        <ScrollViewer HorizontalScrollMode="Disabled" Grid.Row="0" Grid.Column="0" VerticalAlignment="Stretch" Margin="4,0,4,4" Padding="0,0,13,0">
+        <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden" Grid.Row="0" Grid.Column="0" VerticalAlignment="Stretch" Margin="4,0,4,4" Padding="0,0,0,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
