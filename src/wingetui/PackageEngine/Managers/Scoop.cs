@@ -345,14 +345,7 @@ public class Scoop : PackageManagerWithSources
                 details.InstallerUrl = new Uri(RawInfo["architecture"][FirstArch]["url"].ToString());
             }
 
-            WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
-            req.Method = "HEAD";
-            WebResponse resp = await req.GetResponseAsync();
-            long ContentLength = 0;
-            if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
-            {
-                details.InstallerSize = ContentLength / 1048576;
-            }
+            details.InstallerSize = await Tools.GetFileSizeAsync(details.InstallerUrl);
         }
         catch (Exception ex) { AppTools.Log("Can't load installer URL: " + ex); }
 

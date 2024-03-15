@@ -285,12 +285,7 @@ namespace ModernWindow.PackageEngine.Managers
                             else if (outLine.StartsWith(".tarball"))
                             {
                                 details.InstallerUrl = new Uri(outLine.Replace(".tarball: ", "").Trim());
-                                WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
-                                req.Method = "HEAD";
-                                WebResponse resp = await req.GetResponseAsync();
-                                long ContentLength = 0;
-                                if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
-                                    details.InstallerSize = ContentLength / 1048576;
+                                details.InstallerSize = await Tools.GetFileSizeAsync(details.InstallerUrl);
                             }
                             else if (outLine.StartsWith(".integrity"))
                             {

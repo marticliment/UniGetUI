@@ -330,13 +330,7 @@ namespace ModernWindow.PackageEngine.Managers
                     {
                         details.InstallerType = url["url"].ToString().Split('.')[^1].Replace("whl", "Wheel");
                         details.InstallerUrl = new Uri(url["url"].ToString());
-                        WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
-                        req.Method = "HEAD";
-                        WebResponse resp = await req.GetResponseAsync();
-                        long ContentLength = 0;
-                        if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
-                            details.InstallerSize = ContentLength / 1048576;
-
+                        details.InstallerSize = await Tools.GetFileSizeAsync(details.InstallerUrl);
                     }
                 }
             }
