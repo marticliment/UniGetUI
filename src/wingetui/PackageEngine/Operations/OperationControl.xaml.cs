@@ -437,7 +437,8 @@ namespace ModernWindow.PackageEngine
                                 p.WaitForExit();
                             }
                         await Task.Delay(5000);
-                        _ = Close();
+                        if (!Tools.GetSettings("MaintainSuccessfulInstalls"))
+                            _ = Close();
                         break;
 
                     case AfterFinshAction.ManualClose:
