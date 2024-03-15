@@ -393,7 +393,7 @@ public class Scoop : PackageManagerWithSources
                     }
                     else if (line.Trim() != "")
                     {
-                        string[] elements = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
+                        string[] elements = Regex.Replace(line.Replace("AM", "").Replace("PM", "").Trim(), " {2,}", " ").Split(' ');
                         if (elements.Length >= 5)
                         {
                             if (!elements[1].Contains("https://"))
