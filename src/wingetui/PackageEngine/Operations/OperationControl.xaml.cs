@@ -353,6 +353,9 @@ namespace ModernWindow.PackageEngine
                 startInfo.RedirectStandardError = true;
                 startInfo.UseShellExecute = false;
                 startInfo.CreateNoWindow = true;
+                startInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                startInfo.StandardInputEncoding = System.Text.Encoding.UTF8;
+                startInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
                 startInfo.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
                 Process = BuildProcessInstance(startInfo);

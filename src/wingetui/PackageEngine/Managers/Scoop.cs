@@ -251,7 +251,7 @@ public class Scoop : PackageManagerWithSources
             RedirectStandardError = true,
             UseShellExecute = false,
             CreateNoWindow = true,
-            StandardOutputEncoding = System.Text.Encoding.UTF8
+            StandardOutputEncoding = System.Text.Encoding.UTF8,
         };
 
         p.Start();
@@ -372,6 +372,7 @@ public class Scoop : PackageManagerWithSources
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.StandardInputEncoding = System.Text.Encoding.UTF8;
+            process.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
 
             List<ManagerSource> sources = new();
 
