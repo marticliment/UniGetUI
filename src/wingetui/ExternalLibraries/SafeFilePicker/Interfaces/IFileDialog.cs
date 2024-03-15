@@ -16,7 +16,7 @@ internal interface IFileDialog : IModalWindow
     // --------------------------------------------------------------------------------
     [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime),
     PreserveSig]
-    int Show([In] IntPtr parent);
+    new int Show([In] IntPtr parent);
 
     // IFileDialog-Specific interface members
     // --------------------------------------------------------------------------------

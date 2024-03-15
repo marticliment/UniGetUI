@@ -36,7 +36,7 @@
                             </Border>
                             <TextBlock Grid.Column="0" Text="{x:Bind Language}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                             <TextBlock Grid.Column="2" Text="{x:Bind Name}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                            <HyperlinkButton Grid.Column="3" NavigateUri="{x:Bind GitHubUrl}" Visibility="{x:Bind HasGithubProfile}" VerticalAlignment="Center" HorizontalAlignment="Left">
+                            <HyperlinkButton Grid.Column="3" NavigateUri="{x:Bind GitHubUrl}" Visibility="{x:Bind HasGitHubProfile}" VerticalAlignment="Center" HorizontalAlignment="Left">
                                 <TextBlock Text="GitHub"/>
                             </HyperlinkButton>
                         </Grid>

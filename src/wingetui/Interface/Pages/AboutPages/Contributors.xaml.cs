@@ -30,13 +30,13 @@ namespace ModernWindow.Interface.Pages.AboutPages
         public Uri? ProfilePicture;
         public Uri? GitHubUrl;
         public bool HasPicture = false;
-        public bool HasGithubProfile = false;
+        public bool HasGitHubProfile = false;
         public string Language = "";
     }
 
     public sealed partial class Contributors : Page
     {
-        public ObservableCollection<Person> ContributorList = new();
+        public ObservableCollection<Person> ContributorList = [];
         public Contributors()
         {
             this.InitializeComponent();
@@ -48,7 +48,7 @@ namespace ModernWindow.Interface.Pages.AboutPages
                     ProfilePicture = new Uri("https://github.com/" + contributor + ".png"),
                     GitHubUrl = new Uri("https://github.com/" + contributor),
                     HasPicture = true,
-                    HasGithubProfile = true,
+                    HasGitHubProfile = true,
                 };
                 ContributorList.Add(person);
             }

@@ -123,7 +123,7 @@ namespace ModernWindow
             {
                 ToastNotificationManagerCompat.Uninstall();
             }
-            catch (Exception e)
+            catch
             { 
             }
         }

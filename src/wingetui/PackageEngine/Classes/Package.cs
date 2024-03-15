@@ -434,7 +434,7 @@ namespace ModernWindow.PackageEngine.Classes
         public float NewVersionAsFloat { get; }
         public override bool IsUpgradable { get; } = true;
 
-        private new string __hash;
+        private string __hash;
 
         /// <summary>
         /// Creates an UpgradablePackage object representing a package that can be upgraded; given its name, id, installed version, new version, source and manager, and an optional scope.

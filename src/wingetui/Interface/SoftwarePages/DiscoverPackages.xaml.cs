@@ -37,7 +37,6 @@ namespace ModernWindow.Interface
         protected ProgressBar LoadingProgressBar;
         protected MenuFlyout ContextMenu;
 
-        private bool IsDescending = true;
         private bool Initialized = false;
         private string LastCalledQuery = "";
         private bool AllSelected = false;

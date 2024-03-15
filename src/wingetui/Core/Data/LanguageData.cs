@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -98,15 +99,15 @@ namespace ModernWindow.Core.Data
             try
             {
                 Uri NewFile = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/src/wingetui/Assets/Languages/" + "lang_" + LangKey + ".json");
-                using (WebClient client = new())
-                {
-                    string fileContents = await client.DownloadStringTaskAsync(NewFile);
 
-                    if (!Directory.Exists(CoreData.WingetUICacheDirectory_Lang))
-                        Directory.CreateDirectory(CoreData.WingetUICacheDirectory_Lang);
+                HttpClient client = new();
+                string fileContents = await client.GetStringAsync(NewFile);
 
-                    File.WriteAllText(Path.Join(CoreData.WingetUICacheDirectory_Lang, "lang_" + LangKey + ".json"), fileContents);
-                }
+                if (!Directory.Exists(CoreData.WingetUICacheDirectory_Lang))
+                    Directory.CreateDirectory(CoreData.WingetUICacheDirectory_Lang);
+
+                File.WriteAllText(Path.Join(CoreData.WingetUICacheDirectory_Lang, "lang_" + LangKey + ".json"), fileContents);
+
                 AppTools.Log("Lang files were updated successfully");
             }
             catch (Exception e)

@@ -560,7 +560,7 @@ public class Scoop : PackageManagerWithSources
             Description = Tools.Translate("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"),
             IconId = "scoop",
             ColorIconId = "scoop_color",
-            ExecutableCallArgs = "-NoProfile -ExecutionPolicy Bypass -Command scoop",
+            ExecutableCallArgs = " -NoProfile -ExecutionPolicy Bypass -Command scoop",
             ExecutableFriendlyName = "scoop",
             InstallVerb = "install",
             UpdateVerb = "update",

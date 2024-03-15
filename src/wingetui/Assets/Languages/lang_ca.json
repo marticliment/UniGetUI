@@ -239,7 +239,7 @@
   "Locating {pm}..." : "Cercant el {pm}...",
   "Looking for packages..." : "Cercant paquets...",
   "Machine | Global" : "Màquina | Global",
-  "Manage WingetUI autostart behaviour from the Settings app" : "Administra el comportament d'inici del WingetUI des de l'aplicació de Confoguració",
+  "Manage WingetUI autostart behaviour from the Settings app" : "Administra el comportament d'inici del WingetUI des de l'aplicació de Configuració",
   "Manage ignored packages" : "Administra els paquets ignorats",
   "Manage ignored updates" : "Administra les actualitzacions ignorades",
   "Manage {0} sources" : "Administra les fonts del {0}",

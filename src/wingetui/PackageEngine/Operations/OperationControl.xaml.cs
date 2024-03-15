@@ -105,8 +105,10 @@ namespace ModernWindow.PackageEngine
             set { __progressbar_color = value; if (ProgressIndicator != null) ProgressIndicator.Foreground = (__progressbar_color != null) ? __progressbar_color : null; }
         }
 
+#pragma warning disable CS0067
         protected event EventHandler<OperationCancelledEventArgs> CancelRequested;
         protected event EventHandler<OperationCancelledEventArgs> CloseRequested;
+#pragma warning restore CS0067
         protected Process Process;
         protected ObservableCollection<string> ProcessOutput = new();
 

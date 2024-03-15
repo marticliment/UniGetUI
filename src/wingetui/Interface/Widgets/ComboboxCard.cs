@@ -27,7 +27,6 @@ namespace ModernWindow.Interface.Widgets
         private ObservableCollection<string> _elements;
         private Dictionary<string, string> _values_ref;
         private Dictionary<string, string> _inverted_val_ref;
-        private static string _text;
 
         public string SettingName
         {
