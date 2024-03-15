@@ -816,6 +816,7 @@ namespace ModernWindow.Interface
                 if (package == foreignPackage || package.Equals(foreignPackage))
                 {
                     Packages.Remove(package);
+                    package.Tag = PackageTag.Default;
                     if (FilteredPackages.Contains(package))
                         FilteredPackages.Remove(package);
                 }
