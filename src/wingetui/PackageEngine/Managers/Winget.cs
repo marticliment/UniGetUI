@@ -211,47 +211,54 @@ namespace ModernWindow.PackageEngine.Managers
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
-                if (!DashesPassed && line.Contains("---"))
+                try
                 {
-                    string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
-                    string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
-                    IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
-                    VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
-                    NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix);
-                    SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
-                    DashesPassed = true;
-                }
-                else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
-                {
-                    int offset = 0; // Account for non-unicode character length
-                    while (((IdIndex - offset) <= line.Length && line[IdIndex - offset - 1] != ' ') || offset > (IdIndex - 5))
-                        offset++;
-                    string name = line[..(IdIndex - offset)].Trim();
-                    string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
-                    if (NewVersionIndex == -1 && SourceIndex != -1) NewVersionIndex = SourceIndex;
-                    else if (NewVersionIndex == -1 && SourceIndex == -1) NewVersionIndex = line.Length - 1;
-                    string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
-
-                    ManagerSource source;
-                    if (SourceIndex == -1 || (SourceIndex - offset) >= line.Length)
+                    output += line + "\n";
+                    if (!DashesPassed && line.Contains("---"))
                     {
-                        source = GetLocalSource(id); // Load Winget Local Sources
+                        string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
+                        string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
+                        IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
+                        VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
+                        NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix);
+                        SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
+                        DashesPassed = true;
                     }
-                    else
+                    else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
                     {
-                        string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();
-                        if (SourceReference.ContainsKey(sourceName))
-                            source = SourceReference[sourceName];
+                        int offset = 0; // Account for non-unicode character length
+                        while (((IdIndex - offset) <= line.Length && line[IdIndex - offset - 1] != ' ') || offset > (IdIndex - 5))
+                            offset++;
+                        string name = line[..(IdIndex - offset)].Trim();
+                        string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
+                        if (NewVersionIndex == -1 && SourceIndex != -1) NewVersionIndex = SourceIndex;
+                        else if (NewVersionIndex == -1 && SourceIndex == -1) NewVersionIndex = line.Length - 1;
+                        string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
+
+                        ManagerSource source;
+                        if (SourceIndex == -1 || (SourceIndex - offset) >= line.Length)
+                        {
+                            source = GetLocalSource(id); // Load Winget Local Sources
+                        }
                         else
                         {
-                            source = new ManagerSource(this, sourceName, new Uri("https://microsoft.com/winget"));
-                            SourceReference.Add(source.Name, source);
+                            string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();
+                            if (SourceReference.ContainsKey(sourceName))
+                                source = SourceReference[sourceName];
+                            else
+                            {
+                                source = new ManagerSource(this, sourceName, new Uri("https://microsoft.com/winget"));
+                                SourceReference.Add(source.Name, source);
+                            }
                         }
+                        Packages.Add(new Package(name, id, version, source, this));
                     }
-                    Packages.Add(new Package(name, id, version, source, this));
+                    OldLine = line;
                 }
-                OldLine = line;
+                catch (Exception e)
+                {
+                    AppTools.Log(e);
+                }
             }
 
             output += await p.StandardError.ReadToEndAsync();

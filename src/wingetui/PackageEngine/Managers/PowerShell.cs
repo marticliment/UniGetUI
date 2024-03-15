@@ -112,6 +112,7 @@ namespace ModernWindow.PackageEngine.Managers
                     }
                 }
                 Get-InstalledModule | Test-GalleryModuleUpdate
+
                 exit
                 "); // do NOT remove the trailing endline
             string line;
