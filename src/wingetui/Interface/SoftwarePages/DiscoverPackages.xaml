@@ -584,12 +584,12 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="1000000*" MaxWidth="1350"/>
+            <ColumnDefinition Width="1000000*" MaxWidth="2000"/>
             <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    </Grid.ColumnDefinitions>
 
         <!-- HEADER -->
-        <Grid Name="MainHeader" Grid.Row="0" Grid.Column="1" >
+        <Grid Name="MainHeader" Grid.Row="0" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80"/>
                 <ColumnDefinition Width="*"/>

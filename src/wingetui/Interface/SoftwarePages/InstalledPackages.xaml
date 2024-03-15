@@ -584,7 +584,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="1000000*" MaxWidth="1350"/>
+            <ColumnDefinition Width="1000000*" MaxWidth="2000"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
