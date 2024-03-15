@@ -53,7 +53,7 @@ namespace ModernWindow.Interface
             UpdatesPage = new SoftwareUpdatesPage();
             InstalledPage = new InstalledPackagesPage();
             AboutPage = new AboutWingetUI();
-            HelpPage = new HelpDialog();
+            //HelpPage = new HelpDialog();
             BundlesPage = new PackageBundlePage();
             IgnoredUpdatesPage = new IgnoredUpdatesManager();
 
@@ -377,6 +377,8 @@ namespace ModernWindow.Interface
 
             await Tools.App.MainWindow.ShowDialogAsync(NotesDialog);
 
+            notes.Dispose();
+            notes = null;
             NotesDialog = null;
         }
 
@@ -430,6 +432,8 @@ namespace ModernWindow.Interface
         }
         public void ShowHelp()
         {
+            if(HelpPage == null)
+                HelpPage = new HelpDialog();
             NavigateToPage(HelpPage);
         }
 

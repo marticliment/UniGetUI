@@ -29,6 +29,11 @@ namespace ModernWindow.Interface.Dialogs
             WebView.Source = new Uri("https://github.com/marticliment/WingetUI/releases/tag/" + CoreData.VersionName);
         }
 
+        public void Dispose()
+        {
+            WebView.Close();
+        }
+
 
     }
 }
