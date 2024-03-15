@@ -430,6 +430,9 @@ namespace ModernWindow.Interface
             string directory = Tools.GetSettingsValue("ChangeBackupOutputDirectory");
             if (directory == "")
                 directory = CoreData.WingetUI_DefaultBackupDirectory;
+
+            directory = directory.Replace("/", "\\");
+
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
             Process.Start("explorer.exe", directory);
