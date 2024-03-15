@@ -447,9 +447,9 @@ public class Scoop : PackageManagerWithSources
             options.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;
         }
-        if (output_string.Contains("Latest versions for all apps are installed") || output_string.Contains("is already installed") || output_string.Contains("was installed successfully"))
-            return OperationVeredict.Succeeded;
-        return OperationVeredict.Failed;
+        if (output_string.Contains("ERROR"))
+            return OperationVeredict.Failed;
+        return OperationVeredict.Succeeded;
     }
     public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
     {
