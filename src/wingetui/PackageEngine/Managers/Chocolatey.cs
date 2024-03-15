@@ -251,14 +251,7 @@ namespace ModernWindow.PackageEngine.Managers
                 {
                     details.InstallerType = Tools.Translate("NuPkg (zipped manifest)");
                     details.InstallerUrl = new Uri("https://packages.chocolatey.org/" + package.Id + "." + package.Version + ".nupkg");
-                    WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
-                    req.Method = "HEAD";
-                    WebResponse resp = await req.GetResponseAsync();
-                    long ContentLength = 0;
-                    if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
-                    {
-                        details.InstallerSize = ContentLength / 1048576;
-                    }
+                    details.InstallerSize = await Tools.GetFileSizeAsync(details.InstallerUrl);
                 }
                 catch (Exception ex)
                 {

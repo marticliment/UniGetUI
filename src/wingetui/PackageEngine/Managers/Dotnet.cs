@@ -292,21 +292,8 @@ namespace ModernWindow.PackageEngine.Managers
 
                     details.InstallerUrl = new Uri($"https://globalcdn.nuget.org/packages/{package.Id}.{package.Version}.nupkg");
                     details.InstallerType = Tools.Translate("NuPkg (zipped manifest)");
-                    try
-                    {
-                        WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
-                        req.Method = "HEAD";
-                        WebResponse resp = await req.GetResponseAsync();
-                        long ContentLength = 0;
-                        if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
-                        {
-                            details.InstallerSize = ContentLength / 1048576;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        AppTools.Log(e);
-                    }
+                    details.InstallerSize = await Tools.GetFileSizeAsync(details.InstallerUrl);
+                    
 
                     foreach (Match match in Regex.Matches(apiContents, @"<name>[^<>]+<\/name>"))
                     {

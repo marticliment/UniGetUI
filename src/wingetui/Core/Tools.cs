@@ -441,5 +441,30 @@ Crash Traceback:
                       .IsInRole(WindowsBuiltInRole.Administrator);
         }
 
+        /// <summary>
+        /// Returns the size (in MB) of the file at the given URL
+        /// </summary>
+        /// <param name="url">a valid Uri object containing a URL to a file</param>
+        /// <returns>a double representing the size in MBs, 0 if the process fails</returns>
+        public async Task<double> GetFileSizeAsync(Uri url)
+        {
+            try
+            {
+                WebRequest req = WebRequest.Create(url);
+                req.Method = "HEAD";
+                WebResponse resp = await req.GetResponseAsync();
+                long ContentLength;
+                if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
+                {
+                    return ContentLength / 1048576;
+                }
+
+            }
+            catch (Exception e)
+            {
+                Log(e);
+            }
+            return 0;
+        }
     }
 }

@@ -31,8 +31,8 @@
 
     <Grid RowSpacing="4" ColumnSpacing="0">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="77"/>
-            <ColumnDefinition Width="10000*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -57,7 +57,7 @@
             </ScrollView>
         </Grid>
 
-        <ScrollViewer HorizontalScrollMode="Disabled" Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch" Margin="4,0,4,4">
+        <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden" Grid.Row="0" Grid.Column="0" VerticalAlignment="Stretch" Margin="4,0,4,4" Padding="0,0,0,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

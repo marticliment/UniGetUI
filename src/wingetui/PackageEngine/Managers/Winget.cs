@@ -606,14 +606,7 @@ namespace ModernWindow.PackageEngine.Managers
                     else if (line.Contains("Installer Url:"))
                     {
                         details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
-                        WebRequest req = HttpWebRequest.Create(details.InstallerUrl);
-                        req.Method = "HEAD";
-                        WebResponse resp = await req.GetResponseAsync();
-                        long ContentLength = 0;
-                        if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
-                        {
-                            details.InstallerSize = ContentLength / 1048576;
-                        }
+                        details.InstallerSize = await Tools.GetFileSizeAsync(details.InstallerUrl);
                     }
                     else if (line.Contains("Release Date:"))
                         details.UpdateDate = line.Split(":")[1].Trim();
