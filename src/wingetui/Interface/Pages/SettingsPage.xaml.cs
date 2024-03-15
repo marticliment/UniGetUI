@@ -278,7 +278,7 @@ namespace ModernWindow.Interface
                 CheckboxCard ParallelCard = new()
                 {
                     Text = Tools.AutoTranslated("Allow {pm} operations to be performed in parallel"),
-                    SettingName = "AlwaysElevate" + Manager.Name,
+                    SettingName = "AllowParallelInstallsForManager" + Manager.Name,
                 };
                 ParallelCard._checkbox.Content = ParallelCard._checkbox.Content.ToString().Replace("{pm}", Manager.Name);
                 ExtraSettingsCards[Manager].Insert(index++, ParallelCard);
