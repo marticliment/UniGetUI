@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11700,
-        "done": 5026,
-        "packages_with_icon": 5026,
-        "packages_with_screenshot": 538,
-        "total_screenshots": 1697
+        "done": 5030,
+        "packages_with_icon": 5030,
+        "packages_with_screenshot": 542,
+        "total_screenshots": 1707
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -12171,7 +12171,7 @@
             "images": []
         },
         "eadesktop": {
-            "icon": "",
+            "icon": "https://cdn2.steamgriddb.com/icon/ff51fb7a9bcb22c595616b4fa368880a/32/256x256.png",
             "images": []
         },
         "eagle": {
@@ -17884,7 +17884,7 @@
             "images": []
         },
         "hearthstonedecktracker": {
-            "icon": "",
+            "icon": "https://hsdecktracker.net/static/images/logo.png",
             "images": []
         },
         "heaven-benchmark": {
@@ -29576,7 +29576,7 @@
             "images": []
         },
         "paradoxlauncher": {
-            "icon": "",
+            "icon": "https://vectorified.com/images/paradox-icon-21.png",
             "images": []
         },
         "paragon-hfs": {
@@ -31199,8 +31199,14 @@
             "images": []
         },
         "portmaster": {
-            "icon": "",
-            "images": []
+            "icon": "https://avatars.githubusercontent.com/u/20678162?s=200&v=4",
+            "images": [
+                "https://camo.githubusercontent.com/2b2fb81ed43805526b69458094bfb2f2500023999dd6e06916e54299fe24f8c7/68747470733a2f2f736166696e672e696f2f6173736574732f696d672f706167652d73706563696669632f6c616e64696e672f706f72746d61737465722d7468756d626e61696c2e706e673f",
+                "https://raw.githubusercontent.com/kamack38/chocopkgs/94fb372e1be6e893d51714e565ea9413cd97e6bc/assets/portmaster.png",
+                "https://safing.io/assets/img/page-specific/portmaster/block-trackers-system-wide.png",
+                "https://safing.io/assets/img/page-specific/portmaster/set-global-and-per-app-configuration.png",
+                "https://safing.io/assets/img/page-specific/portmaster/monitor-network-activity.png"
+            ]
         },
         "portmon": {
             "icon": "https://community.chocolatey.org/content/packageimages/portmon.3.03.0.20151228.png",
@@ -35380,7 +35386,11 @@
         },
         "samsung-magician": {
             "icon": "https://community.chocolatey.org/content/packageimages/samsung-magician.7.2.1.980.png",
-            "images": []
+            "images": [
+                "https://images.samsung.com/is/image/samsung/assets/de/memory-storage/magician-software/Magician-8.0_Online_feature_02_Drive_information_pc_health-check.jpg?$FB_TYPE_A_PNG$",
+                "https://images.samsung.com/is/image/samsung/assets/de/memory-storage/magician-software/Magician-8.0_Online_feature_03_Drive_management_pc_dark.jpg?$FB_TYPE_A_PNG$",
+                "https://images.samsung.com/is/image/samsung/assets/de/memory-storage/magician-software/Magician-8.0_Online_feature_05_information_pc.jpg?$FB_TYPE_A_PNG$"
+            ]
         },
         "samsung-nvme-driver": {
             "icon": "https://community.chocolatey.org/content/packageimages/samsung-nvme-driver.3.3.png",
@@ -40428,11 +40438,15 @@
         },
         "terminal-icons": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://raw.githubusercontent.com/devblackops/Terminal-Icons/main/media/screenshot.png"
+            ]
         },
         "terminal-icons-powershell": {
             "icon": "https://community.chocolatey.org/content/packageimages/terminal-icons.powershell.0.10.0.png",
-            "images": []
+            "images": [
+                "https://raw.githubusercontent.com/devblackops/Terminal-Icons/main/media/screenshot.png"
+            ]
         },
         "terminalpp": {
             "icon": "",
