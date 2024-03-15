@@ -38,7 +38,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Name="MainContentPresenterGrid" RowSpacing="8" Grid.Row="0" Grid.Column="1" Margin="0,0,8,8">
+        <Grid Name="MainContentPresenterGrid" RowSpacing="0" Grid.Row="0" Grid.Column="1" Margin="0,0,8,8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="0" />
@@ -52,8 +52,8 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <ScrollView Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1" Margin="0" Padding="0" MaxHeight="200">
-                <StackPanel Orientation="Vertical" Spacing="8" Margin="0,0,0,0" Padding="0" Name="__operations_list_stackpanel"/>
+            <ScrollView Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1" Margin="0" Padding="0,0,0,0" MaxHeight="200">
+                <StackPanel Orientation="Vertical" Spacing="0" Margin="0,0,0,0" Padding="0,0,0,0" Name="__operations_list_stackpanel"/>
             </ScrollView>
         </Grid>
 

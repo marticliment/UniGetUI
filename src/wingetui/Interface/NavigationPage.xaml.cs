@@ -53,7 +53,6 @@ namespace ModernWindow.Interface
             UpdatesPage = new SoftwareUpdatesPage();
             InstalledPage = new InstalledPackagesPage();
             AboutPage = new AboutWingetUI();
-            //HelpPage = new HelpDialog();
             BundlesPage = new PackageBundlePage();
             IgnoredUpdatesPage = new IgnoredUpdatesManager();
 

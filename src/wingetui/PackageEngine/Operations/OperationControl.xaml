@@ -6,7 +6,7 @@
     xmlns:local="using:ModernWindow.PackageEngine"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" SizeChanged="ResizeEvent">
+    mc:Ignorable="d" SizeChanged="ResizeEvent" Margin="0,8,0,0">
 
     <Grid ColumnSpacing="6" RowSpacing="6" Padding="8" x:Name="MainGrid">
         <Grid.Style>
