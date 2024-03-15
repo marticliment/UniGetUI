@@ -167,8 +167,9 @@ namespace ModernWindow.PackageEngine.Managers
                 output += line + "\n";
                 if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
                 {
+                    line = line.Replace("- @", "- %");
                     string[] elements = line[4..].Split('@');
-                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
+                    Packages.Add(new Package(Tools.FormatAsName(elements[0].Replace('%', '@')), elements[0].Replace('%', '@'), elements[1], MainSource, this, PackageScope.Global));
                 }
             }
 
