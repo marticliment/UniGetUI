@@ -34,6 +34,10 @@ try:
         "VersionInfoVersion=": f"{versionISS}\n",
     }, encoding="utf-8-sig")
 
+    fileReplaceLinesWith("src/wingetui/app.manifest", {
+        "	  version=": f" \"{versionISS}\"\n",
+    }, encoding="utf-8-sig")
+
     print("done!")
 except FileNotFoundError as e:
     print(f"Error: {e.strerror}: {e.filename}")
