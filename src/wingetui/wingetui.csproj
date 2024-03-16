@@ -18,6 +18,9 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <AssemblyName>WingetUI</AssemblyName>
     <Nullable>annotations</Nullable>
+	<GenerateBootstrapperOnBuild>true</GenerateBootstrapperOnBuild>
+	<BootstrapperVariant>GUI</BootstrapperVariant>
+	  <BootstrapperPromptRequired>false</BootstrapperPromptRequired>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
@@ -58,6 +61,10 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
+    <PackageReference Include="DotnetRuntimeBootstrapper" Version="2.5.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.124" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
