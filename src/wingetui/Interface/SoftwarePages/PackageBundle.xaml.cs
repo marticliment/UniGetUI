@@ -161,6 +161,7 @@ namespace ModernWindow.Interface
 
             GenerateToolBar();
             LoadInterface();
+            QueryBlock.PlaceholderText = Tools.Translate("Search for packages");
         }
 
 

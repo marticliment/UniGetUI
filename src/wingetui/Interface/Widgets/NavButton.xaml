@@ -22,14 +22,31 @@
                 <animations:OpacityAnimation Duration="0:0:0.25" From="0" To="1"/>
             </animations:Implicit.ShowAnimations>
         </Border-->
+        <Grid Margin="1,0,1,0" Padding="0" Name="VariableGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <FontIcon 
+            Grid.Row="0" x:Name="IconBlock"
+            FontSize="16" VerticalAlignment="Bottom"/>
+            <TextBlock
+                x:Name="TextBlock"
+                FontSize="11" Grid.Row="1" 
+                MinHeight="28" VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                TextAlignment="Center"
+                TextWrapping="Wrap" Padding="1,4,2,4"
+            />
+        </Grid>
         <ToggleButton x:Name="ToggleButton"
-            x:FieldModifier="public"
+            x:FieldModifier="public" Foreground="Transparent"
             Click="ToggleButton_Click">
             <ToggleButton.Style>
                 <Style TargetType="ToggleButton">
                     <Setter Property="Background" Value="{ThemeResource ControlAltFillColorTransparent}" />
                     <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
-                    <Setter Property="Foreground" Value="{ThemeResource ToggleButtonForeground}" />
+                    <Setter Property="Foreground" Value="Transparent" />
                     <Setter Property="BorderBrush" Value="{ThemeResource ExpanderContentBorderBrush}" />
                     <Setter Property="BorderThickness" Value="1" />
                     <Setter Property="Padding" Value="0,0,0,0" />
@@ -68,9 +85,6 @@
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ControlAltFillColorTransparent}" />
                                                     </ObjectAnimationUsingKeyFrames>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForeground}" />
-                                                    </ObjectAnimationUsingKeyFrames>
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ControlAltFillColorTransparent}" />
                                                     </ObjectAnimationUsingKeyFrames>
@@ -88,18 +102,12 @@
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundDisabled}" />
                                                     </ObjectAnimationUsingKeyFrames>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForeground}" />
-                                                    </ObjectAnimationUsingKeyFrames>
                                                 </Storyboard>
                                             </VisualState>
                                             <VisualState x:Name="Disabled">
                                                 <Storyboard>
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundDisabled}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForeground}" />
                                                     </ObjectAnimationUsingKeyFrames>
                                                 </Storyboard>
                                             </VisualState>
@@ -108,18 +116,12 @@
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundPointerOver}" />
                                                     </ObjectAnimationUsingKeyFrames>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForeground}" />
-                                                    </ObjectAnimationUsingKeyFrames>
                                                 </Storyboard>
                                             </VisualState>
                                             <VisualState x:Name="CheckedPointerOver">
                                                 <Storyboard>
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundPointerOver}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForeground}" />
                                                     </ObjectAnimationUsingKeyFrames>
                                                 </Storyboard>
                                             </VisualState>
@@ -128,18 +130,12 @@
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundPointerOver}" />
                                                     </ObjectAnimationUsingKeyFrames>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForeground}" />
-                                                    </ObjectAnimationUsingKeyFrames>
                                                 </Storyboard>
                                             </VisualState>
                                             <VisualState x:Name="CheckedDisabled">
                                                 <Storyboard>
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundCheckedDisabled}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForegroundCheckedDisabled}" />
                                                     </ObjectAnimationUsingKeyFrames>
                                                 </Storyboard>
                                             </VisualState>
@@ -151,23 +147,6 @@
                     </Setter>
                 </Style>
             </ToggleButton.Style>
-            <Grid Margin="1,0,1,0" Padding="0" Name="VariableGrid">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <FontIcon 
-                Grid.Row="0" x:Name="IconBlock"
-                FontSize="16" VerticalAlignment="Bottom"/>
-                <TextBlock
-                    x:Name="TextBlock"
-                    FontSize="11" Grid.Row="1" 
-                    MinHeight="28" VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    TextAlignment="Center"
-                    TextWrapping="Wrap" Padding="1,4,2,4"
-                />
-            </Grid>
         </ToggleButton>
     </Grid>
 </UserControl>

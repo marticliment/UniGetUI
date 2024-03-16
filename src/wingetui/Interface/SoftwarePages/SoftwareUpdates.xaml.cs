@@ -167,6 +167,8 @@ namespace ModernWindow.Interface
             GenerateToolBar();
             LoadInterface();
             _ = LoadPackages(ManualCheck: false);
+
+            QueryBlock.PlaceholderText = Tools.Translate("Search for packages");
         }
 
         protected void AddPackageToSourcesList(UpgradablePackage package)

@@ -165,6 +165,8 @@ namespace ModernWindow.Interface
             LoadInterface();
             _ = __load_packages();
 
+            QueryBlock.PlaceholderText = Tools.Translate("Search for packages");
+
         }
 
         protected async Task __load_packages()

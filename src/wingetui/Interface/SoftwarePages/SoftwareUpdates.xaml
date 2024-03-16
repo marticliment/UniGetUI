@@ -639,7 +639,7 @@
                          VerticalContentAlignment="Center"
                          />
                 <Button Grid.Column="1" x:Name="FindButton" CornerRadius="0,4,4,0"
-                        Height="32" Width="30" Padding="4">
+                        Height="32" Width="30" Padding="4" AutomationProperties.HelpText="Search">
                     <AnimatedIcon>
                         <AnimatedIcon.Source>
                             <animatedvisuals:AnimatedFindVisualSource/>
@@ -650,7 +650,7 @@
                     </AnimatedIcon>
                 </Button>
                 <Button Grid.Column="2" x:Name="ReloadButton" CornerRadius="4"
-                        Margin="6,0,4,0" Padding="0"
+                        Margin="6,0,4,0" Padding="0" AutomationProperties.HelpText="Reload packages"
                         Height="32" Width="32">
                     <FontIcon Glyph="&#xE72C;" FontSize="16"/>
                 </Button>
@@ -687,7 +687,8 @@
                     <!-- Sources Expander -->
                     <Expander Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" CornerRadius="8"
                         IsExpanded="True" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
-                        Padding="4,4,4,8" HorizontalContentAlignment="Stretch">
+                        Padding="4,4,4,8" HorizontalContentAlignment="Stretch"
+                              AutomationProperties.Name="Filter by sources">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <FontIcon Glyph="&#xE74C;" FontSize="20"/>
@@ -725,7 +726,8 @@
                     <!-- Filter Options Expander -->
                     <Expander Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" CornerRadius="8"
                         IsExpanded="False" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
-                        Padding="16,8,16,8" HorizontalContentAlignment="Stretch">
+                        Padding="16,8,16,8" HorizontalContentAlignment="Stretch"
+                              AutomationProperties.Name="Filter options">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <FontIcon Glyph="&#xE71C;" FontSize="20"/>
@@ -755,7 +757,8 @@
                     <!-- Search mode expander -->
                     <Expander Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch" CornerRadius="8"
     IsExpanded="False" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
-    Padding="16,8,16,8" HorizontalContentAlignment="Stretch">
+    Padding="16,8,16,8" HorizontalContentAlignment="Stretch"
+                              AutomationProperties.Name="Search mode">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <FontIcon Glyph="&#xE773;" FontSize="20"/>
