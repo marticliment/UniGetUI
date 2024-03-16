@@ -14,6 +14,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
+using Windows.UI;
 using YamlDotNet.Serialization;
 
 namespace ModernWindow
@@ -46,6 +47,18 @@ namespace ModernWindow
             try
             {
                 InitializeComponent();
+
+                string preferredTheme = AppTools.GetSettingsValue_Static("PreferredTheme");
+                if (preferredTheme == "dark")
+                {
+                    RequestedTheme = ApplicationTheme.Dark;
+                }
+                else if (preferredTheme == "light")
+                {
+                    RequestedTheme = ApplicationTheme.Light;
+                }
+
+
                 RegisterErrorHandling();
                 SetUpWebViewUserDataFolder();
                 InitializeMainWindow();

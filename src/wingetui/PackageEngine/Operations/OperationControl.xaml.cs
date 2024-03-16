@@ -121,6 +121,7 @@ namespace ModernWindow.PackageEngine
             get { return __status; }
             set
             {
+                MainGrid.RequestedTheme = Tools.App.MainWindow.ContentRoot.RequestedTheme;
                 __status = value;
                 switch (__status)
                 {
