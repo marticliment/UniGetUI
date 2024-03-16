@@ -90,6 +90,7 @@ namespace ModernWindow.Interface.Widgets
             _inverted_val_ref.Add(value, name);
         }
 
+
         public void ShowAddedItems()
         {
             try
