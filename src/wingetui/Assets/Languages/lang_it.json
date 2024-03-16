@@ -401,7 +401,7 @@
   "Show the live output" : "Mostra l'output in tempo reale",
   "Size" : "Dimensioni",
   "Skip" : "Salta",
-  "Skip hash check" : "No controllo hash",
+  "Skip hash check" : "Salta controllo hash",
   "Skip integrity checks" : "No controlli integrità",
   "Skip the hash check when installing the selected packages" : "Salta la verifica hash durante l'installazione dei pacchetti selezionati",
   "Skip the hash check when updating the selected packages" : "Salta la verifica hash durante l'aggiornamento dei pacchetti selezionati",
