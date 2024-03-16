@@ -9,12 +9,13 @@ namespace ModernWindow.Core.Data
             {"WingetUI",                "LGPL v2.1" },
 
             // C# Libraries
-            {"Pickers",                 "MIT"}, //https://github.com/PavlikBender/Pickers/blob/master/LICENSE
-            {"Community Toolkit",       "MIT"}, //https://github.com/CommunityToolkit/Windows/blob/main/License.md
-            {"H.NotifyIcon",            "MIT"}, //https://github.com/HavenDV/H.NotifyIcon/blob/master/LICENSE.md
-            {"Windows App Sdk",         "MIT"}, //https://github.com/microsoft/WindowsAppSDK/blob/main/LICENSE
-            {"NancyFx",                 "MIT"}, //https://github.com/NancyFx/Nancy/blob/master/license.txt
-            {"YamlDotNet",              "MIT"}, //https://github.com/aaubry/YamlDotNet/blob/master/LICENSE.txt
+            {"Pickers",                 "MIT"},
+            {"Community Toolkit",       "MIT"},
+            {"H.NotifyIcon",            "MIT"},
+            {"Windows App Sdk",         "MIT"},
+            {"NancyFx",                 "MIT"},
+            {"YamlDotNet",              "MIT"},
+            {"DotnetRuntimeBootstrapper","MIT" }, 
             
             // Package managers and related
             {"Winget",                  "MIT"},
@@ -43,7 +44,8 @@ namespace ModernWindow.Core.Data
             {"Windows App Sdk",       new Uri("https://github.com/microsoft/WindowsAppSDK/blob/main/LICENSE")},
             {"NancyFx",               new Uri("https://github.com/NancyFx/Nancy/blob/master/license.txt")},
             {"YamlDotNet",            new Uri("https://github.com/aaubry/YamlDotNet/blob/master/LICENSE.txt") },
-            
+            {"DotnetRuntimeBootstrapper", new Uri("https://github.com/Tyrrrz/DotnetRuntimeBootstrapper/blob/master/License.txt") },
+                
             // Package managers and related
             {"Winget",                new Uri("https://github.com/microsoft/winget-cli/blob/master/LICENSE")},
             {"Scoop",                 new Uri("https://github.com/ScoopInstaller/Scoop/blob/master/LICENSE")},
@@ -71,6 +73,7 @@ namespace ModernWindow.Core.Data
             {"Windows App Sdk",       new Uri("https://github.com/microsoft/WindowsAppSDK/")},
             {"NancyFx",               new Uri("https://github.com/NancyFx/Nancy/")},
             {"YamlDotNet",            new Uri("https://github.com/aaubry/YamlDotNet/") },
+            {"DotnetRuntimeBootstrapper", new Uri("https://github.com/Tyrrrz/DotnetRuntimeBootstrapper")},
             
             // Package managers and related
             {"Winget",                new Uri("https://github.com/microsoft/winget-cli/")},
