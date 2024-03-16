@@ -43,14 +43,21 @@ namespace ModernWindow
 
         public MainApp()
         {
-            InitializeComponent();
-            RegisterErrorHandling();
-            SetUpWebViewUserDataFolder();
-            InitializeMainWindow();
-            ClearNotificationHistory_Safe();
-            RegisterNotificationActivationEvent_Safe();
+            try
+            {
+                InitializeComponent();
+                RegisterErrorHandling();
+                SetUpWebViewUserDataFolder();
+                InitializeMainWindow();
+                ClearNotificationHistory_Safe();
+                RegisterNotificationActivationEvent_Safe();
 
-            LoadComponentsAsync().ConfigureAwait(false);
+                LoadComponentsAsync().ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                AppTools.ReportFatalException(e);
+            }
         }
 
         private void RegisterErrorHandling()
