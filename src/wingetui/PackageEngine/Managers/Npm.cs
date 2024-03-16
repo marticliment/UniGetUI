@@ -106,7 +106,16 @@ namespace ModernWindow.PackageEngine.Managers
                 output += line + "\n";
                 string[] elements = line.Split(':');
                 if (elements.Length >= 4)
-                    Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], MainSource, this, PackageScope.Global));
+                {
+                    if (elements[2][0] == '@')
+                        elements[2] = "%" + elements[2][1..];
+
+
+                    if (elements[3][0] == '@')
+                        elements[3] = "%" + elements[3][1..];
+
+                    Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[2].Split('@')[0]).Replace('%', '@'), elements[2].Split('@')[0].Replace('%', '@'), elements[3].Split('@')[^1].Replace('%', '@'), elements[2].Split('@')[^1].Replace('%', '@'), MainSource, this, PackageScope.Global));
+                }
             }
 
             output += await p.StandardError.ReadToEndAsync();
