@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11700,
-        "done": 5030,
-        "packages_with_icon": 5030,
+        "done": 5031,
+        "packages_with_icon": 5031,
         "packages_with_screenshot": 542,
         "total_screenshots": 1707
     },
@@ -34953,7 +34953,7 @@
             "images": []
         },
         "rsilauncher": {
-            "icon": "",
+            "icon": "https://i.imgur.com/eUHF7BW.png",
             "images": [
                 "https://i.imgur.com/uVnyK5g.png"
             ]
