@@ -49,11 +49,19 @@
   ],
   "cs": [
     {
+      "name": "mlisko",
+      "link": "https://github.com/mlisko"
+    },
+    {
       "name": "panther7",
       "link": "https://github.com/panther7"
     }
   ],
   "da": [
+    {
+      "name": "AAUCrisp",
+      "link": "https://github.com/AAUCrisp"
+    },
     {
       "name": "mikkolukas",
       "link": "https://github.com/mikkolukas"
@@ -171,6 +179,10 @@
   ],
   "fi": [],
   "fr": [
+    {
+      "name": "BreatFR",
+      "link": ""
+    },
     {
       "name": "Evans Costa",
       "link": ""
@@ -338,12 +350,8 @@
   ],
   "pt_PT": [
     {
-      "name": "PoetaGA",
-      "link": "https://github.com/PoetaGA"
-    },
-    {
-      "name": "ppvnf",
-      "link": "https://github.com/ppvnf"
+      "name": "Tiago_Ferreira",
+      "link": "https://github.com/Tiago_Ferreira"
     }
   ],
   "ro": [
@@ -463,7 +471,7 @@
     },
     {
       "name": "bai0012",
-      "link": ""
+      "link": "https://github.com/bai0012"
     },
     {
       "name": "BUGP Association",
@@ -483,7 +491,7 @@
     },
     {
       "name": "FloatStream",
-      "link": ""
+      "link": "https://github.com/FloatStream"
     },
     {
       "name": "SpaceTimee",
