@@ -202,7 +202,7 @@ If this doesn't work, consider asking for help at [Winget's own project page](ht
 
 A: This is a known limitation of Winget. 
 
-See more details in issue https://github.com/microsoft/winget-cli/issues/2603.<br>
+See more details on issue https://github.com/microsoft/winget-cli/issues/2603.<br>
 
 #
 
@@ -210,7 +210,7 @@ See more details in issue https://github.com/microsoft/winget-cli/issues/2603.<b
 
 A: A common reason apps (i.e., executables) get blocked and/or detected as a virus — even when there's nothing malicious about them, like in the case of WingetUI — is because they're not being used by a relatively large amount of people.
 
-Combine that with the fact that you might be downloading something that was recently released, and simply blocking unknown apps is in many cases a good precaution to take in order to prevent actual malware.
+Combine that with the fact that you might be downloading something recently released, and simply blocking unknown apps is in many cases a good precaution to take to prevent actual malware.
 
 Since WingetUI is open source and safe to use, simply whitelist the app in the settings of your antivirus/browser.<br>
 
@@ -225,13 +225,13 @@ To mitigate the risks of downloading malware, Microsoft has implemented a few ch
 <br><p align="center"><i>Check out the <a href="https://github.com/marticliment/WingetUI/wiki">Wiki</a> for more information!</i></p>
 
 ## Command-line parameters:
-`--daemon`: Start WingetUI without spawnign a new window. WingetUI will run minimized on the system tray. WingetUI is called with this parameter when launched at startup. **Autostart WingetUI in the notifications area** must be enabled in order for this paramater to work.<br>
+`--daemon`: Start WingetUI without spawning a new window. WingetUI will run minimized on the system tray. WingetUI is called with this parameter when launched at startup. **Autostart WingetUI in the notifications area** must be enabled for this parameter to work.<br>
 `--welcomewizard` (or simply `--welcome`): Show a window to choose which package managers to use.<br>
-`--updateapps`: Enable automatic install of available updates.
+`--updateapps`: Enable automatic installation of available updates.
 `--report-all-errors`: May help debug crashes (WingetUI 3.0 and newer)
 
 ### Installer command-line parameters:
-The installer is inno-setup based, so it supports regular Inno Setup command-line parameters. Additionally, it does also support the following ones:
+The installer is inno-setup based, so it supports regular Inno Setup command-line parameters. Additionally, it also supports the following parameters:
  <br>`/NoAutoStart`: Will not launch WingetUI after installing it.
 <br> `/ALLUSERS`: Install WingetUI for every user
 <br> `/CURRENTUSER`: Install WingetUI for the current user only
