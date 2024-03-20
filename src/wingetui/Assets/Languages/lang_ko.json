@@ -172,7 +172,7 @@
   "Hi, my name is Martí, and i am the <i>developer</i> of WingetUI. WingetUI has been entirely made on my free time!" : "안녕, 내 이름은 Martí고, WingetUI <i>개발자야</i>. WingetUI는 내 여가시간에 만들어 졌어.",
   "Hide details" : "세부사항 숨기기",
   "Homepage" : "홈페이지",
-  "Hooray! No updates were found." : "무야호! 업데이트 할 항목이 없습니다.",
+  "Hooray! No updates were found." : "야호! 업데이트 할 항목이 없습니다.",
   "How should installations that require administrator privileges be treated?" : "관리자 권한이 필요한 설치는 어떻게 처리해야 하나요?",
   "I understand" : null,
   "Ignore future updates for this package" : "이 패키지에 대한 향후 업데이트 무시",
