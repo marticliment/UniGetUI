@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
@@ -20,7 +20,11 @@
     <Nullable>annotations</Nullable>
 	<GenerateBootstrapperOnBuild>true</GenerateBootstrapperOnBuild>
 	<BootstrapperVariant>GUI</BootstrapperVariant>
-	  <BootstrapperPromptRequired>false</BootstrapperPromptRequired>
+	<BootstrapperPromptRequired>false</BootstrapperPromptRequired>
+	<FileVersion>3.1.0.0</FileVersion>
+	<InformationalVersion>3.1.0.0</InformationalVersion>
+	<Product>UniGetUI</Product>
+	<Copyright>2024, Martí Climent</Copyright>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
