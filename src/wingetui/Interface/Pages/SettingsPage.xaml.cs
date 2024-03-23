@@ -78,6 +78,9 @@ namespace ModernWindow.Interface
             }
             UpdatesCheckIntervalSelector.ShowAddedItems();
 
+            if (Tools.GetSettingsValue("PreferredTheme") == "")
+                Tools.SetSettingsValue("PreferredTheme", "auto");
+
             ThemeSelector.AddItem(Tools.AutoTranslated("Light"), "light");
             ThemeSelector.AddItem(Tools.AutoTranslated("Dark"), "dark");
             ThemeSelector.AddItem(Tools.AutoTranslated("Follow system color scheme"), "auto");

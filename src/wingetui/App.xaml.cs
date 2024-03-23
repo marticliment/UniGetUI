@@ -14,6 +14,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
+using Windows.UI;
 using YamlDotNet.Serialization;
 
 namespace ModernWindow
@@ -43,14 +44,33 @@ namespace ModernWindow
 
         public MainApp()
         {
-            InitializeComponent();
-            RegisterErrorHandling();
-            SetUpWebViewUserDataFolder();
-            InitializeMainWindow();
-            ClearNotificationHistory_Safe();
-            RegisterNotificationActivationEvent_Safe();
+            try
+            {
+                InitializeComponent();
 
-            LoadComponentsAsync().ConfigureAwait(false);
+                string preferredTheme = AppTools.GetSettingsValue_Static("PreferredTheme");
+                if (preferredTheme == "dark")
+                {
+                    RequestedTheme = ApplicationTheme.Dark;
+                }
+                else if (preferredTheme == "light")
+                {
+                    RequestedTheme = ApplicationTheme.Light;
+                }
+
+
+                RegisterErrorHandling();
+                SetUpWebViewUserDataFolder();
+                InitializeMainWindow();
+                ClearNotificationHistory_Safe();
+                RegisterNotificationActivationEvent_Safe();
+
+                LoadComponentsAsync().ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                AppTools.ReportFatalException(e);
+            }
         }
 
         private void RegisterErrorHandling()

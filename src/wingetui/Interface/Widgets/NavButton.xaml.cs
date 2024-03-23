@@ -1,9 +1,12 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
 using ModernWindow.Structures;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using Windows.Media.Devices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -50,22 +53,8 @@ namespace ModernWindow.Interface.Widgets
                 {
                     string val = Tools.Translate((string)e.NewValue);
                     int count = val.Count(x => x == ' ');
-                    /*if (count > 0)
-                    {
-                        Height = 58 + 14*count;
-                        VariableGrid.RowDefinitions[1].Height = new GridLength(26 + 14 * count);
-                        TextBlock.Height = 18 + 14 * count;
-                        TextBlock.HorizontalAlignment = HorizontalAlignment.Center;
-                        TextBlock.VerticalAlignment = VerticalAlignment.Center;
-                        TextBlock.TextAlignment = TextAlignment.Center;
-                    }
-                    else
-                    {
-                        Height = 58;
-                        TextBlock.Height = 18;
-                        VariableGrid.RowDefinitions[1].Height = new GridLength(26);
-                    }*/
                     TextBlock.Text = val.Replace(" ", "\x0a");
+                    ToggleButton.Content = val.Replace(" ", "\x0a");
                 }))
             );
 

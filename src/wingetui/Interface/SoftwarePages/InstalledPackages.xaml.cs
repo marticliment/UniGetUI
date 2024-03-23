@@ -170,6 +170,8 @@ namespace ModernWindow.Interface
             GenerateToolBar();
             LoadInterface();
             _ = LoadPackages();
+
+            QueryBlock.PlaceholderText = Tools.Translate("Search for packages");
         }
 
         public void ReloadPackages()
@@ -470,12 +472,10 @@ namespace ModernWindow.Interface
 
             FilteredPackages.Descending = !FilteredPackages.Descending;
             FilteredPackages.SortingSelector = (a) => (a.GetType().GetProperty(Sorter).GetValue(a));
-            object Item = PackageList.SelectedItem;
             FilteredPackages.Sort();
 
-            if (Item != null)
-                PackageList.SelectedItem = Item;
-            PackageList.ScrollIntoView(Item);
+            if (FilteredPackages.Count > 0)
+                PackageList.ScrollIntoView(FilteredPackages[0]);
         }
 
         public void LoadInterface()

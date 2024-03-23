@@ -42,7 +42,8 @@ namespace ModernWindow.Interface.Widgets
             DefaultStyleKey = typeof(Announcer);
             BringIntoViewRequested += (s, e) => { LoadAnnouncements(); };
 
-            PointerPressed += (s, e) => { LoadAnnouncements(); };
+            int i = 0;
+            PointerPressed += (s, e) => { if(i++ %3 != 0) LoadAnnouncements(); };
 
             SetText(binder.Translate("Fetching latest announcements, please wait..."));
             _textblock.TextWrapping = TextWrapping.Wrap;

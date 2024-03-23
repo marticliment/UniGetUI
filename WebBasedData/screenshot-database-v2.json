@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11700,
-        "done": 5030,
-        "packages_with_icon": 5030,
-        "packages_with_screenshot": 542,
-        "total_screenshots": 1707
+        "done": 5032,
+        "packages_with_icon": 5032,
+        "packages_with_screenshot": 543,
+        "total_screenshots": 1709
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -30861,8 +30861,11 @@
             "images": []
         },
         "playdatesdk": {
-            "icon": "",
-            "images": []
+            "icon": "https://nikeedev.stio.studio/imgr/playdate4.png",
+            "images": [
+                "https://nikeedev.stio.studio/imgr/playdatesdk_screenshot.png",
+                "https://nikeedev.stio.studio/imgr/playdatesdk_screenshot2.png"
+            ]
         },
         "playgames-beta": {
             "icon": "",
@@ -34953,7 +34956,7 @@
             "images": []
         },
         "rsilauncher": {
-            "icon": "",
+            "icon": "https://i.imgur.com/eUHF7BW.png",
             "images": [
                 "https://i.imgur.com/uVnyK5g.png"
             ]
