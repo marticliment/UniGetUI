@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 
-namespace UnigetUI.Core.Data
+namespace UniGetUI.Core.Data
 {
     public static class ContributorsData
     {

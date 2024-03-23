@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
-using UnigetUI.PackageEngine.Classes;
-using UnigetUI.PackageEngine.Operations;
-using UnigetUI.Structures;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace UnigetUI.PackageEngine.Managers
+namespace UniGetUI.PackageEngine.Managers
 {
     public class PowerShell : PackageManagerWithSources
     {

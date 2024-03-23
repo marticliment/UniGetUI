@@ -1,7 +1,7 @@
-﻿using UnigetUI.Core.Data;
-using UnigetUI.PackageEngine.Classes;
-using UnigetUI.PackageEngine.Operations;
-using UnigetUI.Structures;
+﻿using UniGetUI.Core.Data;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 
-namespace UnigetUI.PackageEngine.Managers
+namespace UniGetUI.PackageEngine.Managers
 {
     public class Winget : PackageManagerWithSources
     {

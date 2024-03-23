@@ -2,12 +2,11 @@ using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using UnigetUI.Core.Data;
-using UnigetUI.Essentials;
-using UnigetUI.Interface.Widgets;
-using UnigetUI.PackageEngine.Classes;
-using UnigetUI.PackageEngine.Operations;
-using UnigetUI.Structures;
+using UniGetUI.Core.Data;
+using UniGetUI.Core;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Operations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,7 +20,7 @@ using Windows.UI.Core;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace UnigetUI.Interface
+namespace UniGetUI.Interface
 {
 
     public partial class InstalledPackagesPage : Page

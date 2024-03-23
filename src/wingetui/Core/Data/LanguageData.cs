@@ -1,5 +1,5 @@
-﻿using UnigetUI.PackageEngine.Classes;
-using UnigetUI.Structures;
+﻿using UniGetUI.PackageEngine.Classes;
+using UniGetUI.Core;
 using Nancy.Extensions;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Windows.Media.Streaming.Adaptive;
 
-namespace UnigetUI.Core.Data
+namespace UniGetUI.Core.Data
 {
     public static class LanguageData
     {

@@ -1,12 +1,12 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UnigetUI.Structures;
+using UniGetUI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace UnigetUI.Interface.Widgets
+namespace UniGetUI.Interface.Widgets
 {
     public sealed class SettingsEntry : SettingsExpander
     {

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 
-namespace UnigetUI.Essentials
+namespace UniGetUI.Core
 {
     public class SortableObservableCollection<T> : ObservableCollection<T>
     {

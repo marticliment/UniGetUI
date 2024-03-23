@@ -3,15 +3,15 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
-using UnigetUI.Core.Data;
-using UnigetUI.Interface.Widgets;
-using UnigetUI.PackageEngine.Classes;
-using UnigetUI.Structures;
+using UniGetUI.Core.Data;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.Core;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace UnigetUI.PackageEngine.Operations
+namespace UniGetUI.PackageEngine.Operations
 {
 
     public abstract class SourceOperation : AbstractOperation

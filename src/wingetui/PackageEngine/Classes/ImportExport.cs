@@ -1,12 +1,12 @@
 ﻿using Microsoft.UI.Xaml;
-using UnigetUI.Structures;
+using UniGetUI.Core;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using static UnigetUI.PackageEngine.Classes.InstallationOptions;
+using static UniGetUI.PackageEngine.Classes.InstallationOptions;
 
-namespace UnigetUI.PackageEngine.Classes
+namespace UniGetUI.PackageEngine.Classes
 {
 
     public class SerializableBundle_v1

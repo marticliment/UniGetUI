@@ -1,5 +1,5 @@
-﻿using UnigetUI.Core.Data;
-using UnigetUI.Structures;
+﻿using UniGetUI.Core.Data;
+using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Devices.Bluetooth.Advertisement;
 
-namespace UnigetUI.PackageEngine.Classes
+namespace UniGetUI.PackageEngine.Classes
 {
     /// <summary>
     /// Represents the scope of a package. To be coherent with package manager naming, the values are repeated.

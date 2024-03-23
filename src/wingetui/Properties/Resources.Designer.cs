@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace UnigetUI.Properties {
+namespace UniGetUI.Properties {
     using System;
     
     

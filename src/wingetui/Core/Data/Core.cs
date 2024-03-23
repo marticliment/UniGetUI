@@ -1,4 +1,4 @@
-﻿using UnigetUI.Structures;
+﻿using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Windows.Storage.Search;
 using System.Net.Http;
 
-namespace UnigetUI.Core.Data
+namespace UniGetUI.Core.Data
 {
     public static class CoreData
     {
