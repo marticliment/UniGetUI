@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using ModernWindow.Core.Data;
-using ModernWindow.Interface;
-using ModernWindow.PackageEngine.Classes;
-using ModernWindow.PackageEngine.Managers;
-using ModernWindow.Structures;
+using UnigetUI.Core.Data;
+using UnigetUI.Interface;
+using UnigetUI.PackageEngine.Classes;
+using UnigetUI.PackageEngine.Managers;
+using UnigetUI.Structures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,7 +17,7 @@ using Windows.Foundation.Collections;
 using Windows.UI;
 using YamlDotNet.Serialization;
 
-namespace ModernWindow
+namespace UnigetUI
 {
     public partial class MainApp : Application
     {

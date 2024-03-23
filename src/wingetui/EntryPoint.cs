@@ -1,15 +1,15 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
-using ModernWindow.Core.Data;
-using ModernWindow.Structures;
+using UnigetUI.Core.Data;
+using UnigetUI.Structures;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ModernWindow
+namespace UnigetUI
 {
     public static class EntryPoint
     {

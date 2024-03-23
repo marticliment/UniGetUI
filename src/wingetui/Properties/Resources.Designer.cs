@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ModernWindow.Properties {
+namespace UnigetUI.Properties {
     using System;
     
     

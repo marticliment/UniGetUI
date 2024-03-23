@@ -1,7 +1,7 @@
 ﻿using H.NotifyIcon.Core;
-using ModernWindow.PackageEngine.Classes;
-using ModernWindow.PackageEngine.Operations;
-using ModernWindow.Structures;
+using UnigetUI.PackageEngine.Classes;
+using UnigetUI.PackageEngine.Operations;
+using UnigetUI.Structures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +13,7 @@ using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ModernWindow.PackageEngine.Managers;
+namespace UnigetUI.PackageEngine.Managers;
 
 public class Scoop : PackageManagerWithSources
 {

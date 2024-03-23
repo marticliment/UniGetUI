@@ -1,6 +1,6 @@
-﻿using ModernWindow.PackageEngine.Classes;
-using ModernWindow.PackageEngine.Operations;
-using ModernWindow.Structures;
+﻿using UnigetUI.PackageEngine.Classes;
+using UnigetUI.PackageEngine.Operations;
+using UnigetUI.Structures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +10,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace ModernWindow.PackageEngine.Managers
+namespace UnigetUI.PackageEngine.Managers
 {
     public class Chocolatey : PackageManagerWithSources
     {

@@ -4,13 +4,13 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media.Imaging;
-using ModernWindow.Core.Data;
-using ModernWindow.Interface.Dialogs;
-using ModernWindow.Interface.Pages;
-using ModernWindow.Interface.Widgets;
-using ModernWindow.PackageEngine.Classes;
-using ModernWindow.PackageEngine.Operations;
-using ModernWindow.Structures;
+using UnigetUI.Core.Data;
+using UnigetUI.Interface.Dialogs;
+using UnigetUI.Interface.Pages;
+using UnigetUI.Interface.Widgets;
+using UnigetUI.PackageEngine.Classes;
+using UnigetUI.PackageEngine.Operations;
+using UnigetUI.Structures;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -21,7 +21,7 @@ using Windows.UI.Core;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace ModernWindow.Interface
+namespace UnigetUI.Interface
 {
     public sealed partial class NavigationPage : UserControl
     {

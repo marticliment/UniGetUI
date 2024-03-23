@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 
-namespace ModernWindow.Essentials
+namespace UnigetUI.Essentials
 {
     public class SortableObservableCollection<T> : ObservableCollection<T>
     {

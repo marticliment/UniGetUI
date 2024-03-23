@@ -7,11 +7,11 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
-using ModernWindow.Core.Data;
-using ModernWindow.Interface;
-using ModernWindow.Interface.Widgets;
-using ModernWindow.PackageEngine.Classes;
-using ModernWindow.Structures;
+using UnigetUI.Core.Data;
+using UnigetUI.Interface;
+using UnigetUI.Interface.Widgets;
+using UnigetUI.PackageEngine.Classes;
+using UnigetUI.Structures;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -23,7 +23,7 @@ using Windows.ApplicationModel.VoiceCommands;
 using Windows.Foundation.Collections;
 
 
-namespace ModernWindow
+namespace UnigetUI
 {
     public sealed partial class MainWindow : Window
     {

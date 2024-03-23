@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
-namespace ModernWindow.Clipboard
+namespace UnigetUI.Clipboard
 {
     public class Main
     {

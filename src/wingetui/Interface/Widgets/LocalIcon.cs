@@ -1,10 +1,10 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
-using ModernWindow.Structures;
+using UnigetUI.Structures;
 using System;
 
-namespace ModernWindow.Interface.Widgets
+namespace UnigetUI.Interface.Widgets
 {
     public class LocalIcon : ImageIcon
     {

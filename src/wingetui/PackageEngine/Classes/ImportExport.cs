@@ -1,12 +1,12 @@
 ﻿using Microsoft.UI.Xaml;
-using ModernWindow.Structures;
+using UnigetUI.Structures;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using static ModernWindow.PackageEngine.Classes.InstallationOptions;
+using static UnigetUI.PackageEngine.Classes.InstallationOptions;
 
-namespace ModernWindow.PackageEngine.Classes
+namespace UnigetUI.PackageEngine.Classes
 {
 
     public class SerializableBundle_v1

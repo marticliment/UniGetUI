@@ -1,10 +1,10 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
-using ModernWindow.Core.Data;
-using ModernWindow.PackageEngine.Classes;
-using ModernWindow.PackageEngine.Operations;
-using ModernWindow.Structures;
+using UnigetUI.Core.Data;
+using UnigetUI.PackageEngine.Classes;
+using UnigetUI.PackageEngine.Operations;
+using UnigetUI.Structures;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -16,7 +16,7 @@ using Windows.Storage.Pickers;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace ModernWindow.Interface.Dialogs
+namespace UnigetUI.Interface.Dialogs
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

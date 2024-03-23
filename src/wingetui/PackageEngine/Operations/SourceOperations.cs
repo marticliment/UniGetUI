@@ -3,15 +3,15 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
-using ModernWindow.Core.Data;
-using ModernWindow.Interface.Widgets;
-using ModernWindow.PackageEngine.Classes;
-using ModernWindow.Structures;
+using UnigetUI.Core.Data;
+using UnigetUI.Interface.Widgets;
+using UnigetUI.PackageEngine.Classes;
+using UnigetUI.Structures;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace ModernWindow.PackageEngine.Operations
+namespace UnigetUI.PackageEngine.Operations
 {
 
     public abstract class SourceOperation : AbstractOperation

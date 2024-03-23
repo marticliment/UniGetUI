@@ -2,9 +2,9 @@
 using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using ModernWindow.Core.Data;
-using ModernWindow.PackageEngine;
-using ModernWindow.PackageEngine.Classes;
+using UnigetUI.Core.Data;
+using UnigetUI.PackageEngine;
+using UnigetUI.PackageEngine.Classes;
 using Nancy;
 using Nancy.Conventions;
 using System;
@@ -22,7 +22,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ModernWindow.Structures
+namespace UnigetUI.Structures
 {
     public class AppTools
     {

@@ -1,10 +1,10 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using ModernWindow.PackageEngine.Classes;
-using ModernWindow.Structures;
+using UnigetUI.PackageEngine.Classes;
+using UnigetUI.Structures;
 using System;
 
-namespace ModernWindow.Interface.Widgets
+namespace UnigetUI.Interface.Widgets
 {
     public class BetterMenu : MenuFlyout
     {

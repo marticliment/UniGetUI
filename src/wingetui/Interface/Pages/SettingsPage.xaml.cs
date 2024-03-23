@@ -3,11 +3,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
-using ModernWindow.Clipboard;
-using ModernWindow.Core.Data;
-using ModernWindow.Interface.Widgets;
-using ModernWindow.PackageEngine.Classes;
-using ModernWindow.Structures;
+using UnigetUI.Clipboard;
+using UnigetUI.Core.Data;
+using UnigetUI.Interface.Widgets;
+using UnigetUI.PackageEngine.Classes;
+using UnigetUI.Structures;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ using Windows.Storage.Pickers;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace ModernWindow.Interface
+namespace UnigetUI.Interface
 {
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
