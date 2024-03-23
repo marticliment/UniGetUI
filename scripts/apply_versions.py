@@ -30,8 +30,8 @@ try:
     }, encoding="utf-8-sig")
 
     fileReplaceLinesWith("src/wingetui/wingetui.csproj", {
-        "  <FileVersion>": f"{versionISS}</FileVersion>\n",
-        "  <InformationalVersion>": f"{versionName}</InformationalVersion>\n",
+        "\t<FileVersion>": f"{versionISS}</FileVersion>\n",
+        "\t<InformationalVersion>": f"{versionName}</InformationalVersion>\n",
     }, encoding="utf-8-sig")
 
     fileReplaceLinesWith("WingetUI.iss", {

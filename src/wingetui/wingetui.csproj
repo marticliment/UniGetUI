@@ -21,8 +21,8 @@
 	<GenerateBootstrapperOnBuild>true</GenerateBootstrapperOnBuild>
 	<BootstrapperVariant>GUI</BootstrapperVariant>
 	<BootstrapperPromptRequired>false</BootstrapperPromptRequired>
-	<FileVersion>3.1.0.0</FileVersion>
-	<InformationalVersion>3.1.0.0</InformationalVersion>
+	<FileVersion>3.0.1.0</FileVersion>
+	<InformationalVersion>3.0.1</InformationalVersion>
 	<Product>UniGetUI</Product>
 	<Copyright>2024, Martí Climent</Copyright>
   </PropertyGroup>
