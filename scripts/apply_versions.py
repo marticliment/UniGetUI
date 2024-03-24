@@ -29,6 +29,11 @@ try:
         "        public static double VersionNumber = ": f" {versionCode}; // Do not modify this line, use file scripts/apply_versions.py\n",
     }, encoding="utf-8-sig")
 
+    fileReplaceLinesWith("src/wingetui/wingetui.csproj", {
+        "\t<FileVersion>": f"{versionISS}</FileVersion>\n",
+        "\t<InformationalVersion>": f"{versionName}</InformationalVersion>\n",
+    }, encoding="utf-8-sig")
+
     fileReplaceLinesWith("WingetUI.iss", {
         "#define MyAppVersion": f" \"{versionName}\"\n",
         "VersionInfoVersion=": f"{versionISS}\n",

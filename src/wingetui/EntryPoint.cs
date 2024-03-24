@@ -24,7 +24,6 @@ namespace ModernWindow
                 if (args.Contains("--uninstall-wingetui"))
                     // If the app is being uninstalled, run the cleaner and exit
                     UninstallPreps();
-
                 else
                     // Otherwise, run WingetUI as normal
                     _ = AsyncMain(args);
