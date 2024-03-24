@@ -51,10 +51,6 @@ namespace ModernWindow
                 // WinRT single-instance fancy stuff
                 WinRT.ComWrappersSupport.InitializeComWrappers();
                 bool isRedirect = await DecideRedirection();
-                if (!isRedirect) // Sometimes, redirection fails, so we try again
-                    isRedirect = await DecideRedirection();
-                if (!isRedirect) // Sometimes, redirection fails, so we try again (second time)
-                    isRedirect = await DecideRedirection();
 
                 // If this is the main instance, start the app
                 if (!isRedirect)
