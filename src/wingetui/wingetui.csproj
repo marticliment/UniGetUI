@@ -18,7 +18,7 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <AssemblyName>WingetUI</AssemblyName>
     <Nullable>annotations</Nullable>
-	<FileVersion>3.1.0.0</FileVersion>
+	<FileVersion>3.0.1.0</FileVersion>
 	<InformationalVersion>3.1.0-beta</InformationalVersion>
 	<Product>UniGetUI</Product>
 	<Copyright>2024, Martí Climent</Copyright>

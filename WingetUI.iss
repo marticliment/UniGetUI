@@ -7,6 +7,10 @@
 #define MyAppURL "https://github.com/marticliment/WingetUI"
 #define MyAppExeName "WingetUI.exe"
 
+#define public Dependency_Path_NetCoreCheck "InstallerExtras\"
+#include "InstallerExtras\CodeDependencies.iss"
+
+
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
@@ -19,8 +23,10 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL='https://www.marticliment.com/'
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-VersionInfoVersion=3.1.0.0
+VersionInfoVersion=3.0.1.0
 DefaultDirName="{autopf64}\WingetUI"
+ArchitecturesInstallIn64BitMode=x64 arm64
+ArchitecturesAllowed=x64 arm64
 DisableProgramGroupPage=yes
 DisableDirPage=no
 DirExistsWarning=no
@@ -228,6 +234,14 @@ begin
   end;
 end;
 
+function InitializeSetup: Boolean;
+begin
+  Dependency_AddDotNet80Desktop;
+  Dependency_AddVC2015To2022;
+  Dependency_AddAppSdk151;
+  Result := True;
+end;
+
 
 [Tasks]
 Name: "portableinstall"; Description: "{cm:PortInst}"; GroupDescription: "{cm:InstallType}"; Flags: unchecked exclusive
@@ -245,7 +259,7 @@ Source: "src\wingetui\bin\x64\Release\net8.0-windows10.0.19041.0\choco-cli\*"; D
 
 ; MSVC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
 ;Source: "InstallerExtras\vcredist.exe"; DestDir: {tmp}; Flags: deleteafterinstall
-Source: "InstallerExtras\appsdk.exe"; DestDir: {tmp}; Flags: deleteafterinstall    
+;Source: "InstallerExtras\appsdk.exe"; DestDir: {tmp}; Flags: deleteafterinstall    
 ;Source: "InstallerExtras\net8.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 ;Source: "InstallerExtras\SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe UI Variable"; Flags: onlyifdoesntexist uninsneveruninstall
 
@@ -257,8 +271,7 @@ Name: "{autodesktop}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks: r
 [Run]   
 ;Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall;     
 ;Filename: "{tmp}\net8.exe"; Flags: runhidden; Parameters: "/silent"; StatusMsg: "Installing .NET 8 Runtime (x64)";
-Filename: "{tmp}\appsdk.exe"; Flags: runhidden; Parameters: "--force"; StatusMsg: "Installing Windows App Sdk (x64)";
-Filename: "{app}\{#MyAppExeName}"; Parameters: "--install-dependencies-and-quit"; StatusMsg: "Installing other dependencies...";    
+;Filename: "{tmp}\appsdk.exe"; Flags: runhidden; Parameters: "--force"; StatusMsg: "Installing Windows App Sdk (x64)";
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall;
 ; Check: not CmdLineParamExists('/NoAutoStart');
 ; Autostart is required to finish installation properly from an update, hence autostart will be obligatory

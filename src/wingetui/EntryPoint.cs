@@ -24,10 +24,6 @@ namespace ModernWindow
                 if (args.Contains("--uninstall-wingetui"))
                     // If the app is being uninstalled, run the cleaner and exit
                     UninstallPreps();
-
-                else if (args.Contains("--install-dependencies-and-quit"))
-                    return;
-
                 else
                     // Otherwise, run WingetUI as normal
                     _ = AsyncMain(args);
