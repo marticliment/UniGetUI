@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WingetUI"
-#define MyAppVersion "3.0.1"
+#define MyAppVersion "3.1.0-beta"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/marticliment/WingetUI"
 #define MyAppExeName "WingetUI.exe"
@@ -19,7 +19,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL='https://www.marticliment.com/'
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-VersionInfoVersion=3.0.1.0
+VersionInfoVersion=3.1.0.0
 DefaultDirName="{autopf64}\WingetUI"
 DisableProgramGroupPage=yes
 DisableDirPage=no
@@ -244,20 +244,21 @@ Source: "src\wingetui\bin\x64\Release\net8.0-windows10.0.19041.0\*"; DestDir: "{
 Source: "src\wingetui\bin\x64\Release\net8.0-windows10.0.19041.0\choco-cli\*"; DestDir: "{userpf}\WingetUI\choco-cli"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall
 
 ; MSVC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
-Source: "InstallerExtras\vcredist.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+;Source: "InstallerExtras\vcredist.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 Source: "InstallerExtras\appsdk.exe"; DestDir: {tmp}; Flags: deleteafterinstall    
-Source: "InstallerExtras\net8.exe"; DestDir: {tmp}; Flags: deleteafterinstall
-Source: "InstallerExtras\SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe UI Variable"; Flags: onlyifdoesntexist uninsneveruninstall
+;Source: "InstallerExtras\net8.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+;Source: "InstallerExtras\SegUIVar.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe UI Variable"; Flags: onlyifdoesntexist uninsneveruninstall
 
 [Icons]
 ; Yes, they do have a space. This has been done in purpose for the updater to handle properly the new shortcuts
 Name: "{autostartmenu}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\startmenuicon
 Name: "{autodesktop}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\desktopicon
 
-[Run]
-Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall;     
-Filename: "{tmp}\net8.exe"; Flags: runhidden; Parameters: "/silent"; StatusMsg: "Installing .NET 8 Runtime (x64)";
-Filename: "{tmp}\appsdk.exe"; Flags: runhidden; Parameters: "--force"; StatusMsg: "Installing Windows App Sdk (x64)";  
+[Run]   
+;Filename: "{tmp}\vcredist.exe"; Flags: runhidden; Parameters: "/install /norestart /passive"; StatusMsg: "Installing Microsoft Visual C++ Redistributables (x64)"; Check: VCRedistNeedsInstall;     
+;Filename: "{tmp}\net8.exe"; Flags: runhidden; Parameters: "/silent"; StatusMsg: "Installing .NET 8 Runtime (x64)";
+Filename: "{tmp}\appsdk.exe"; Flags: runhidden; Parameters: "--force"; StatusMsg: "Installing Windows App Sdk (x64)";
+Filename: "{app}\{#MyAppExeName}"; Parameters: "--install-dependencies-and-quit"; StatusMsg: "Installing other dependencies...";    
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall;
 ; Check: not CmdLineParamExists('/NoAutoStart');
 ; Autostart is required to finish installation properly from an update, hence autostart will be obligatory
