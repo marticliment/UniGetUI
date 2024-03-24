@@ -107,7 +107,7 @@ namespace ModernWindow
             }
             catch (Exception e)
             {
-                AppTools.ReportFatalException(e);
+                AppTools.Log(e);
                 return false;
             }
         }
