@@ -1,9 +1,11 @@
-﻿using ModernWindow.Core.Data;
+﻿using CommunityToolkit.Common;
+using ModernWindow.Core.Data;
 using ModernWindow.PackageEngine.Classes;
 using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,9 +13,12 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Services.TargetedContent;
 using Windows.Storage.Streams;
+using Deployment = Microsoft.Management.Deployment;
 
 using WindowsPackageManager.Interop;
+using Windows.Foundation;
 
 
 namespace ModernWindow.PackageEngine.Managers
@@ -29,6 +34,9 @@ namespace ModernWindow.PackageEngine.Managers
         private static UbisoftConnectSource UbisoftConnectSource { get; } = new UbisoftConnectSource();
         private static GOGSource GOGSource { get; } = new GOGSource();
         private static MicrosoftStoreSource MicrosoftStoreSource { get; } = new MicrosoftStoreSource();
+
+        private WindowsPackageManagerFactory WinGetFactory;
+        private Deployment.PackageManager WinGetManager;
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
@@ -728,30 +736,8 @@ namespace ModernWindow.PackageEngine.Managers
 
         public override async Task RefreshPackageIndexes()
         {
-            Process process = new();
-            ProcessStartInfo StartInfo = new()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " source update",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-            process.StartInfo = StartInfo;
-            process.Start();
-
-            int StartTime = Environment.TickCount;
-
-            while (!process.HasExited && Environment.TickCount - StartTime < 8000)
-                await Task.Delay(100);
-
-            if (!process.HasExited)
-            {
-                process.Kill();
-                AppTools.Log("Winget source update timed out. Current output was");
-                AppTools.Log(await process.StandardOutput.ReadToEndAsync());
-            }
+            await Task.Delay(0);
+            // As of WinGet 1.6, WinGet does handle updating package indexes automatically
         }
 
         protected override ManagerCapabilities GetCapabilities()
@@ -796,7 +782,8 @@ namespace ModernWindow.PackageEngine.Managers
         protected override async Task<ManagerStatus> LoadManager()
         {
             ManagerStatus status = new();
-            Process process = new()
+            
+            /*Process process = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -809,22 +796,35 @@ namespace ModernWindow.PackageEngine.Managers
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
+
             process.Start();
             string output = await process.StandardOutput.ReadToEndAsync();
+            */
 
-            if (Tools.GetSettings("UseSystemWinget"))
-                status.ExecutablePath = await Tools.Which("winget.exe");
+            //if (Tools.GetSettings("UseSystemWinget"))
+            status.ExecutablePath = await Tools.Which("winget.exe");
+
+            /*
             else if (output.Contains("ARM64") | Tools.GetSettings("EnableArmWinget"))
                 status.ExecutablePath = Path.Join(CoreData.WingetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_arm64", "winget.exe");
             else
                 status.ExecutablePath = Path.Join(CoreData.WingetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_x64", "winget.exe");
+            */
 
             status.Found = File.Exists(status.ExecutablePath);
 
             if (!status.Found)
                 return status;
 
-            process = new Process()
+            if (Tools.IsAdministrator())
+                WinGetFactory = new WindowsPackageManagerElevatedFactory();
+            else
+                WinGetFactory = new WindowsPackageManagerStandardFactory();
+            WinGetManager = WinGetFactory.CreatePackageManager();
+
+            Console.WriteLine(WinGetManager.ToString());
+
+            var process = new Process()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -842,7 +842,7 @@ namespace ModernWindow.PackageEngine.Managers
 
             Status = status; // Need to set status before calling RefreshSources, otherwise will crash
             if (status.Found && IsEnabled())
-                await RefreshSources();
+                await RefreshPackageIndexes();
 
             return status;
         }
