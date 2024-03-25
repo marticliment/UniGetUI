@@ -40,101 +40,90 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
+            List<Package> Packages = new();
+            var PackageFilters = WinGetFactory.CreateFindPackagesOptions();
 
-            var WinGet = new WindowsPackageManagerElevatedFactory();
-            var Manager = WinGet.CreatePackageManager();
+            // Name filter
+            var FilterName = WinGetFactory.CreatePackageMatchFilter();
+            FilterName.Field = Deployment.PackageMatchField.Name;
+            FilterName.Value = query;
+            FilterName.Option = Deployment.PackageFieldMatchOption.ContainsCaseInsensitive;
+            PackageFilters.Filters.Add(FilterName);
 
-            List<Package> packages = new();
+            // Id filter
+            var FilterId = WinGetFactory.CreatePackageMatchFilter();
+            FilterId.Field = Deployment.PackageMatchField.Name;
+            FilterId.Value = query;
+            FilterId.Option = Deployment.PackageFieldMatchOption.ContainsCaseInsensitive;
+            PackageFilters.Filters.Add(FilterId);
 
-            var catalogs = Manager.GetPackageCatalogs();
-            foreach (var catalog in catalogs)
+            // Load catalogs
+            var AvailableCatalogs = WinGetManager.GetPackageCatalogs();
+            Dictionary<Deployment.PackageCatalogReference, Task<Deployment.FindPackagesResult>> FindPackageTasks = new();
+
+            // Spawn Tasks to find packages on catalogs
+            foreach (var CatalogReference in AvailableCatalogs.ToArray())
             {
-                var connect_result = catalog.Connect();
-                var filters = new Microsoft.Management.Deployment.FindPackagesOptions();
-
-                var package_list = await connect_result.PackageCatalog.FindPackagesAsync(filters);
-                foreach (var match in package_list.Matches)
+                // Connect to catalog
+                var result = CatalogReference.Connect();
+                CatalogReference.AcceptSourceAgreements = true;
+                if (result.Status == Deployment.ConnectResultStatus.Ok)
                 {
-                    var package = match.CatalogPackage;
-
-                    packages.Add(new Package(
-                        package.Name,
-                        package.Id,
-                        package.DefaultInstallVersion.ToString(),
-                        new ManagerSource(this, catalog.Info.Name, new Uri(catalog.Info.Origin.ToString())),
-                        this
-                    ));
-                }
-            }
-
-            return packages.ToArray();
-
-            /*List<Package> Packages = new();
-            Process p = new();
-            ProcessStartInfo startInfo = new()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\"  --accept-source-agreements",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-            p.StartInfo = startInfo;
-            p.Start();
-
-            string OldLine = "";
-            int IdIndex = -1;
-            int VersionIndex = -1;
-            int SourceIndex = -1;
-            bool DashesPassed = false;
-            string line;
-            string output = "";
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
-                if (!DashesPassed && line.Contains("---"))
-                {
-                    string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
-                    IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
-                    VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
-                    SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
-                    DashesPassed = true;
-                }
-                else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
-                {
-                    int offset = 0; // Account for non-unicode character length
-                    while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
-                        offset++;
-                    string name = line[..(IdIndex - offset)].Trim();
-                    string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
-                    string version = line[(VersionIndex - offset)..].Trim().Split(' ')[0];
-                    ManagerSource source;
-                    if (SourceIndex == -1 || SourceIndex >= line.Length)
-                        source = MainSource;
-                    else
+                    try
                     {
-                        string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
-                        if (SourceReference.ContainsKey(sourceName))
-                            source = SourceReference[sourceName];
-                        else
-                        {
-                            source = new ManagerSource(this, sourceName, new Uri("https://microsoft.com/winget"));
-                            SourceReference.Add(source.Name, source);
-                        }
+                        // Create task and spawn it
+                        var task = new Task<Deployment.FindPackagesResult>(() => result.PackageCatalog.FindPackages(PackageFilters));
+                        task.Start();
+
+                        // Add task to list
+                        FindPackageTasks.Add(
+                            CatalogReference,
+                            task
+                        );
                     }
-                    Packages.Add(new Package(name, id, version, source, this));
+                    catch (Exception e)
+                    {
+                        AppTools.Log("WinGet: Catalog " + CatalogReference.Info.Name + " failed to spawn FindPackagesAsync.");
+                        AppTools.Log(e);
+                    }
                 }
-                OldLine = line;
+                else
+                {
+                    AppTools.Log("WinGet: Catalog " + CatalogReference.Info.Name + " failed to connect.");
+                }
             }
 
-            output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
-            await Task.Run(p.WaitForExit);
+            // Wait for tasks completion
+            await Task.WhenAll(FindPackageTasks.Values.ToArray());
 
-            return Packages.ToArray();*/
+            foreach(var CatalogTaskPair in FindPackageTasks)
+            {   
+                try
+                {
+                    // Get the source for the catalog
+                    ManagerSource source = SourceFactory.GetSourceOrDefault(CatalogTaskPair.Key.Info.Name);
 
+                    var FoundPackages = CatalogTaskPair.Value.Result;
+                    foreach(var package in FoundPackages.Matches.ToArray())
+                    {
+                        // Create the Package item and add it to the list
+                        Packages.Add(new Package(
+                            package.CatalogPackage.Name,
+                            package.CatalogPackage.Id,
+                            package.CatalogPackage.DefaultInstallVersion.Version,
+                            source,
+                            this
+                        ));
+                    }
+                }
+                catch (Exception e)
+                {
+                    AppTools.Log("WinGet: Catalog failed to get available packages.");
+                    AppTools.Log(e);
+                }
+            }
+
+            return Packages.ToArray();
         }
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
