@@ -371,7 +371,7 @@ namespace ModernWindow.PackageEngine.Classes
 
     public abstract class PackageManagerWithSources : PackageManager
     {
-        protected ManagerSourceFactory SourceFactory;
+        public ManagerSourceFactory SourceFactory { get; private set; }
         public ManagerSource[] KnownSources { get; set; }
         public virtual async Task<ManagerSource[]> GetSources()
         {
@@ -522,6 +522,21 @@ namespace ModernWindow.PackageEngine.Classes
             var new_source = new ManagerSource(__manager, name, __default_uri);
             __reference.Add(name, new_source);
             return new_source;
+        }
+
+        /// <summary>
+        /// Returns the existing source for the given name, or null if it does not exist.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public ManagerSource? GetSourceIfExists(string name)
+        {
+            ManagerSource source;
+            if (__reference.TryGetValue(name, out source))
+            {
+                return source;
+            }
+            return null;
         }
 
         public void AddSource(ManagerSource source)
