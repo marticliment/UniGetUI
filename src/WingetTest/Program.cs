@@ -37,16 +37,20 @@ namespace WingetTest
                         
             foreach (var Catalog in AvailableCatalogs.ToArray())
             {
+                // Create a filter to search for packages
                 var FilterList = WinGetFactory.CreateFindPackagesOptions();
-                var NameFilter = WinGetFactory.CreatePackageMatchFilter();
 
+                // Add the query to the filter
+                var NameFilter = WinGetFactory.CreatePackageMatchFilter();
                 NameFilter.Field = Microsoft.Management.Deployment.PackageMatchField.Name;
                 NameFilter.Value = Query;
                 FilterList.Filters.Add(NameFilter);
 
+                // Find the packages with the filters
                 var SearchResults = await Catalog.Connect().PackageCatalog.FindPackagesAsync(FilterList);
                 foreach (var Match in SearchResults.Matches.ToArray())
                 {
+                    // Print the packages
                     var Package = Match.CatalogPackage;
                     Console.WriteLine(Package.Name);
                 }
