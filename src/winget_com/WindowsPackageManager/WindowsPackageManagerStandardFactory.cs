@@ -9,9 +9,9 @@ using WinRT;
 
 namespace DevHome.SetupFlow.Common.WindowsPackageManager;
 
-public class WindowsPackageManagerDefaultFactory : WindowsPackageManagerFactory
+public class WindowsPackageManagerStandardFactory : WindowsPackageManagerFactory
 {
-    public WindowsPackageManagerDefaultFactory(ClsidContext clsidContext = ClsidContext.Prod)
+    public WindowsPackageManagerStandardFactory(ClsidContext clsidContext = ClsidContext.Prod)
         : base(clsidContext)
     {
     }

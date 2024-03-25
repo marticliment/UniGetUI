@@ -21,11 +21,11 @@ namespace DevHome.SetupFlow.Common.WindowsPackageManager;
 /// This class is based on what the winget cmdlets do. See
 /// https://github.com/microsoft/winget-cli/blob/master/src/PowerShell/Microsoft.WinGet.Client/Helpers/ComObjectFactory.cs
 /// </remarks>
-public class WindowsPackageManagerManualActivationFactory : WindowsPackageManagerFactory
+public class WindowsPackageManagerElevatedFactory : WindowsPackageManagerFactory
 {
     // The only CLSID context supported by the DLL we call is Prod.
     // If we want to use Dev classes we have to use a Dev version of the DLL.
-    public WindowsPackageManagerManualActivationFactory()
+    public WindowsPackageManagerElevatedFactory()
         : base(ClsidContext.Prod)
     {
     }

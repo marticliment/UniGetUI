@@ -1,4 +1,6 @@
-﻿using DevHome.SetupFlow.Common.WindowsPackageManager;
+﻿using ABI.Microsoft.Management.Deployment;
+using DevHome.SetupFlow.Common.WindowsPackageManager;
+using System.Security.Principal;
 
 namespace WingetTest
 {
@@ -6,36 +8,47 @@ namespace WingetTest
     {
         static public void Main(string[] args)
         {
-            RunWinget();
-            Console.ReadLine();
+            while(true)
+            {
+                Console.WriteLine("                    ");
+                Console.Write("Enter search query: ");
+                string? Query = Console.ReadLine();
+                if(Query == null || Query == "")
+                    break;
+
+                FindPackagesForQuery(Query).Wait();
+            }
         }
 
-        private static async void RunWinget()
-        { 
-            var WinGet = new WindowsPackageManagerDefaultFactory();
-            var Manager = WinGet.CreatePackageManager();
+        private static async Task FindPackagesForQuery(string Query)
+        {   
+            WindowsPackageManagerFactory WinGetFactory;
+            bool IsAdministrator = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 
-            var catalogs = Manager.GetPackageCatalogs();
-            
-            var array_pkgs = catalogs.ToArray();
-            
-            foreach (var catalog in array_pkgs)
+            // If the user is an administrator, use the elevated factory. Otherwhise COM will crash
+            if(IsAdministrator)
+                WinGetFactory = new WindowsPackageManagerElevatedFactory();
+            else
+                WinGetFactory = new WindowsPackageManagerStandardFactory();
+
+            // Create Package Manager and get available catalogs
+            var Manager = WinGetFactory.CreatePackageManager();
+            var AvailableCatalogs = Manager.GetPackageCatalogs();
+                        
+            foreach (var Catalog in AvailableCatalogs.ToArray())
             {
-                var connect_result = catalog.Connect();
-                var filters = WinGet.CreateFindPackagesOptions();
-                var filter = WinGet.CreatePackageMatchFilter();
+                var FilterList = WinGetFactory.CreateFindPackagesOptions();
+                var NameFilter = WinGetFactory.CreatePackageMatchFilter();
 
-                filter.Field = Microsoft.Management.Deployment.PackageMatchField.Name;
-                filter.Value = "Hello";
+                NameFilter.Field = Microsoft.Management.Deployment.PackageMatchField.Name;
+                NameFilter.Value = Query;
+                FilterList.Filters.Add(NameFilter);
 
-                filters.Filters.Add(filter);
-
-                var package_list = await connect_result.PackageCatalog.FindPackagesAsync(filters);
-                foreach (var match in package_list.Matches.ToArray())
+                var SearchResults = await Catalog.Connect().PackageCatalog.FindPackagesAsync(FilterList);
+                foreach (var Match in SearchResults.Matches.ToArray())
                 {
-                    var package = match.CatalogPackage;
-
-                    Console.WriteLine(package.Name);
+                    var Package = Match.CatalogPackage;
+                    Console.WriteLine(Package.Name);
                 }
             }
         }

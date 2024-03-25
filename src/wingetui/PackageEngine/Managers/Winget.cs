@@ -34,7 +34,7 @@ namespace ModernWindow.PackageEngine.Managers
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
 
-            var WinGet = new WindowsPackageManagerManualActivationFactory();
+            var WinGet = new WindowsPackageManagerElevatedFactory();
             var Manager = WinGet.CreatePackageManager();
 
             List<Package> packages = new();
