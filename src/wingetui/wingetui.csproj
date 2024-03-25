@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
@@ -18,6 +18,10 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <AssemblyName>WingetUI</AssemblyName>
     <Nullable>annotations</Nullable>
+	<FileVersion>3.0.1.0</FileVersion>
+	<InformationalVersion>3.1.0-beta</InformationalVersion>
+	<Product>UniGetUI</Product>
+	<Copyright>2024, Martí Climent</Copyright>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="icon.ico" />

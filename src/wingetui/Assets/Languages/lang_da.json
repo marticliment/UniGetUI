@@ -579,6 +579,7 @@
   "[RAN AS ADMINISTRATOR]" : "[KØRTE SOM ADMINISTRATOR]",
   "buy me a coffee" : "giv en kop kaffe",
   "extracted" : "pakket ud",
+  "formerly WingetUI" : null,
   "homepage" : "startside",
   "install" : "installer",
   "installation" : "installation",
