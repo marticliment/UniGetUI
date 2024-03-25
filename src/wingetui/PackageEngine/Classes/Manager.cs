@@ -373,6 +373,12 @@ namespace ModernWindow.PackageEngine.Classes
     {
         public ManagerSourceFactory SourceFactory { get; private set; }
         public ManagerSource[] KnownSources { get; set; }
+
+        public PackageManagerWithSources() : base()
+        {
+            SourceFactory = new(this);
+        }
+
         public virtual async Task<ManagerSource[]> GetSources()
         {
             try
