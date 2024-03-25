@@ -86,15 +86,12 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
     <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.124" />
-    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.49-beta">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.7" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
     <PackageReference Include="Nancy" Version="2.0.0" />
-    <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0" />
+    <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0">
+      <NoWarn>NU1701</NoWarn>
+    </PackageReference>
     <PackageReference Include="YamlDotNet" Version="15.1.2" />
 
 	<!--
@@ -1895,6 +1892,6 @@
     <PRIResource Remove="PackageEngine\Managers\WinGetClasses\**" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\winget_com\WinGet Interop.csproj" />
+    <ProjectReference Include="Y:\WingetUI-Store\src\WindowsPackageManager.Interop\WindowsPackageManager Interop.csproj" />
   </ItemGroup>
 </Project>

@@ -13,8 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 
-using DevHome.SetupFlow.Common.WindowsPackageManager;
-using DevHome.SetupFlow.Common.Exceptions;
+using WindowsPackageManager.Interop;
 
 
 namespace ModernWindow.PackageEngine.Managers
@@ -44,6 +43,7 @@ namespace ModernWindow.PackageEngine.Managers
             {
                 var connect_result = catalog.Connect();
                 var filters = new Microsoft.Management.Deployment.FindPackagesOptions();
+
                 var package_list = await connect_result.PackageCatalog.FindPackagesAsync(filters);
                 foreach (var match in package_list.Matches)
                 {
@@ -195,13 +195,7 @@ namespace ModernWindow.PackageEngine.Managers
                     else
                     {
                         string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
-                        if (SourceReference.ContainsKey(sourceName))
-                            source = SourceReference[sourceName];
-                        else
-                        {
-                            source = new ManagerSource(this, sourceName, new Uri("https://microsoft.com/winget"));
-                            SourceReference.Add(source.Name, source);
-                        }
+                        source = SourceFactory.GetSourceOrDefault(sourceName);                        
                     }
 
                     Packages.Add(new UpgradablePackage(name, id, version, newVersion, source, this));
@@ -275,13 +269,7 @@ namespace ModernWindow.PackageEngine.Managers
                         else
                         {
                             string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();
-                            if (SourceReference.ContainsKey(sourceName))
-                                source = SourceReference[sourceName];
-                            else
-                            {
-                                source = new ManagerSource(this, sourceName, new Uri("https://microsoft.com/winget"));
-                                SourceReference.Add(source.Name, source);
-                            }
+                            source = SourceFactory.GetSourceOrDefault(sourceName);
                         }
                         Packages.Add(new Package(name, id, version, source, this));
                     }
