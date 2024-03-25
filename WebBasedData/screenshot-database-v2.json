@@ -30861,10 +30861,10 @@
             "images": []
         },
         "playdatesdk": {
-            "icon": "https://nikeedev.stio.studio/assets/playdate4.png",
+            "icon": "https://nikeedev.stio.studio/imgr/playdate4.png",
             "images": [
-                "https://nikeedev.stio.studio/assets/playdatesdk_screenshot.png",
-                "https://nikeedev.stio.studio/assets/playdatesdk_screenshot2.png"
+                "https://nikeedev.stio.studio/imgr/playdatesdk_screenshot.png",
+                "https://nikeedev.stio.studio/imgr/playdatesdk_screenshot2.png"
             ]
         },
         "playgames-beta": {
