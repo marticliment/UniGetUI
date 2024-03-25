@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "dgSpecHash": "SdWSFOZXi7PMYq/Pt674Po2uj3EjejzzC76uu/1er/yuk1PHH5PpQt0HzHucrgVIOsXrvS/QGtJ6fAMRK4eGlQ==",
+  "success": true,
+  "projectFilePath": "Y:\\WingetUI-Store\\src\\winget_com\\WinGet Interop.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.management.infrastructure\\3.0.0\\microsoft.management.infrastructure.3.0.0.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.management.infrastructure.runtime.unix\\3.0.0\\microsoft.management.infrastructure.runtime.unix.3.0.0.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.management.infrastructure.runtime.win\\3.0.0\\microsoft.management.infrastructure.runtime.win.3.0.0.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.windows.cswin32\\0.3.49-beta\\microsoft.windows.cswin32.0.3.49-beta.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.windows.cswinrt\\2.0.7\\microsoft.windows.cswinrt.2.0.7.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.windows.sdk.win32docs\\0.1.42-alpha\\microsoft.windows.sdk.win32docs.0.1.42-alpha.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.windows.sdk.win32metadata\\55.0.45-preview\\microsoft.windows.sdk.win32metadata.55.0.45-preview.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.windows.wdk.win32metadata\\0.9.9-experimental\\microsoft.windows.wdk.win32metadata.0.9.9-experimental.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.windowspackagemanager.cominterop\\1.7.10091-preview\\microsoft.windowspackagemanager.cominterop.1.7.10091-preview.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.windowspackagemanager.configuration.outofproc\\1.7.10091-preview\\microsoft.windowspackagemanager.configuration.outofproc.1.7.10091-preview.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\system.memory\\4.5.5\\system.memory.4.5.5.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-arm64\\8.0.3\\microsoft.aspnetcore.app.runtime.win-arm64.8.0.3.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.3\\microsoft.aspnetcore.app.runtime.win-x64.8.0.3.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x86\\8.0.3\\microsoft.aspnetcore.app.runtime.win-x86.8.0.3.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.netcore.app.runtime.win-arm64\\8.0.3\\microsoft.netcore.app.runtime.win-arm64.8.0.3.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.3\\microsoft.netcore.app.runtime.win-x64.8.0.3.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x86\\8.0.3\\microsoft.netcore.app.runtime.win-x86.8.0.3.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.windows.sdk.net.ref\\10.0.19041.31\\microsoft.windows.sdk.net.ref.10.0.19041.31.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-arm64\\8.0.3\\microsoft.windowsdesktop.app.runtime.win-arm64.8.0.3.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\8.0.3\\microsoft.windowsdesktop.app.runtime.win-x64.8.0.3.nupkg.sha512",
+    "C:\\Users\\marti\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x86\\8.0.3\\microsoft.windowsdesktop.app.runtime.win-x86.8.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

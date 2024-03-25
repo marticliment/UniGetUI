@@ -5,7 +5,7 @@ using System;
 using System.Runtime.InteropServices;
 using WinRT;
 
-namespace DevHome.SetupFlow.Common.WindowsPackageManager;
+namespace WindowsPackageManager.Interop;
 
 /// <summary>
 /// Factory for creating winget COM objects using manual activation

@@ -3,7 +3,7 @@
 
 using System;
 
-namespace DevHome.SetupFlow.Common.Exceptions;
+namespace WindowsPackageManager.Interop;
 
 public class WinGetConfigurationException : Exception
 {

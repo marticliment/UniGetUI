@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DevHome.SetupFlow.Common.WindowsPackageManager;
+namespace WindowsPackageManager.Interop;
 
 internal sealed class ClassModel
 {
