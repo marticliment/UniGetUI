@@ -35,6 +35,13 @@ src/packages/
 
 src/wingetui/bin
 src/wingetui/obj
+
+src/winget_com/bin
+src/winget_com/obj
+
+src/wingettest/bin
+src/wingettest/obj
+
 src/.vs
 src/.vscode
 new-names.docx

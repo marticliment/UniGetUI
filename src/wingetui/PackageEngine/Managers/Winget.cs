@@ -13,6 +13,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 
+using DevHome.SetupFlow.Common.WindowsPackageManager;
+using DevHome.SetupFlow.Common.Exceptions;
+
+
 namespace ModernWindow.PackageEngine.Managers
 {
     public class Winget : PackageManagerWithSources
@@ -29,7 +33,35 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            List<Package> Packages = new();
+
+            var WinGet = new WindowsPackageManagerManualActivationFactory();
+            var Manager = WinGet.CreatePackageManager();
+
+            List<Package> packages = new();
+
+            var catalogs = Manager.GetPackageCatalogs();
+            foreach (var catalog in catalogs)
+            {
+                var connect_result = catalog.Connect();
+                var filters = new Microsoft.Management.Deployment.FindPackagesOptions();
+                var package_list = await connect_result.PackageCatalog.FindPackagesAsync(filters);
+                foreach (var match in package_list.Matches)
+                {
+                    var package = match.CatalogPackage;
+
+                    packages.Add(new Package(
+                        package.Name,
+                        package.Id,
+                        package.DefaultInstallVersion.ToString(),
+                        new ManagerSource(this, catalog.Info.Name, new Uri(catalog.Info.Origin.ToString())),
+                        this
+                    ));
+                }
+            }
+
+            return packages.ToArray();
+
+            /*List<Package> Packages = new();
             Process p = new();
             ProcessStartInfo startInfo = new()
             {
@@ -93,7 +125,7 @@ namespace ModernWindow.PackageEngine.Managers
             AppTools.LogManagerOperation(this, p, output);
             await Task.Run(p.WaitForExit);
 
-            return Packages.ToArray();
+            return Packages.ToArray();*/
 
         }
 
@@ -970,5 +1002,4 @@ namespace ModernWindow.PackageEngine.Managers
             return "Microsoft Store";
         }
     }
-
 }
