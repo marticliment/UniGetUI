@@ -496,7 +496,7 @@ public class Scoop : PackageManagerWithSources
         return parameters.ToArray();
     }
 
-    public override async Task RefreshSources()
+    public override async Task RefreshPackageIndexes()
     {
         Process process = new();
         ProcessStartInfo StartInfo = new()
@@ -570,7 +570,7 @@ public class Scoop : PackageManagerWithSources
 
 
         if (status.Found && IsEnabled())
-            _ = RefreshSources();
+            _ = RefreshPackageIndexes();
 
 
         Status = status; // Wee need this for the RunCleanup method to get the executable path

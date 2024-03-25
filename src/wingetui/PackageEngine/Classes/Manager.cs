@@ -359,7 +359,7 @@ namespace ModernWindow.PackageEngine.Classes
         /// Each manager MUST implement this method.
         /// </summary>
         /// <returns></returns>
-        public abstract Task RefreshSources();
+        public abstract Task RefreshPackageIndexes();
 
         /// <summary>
         /// Returns the main source for the manager, even if the manager does not support custom sources.

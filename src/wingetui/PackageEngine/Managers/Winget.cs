@@ -726,7 +726,7 @@ namespace ModernWindow.PackageEngine.Managers
         }
 
 
-        public override async Task RefreshSources()
+        public override async Task RefreshPackageIndexes()
         {
             Process process = new();
             ProcessStartInfo StartInfo = new()
