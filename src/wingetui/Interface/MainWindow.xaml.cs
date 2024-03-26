@@ -21,7 +21,6 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.VoiceCommands;
 using Windows.Foundation.Collections;
-using Jeffijoe.MessageFormat;
 
 
 namespace ModernWindow
