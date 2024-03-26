@@ -59,16 +59,16 @@ namespace ModernWindow.Interface
 
             Dictionary<string, string> updates_dict = new()
             {
-                {Tools.Translate("{0} minutes", "10"), "600"},
-                {Tools.Translate("{0} minutes", "30"), "1800"},
+                {Tools.Translate("{0} minutes", 10), "600"},
+                {Tools.Translate("{0} minutes", 30), "1800"},
                 {Tools.Translate("1 hour"), "3600"},
-                {Tools.Translate("{0} hours", "2"), "7200"},
-                {Tools.Translate("{0} hours", "4"), "14400"},
-                {Tools.Translate("{0} hours", "8"), "28800"},
-                {Tools.Translate("{0} hours", "12"), "43200"},
+                {Tools.Translate("{0} hours", 2), "7200"},
+                {Tools.Translate("{0} hours", 4), "14400"},
+                {Tools.Translate("{0} hours", 8), "28800"},
+                {Tools.Translate("{0} hours", 12), "43200"},
                 {Tools.Translate("1 day"), "86400"},
-                {Tools.Translate("{0} days", "2"), "172800"},
-                {Tools.Translate("{0} days", "3"), "259200"},
+                {Tools.Translate("{0} days", 2), "172800"},
+                {Tools.Translate("{0} days", 3), "259200"},
                 {Tools.Translate("1 week"), "604800"}
             };
 
