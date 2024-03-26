@@ -452,7 +452,7 @@ namespace ModernWindow.Interface
                     {
                         BackgroundText.Text = Tools.AutoTranslated("No results were found matching the input criteria");
                         SourcesPlaceholderText.Text = Tools.AutoTranslated("No packages were found");
-                        MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.", Packages.Count.ToString(), (FilteredPackages.Count()).ToString());
+                        MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.", Packages.Count, FilteredPackages.Count());
                     }
                     BackgroundText.Visibility = Visibility.Visible;
                 }
@@ -461,7 +461,7 @@ namespace ModernWindow.Interface
             else
             {
                 BackgroundText.Visibility = Visibility.Collapsed;
-                MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.", Packages.Count.ToString(), (FilteredPackages.Count()).ToString());
+                MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.", Packages.Count, FilteredPackages.Count());
             }
         }
 
@@ -661,7 +661,7 @@ namespace ModernWindow.Interface
             dialog.DefaultButton = ContentDialogButton.Primary;
 
             StackPanel p = new();
-            p.Children.Add(new TextBlock() { Text = Tools.Translate("Do you really want to uninstall the following {0} packages?", packages.Length.ToString()), Margin = new Thickness(0, 0, 0, 5) });
+            p.Children.Add(new TextBlock() { Text = Tools.Translate("Do you really want to uninstall the following {0} packages?", packages.Length), Margin = new Thickness(0, 0, 0, 5) });
 
             string pkgList = "";
             foreach (Package package in packages)
