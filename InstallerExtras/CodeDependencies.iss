@@ -253,7 +253,7 @@ procedure Dependency_AddAppSdk151;
 begin
   // https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads
   Dependency_Add('appsdk151' + Dependency_ArchSuffix + '.exe',
-    '--force',
+    '--force --quiet',
     'Windows App Sdk 1.5.1' + Dependency_ArchTitle,
     Dependency_String('https://aka.ms/windowsappsdk/1.5/1.5.240311000/windowsappruntimeinstall-x64.exe', 'https://aka.ms/windowsappsdk/1.5/1.5.240311000/windowsappruntimeinstall-x64.exe'),
     '', False, False);
