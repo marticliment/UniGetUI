@@ -382,7 +382,7 @@ namespace ModernWindow.Interface
                                 .AddArgument("action", "openWingetUIOnUpdatesTab")
                                 .SetBackgroundActivation());
                             toast.AddButton(new ToastButton()
-                                .SetContent(Tools.Translate(upgradablePackages.Count == 1 ? "Update" : "Update all"))
+                                .SetContent(upgradablePackages.Count == 1? Tools.Translate("Update"): Tools.Translate("Update all"))
                                 .AddArgument("action", "updateAll")
                                 .SetBackgroundActivation());
                         }
