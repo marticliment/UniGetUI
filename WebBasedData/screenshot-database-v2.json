@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11700,
-        "done": 5032,
-        "packages_with_icon": 5032,
+        "done": 5034,
+        "packages_with_icon": 5034,
         "packages_with_screenshot": 543,
         "total_screenshots": 1709
     },
@@ -47412,13 +47412,13 @@
             "images": []
         },
         "workstationplayer": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/vmware-workstation-player.17.0.1.21139696.png",
             "images": [
                 "https://i.postimg.cc/BZTLQ4J2/Captura-de-pantalla-28.png"
             ]
         },
         "workstationpro": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/vmwareworkstation.17.0.1.21139696.png",
             "images": []
         },
         "worldofwarshipsmodstation": {
