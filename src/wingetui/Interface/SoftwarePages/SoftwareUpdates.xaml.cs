@@ -360,8 +360,8 @@ namespace ModernWindow.Interface
                             attribution += package.Name + ", ";
                         }
                         attribution = attribution.TrimEnd(' ').TrimEnd(',');
-                        ShowButtons = true;
                     }
+                    ShowButtons = true;
                 }
 
                 if (!Tools.GetSettings("DisableUpdatesNotifications") && !Tools.GetSettings("DisableNotifications"))
@@ -382,7 +382,7 @@ namespace ModernWindow.Interface
                                 .AddArgument("action", "openWingetUIOnUpdatesTab")
                                 .SetBackgroundActivation());
                             toast.AddButton(new ToastButton()
-                                .SetContent(Tools.Translate("Update all"))
+                                .SetContent(Tools.Translate(upgradablePackages.Count == 1 ? "Update" : "Update all"))
                                 .AddArgument("action", "updateAll")
                                 .SetBackgroundActivation());
                         }
