@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11700,
-        "done": 5034,
-        "packages_with_icon": 5034,
-        "packages_with_screenshot": 543,
-        "total_screenshots": 1709
+        "done": 5035,
+        "packages_with_icon": 5035,
+        "packages_with_screenshot": 548,
+        "total_screenshots": 1719
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -13686,7 +13686,9 @@
         },
         "falkon": {
             "icon": "https://community.chocolatey.org/content/packageimages/falkon.3.1.0.20220620.png",
-            "images": []
+            "images": [
+                "https://falkon.org//images/screenshot.png"
+            ]
         },
         "famisafe": {
             "icon": "",
@@ -21003,11 +21005,19 @@
         },
         "kdeconnect": {
             "icon": "https://community.chocolatey.org/content/packageimages/kdeconnect-kde.22.12.2.1263.png",
-            "images": []
+            "images": [
+                "https://cdn.kde.org/screenshots/kdeconnect/plasmoid.png",
+                "https://cdn.kde.org/screenshots/kdeconnect/kcm.png",
+                "https://cdn.kde.org/screenshots/kdeconnect/gnome3.png"
+            ]
         },
         "kdeconnect-kde": {
             "icon": "https://community.chocolatey.org/content/packageimages/kdeconnect-kde.22.12.2.1263.png",
-            "images": []
+            "images": [
+                "https://cdn.kde.org/screenshots/kdeconnect/plasmoid.png",
+                "https://cdn.kde.org/screenshots/kdeconnect/kcm.png",
+                "https://cdn.kde.org/screenshots/kdeconnect/gnome3.png"
+            ]
         },
         "kdenlive": {
             "icon": "https://kdenlive.org/wp-content/uploads/2022/01/kdenlive-logo-blank-500px.png",
@@ -21019,11 +21029,16 @@
         },
         "kdevelop": {
             "icon": "https://community.chocolatey.org/content/packageimages/kdevelop.install.5.5.0.png",
-            "images": []
+            "images": [
+                "https://cdn.kde.org/screenshots/kdevelop/kdevelop.png"
+            ]
         },
         "kdiff3": {
             "icon": "https://community.chocolatey.org/content/packageimages/kdiff3.0.9.98.20220330.png",
-            "images": []
+            "images": [
+                "https://cdn.kde.org/screenshots/kdiff3/diffscreen_two_way.png",
+                "https://cdn.kde.org/screenshots/kdiff3/ManualMerdge.png"
+            ]
         },
         "kdoc-formatter": {
             "icon": "",
@@ -21663,7 +21678,7 @@
             "images": []
         },
         "kobo": {
-            "icon": "",
+            "icon": "https://play-lh.googleusercontent.com/gWAccZO7a9JX1u7jzeu4LpxuOlVlpdzt4Z6vkqwpp4ankRCqQZgt7WEfD4czLXVvtzk=w240-h480",
             "images": []
         },
         "kodi": {
