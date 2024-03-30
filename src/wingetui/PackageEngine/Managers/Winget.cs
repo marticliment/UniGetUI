@@ -150,85 +150,24 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            return new UpgradablePackage[0];
-
-            /*List<UpgradablePackage> Packages = new();
-            Process p = new();
-            ProcessStartInfo startInfo = new()
+            List<UpgradablePackage> Packages = new();
+            foreach (var package in (await Task.Run(() => GetAvailableUpdatesFromAllCatalogs())).Split('\n'))
             {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " update --include-unknown  --accept-source-agreements",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-            p.StartInfo = startInfo;
-            p.Start();
+                var parts = package.Split('\t');
 
-            string OldLine = "";
-            int IdIndex = -1;
-            int VersionIndex = -1;
-            int NewVersionIndex = -1;
-            int SourceIndex = -1;
-            bool DashesPassed = false;
-            string line;
-            string output = "";
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
-
-                if (line.Contains("have pins"))
+                if (parts.Length < 5)
                     continue;
-                
-                if (!DashesPassed && line.Contains("---"))
-                {
-                    string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
-                    string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
-                    IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
-                    VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
-                    NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix);
-                    SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
-                    DashesPassed = true;
-                }
-                else if (line.Trim() == "")
-                {
-                    DashesPassed = false;
-                }
-                else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && NewVersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < NewVersionIndex && NewVersionIndex < line.Length)
-                {
-                    int offset = 0; // Account for non-unicode character length
-                    while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
-                        offset++;
-                    string name = line[..(IdIndex - offset)].Trim();
-                    string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
-                    string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
-                    string newVersion;
-                    if (SourceIndex != -1)
-                        newVersion = line[(NewVersionIndex - offset)..(SourceIndex - offset)].Trim();
-                    else
-                        newVersion = line[(NewVersionIndex - offset)..].Trim().Split(' ')[0];
 
-                    ManagerSource source;
-                    if (SourceIndex == -1 || SourceIndex >= line.Length)
-                        source = MainSource;
-                    else
-                    {
-                        string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
-                        source = SourceFactory.GetSourceOrDefault(sourceName);                        
-                    }
-
-                    Packages.Add(new UpgradablePackage(name, id, version, newVersion, source, this));
-                }
-                OldLine = line;
+                Packages.Add(new UpgradablePackage(
+                    parts[0],
+                    parts[1],
+                    parts[2],
+                    parts[3],
+                    SourceFactory.GetSourceOrDefault(parts[4]),
+                    this
+                ));
             }
-
-            output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
-            await Task.Run(p.WaitForExit);
-
-            return Packages.ToArray();*/
+            return Packages.ToArray();
         }
 
         
