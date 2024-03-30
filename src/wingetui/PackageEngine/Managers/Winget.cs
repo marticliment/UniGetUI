@@ -237,16 +237,7 @@ namespace ModernWindow.PackageEngine.Managers
         {
 
             List<Package> Packages = new();
-
-            bool result1 = InitializePackageManager();
-
-            Debug.WriteLine("WinGet: DLL Version " + GetDLLModuleVersion());
-            Debug.WriteLine("Manager init result: " + result1);
-
-            string result2 = GetInstalledPackagesFromAllCatalogs();
-            Debug.WriteLine(result2);
-
-            foreach (var package in GetInstalledPackagesFromAllCatalogs().Split('\n'))
+            foreach (var package in (await Task.Run(() => GetInstalledPackagesFromAllCatalogs())).Split('\n'))
             {
                 var parts = package.Split('\t');
 
@@ -270,8 +261,6 @@ namespace ModernWindow.PackageEngine.Managers
             }
 
             return Packages.ToArray();
-            
-
         }
 
         private ManagerSource GetLocalSource(string id)
@@ -768,14 +757,6 @@ namespace ModernWindow.PackageEngine.Managers
             if (!status.Found)
                 return status;
 
-            WinGetFactory = (Tools.IsAdministrator()) 
-                ? new WindowsPackageManagerElevatedFactory()
-                : new WindowsPackageManagerStandardFactory();
-   
-            WinGetManager = WinGetFactory.CreatePackageManager();
-
-            Console.WriteLine(WinGetManager.ToString());
-
             var process = new Process()
             {
                 StartInfo = new ProcessStartInfo()
@@ -790,7 +771,19 @@ namespace ModernWindow.PackageEngine.Managers
                 }
             };
             process.Start();
-            status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
+            status.Version = "WinGet CLI Version: " + (await process.StandardOutput.ReadToEndAsync()).Trim();
+
+
+            // Initialize the WinGet manager (C# Native)
+            WinGetFactory = (Tools.IsAdministrator()) 
+                ? new WindowsPackageManagerElevatedFactory()
+                : new WindowsPackageManagerStandardFactory();
+            WinGetManager = await Task.Run(() => WinGetFactory.CreatePackageManager());
+
+            // Initialize the WinGet manager (C++ Interop)
+            bool CppWinGetInitResult = await Task.Run(() => InitializePackageManager());
+            status.Version += "\nWinGet C++ Interop initialized: " + CppWinGetInitResult.ToString();
+            status.Version += "\nWinGet C++ Interop DLL Version: " + await Task.Run(() => GetDLLModuleVersion());
 
             Status = status; // Need to set status before calling RefreshSources, otherwise will crash
             if (status.Found && IsEnabled())
