@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11700,
-        "done": 5035,
-        "packages_with_icon": 5035,
+        "done": 5037,
+        "packages_with_icon": 5037,
         "packages_with_screenshot": 548,
         "total_screenshots": 1719
     },
@@ -29037,7 +29037,7 @@
             "images": []
         },
         "openvpnconnect": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/openvpn-connect.3.4.4.png",
             "images": []
         },
         "openvr-advancedsettings": {
@@ -39903,7 +39903,7 @@
             "images": []
         },
         "tailscale": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/tailscale.1.62.1.png",
             "images": []
         },
         "tailwindcss": {
