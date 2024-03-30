@@ -19,6 +19,11 @@ using Deployment = Microsoft.Management.Deployment;
 
 using WindowsPackageManager.Interop;
 using Windows.Foundation;
+using System.Collections;
+using Microsoft.Management.Deployment;
+using System.ComponentModel;
+using CommunityToolkit.WinUI.Animations;
+using Microsoft.UI.Xaml.Controls;
 
 
 namespace ModernWindow.PackageEngine.Managers
@@ -37,6 +42,23 @@ namespace ModernWindow.PackageEngine.Managers
 
         private WindowsPackageManagerFactory WinGetFactory;
         private Deployment.PackageManager WinGetManager;
+
+
+        [DllImport("WindowsPackgeManager.DLL.Interop.dll", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.BStr)]
+        public static extern string GetDLLModuleVersion();
+
+        [DllImport("WindowsPackgeManager.DLL.Interop.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool InitializePackageManager();
+
+        [DllImport("WindowsPackgeManager.DLL.Interop.dll", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.BStr)]
+        public static extern string GetInstalledPackagesFromAllCatalogs();
+
+        [DllImport("WindowsPackgeManager.DLL.Interop.dll", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.BStr)]
+        public static extern string GetAvailableUpdatesFromAllCatalogs();
+
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
@@ -65,8 +87,8 @@ namespace ModernWindow.PackageEngine.Managers
             foreach (var CatalogReference in AvailableCatalogs.ToArray())
             {
                 // Connect to catalog
-                var result = CatalogReference.Connect();
                 CatalogReference.AcceptSourceAgreements = true;
+                var result = await CatalogReference.ConnectAsync();
                 if (result.Status == Deployment.ConnectResultStatus.Ok)
                 {
                     try
@@ -83,7 +105,7 @@ namespace ModernWindow.PackageEngine.Managers
                     }
                     catch (Exception e)
                     {
-                        AppTools.Log("WinGet: Catalog " + CatalogReference.Info.Name + " failed to spawn FindPackagesAsync.");
+                        AppTools.Log("WinGet: Catalog " + CatalogReference.Info.Name + " failed to spawn FindPackages task.");
                         AppTools.Log(e);
                     }
                 }
@@ -118,7 +140,7 @@ namespace ModernWindow.PackageEngine.Managers
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log("WinGet: Catalog failed to get available packages.");
+                    AppTools.Log("WinGet: Catalog " + CatalogTaskPair.Key.Info.Name + " failed to get available packages.");
                     AppTools.Log(e);
                 }
             }
@@ -128,7 +150,9 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            List<UpgradablePackage> Packages = new();
+            return new UpgradablePackage[0];
+
+            /*List<UpgradablePackage> Packages = new();
             Process p = new();
             ProcessStartInfo startInfo = new()
             {
@@ -204,85 +228,50 @@ namespace ModernWindow.PackageEngine.Managers
             AppTools.LogManagerOperation(this, p, output);
             await Task.Run(p.WaitForExit);
 
-            return Packages.ToArray();
+            return Packages.ToArray();*/
         }
+
+        
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
+
             List<Package> Packages = new();
-            Process p = new();
-            ProcessStartInfo startInfo = new()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " list  --accept-source-agreements",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-            p.StartInfo = startInfo;
-            p.Start();
 
-            string OldLine = "";
-            int IdIndex = -1;
-            int VersionIndex = -1;
-            int SourceIndex = -1;
-            int NewVersionIndex = -1;
-            bool DashesPassed = false;
-            string line;
-            string output = "";
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                try
-                {
-                    output += line + "\n";
-                    if (!DashesPassed && line.Contains("---"))
-                    {
-                        string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
-                        string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
-                        IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
-                        VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
-                        NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix);
-                        SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
-                        DashesPassed = true;
-                    }
-                    else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
-                    {
-                        int offset = 0; // Account for non-unicode character length
-                        while (((IdIndex - offset) <= line.Length && line[IdIndex - offset - 1] != ' ') || offset > (IdIndex - 5))
-                            offset++;
-                        string name = line[..(IdIndex - offset)].Trim();
-                        string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
-                        if (NewVersionIndex == -1 && SourceIndex != -1) NewVersionIndex = SourceIndex;
-                        else if (NewVersionIndex == -1 && SourceIndex == -1) NewVersionIndex = line.Length - 1;
-                        string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
+            bool result1 = InitializePackageManager();
 
-                        ManagerSource source;
-                        if (SourceIndex == -1 || (SourceIndex - offset) >= line.Length)
-                        {
-                            source = GetLocalSource(id); // Load Winget Local Sources
-                        }
-                        else
-                        {
-                            string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();
-                            source = SourceFactory.GetSourceOrDefault(sourceName);
-                        }
-                        Packages.Add(new Package(name, id, version, source, this));
-                    }
-                    OldLine = line;
-                }
-                catch (Exception e)
-                {
-                    AppTools.Log(e);
-                }
+            Debug.WriteLine("WinGet: DLL Version " + GetDLLModuleVersion());
+            Debug.WriteLine("Manager init result: " + result1);
+
+            string result2 = GetInstalledPackagesFromAllCatalogs();
+            Debug.WriteLine(result2);
+
+            foreach (var package in GetInstalledPackagesFromAllCatalogs().Split('\n'))
+            {
+                var parts = package.Split('\t');
+
+                if(parts.Length < 4)
+                    continue;
+
+                // Create the Package item and add it to the list
+                ManagerSource source;
+                if (parts[3] != "")
+                    source = SourceFactory.GetSourceOrDefault(parts[3]);
+                else
+                    source = GetLocalSource(parts[1]);
+
+                Packages.Add(new Package(
+                    parts[0],
+                    parts[1],
+                    parts[2],
+                    source,
+                    this
+                ));
             }
 
-            output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
-            await Task.Run(p.WaitForExit);
-
             return Packages.ToArray();
+            
+
         }
 
         private ManagerSource GetLocalSource(string id)
@@ -300,7 +289,7 @@ namespace ModernWindow.PackageEngine.Managers
                 if (AndroidValid && id.Count(x => x == '.') >= 2)
                     return AndroidSubsystemSource;
 
-                // Check if source is Steama
+                // Check if source is Steam
                 if ((id == "Steam" || id.Contains("Steam App ")) && id.Split("Steam App").Count() >= 2 && id.Split("Steam App")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
                     return SteamSource;
 
@@ -313,7 +302,7 @@ namespace ModernWindow.PackageEngine.Managers
                     return GOGSource;
 
                 // Check if source is Microsoft Store
-                if (id.Count(x => x == '_') == 1 && (id.Split('_')[^1].Length == 14 | id.Split('_')[^1].Length == 13 | id.Split('_')[^1].Length <= 13 && id[^1] == '…'))
+                if (id.Count(x => x == '_') == 1 && (id.Split('_')[^1].Length == 14 | id.Split('_')[^1].Length == 13))
                     return MicrosoftStoreSource;
 
                 return LocalPcSource;
@@ -772,43 +761,17 @@ namespace ModernWindow.PackageEngine.Managers
         {
             ManagerStatus status = new();
             
-            /*Process process = new()
-            {
-                StartInfo = new ProcessStartInfo()
-                {
-                    FileName = "cmd.exe",
-                    Arguments = "/C echo %PROCESSOR_ARCHITECTURE%",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
-            };
-
-            process.Start();
-            string output = await process.StandardOutput.ReadToEndAsync();
-            */
-
-            //if (Tools.GetSettings("UseSystemWinget"))
             status.ExecutablePath = await Tools.Which("winget.exe");
-
-            /*
-            else if (output.Contains("ARM64") | Tools.GetSettings("EnableArmWinget"))
-                status.ExecutablePath = Path.Join(CoreData.WingetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_arm64", "winget.exe");
-            else
-                status.ExecutablePath = Path.Join(CoreData.WingetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_x64", "winget.exe");
-            */
 
             status.Found = File.Exists(status.ExecutablePath);
 
             if (!status.Found)
                 return status;
 
-            if (Tools.IsAdministrator())
-                WinGetFactory = new WindowsPackageManagerElevatedFactory();
-            else
-                WinGetFactory = new WindowsPackageManagerStandardFactory();
+            WinGetFactory = (Tools.IsAdministrator()) 
+                ? new WindowsPackageManagerElevatedFactory()
+                : new WindowsPackageManagerStandardFactory();
+   
             WinGetManager = WinGetFactory.CreatePackageManager();
 
             Console.WriteLine(WinGetManager.ToString());

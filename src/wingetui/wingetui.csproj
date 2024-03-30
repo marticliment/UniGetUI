@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
 	<TargetMinVersion>10.0.17763.0</TargetMinVersion>
@@ -78,6 +78,9 @@
     </ItemGroup-->
 
 
+	<ItemGroup>
+		<Content Include="..\x64\Release\WindowsPackageManager.DLL.Interop.dll" Link="WindowsPackgeManager.DLL.Interop.dll" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
 
 	<ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.0.240109" />
@@ -1729,6 +1732,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="choco-cli\tools\shimgen.license.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="WindowsPackgeManager.DLL.Interop.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Page Update="Interface\Pages\AboutPages\SupportMe.xaml">

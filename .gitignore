@@ -40,9 +40,12 @@ src/WindowsPackageManager.Interop/.vs
 src/WindowsPackageManager.Interop/bin
 src/WindowsPackageManager.Interop/obj
 
-src/WindowsPackageManager.DLL.Interop/.vs/*
-src/WindowsPackageManager.DLL.Interop/bin/*
-src/WindowsPackageManager.DLL.Interop/obj/*
+src/WindowsPackageManager.DLL.Interop/.vs
+src/WindowsPackageManager.DLL.Interop/bin
+src/WindowsPackageManager.DLL.Interop/packages
+src/WindowsPackageManager.DLL.Interop/x64
+src/WindowsPackageManager.DLL.Interop/obj
+src/WindowsPackageManager.DLL.Interop/Console*
 
 src/.vs
 src/.vscode
