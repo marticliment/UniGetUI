@@ -588,43 +588,11 @@ namespace ModernWindow.PackageEngine.Managers
         {
             List<ManagerSource> sources = new();
 
-            Process process = new();
-            ProcessStartInfo startInfo = new()
+            foreach(var catalog in await Task.Run(() => WinGetManager.GetPackageCatalogs().ToArray()))
             {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " source list",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-
-            process.StartInfo = startInfo;
-            process.Start();
-
-            bool dashesPassed = false;
-            string output = "";
-            string line;
-            while ((line = await process.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
                 try
                 {
-                    if (string.IsNullOrEmpty(line))
-                        continue;
-
-                    if (!dashesPassed)
-                    {
-                        if (line.Contains("---"))
-                            dashesPassed = true;
-                    }
-                    else
-                    {
-                        string[] parts = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
-                        sources.Add(new ManagerSource(this, parts[0].Trim(), new Uri(parts[1].Trim())));
-                    }
+                    sources.Add(new ManagerSource(this, catalog.Info.Name, new Uri(catalog.Info.Argument), updateDate: catalog.Info.LastUpdateTime.ToString()));
                 }
                 catch (Exception e)
                 {
@@ -632,10 +600,6 @@ namespace ModernWindow.PackageEngine.Managers
                 }
             }
 
-            output += await process.StandardError.ReadToEndAsync(); 
-            AppTools.LogManagerOperation(this, process, output);
-
-            await process.WaitForExitAsync();
             return sources.ToArray();
         }
 
@@ -662,7 +626,7 @@ namespace ModernWindow.PackageEngine.Managers
                 Sources = new ManagerSource.Capabilities()
                 {
                     KnowsPackageCount = false,
-                    KnowsUpdateDate = false,
+                    KnowsUpdateDate = true,
                     MustBeInstalledAsAdmin = true,
                 }
             };
