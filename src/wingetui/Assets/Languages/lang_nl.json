@@ -628,7 +628,7 @@
   "{package} update failed" : "{package} bijwerken mislukt",
   "{package} update failed. Click here for more details." : "{package} update mislukt. Klik hier voor meer informatie.",
   "{package} was installed successfully" : "{package} is geïnstalleerd",
-  "{package} was uninstalled successfully" : "{packkage} is verwijderd",
+  "{package} was uninstalled successfully" : "{package} is verwijderd",
   "{package} was updated successfully" : "{package} is bijgewerkt",
   "{pcName} installed packages" : "{pcName} geïnstalleerde pakketten",
   "{pm} could not be found" : "{pm} kon niet worden gevonden",
