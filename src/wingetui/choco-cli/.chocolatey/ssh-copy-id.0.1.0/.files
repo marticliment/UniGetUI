@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<fileSnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <files>
-    <file path="C:\Users\marti\AppData/Local/Programs/WingetUI/choco-cli\lib\ssh-copy-id\ssh-copy-id.nupkg" checksum="49B039A00FBD7C9DE0F41ED66E790AB9" />
-    <file path="C:\Users\marti\AppData/Local/Programs/WingetUI/choco-cli\lib\ssh-copy-id\ssh-copy-id.nuspec" checksum="D773893ADC0DD00F3B8A59F360A2A237" />
-    <file path="C:\Users\marti\AppData/Local/Programs/WingetUI/choco-cli\lib\ssh-copy-id\tools\chocolateyinstall.ps1" checksum="7FC15BDA3F2DA77A1FFDCBB96A33CAB9" />
-    <file path="C:\Users\marti\AppData/Local/Programs/WingetUI/choco-cli\lib\ssh-copy-id\tools\ssh-copy-id.cmd" checksum="902228F99C29D8E677EAD788D9C78A42" />
-  </files>
-</fileSnapshot>
