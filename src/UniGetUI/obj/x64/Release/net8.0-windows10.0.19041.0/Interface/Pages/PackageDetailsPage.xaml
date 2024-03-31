@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Page x:ConnectionId='1'
+    x:Class="ModernWindow.Interface.Dialogs.PackageDetailsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ModernWindow.Interface.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:ModernWindow.Interface.Widgets"
+    xmlns:xaml="using:Microsoft.UI.Xaml.Controls"
+    xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d">
+
+    <Grid>
+        <ScrollViewer HorizontalAlignment="Stretch" Margin="0,0,-15,0" Padding="0,0,15,0">
+            <Grid x:ConnectionId='4' Name="MainGrid" ColumnSpacing="32" RowSpacing="16">
+
+                <StackPanel x:ConnectionId='5' Name="LeftPanel" Spacing="16"/>
+                <StackPanel x:ConnectionId='6' Name="RightPanel" Spacing="16"/>
+
+                <!-- Title + Icon -->
+                <Grid x:ConnectionId='7' Name="TitlePanel" HorizontalAlignment="Stretch" ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" BorderThickness="10" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="128" Width="128" CornerRadius="24">
+                        <Image x:ConnectionId='46' Name="PackageIcon" Height="80" Width="80" Margin="8"/>
+                    </Border>
+                    <TextBlock x:ConnectionId='45' Grid.Column="1" Name="PackageName" HorizontalAlignment="Left" VerticalAlignment="Center" Text="ElevenClock" FontFamily="Segoe UI Variable Display" FontWeight="Bold" FontSize="50" TextWrapping="Wrap"/>
+                </Grid>
+                
+                <!-- Tags + Description -->
+                <StackPanel x:ConnectionId='8' Name="DescriptionPanel" Orientation="Vertical" VerticalAlignment="Top">
+                    <xaml:ItemsRepeater x:ConnectionId='39' Name="TagGridView"                                    >
+                        <xaml:ItemsRepeater.ItemTemplate>
+                            <DataTemplate                       >
+                                <Border x:ConnectionId='42'  Background="{ThemeResource AccentAAFillColorDefaultBrush}" Padding="8,2,8,2" Margin="2" CornerRadius="12" Height="24" VerticalAlignment="Center" >
+                                    <TextBlock x:ConnectionId='43'                      Foreground="{ThemeResource TextOnAccentAAFillColorPrimary}"/>
+                                </Border>
+                            </DataTemplate>
+                        </xaml:ItemsRepeater.ItemTemplate>
+                        <xaml:ItemsRepeater.Layout>
+                            <toolkit:WrapLayout x:ConnectionId='44' x:Name="Wrap"/>
+                        </xaml:ItemsRepeater.Layout>
+                    </xaml:ItemsRepeater>
+                    <TextBlock x:ConnectionId='40' Name="DescriptionBox" TextWrapping="WrapWholeWords" Text="Hello World. This is the App's description"/>
+                </StackPanel>
+
+                <!-- Basic Info Panel -->
+                <StackPanel x:ConnectionId='9' Name="BasicInfoPanel" Orientation="Vertical" VerticalAlignment="Top" Spacing="6">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <widgets:TranslatedTextBlock Text="Homepage" Suffix=":" FontWeight="Bold"/>
+                        <HyperlinkButton x:ConnectionId='38' Name="HomepageUrlButton" Content="Hello World" Margin="0" Padding="4,0,4,0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <widgets:TranslatedTextBlock Text="Publisher" Suffix=":" FontWeight="Bold"/>
+                        <TextBlock x:ConnectionId='37' Name="PublisherTextBlock" Text="Hello World"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <widgets:TranslatedTextBlock Text="Author" Suffix=":" FontWeight="Bold"/>
+                        <TextBlock x:ConnectionId='36' Name="AuthorTextBlock" Text="Hello World"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <widgets:TranslatedTextBlock Text="License" Suffix=":" FontWeight="Bold"/>
+                        <TextBlock x:ConnectionId='34' Name="LicenseTextBlock" Text="Hello World"/>
+                        <HyperlinkButton x:ConnectionId='35' Name="LicenseUrlButton" Content="(Hello World)" Margin="0" Padding="4,0,4,0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <widgets:TranslatedTextBlock Text="Package Manager" Suffix=":" FontWeight="Bold"/>
+                        <TextBlock x:ConnectionId='33' Name="SourceNameTextBlock" Text="Hello World"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Install and Share button -->
+                <Grid x:ConnectionId='10' Name="ActionsPanel"  VerticalAlignment="Top" RowSpacing="8" ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10000*" MaxWidth="250"/>
+                        <ColumnDefinition Width="*" MinWidth="16"/>
+                        <ColumnDefinition Width="10000*" MaxWidth="250"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Button x:ConnectionId='30' Grid.Column="0" Name="ShareButton"                           CornerRadius="8" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Height="40">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="8" HorizontalAlignment="Center">
+                            <widgets:LocalIcon IconName="share" Height="20" Width="20"/>
+                            <widgets:TranslatedTextBlock Text="Share this package" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:ConnectionId='31' Grid.Column="2" Name="ActionButton" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" Content="Action!"                            Height="40" CornerRadius="8"/>
+                    <TextBox x:ConnectionId='32' Name="CommandTextBlock" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" FontFamily="Consolas" IsReadOnly="True" Padding="12,6,12,6" CornerRadius="8" TextWrapping="Wrap"/>
+                </Grid>
+
+                <!-- Screenshots -->
+                <StackPanel x:ConnectionId='11' Name="ScreenshotsPanel" Orientation="Vertical" Spacing="8">
+                    <FlipView x:ConnectionId='28' Name="ScreenshotsCarroussel" CornerRadius="8">
+                        <FlipView.Items>
+                            <FlipViewItem>
+                                <Grid Margin="30,10,30,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <widgets:TranslatedTextBlock  VerticalAlignment="Center" Grid.Column="0" Text="This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." WrappingMode="WrapWholeWords"/>
+                                    <HyperlinkButton Grid.Column="1" NavigateUri="https://marticliment.com/wingetui/help/icons-and-screenshots/#about-icons" VerticalAlignment="Stretch">
+                                        <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="Become a contributor"/>
+                                    </HyperlinkButton>
+                                </Grid>
+                            </FlipViewItem>
+                        </FlipView.Items>
+                    </FlipView>
+                    <Grid x:ConnectionId='29' Name="IconsExtraBanner" Visibility="Collapsed">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <widgets:TranslatedTextBlock Grid.Column="0" Text="This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." WrappingMode="WrapWholeWords"/>
+                        <HyperlinkButton Grid.Column="1" NavigateUri="https://marticliment.com/wingetui/help/icons-and-screenshots/#about-icons" VerticalAlignment="Stretch">
+                            <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="Become a contributor"/>
+                        </HyperlinkButton>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Install Options -->
+                <Border x:ConnectionId='12' Name="InstallOptionsBorder" CornerRadius="8">
+                    <Expander x:ConnectionId='27' HorizontalAlignment="Stretch" CornerRadius="8" Name="InstallOptionsExpander"  VerticalAlignment="Top">
+                        <Expander.Header>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <widgets:LocalIcon IconName="options" Height="24"/>
+                                <widgets:TranslatedTextBlock Text="Installation options" VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Expander.Header>
+                    </Expander>
+                </Border>
+
+                <!-- Package Details -->
+                <StackPanel x:ConnectionId='13' Name="MoreDataStackPanel" Orientation="Vertical"  VerticalAlignment="Top" Spacing="6">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <widgets:TranslatedTextBlock Text="Package ID" Suffix=":" FontWeight="Bold"/>
+                        <TextBlock x:ConnectionId='26' Name="IdTextBlock" Text="Hello World"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <widgets:TranslatedTextBlock Text="Manifest" Suffix=":" FontWeight="Bold"/>
+                        <HyperlinkButton x:ConnectionId='25' Name="ManifestUrlButton" Content="(Hello World)" Margin="0" Padding="4,0,4,0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <widgets:TranslatedTextBlock Text="Installed Version" Suffix=":" FontWeight="Bold"/>
+                        <!-- Mutable! -->
+                        <TextBlock x:ConnectionId='24' Name="VersionTextBlock" Text="Hello World"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <widgets:TranslatedTextBlock Text="Installer SHA256" Suffix=":" FontWeight="Bold"/>
+                        <!-- Mutable! -->
+                        <TextBlock x:ConnectionId='23' Name="HashTextBlock" Text="Hello World"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Spacing="6">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <widgets:TranslatedTextBlock Text="Installer URL" Suffix=":" FontWeight="Bold"/>
+                            <HyperlinkButton x:ConnectionId='22' Name="InstallerUrlButton" Content="(Hello World)" Margin="0" Padding="4,0,4,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <Grid>
+                                <ProgressBar x:ConnectionId='20' Width="198" Visibility="Collapsed" VerticalAlignment="Top" Margin="1,0,1,0" CornerRadius="4,4,0,0" HorizontalAlignment="Stretch" IsIndeterminate="True" Name="DownloadInstallerButtonProgress"/>
+                                <Button x:ConnectionId='21' Width="200" Name="DownloadInstallerButton"                                      >
+                                    <widgets:TranslatedTextBlock Text="Download installer"/>
+                                </Button>
+                            </Grid>
+                            <TextBlock x:ConnectionId='18' Name="ErrorOutput" Foreground="Orange" VerticalAlignment="Center" Text=""/>
+                            <widgets:TranslatedTextBlock Text="Size" Suffix=":" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <TextBlock x:ConnectionId='19' Name="InstallerSizeTextBlock" Text="Hello World" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <widgets:TranslatedTextBlock Text="Installer Type" Suffix=":" FontWeight="Bold"/>
+                        <TextBlock x:ConnectionId='17' Name="InstallerTypeTextBlock" Text="Hello World"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <widgets:TranslatedTextBlock Text="Last updated:" FontWeight="Bold"/>
+                        <TextBlock x:ConnectionId='16' Name="UpdateDateTextBlock" Text="Hello World"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Spacing="6">
+                        <widgets:TranslatedTextBlock Text="Release notes" Suffix=":" FontWeight="Bold"/>
+                        <TextBlock x:ConnectionId='15' Name="ReleaseNotesBlock" TextWrapping="WrapWholeWords" Text="Hello World"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <widgets:TranslatedTextBlock Text="Release notes URL" Suffix=":" FontWeight="Bold"/>
+                        <HyperlinkButton x:ConnectionId='14' Name="ReleaseNotesUrlButton" Content="(Hello World)" Margin="0" Padding="4,0,4,0"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+        
+        <!-- Close Button -->
+        <Button x:ConnectionId='2' HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="6" 
+                BorderThickness="0" Margin="0,-20,-20,0" Width="40" Height="40"
+                                         
+                Padding="0" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <widgets:LocalIcon IconName="close" Height="24"/>
+        </Button>
+        <ProgressBar x:ConnectionId='3' Name="LoadingIndicator" Margin="-30,-24,-30,0" IsIndeterminate="True" VerticalAlignment="Top"/>
+
+    </Grid>
+</Page>
+
