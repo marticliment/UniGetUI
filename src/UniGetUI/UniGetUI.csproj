@@ -31,7 +31,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Assets\Languages\Contributors.list" />
-    <None Remove="Interface\AboutWingetUI.xaml" />
     <None Remove="Interface\Dialogs\HelpInterface.xaml" />
     <None Remove="Interface\Dialogs\InstallOptions.xaml" />
     <None Remove="Interface\Dialogs\PackageDetailsPage.xaml" />
@@ -40,7 +39,7 @@
     <None Remove="Interface\IgnoredUpdates.xaml" />
     <None Remove="Interface\InstalledPackages.xaml" />
     <None Remove="Interface\MainView.xaml" />
-    <None Remove="Interface\Pages\AboutPages\AboutWingetUI.xaml" />
+    <None Remove="Interface\Pages\AboutPages\AboutUniGetUI.xaml" />
     <None Remove="Interface\Pages\AboutPages\Contributors.xaml" />
     <None Remove="Interface\Pages\AboutPages\SupportMe.xaml" />
     <None Remove="Interface\Pages\AboutPages\ThirdPartyLicenses.xaml" />
@@ -1682,7 +1681,7 @@
     <Page Update="Interface\Pages\AboutPages\ThirdPartyLicenses.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Interface\Pages\AboutPages\AboutWingetUI.xaml">
+    <Page Update="Interface\Pages\AboutPages\AboutUniGetUI.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <None Update="PackageEngine\Managers\winget-cli_arm64\AppInstallerBackgroundTasks.dll">

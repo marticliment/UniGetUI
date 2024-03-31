@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WingetUI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7e53e8798dbc0c332e3b46919a4c2bd7ac7e232e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bd528b15c179f9069ed96f620cfe22041801fe51")]
 [assembly: System.Reflection.AssemblyProductAttribute("WingetUI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WingetUI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

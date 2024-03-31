@@ -22,7 +22,7 @@
     <Page Update="Interface\Pages\AboutPages\ThirdPartyLicenses.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Interface\Pages\AboutPages\AboutWingetUI.xaml">
+    <Page Update="Interface\Pages\AboutPages\AboutUniGetUI.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Interface\Pages\LogPage.xaml">
