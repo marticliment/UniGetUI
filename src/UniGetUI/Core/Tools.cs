@@ -86,8 +86,16 @@ namespace UniGetUI.Core
 
         public static void EnsureTempDir()
         {
-            if (!Directory.Exists(CoreData.WingetUIDataDirectory))
-                Directory.CreateDirectory(CoreData.WingetUIDataDirectory);
+            try
+            {
+                if (!Directory.Exists(CoreData.WingetUIDataDirectory))
+                    Directory.CreateDirectory(CoreData.WingetUIDataDirectory);
+            }
+            catch (Exception e)
+            {
+                Log("CRITICAL ERROR: CANNOT CREATE TEMP DIR");
+                Log(e);
+            }
         }
 
         public bool GetSettings(string setting, bool invert = false)
@@ -438,8 +446,16 @@ Crash Traceback:
         }
         public bool IsAdministrator()
         {
-            return (new WindowsPrincipal(WindowsIdentity.GetCurrent()))
-                      .IsInRole(WindowsBuiltInRole.Administrator);
+            try
+            {
+                return (new WindowsPrincipal(WindowsIdentity.GetCurrent()))
+                          .IsInRole(WindowsBuiltInRole.Administrator);
+            }
+            catch (Exception e)
+            {
+                Log(e);
+                return false;
+            }
         }
 
         /// <summary>

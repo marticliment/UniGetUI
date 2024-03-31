@@ -110,9 +110,16 @@ namespace UniGetUI
 
         private void SetUpWebViewUserDataFolder()
         {
-            if (!Directory.Exists(_webViewPath))
-                Directory.CreateDirectory(_webViewPath);
-            Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", _webViewPath);
+            try
+            {
+                if (!Directory.Exists(_webViewPath))
+                    Directory.CreateDirectory(_webViewPath);
+                Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", _webViewPath);
+            }
+            catch (Exception e)
+            {
+                AppTools.Log(e);
+            }
         }
 
         /// <summary>

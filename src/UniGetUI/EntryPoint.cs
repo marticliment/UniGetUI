@@ -24,7 +24,6 @@ namespace UniGetUI
                 if (args.Contains("--uninstall-wingetui"))
                     // If the app is being uninstalled, run the cleaner and exit
                     UninstallPreps();
-
                 else
                     // Otherwise, run WingetUI as normal
                     _ = AsyncMain(args);
@@ -52,10 +51,6 @@ namespace UniGetUI
                 // WinRT single-instance fancy stuff
                 WinRT.ComWrappersSupport.InitializeComWrappers();
                 bool isRedirect = await DecideRedirection();
-                if (!isRedirect) // Sometimes, redirection fails, so we try again
-                    isRedirect = await DecideRedirection();
-                if (!isRedirect) // Sometimes, redirection fails, so we try again (second time)
-                    isRedirect = await DecideRedirection();
 
                 // If this is the main instance, start the app
                 if (!isRedirect)
@@ -108,7 +103,7 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                AppTools.ReportFatalException(e);
+                AppTools.Log(e);
                 return false;
             }
         }

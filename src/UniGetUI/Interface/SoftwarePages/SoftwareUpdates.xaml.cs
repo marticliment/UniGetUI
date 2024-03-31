@@ -359,8 +359,8 @@ namespace UniGetUI.Interface
                             attribution += package.Name + ", ";
                         }
                         attribution = attribution.TrimEnd(' ').TrimEnd(',');
-                        ShowButtons = true;
                     }
+                    ShowButtons = true;
                 }
 
                 if (!Tools.GetSettings("DisableUpdatesNotifications") && !Tools.GetSettings("DisableNotifications"))
@@ -381,7 +381,7 @@ namespace UniGetUI.Interface
                                 .AddArgument("action", "openWingetUIOnUpdatesTab")
                                 .SetBackgroundActivation());
                             toast.AddButton(new ToastButton()
-                                .SetContent(Tools.Translate("Update all"))
+                                .SetContent(upgradablePackages.Count == 1? Tools.Translate("Update"): Tools.Translate("Update all"))
                                 .AddArgument("action", "updateAll")
                                 .SetBackgroundActivation());
                         }
