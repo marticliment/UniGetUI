@@ -31,16 +31,16 @@ body:
       required: false
   - type: textarea
     attributes:
-      label: WingetUI Log
+      label: UniGetUI Log
       render: "text"
-      placeholder: Paste here your WingetUI logs. Click the button on the top-right corner of WingetUI -> WingetUI Log
+      placeholder: Paste here your UniGetUI logs. Click the button on the top-right corner of UniGetUI -> UniGetUI Log
     validations:
       required: true
   - type: textarea
     attributes:
       label: Package Managers Logs
       render: "text"
-      placeholder: Paste here your Package Manager logs. Click the button on the top-right corner of WingetUI -> Package Manager logs
+      placeholder: Paste here your Package Manager logs. Click the button on the top-right corner of UniGetUI -> Package Manager logs
     validations:
       required: true
   - type: textarea

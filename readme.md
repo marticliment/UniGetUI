@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/marticliment/WingetUI/main/src/wingetui/Assets/Images/icon.png" height="40">WingetUI
+# <img src="https://raw.githubusercontent.com/marticliment/WingetUI/main/src/wingetui/Assets/Images/icon.png" height="40">UniGetUI (formerly WingetUI)
 
 [![Downloads@latest](https://img.shields.io/github/downloads/marticliment/WingetUI/2.2.0/total?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe)
 [![Release Version Badge](https://img.shields.io/github/v/release/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases)
@@ -10,21 +10,21 @@ With this app, you'll be able to easily download, install, update and uninstall 
 
 Check out the [Supported Package Managers Table](#supported-package-managers) for more details!
 
-**This is WingetUI's official repository. If you are searching for WingetUI's homepage, please refer to [https://www.marticliment.com/wingetui/](https://www.marticliment.com/wingetui/)**
+**This is UniGetUI (formerly WingetUI)'s official repository. If you are searching for UniGetUI's homepage, please refer to [https://www.marticliment.com/wingetui/](https://www.marticliment.com/wingetui/)**
 
-**Disclaimer:** This project has no connection with any of the supported package managers — it's completely unofficial. Be aware of the fact that I, the developer of WingetUI, am NOT responsible for the downloaded apps.
+**Disclaimer:** This project has no connection with any of the supported package managers — it's completely unofficial. Be aware of the fact that I, the developer of UniGetUI, am NOT responsible for the downloaded apps.
 
 ![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fmarticliment.com%2Fresources%2Fbadges%2Fdev-status.json)
  
 ## Table of contents
- - **[WingetUI Homepage](https://www.marticliment.com/wingetui/)**
+ - **[UniGetUI Homepage](https://www.marticliment.com/wingetui/)**
  - [Table of contents](#table-of-contents)
  - [Installation](#installation)
- - [Update WingetUI](#update-wingetui)
+ - [Update UniGetUI](#update-UniGetUI)
  - [Support the developer](#support-the-developer)
  - [Features](#features)
    - [Supported Package Managers](#supported-package-managers)
- - [Translating WingetUI](#translating-wingetui-to-other-languages)
+ - [Translating UniGetUI](#translating-UniGetUI-to-other-languages)
    - [Currently supported languages](#currently-supported-languages)
  - [Contributors](#contributors)
  - [Screenshots](#screenshots)
@@ -32,17 +32,17 @@ Check out the [Supported Package Managers Table](#supported-package-managers) fo
 
  
 ## Installation
-<p>There are multiple ways to install WingetUI — choose whichever one you prefer!<br</p>
+<p>There are multiple ways to install UniGetUI — choose whichever one you prefer!<br</p>
 
-**Download WingetUI installer (recommended):**
+**Download UniGetUI installer (recommended):**
 <p align="left"><b><a href="https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe">Click here to download WingetUI</a></b></p>
 
-**Install WingetUI through Winget:**    
+**Install UniGetUI through Winget:**    
 ```cmd
 winget install SomePythonThings.WingetUIStore
 ```
 
-**Install WingetUI through Scoop:**
+**Install UniGetUI through Scoop:**
 ```cmd
 scoop bucket add extras
 ```
@@ -50,15 +50,15 @@ scoop bucket add extras
 scoop install extras/wingetui
 ```
 
-**Install WingetUI through Chocolatey:**    
+**Install UniGetUI through Chocolatey:**    
 ```cmd
 choco install wingetui
 ```
 
 
-## Update WingetUI
+## Update UniGetUI
 
-WingetUI has a built-in autoupdater. However, it can also be updated like any other package within WingetUI (since WingetUI is available through Winget and Scoop).
+UniGetUI has a built-in autoupdater. However, it can also be updated like any other package within UniGetUI (since UniGetUI is available through Winget and Scoop).
 
 
 ## Support the developer
@@ -70,7 +70,7 @@ It really does make a big difference, and is very much appreciated. Thanks :)
 
 ## Features
 
- - Install, update and remove software from your system easily at one click: WingetUI combines the packages from the most used package managers for windows: Winget, Chocolatey, Scoop, Pip, Npm and .NET Tool.
+ - Install, update and remove software from your system easily at one click: UniGetUI combines the packages from the most used package managers for windows: Winget, Chocolatey, Scoop, Pip, Npm and .NET Tool.
  - Discover new packages and filter them to easily find the package you want.
  - View detailed metadata about any package before installing it. Get the direct download URL or the name of the publisher, as well as the size of the download.
  - Easily bulk-install, update or uninstall multiple packages at once selecting multiple packages before performing an operation
@@ -96,7 +96,7 @@ It really does make a big difference, and is very much appreciated. Thanks :)
 | **.NET Tool** | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | 2.1.0 |
 | **PowerShell** | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ | ❌ | ✅ | 2.2.0 |
 
-✅: Supported on WingetUI<br>
+✅: Supported on UniGetUI<br>
 ☑️: Not directly supported but can be easily achieved<br>
 ⚠️: Some packages might not follow this setting<br>
 ❌: Not supported by the Package Manager<br>
@@ -105,8 +105,8 @@ It really does make a big difference, and is very much appreciated. Thanks :)
 **2\.** Despite the Package Manager may not support _PreReleases_, some packages can be found duplicated, with one of the copies being the beta version of it.<br>
 **3\.** Some installers do not have a GUI, and will ignore the `interactive` flag<br>
 
-# Translating WingetUI to other languages
-In order to translate WingetUI to other languages or to update an old translation, please see [Translating WingetUI - WingetUI Wiki](https://github.com/marticliment/WingetUI/wiki#translating-wingetui) for more info.
+# Translating UniGetUI to other languages
+In order to translate UniGetUI to other languages or to update an old translation, please see [Translating UniGetUI - UniGetUI Wiki](https://github.com/marticliment/WingetUI/wiki#translating-wingetui) for more info.
 
 
 ## Currently Supported languages
@@ -159,7 +159,7 @@ Last updated: Sat Mar 23 00:10:35 2024
 
 
 # Contributions
- WingetUI wouldn't have been possible without the help of our dear contributors. From the person who fixed a typo to the person who improved half of the code, WingetUI wouldn't be possible without them! :smile:<br><br>
+ UniGetUI wouldn't have been possible without the help of our dear contributors. From the person who fixed a typo to the person who improved half of the code, UniGetUI wouldn't be possible without them! :smile:<br><br>
 
 ## Contributors:
  [![My dear contributors](https://contrib.rocks/image?repo=marticliment/WingetUI)](https://github.com/marticliment/WingetUI/graphs/contributors)<br><br>
@@ -190,7 +190,7 @@ Last updated: Sat Mar 23 00:10:35 2024
 
 **Q: I am unable to install or upgrade a specific Winget package! What should I do?**<br>
 
-A: This is likely an issue with Winget rather than WingetUI. 
+A: This is likely an issue with Winget rather than UniGetUI. 
 
 Please check if it's possible to install/upgrade the package through PowerShell or the Command Prompt by using the commands `winget upgrade` or `winget install`, depending on the situation (for example: `winget upgrade --id Microsoft.PowerToys`). 
 
@@ -206,32 +206,32 @@ See more details on issue https://github.com/microsoft/winget-cli/issues/2603.<b
 
 #
 
-**Q: My antivirus is telling me that WingetUI is a virus! / My browser is blocking the download of WingetUI!**<br>
+**Q: My antivirus is telling me that UniGetUI is a virus! / My browser is blocking the download of UniGetUI!**<br>
 
-A: A common reason apps (i.e., executables) get blocked and/or detected as a virus — even when there's nothing malicious about them, like in the case of WingetUI — is because they're not being used by a relatively large amount of people.
+A: A common reason apps (i.e., executables) get blocked and/or detected as a virus — even when there's nothing malicious about them, like in the case of UniGetUI — is because they're not being used by a relatively large amount of people.
 
 Combine that with the fact that you might be downloading something recently released, and simply blocking unknown apps is in many cases a good precaution to take to prevent actual malware.
 
-Since WingetUI is open source and safe to use, simply whitelist the app in the settings of your antivirus/browser.<br>
+Since UniGetUI is open source and safe to use, simply whitelist the app in the settings of your antivirus/browser.<br>
 
 #
 
 **Q: Are Winget/Scoop packages safe?**<br>
 
-A: WingetUI, Microsoft and Scoop aren't responsible for the packages available for download, which are provided by third parties and can theoretically be compromised.
+A: UniGetUI, Microsoft and Scoop aren't responsible for the packages available for download, which are provided by third parties and can theoretically be compromised.
 
 To mitigate the risks of downloading malware, Microsoft has implemented a few checks for the software available on Winget. Even so, It's recommended to only download software from publishers that you trust. 
 
 <br><p align="center"><i>Check out the <a href="https://github.com/marticliment/WingetUI/wiki">Wiki</a> for more information!</i></p>
 
 ## Command-line parameters:
-`--daemon`: Start WingetUI without spawning a new window. WingetUI will run minimized on the system tray. WingetUI is called with this parameter when launched at startup. **Autostart WingetUI in the notifications area** must be enabled for this parameter to work.<br>
+`--daemon`: Start UniGetUI without spawning a new window. UniGetUI will run minimized on the system tray. UniGetUI is called with this parameter when launched at startup. **Autostart UniGetUI in the notifications area** must be enabled for this parameter to work.<br>
 `--welcomewizard` (or simply `--welcome`): Show a window to choose which package managers to use.<br>
 `--updateapps`: Enable automatic installation of available updates.
-`--report-all-errors`: May help debug crashes (WingetUI 3.0 and newer)
+`--report-all-errors`: May help debug crashes
 
 ### Installer command-line parameters:
 The installer is inno-setup based, so it supports regular Inno Setup command-line parameters. Additionally, it also supports the following parameters:
- <br>`/NoAutoStart`: Will not launch WingetUI after installing it.
-<br> `/ALLUSERS`: Install WingetUI for every user
-<br> `/CURRENTUSER`: Install WingetUI for the current user only
+ <br>`/NoAutoStart`: Will not launch UniGetUI after installing it.
+<br> `/ALLUSERS`: Install UniGetUI for every user
+<br> `/CURRENTUSER`: Install UniGetUI for the current user only
