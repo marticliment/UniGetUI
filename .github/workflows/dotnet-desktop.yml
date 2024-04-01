@@ -43,5 +43,5 @@ jobs:
     - name: build and run
       run: |
         mkdir out
-        msbuild src/wingetui/wingetui.csproj /noLogo /property:Configuration=Release /property:Platform=x64 /restore:True /interactive:False /property:OutputPath=.\out
+        msbuild src/UniGetUI/UniGetUI.csproj /noLogo /property:Configuration=Release /property:Platform=x64 /restore:True /interactive:False /property:OutputPath=.\out
         exit $LASTEXITCODE
