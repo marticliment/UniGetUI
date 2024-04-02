@@ -48,10 +48,16 @@
       <GeneratePathProperty>true</GeneratePathProperty>
       <IncludeAssets>none</IncludeAssets>
     </PackageReference>
+
+	  <PackageReference Include="Microsoft.WindowsPackageManager.InProcCom" Version="1.7.10861">
+		  <NoWarn>NU1701</NoWarn>
+		  <GeneratePathProperty>true</GeneratePathProperty>
+		  <IncludeAssets>none</IncludeAssets>
+	  </PackageReference>
   </ItemGroup>
 
   <Target Name="CopyWinmdToTargetDir" BeforeTargets="BeforeBuild">
-    <Copy SourceFiles="$(PkgMicrosoft_WindowsPackageManager_ComInterop)\lib\Microsoft.Management.Deployment.winmd" DestinationFolder="$(TargetDir)" />
+    <Copy SourceFiles="$(PkgMicrosoft_WindowsPackageManager_InProcCom)\lib\Microsoft.Management.Deployment.winmd" DestinationFolder="$(TargetDir)" />
 	  <Copy SourceFiles="$(PkgMicrosoft_WindowsPackageManager_ComInterop)\runtimes\win10-$(Platform)\native\winrtact.dll" DestinationFolder="$(TargetDir)" />
   </Target>
 </Project>
