@@ -22,18 +22,19 @@ static T* WinRTActCreateInstance(const GUID& clsid, const GUID& iid)
         try
         {
             hr = WinRTAct_DllCreateInstance(clsid, iid, CLSCTX_ALL, &pUnknown);
+            cout << "WinRTActCreateInstance: Returned from WinRTAct_DllCreateInstance." << endl;
             if (FAILED(hr))
             {
                 throw hr;
             }
-
+            cout << "WinRTActCreateInstance: Attempting to convert to the specified interface." << endl;
             T* pInterface;
             hr = ((IUnknown*)pUnknown)->QueryInterface(iid, (void**)&pInterface);
             if (FAILED(hr))
             {
                 throw hr;
             }
-            cout << "WinRTActCreateInstance: Returning loaded pointer" << endl;
+            cout << "WinRTActCreateInstance: Pointer converted to class successfully. Now returning from WinRTActCreateInstance" << endl;
             return pInterface;
         }
         catch (HRESULT hrException)
@@ -49,7 +50,7 @@ static T* WinRTActCreateInstance(const GUID& clsid, const GUID& iid)
 	}
 	else
 	{
-        cout << "DLL not loaded" << endl;
+        cout << "WinRTActCreateInstance: DLL not found or loaded" << endl;
 		throw HRESULT_FROM_WIN32(GetLastError());
 	}
 }
