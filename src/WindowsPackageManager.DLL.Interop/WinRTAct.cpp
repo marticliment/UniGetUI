@@ -38,19 +38,18 @@ static T* WinRTActCreateInstance(const GUID& clsid, const GUID& iid)
         }
         catch (HRESULT hrException)
         {
-            cout << "WinRTActCreateInstance: Error loading instance with hrException " << hrException << endl; // "Error loading instance\n
+            cout << "WinRTActCreateInstance: Error loading instance with hrException " << hrException << endl;
             throw hrException;
         }
         catch (...)
         {
-            cout << "WinRTActCreateInstance: Error loading instance unknown error" << endl; // "Error loading instance\n
+            cout << "WinRTActCreateInstance: Error loading instance unknown error" << endl;
             throw;
         }
 	}
 	else
 	{
-        cout << "DLL not loaded" << endl; // "DLL not loaded\n
-		// handle error
+        cout << "DLL not loaded" << endl;
 		throw HRESULT_FROM_WIN32(GetLastError());
 	}
 }

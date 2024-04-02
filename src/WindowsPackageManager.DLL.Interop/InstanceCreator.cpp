@@ -38,7 +38,7 @@ static T BaseCreateInstance(CLSID CLASS_ID, IID INTERFACE_ID)
 		cout << "BaseCreateInstance: Calling WinRTActCreateInstance in ELEVATED mode" << endl;
 		T* pointer = WinRTActCreateInstance<T>(CLASS_ID, INTERFACE_ID);
 		cout << "BaseCreateInstance: Received pointer from WinRTActCreateInstance. Pointer status: " << (pointer == nullptr? "NULLPTR": "VALID") << endl;
-		res = *(pointer); // Check this piece of garbage
+		res = *(pointer); // TODO: Check this piece of () which is causing 0xC0000005 crashes by being an invalid pointer
 	}
 	else
 	{
