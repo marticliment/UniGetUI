@@ -1841,6 +1841,6 @@
     <PRIResource Remove="PackageEngine\Managers\WinGetClasses\**" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Y:\WingetUI-Store\src\WindowsPackageManager.Interop\WindowsPackageManager Interop.csproj" />
+    <ProjectReference Include="..\WindowsPackageManager.Interop\WindowsPackageManager Interop.csproj" />
   </ItemGroup>
 </Project>
