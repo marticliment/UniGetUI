@@ -44,22 +44,6 @@ namespace ModernWindow.PackageEngine.Managers
         private Deployment.PackageManager WinGetManager;
 
 
-        [DllImport("WindowsPackgeManager.DLL.Interop.dll", CallingConvention = CallingConvention.Cdecl)]
-        [return: MarshalAs(UnmanagedType.BStr)]
-        public static extern string GetDLLModuleVersion();
-
-        [DllImport("WindowsPackgeManager.DLL.Interop.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool InitializePackageManager();
-
-        [DllImport("WindowsPackgeManager.DLL.Interop.dll", CallingConvention = CallingConvention.Cdecl)]
-        [return: MarshalAs(UnmanagedType.BStr)]
-        public static extern string GetInstalledPackagesFromAllCatalogs();
-
-        [DllImport("WindowsPackgeManager.DLL.Interop.dll", CallingConvention = CallingConvention.Cdecl)]
-        [return: MarshalAs(UnmanagedType.BStr)]
-        public static extern string GetAvailableUpdatesFromAllCatalogs();
-
-
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = new();
@@ -150,54 +134,139 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            List<UpgradablePackage> Packages = new();
-            foreach (var package in (await Task.Run(() => GetAvailableUpdatesFromAllCatalogs())).Split('\n'))
-            {
-                var parts = package.Split('\t');
+            var Packages = new List<UpgradablePackage>();
 
-                if (parts.Length < 5)
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = "powershell.exe",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
+            };
+
+            p.Start();
+
+            await p.StandardInput.WriteAsync(@"
+                function Print-WinGetPackage {
+                    param (
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
+                        [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
+                        [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
+                    )
+                    process {
+                        if($IsUpdateAvailable)
+                        {
+                            Write-Output(""#"" + $Name + ""`t"" + $Id + ""`t"" + $InstalledVersion + ""`t"" + $AvailableVersions[0] + ""`t"" + $Source)
+                        }
+                    }
+                }
+
+                if(!(Get-Command -Verb Get -Noun WinGetPackage))
+                {
+                    Install-Module -Name Microsoft.WinGet.Client -Scope CurrentUser -AllowClobber -Confirm:$false -Force
+                }
+                Get-WinGetPackage | Print-WinGetPackage
+                
+                exit
+                ");
+
+            string line;
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                output += line + "\n";
+                if (!line.StartsWith("#"))
+                    continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
+
+                string[] elements = line.Split('\t');
+                if (elements.Length < 5)
                     continue;
 
-                Packages.Add(new UpgradablePackage(
-                    parts[0],
-                    parts[1],
-                    parts[2],
-                    parts[3],
-                    SourceFactory.GetSourceOrDefault(parts[4]),
-                    this
-                ));
+                ManagerSource source = SourceFactory.GetSourceOrDefault(elements[4]);
+
+                Packages.Add(new UpgradablePackage(elements[0][1..], elements[1], elements[2], elements[3], source, this));
             }
+
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
+            await p.WaitForExitAsync();
+
             return Packages.ToArray();
         }
 
-        
-
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
+            var Packages = new List<Package>();
 
-            List<Package> Packages = new();
-            foreach (var package in (await Task.Run(() => GetInstalledPackagesFromAllCatalogs())).Split('\n'))
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
             {
-                var parts = package.Split('\t');
+                FileName = "powershell.exe",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
+            };
 
-                if(parts.Length < 4)
+            p.Start();
+
+            await p.StandardInput.WriteAsync(@"
+                function Print-WinGetPackage {
+                    param (
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
+                        [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
+                        [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
+                    )
+                    process {
+                        Write-Output(""#"" + $Name + ""`t"" + $Id + ""`t"" + $InstalledVersion + ""`t"" + $Source)
+                    }
+                }
+
+                if(!(Get-Command -Verb Get -Noun WinGetPackage))
+                {
+                    Install-Module -Name Microsoft.WinGet.Client -Scope CurrentUser -AllowClobber -Confirm:$false -Force
+                }
+                Get-WinGetPackage | Print-WinGetPackage
+                
+                exit
+                ");
+
+            string line;
+            string output = "";
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            {
+                output += line + "\n";
+                if (!line.StartsWith("#"))
+                    continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
+
+                string[] elements = line.Split('\t');
+                if (elements.Length < 4)
                     continue;
 
-                // Create the Package item and add it to the list
                 ManagerSource source;
-                if (parts[3] != "")
-                    source = SourceFactory.GetSourceOrDefault(parts[3]);
+                if (elements[3] != "")
+                    source = SourceFactory.GetSourceOrDefault(elements[3]);
                 else
-                    source = GetLocalSource(parts[1]);
+                    source = GetLocalSource(elements[1]);
 
-                Packages.Add(new Package(
-                    parts[0],
-                    parts[1],
-                    parts[2],
-                    source,
-                    this
-                ));
+                Packages.Add(new Package(elements[0][1..], elements[1], elements[2], source, this));
             }
+
+            output += await p.StandardError.ReadToEndAsync();
+            AppTools.LogManagerOperation(this, p, output);
+            await p.WaitForExitAsync();
 
             return Packages.ToArray();
         }
@@ -682,11 +751,6 @@ namespace ModernWindow.PackageEngine.Managers
                 ? new WindowsPackageManagerElevatedFactory()
                 : new WindowsPackageManagerStandardFactory();
             WinGetManager = await Task.Run(() => WinGetFactory.CreatePackageManager());
-
-            // Initialize the WinGet manager (C++ Interop)
-            bool CppWinGetInitResult = await Task.Run(() => InitializePackageManager());
-            status.Version += "\nWinGet C++ Interop initialized: " + CppWinGetInitResult.ToString();
-            status.Version += "\nWinGet C++ Interop DLL Version: " + await Task.Run(() => GetDLLModuleVersion());
 
             Status = status; // Need to set status before calling RefreshSources, otherwise will crash
             if (status.Found && IsEnabled())
