@@ -35,7 +35,7 @@ static T BaseCreateInstance(CLSID CLASS_ID, IID INTERFACE_ID)
 	T res = nullptr;
 	if (IsRunAsAdmin() == 1)
 	{
-		cout << "BaseCreateInstance: Calling WinRTActCreateInstance in ELEVATED mode" << endl;
+		/*cout << "BaseCreateInstance: Calling WinRTActCreateInstance in ELEVATED mode" << endl;
 		T* pointer = WinRTActCreateInstance<T>(CLASS_ID, INTERFACE_ID);
 		cout << "BaseCreateInstance: Received pointer from WinRTActCreateInstance. Pointer status: " << (pointer != nullptr? "VALID": "NULLPTR") << endl;
 		try {
@@ -44,7 +44,7 @@ static T BaseCreateInstance(CLSID CLASS_ID, IID INTERFACE_ID)
 		catch (...)
 		{
 			cout << "BaseCreateInstance: Exception caught when trying to convert pointer to class" << endl;
-		}
+		}*/
 	}
 	else
 	{

@@ -134,6 +134,8 @@ bool InitializePackageManager()
 		CoInitialize(nullptr);
 		cout << "InitializePackageManager: CoInitialize succeeded" << endl;
 		WindowsPackageManager = CreatePackageManager();
+		if (WindowsPackageManager == nullptr)
+			return false;
 		cout << "InitializePackageManager: CreatePackageManager succeeded" << endl;
 		return true;
 	}

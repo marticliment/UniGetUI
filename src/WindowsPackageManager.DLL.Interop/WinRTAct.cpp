@@ -1,56 +1,61 @@
 #pragma once
 #include "pch.h"
 
-typedef HRESULT(WINAPI* PFN_WinGetServerManualActivation_CreateInstance)(
-    const GUID& clsid,
-    const GUID& iid,
-    DWORD flags,
-    void** instance);
-
 template <typename T>
-static T* WinRTActCreateInstance(const GUID& clsid, const GUID& iid)
+T* WinRTActCreateInstance(GUID clsid, GUID iid)
 {
-    void* pUnknown = nullptr;
-    HRESULT hr = S_OK;
+    IUnknown* pUnknown = nullptr;
+    T* pInterface = nullptr;
 
+    // Load the DLL.
     HMODULE hModule = LoadLibrary("winrtact.dll");
-    cout << "WinRTActCreateInstance: Loaded winrtact.dll successfully" << endl;
-    if (hModule)
+    if (hModule == NULL)
     {
-        PFN_WinGetServerManualActivation_CreateInstance WinRTAct_DllCreateInstance = (PFN_WinGetServerManualActivation_CreateInstance)GetProcAddress(hModule, "WinGetServerManualActivation_CreateInstance");
-        cout << "WinRTActCreateInstance: Loaded WinGetServerManualActivation_CreateInstance address successfully" << endl;
-        try
-        {
-            hr = WinRTAct_DllCreateInstance(clsid, iid, CLSCTX_ALL, &pUnknown);
-            cout << "WinRTActCreateInstance: Returned from WinRTAct_DllCreateInstance." << endl;
-            if (FAILED(hr))
-            {
-                throw hr;
-            }
-            cout << "WinRTActCreateInstance: Attempting to convert to the specified interface." << endl;
-            T* pInterface;
-            hr = ((IUnknown*)pUnknown)->QueryInterface(iid, (void**)&pInterface);
-            if (FAILED(hr))
-            {
-                throw hr;
-            }
-            cout << "WinRTActCreateInstance: Pointer converted to class successfully. Now returning from WinRTActCreateInstance" << endl;
-            return pInterface;
-        }
-        catch (HRESULT hrException)
-        {
-            cout << "WinRTActCreateInstance: Error loading instance with hrException " << hrException << endl;
-            throw hrException;
-        }
-        catch (...)
-        {
-            cout << "WinRTActCreateInstance: Error loading instance unknown error" << endl;
-            throw;
-        }
-	}
-	else
-	{
-        cout << "WinRTActCreateInstance: DLL not found or loaded" << endl;
-		throw HRESULT_FROM_WIN32(GetLastError());
-	}
+        cout << "WinRTActCreateInstance: Cannot load winrtact.dll" << endl;
+        return nullptr;
+    }
+    cout << "WinRTActCreateInstance: Loaded winrtact.dll successfully" << endl;
+
+    // Get the function pointer.
+    typedef HRESULT(WINAPI* WinGetServerManualActivation_CreateInstance)(REFGUID, REFGUID, DWORD, LPVOID*);
+    WinGetServerManualActivation_CreateInstance pFunc = (WinGetServerManualActivation_CreateInstance)GetProcAddress(hModule, "WinGetServerManualActivation_CreateInstance");
+    if (pFunc == NULL)
+    {
+        cout << "WinRTActCreateInstance: Cannot load function WinGetServerManualActivation_CreateInstance from winrtact.dll" << endl;
+        FreeLibrary(hModule);
+        return nullptr;
+    }
+    cout << "WinRTActCreateInstance: Loaded WinGetServerManualActivation_CreateInstance address successfully" << endl;
+
+    // Call the function.
+    HRESULT hr = pFunc(clsid, iid, 0, (void**)&pUnknown);
+    if (FAILED(hr))
+    {
+        cout << "WinRTActCreateInstance: WinGetServerManualActivation_CreateInstance failed with code " << to_string(hr) << endl;
+        FreeLibrary(hModule);
+        return nullptr;
+    }
+    cout << "WinRTActCreateInstance: Returned from pFunc. pUnknown status: " << (pUnknown == nullptr ? "NULLPTR" : "VALID") << endl;
+    cout << "WinRTActCreateInstance: Attempting to convert to the specified interface." << endl;
+
+    // Query the interface.
+    hr = pUnknown->QueryInterface(iid, (void**)&pInterface);
+    //hr = pUnknown->QueryInterface(iid, (void**)&pInterface);
+    pInterface = (T*)pUnknown;
+    if (FAILED(hr))
+    {
+        cout << "WinRTActCreateInstance: pUnknown->QueryInterface failed with code " << to_string(hr) << endl;
+        pUnknown->Release();
+        FreeLibrary(hModule);
+        return nullptr;
+    }
+    cout << "WinRTActCreateInstance: Pointer converted to class successfully. Now returning from WinRTActCreateInstance" << endl;
+
+    // Release the IUnknown pointer.
+    pUnknown->Release();
+
+    // Unload the DLL.
+    FreeLibrary(hModule);
+
+    return pInterface;
 }
