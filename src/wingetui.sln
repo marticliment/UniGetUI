@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsPackageManager Interop", "Y:\WingetUI-Store\src\WindowsPackageManager.Interop\WindowsPackageManager Interop.csproj", "{52AC982E-7382-4746-BB66-4003698FCC02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsPackageManager Interop", "WindowsPackageManager.Interop\WindowsPackageManager Interop.csproj", "{52AC982E-7382-4746-BB66-4003698FCC02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
