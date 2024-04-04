@@ -88,8 +88,8 @@ namespace UniGetUI.Core
         {
             try
             {
-                if (!Directory.Exists(CoreData.WingetUIDataDirectory))
-                    Directory.CreateDirectory(CoreData.WingetUIDataDirectory);
+                if (!Directory.Exists(CoreData.UniGetUIDataDirectory))
+                    Directory.CreateDirectory(CoreData.UniGetUIDataDirectory);
             }
             catch (Exception e)
             {
@@ -104,7 +104,7 @@ namespace UniGetUI.Core
         public static bool GetSettings_Static(string setting, bool invert = false)
         {
             EnsureTempDir();
-            return File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)) ^ invert;
+            return File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)) ^ invert;
         }
 
         public void SetSettings(string setting, bool value)
@@ -116,13 +116,13 @@ namespace UniGetUI.Core
                 EnsureTempDir();
                 if (value)
                 {
-                    if (!File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
-                        File.WriteAllText(Path.Join(CoreData.WingetUIDataDirectory, setting), "");
+                    if (!File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+                        File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), "");
                 }
                 else
                 {
-                    if (File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
-                        File.Delete(Path.Join(CoreData.WingetUIDataDirectory, setting));
+                    if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+                        File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, setting));
                 }
             }
             catch (Exception e)
@@ -136,9 +136,9 @@ namespace UniGetUI.Core
         public static string GetSettingsValue_Static(string setting)
         {
             EnsureTempDir();
-            if (!File.Exists(Path.Join(CoreData.WingetUIDataDirectory, setting)))
+            if (!File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
                 return "";
-            return File.ReadAllText(Path.Join(CoreData.WingetUIDataDirectory, setting));
+            return File.ReadAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting));
         }
         public void SetSettingsValue(string setting, string value)
         { AppTools.SetSettingsValue_Static(setting, value); }
@@ -148,7 +148,7 @@ namespace UniGetUI.Core
             try
             {
                 EnsureTempDir();
-                File.WriteAllText(Path.Join(CoreData.WingetUIDataDirectory, setting), value);
+                File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), value);
             }
             catch (Exception e)
             {
@@ -232,7 +232,7 @@ namespace UniGetUI.Core
 
         public static void Log(string s)
         {
-            CoreData.WingetUILog += s + "\n";
+            CoreData.UniGetUILog += s + "\n";
             Debug.WriteLine(s);
         }
 
@@ -284,7 +284,7 @@ Crash Traceback:
             Console.WriteLine(Error_String);
 
 
-            string ErrorBody = "https://www.marticliment.com/error-report/?appName=WingetUI^&errorBody=" + Uri.EscapeDataString(Error_String.Replace("\n", "{l}"));
+            string ErrorBody = "https://www.marticliment.com/error-report/?appName=UniGetUI^&errorBody=" + Uri.EscapeDataString(Error_String.Replace("\n", "{l}"));
 
             Console.WriteLine(ErrorBody);
 
@@ -321,10 +321,10 @@ Crash Traceback:
         }
 
         /// <summary>
-        /// Update WingetUI
+        /// Update UniGetUI
         /// </summary>
         /// <param name="round"></param>
-        public async void UpdateWingetUIIfPossible(int round = 0)
+        public async void UpdateUniGetUIIfPossible(int round = 0)
         {
             InfoBar? banner = null; ;
             try
@@ -334,7 +334,7 @@ Crash Traceback:
                 string fileContents = "";
 
                 using (HttpClient client = new())
-                    fileContents = await client.GetStringAsync("https://www.marticliment.com/versions/wingetui.ver");
+                    fileContents = await client.GetStringAsync("https://www.marticliment.com/versions/unigetui.ver");
 
 
                 if (!fileContents.Contains("///"))
@@ -414,14 +414,14 @@ Crash Traceback:
                         banner.IsClosable = true;
 
                         await Task.Delay(7200000); // Check again in 2 hours
-                        UpdateWingetUIIfPossible();
+                        UpdateUniGetUIIfPossible();
                     }
                 }
                 else
                 {
-                    Log("WingetUI is up to date");
+                    Log("UniGetUI is up to date");
                     await Task.Delay(7200000); // Check again in 2 hours
-                    UpdateWingetUIIfPossible();
+                    UpdateUniGetUIIfPossible();
                 }
             }
             catch (Exception e)
@@ -441,7 +441,7 @@ Crash Traceback:
                     return;
 
                 await Task.Delay(600000); // Try again in 10 minutes
-                UpdateWingetUIIfPossible(round + 1);
+                UpdateUniGetUIIfPossible(round + 1);
             }
         }
         public bool IsAdministrator()

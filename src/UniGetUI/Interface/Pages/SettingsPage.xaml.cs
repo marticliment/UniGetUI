@@ -92,7 +92,7 @@ namespace UniGetUI.Interface
             OpenBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2));
             if (!Tools.GetSettings("ChangeBackupOutputDirectory"))
             {
-                BackupDirectoryLabel.Text = CoreData.WingetUI_DefaultBackupDirectory;
+                BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
                 ResetBackupDirectory.IsEnabled = false;
             }
             else
@@ -128,7 +128,7 @@ namespace UniGetUI.Interface
             ButtonCard Winget_ResetSources = new() { Text = Tools.AutoTranslated("Reset Winget sources (might help if no packages are listed)"), ButtonText = Tools.AutoTranslated("Reset") };
             Winget_ResetSources.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), Tools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
+                AppTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), Tools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
             };
 
             ExtraSettingsCards[Tools.App.Winget].Add(Winget_ResetSources);
@@ -136,19 +136,19 @@ namespace UniGetUI.Interface
             ButtonCard Scoop_Install = new() { Text = Tools.AutoTranslated("Install Scoop"), ButtonText = Tools.AutoTranslated("Install") };
             Scoop_Install.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"), Tools.Translate("Scoop Installer - WingetUI"));
+                AppTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"), Tools.Translate("Scoop Installer - WingetUI"));
                 PackageManagerExpanders[Tools.App.Scoop].ShowRestartRequiredBanner();
             };
             ButtonCard Scoop_Uninstall = new() { Text = Tools.AutoTranslated("Uninstall Scoop (and its packages)"), ButtonText = Tools.AutoTranslated("Uninstall") };
             Scoop_Uninstall.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"), Tools.Translate("Scoop Uninstaller - WingetUI"));
+                AppTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"), Tools.Translate("Scoop Uninstaller - WingetUI"));
                 PackageManagerExpanders[Tools.App.Scoop].ShowRestartRequiredBanner();
             };
             ButtonCard Scoop_ResetAppCache = new() { Text = Tools.AutoTranslated("Run cleanup and clear cache"), ButtonText = Tools.AutoTranslated("Run") };
             Scoop_ResetAppCache.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"), Tools.Translate("Clearing Scoop cache - WingetUI"), RunAsAdmin: true);
+                AppTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"), Tools.Translate("Clearing Scoop cache - WingetUI"), RunAsAdmin: true);
             };
 
             ExtraSettingsCards[Tools.App.Scoop].Add(Scoop_Install);
@@ -352,7 +352,7 @@ namespace UniGetUI.Interface
                     var IgnoredSettings = new string[] { "OperationHistory", "CurrentSessionToken", "OldWindowGeometry" };
 
                     Dictionary<string, string> settings = new();
-                    foreach (var path in Directory.EnumerateFiles(CoreData.WingetUIDataDirectory))
+                    foreach (var path in Directory.EnumerateFiles(CoreData.UniGetUIDataDirectory))
                     {
                         if (Path.GetFileName(path).Contains('.') || IgnoredSettings.Contains(Path.GetFileName(path)))
                             continue;
@@ -376,7 +376,7 @@ namespace UniGetUI.Interface
         {
             try
             {
-                foreach (var path in Directory.EnumerateFiles(CoreData.WingetUIDataDirectory))
+                foreach (var path in Directory.EnumerateFiles(CoreData.UniGetUIDataDirectory))
                 {
                     File.Delete(path);
                 }
@@ -405,7 +405,7 @@ namespace UniGetUI.Interface
 
         private void ResetBackupPath_Click(object sender, dynamic e)
         {
-            BackupDirectoryLabel.Text = CoreData.WingetUI_DefaultBackupDirectory;
+            BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
             Tools.SetSettings("ChangeBackupOutputDirectory", false);
             ResetBackupDirectory.IsEnabled = false;
         }
@@ -432,7 +432,7 @@ namespace UniGetUI.Interface
         {
             string directory = Tools.GetSettingsValue("ChangeBackupOutputDirectory");
             if (directory == "")
-                directory = CoreData.WingetUI_DefaultBackupDirectory;
+                directory = CoreData.UniGetUI_DefaultBackupDirectory;
 
             directory = directory.Replace("/", "\\");
 
@@ -474,7 +474,7 @@ namespace UniGetUI.Interface
         {
             try
             {
-                Directory.Delete(CoreData.WingetUICacheDirectory_Icons, true);
+                Directory.Delete(CoreData.UniGetUICacheDirectory_Icons, true);
             }
             catch (Exception ex)
             {

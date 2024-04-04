@@ -17,15 +17,15 @@ namespace UniGetUI.Core.Data
     public static class LanguageData
     {
         public static string TranslatorsJSON = File.ReadAllText(
-            Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Data", "Translators.json")
+            Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "Translators.json")
         );
 
         public static Dictionary<string, string> LanguageList = (JsonObject.Parse(
-            File.ReadAllText(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Data", "LanguagesReference.json"))
+            File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "LanguagesReference.json"))
         ) as JsonObject).ToDictionary(x => x.Key, x => x.Value.ToString());
 
         public static Dictionary<string, string> TranslatedPercentages = (JsonObject.Parse(
-            File.ReadAllText(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Data", "TranslatedPercentages.json"))
+            File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "TranslatedPercentages.json"))
         ) as JsonObject).ToDictionary(x => x.Key, x => x.Value.ToString());
     }
 
@@ -65,7 +65,7 @@ namespace UniGetUI.Core.Data
             try
             {
                 Dictionary<string, string> LangDict = new();
-                string LangFileToLoad = Path.Join(CoreData.WingetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
+                string LangFileToLoad = Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
                 AppTools.Log(LangFileToLoad);
 
                 if (!File.Exists(LangFileToLoad) || AppTools.GetSettings_Static("DisableLangAutoUpdater"))
@@ -75,7 +75,7 @@ namespace UniGetUI.Core.Data
 
                 if (ForceBundled)
                 {
-                    LangFileToLoad = Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
+                    LangFileToLoad = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
                     AppTools.Log(LangFileToLoad);
                 }
 
@@ -103,10 +103,10 @@ namespace UniGetUI.Core.Data
                 HttpClient client = new();
                 string fileContents = await client.GetStringAsync(NewFile);
 
-                if (!Directory.Exists(CoreData.WingetUICacheDirectory_Lang))
-                    Directory.CreateDirectory(CoreData.WingetUICacheDirectory_Lang);
+                if (!Directory.Exists(CoreData.UniGetUICacheDirectory_Lang))
+                    Directory.CreateDirectory(CoreData.UniGetUICacheDirectory_Lang);
 
-                File.WriteAllText(Path.Join(CoreData.WingetUICacheDirectory_Lang, "lang_" + LangKey + ".json"), fileContents);
+                File.WriteAllText(Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json"), fileContents);
 
                 AppTools.Log("Lang files were updated successfully");
             }

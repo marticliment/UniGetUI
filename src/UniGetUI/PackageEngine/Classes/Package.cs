@@ -666,7 +666,7 @@ namespace UniGetUI.PackageEngine.Classes
         private FileInfo GetPackageOptionsFile()
         {
             var optionsFileName = Package.Manager.Name + "." + Package.Id + ".json";
-            return new FileInfo(Path.Join(CoreData.WingetUIInstallationOptionsDirectory, optionsFileName));
+            return new FileInfo(Path.Join(CoreData.UniGetUIInstallationOptionsDirectory, optionsFileName));
         }
 
         /// <summary>

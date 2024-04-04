@@ -24,10 +24,10 @@ namespace UniGetUI.Interface.Pages.AboutPages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AboutWingetUI : Page
+    public sealed partial class AboutUniGetUI : Page
     {
         AppTools Tools = AppTools.Instance;
-        public AboutWingetUI()
+        public AboutUniGetUI()
         {
             this.InitializeComponent();
             VersionText.Text = Tools.Translate("You have installed WingetUI Version {0}").Replace("{0}", CoreData.VersionName);

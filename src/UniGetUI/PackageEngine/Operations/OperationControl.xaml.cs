@@ -39,7 +39,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         private string __button_text;
         private string __line_info_text = "Please wait...";
-        private Uri __icon_source = new("ms-appx://wingetui/resources/package_color.png");
+        private Uri __icon_source = new("ms-appx:///Assets/Images/package_color.png");
         private string __operation_description = "$Package Install";
         private SolidColorBrush? __progressbar_color = null;
         private OperationStatus __status = OperationStatus.Pending;

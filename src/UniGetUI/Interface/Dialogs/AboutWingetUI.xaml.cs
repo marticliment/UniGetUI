@@ -17,13 +17,13 @@ namespace UniGetUI.Interface
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
 
-    public sealed partial class AboutWingetUI : Page
+    public sealed partial class AboutUniGetUI : Page
     {
 
         AppTools Tools = AppTools.Instance;
 
         int previousSelectedIndex = 0;
-        public AboutWingetUI()
+        public AboutUniGetUI()
         {
             InitializeComponent();
         }
@@ -37,7 +37,7 @@ namespace UniGetUI.Interface
             switch (currentSelectedIndex)
             {
                 case 0:
-                    pageType = typeof(Pages.AboutPages.AboutWingetUI);
+                    pageType = typeof(Pages.AboutPages.AboutUniGetUI);
                     break;
                 case 1:
                     pageType = typeof(ThirdPartyLicenses);

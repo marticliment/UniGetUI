@@ -56,7 +56,7 @@ namespace UniGetUI.Interface.Pages
         {
             if (LogType == LogType.WingetUILog)
             {
-                SetText(CoreData.WingetUILog);
+                SetText(CoreData.UniGetUILog);
             }
             else if (LogType == LogType.ManagerLogs)
             {

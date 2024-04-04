@@ -37,7 +37,7 @@
                             <BitmapImage DecodePixelHeight="16"  UriSource="ms-appx:///Assets/Images/icon.png"/>
                         </Image.Source>
                     </Image>
-                    <widgets:TranslatedTextBlock x:Name="AppTitle" Text="WingetUI" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="12"/>
+                    <widgets:TranslatedTextBlock x:Name="AppTitle" Text="UniGetUI" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="12"/>
                 </StackPanel>
             </Border>
             <InfoBar Name="UpdatesBanner" x:FieldModifier="public" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsOpen="False" Visibility="{x:Bind UpdatesBanner.IsOpen, Mode=OneWay}" Margin="0,0,0,4" CornerRadius="0" BorderThickness="0,1,0,1"/>
@@ -87,7 +87,7 @@
                     <Grid>
                     <TextBlock Text="UniGetUI" VerticalAlignment="Center" FontWeight="ExtraBlack" 
                         HorizontalAlignment="Right" HorizontalTextAlignment="Right" Padding="0,0,0,10"
-                        FontFamily="Segoe UI Variable Display" FontSize="90" Name="WingetUITitle"/>
+                        FontFamily="Segoe UI Variable Display" FontSize="90" Name="UniGetUITitle"/>
                         <widgets:TranslatedTextBlock Text="Formerly known as WingetUI" VerticalAlignment="Bottom"
                         HorizontalAlignment="Center"
                         FontFamily="Segoe UI Variable Text" FontSize="20" />

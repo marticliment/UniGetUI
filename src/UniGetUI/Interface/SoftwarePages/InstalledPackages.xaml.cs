@@ -335,7 +335,7 @@ namespace UniGetUI.Interface
 
                 var dirName = Tools.GetSettingsValue("ChangeBackupOutputDirectory");
                 if (dirName == "")
-                    dirName = CoreData.WingetUI_DefaultBackupDirectory;
+                    dirName = CoreData.UniGetUI_DefaultBackupDirectory;
 
                 if(!Directory.Exists(dirName))
                     Directory.CreateDirectory(dirName);

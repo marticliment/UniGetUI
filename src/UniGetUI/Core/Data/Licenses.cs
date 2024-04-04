@@ -6,7 +6,7 @@ namespace UniGetUI.Core.Data
     public static class LicenseData
     {
         public static Dictionary<string, string> LicenseNames = new() {
-            {"WingetUI",                "LGPL v2.1" },
+            {"UniGetUI",                "MIT" },
 
             // C# Libraries
             {"Pickers",                 "MIT"},
@@ -35,7 +35,7 @@ namespace UniGetUI.Core.Data
         };
 
         public static Dictionary<string, Uri> LicenseURLs = new(){
-            {"WingetUI",                new Uri("https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html")},
+            {"UniGetUI",                new Uri("https://github.com/marticliment/WingetUI/blob/main/LICENSE")},
                                        
             // C# Libraries            
             {"Pickers",                 new Uri("https://github.com/PavlikBender/Pickers/blob/master/LICENSE")},
@@ -64,7 +64,7 @@ namespace UniGetUI.Core.Data
         };
 
         public static Dictionary<string, Uri> HomepageUrls = new(){
-            {"WingetUI",                new Uri("https://marticliment.com/wingetui")},
+            {"UniGetUI",                new Uri("https://marticliment.com/unigetui")},
             
             // C# Libraries
             {"Pickers",                 new Uri("https://github.com/PavlikBender/Pickers/")},

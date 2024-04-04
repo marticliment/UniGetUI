@@ -103,7 +103,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <widgets:TranslatedTextBlock  VerticalAlignment="Center" Grid.Column="0" Text="This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." WrappingMode="WrapWholeWords"/>
-                                    <HyperlinkButton Grid.Column="1" NavigateUri="https://marticliment.com/wingetui/help/icons-and-screenshots/#about-icons" VerticalAlignment="Stretch">
+                                    <HyperlinkButton Grid.Column="1" NavigateUri="https://marticliment.com/unigetui/help/icons-and-screenshots/#about-icons" VerticalAlignment="Stretch">
                                         <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="Become a contributor"/>
                                     </HyperlinkButton>
                                 </Grid>
@@ -116,7 +116,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <widgets:TranslatedTextBlock Grid.Column="0" Text="This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." WrappingMode="WrapWholeWords"/>
-                        <HyperlinkButton Grid.Column="1" NavigateUri="https://marticliment.com/wingetui/help/icons-and-screenshots/#about-icons" VerticalAlignment="Stretch">
+                        <HyperlinkButton Grid.Column="1" NavigateUri="https://marticliment.com/unigetui/help/icons-and-screenshots/#about-icons" VerticalAlignment="Stretch">
                             <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="Become a contributor"/>
                         </HyperlinkButton>
                     </Grid>

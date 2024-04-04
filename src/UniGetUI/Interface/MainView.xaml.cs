@@ -39,7 +39,7 @@ namespace UniGetUI.Interface
         public StackPanel OperationStackPanel;
         private Dictionary<Page, NavButton> PageButtonReference = new();
 
-        private AboutWingetUI AboutPage;
+        private AboutUniGetUI AboutPage;
         private IgnoredUpdatesManager IgnoredUpdatesPage;
 
         public MainView()
@@ -52,7 +52,7 @@ namespace UniGetUI.Interface
             DiscoverPage = new DiscoverPackagesPage();
             UpdatesPage = new SoftwareUpdatesPage();
             InstalledPage = new InstalledPackagesPage();
-            AboutPage = new AboutWingetUI();
+            AboutPage = new AboutUniGetUI();
             BundlesPage = new PackageBundlePage();
             IgnoredUpdatesPage = new IgnoredUpdatesManager();
 
@@ -419,7 +419,7 @@ namespace UniGetUI.Interface
             NavigateToPage(new LogPage(LogType.ManagerLogs));
         }
 
-        public void WingetUILogs_Click(object sender, RoutedEventArgs e)
+        public void UniGetUILogs_Click(object sender, RoutedEventArgs e)
         {
             NavigateToPage(new LogPage(LogType.WingetUILog));
         }
@@ -436,7 +436,7 @@ namespace UniGetUI.Interface
             NavigateToPage(HelpPage);
         }
 
-        private void QuitWingetUI_Click(object sender, RoutedEventArgs e)
+        private void QuitUniGetUI_Click(object sender, RoutedEventArgs e)
         {
             Tools.App.DisposeAndQuit();
         }

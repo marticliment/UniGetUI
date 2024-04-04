@@ -533,7 +533,7 @@ namespace UniGetUI.PackageEngine.Managers
             List<string> output = new();
             ProcessStartInfo startInfo = new()
             {
-                FileName = Path.Join(CoreData.WingetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_x64", "winget.exe"),
+                FileName = Path.Join(CoreData.UniGetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_x64", "winget.exe"),
                 Arguments = Properties.ExecutableCallArgs + " show --id " + package.Id + " --exact --disable-interactivity --accept-source-agreements --source " + package.Source.Name,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,

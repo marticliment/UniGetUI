@@ -8,7 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:interface="using:UniGetUI.Interface"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    xmlns:engine="using:UniGetUI.PackageEngine"
     mc:Ignorable="d"
     MinHeight="200"
     MinWidth="200"
@@ -18,14 +17,14 @@
         <widgets:BetterMenu x:Name="MoreNavButtonMenu" Placement="Right">
             <widgets:BetterMenuItem Text="Help" IconName="help" Name="HelpMenu" Click="HelpMenu_Click" />
             <MenuFlyoutSeparator Height="5"/>
-            <widgets:BetterMenuItem Text="WingetUI log" IconName="buggy" Name="WingetUILogs" Click="WingetUILogs_Click" />
+            <widgets:BetterMenuItem Text="WingetUI log" IconName="buggy" Name="WingetUILogs" Click="UniGetUILogs_Click" />
             <widgets:BetterMenuItem Text="Package Manager logs" IconName="console" Name="ManagerLogsMenu" Click="ManagerLogsMenu_Click" />
             <widgets:BetterMenuItem Text="Operation history" IconName="history" Name="OperationHistoryMenu" Click="OperationHistoryMenu_Click" />
             <MenuFlyoutSeparator Height="5"/>
             <widgets:BetterMenuItem x:Name="VersionMenuItem" IconName="info" IsEnabled="False" />
             <widgets:BetterMenuItem Text="Release notes" IconName="megaphone" Name="ReleaseNotesMenu" Click="ReleaseNotesMenu_Click" />
             <MenuFlyoutSeparator Height="5"/>
-            <widgets:BetterMenuItem Text="Quit WingetUI" IconName="menu_close" Name="QuitWingetUI" Click="QuitWingetUI_Click" />
+            <widgets:BetterMenuItem Text="Quit WingetUI" IconName="menu_close" Name="QuitWingetUI" Click="QuitUniGetUI_Click" />
         </widgets:BetterMenu>
     </UserControl.Resources>
 

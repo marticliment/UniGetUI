@@ -36,7 +36,7 @@ namespace UniGetUI
         public Interface.SettingsInterface settings;
         public MainWindow MainWindow;
 
-        private const string WebViewFolder = "WingetUI\\WebView";
+        private const string WebViewFolder = "UniGetUI\\WebView";
         private readonly string _webViewPath = Path.Join(Path.GetTempPath(), WebViewFolder);
         private BackgroundApiRunner BackgroundApi = new BackgroundApiRunner();
 
@@ -100,7 +100,7 @@ namespace UniGetUI
                     };
                     button.Click += (sender, args) =>
                     {
-                        MainWindow.NavigationPage.WingetUILogs_Click(sender, args);
+                        MainWindow.NavigationPage.UniGetUILogs_Click(sender, args);
                     };
                     MainWindow.ErrorBanner.ActionButton = button;
                     e.Handled = true;
@@ -192,7 +192,7 @@ namespace UniGetUI
                 InitializePackageManagers();
 
                 // Run other initializations asynchronously
-                AppTools.Instance.UpdateWingetUIIfPossible();
+                AppTools.Instance.UpdateUniGetUIIfPossible();
                 _ = CoreData.LoadIconAndScreenshotsDatabase();
                 if(!AppTools.Instance.GetSettings("DisableApi"))
                     _ = BackgroundApi.Start();

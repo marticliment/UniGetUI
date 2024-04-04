@@ -32,7 +32,7 @@
             <StackPanel x:Name="MainLayout" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Orientation="Vertical" Spacing="8" Margin="0,0,0,20">
                 <widgets:Announcer
                     x:Name="SettingsAnnouncer"
-                    Url="https://marticliment.com/resources/annoucements/wingetui"
+                    Url="https://marticliment.com/resources/annoucements/unigetui"
                     />
                 <widgets:TranslatedTextBlock FontSize="40" FontWeight="Bold" WrappingMode="NoWrap" Text="WingetUI Settings" Suffix="                                                          ." HorizontalAlignment="Stretch"/>
                 <widgets:SettingsEntry
@@ -276,7 +276,7 @@
                             Text="Use a custom icon and screenshot database URL"
                             Placeholder="Leave empty for default"
                             SettingName="IconDataBaseURL"
-                            HelpUrl="https://www.marticliment.com/wingetui/help/icons-and-screenshots#custom-source"
+                            HelpUrl="https://www.marticliment.com/unigetui/help/icons-and-screenshots#custom-source"
                             ValueChanged="TextboxCard_ValueChanged"
                             />
                     </Toolkit:SettingsExpander.Items>

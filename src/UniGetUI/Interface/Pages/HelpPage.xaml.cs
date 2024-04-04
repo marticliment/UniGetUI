@@ -39,7 +39,7 @@ namespace UniGetUI.Interface.Dialogs
         {
             await WebView.EnsureCoreWebView2Async();
             Initialized = true;
-            WebView.Source = new Uri("https://marticliment.com/wingetui/help");
+            WebView.Source = new Uri("https://marticliment.com/unigetui/help");
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -59,7 +59,7 @@ namespace UniGetUI.Interface.Dialogs
         {
 
             if (Initialized)
-                WebView.Source = new Uri("https://marticliment.com/wingetui/help");
+                WebView.Source = new Uri("https://marticliment.com/unigetui/help");
         }
 
         private void ReloadButton_Click(object sender, RoutedEventArgs e)

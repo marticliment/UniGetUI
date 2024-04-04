@@ -31,7 +31,7 @@ namespace UniGetUI.Core.Data
         }
         public static bool IsDaemon = false;
 
-        public static string WingetUILog = "";
+        public static string UniGetUILog = "";
         public static string ManagerLogs = "";
 
 
@@ -39,17 +39,17 @@ namespace UniGetUI.Core.Data
         public static int VolatileNotificationIdCounter { get { return __volatile_notification_id_counter++; } }
         public static int UpdatesAvailableNotificationId = 1234;
 
-        public static string WingetUIExecutableDirectory = Directory.GetParent(Environment.ProcessPath).FullName;
-        public static string WingetUIExecutableFile = Environment.ProcessPath;
-        public static string GSudoPath = Path.Join(WingetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
+        public static string UniGetUIExecutableDirectory = Directory.GetParent(Environment.ProcessPath).FullName;
+        public static string UniGetUIExecutableFile = Environment.ProcessPath;
+        public static string GSudoPath = Path.Join(UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
 
-        public static string WingetUIDataDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
-        public static string WingetUIInstallationOptionsDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui", "InstallationOptions");
-        public static string WingetUICacheDirectory_Data = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedData");
-        public static string WingetUICacheDirectory_Icons = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedIcons");
-        public static string WingetUICacheDirectory_Lang = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedLangFiles");
+        public static string UniGetUIDataDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
+        public static string UniGetUIInstallationOptionsDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui", "InstallationOptions");
+        public static string UniGetUICacheDirectory_Data = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedData");
+        public static string UniGetUICacheDirectory_Icons = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedIcons");
+        public static string UniGetUICacheDirectory_Lang = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedLangFiles");
 
-        public static string WingetUI_DefaultBackupDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WingetUI");
+        public static string UniGetUI_DefaultBackupDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WingetUI");
 
         public static Dictionary<string, IconScreenshotDatabase_v2.PackageIconAndScreenshots> IconDatabaseData = new();
 
@@ -75,7 +75,7 @@ namespace UniGetUI.Core.Data
 
         public static async Task LoadIconAndScreenshotsDatabase()
         {
-            string IconsAndScreenshotsFile = Path.Join(WingetUICacheDirectory_Data, "Icon Database.json");
+            string IconsAndScreenshotsFile = Path.Join(UniGetUICacheDirectory_Data, "Icon Database.json");
 
             try
             {

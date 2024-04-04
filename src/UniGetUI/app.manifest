@@ -3,7 +3,7 @@
   <assemblyIdentity 
 	  type="win32"
 	  version= "3.0.1.0"
-	  name="WingetUI"
+	  name="UniGetUI"
 	  />
 
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">

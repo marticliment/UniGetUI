@@ -64,10 +64,10 @@ namespace UniGetUI.Interface
             ContentRoot = __content_root;
             ApplyTheme();
 
-            AppWindow.SetIcon(Path.Join(CoreData.WingetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
+            AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
             if (Tools.IsAdministrator())
             {
-                Title = "WingetUI " + Tools.Translate("[RAN AS ADMINISTRATOR]");
+                Title = "UniGetUI " + Tools.Translate("[RAN AS ADMINISTRATOR]");
                 AppTitle.Text = Title;
             }
 
@@ -162,18 +162,18 @@ namespace UniGetUI.Interface
             XamlUICommand DiscoverPackages = new();
             XamlUICommand AvailableUpdates = new();
             XamlUICommand InstalledPackages = new();
-            XamlUICommand AboutWingetUI = new();
-            XamlUICommand ShowWingetUI = new();
-            XamlUICommand QuitWingetUI = new();
+            XamlUICommand AboutUniGetUI = new();
+            XamlUICommand ShowUniGetUI = new();
+            XamlUICommand QuitUniGetUI = new();
 
             Dictionary<XamlUICommand, string> Labels = new()
             {
                 { DiscoverPackages, "Discover Packages" },
                 { AvailableUpdates, "Available Updates" },
                 { InstalledPackages, "Installed Packages" },
-                { AboutWingetUI, "WingetUI Version {0}" },
-                { ShowWingetUI, "Show WingetUI" },
-                { QuitWingetUI, "Quit" },
+                { AboutUniGetUI, "WingetUI Version {0}" },
+                { ShowUniGetUI, "Show WingetUI" },
+                { QuitUniGetUI, "Quit" },
             };
 
             foreach (KeyValuePair<XamlUICommand, string> item in Labels)
@@ -186,9 +186,9 @@ namespace UniGetUI.Interface
                 { DiscoverPackages,  "\uF6FA"},
                 { AvailableUpdates,  "\uE977"},
                 { InstalledPackages,  "\uE895"},
-                { AboutWingetUI,  "\uE946"},
-                { ShowWingetUI,  "\uE8A7"},
-                { QuitWingetUI,  "\uE711"},
+                { AboutUniGetUI,  "\uE946"},
+                { ShowUniGetUI,  "\uE8A7"},
+                { QuitUniGetUI,  "\uE711"},
             };
 
             foreach (KeyValuePair<XamlUICommand, string> item in Icons)
@@ -199,20 +199,20 @@ namespace UniGetUI.Interface
             DiscoverPackages.ExecuteRequested += (s, e) => { NavigationPage.DiscoverNavButton.ForceClick(); Activate(); };
             AvailableUpdates.ExecuteRequested += (s, e) => { NavigationPage.UpdatesNavButton.ForceClick(); Activate(); };
             InstalledPackages.ExecuteRequested += (s, e) => { NavigationPage.InstalledNavButton.ForceClick(); Activate(); };
-            AboutWingetUI.Label = Tools.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
-            ShowWingetUI.ExecuteRequested += (s, e) => { Activate(); };
-            QuitWingetUI.ExecuteRequested += (s, e) => { Tools.App.DisposeAndQuit(); };
+            AboutUniGetUI.Label = Tools.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
+            ShowUniGetUI.ExecuteRequested += (s, e) => { Activate(); };
+            QuitUniGetUI.ExecuteRequested += (s, e) => { Tools.App.DisposeAndQuit(); };
 
             TrayMenu.Items.Add(new MenuFlyoutItem() { Command = DiscoverPackages });
             TrayMenu.Items.Add(new MenuFlyoutItem() { Command = AvailableUpdates });
             TrayMenu.Items.Add(new MenuFlyoutItem() { Command = InstalledPackages });
             TrayMenu.Items.Add(new MenuFlyoutSeparator());
-            MenuFlyoutItem _about = new() { Command = AboutWingetUI };
+            MenuFlyoutItem _about = new() { Command = AboutUniGetUI };
             _about.IsEnabled = false;
             TrayMenu.Items.Add(_about);
             TrayMenu.Items.Add(new MenuFlyoutSeparator());
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = ShowWingetUI });
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = QuitWingetUI });
+            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = ShowUniGetUI });
+            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = QuitUniGetUI });
 
 
             TrayMenu.AreOpenCloseAnimationsEnabled = false;
@@ -395,7 +395,7 @@ namespace UniGetUI.Interface
             dataTransferManager.DataRequested += (sender, args) =>
             {
                 DataRequest dataPackage = args.Request;
-                Uri ShareUrl = new("https://marticliment.com/wingetui/share?pid=" + System.Web.HttpUtility.UrlEncode(package.Id) + "&pname=" + System.Web.HttpUtility.UrlEncode(package.Name) + "&psource=" + System.Web.HttpUtility.UrlEncode(package.Source.ToString()));
+                Uri ShareUrl = new("https://marticliment.com/unigetui/share?pid=" + System.Web.HttpUtility.UrlEncode(package.Id) + "&pname=" + System.Web.HttpUtility.UrlEncode(package.Name) + "&psource=" + System.Web.HttpUtility.UrlEncode(package.Source.ToString()));
                 dataPackage.Data.SetWebLink(ShareUrl);
                 dataPackage.Data.Properties.Title = "Sharing " + package.Name;
                 dataPackage.Data.Properties.ApplicationName = "WingetUI";
