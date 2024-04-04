@@ -1,10 +1,5 @@
 /.vscode/
 src/.vscode/
-src/UniGetUI-old-project/__pycache__
-src/UniGetUI-old-project/lang/__pycache__/*
-src/UniGetUI-old-project/build/
-src/UniGetUI-old-project/dist/
-src/UniGetUI-old-project/winget-cli.1.2.0/
 "UniGetUI Store.exe"
 UniGetUI Store Installer.exe
 UniGetUI Installer.exe
@@ -38,6 +33,15 @@ src/UniGetUI/obj
 src/.vs
 src/.vscode
 new-names.docx
+
+
+src/WindowsPackageManager.Interop/bin
+src/WindowsPackageManager.Interop/packages
+src/WindowsPackageManager.Interop/obj
+
+src/UniGetUI/bin
+src/UniGetUI/packages
+src/UniGetUI/obj
 
 src/UniGetUI/choco-cli/logs/choco.summary.log
 src/UniGetUI/choco-cli/logs/chocolatey.log
