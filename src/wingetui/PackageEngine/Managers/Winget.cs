@@ -278,7 +278,7 @@ namespace ModernWindow.PackageEngine.Managers
                 // Check if source is android
                 bool AndroidValid = true;
                 foreach (char c in id)
-                    if (!"abcdefghijklmnopqrstuvwxyz.…".Contains(c))
+                    if (!"abcdefghijklmnopqrstuvwxyz.".Contains(c))
                     {
                         AndroidValid = false;
                         break;
@@ -302,6 +302,7 @@ namespace ModernWindow.PackageEngine.Managers
                 if (id.Count(x => x == '_') == 1 && (id.Split('_')[^1].Length == 14 | id.Split('_')[^1].Length == 13))
                     return MicrosoftStoreSource;
 
+                // Otherwise, Source is localpc
                 return LocalPcSource;
             }
             catch (Exception ex)
@@ -361,12 +362,7 @@ namespace ModernWindow.PackageEngine.Managers
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
             List<string> parameters = new() { Properties.UninstallVerb };
-            if (!package.Id.Contains("…"))
-                parameters.AddRange(new string[] { "--id", package.Id, "--exact" });
-            else if (!package.Name.Contains("…"))
-                parameters.AddRange(new string[] { "--name", "\"" + package.Name + "\"", "--exact" });
-            else
-                parameters.AddRange(new string[] { "--id", package.Id.Replace("…", "") });
+            parameters.AddRange(new string[] { "--id", package.Id, "--exact" });
 
             parameters.Add("--accept-source-agreements");
 
