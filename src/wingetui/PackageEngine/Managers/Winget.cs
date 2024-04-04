@@ -464,22 +464,82 @@ namespace ModernWindow.PackageEngine.Managers
             else if (package.Source.Name == "msstore")
                 details.ManifestUrl = new Uri("https://apps.microsoft.com/detail/" + package.Id);
 
-            // Get the output for the best matching locale
-            Process process = new();
-            string packageIdentifier;
-            if (!package.Id.Contains("…"))
-                packageIdentifier = "--id " + package.Id + " --exact";
-            else if (!package.Name.Contains("…"))
-                packageIdentifier = "--name " + package.Id + " --exact";
-            else
-                packageIdentifier = "--id " + package.Id;
+            // Find the native package for the given Package object
+            var Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
+            if (Catalog == null)
+            {
+                AppTools.Log("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+                return details;
+            }
 
+            // Connect to catalog
+            Catalog.AcceptSourceAgreements = true;
+            var ConnectResult = await Task.Run(() => Catalog.Connect());
+            if(ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
+            {
+                AppTools.Log("Failed to connect to catalog " + package.Source.Name);
+                return details;
+            }
+
+            // Match only the exact same Id
+            var packageMatchFilter = WinGetFactory.CreateFindPackagesOptions();
+            var filters = WinGetFactory.CreatePackageMatchFilter();
+            filters.Field = Deployment.PackageMatchField.Id;
+            filters.Value = package.Id;
+            filters.Option = Deployment.PackageFieldMatchOption.Equals;
+            packageMatchFilter.Filters.Add(filters);
+            packageMatchFilter.ResultLimit = 1;
+            var SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
+
+            if(SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
+            {
+                AppTools.Log("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                return details;
+            }
+
+            // Get the Native Package
+            var NativePackage = SearchResult.Result.Matches.First().CatalogPackage;
+
+            // Extract data from NativeDetails
+            var NativeDetails = NativePackage.DefaultInstallVersion.GetCatalogPackageMetadata(Windows.System.UserProfile.GlobalizationPreferences.Languages[0]);
+
+            if(NativeDetails.Author != "")
+                details.Author = NativeDetails.Author;
+
+            if (NativeDetails.Description != "")
+                details.Description = NativeDetails.Description;
+
+            if (NativeDetails.PackageUrl != "")
+                details.HomepageUrl = new Uri(NativeDetails.PackageUrl);
+
+            if (NativeDetails.License != "")
+                details.License = NativeDetails.License;
+
+            if (NativeDetails.LicenseUrl != "")
+                details.LicenseUrl = new Uri(NativeDetails.LicenseUrl);
+
+            if (NativeDetails.Publisher != "")
+                details.Publisher = NativeDetails.Publisher;
+
+            if (NativeDetails.ReleaseNotes != "")
+                details.ReleaseNotes = NativeDetails.ReleaseNotes;
+
+            if (NativeDetails.ReleaseNotesUrl != "")
+                details.ReleaseNotesUrl = new Uri(NativeDetails.ReleaseNotesUrl);
+
+            if (NativeDetails.Tags != null)
+                details.Tags = NativeDetails.Tags.ToArray();
+
+            Debug.WriteLine("Starting manual fetch");
+            
+            // There is no way yet to retrieve installer URLs right now so this part will be console-parsed.
+            // TODO: Replace this code with native code when available on the COM api
+            Process process = new();
             List<string> output = new();
-            bool LocaleFound = true;
             ProcessStartInfo startInfo = new()
             {
                 FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " show " + packageIdentifier + " --disable-interactivity --accept-source-agreements --locale " + System.Globalization.CultureInfo.CurrentCulture.ToString(),
+                Arguments = Properties.ExecutableCallArgs + " show --id " + package.Id + " --exact --disable-interactivity --accept-source-agreements --source " + package.Source.Name,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
@@ -490,127 +550,20 @@ namespace ModernWindow.PackageEngine.Managers
             process.StartInfo = startInfo;
             process.Start();
 
+            // Retrieve the output
             string _line;
             while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
                 if (_line.Trim() != "")
-                {
                     output.Add(_line);
-                    AppTools.Log(_line);
-                    if (_line.Contains("The value provided for the `locale` argument is invalid") || _line.Contains("No applicable installer found; see logs for more details."))
-                    {
-                        LocaleFound = false;
-                        break;
-                    }
-                }
-
-            // Load fallback english locale
-            if (!LocaleFound)
-            {
-                output.Clear();
-                AppTools.Log("Winget could not found culture data for package Id=" + package.Id + " and Culture=" + System.Globalization.CultureInfo.CurrentCulture.ToString() + ". Trying to get data for en-US");
-                process = new Process();
-                LocaleFound = true;
-                startInfo = new()
-                {
-                    FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " show " + packageIdentifier + " --disable-interactivity --accept-source-agreements --locale en-US",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                };
-                process.StartInfo = startInfo;
-                process.Start();
-
-                while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
-                    if (_line.Trim() != "")
-                    {
-                        output.Add(_line);
-                        AppTools.Log(_line);
-                        if (_line.Contains("The value provided for the `locale` argument is invalid") || _line.Contains("No applicable installer found; see logs for more details."))
-                        {
-                            LocaleFound = false;
-                            break;
-                        }
-                    }
-            }
-
-            // Load default locale
-            if (!LocaleFound)
-            {
-                output.Clear();
-                AppTools.Log("Winget could not found culture data for package Id=" + package.Id + " and Culture=en-US. Loading default");
-                LocaleFound = true;
-                process = new Process();
-                startInfo = new()
-                {
-                    FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " show " + packageIdentifier + " --disable-interactivity --accept-source-agreements",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                };
-                process.StartInfo = startInfo;
-                process.Start();
-
-                while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
-                    if (_line.Trim() != "")
-                    {
-                        output.Add(_line);
-                        AppTools.Log(_line);
-                    }
-            }
 
             // Parse the output
-            bool IsLoadingDescription = false;
-            bool IsLoadingReleaseNotes = false;
-            bool IsLoadingTags = false;
             foreach (string __line in output)
             {
-                try
-                {
-                    string line = __line.TrimEnd();
-                    if (line == "")
-                        continue;
-
-                    // Check if a multiline field is being loaded
-                    if (line.StartsWith(" ") && IsLoadingDescription)
-                        details.Description += "\n" + line.Trim();
-                    else if (line.StartsWith(" ") && IsLoadingReleaseNotes)
-                        details.ReleaseNotes += "\n" + line.Trim();
-                    else if (line.StartsWith(" ") && IsLoadingTags)
-                        details.Tags = details.Tags.Append(line.Trim()).ToArray();
-
-                    // Stop loading multiline fields
-                    else if (IsLoadingDescription)
-                        IsLoadingDescription = false;
-                    else if (IsLoadingReleaseNotes)
-                        IsLoadingReleaseNotes = false;
-                    else if (IsLoadingTags)
-                        IsLoadingTags = false;
-
-                    // Check for singleline fields
-                    if (line.Contains("Publisher:"))
-                        details.Publisher = line.Split(":")[1].Trim();
-
-                    else if (line.Contains("Author:"))
-                        details.Author = line.Split(":")[1].Trim();
-
-                    else if (line.Contains("Homepage:"))
-                        details.HomepageUrl = new Uri(line.Replace("Homepage:", "").Trim());
-
-                    else if (line.Contains("License:"))
-                        details.License = line.Split(":")[1].Trim();
-
-                    else if (line.Contains("License Url:"))
-                        details.LicenseUrl = new Uri(line.Replace("License Url:", "").Trim());
-
-                    else if (line.Contains("Installer SHA256:"))
+                try 
+                { 
+                    AppTools.Log(__line);
+                    string line = __line.Trim();
+                    if (line.Contains("Installer SHA256:"))
                         details.InstallerHash = line.Split(":")[1].Trim();
 
                     else if (line.Contains("Installer Url:"))
@@ -621,36 +574,19 @@ namespace ModernWindow.PackageEngine.Managers
                     else if (line.Contains("Release Date:"))
                         details.UpdateDate = line.Split(":")[1].Trim();
 
-                    else if (line.Contains("Release Notes Url:"))
-                        details.ReleaseNotesUrl = new Uri(line.Replace("Release Notes Url:", "").Trim());
-
                     else if (line.Contains("Installer Type:"))
                         details.InstallerType = line.Split(":")[1].Trim();
-
-                    else if (line.Contains("Description:"))
-                    {
-                        details.Description = line.Split(":")[1].Trim();
-                        IsLoadingDescription = true;
-                    }
-                    else if (line.Contains("ReleaseNotes"))
-                    {
-                        details.ReleaseNotes = line.Split(":")[1].Trim();
-                        IsLoadingReleaseNotes = true;
-                    }
-                    else if (line.Contains("Tags"))
-                    {
-                        details.Tags = new string[0];
-                        IsLoadingTags = true;
-                    }
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log("Error occurred while parsing line value=\"" + _line + "\"");
+                    AppTools.Log("Error occurred while parsing line value=\"" + __line + "\"");
                     AppTools.Log(e.Message);
                 }
             }
 
+            // NativeDetails.Icons ICONS
             return details;
+            
         }
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()
@@ -658,16 +594,11 @@ namespace ModernWindow.PackageEngine.Managers
             List<ManagerSource> sources = new();
 
             foreach(var catalog in await Task.Run(() => WinGetManager.GetPackageCatalogs().ToArray()))
-            {
-                try
-                {
+                try {
                     sources.Add(new ManagerSource(this, catalog.Info.Name, new Uri(catalog.Info.Argument), updateDate: catalog.Info.LastUpdateTime.ToString()));
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     AppTools.Log(e);
                 }
-            }
 
             return sources.ToArray();
         }
@@ -761,50 +692,42 @@ namespace ModernWindow.PackageEngine.Managers
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
-            string callId = "";
-            if (!package.Id.Contains("…"))
-                callId = "--id " + package.Id + " --exact";
-            else if (!package.Name.Contains("…"))
-                callId = "--name \"" + package.Name + "\" --exact";
-            else
-                callId = "--id " + package.Id;
-
-
-            Process p = new()
+            // Find the native package for the given Package object
+            var Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
+            if(Catalog == null)
             {
-                StartInfo = new ProcessStartInfo()
-                {
-                    FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " show " + callId + " --versions --accept-source-agreements",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
-            };
-
-            p.Start();
-
-            string line;
-            List<string> versions = new();
-            bool DashesPassed = false;
-            string output = "";
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
-                if (!DashesPassed)
-                {
-                    if (line.Contains("---"))
-                        DashesPassed = true;
-                }
-                else
-                    versions.Add(line.Trim());
+                AppTools.Log("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+                return [];
             }
-            output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
-            return versions.ToArray();
+
+            // Connect to catalog
+            Catalog.AcceptSourceAgreements = true;
+            var ConnectResult = await Task.Run(() => Catalog.Connect());
+            if (ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
+            {
+                AppTools.Log("Failed to connect to catalog " + package.Source.Name);
+                return [];
+            }
+
+            // Match only the exact same Id
+            var packageMatchFilter = WinGetFactory.CreateFindPackagesOptions();
+            var filters = WinGetFactory.CreatePackageMatchFilter();
+            filters.Field = Deployment.PackageMatchField.Id;
+            filters.Value = package.Id;
+            filters.Option = Deployment.PackageFieldMatchOption.Equals;
+            packageMatchFilter.Filters.Add(filters);
+            packageMatchFilter.ResultLimit = 1;
+            var SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
+
+            if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
+            {
+                AppTools.Log("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                return [];
+            }
+
+            // Get the Native Package
+            var NativePackage = SearchResult.Result.Matches.First().CatalogPackage;
+            return NativePackage.AvailableVersions.Select(x => x.Version).ToArray();
         }
 
         public override ManagerSource[] GetKnownSources()
