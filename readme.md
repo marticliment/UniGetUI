@@ -47,7 +47,7 @@ winget install SomePythonThings.WingetUIStore
 scoop bucket add extras
 ```
 ```cmd
-scoop install extras/wingetui
+scoop install wingetui
 ```
 
 **Install WingetUI through Chocolatey:**    
