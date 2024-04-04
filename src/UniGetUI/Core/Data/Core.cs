@@ -80,12 +80,20 @@ namespace UniGetUI.Core.Data
         /// <summary>
         /// The directory where package backups will be saved by default.
         /// </summary>
-        public static string UniGetUI_DefaultBackupDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WingetUI");
+        public static string UniGetUI_DefaultBackupDirectory
+        {
+            get
+            {
+                var old_dir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WingetUI");
+                var new_dir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "UniGetUI");
+                return GetNewDataDirectoryOrMoveOld(old_dir, new_dir);
+            }
+        }
 
-        /// <summary>
-        /// The file where the screenshot metadata is stored. If the file does not exist, it will be created automatically.
-        /// </summary>
-        public static string IgnoredUpdatesDatabaseFile
+    /// <summary>
+    /// The file where the screenshot metadata is stored. If the file does not exist, it will be created automatically.
+    /// </summary>
+    public static string IgnoredUpdatesDatabaseFile
         {
             get
             {
