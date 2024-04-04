@@ -513,7 +513,7 @@
                     <ColumnDefinition Width="24"/>
                     <ColumnDefinition Width="*" MinWidth="100"/>
                     <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="*" MaxWidth="100"/>
+                    <ColumnDefinition Width="*" MaxWidth="150"/>
                     <ColumnDefinition Width="24"/>
                     <ColumnDefinition Width="*" MaxWidth="150"/>
                 </Grid.ColumnDefinitions>
@@ -805,7 +805,7 @@
                         <ColumnDefinition Width="24"/>
                         <ColumnDefinition Width="*" MinWidth="100"/>
                         <ColumnDefinition Width="24"/>
-                        <ColumnDefinition Width="*" MaxWidth="100"/>
+                        <ColumnDefinition Width="*" MaxWidth="150"/>
                         <ColumnDefinition Width="24"/>
                         <ColumnDefinition Width="*" MaxWidth="150"/>
                         <ColumnDefinition Width="11"/>
