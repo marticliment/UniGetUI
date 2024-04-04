@@ -362,7 +362,7 @@ namespace ModernWindow.PackageEngine.Managers
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
             List<string> parameters = new() { Properties.UninstallVerb };
-            parameters.AddRange(new string[] { "--id", package.Id, "--exact" });
+            parameters.AddRange(new string[] { "--id", package.Id, "--exact", "--source", package.Source.Name });
 
             parameters.Add("--accept-source-agreements");
 
