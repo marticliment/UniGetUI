@@ -1,4 +1,4 @@
-﻿using UniGetUI.Core;
+using UniGetUI.Core;
 using UniGetUI.PackageEngine.Operations;
 using System;
 using System.Collections.Generic;
@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth.Advertisement;
 
 namespace UniGetUI.PackageEngine.Classes
 {
@@ -56,13 +57,11 @@ namespace UniGetUI.PackageEngine.Classes
                     if (winner == SourcesTask)
                     {
                         ManagerReady = true;
-                        (this as PackageManagerWithSources).Sources = SourcesTask.Result;
                     }
                     else
                     {
                         ManagerReady = true;
                         AppTools.Log(Name + " sources took too long to load, using known sources as default");
-                        (this as PackageManagerWithSources).Sources = (this as PackageManagerWithSources).KnownSources;
                     }
                 }
                 ManagerReady = true;
@@ -357,7 +356,7 @@ namespace UniGetUI.PackageEngine.Classes
         /// Each manager MUST implement this method.
         /// </summary>
         /// <returns></returns>
-        public abstract Task RefreshSources();
+        public abstract Task RefreshPackageIndexes();
 
         /// <summary>
         /// Returns the main source for the manager, even if the manager does not support custom sources.
@@ -369,24 +368,28 @@ namespace UniGetUI.PackageEngine.Classes
 
     public abstract class PackageManagerWithSources : PackageManager
     {
-        public ManagerSource[] Sources { get; set; }
+        public ManagerSourceFactory SourceFactory { get; private set; }
         public ManagerSource[] KnownSources { get; set; }
 
-        public Dictionary<string, ManagerSource> SourceReference = new();
+        public PackageManagerWithSources() : base()
+        {
+            SourceFactory = new(this);
+        }
+
         public virtual async Task<ManagerSource[]> GetSources()
         {
             try
             {
                 ManagerSource[] sources = await GetSources_UnSafe();
-                SourceReference.Clear();
+                SourceFactory.Reset();
                 foreach (ManagerSource source in sources)
-                    SourceReference.Add(source.Name, source);
+                    SourceFactory.AddSource(source);
                 return sources;
             }
             catch (Exception e)
             {
                 AppTools.Log("Error finding sources for manager " + Name + ": \n" + e.ToString());
-                return new ManagerSource[] { };
+                return new ManagerSource[0];
             }
         }
 
@@ -456,7 +459,7 @@ namespace UniGetUI.PackageEngine.Classes
 
         public PackageManager Manager { get; }
         public string Name { get; }
-        public Uri Url { get; }
+        public Uri Url { get; private set; }
         public int? PackageCount { get; }
         public string UpdateDate { get; }
 
@@ -479,12 +482,79 @@ namespace UniGetUI.PackageEngine.Classes
                 return Manager.Name;
         }
 
-        public override bool Equals(object obj)
+        /// <summary>
+        /// Replaces the current URL with the new one. Must be used only when a placeholder URL is used.
+        /// </summary>
+        /// <param name="newUrl"></param>
+        public void ReplaceUrl(Uri newUrl)
         {
-            if (obj is not ManagerSource)
-                return false;
-            else
-                return (obj as ManagerSource).Manager == Manager && (obj as ManagerSource).Name == Name && (obj as ManagerSource).Url == Url;
+            Url = newUrl;
+        }
+    }
+
+    public class ManagerSourceFactory
+    {
+        private PackageManager __manager;
+        private Dictionary<string, ManagerSource> __reference;
+        private Uri __default_uri = new Uri("https://marticliment.com/wingetui/");
+
+        public ManagerSourceFactory(PackageManager manager)
+        {
+            __reference = new();
+            __manager = manager;
+        }
+
+        public void Reset()
+        {
+            __reference.Clear();
+        }
+
+        /// <summary>
+        /// Returns the existing source for the given name, or creates a new one if it does not exist.
+        /// </summary>
+        /// <param name="name">The name of the source</param>
+        /// <returns>A valid ManagerSource</returns>
+        public ManagerSource GetSourceOrDefault(string name)
+        {
+            ManagerSource source;
+            if (__reference.TryGetValue(name, out source))
+            {
+                return source;
+            }
+
+            var new_source = new ManagerSource(__manager, name, __default_uri);
+            __reference.Add(name, new_source);
+            return new_source;
+        }
+
+        /// <summary>
+        /// Returns the existing source for the given name, or null if it does not exist.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public ManagerSource? GetSourceIfExists(string name)
+        {
+            ManagerSource source;
+            if (__reference.TryGetValue(name, out source))
+            {
+                return source;
+            }
+            return null;
+        }
+
+        public void AddSource(ManagerSource source)
+        {
+            if(!__reference.TryAdd(source.Name, source))
+            {
+                var existing_source = __reference[source.Name];
+                if(existing_source.Url == __default_uri)
+                    existing_source.ReplaceUrl(source.Url);
+            }
+        }
+
+        public ManagerSource[] GetAvailableSources()
+        {
+            return __reference.Values.ToArray();
         }
     }
 }

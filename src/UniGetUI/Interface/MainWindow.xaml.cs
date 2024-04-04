@@ -219,6 +219,7 @@ namespace UniGetUI.Interface
 
             TrayIcon = new TaskbarIcon();
             __content_root.Children.Add(TrayIcon);
+            Closed += (s, e) => TrayIcon.Dispose();
             TrayIcon.ContextMenuMode = H.NotifyIcon.ContextMenuMode.PopupMenu;
 
             XamlUICommand ShowHideCommand = new();

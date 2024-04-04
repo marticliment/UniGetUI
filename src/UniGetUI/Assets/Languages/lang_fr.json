@@ -1,7 +1,7 @@
 {
   "(Last checked: {0})" : "(Dernière vérification : {0})",
   "(Number {0} in the queue)" : "(Numéro {0} dans la file d'attente)",
-  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : "Evans Costa, Rémi Guerrero, @W1L7dev, BreatFR",
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : "Evans Costa, Rémi Guerrero, @W1L7dev, BreatFR, @PikPakPik",
   "0 packages found" : "Aucun paquet trouvé",
   "0 updates found" : "Aucune mise à jour trouvée",
   "1 day" : "1 jour",
@@ -579,7 +579,7 @@
   "[RAN AS ADMINISTRATOR]" : "[EXÉCUTÉ EN TANT QU'ADMINISTRATEUR]",
   "buy me a coffee" : "m'offrir un café",
   "extracted" : "extrait",
-  "formerly WingetUI" : null,
+  "formerly WingetUI" : "anciennement WingetUI",
   "homepage" : "page d'accueil",
   "install" : "installer",
   "installation" : "installation",
