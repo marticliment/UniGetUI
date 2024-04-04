@@ -31,7 +31,7 @@ public class Scoop : PackageManagerWithSources
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName = path,
+                    FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " install main/scoop-search",
                     UseShellExecute = true,
                     CreateNoWindow = true
