@@ -17,16 +17,83 @@ namespace UniGetUI.Core.Data
         public static string VersionName =  "3.1.0-beta"; // Do not modify this line, use file scripts/apply_versions.py
         public static double VersionNumber =  3.099; // Do not modify this line, use file scripts/apply_versions.py
 
-        private static string __ignored_updates_database_file = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui", "IgnoredPackageUpdates.json");
+        /// <summary>
+        /// The directory where all the user data is stored. The directory is automatically created if it does not exist.
+        /// </summary>
+        public static string UniGetUIDataDirectory
+        {
+            get
+            {
+                var old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
+                var new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI");
+                return GetNewDataDirectoryOrMoveOld(old_path, new_path);
+            }
+        }
+
+        /// <summary>
+        /// The directory where the installation options are stored. The directory is automatically created if it does not exist.
+        /// </summary>
+        public static string UniGetUIInstallationOptionsDirectory
+        {
+            get => Path.Join(UniGetUIDataDirectory, "InstallationOptions");
+        }
+
+        /// <summary>
+        /// The directory where the metadata cache is stored. The directory is automatically created if it does not exist.
+        /// </summary>
+        public static string UniGetUICacheDirectory_Data
+        {
+            get
+            {
+                var old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedData");
+                var new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI", "CachedMetadata");
+                return GetNewDataDirectoryOrMoveOld(old_path, new_path);
+            }
+        }
+
+        /// <summary>
+        /// The directory where the cached icons and screenshots are saved. The directory is automatically created if it does not exist.
+        /// </summary>
+        public static string UniGetUICacheDirectory_Icons
+        {
+            get
+            {
+                var old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedIcons");
+                var new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI", "CachedMedia");
+                return GetNewDataDirectoryOrMoveOld(old_path, new_path);
+            }
+        }
+
+        /// <summary>
+        /// The directory where the cached language files are stored. The directory is automatically created if it does not exist.
+        /// </summary>
+        public static string UniGetUICacheDirectory_Lang
+        {
+            get
+            {
+                var old_dir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedLangFiles");
+                var new_dir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI", "CachedLanguageFiles");
+                return GetNewDataDirectoryOrMoveOld(old_dir, new_dir);
+            }
+        }
+
+        /// <summary>
+        /// The directory where package backups will be saved by default.
+        /// </summary>
+        public static string UniGetUI_DefaultBackupDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WingetUI");
+
+        /// <summary>
+        /// The file where the screenshot metadata is stored. If the file does not exist, it will be created automatically.
+        /// </summary>
         public static string IgnoredUpdatesDatabaseFile
         {
             get
             {
-                if (!Directory.Exists(Path.GetDirectoryName(__ignored_updates_database_file)))
-                    Directory.CreateDirectory(Path.GetDirectoryName(__ignored_updates_database_file));
-                if (!File.Exists(__ignored_updates_database_file))
-                    File.WriteAllText(__ignored_updates_database_file, "{}");
-                return __ignored_updates_database_file;
+                // Calling the UniGetUIDataDirectory will create the directory if it does not exist
+                var file_path = Path.Join(UniGetUIDataDirectory, "IgnoredPackageUpdates.json");
+                if (!File.Exists(file_path))
+                    File.WriteAllText(file_path, "{}");
+                return file_path;
             }
         }
         public static bool IsDaemon = false;
@@ -36,23 +103,42 @@ namespace UniGetUI.Core.Data
 
 
         private static int __volatile_notification_id_counter = 1235;
-        public static int VolatileNotificationIdCounter { get { return __volatile_notification_id_counter++; } }
+        
+        /// <summary>
+        /// A self-incremented value to generate random notification IDs
+        /// </summary>
+        public static int VolatileNotificationIdCounter { 
+            get => __volatile_notification_id_counter++; 
+        }
+        
+        /// <summary>
+        /// The ID of the notification that is used to inform the user that updates are available
+        /// </summary>
         public static int UpdatesAvailableNotificationId = 1234;
 
+        /// <summary>
+        /// A path pointing to the location where the app is installed
+        /// </summary>
         public static string UniGetUIExecutableDirectory = Directory.GetParent(Environment.ProcessPath).FullName;
+        
+        /// <summary>
+        /// A path pointing to the executable file of the app
+        /// </summary>
         public static string UniGetUIExecutableFile = Environment.ProcessPath;
+        
+        /// <summary>
+        /// A path pointing to the gsudo executable bundled with the app
+        /// </summary>
         public static string GSudoPath = Path.Join(UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
 
-        public static string UniGetUIDataDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
-        public static string UniGetUIInstallationOptionsDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui", "InstallationOptions");
-        public static string UniGetUICacheDirectory_Data = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedData");
-        public static string UniGetUICacheDirectory_Icons = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedIcons");
-        public static string UniGetUICacheDirectory_Lang = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedLangFiles");
-
-        public static string UniGetUI_DefaultBackupDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WingetUI");
-
+        /// <summary>
+        /// The icon and screensho database
+        /// </summary>
         public static Dictionary<string, IconScreenshotDatabase_v2.PackageIconAndScreenshots> IconDatabaseData = new();
 
+        /// <summary>
+        /// Tis class represents the structure of the icon and screenshot database. It is used to deserialize the JSON data.
+        /// </summary>
         public class IconScreenshotDatabase_v2
         {
             public class PackageCount
@@ -73,16 +159,16 @@ namespace UniGetUI.Core.Data
             public Dictionary<string, PackageIconAndScreenshots> icons_and_screenshots { get; set; }
         }
 
+        /// <summary>
+        /// Download the icon and screenshots database to a local file, and load it into memory
+        /// </summary>
+        /// <returns></returns>
         public static async Task LoadIconAndScreenshotsDatabase()
         {
             string IconsAndScreenshotsFile = Path.Join(UniGetUICacheDirectory_Data, "Icon Database.json");
 
             try
             {
-                if (!File.Exists(IconsAndScreenshotsFile))
-                    if (!Directory.Exists(Path.GetDirectoryName(IconsAndScreenshotsFile)))
-                        Directory.CreateDirectory(Path.GetDirectoryName(IconsAndScreenshotsFile));
-
                 Uri DownloadUrl = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/WebBasedData/screenshot-database-v2.json");
                 if (AppTools.GetSettings_Static("IconDataBaseURL"))
                     DownloadUrl = new Uri(AppTools.GetSettingsValue_Static("IconDataBaseURL"));
@@ -121,5 +207,41 @@ namespace UniGetUI.Core.Data
                 AppTools.Log(ex);
             }
         }
+
+        /// <summary>
+        /// This method will return the most appropriate data directory.
+        /// If the new directory exists, it will be used.
+        /// If the new directory does not exist, but the old directory does, it will be moved to the new location, and the new location will be used.
+        /// If none exist, the new directory will be created.
+        /// </summary>
+        /// <param name="old_path">The old/legacy directory</param>
+        /// <param name="new_path">The new directory</param>
+        /// <returns>The path to an existing, valid directory</returns>
+        private static string GetNewDataDirectoryOrMoveOld(string old_path, string new_path)
+        {
+            if (Directory.Exists(new_path))
+                return new_path;
+            else if (Directory.Exists(old_path))
+            {
+                try
+                {
+                    Directory.Move(old_path, new_path);
+                    return new_path;
+                }
+                catch (Exception e)
+                {
+                    AppTools.Log("WARNING: Cannot move old data directory to new location. Directory to move: " + old_path + ". Destination: " + new_path);
+                    AppTools.Log(e);
+                    return old_path;
+                }
+            }
+            else
+            {
+                AppTools.Log("Creating non-existing data directory at: " + new_path);
+                Directory.CreateDirectory(new_path);
+                return new_path;
+            }
+        }
+
     }
 }

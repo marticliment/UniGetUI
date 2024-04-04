@@ -36,11 +36,9 @@ namespace UniGetUI
         public Interface.SettingsInterface settings;
         public MainWindow MainWindow;
 
-        private const string WebViewFolder = "UniGetUI\\WebView";
-        private readonly string _webViewPath = Path.Join(Path.GetTempPath(), WebViewFolder);
         private BackgroundApiRunner BackgroundApi = new BackgroundApiRunner();
 
-        private const int ManagerLoadTimeout = 10000; // 10 seconds timeout for Package Managers initialization
+        private const int ManagerLoadTimeout = 10000; // 10 seconds timeout for Package Manager initialization
 
         public MainApp()
         {
@@ -112,9 +110,10 @@ namespace UniGetUI
         {
             try
             {
-                if (!Directory.Exists(_webViewPath))
-                    Directory.CreateDirectory(_webViewPath);
-                Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", _webViewPath);
+                string WebViewPath = Path.Join(Path.GetTempPath(), "UniGetUI", "WebView");
+                if (!Directory.Exists(WebViewPath))
+                    Directory.CreateDirectory(WebViewPath);
+                Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", WebViewPath);
             }
             catch (Exception e)
             {

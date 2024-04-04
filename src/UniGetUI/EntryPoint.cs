@@ -21,7 +21,7 @@ namespace UniGetUI
             {
                 CoreData.IsDaemon = args.Contains("--daemon");
 
-                if (args.Contains("--uninstall-wingetui"))
+                if (args.Contains("--uninstall-unigetui"))
                     // If the app is being uninstalled, run the cleaner and exit
                     UninstallPreps();
                 else
@@ -84,7 +84,7 @@ namespace UniGetUI
                 AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();
                 ExtendedActivationKind kind = args.Kind;
 
-                AppInstance keyInstance = AppInstance.FindOrRegisterForKey("MartiCliment.WingetUI.NeXT");
+                AppInstance keyInstance = AppInstance.FindOrRegisterForKey("MartiCliment.UniGetUI.MainInterface");
 
                 if (keyInstance.IsCurrent)
                 {

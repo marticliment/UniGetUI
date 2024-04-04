@@ -84,26 +84,11 @@ namespace UniGetUI.Core
             return new string(chars.ToArray());
         }
 
-        public static void EnsureTempDir()
-        {
-            try
-            {
-                if (!Directory.Exists(CoreData.UniGetUIDataDirectory))
-                    Directory.CreateDirectory(CoreData.UniGetUIDataDirectory);
-            }
-            catch (Exception e)
-            {
-                Log("CRITICAL ERROR: CANNOT CREATE TEMP DIR");
-                Log(e);
-            }
-        }
-
         public bool GetSettings(string setting, bool invert = false)
         { return AppTools.GetSettings_Static(setting, invert); }
 
         public static bool GetSettings_Static(string setting, bool invert = false)
         {
-            EnsureTempDir();
             return File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)) ^ invert;
         }
 
@@ -113,7 +98,6 @@ namespace UniGetUI.Core
         public static void SetSettings_Static(string setting, bool value)
         {
             try { 
-                EnsureTempDir();
                 if (value)
                 {
                     if (!File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
@@ -135,7 +119,6 @@ namespace UniGetUI.Core
 
         public static string GetSettingsValue_Static(string setting)
         {
-            EnsureTempDir();
             if (!File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
                 return "";
             return File.ReadAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting));
@@ -147,7 +130,6 @@ namespace UniGetUI.Core
         {
             try
             {
-                EnsureTempDir();
                 File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), value);
             }
             catch (Exception e)
