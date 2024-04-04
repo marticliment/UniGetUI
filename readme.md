@@ -8,6 +8,8 @@
 The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and Windows 11, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/), [Scoop](https://scoop.sh/), [Chocolatey](https://chocolatey.org/), [Pip](https://pypi.org/), [Npm](https://www.npmjs.com/), [.NET Tool](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install) and [PowerShell Gallery](https://www.powershellgallery.com/).
 With this app, you'll be able to easily download, install, update and uninstall any software that's published on the supported package managers — and much more!
 
+**WingetUI** will become **UniGetUI** soon. Please check [this discussion](https://github.com/marticliment/WingetUI/discussions/1900) for more details
+
 Check out the [Supported Package Managers Table](#supported-package-managers) for more details!
 
 **This is WingetUI's official repository. If you are searching for WingetUI's homepage, please refer to [https://www.marticliment.com/wingetui/](https://www.marticliment.com/wingetui/)**
