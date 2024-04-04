@@ -130,7 +130,7 @@ namespace UniGetUI.Core.Data
         {
             if (key == "WingetUI")
             {
-                if (MainLangDict.ContainsKey("formerly WingetUI"))
+                if (MainLangDict.ContainsKey("formerly WingetUI") && MainLangDict["formerly WingetUI"] != "")
                     return "UniGetUI (" + MainLangDict["formerly WingetUI"] + ")";
                 return "UniGetUI (formerly WingetUI)";
             }
