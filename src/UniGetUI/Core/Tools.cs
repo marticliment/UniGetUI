@@ -339,7 +339,7 @@ Crash Traceback:
                     banner.IsClosable = false;
 
                     Uri DownloadUrl = new Uri("https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe");
-                    string InstallerPath = Path.Join(Directory.CreateTempSubdirectory().FullName, "wingetui-updater.exe");
+                    string InstallerPath = Path.Join(Directory.CreateTempSubdirectory().FullName, "unigetui-updater.exe");
 
                     using (HttpClient client = new())
                     {

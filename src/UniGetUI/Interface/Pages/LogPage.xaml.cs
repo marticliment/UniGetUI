@@ -23,7 +23,7 @@ namespace UniGetUI.Interface.Pages
     /// 
     public enum LogType
     {
-        WingetUILog,
+        UniGetUILog,
         ManagerLogs,
         OperationHistory
     }
@@ -31,7 +31,7 @@ namespace UniGetUI.Interface.Pages
     public sealed partial class LogPage : Page
     {
         public LogType LogType;
-        public LogPage(LogType logType = LogType.WingetUILog)
+        public LogPage(LogType logType = LogType.UniGetUILog)
         {
             InitializeComponent();
             LogType = logType;
@@ -54,7 +54,7 @@ namespace UniGetUI.Interface.Pages
 
         public void LoadLog()
         {
-            if (LogType == LogType.WingetUILog)
+            if (LogType == LogType.UniGetUILog)
             {
                 SetText(CoreData.UniGetUILog);
             }

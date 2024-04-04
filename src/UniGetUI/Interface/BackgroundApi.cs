@@ -96,7 +96,7 @@ namespace UniGetUI.Interface
         /// </summary>
         public void BuildShareApi()
         { 
-            // Show package from https://marticliment.com/wingetui/share
+            // Show package from https://marticliment.com/unigetui/share
             Get("/v2/show-package", async (parameters) =>
             {
                 try
@@ -122,7 +122,7 @@ namespace UniGetUI.Interface
             });
 
 
-            // Basic entrypoint to know if WingetUI is running
+            // Basic entrypoint to know if UniGetUI is running
             Get("/is-running", (parameters) =>
             {
                 return "{\"status\": \"success\"}";
@@ -169,7 +169,7 @@ namespace UniGetUI.Interface
                 return packages;
             });
 
-            // Open WingetUI (as it was)
+            // Open UniGetUI (as it was)
             Get("/widgets/v1/open_wingetui", (parameters) =>
             {
                 if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))
@@ -179,7 +179,7 @@ namespace UniGetUI.Interface
                 return 200;
             });
 
-            // Open WingetUI with the Updates page shown
+            // Open UniGetUI with the Updates page shown
             Get("/widgets/v1/view_on_wingetui", (parameters) =>
             {
                 if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))

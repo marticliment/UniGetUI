@@ -369,7 +369,7 @@ namespace UniGetUI.Interface
                     {
 
                         ToastContentBuilder toast = new();
-                        toast.AddArgument("action", "openWingetUIOnUpdatesTab");
+                        toast.AddArgument("action", "openUniGetUIOnUpdatesTab");
                         toast.AddArgument("notificationId", CoreData.UpdatesAvailableNotificationId);
                         toast.AddText(title);
                         toast.AddText(body);
@@ -378,7 +378,7 @@ namespace UniGetUI.Interface
                         {
                             toast.AddButton(new ToastButton()
                                 .SetContent(Tools.Translate("Open WingetUI"))
-                                .AddArgument("action", "openWingetUIOnUpdatesTab")
+                                .AddArgument("action", "openUniGetUIOnUpdatesTab")
                                 .SetBackgroundActivation());
                             toast.AddButton(new ToastButton()
                                 .SetContent(upgradablePackages.Count == 1? Tools.Translate("Update"): Tools.Translate("Update all"))

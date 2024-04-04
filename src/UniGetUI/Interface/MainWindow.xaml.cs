@@ -81,7 +81,7 @@ namespace UniGetUI.Interface
         {
             if (args.Contains("action") && args["action"] == "updateAll")
                 NavigationPage.UpdatesPage.UpdateAll();
-            else if (args.Contains("action") && args["action"] == "openWingetUIOnUpdatesTab")
+            else if (args.Contains("action") && args["action"] == "openUniGetUIOnUpdatesTab")
             {
                 NavigationPage.UpdatesNavButton.ForceClick();
 

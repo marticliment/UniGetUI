@@ -421,7 +421,7 @@ namespace UniGetUI.Interface
 
         public void UniGetUILogs_Click(object sender, RoutedEventArgs e)
         {
-            NavigateToPage(new LogPage(LogType.WingetUILog));
+            NavigateToPage(new LogPage(LogType.UniGetUILog));
         }
 
 

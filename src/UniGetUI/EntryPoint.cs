@@ -25,7 +25,7 @@ namespace UniGetUI
                     // If the app is being uninstalled, run the cleaner and exit
                     UninstallPreps();
                 else
-                    // Otherwise, run WingetUI as normal
+                    // Otherwise, run UniGetUI as normal
                     _ = AsyncMain(args);
             }
             catch (Exception e)
@@ -35,7 +35,7 @@ namespace UniGetUI
         }
         
         /// <summary>
-        /// WingetUI app main entry point
+        /// UniGetUI app main entry point
         /// </summary>
         /// <param name="args">Call arguments</param>
         /// <returns></returns>
@@ -44,7 +44,7 @@ namespace UniGetUI
             try
             {
 
-                AppTools.Log("Welcome to WingetUI Version " + CoreData.VersionName);
+                AppTools.Log("Welcome to UniGetUI Version " + CoreData.VersionName);
                 AppTools.Log("               Version Code " + CoreData.VersionNumber.ToString());
                 AppTools.Log("              ");
 

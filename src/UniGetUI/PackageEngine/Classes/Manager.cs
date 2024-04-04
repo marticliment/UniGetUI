@@ -496,7 +496,7 @@ namespace UniGetUI.PackageEngine.Classes
     {
         private PackageManager __manager;
         private Dictionary<string, ManagerSource> __reference;
-        private Uri __default_uri = new Uri("https://marticliment.com/wingetui/");
+        private Uri __default_uri = new Uri("https://marticliment.com/unigetui/");
 
         public ManagerSourceFactory(PackageManager manager)
         {
