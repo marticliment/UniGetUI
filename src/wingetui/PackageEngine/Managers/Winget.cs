@@ -1,9 +1,11 @@
-﻿using ModernWindow.Core.Data;
+﻿using CommunityToolkit.Common;
+using ModernWindow.Core.Data;
 using ModernWindow.PackageEngine.Classes;
 using ModernWindow.PackageEngine.Operations;
 using ModernWindow.Structures;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,7 +13,18 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Services.TargetedContent;
 using Windows.Storage.Streams;
+using Deployment = Microsoft.Management.Deployment;
+
+using WindowsPackageManager.Interop;
+using Windows.Foundation;
+using System.Collections;
+using Microsoft.Management.Deployment;
+using System.ComponentModel;
+using CommunityToolkit.WinUI.Animations;
+using Microsoft.UI.Xaml.Controls;
+
 
 namespace ModernWindow.PackageEngine.Managers
 {
@@ -27,243 +40,233 @@ namespace ModernWindow.PackageEngine.Managers
         private static GOGSource GOGSource { get; } = new GOGSource();
         private static MicrosoftStoreSource MicrosoftStoreSource { get; } = new MicrosoftStoreSource();
 
+        private WindowsPackageManagerFactory WinGetFactory;
+        private Deployment.PackageManager WinGetManager;
+
+
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = new();
-            Process p = new();
-            ProcessStartInfo startInfo = new()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\"  --accept-source-agreements",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-            p.StartInfo = startInfo;
-            p.Start();
+            var PackageFilters = WinGetFactory.CreateFindPackagesOptions();
 
-            string OldLine = "";
-            int IdIndex = -1;
-            int VersionIndex = -1;
-            int SourceIndex = -1;
-            bool DashesPassed = false;
-            string line;
-            string output = "";
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            // Name filter
+            var FilterName = WinGetFactory.CreatePackageMatchFilter();
+            FilterName.Field = Deployment.PackageMatchField.Name;
+            FilterName.Value = query;
+            FilterName.Option = Deployment.PackageFieldMatchOption.ContainsCaseInsensitive;
+            PackageFilters.Filters.Add(FilterName);
+
+            // Id filter
+            var FilterId = WinGetFactory.CreatePackageMatchFilter();
+            FilterId.Field = Deployment.PackageMatchField.Name;
+            FilterId.Value = query;
+            FilterId.Option = Deployment.PackageFieldMatchOption.ContainsCaseInsensitive;
+            PackageFilters.Filters.Add(FilterId);
+
+            // Load catalogs
+            var AvailableCatalogs = WinGetManager.GetPackageCatalogs();
+            Dictionary<Deployment.PackageCatalogReference, Task<Deployment.FindPackagesResult>> FindPackageTasks = new();
+
+            // Spawn Tasks to find packages on catalogs
+            foreach (var CatalogReference in AvailableCatalogs.ToArray())
             {
-                output += line + "\n";
-                if (!DashesPassed && line.Contains("---"))
+                // Connect to catalog
+                CatalogReference.AcceptSourceAgreements = true;
+                var result = await CatalogReference.ConnectAsync();
+                if (result.Status == Deployment.ConnectResultStatus.Ok)
                 {
-                    string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
-                    IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
-                    VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
-                    SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
-                    DashesPassed = true;
-                }
-                else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
-                {
-                    int offset = 0; // Account for non-unicode character length
-                    while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
-                        offset++;
-                    string name = line[..(IdIndex - offset)].Trim();
-                    string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
-                    string version = line[(VersionIndex - offset)..].Trim().Split(' ')[0];
-                    ManagerSource source;
-                    if (SourceIndex == -1 || SourceIndex >= line.Length)
-                        source = MainSource;
-                    else
+                    try
                     {
-                        string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
-                        if (SourceReference.ContainsKey(sourceName))
-                            source = SourceReference[sourceName];
-                        else
-                        {
-                            source = new ManagerSource(this, sourceName, new Uri("https://microsoft.com/winget"));
-                            SourceReference.Add(source.Name, source);
-                        }
+                        // Create task and spawn it
+                        var task = new Task<Deployment.FindPackagesResult>(() => result.PackageCatalog.FindPackages(PackageFilters));
+                        task.Start();
+
+                        // Add task to list
+                        FindPackageTasks.Add(
+                            CatalogReference,
+                            task
+                        );
                     }
-                    Packages.Add(new Package(name, id, version, source, this));
+                    catch (Exception e)
+                    {
+                        AppTools.Log("WinGet: Catalog " + CatalogReference.Info.Name + " failed to spawn FindPackages task.");
+                        AppTools.Log(e);
+                    }
                 }
-                OldLine = line;
+                else
+                {
+                    AppTools.Log("WinGet: Catalog " + CatalogReference.Info.Name + " failed to connect.");
+                }
             }
 
-            output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
-            await Task.Run(p.WaitForExit);
+            // Wait for tasks completion
+            await Task.WhenAll(FindPackageTasks.Values.ToArray());
+
+            foreach(var CatalogTaskPair in FindPackageTasks)
+            {   
+                try
+                {
+                    // Get the source for the catalog
+                    ManagerSource source = SourceFactory.GetSourceOrDefault(CatalogTaskPair.Key.Info.Name);
+
+                    var FoundPackages = CatalogTaskPair.Value.Result;
+                    foreach(var package in FoundPackages.Matches.ToArray())
+                    {
+                        // Create the Package item and add it to the list
+                        Packages.Add(new Package(
+                            package.CatalogPackage.Name,
+                            package.CatalogPackage.Id,
+                            package.CatalogPackage.DefaultInstallVersion.Version,
+                            source,
+                            this
+                        ));
+                    }
+                }
+                catch (Exception e)
+                {
+                    AppTools.Log("WinGet: Catalog " + CatalogTaskPair.Key.Info.Name + " failed to get available packages.");
+                    AppTools.Log(e);
+                }
+            }
 
             return Packages.ToArray();
-
         }
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            List<UpgradablePackage> Packages = new();
-            Process p = new();
-            ProcessStartInfo startInfo = new()
+            var Packages = new List<UpgradablePackage>();
+
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
             {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " update --include-unknown  --accept-source-agreements",
+                FileName = "powershell.exe",
+                UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                UseShellExecute = false,
+                RedirectStandardInput = true,
                 CreateNoWindow = true,
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
-            p.StartInfo = startInfo;
+
             p.Start();
 
-            string OldLine = "";
-            int IdIndex = -1;
-            int VersionIndex = -1;
-            int NewVersionIndex = -1;
-            int SourceIndex = -1;
-            bool DashesPassed = false;
+            await p.StandardInput.WriteAsync(@"
+                function Print-WinGetPackage {
+                    param (
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
+                        [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
+                        [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
+                    )
+                    process {
+                        if($IsUpdateAvailable)
+                        {
+                            Write-Output(""#"" + $Name + ""`t"" + $Id + ""`t"" + $InstalledVersion + ""`t"" + $AvailableVersions[0] + ""`t"" + $Source)
+                        }
+                    }
+                }
+
+                if(!(Get-Command -Verb Get -Noun WinGetPackage))
+                {
+                    Install-Module -Name Microsoft.WinGet.Client -Scope CurrentUser -AllowClobber -Confirm:$false -Force
+                }
+                Get-WinGetPackage | Print-WinGetPackage
+                
+                exit
+                ");
+
             string line;
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 output += line + "\n";
+                if (!line.StartsWith("#"))
+                    continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
 
-                if (line.Contains("have pins"))
+                string[] elements = line.Split('\t');
+                if (elements.Length < 5)
                     continue;
-                
-                if (!DashesPassed && line.Contains("---"))
-                {
-                    string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
-                    string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
-                    IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
-                    VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
-                    NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix);
-                    SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
-                    DashesPassed = true;
-                }
-                else if (line.Trim() == "")
-                {
-                    DashesPassed = false;
-                }
-                else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && NewVersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < NewVersionIndex && NewVersionIndex < line.Length)
-                {
-                    int offset = 0; // Account for non-unicode character length
-                    while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
-                        offset++;
-                    string name = line[..(IdIndex - offset)].Trim();
-                    string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
-                    string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
-                    string newVersion;
-                    if (SourceIndex != -1)
-                        newVersion = line[(NewVersionIndex - offset)..(SourceIndex - offset)].Trim();
-                    else
-                        newVersion = line[(NewVersionIndex - offset)..].Trim().Split(' ')[0];
 
-                    ManagerSource source;
-                    if (SourceIndex == -1 || SourceIndex >= line.Length)
-                        source = MainSource;
-                    else
-                    {
-                        string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
-                        if (SourceReference.ContainsKey(sourceName))
-                            source = SourceReference[sourceName];
-                        else
-                        {
-                            source = new ManagerSource(this, sourceName, new Uri("https://microsoft.com/winget"));
-                            SourceReference.Add(source.Name, source);
-                        }
-                    }
+                ManagerSource source = SourceFactory.GetSourceOrDefault(elements[4]);
 
-                    Packages.Add(new UpgradablePackage(name, id, version, newVersion, source, this));
-                }
-                OldLine = line;
+                Packages.Add(new UpgradablePackage(elements[0][1..], elements[1], elements[2], elements[3], source, this));
             }
 
             output += await p.StandardError.ReadToEndAsync();
             AppTools.LogManagerOperation(this, p, output);
-            await Task.Run(p.WaitForExit);
+            await p.WaitForExitAsync();
 
             return Packages.ToArray();
         }
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            List<Package> Packages = new();
-            Process p = new();
-            ProcessStartInfo startInfo = new()
+            var Packages = new List<Package>();
+
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
             {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " list  --accept-source-agreements",
+                FileName = "powershell.exe",
+                UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                UseShellExecute = false,
+                RedirectStandardInput = true,
                 CreateNoWindow = true,
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
-            p.StartInfo = startInfo;
+
             p.Start();
 
-            string OldLine = "";
-            int IdIndex = -1;
-            int VersionIndex = -1;
-            int SourceIndex = -1;
-            int NewVersionIndex = -1;
-            bool DashesPassed = false;
+            await p.StandardInput.WriteAsync(@"
+                function Print-WinGetPackage {
+                    param (
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
+                        [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
+                        [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
+                    )
+                    process {
+                        Write-Output(""#"" + $Name + ""`t"" + $Id + ""`t"" + $InstalledVersion + ""`t"" + $Source)
+                    }
+                }
+
+                if(!(Get-Command -Verb Get -Noun WinGetPackage))
+                {
+                    Install-Module -Name Microsoft.WinGet.Client -Scope CurrentUser -AllowClobber -Confirm:$false -Force
+                }
+                Get-WinGetPackage | Print-WinGetPackage
+                
+                exit
+                ");
+
             string line;
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                try
-                {
-                    output += line + "\n";
-                    if (!DashesPassed && line.Contains("---"))
-                    {
-                        string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
-                        string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
-                        IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
-                        VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
-                        NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix);
-                        SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
-                        DashesPassed = true;
-                    }
-                    else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
-                    {
-                        int offset = 0; // Account for non-unicode character length
-                        while (((IdIndex - offset) <= line.Length && line[IdIndex - offset - 1] != ' ') || offset > (IdIndex - 5))
-                            offset++;
-                        string name = line[..(IdIndex - offset)].Trim();
-                        string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
-                        if (NewVersionIndex == -1 && SourceIndex != -1) NewVersionIndex = SourceIndex;
-                        else if (NewVersionIndex == -1 && SourceIndex == -1) NewVersionIndex = line.Length - 1;
-                        string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
+                output += line + "\n";
+                if (!line.StartsWith("#"))
+                    continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
 
-                        ManagerSource source;
-                        if (SourceIndex == -1 || (SourceIndex - offset) >= line.Length)
-                        {
-                            source = GetLocalSource(id); // Load Winget Local Sources
-                        }
-                        else
-                        {
-                            string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();
-                            if (SourceReference.ContainsKey(sourceName))
-                                source = SourceReference[sourceName];
-                            else
-                            {
-                                source = new ManagerSource(this, sourceName, new Uri("https://microsoft.com/winget"));
-                                SourceReference.Add(source.Name, source);
-                            }
-                        }
-                        Packages.Add(new Package(name, id, version, source, this));
-                    }
-                    OldLine = line;
-                }
-                catch (Exception e)
-                {
-                    AppTools.Log(e);
-                }
+                string[] elements = line.Split('\t');
+                if (elements.Length < 4)
+                    continue;
+
+                ManagerSource source;
+                if (elements[3] != "")
+                    source = SourceFactory.GetSourceOrDefault(elements[3]);
+                else
+                    source = GetLocalSource(elements[1]);
+
+                Packages.Add(new Package(elements[0][1..], elements[1], elements[2], source, this));
             }
 
             output += await p.StandardError.ReadToEndAsync();
             AppTools.LogManagerOperation(this, p, output);
-            await Task.Run(p.WaitForExit);
+            await p.WaitForExitAsync();
 
             return Packages.ToArray();
         }
@@ -275,7 +278,7 @@ namespace ModernWindow.PackageEngine.Managers
                 // Check if source is android
                 bool AndroidValid = true;
                 foreach (char c in id)
-                    if (!"abcdefghijklmnopqrstuvwxyz.…".Contains(c))
+                    if (!"abcdefghijklmnopqrstuvwxyz.".Contains(c))
                     {
                         AndroidValid = false;
                         break;
@@ -283,7 +286,7 @@ namespace ModernWindow.PackageEngine.Managers
                 if (AndroidValid && id.Count(x => x == '.') >= 2)
                     return AndroidSubsystemSource;
 
-                // Check if source is Steama
+                // Check if source is Steam
                 if ((id == "Steam" || id.Contains("Steam App ")) && id.Split("Steam App").Count() >= 2 && id.Split("Steam App")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
                     return SteamSource;
 
@@ -296,9 +299,10 @@ namespace ModernWindow.PackageEngine.Managers
                     return GOGSource;
 
                 // Check if source is Microsoft Store
-                if (id.Count(x => x == '_') == 1 && (id.Split('_')[^1].Length == 14 | id.Split('_')[^1].Length == 13 | id.Split('_')[^1].Length <= 13 && id[^1] == '…'))
+                if (id.Count(x => x == '_') == 1 && (id.Split('_')[^1].Length == 14 | id.Split('_')[^1].Length == 13))
                     return MicrosoftStoreSource;
 
+                // Otherwise, Source is localpc
                 return LocalPcSource;
             }
             catch (Exception ex)
@@ -358,12 +362,7 @@ namespace ModernWindow.PackageEngine.Managers
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
             List<string> parameters = new() { Properties.UninstallVerb };
-            if (!package.Id.Contains("…"))
-                parameters.AddRange(new string[] { "--id", package.Id, "--exact" });
-            else if (!package.Name.Contains("…"))
-                parameters.AddRange(new string[] { "--name", "\"" + package.Name + "\"", "--exact" });
-            else
-                parameters.AddRange(new string[] { "--id", package.Id.Replace("…", "") });
+            parameters.AddRange(new string[] { "--id", package.Id, "--exact", "--source", package.Source.Name });
 
             parameters.Add("--accept-source-agreements");
 
@@ -461,22 +460,82 @@ namespace ModernWindow.PackageEngine.Managers
             else if (package.Source.Name == "msstore")
                 details.ManifestUrl = new Uri("https://apps.microsoft.com/detail/" + package.Id);
 
-            // Get the output for the best matching locale
-            Process process = new();
-            string packageIdentifier;
-            if (!package.Id.Contains("…"))
-                packageIdentifier = "--id " + package.Id + " --exact";
-            else if (!package.Name.Contains("…"))
-                packageIdentifier = "--name " + package.Id + " --exact";
-            else
-                packageIdentifier = "--id " + package.Id;
+            // Find the native package for the given Package object
+            var Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
+            if (Catalog == null)
+            {
+                AppTools.Log("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+                return details;
+            }
 
+            // Connect to catalog
+            Catalog.AcceptSourceAgreements = true;
+            var ConnectResult = await Task.Run(() => Catalog.Connect());
+            if(ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
+            {
+                AppTools.Log("Failed to connect to catalog " + package.Source.Name);
+                return details;
+            }
+
+            // Match only the exact same Id
+            var packageMatchFilter = WinGetFactory.CreateFindPackagesOptions();
+            var filters = WinGetFactory.CreatePackageMatchFilter();
+            filters.Field = Deployment.PackageMatchField.Id;
+            filters.Value = package.Id;
+            filters.Option = Deployment.PackageFieldMatchOption.Equals;
+            packageMatchFilter.Filters.Add(filters);
+            packageMatchFilter.ResultLimit = 1;
+            var SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
+
+            if(SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
+            {
+                AppTools.Log("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                return details;
+            }
+
+            // Get the Native Package
+            var NativePackage = SearchResult.Result.Matches.First().CatalogPackage;
+
+            // Extract data from NativeDetails
+            var NativeDetails = NativePackage.DefaultInstallVersion.GetCatalogPackageMetadata(Windows.System.UserProfile.GlobalizationPreferences.Languages[0]);
+
+            if(NativeDetails.Author != "")
+                details.Author = NativeDetails.Author;
+
+            if (NativeDetails.Description != "")
+                details.Description = NativeDetails.Description;
+
+            if (NativeDetails.PackageUrl != "")
+                details.HomepageUrl = new Uri(NativeDetails.PackageUrl);
+
+            if (NativeDetails.License != "")
+                details.License = NativeDetails.License;
+
+            if (NativeDetails.LicenseUrl != "")
+                details.LicenseUrl = new Uri(NativeDetails.LicenseUrl);
+
+            if (NativeDetails.Publisher != "")
+                details.Publisher = NativeDetails.Publisher;
+
+            if (NativeDetails.ReleaseNotes != "")
+                details.ReleaseNotes = NativeDetails.ReleaseNotes;
+
+            if (NativeDetails.ReleaseNotesUrl != "")
+                details.ReleaseNotesUrl = new Uri(NativeDetails.ReleaseNotesUrl);
+
+            if (NativeDetails.Tags != null)
+                details.Tags = NativeDetails.Tags.ToArray();
+
+            Debug.WriteLine("Starting manual fetch");
+            
+            // There is no way yet to retrieve installer URLs right now so this part will be console-parsed.
+            // TODO: Replace this code with native code when available on the COM api
+            Process process = new();
             List<string> output = new();
-            bool LocaleFound = true;
             ProcessStartInfo startInfo = new()
             {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " show " + packageIdentifier + " --disable-interactivity --accept-source-agreements --locale " + System.Globalization.CultureInfo.CurrentCulture.ToString(),
+                FileName = Path.Join(CoreData.WingetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_x64", "winget.exe"),
+                Arguments = Properties.ExecutableCallArgs + " show --id " + package.Id + " --exact --disable-interactivity --accept-source-agreements --source " + package.Source.Name,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
@@ -487,127 +546,20 @@ namespace ModernWindow.PackageEngine.Managers
             process.StartInfo = startInfo;
             process.Start();
 
+            // Retrieve the output
             string _line;
             while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
                 if (_line.Trim() != "")
-                {
                     output.Add(_line);
-                    AppTools.Log(_line);
-                    if (_line.Contains("The value provided for the `locale` argument is invalid") || _line.Contains("No applicable installer found; see logs for more details."))
-                    {
-                        LocaleFound = false;
-                        break;
-                    }
-                }
-
-            // Load fallback english locale
-            if (!LocaleFound)
-            {
-                output.Clear();
-                AppTools.Log("Winget could not found culture data for package Id=" + package.Id + " and Culture=" + System.Globalization.CultureInfo.CurrentCulture.ToString() + ". Trying to get data for en-US");
-                process = new Process();
-                LocaleFound = true;
-                startInfo = new()
-                {
-                    FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " show " + packageIdentifier + " --disable-interactivity --accept-source-agreements --locale en-US",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                };
-                process.StartInfo = startInfo;
-                process.Start();
-
-                while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
-                    if (_line.Trim() != "")
-                    {
-                        output.Add(_line);
-                        AppTools.Log(_line);
-                        if (_line.Contains("The value provided for the `locale` argument is invalid") || _line.Contains("No applicable installer found; see logs for more details."))
-                        {
-                            LocaleFound = false;
-                            break;
-                        }
-                    }
-            }
-
-            // Load default locale
-            if (!LocaleFound)
-            {
-                output.Clear();
-                AppTools.Log("Winget could not found culture data for package Id=" + package.Id + " and Culture=en-US. Loading default");
-                LocaleFound = true;
-                process = new Process();
-                startInfo = new()
-                {
-                    FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " show " + packageIdentifier + " --disable-interactivity --accept-source-agreements",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                };
-                process.StartInfo = startInfo;
-                process.Start();
-
-                while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
-                    if (_line.Trim() != "")
-                    {
-                        output.Add(_line);
-                        AppTools.Log(_line);
-                    }
-            }
 
             // Parse the output
-            bool IsLoadingDescription = false;
-            bool IsLoadingReleaseNotes = false;
-            bool IsLoadingTags = false;
             foreach (string __line in output)
             {
-                try
-                {
-                    string line = __line.TrimEnd();
-                    if (line == "")
-                        continue;
-
-                    // Check if a multiline field is being loaded
-                    if (line.StartsWith(" ") && IsLoadingDescription)
-                        details.Description += "\n" + line.Trim();
-                    else if (line.StartsWith(" ") && IsLoadingReleaseNotes)
-                        details.ReleaseNotes += "\n" + line.Trim();
-                    else if (line.StartsWith(" ") && IsLoadingTags)
-                        details.Tags = details.Tags.Append(line.Trim()).ToArray();
-
-                    // Stop loading multiline fields
-                    else if (IsLoadingDescription)
-                        IsLoadingDescription = false;
-                    else if (IsLoadingReleaseNotes)
-                        IsLoadingReleaseNotes = false;
-                    else if (IsLoadingTags)
-                        IsLoadingTags = false;
-
-                    // Check for singleline fields
-                    if (line.Contains("Publisher:"))
-                        details.Publisher = line.Split(":")[1].Trim();
-
-                    else if (line.Contains("Author:"))
-                        details.Author = line.Split(":")[1].Trim();
-
-                    else if (line.Contains("Homepage:"))
-                        details.HomepageUrl = new Uri(line.Replace("Homepage:", "").Trim());
-
-                    else if (line.Contains("License:"))
-                        details.License = line.Split(":")[1].Trim();
-
-                    else if (line.Contains("License Url:"))
-                        details.LicenseUrl = new Uri(line.Replace("License Url:", "").Trim());
-
-                    else if (line.Contains("Installer SHA256:"))
+                try 
+                { 
+                    AppTools.Log(__line);
+                    string line = __line.Trim();
+                    if (line.Contains("Installer SHA256:"))
                         details.InstallerHash = line.Split(":")[1].Trim();
 
                     else if (line.Contains("Installer Url:"))
@@ -618,120 +570,40 @@ namespace ModernWindow.PackageEngine.Managers
                     else if (line.Contains("Release Date:"))
                         details.UpdateDate = line.Split(":")[1].Trim();
 
-                    else if (line.Contains("Release Notes Url:"))
-                        details.ReleaseNotesUrl = new Uri(line.Replace("Release Notes Url:", "").Trim());
-
                     else if (line.Contains("Installer Type:"))
                         details.InstallerType = line.Split(":")[1].Trim();
-
-                    else if (line.Contains("Description:"))
-                    {
-                        details.Description = line.Split(":")[1].Trim();
-                        IsLoadingDescription = true;
-                    }
-                    else if (line.Contains("ReleaseNotes"))
-                    {
-                        details.ReleaseNotes = line.Split(":")[1].Trim();
-                        IsLoadingReleaseNotes = true;
-                    }
-                    else if (line.Contains("Tags"))
-                    {
-                        details.Tags = new string[0];
-                        IsLoadingTags = true;
-                    }
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log("Error occurred while parsing line value=\"" + _line + "\"");
+                    AppTools.Log("Error occurred while parsing line value=\"" + __line + "\"");
                     AppTools.Log(e.Message);
                 }
             }
 
+            // NativeDetails.Icons ICONS
             return details;
+            
         }
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()
         {
             List<ManagerSource> sources = new();
 
-            Process process = new();
-            ProcessStartInfo startInfo = new()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " source list",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-
-            process.StartInfo = startInfo;
-            process.Start();
-
-            bool dashesPassed = false;
-            string output = "";
-            string line;
-            while ((line = await process.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
-                try
-                {
-                    if (string.IsNullOrEmpty(line))
-                        continue;
-
-                    if (!dashesPassed)
-                    {
-                        if (line.Contains("---"))
-                            dashesPassed = true;
-                    }
-                    else
-                    {
-                        string[] parts = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
-                        sources.Add(new ManagerSource(this, parts[0].Trim(), new Uri(parts[1].Trim())));
-                    }
-                }
-                catch (Exception e)
-                {
+            foreach(var catalog in await Task.Run(() => WinGetManager.GetPackageCatalogs().ToArray()))
+                try {
+                    sources.Add(new ManagerSource(this, catalog.Info.Name, new Uri(catalog.Info.Argument), updateDate: catalog.Info.LastUpdateTime.ToString()));
+                } catch (Exception e) {
                     AppTools.Log(e);
                 }
-            }
 
-            output += await process.StandardError.ReadToEndAsync(); 
-            AppTools.LogManagerOperation(this, process, output);
-
-            await process.WaitForExitAsync();
             return sources.ToArray();
         }
 
 
-        public override async Task RefreshSources()
+        public override async Task RefreshPackageIndexes()
         {
-            Process process = new();
-            ProcessStartInfo StartInfo = new()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " source update",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-            process.StartInfo = StartInfo;
-            process.Start();
-
-            int StartTime = Environment.TickCount;
-
-            while (!process.HasExited && Environment.TickCount - StartTime < 8000)
-                await Task.Delay(100);
-
-            if (!process.HasExited)
-            {
-                process.Kill();
-                AppTools.Log("Winget source update timed out. Current output was");
-                AppTools.Log(await process.StandardOutput.ReadToEndAsync());
-            }
+            await Task.Delay(0);
+            // As of WinGet 1.6, WinGet does handle updating package indexes automatically
         }
 
         protected override ManagerCapabilities GetCapabilities()
@@ -750,7 +622,7 @@ namespace ModernWindow.PackageEngine.Managers
                 Sources = new ManagerSource.Capabilities()
                 {
                     KnowsPackageCount = false,
-                    KnowsUpdateDate = false,
+                    KnowsUpdateDate = true,
                     MustBeInstalledAsAdmin = true,
                 }
             };
@@ -776,35 +648,15 @@ namespace ModernWindow.PackageEngine.Managers
         protected override async Task<ManagerStatus> LoadManager()
         {
             ManagerStatus status = new();
-            Process process = new()
-            {
-                StartInfo = new ProcessStartInfo()
-                {
-                    FileName = "cmd.exe",
-                    Arguments = "/C echo %PROCESSOR_ARCHITECTURE%",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
-            };
-            process.Start();
-            string output = await process.StandardOutput.ReadToEndAsync();
-
-            if (Tools.GetSettings("UseSystemWinget"))
-                status.ExecutablePath = await Tools.Which("winget.exe");
-            else if (output.Contains("ARM64") | Tools.GetSettings("EnableArmWinget"))
-                status.ExecutablePath = Path.Join(CoreData.WingetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_arm64", "winget.exe");
-            else
-                status.ExecutablePath = Path.Join(CoreData.WingetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_x64", "winget.exe");
+            
+            status.ExecutablePath = await Tools.Which("winget.exe");
 
             status.Found = File.Exists(status.ExecutablePath);
 
             if (!status.Found)
                 return status;
 
-            process = new Process()
+            var process = new Process()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -818,61 +670,60 @@ namespace ModernWindow.PackageEngine.Managers
                 }
             };
             process.Start();
-            status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
+            status.Version = "WinGet CLI Version: " + (await process.StandardOutput.ReadToEndAsync()).Trim();
+
+
+            // Initialize the WinGet manager (C# Native)
+            WinGetFactory = (Tools.IsAdministrator()) 
+                ? new WindowsPackageManagerElevatedFactory()
+                : new WindowsPackageManagerStandardFactory();
+            WinGetManager = await Task.Run(() => WinGetFactory.CreatePackageManager());
 
             Status = status; // Need to set status before calling RefreshSources, otherwise will crash
             if (status.Found && IsEnabled())
-                await RefreshSources();
+                await RefreshPackageIndexes();
 
             return status;
         }
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
-            string callId = "";
-            if (!package.Id.Contains("…"))
-                callId = "--id " + package.Id + " --exact";
-            else if (!package.Name.Contains("…"))
-                callId = "--name \"" + package.Name + "\" --exact";
-            else
-                callId = "--id " + package.Id;
-
-
-            Process p = new()
+            // Find the native package for the given Package object
+            var Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
+            if(Catalog == null)
             {
-                StartInfo = new ProcessStartInfo()
-                {
-                    FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " show " + callId + " --versions --accept-source-agreements",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
-            };
-
-            p.Start();
-
-            string line;
-            List<string> versions = new();
-            bool DashesPassed = false;
-            string output = "";
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
-                if (!DashesPassed)
-                {
-                    if (line.Contains("---"))
-                        DashesPassed = true;
-                }
-                else
-                    versions.Add(line.Trim());
+                AppTools.Log("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+                return [];
             }
-            output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
-            return versions.ToArray();
+
+            // Connect to catalog
+            Catalog.AcceptSourceAgreements = true;
+            var ConnectResult = await Task.Run(() => Catalog.Connect());
+            if (ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
+            {
+                AppTools.Log("Failed to connect to catalog " + package.Source.Name);
+                return [];
+            }
+
+            // Match only the exact same Id
+            var packageMatchFilter = WinGetFactory.CreateFindPackagesOptions();
+            var filters = WinGetFactory.CreatePackageMatchFilter();
+            filters.Field = Deployment.PackageMatchField.Id;
+            filters.Value = package.Id;
+            filters.Option = Deployment.PackageFieldMatchOption.Equals;
+            packageMatchFilter.Filters.Add(filters);
+            packageMatchFilter.ResultLimit = 1;
+            var SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
+
+            if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
+            {
+                AppTools.Log("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                return [];
+            }
+
+            // Get the Native Package
+            var NativePackage = SearchResult.Result.Matches.First().CatalogPackage;
+            return NativePackage.AvailableVersions.Select(x => x.Version).ToArray();
         }
 
         public override ManagerSource[] GetKnownSources()
@@ -970,5 +821,4 @@ namespace ModernWindow.PackageEngine.Managers
             return "Microsoft Store";
         }
     }
-
 }

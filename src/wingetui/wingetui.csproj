@@ -2,8 +2,8 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-	<TargetMinVersion>10.0.17763.0</TargetMinVersion>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+	<TargetMinVersion>10.0.19041.0</TargetMinVersion>
     <RootNamespace>ModernWindow</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x64</Platforms>
@@ -28,10 +28,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Intereface\**" />
+    <Compile Remove="PackageEngine\Managers\WinGetClasses\**" />
     <Content Remove="..\wingetui-engine\.vscode\**" />
     <EmbeddedResource Remove="Intereface\**" />
+    <EmbeddedResource Remove="PackageEngine\Managers\WinGetClasses\**" />
     <None Remove="Intereface\**" />
+    <None Remove="PackageEngine\Managers\WinGetClasses\**" />
     <Page Remove="Intereface\**" />
+    <Page Remove="PackageEngine\Managers\WinGetClasses\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Assets\Languages\Contributors.list" />
@@ -56,7 +60,9 @@
     <None Remove="MainWindow.xaml" />
     <None Remove="PackageEngine\OperationControl.xaml" />
   </ItemGroup>
-  <ItemGroup>
+
+
+	<ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
@@ -66,15 +72,15 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
     <PackageReference Include="Nancy" Version="2.0.0" />
-    <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0" />
+    <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0">
+      <NoWarn>NU1701</NoWarn>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="YamlDotNet" Version="15.1.2" />
+
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
-  <!-- 
-    Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
-    Tools extension to be activated for this project even if the Windows App SDK Nuget
-    package has not yet been restored.
-  -->
+
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
   </ItemGroup>
@@ -1689,48 +1695,6 @@
     <Page Update="Interface\Pages\AboutPages\AboutWingetUI.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\AppInstallerBackgroundTasks.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\concrt140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\Microsoft.Management.Configuration.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\msvcp140_1_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\msvcp140_2_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\msvcp140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\resources.pri">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\vcamp140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\vccorlib140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\vcomp140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\vcruntime140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\WindowsPackageManager.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\WindowsPackageManagerServer.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\winget.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="PackageEngine\Managers\winget-cli_x64\AppInstallerBackgroundTasks.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -1830,5 +1794,11 @@
   <ItemGroup>
     <Folder Include="Interface\SoftwarePages\" />
     <Folder Include="PackageEngine\Operations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="PackageEngine\Managers\WinGetClasses\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WindowsPackageManager.Interop\WindowsPackageManager Interop.csproj" />
   </ItemGroup>
 </Project>
