@@ -1695,48 +1695,6 @@
     <Page Update="Interface\Pages\AboutPages\AboutWingetUI.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\AppInstallerBackgroundTasks.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\concrt140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\Microsoft.Management.Configuration.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\msvcp140_1_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\msvcp140_2_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\msvcp140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\resources.pri">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\vcamp140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\vccorlib140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\vcomp140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\vcruntime140_app.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\WindowsPackageManager.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\WindowsPackageManagerServer.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_arm64\winget.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="PackageEngine\Managers\winget-cli_x64\AppInstallerBackgroundTasks.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
