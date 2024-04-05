@@ -462,7 +462,7 @@ namespace UniGetUI.PackageEngine.Managers
             var old_choco_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli");
             var new_choco_path = Path.Join(CoreData.UniGetUIDataDirectory, "Chocolatey");
 
-            if (File.Exists(old_choco_path))
+            if (Directory.Exists(old_choco_path))
                 try
                 {
                     AppTools.Log("Moving choco-cli from old path to new path...");
@@ -502,15 +502,19 @@ namespace UniGetUI.PackageEngine.Managers
             status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
     
             // If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
-            if (/*Tools.GetSettings("ShownWelcomeWizard") && */!Tools.GetSettings("UseSystemChocolatey") && !Tools.GetSettings("ChocolateyAddedToPath") && !File.Exists(@"C:\ProgramData\Chocolatey\bin\choco.exe"))
+            if (/*Tools.GetSettings("ShownWelcomeWizard") && */!Tools.GetSettings("UseSystemChocolatey") && !File.Exists(@"C:\ProgramData\Chocolatey\bin\choco.exe"))
             {
-                AppTools.Log("Adding chocolatey to path");
                 string path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
-                Environment.SetEnvironmentVariable("PATH", $"{status.ExecutablePath.Replace("\\choco.exe", "\\bin")};{path}", EnvironmentVariableTarget.User);
-                Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.User);
-                Tools.SetSettings("ChocolateyAddedToPath", true);
+                if (!path.Contains(status.ExecutablePath.Replace("\\choco.exe", "\\bin")))
+                {
+                    AppTools.Log("Adding chocolatey to path since it was not on path.");
+                    Environment.SetEnvironmentVariable("PATH", $"{status.ExecutablePath.Replace("\\choco.exe", "\\bin")};{path}", EnvironmentVariableTarget.User);
+                    Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.User);
+                }
             }
-            
+            Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.Process);
+
+
             if (status.Found && IsEnabled())
                 await RefreshPackageIndexes();
 
