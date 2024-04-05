@@ -327,7 +327,7 @@
   "Removal succeeded" : "Удаление прошло успешно",
   "Remove from list" : "Удалить из списка",
   "Remove permanent data" : "Удалить постоянные данные",
-  "Remove selection from bundle" : null,
+  "Remove selection from bundle" : "Удалить выделеные из пакета",
   "Remove successful installs/uninstalls/updates from the installation list" : "Убирать успешные установки/удаления/обновления из списка установок",
   "Removing source {source} from {manager}" : "Удаление источника {source} из {manager}",
   "Report an issue or submit a feature request" : "Сообщить о проблеме или отправить запрос на функцию",
