@@ -98,7 +98,7 @@ namespace UniGetUI.Core.Data
         {
             try
             {
-                Uri NewFile = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/src/wingetui/Assets/Languages/" + "lang_" + LangKey + ".json");
+                Uri NewFile = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/src/UniGetUI/Assets/Languages/" + "lang_" + LangKey + ".json");
 
                 HttpClient client = new();
                 string fileContents = await client.GetStringAsync(NewFile);

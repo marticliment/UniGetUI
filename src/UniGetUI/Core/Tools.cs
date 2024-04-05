@@ -338,7 +338,7 @@ Crash Traceback:
                     banner.IsOpen = true;
                     banner.IsClosable = false;
 
-                    Uri DownloadUrl = new Uri("https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe");
+                    Uri DownloadUrl = new Uri("https://github.com/marticliment/WingetUI/releases/latest/download/UniGetUI.Installer.exe");
                     string InstallerPath = Path.Join(Directory.CreateTempSubdirectory().FullName, "unigetui-updater.exe");
 
                     using (HttpClient client = new())

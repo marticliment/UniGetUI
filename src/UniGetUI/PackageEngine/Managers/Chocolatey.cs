@@ -458,10 +458,24 @@ namespace UniGetUI.PackageEngine.Managers
         {
             ManagerStatus status = new();
 
+            var old_choco_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli");
+            var new_choco_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\UniGetUI\\choco-cli");
+
+            if (File.Exists(old_choco_path))
+                try
+                {
+                    AppTools.Log("Moving choco-cli from old path to new path...");
+                    Directory.Move(old_choco_path, new_choco_path);
+                }
+                catch (Exception e)
+                {
+                    AppTools.Log(e);
+                }
+
             if (Tools.GetSettings("UseSystemChocolatey"))
                 status.ExecutablePath = await Tools.Which("choco.exe");
-            else if (File.Exists(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli\\choco.exe")))
-                status.ExecutablePath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli\\choco.exe");
+            else if (File.Exists(Path.Join(new_choco_path, "choco.exe")))
+                status.ExecutablePath = Path.Join(new_choco_path, "choco.exe");
             else
                 status.ExecutablePath = Path.Join(Directory.GetParent(Environment.ProcessPath).FullName, "choco-cli\\choco.exe");
 

@@ -25,7 +25,7 @@
             <widgets:TranslatedTextBlock Text="Share WingetUI" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
             <widgets:TranslatedTextBlock Text="Don't feel like donating? Don't worry, you can always share WingetUI with your friends. Spread the word about WingetUI."/>
             <widgets:TranslatedTextBlock Text="Thank you 😉"/>
-            <HyperlinkButton NavigateUri="https://www.marticliment.com/wingetui" HorizontalAlignment="Stretch">
+            <HyperlinkButton NavigateUri="https://www.marticliment.com/unigetui" HorizontalAlignment="Stretch">
                 <widgets:TranslatedTextBlock Text="WingetUI Homepage - Share this link!"/>
             </HyperlinkButton>
         </StackPanel>

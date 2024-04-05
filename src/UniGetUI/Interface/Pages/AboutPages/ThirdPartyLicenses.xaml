@@ -12,7 +12,7 @@
     <ScrollView Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
         <StackPanel Orientation="Vertical" Padding="0,0,0,0" Spacing="4">
             <widgets:TranslatedTextBlock Text="WingetUI License" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
-            <widgets:TranslatedTextBlock Text="Using WingetUI implies the acceptation of the GNU Lesser General Public License v2.1 License"/>
+            <widgets:TranslatedTextBlock Text="Using WingetUI implies the acceptation of the MIT License"/>
             <TextBlock/>
             <widgets:TranslatedTextBlock Text="Third-party licenses" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
             <widgets:TranslatedTextBlock Text="WingetUI uses the following libraries. Without them, WingetUI wouldn't have been possible."/>
