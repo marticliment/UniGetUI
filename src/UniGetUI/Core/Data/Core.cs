@@ -90,10 +90,10 @@ namespace UniGetUI.Core.Data
             }
         }
 
-    /// <summary>
-    /// The file where the screenshot metadata is stored. If the file does not exist, it will be created automatically.
-    /// </summary>
-    public static string IgnoredUpdatesDatabaseFile
+        /// <summary>
+        /// The file where the screenshot metadata is stored. If the file does not exist, it will be created automatically.
+        /// </summary>
+        public static string IgnoredUpdatesDatabaseFile
         {
             get
             {

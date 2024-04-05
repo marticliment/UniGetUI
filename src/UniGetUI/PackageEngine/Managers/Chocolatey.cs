@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using UniGetUI.Core.Data;
 
 namespace UniGetUI.PackageEngine.Managers
 {
@@ -459,7 +460,7 @@ namespace UniGetUI.PackageEngine.Managers
             ManagerStatus status = new();
 
             var old_choco_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli");
-            var new_choco_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\UniGetUI\\choco-cli");
+            var new_choco_path = Path.Join(CoreData.UniGetUIDataDirectory, "Chocolatey");
 
             if (File.Exists(old_choco_path))
                 try
