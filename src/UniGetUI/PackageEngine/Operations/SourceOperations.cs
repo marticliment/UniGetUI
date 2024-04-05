@@ -77,7 +77,7 @@ namespace UniGetUI.PackageEngine.Operations
                 try
                 {
                     new ToastContentBuilder()
-                    .AddArgument("action", "openWingetUI")
+                    .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(Tools.Translate("Installation failed"))
                     .AddText(Tools.Translate("Could not add source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
@@ -139,7 +139,7 @@ namespace UniGetUI.PackageEngine.Operations
                 
                 try{
                     new ToastContentBuilder()
-                    .AddArgument("action", "openWingetUI")
+                    .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(Tools.Translate("Addition succeeded"))
                     .AddText(Tools.Translate("The source {source} was added to {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
@@ -211,7 +211,7 @@ namespace UniGetUI.PackageEngine.Operations
             LineInfoText = Tools.Translate("Could not remove source {source} from {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
             if (!Tools.GetSettings("DisableErrorNotifications") && !Tools.GetSettings("DisableNotifications"))
                 new ToastContentBuilder()
-                    .AddArgument("action", "openWingetUI")
+                    .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(Tools.Translate("Removal failed"))
                     .AddText(Tools.Translate("Could not remove source {source} from {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
@@ -267,7 +267,7 @@ namespace UniGetUI.PackageEngine.Operations
             if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try { 
                 new ToastContentBuilder()
-                    .AddArgument("action", "openWingetUI")
+                    .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(Tools.Translate("Removal succeeded"))
                     .AddText(Tools.Translate("The source {source} was removed from {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();

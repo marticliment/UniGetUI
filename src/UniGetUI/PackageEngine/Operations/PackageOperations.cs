@@ -148,7 +148,7 @@ namespace UniGetUI.PackageEngine.Operations
             if (!Tools.GetSettings("DisableErrorNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try {
                     new ToastContentBuilder()
-                        .AddArgument("action", "openWingetUI")
+                        .AddArgument("action", "OpenUniGetUI")
                         .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                         .AddText(Tools.Translate("Installation failed"))
                         .AddText(Tools.Translate("{package} could not be installed").Replace("{package}", Package.Name)).Show();
@@ -213,7 +213,7 @@ namespace UniGetUI.PackageEngine.Operations
                 
                 try{
                     new ToastContentBuilder()
-                    .AddArgument("action", "openWingetUI")
+                    .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(Tools.Translate("Installation succeeded"))
                     .AddText(Tools.Translate("{package} was installed successfully").Replace("{package}", Package.Name)).Show();
@@ -288,7 +288,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             if (!Tools.GetSettings("DisableErrorNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try{new ToastContentBuilder()
-                    .AddArgument("action", "openWingetUI")
+                    .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(Tools.Translate("Update failed"))
                     .AddText(Tools.Translate("{package} could not be updated").Replace("{package}", Package.Name)).Show();
@@ -352,7 +352,7 @@ namespace UniGetUI.PackageEngine.Operations
             
             if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try{new ToastContentBuilder()
-                .AddArgument("action", "openWingetUI")
+                .AddArgument("action", "OpenUniGetUI")
                 .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                 .AddText(Tools.Translate("Update succeeded"))
                 .AddText(Tools.Translate("{package} was updated successfully").Replace("{package}", Package.Name)).Show();
@@ -431,7 +431,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             if (!Tools.GetSettings("DisableErrorNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try{new ToastContentBuilder()
-                    .AddArgument("action", "openWingetUI")
+                    .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(Tools.Translate("Uninstall failed"))
                     .AddText(Tools.Translate("{package} could not be uninstalled").Replace("{package}", Package.Name)).Show();
@@ -496,7 +496,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
                 try{new ToastContentBuilder()
-                .AddArgument("action", "openWingetUI")
+                .AddArgument("action", "OpenUniGetUI")
                 .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                 .AddText(Tools.Translate("Uninstall succeeded"))
                 .AddText(Tools.Translate("{package} was uninstalled successfully").Replace("{package}", Package.Name)).Show();

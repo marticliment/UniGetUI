@@ -29,7 +29,6 @@
   <ItemGroup>
     <Compile Remove="Intereface\**" />
     <Compile Remove="PackageEngine\Managers\WinGetClasses\**" />
-    <Content Remove="..\wingetui-engine\.vscode\**" />
     <EmbeddedResource Remove="Intereface\**" />
     <EmbeddedResource Remove="PackageEngine\Managers\WinGetClasses\**" />
     <None Remove="Intereface\**" />
