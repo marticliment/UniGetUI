@@ -282,7 +282,7 @@
                     </Toolkit:SettingsExpander.Items>
                 </widgets:SettingsEntry>
                 <widgets:TranslatedTextBlock Margin="0,50,0,0" FontSize="30" WrappingMode="Wrap" FontWeight="Bold" Text="Package Managers" HorizontalAlignment="Stretch"/>
-                <widgets:TranslatedTextBlock Margin="0" FontSize="15" WrappingMode="Wrap" Text="By toggling a package manager off, you'll no longer be able to see or update its packages." HorizontalAlignment="Stretch"/>
+                <widgets:TranslatedTextBlock Margin="0" FontSize="15" Opacity="0.7" WrappingMode="Wrap" Text="By toggling a package manager off, you will no longer be able to see or update its packages." HorizontalAlignment="Stretch"/>
             </StackPanel>
         </Grid>
     </ScrollViewer>
