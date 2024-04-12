@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11700,
-        "done": 5037,
-        "packages_with_icon": 5037,
-        "packages_with_screenshot": 548,
-        "total_screenshots": 1719
+        "total": 11701,
+        "done": 5040,
+        "packages_with_icon": 5040,
+        "packages_with_screenshot": 550,
+        "total_screenshots": 1728
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -7155,31 +7155,43 @@
             "images": []
         },
         "chrome": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Chrome_icon_%28February_2022%29.svg/2048px-Google_Chrome_icon_%28February_2022%29.svg.png",
+            "icon": "https://i.postimg.cc/yd2gGCZY/chrome-icon.png",
             "images": [
-                "https://www.html.it/app/uploads/2022/02/google-chrome.png",
-                "https://www.iphonelife.com/sites/iphonelife.com/files/chrome_1_0.png"
+                "https://i.postimg.cc/5tNCY3J1/chrome-1.png",
+                "https://i.postimg.cc/nVQQDrys/chrome-2.png",
+                "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
             ]
         },
         "chrome-beta": {
-            "icon": "https://image.winudf.com/v2/image1/Y29tLmNocm9tZS5kZXZfaWNvbl8xNTYzNDkxNzUyXzA3Ng/icon.png?w=&fakeurl=1",
+            "icon": "https://i.postimg.cc/BnRrthHP/chrome-beta-icon.png",
             "images": [
-                "https://www.html.it/app/uploads/2022/02/google-chrome.png",
-                "https://www.iphonelife.com/sites/iphonelife.com/files/chrome_1_0.png"
+                "https://i.postimg.cc/5tNCY3J1/chrome-1.png",
+                "https://i.postimg.cc/nVQQDrys/chrome-2.png",
+                "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
             ]
         },
         "chrome-canary": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Chrome-canary-logo.svg/512px-Chrome-canary-logo.svg.png",
+            "icon": "https://i.postimg.cc/9f8qG7X9/chrome-canary-icon.png",
             "images": [
-                "https://www.html.it/app/uploads/2022/02/google-chrome.png",
-                "https://www.iphonelife.com/sites/iphonelife.com/files/chrome_1_0.png"
+                "https://i.postimg.cc/5tNCY3J1/chrome-1.png",
+                "https://i.postimg.cc/nVQQDrys/chrome-2.png",
+                "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
             ]
         },
         "chrome-dev": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/tgPL6hNS/chrome-dev-icon.png",
             "images": [
-                "https://www.html.it/app/uploads/2022/02/google-chrome.png",
-                "https://www.iphonelife.com/sites/iphonelife.com/files/chrome_1_0.png"
+                "https://i.postimg.cc/5tNCY3J1/chrome-1.png",
+                "https://i.postimg.cc/nVQQDrys/chrome-2.png",
+                "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
+            ]
+        },
+        "chrome-exe": {
+            "icon": "https://i.postimg.cc/yd2gGCZY/chrome-icon.png",
+            "images": [
+                "https://i.postimg.cc/5tNCY3J1/chrome-1.png",
+                "https://i.postimg.cc/nVQQDrys/chrome-2.png",
+                "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
             ]
         },
         "chrome-remote-desktop-host": {
@@ -30824,8 +30836,11 @@
             "images": []
         },
         "pl-sqlitestudio": {
-            "icon": "",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/pawelsalawa/sqlitestudio/master/SQLiteStudio3/guiSQLiteStudio/img/sqlitestudio_256.png",
+            "images": [
+                "https://sqlitestudio.pl/img/uploaded/full_22.png",
+                "https://sqlitestudio.pl/img/uploaded/1613941917961410_3.3.0.png"
+            ]
         },
         "planetblupi": {
             "icon": "",
@@ -30876,10 +30891,10 @@
             "images": []
         },
         "playdatesdk": {
-            "icon": "https://nikeedev.stio.studio/imgr/playdate4.png",
+            "icon": "https://nikee.dev/imgr/playdate4.png",
             "images": [
-                "https://nikeedev.stio.studio/imgr/playdatesdk_screenshot.png",
-                "https://nikeedev.stio.studio/imgr/playdatesdk_screenshot2.png"
+                "https://nikee.dev/imgr/playdatesdk_screenshot.png",
+                "https://nikee.dev/imgr/playdatesdk_screenshot2.png"
             ]
         },
         "playgames-beta": {
