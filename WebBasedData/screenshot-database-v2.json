@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11701,
-        "done": 5040,
-        "packages_with_icon": 5040,
+        "done": 5041,
+        "packages_with_icon": 5041,
         "packages_with_screenshot": 550,
         "total_screenshots": 1728
     },
@@ -7233,7 +7233,7 @@
             "images": []
         },
         "chromium": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/FzjDb7vy/chromium-icon.png",
             "images": []
         },
         "chromium-gost": {
@@ -34986,9 +34986,9 @@
             "images": []
         },
         "rsilauncher": {
-            "icon": "https://i.imgur.com/eUHF7BW.png",
+            "icon": "https://i.imgur.com/AoIT18N.png",
             "images": [
-                "https://i.imgur.com/uVnyK5g.png"
+                "https://i.imgur.com/7P1Z9pQ.png"
             ]
         },
         "rss-builder": {
