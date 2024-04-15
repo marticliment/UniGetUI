@@ -24,12 +24,12 @@ try:
             f.write(data)
             f.truncate()
 
-    fileReplaceLinesWith("src/wingetui/Core/Data/Core.cs", {
+    fileReplaceLinesWith("src/UniGetUI/Core/Data/Core.cs", {
         "        public static string VersionName = ": f" \"{versionName}\"; // Do not modify this line, use file scripts/apply_versions.py\n",
         "        public static double VersionNumber = ": f" {versionCode}; // Do not modify this line, use file scripts/apply_versions.py\n",
     }, encoding="utf-8-sig")
 
-    fileReplaceLinesWith("src/wingetui/wingetui.csproj", {
+    fileReplaceLinesWith("src/UniGetUI/UniGetUI.csproj", {
         "\t<FileVersion>": f"{versionISS}</FileVersion>\n",
         "\t<InformationalVersion>": f"{versionName}</InformationalVersion>\n",
     }, encoding="utf-8-sig")
@@ -39,7 +39,7 @@ try:
         "VersionInfoVersion=": f"{versionISS}\n",
     }, encoding="utf-8-sig")
 
-    fileReplaceLinesWith("src/wingetui/app.manifest", {
+    fileReplaceLinesWith("src/UniGetUI/app.manifest", {
         "	  version=": f" \"{versionISS}\"\n",
     }, encoding="utf-8-sig")
 
