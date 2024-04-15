@@ -21,8 +21,8 @@
     <Nullable>annotations</Nullable>
 	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	  <SelfContained>true</SelfContained>
-	<FileVersion>3.1.0.0</FileVersion>
-	<InformationalVersion>3.1.0-beta</InformationalVersion>
+	<FileVersion>3.0.1.0</FileVersion>
+	<InformationalVersion>3.01</InformationalVersion>
 	<Product>UniGetUI</Product>
 	<Copyright>2024, Martí Climent</Copyright>
   </PropertyGroup>
