@@ -13,16 +13,6 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Services.TargetedContent;
-using Windows.Storage.Streams;
-using Deployment = Microsoft.Management.Deployment;
-
-using WindowsPackageManager.Interop;
-using Windows.Foundation;
-using System.Collections;
-using Microsoft.Management.Deployment;
-using System.ComponentModel;
-using CommunityToolkit.WinUI.Animations;
-using Microsoft.UI.Xaml.Controls;
 
 
 namespace UniGetUI.PackageEngine.Managers
@@ -39,96 +29,11 @@ namespace UniGetUI.PackageEngine.Managers
         private static GOGSource GOGSource { get; } = new GOGSource();
         private static MicrosoftStoreSource MicrosoftStoreSource { get; } = new MicrosoftStoreSource();
 
-        private WindowsPackageManagerFactory WinGetFactory;
-        private Deployment.PackageManager WinGetManager;
-
-
+        private IWinGetPackageHelper WinGetHelper;
+        
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            List<Package> Packages = new();
-            var PackageFilters = WinGetFactory.CreateFindPackagesOptions();
-
-            // Name filter
-            var FilterName = WinGetFactory.CreatePackageMatchFilter();
-            FilterName.Field = Deployment.PackageMatchField.Name;
-            FilterName.Value = query;
-            FilterName.Option = Deployment.PackageFieldMatchOption.ContainsCaseInsensitive;
-            PackageFilters.Filters.Add(FilterName);
-
-            // Id filter
-            var FilterId = WinGetFactory.CreatePackageMatchFilter();
-            FilterId.Field = Deployment.PackageMatchField.Name;
-            FilterId.Value = query;
-            FilterId.Option = Deployment.PackageFieldMatchOption.ContainsCaseInsensitive;
-            PackageFilters.Filters.Add(FilterId);
-
-            // Load catalogs
-            var AvailableCatalogs = WinGetManager.GetPackageCatalogs();
-            Dictionary<Deployment.PackageCatalogReference, Task<Deployment.FindPackagesResult>> FindPackageTasks = new();
-
-            // Spawn Tasks to find packages on catalogs
-            foreach (var CatalogReference in AvailableCatalogs.ToArray())
-            {
-                // Connect to catalog
-                CatalogReference.AcceptSourceAgreements = true;
-                var result = await CatalogReference.ConnectAsync();
-                if (result.Status == Deployment.ConnectResultStatus.Ok)
-                {
-                    try
-                    {
-                        // Create task and spawn it
-                        var task = new Task<Deployment.FindPackagesResult>(() => result.PackageCatalog.FindPackages(PackageFilters));
-                        task.Start();
-
-                        // Add task to list
-                        FindPackageTasks.Add(
-                            CatalogReference,
-                            task
-                        );
-                    }
-                    catch (Exception e)
-                    {
-                        AppTools.Log("WinGet: Catalog " + CatalogReference.Info.Name + " failed to spawn FindPackages task.");
-                        AppTools.Log(e);
-                    }
-                }
-                else
-                {
-                    AppTools.Log("WinGet: Catalog " + CatalogReference.Info.Name + " failed to connect.");
-                }
-            }
-
-            // Wait for tasks completion
-            await Task.WhenAll(FindPackageTasks.Values.ToArray());
-
-            foreach(var CatalogTaskPair in FindPackageTasks)
-            {   
-                try
-                {
-                    // Get the source for the catalog
-                    ManagerSource source = SourceFactory.GetSourceOrDefault(CatalogTaskPair.Key.Info.Name);
-
-                    var FoundPackages = CatalogTaskPair.Value.Result;
-                    foreach(var package in FoundPackages.Matches.ToArray())
-                    {
-                        // Create the Package item and add it to the list
-                        Packages.Add(new Package(
-                            package.CatalogPackage.Name,
-                            package.CatalogPackage.Id,
-                            package.CatalogPackage.DefaultInstallVersion.Version,
-                            source,
-                            this
-                        ));
-                    }
-                }
-                catch (Exception e)
-                {
-                    AppTools.Log("WinGet: Catalog " + CatalogTaskPair.Key.Info.Name + " failed to get available packages.");
-                    AppTools.Log(e);
-                }
-            }
-
-            return Packages.ToArray();
+            return await WinGetHelper.FindPackages_UnSafe(this, query);
         }
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
@@ -446,158 +351,20 @@ namespace UniGetUI.PackageEngine.Managers
             return new ManagerSource(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache"));
         }
 
+        protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
+        {
+            return await WinGetHelper.GetPackageVersions_Unsafe(this, package);
+        }
+
         public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
-            PackageDetails details = new(package);
-
-            if (package.Source.Name == "winget")
-                details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
-                    + package.Id[0].ToString().ToLower() + "/"
-                    + package.Id.Split('.')[0] + "/"
-                    + String.Join("/", (package.Id.Contains('.') ? package.Id.Split('.')[1..] : package.Id.Split('.')))
-                );
-            else if (package.Source.Name == "msstore")
-                details.ManifestUrl = new Uri("https://apps.microsoft.com/detail/" + package.Id);
-
-            // Find the native package for the given Package object
-            var Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
-            if (Catalog == null)
-            {
-                AppTools.Log("Failed to get catalog " + package.Source.Name + ". Is the package local?");
-                return details;
-            }
-
-            // Connect to catalog
-            Catalog.AcceptSourceAgreements = true;
-            var ConnectResult = await Task.Run(() => Catalog.Connect());
-            if(ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
-            {
-                AppTools.Log("Failed to connect to catalog " + package.Source.Name);
-                return details;
-            }
-
-            // Match only the exact same Id
-            var packageMatchFilter = WinGetFactory.CreateFindPackagesOptions();
-            var filters = WinGetFactory.CreatePackageMatchFilter();
-            filters.Field = Deployment.PackageMatchField.Id;
-            filters.Value = package.Id;
-            filters.Option = Deployment.PackageFieldMatchOption.Equals;
-            packageMatchFilter.Filters.Add(filters);
-            packageMatchFilter.ResultLimit = 1;
-            var SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
-
-            if(SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
-            {
-                AppTools.Log("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
-                return details;
-            }
-
-            // Get the Native Package
-            var NativePackage = SearchResult.Result.Matches.First().CatalogPackage;
-
-            // Extract data from NativeDetails
-            var NativeDetails = NativePackage.DefaultInstallVersion.GetCatalogPackageMetadata(Windows.System.UserProfile.GlobalizationPreferences.Languages[0]);
-
-            if(NativeDetails.Author != "")
-                details.Author = NativeDetails.Author;
-
-            if (NativeDetails.Description != "")
-                details.Description = NativeDetails.Description;
-
-            if (NativeDetails.PackageUrl != "")
-                details.HomepageUrl = new Uri(NativeDetails.PackageUrl);
-
-            if (NativeDetails.License != "")
-                details.License = NativeDetails.License;
-
-            if (NativeDetails.LicenseUrl != "")
-                details.LicenseUrl = new Uri(NativeDetails.LicenseUrl);
-
-            if (NativeDetails.Publisher != "")
-                details.Publisher = NativeDetails.Publisher;
-
-            if (NativeDetails.ReleaseNotes != "")
-                details.ReleaseNotes = NativeDetails.ReleaseNotes;
-
-            if (NativeDetails.ReleaseNotesUrl != "")
-                details.ReleaseNotesUrl = new Uri(NativeDetails.ReleaseNotesUrl);
-
-            if (NativeDetails.Tags != null)
-                details.Tags = NativeDetails.Tags.ToArray();
-
-            Debug.WriteLine("Starting manual fetch");
-            
-            // There is no way yet to retrieve installer URLs right now so this part will be console-parsed.
-            // TODO: Replace this code with native code when available on the COM api
-            Process process = new();
-            List<string> output = new();
-            ProcessStartInfo startInfo = new()
-            {
-                FileName = Path.Join(CoreData.UniGetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_x64", "winget.exe"),
-                Arguments = Properties.ExecutableCallArgs + " show --id " + package.Id + " --exact --disable-interactivity --accept-source-agreements --source " + package.Source.Name,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-            process.StartInfo = startInfo;
-            process.Start();
-
-            // Retrieve the output
-            string _line;
-            while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
-                if (_line.Trim() != "")
-                    output.Add(_line);
-
-            // Parse the output
-            foreach (string __line in output)
-            {
-                try 
-                { 
-                    AppTools.Log(__line);
-                    string line = __line.Trim();
-                    if (line.Contains("Installer SHA256:"))
-                        details.InstallerHash = line.Split(":")[1].Trim();
-
-                    else if (line.Contains("Installer Url:"))
-                    {
-                        details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
-                        details.InstallerSize = await Tools.GetFileSizeAsync(details.InstallerUrl);
-                    }
-                    else if (line.Contains("Release Date:"))
-                        details.UpdateDate = line.Split(":")[1].Trim();
-
-                    else if (line.Contains("Installer Type:"))
-                        details.InstallerType = line.Split(":")[1].Trim();
-                }
-                catch (Exception e)
-                {
-                    AppTools.Log("Error occurred while parsing line value=\"" + __line + "\"");
-                    AppTools.Log(e.Message);
-                }
-            }
-
-            // NativeDetails.Icons ICONS
-            return details;
-            
+            return await WinGetHelper.GetPackageDetails_UnSafe(this, package);
         }
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()
         {
-            List<ManagerSource> sources = new();
-
-            foreach(var catalog in await Task.Run(() => WinGetManager.GetPackageCatalogs().ToArray()))
-                try {
-                    sources.Add(new ManagerSource(this, catalog.Info.Name, new Uri(catalog.Info.Argument), updateDate: catalog.Info.LastUpdateTime.ToString()));
-                } catch (Exception e) {
-                    AppTools.Log(e);
-                }
-
-            return sources.ToArray();
+            return await WinGetHelper.GetSources_UnSafe(this);
         }
-
 
         public override async Task RefreshPackageIndexes()
         {
@@ -669,60 +436,26 @@ namespace UniGetUI.PackageEngine.Managers
                 }
             };
             process.Start();
-            status.Version = "WinGet CLI Version: " + (await process.StandardOutput.ReadToEndAsync()).Trim();
+            status.Version = "Naive WinGet CLI Version: " + (await process.StandardOutput.ReadToEndAsync()).Trim();
 
 
-            // Initialize the WinGet manager (C# Native)
-            WinGetFactory = (Tools.IsAdministrator()) 
-                ? new WindowsPackageManagerElevatedFactory()
-                : new WindowsPackageManagerStandardFactory();
-            WinGetManager = await Task.Run(() => WinGetFactory.CreatePackageManager());
+            try
+            {
+                await Task.Run(() => WinGetHelper = new NativeWinGetHelper());
+                status.Version += "\nUsing Native WinGet helper (COM Api)";
+            }
+            catch (Exception ex)
+            {
+                AppTools.Log("Cannot create native WinGet instance due to error: " + ex.ToString());
+                WinGetHelper = new BundledWinGetHelper();
+                status.Version += "\nUsing bundled WinGet helper (CLI parsing)";
+            }
 
             Status = status; // Need to set status before calling RefreshSources, otherwise will crash
             if (status.Found && IsEnabled())
                 await RefreshPackageIndexes();
 
             return status;
-        }
-
-        protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
-        {
-            // Find the native package for the given Package object
-            var Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
-            if(Catalog == null)
-            {
-                AppTools.Log("Failed to get catalog " + package.Source.Name + ". Is the package local?");
-                return [];
-            }
-
-            // Connect to catalog
-            Catalog.AcceptSourceAgreements = true;
-            var ConnectResult = await Task.Run(() => Catalog.Connect());
-            if (ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
-            {
-                AppTools.Log("Failed to connect to catalog " + package.Source.Name);
-                return [];
-            }
-
-            // Match only the exact same Id
-            var packageMatchFilter = WinGetFactory.CreateFindPackagesOptions();
-            var filters = WinGetFactory.CreatePackageMatchFilter();
-            filters.Field = Deployment.PackageMatchField.Id;
-            filters.Value = package.Id;
-            filters.Option = Deployment.PackageFieldMatchOption.Equals;
-            packageMatchFilter.Filters.Add(filters);
-            packageMatchFilter.ResultLimit = 1;
-            var SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
-
-            if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
-            {
-                AppTools.Log("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
-                return [];
-            }
-
-            // Get the Native Package
-            var NativePackage = SearchResult.Result.Matches.First().CatalogPackage;
-            return NativePackage.AvailableVersions.Select(x => x.Version).ToArray();
         }
 
         public override ManagerSource[] GetKnownSources()

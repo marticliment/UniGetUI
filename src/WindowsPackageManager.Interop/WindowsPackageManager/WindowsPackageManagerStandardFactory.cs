@@ -22,7 +22,15 @@ public class WindowsPackageManagerStandardFactory : WindowsPackageManagerFactory
         try
         {
             var hr = PInvoke.CoCreateInstance(clsid, null, CLSCTX.CLSCTX_LOCAL_SERVER, iid, out var result);
+            
+            //                     !! WARNING !!
+            // An exception may be thrown on the line below if UniGetUI
+            // runs as administrator or when WinGet is not installed on the
+            // system. It can be safely ignored if any of the conditions
+            // above are met.
             Marshal.ThrowExceptionForHR(hr);
+            
+            
             pUnknown = Marshal.GetIUnknownForObject(result);
             return MarshalGeneric<T>.FromAbi(pUnknown);
         }
