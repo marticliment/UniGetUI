@@ -55,6 +55,7 @@ namespace UniGetUI.PackageEngine.Managers
             p.Start();
 
             await p.StandardInput.WriteAsync(@"
+                Set-ExecutionPolicy Bypass -Scope Process -Force
                 function Print-WinGetPackage {
                     param (
                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
@@ -74,11 +75,14 @@ namespace UniGetUI.PackageEngine.Managers
 
                 if(!(Get-Command -Verb Get -Noun WinGetPackage))
                 {
+                    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Confirm:$false
                     Install-Module -Name Microsoft.WinGet.Client -Scope CurrentUser -AllowClobber -Confirm:$false -Force
                 }
                 Get-WinGetPackage | Print-WinGetPackage
                 
+
                 exit
+
                 ");
 
             string line;
@@ -124,6 +128,7 @@ namespace UniGetUI.PackageEngine.Managers
             p.Start();
 
             await p.StandardInput.WriteAsync(@"
+                Set-ExecutionPolicy Bypass -Scope Process -Force
                 function Print-WinGetPackage {
                     param (
                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
@@ -140,6 +145,7 @@ namespace UniGetUI.PackageEngine.Managers
 
                 if(!(Get-Command -Verb Get -Noun WinGetPackage))
                 {
+                    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Confirm:$false
                     Install-Module -Name Microsoft.WinGet.Client -Scope CurrentUser -AllowClobber -Confirm:$false -Force
                 }
                 Get-WinGetPackage | Print-WinGetPackage
