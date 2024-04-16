@@ -754,7 +754,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception e)
             {
-                AppTools.Log("Loading installation options for file " + optionsFile  + "Failed: ");
+                AppTools.Log("Loading installation options for file " + optionsFile  + " have failed: ");
                 AppTools.Log(e);
             }
         }
