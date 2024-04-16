@@ -94,11 +94,11 @@ namespace UniGetUI.Core.Data
             }
         }
 
-        public async Task UpdateLanguageFile(string LangKey)
+        public async Task UpdateLanguageFile(string LangKey, bool UseOldUrl = false)
         {
             try
             {
-                Uri NewFile = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/src/UniGetUI/Assets/Languages/" + "lang_" + LangKey + ".json");
+                Uri NewFile = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/src/" + (UseOldUrl? "wingetui": "UniGetUI") + "/Assets/Languages/lang_" + LangKey + ".json");
 
                 HttpClient client = new();
                 string fileContents = await client.GetStringAsync(NewFile);
@@ -112,7 +112,10 @@ namespace UniGetUI.Core.Data
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                if (e is HttpRequestException && !UseOldUrl)
+                    await UpdateLanguageFile(LangKey, true);
+                else
+                    AppTools.Log(e);
             }
         }
 
