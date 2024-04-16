@@ -637,6 +637,6 @@
   "{pm} is enabled and ready to go" : "{pm} ist aktiviert und bereit",
   "{pm} package manager specific preferences" : "{pm} Paketmanager-spezifische Einstellungen",
   "{pm} preferences" : "{pm}-Einstellungen",
-  "{pm} version:" : "{pm}-Version:",
+  "{pm} version:" : "{pm} Version:",
   "{pm} was not found!" : "{pm} wurde nicht gefunden"
 }
