@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11701,
-        "done": 5041,
-        "packages_with_icon": 5041,
+        "done": 5042,
+        "packages_with_icon": 5042,
         "packages_with_screenshot": 550,
         "total_screenshots": 1728
     },
@@ -7305,7 +7305,7 @@
             "images": []
         },
         "ciscowebexmeetings": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/webex-meetings.44.4.0.159.png",
             "images": []
         },
         "citrix-receiver": {
