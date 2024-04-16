@@ -11,6 +11,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Devices.Bluetooth.Advertisement;
+using System.ComponentModel.Design;
 
 namespace UniGetUI.PackageEngine.Classes
 {
@@ -735,18 +736,25 @@ namespace UniGetUI.PackageEngine.Classes
         /// </summary>
         public async Task LoadOptionsFromDiskAsync()
         {
+            var optionsFile = GetPackageOptionsFile();
             try
             {
-                var optionsFile = GetPackageOptionsFile();
                 if (!optionsFile.Exists)
                     return;
                 
+
                 await using var inputStream = optionsFile.OpenRead();
                 var options = await JsonSerializer.DeserializeAsync<SerializableInstallationOptions_v1>(inputStream);
                 FromSerialized(options);
             }
+            catch (JsonException)
+            {
+                AppTools.Log("An error occurred while parsing package " + optionsFile + ". The file will be overwritten");
+                await File.WriteAllTextAsync(optionsFile.FullName, "{}");
+            }
             catch (Exception e)
             {
+                AppTools.Log("Loading installation options for file " + optionsFile  + "Failed: ");
                 AppTools.Log(e);
             }
         }
