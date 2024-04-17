@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11701,
-        "done": 5042,
-        "packages_with_icon": 5042,
+        "total": 11700,
+        "done": 5043,
+        "packages_with_icon": 5043,
         "packages_with_screenshot": 550,
-        "total_screenshots": 1728
+        "total_screenshots": 1722
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -7241,7 +7241,7 @@
             "images": []
         },
         "chromium-stable": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/FzjDb7vy/chromium-icon.png",
             "images": []
         },
         "chromiumbsu": {
@@ -18530,10 +18530,6 @@
             "images": []
         },
         "https-everywhere-chrome": {
-            "icon": "",
-            "images": []
-        },
-        "https://imgur.com/ZGKQslT": {
             "icon": "",
             "images": []
         },
@@ -32951,13 +32947,7 @@
         "qr-codereader": {
             "icon": "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/logo_dark.png",
             "images": [
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/social_banner.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_2_dark.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_2_light.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_4_dark.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_4_light.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_5_dark.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_5_light.png"
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_1_dark.png"
             ]
         },
         "qrcp": {
