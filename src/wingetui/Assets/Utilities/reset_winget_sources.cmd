@@ -8,7 +8,9 @@ echo This script will reset winget sources.
 echo . Please wait... 
 echo winget path: %wingetpath%
 echo Deleting Winget local data sources...
+powershell Set-ExecutionPolicy Unrestricted
 powershell -file "%~dp0\delete_winget_databases.ps1"
+powershell Set-ExecutionPolicy Default
 echo Performing reset...
 cd %dirpathx86%
 %sudopath% .\winget.exe source remove winget
