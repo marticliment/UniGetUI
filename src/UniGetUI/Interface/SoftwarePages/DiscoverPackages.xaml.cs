@@ -242,20 +242,21 @@ namespace UniGetUI.Interface
             if (!Initialized)
                 return;
 
-            if (QueryBlock.Text == null || QueryBlock.Text.Length < 3)
+            if (QueryBlock.Text == null)
             {
+                ClearPackages();
                 MainSubtitle.Text = Tools.AutoTranslated("Found packages: ") + Packages.Count().ToString();
                 LoadingProgressBar.Visibility = Visibility.Collapsed;
-                Packages.Clear();
-                FilteredPackages.Clear();
-                UsedManagers.Clear();
-                SourcesTreeView.RootNodes.Clear();
-                UsedSourcesForManager.Clear();
-                RootNodeForManager.Clear();
-                NodesForSources.Clear();
                 return;
             }
-
+            if (QueryBlock.Text.Length < 3)
+            {
+                ClearPackages();
+                LastCalledQuery = QueryBlock.Text;
+                MainSubtitle.Text = Tools.AutoTranslated("Found packages: ") + Packages.Count().ToString();
+                LoadingProgressBar.Visibility = Visibility.Collapsed;
+                return;
+            }
 
             if (LastCalledQuery.Trim() != QueryBlock.Text.Trim())
             {
@@ -274,13 +275,7 @@ namespace UniGetUI.Interface
                 SourcesTreeViewGrid.Visibility = Visibility.Collapsed;
                 SourcesPlaceholderText.Text = Tools.AutoTranslated("Loading...");
 
-                Packages.Clear();
-                FilteredPackages.Clear();
-                UsedManagers.Clear();
-                SourcesTreeView.RootNodes.Clear();
-                UsedSourcesForManager.Clear();
-                RootNodeForManager.Clear();
-                NodesForSources.Clear();
+                ClearPackages();
 
 
 
@@ -330,6 +325,17 @@ namespace UniGetUI.Interface
             }
 
             LoadingProgressBar.Visibility = Visibility.Collapsed;
+        }
+
+        private void ClearPackages()
+        {
+            Packages.Clear();
+            FilteredPackages.Clear();
+            UsedManagers.Clear();
+            SourcesTreeView.RootNodes.Clear();
+            UsedSourcesForManager.Clear();
+            RootNodeForManager.Clear();
+            NodesForSources.Clear();
         }
 
         public async Task FilterPackages(string query, bool StillLoading = false)

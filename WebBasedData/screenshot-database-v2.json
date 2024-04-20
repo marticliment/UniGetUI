@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11700,
-        "done": 5037,
-        "packages_with_icon": 5037,
-        "packages_with_screenshot": 548,
-        "total_screenshots": 1719
+        "done": 5043,
+        "packages_with_icon": 5043,
+        "packages_with_screenshot": 550,
+        "total_screenshots": 1722
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -7155,31 +7155,43 @@
             "images": []
         },
         "chrome": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Chrome_icon_%28February_2022%29.svg/2048px-Google_Chrome_icon_%28February_2022%29.svg.png",
+            "icon": "https://i.postimg.cc/yd2gGCZY/chrome-icon.png",
             "images": [
-                "https://www.html.it/app/uploads/2022/02/google-chrome.png",
-                "https://www.iphonelife.com/sites/iphonelife.com/files/chrome_1_0.png"
+                "https://i.postimg.cc/5tNCY3J1/chrome-1.png",
+                "https://i.postimg.cc/nVQQDrys/chrome-2.png",
+                "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
             ]
         },
         "chrome-beta": {
-            "icon": "https://image.winudf.com/v2/image1/Y29tLmNocm9tZS5kZXZfaWNvbl8xNTYzNDkxNzUyXzA3Ng/icon.png?w=&fakeurl=1",
+            "icon": "https://i.postimg.cc/BnRrthHP/chrome-beta-icon.png",
             "images": [
-                "https://www.html.it/app/uploads/2022/02/google-chrome.png",
-                "https://www.iphonelife.com/sites/iphonelife.com/files/chrome_1_0.png"
+                "https://i.postimg.cc/5tNCY3J1/chrome-1.png",
+                "https://i.postimg.cc/nVQQDrys/chrome-2.png",
+                "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
             ]
         },
         "chrome-canary": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Chrome-canary-logo.svg/512px-Chrome-canary-logo.svg.png",
+            "icon": "https://i.postimg.cc/9f8qG7X9/chrome-canary-icon.png",
             "images": [
-                "https://www.html.it/app/uploads/2022/02/google-chrome.png",
-                "https://www.iphonelife.com/sites/iphonelife.com/files/chrome_1_0.png"
+                "https://i.postimg.cc/5tNCY3J1/chrome-1.png",
+                "https://i.postimg.cc/nVQQDrys/chrome-2.png",
+                "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
             ]
         },
         "chrome-dev": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/tgPL6hNS/chrome-dev-icon.png",
             "images": [
-                "https://www.html.it/app/uploads/2022/02/google-chrome.png",
-                "https://www.iphonelife.com/sites/iphonelife.com/files/chrome_1_0.png"
+                "https://i.postimg.cc/5tNCY3J1/chrome-1.png",
+                "https://i.postimg.cc/nVQQDrys/chrome-2.png",
+                "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
+            ]
+        },
+        "chrome-exe": {
+            "icon": "https://i.postimg.cc/yd2gGCZY/chrome-icon.png",
+            "images": [
+                "https://i.postimg.cc/5tNCY3J1/chrome-1.png",
+                "https://i.postimg.cc/nVQQDrys/chrome-2.png",
+                "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
             ]
         },
         "chrome-remote-desktop-host": {
@@ -7221,7 +7233,7 @@
             "images": []
         },
         "chromium": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/FzjDb7vy/chromium-icon.png",
             "images": []
         },
         "chromium-gost": {
@@ -7229,7 +7241,7 @@
             "images": []
         },
         "chromium-stable": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/FzjDb7vy/chromium-icon.png",
             "images": []
         },
         "chromiumbsu": {
@@ -7293,7 +7305,7 @@
             "images": []
         },
         "ciscowebexmeetings": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/webex-meetings.44.4.0.159.png",
             "images": []
         },
         "citrix-receiver": {
@@ -18518,10 +18530,6 @@
             "images": []
         },
         "https-everywhere-chrome": {
-            "icon": "",
-            "images": []
-        },
-        "https://imgur.com/ZGKQslT": {
             "icon": "",
             "images": []
         },
@@ -30824,8 +30832,11 @@
             "images": []
         },
         "pl-sqlitestudio": {
-            "icon": "",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/pawelsalawa/sqlitestudio/master/SQLiteStudio3/guiSQLiteStudio/img/sqlitestudio_256.png",
+            "images": [
+                "https://sqlitestudio.pl/img/uploaded/full_22.png",
+                "https://sqlitestudio.pl/img/uploaded/1613941917961410_3.3.0.png"
+            ]
         },
         "planetblupi": {
             "icon": "",
@@ -30876,10 +30887,10 @@
             "images": []
         },
         "playdatesdk": {
-            "icon": "https://nikeedev.stio.studio/imgr/playdate4.png",
+            "icon": "https://nikee.dev/imgr/playdate4.png",
             "images": [
-                "https://nikeedev.stio.studio/imgr/playdatesdk_screenshot.png",
-                "https://nikeedev.stio.studio/imgr/playdatesdk_screenshot2.png"
+                "https://nikee.dev/imgr/playdatesdk_screenshot.png",
+                "https://nikee.dev/imgr/playdatesdk_screenshot2.png"
             ]
         },
         "playgames-beta": {
@@ -32936,13 +32947,7 @@
         "qr-codereader": {
             "icon": "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/logo_dark.png",
             "images": [
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/social_banner.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_2_dark.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_2_light.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_4_dark.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_4_light.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_5_dark.png",
-                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_5_light.png"
+                "https://raw.githubusercontent.com/ottozumkeller/QR-Code-Reader/main/Images/screenshot_1_dark.png"
             ]
         },
         "qrcp": {
@@ -34971,9 +34976,9 @@
             "images": []
         },
         "rsilauncher": {
-            "icon": "https://i.imgur.com/eUHF7BW.png",
+            "icon": "https://i.imgur.com/AoIT18N.png",
             "images": [
-                "https://i.imgur.com/uVnyK5g.png"
+                "https://i.imgur.com/7P1Z9pQ.png"
             ]
         },
         "rss-builder": {
