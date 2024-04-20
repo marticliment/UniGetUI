@@ -8,7 +8,7 @@ except ImportError:
     import requests
 
 
-__project_id = 1 # wingetui
+__project_id = 1 # UniGetUI
 __api_url = f"https://tolgee.marticliment.com/v2/projects/{__project_id}"
 __api_key = ""
 __headers: dict[str, str] = {}
