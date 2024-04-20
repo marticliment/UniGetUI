@@ -235,15 +235,16 @@ Source: "InstallerExtras\EnsureWinGet.ps1"; DestDir: "{tmp}"; Flags: deleteafter
 
 [Icons]
 ; Yes, they do have a space. This has been done in purpose for the updater to handle properly the new shortcuts
-Name: "{autostartmenu}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\startmenuicon
-Name: "{autodesktop}\{#MyAppName} "; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\desktopicon
+Name: "{autostartmenu}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\startmenuicon
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\desktopicon
 
 [Run]
 ; Filename: "{tmp}\appsdk.exe"; Flags: runhidden; Parameters: "--force"; StatusMsg: "Installing Windows App Sdk (x64)"; 
 Filename: "powershell.exe"; Parameters: "-ExecutionPolicy Bypass -File ""{tmp}\EnsureWinGet.ps1"""; StatusMsg: "Ensuring WinGet is installed properly"; WorkingDir: {app}
 ; Flags: runhidden
  
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall;
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall;     
+Filename: "{app}\{#MyAppExeName}"; Parameters: "--migrate-wingetui-to-unigetui"; StatusMsg: "Removing old icons...";
 ; Check: not CmdLineParamExists('/NoAutoStart');
 ; Autostart is required to finish installation properly from an update, hence autostart will be obligatory
 
