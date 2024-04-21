@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11700,
+        "total": 11701,
         "done": 5043,
         "packages_with_icon": 5043,
-        "packages_with_screenshot": 550,
-        "total_screenshots": 1722
+        "packages_with_screenshot": 551,
+        "total_screenshots": 1723
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -5891,6 +5891,10 @@
             "images": []
         },
         "bugn": {
+            "icon": "",
+            "images": []
+        },
+        "bugs": {
             "icon": "",
             "images": []
         },
@@ -20831,7 +20835,9 @@
         },
         "kakaotalk": {
             "icon": "https://community.chocolatey.org/content/packageimages/kakaotalk.3.4.7.3369.png",
-            "images": []
+            "images": [
+                "https://t1.kakaocdn.net/kakaocorp/kakaocorp/admin/service/e9d4e476018e00001.png"
+            ]
         },
         "kakaowork": {
             "icon": "",
