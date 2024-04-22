@@ -3,13 +3,14 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
-using UniGetUI.Core.Data;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.Core;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using UniGetUI.Core;
+using UniGetUI.Core.Data;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.Core.Logging;
 
 namespace UniGetUI.PackageEngine.Operations
 {
@@ -35,7 +36,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 if (Tools.GetSettings("DoCacheAdminRights") || Tools.GetSettings("DoCacheAdminRightsForBatches"))
                 {
-                    AppTools.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
                     p.StartInfo.FileName = CoreData.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
@@ -85,7 +86,7 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 catch (Exception ex)
                 {
-                    AppTools.Log(ex);
+                    Logger.Log(ex);
                 }
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -94,12 +95,12 @@ namespace UniGetUI.PackageEngine.Operations
             dialog.Resources["ContentDialogMaxHeight"] = 1000;
             dialog.Title = Tools.Translate("Source addition failed");
 
-            StackPanel panel = new StackPanel() { Spacing = 16 };
+            StackPanel panel = new() { Spacing = 16 };
             panel.Children.Add(new TextBlock() { TextWrapping = TextWrapping.WrapWholeWords, Text = Tools.Translate("Could not add source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name) + ". " + Tools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
 
-            Expander expander = new Expander() { CornerRadius = new CornerRadius(8) };
+            Expander expander = new() { CornerRadius = new CornerRadius(8) };
 
-            StackPanel HeaderPanel = new StackPanel() { Orientation = Orientation.Horizontal, Spacing = 8 };
+            StackPanel HeaderPanel = new() { Orientation = Orientation.Horizontal, Spacing = 8 };
             HeaderPanel.Children.Add(new LocalIcon("console") { VerticalAlignment = VerticalAlignment.Center, Height = 24, Width = 24, HorizontalAlignment = HorizontalAlignment.Left });
             HeaderPanel.Children.Add(new TextBlock() { Text = Tools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
 
@@ -107,11 +108,11 @@ namespace UniGetUI.PackageEngine.Operations
             expander.HorizontalAlignment = HorizontalAlignment.Stretch;
             panel.Children.Add(expander);
 
-            RichTextBlock output = new RichTextBlock() { FontFamily = new FontFamily("Consolas"), TextWrapping = TextWrapping.Wrap };
-            ScrollViewer sv = new ScrollViewer();
+            RichTextBlock output = new() { FontFamily = new FontFamily("Consolas"), TextWrapping = TextWrapping.Wrap };
+            ScrollViewer sv = new();
             sv.MaxHeight = 500;
-            Paragraph par = new Paragraph();
-            foreach (var line in ProcessOutput)
+            Paragraph par = new();
+            foreach (string line in ProcessOutput)
                 par.Inlines.Add(new Run() { Text = line + "\x0a" });
             output.Blocks.Add(par);
 
@@ -136,8 +137,9 @@ namespace UniGetUI.PackageEngine.Operations
             OperationSucceeded?.Invoke(this, new EventArgs());
             LineInfoText = Tools.Translate("The source {source} was added to {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
             if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
-                
-                try{
+
+                try
+                {
                     new ToastContentBuilder()
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
@@ -147,7 +149,7 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 catch (Exception ex)
                 {
-                    AppTools.Log(ex);
+                    Logger.Log(ex);
                 }
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
@@ -171,7 +173,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 if (Tools.GetSettings("DoCacheAdminRights") || Tools.GetSettings("DoCacheAdminRightsForBatches"))
                 {
-                    AppTools.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
                     p.StartInfo.FileName = CoreData.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
@@ -223,12 +225,12 @@ namespace UniGetUI.PackageEngine.Operations
             dialog.Resources["ContentDialogMaxHeight"] = 1000;
             dialog.Title = Tools.Translate("Source removal failed");
 
-            StackPanel panel = new StackPanel() { Spacing = 16 };
+            StackPanel panel = new() { Spacing = 16 };
             panel.Children.Add(new TextBlock() { TextWrapping = TextWrapping.WrapWholeWords, Text = Tools.Translate("Could not remove source {source} from {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name) + ". " + Tools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
 
-            Expander expander = new Expander() { CornerRadius = new CornerRadius(8) };
+            Expander expander = new() { CornerRadius = new CornerRadius(8) };
 
-            StackPanel HeaderPanel = new StackPanel() { Orientation = Orientation.Horizontal, Spacing = 8 };
+            StackPanel HeaderPanel = new() { Orientation = Orientation.Horizontal, Spacing = 8 };
             HeaderPanel.Children.Add(new LocalIcon("console") { VerticalAlignment = VerticalAlignment.Center, Height = 24, Width = 24, HorizontalAlignment = HorizontalAlignment.Left });
             HeaderPanel.Children.Add(new TextBlock() { Text = Tools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
 
@@ -236,11 +238,11 @@ namespace UniGetUI.PackageEngine.Operations
             expander.HorizontalAlignment = HorizontalAlignment.Stretch;
             panel.Children.Add(expander);
 
-            RichTextBlock output = new RichTextBlock() { FontFamily = new FontFamily("Consolas"), TextWrapping = TextWrapping.Wrap };
-            ScrollViewer sv = new ScrollViewer();
+            RichTextBlock output = new() { FontFamily = new FontFamily("Consolas"), TextWrapping = TextWrapping.Wrap };
+            ScrollViewer sv = new();
             sv.MaxHeight = 500;
-            Paragraph par = new Paragraph();
-            foreach (var line in ProcessOutput)
+            Paragraph par = new();
+            foreach (string line in ProcessOutput)
                 par.Inlines.Add(new Run() { Text = line + "\x0a" });
             output.Blocks.Add(par);
 
@@ -265,17 +267,18 @@ namespace UniGetUI.PackageEngine.Operations
             OperationSucceeded?.Invoke(this, new EventArgs());
             LineInfoText = Tools.Translate("The source {source} was removed from {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
             if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
-                try { 
-                new ToastContentBuilder()
-                    .AddArgument("action", "OpenUniGetUI")
-                    .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                    .AddText(Tools.Translate("Removal succeeded"))
-                    .AddText(Tools.Translate("The source {source} was removed from {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
+                try
+                {
+                    new ToastContentBuilder()
+                        .AddArgument("action", "OpenUniGetUI")
+                        .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
+                        .AddText(Tools.Translate("Removal succeeded"))
+                        .AddText(Tools.Translate("The source {source} was removed from {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name)).Show();
 
                 }
                 catch (Exception ex)
                 {
-                    AppTools.Log(ex);
+                    Logger.Log(ex);
                 }
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;

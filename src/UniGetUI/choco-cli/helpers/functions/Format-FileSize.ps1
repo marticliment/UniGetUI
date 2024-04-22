@@ -49,7 +49,7 @@ Get-WebFile
         [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
     )
 
-    # Do not log function call, it interrupts the single line download progress output.
+    # Do not Logger.Log function call, it interrupts the single line download progress output.
 
     Foreach ($unit in @('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB')) {
         If ($size -lt 1024) {

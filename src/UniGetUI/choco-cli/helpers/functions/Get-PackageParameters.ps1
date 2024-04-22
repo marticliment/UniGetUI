@@ -139,7 +139,7 @@ Install-ChocolateyZipPackage
         Write-Debug 'Parsing $env:ChocolateyPackageParameters and $env:ChocolateyPackageParametersSensitive for parameters'
         $paramStrings = @("$env:ChocolateyPackageParameters", "$env:ChocolateyPackageParametersSensitive")
         if ($env:ChocolateyPackageParametersSensitive) {
-            Write-Debug "Sensitive parameters detected, no logging of parameters."
+            Write-Debug "Sensitive parameters detected, no Logger.Logging of parameters."
             $loggingAllowed = $false
         }
     }

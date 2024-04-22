@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace UniGetUI.Core.Data
+﻿namespace UniGetUI.Core.Data
 {
     public static class LicenseData
     {

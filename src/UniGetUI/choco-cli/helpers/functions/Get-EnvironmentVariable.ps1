@@ -64,7 +64,7 @@ Set-EnvironmentVariable
         [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
     )
 
-    # Do not log function call, it may expose variable names
+    # Do not Logger.Log function call, it may expose variable names
     ## Called from chocolateysetup.psm1 - wrap any Write-Host in try/catch
 
     [string] $MACHINE_ENVIRONMENT_REGISTRY_KEY_NAME = "SYSTEM\CurrentControlSet\Control\Session Manager\Environment\";

@@ -2,17 +2,20 @@ using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UniGetUI.Core.Data;
-using UniGetUI.Core;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using UniGetUI.Core;
+using UniGetUI.Core.Classes;
+using UniGetUI.Core.Data;
+using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.Core.Logging;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -64,10 +67,10 @@ namespace UniGetUI.Interface
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
                 {
-                    AppTools.Log(e);
-                    AppTools.Log(e.OriginalSource);
-                    AppTools.Log(e.OriginalSource as FrameworkElement);
-                    AppTools.Log((e.OriginalSource as FrameworkElement).DataContext);
+                    Logger.Log(e);
+                    Logger.Log(e.OriginalSource);
+                    Logger.Log(e.OriginalSource as FrameworkElement);
+                    Logger.Log((e.OriginalSource as FrameworkElement).DataContext);
                     if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
                     {
                         TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
@@ -81,7 +84,7 @@ namespace UniGetUI.Interface
                     }
                     else
                     {
-                        AppTools.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
+                        Logger.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
                     }
                 }
             };
@@ -107,7 +110,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        AppTools.Log(ex);
+                        Logger.Log(ex);
                     }
                 }
             };
@@ -288,7 +291,7 @@ namespace UniGetUI.Interface
                                     continue;
 
                                 if (package.NewVersionIsInstalled())
-                                    AppTools.Log("Package Id={0} with NewVersion={1} is already installed, skipping it...".Replace("{0}", package.Id).Replace("{1}", package.NewVersion));
+                                    Logger.Log("Package Id={0} with NewVersion={1} is already installed, skipping it...".Replace("{0}", package.Id).Replace("{1}", package.NewVersion));
 
                                 package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);
                                 package.GetInstalledPackage()?.SetTag(PackageTag.IsUpgradable);
@@ -381,14 +384,15 @@ namespace UniGetUI.Interface
                                 .AddArgument("action", "openUniGetUIOnUpdatesTab")
                                 .SetBackgroundActivation());
                             toast.AddButton(new ToastButton()
-                                .SetContent(upgradablePackages.Count == 1? Tools.Translate("Update"): Tools.Translate("Update all"))
+                                .SetContent(upgradablePackages.Count == 1 ? Tools.Translate("Update") : Tools.Translate("Update all"))
                                 .AddArgument("action", "updateAll")
                                 .SetBackgroundActivation());
                         }
                         toast.Show();
-                    } catch (Exception ex)
+                    }
+                    catch (Exception ex)
                     {
-                        AppTools.Log(ex);
+                        Logger.Log(ex);
                     }
                 }
             }
@@ -399,11 +403,11 @@ namespace UniGetUI.Interface
                 try
                 {
                     waitTime = long.Parse(Tools.GetSettingsValue("UpdatesCheckInterval"));
-                    AppTools.Log($"Starting check for updates wait interval with waitTime={waitTime}");
+                    Logger.Log($"Starting check for updates wait interval with waitTime={waitTime}");
                 }
                 catch
                 {
-                    AppTools.Log("Invalid value for UpdatesCheckInterval, using default value of 3600 seconds");
+                    Logger.Log("Invalid value for UpdatesCheckInterval, using default value of 3600 seconds");
                 }
                 await Task.Delay(TimeSpan.FromSeconds(waitTime));
                 _ = LoadPackages(ManualCheck: false);
@@ -492,7 +496,7 @@ namespace UniGetUI.Interface
         }
 
         public void UpdatePackageCount(bool StillLoading = false)
-        { 
+        {
             if (FilteredPackages.Count() == 0)
             {
                 if (!StillLoading)
@@ -649,11 +653,12 @@ namespace UniGetUI.Interface
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
 
-            PackageDetails.Click += (s, e) => {
-                if (PackageList.SelectedItem != null) 
-                    _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update); 
+            PackageDetails.Click += (s, e) =>
+            {
+                if (PackageList.SelectedItem != null)
+                    _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update);
             };
-            
+
             HelpButton.Click += (s, e) => { Tools.App.MainWindow.NavigationPage.ShowHelp(); };
 
             InstallationSettings.Click += async (s, e) =>
@@ -693,9 +698,10 @@ namespace UniGetUI.Interface
                             new InstallationOptions(package) { InteractiveInstallation = true }));
             };
 
-            SharePackage.Click += (s, e) => { 
-                if (PackageList.SelectedItem != null) 
-                    Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); 
+            SharePackage.Click += (s, e) =>
+            {
+                if (PackageList.SelectedItem != null)
+                    Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package);
             };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
@@ -824,31 +830,31 @@ namespace UniGetUI.Interface
 
         public void UpdatePackageForId(string id)
         {
-            foreach(UpgradablePackage package in Packages)
+            foreach (UpgradablePackage package in Packages)
             {
                 if (package.Id == id)
                 {
                     Tools.AddOperationToList(new UpdatePackageOperation(package));
-                    AppTools.Log("Updating package with id " + id + ". Operation was launched from widgets");
+                    Logger.Log("Updating package with id " + id + ". Operation was launched from widgets");
                     break;
                 }
             }
-            AppTools.Log("WARNING! No package with id " + id + " was found. Operation was launched from widgets");
+            Logger.Log("WARNING! No package with id " + id + " was found. Operation was launched from widgets");
         }
-        
+
         public void UpdateAllPackages()
         {
-            AppTools.Log("Updating all packages");
+            Logger.Log("Updating all packages");
             foreach (UpgradablePackage package in Packages)
-                if(package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
+                if (package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
                     Tools.AddOperationToList(new UpdatePackageOperation(package));
         }
 
         public void UpdateAllPackagesForManager(string manager)
         {
-            AppTools.Log("Updating all packages");
+            Logger.Log("Updating all packages");
             foreach (UpgradablePackage package in Packages)
-                if(package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
+                if (package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
                     if (package.Manager.Name == manager)
                         Tools.AddOperationToList(new UpdatePackageOperation(package));
         }
@@ -860,7 +866,7 @@ namespace UniGetUI.Interface
 
             lastSavedWidth = ((int)(e.NewSize.Width / 10));
             Tools.SetSettingsValue("SidepanelWidthUpdatesPage", ((int)e.NewSize.Width).ToString());
-            foreach (var control in SidePanelGrid.Children)
+            foreach (UIElement control in SidePanelGrid.Children)
             {
                 control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;
             }

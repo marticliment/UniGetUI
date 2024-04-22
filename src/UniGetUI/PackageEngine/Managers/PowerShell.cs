@@ -1,15 +1,16 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using UniGetUI.Core;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI.PackageEngine.Managers
 {
@@ -56,7 +57,7 @@ namespace UniGetUI.PackageEngine.Managers
 
                     for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
 
-                    Packages.Add(new Package(Tools.FormatAsName(elements[1]), elements[1], elements[0], SourceFactory.GetSourceOrDefault(elements[2]), this));
+                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[1]), elements[1], elements[0], SourceFactory.GetSourceOrDefault(elements[2]), this));
                 }
             }
 
@@ -126,7 +127,7 @@ namespace UniGetUI.PackageEngine.Managers
                 if (elements[1] + ".0" == elements[2] || elements[1] + ".0.0" == elements[2])
                     continue;
 
-                Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], SourceFactory.GetSourceOrDefault(elements[3]), this));
+                Packages.Add(new UpgradablePackage(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], SourceFactory.GetSourceOrDefault(elements[3]), this));
             }
 
             output += await p.StandardError.ReadToEndAsync();
@@ -172,7 +173,7 @@ namespace UniGetUI.PackageEngine.Managers
 
                     for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
 
-                    Packages.Add(new Package(Tools.FormatAsName(elements[1]), elements[1], elements[0], SourceFactory.GetSourceOrDefault(elements[2]), this));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[1]), elements[1], elements[0], SourceFactory.GetSourceOrDefault(elements[2]), this));
                 }
             }
 
@@ -315,7 +316,7 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception ex)
                 {
-                    AppTools.Log(ex);
+                    Logger.Log(ex);
                 }
 
             }
@@ -368,7 +369,7 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log(e);
+                    Logger.Log(e);
                 }
             }
             output += await process.StandardError.ReadToEndAsync();
@@ -406,7 +407,7 @@ namespace UniGetUI.PackageEngine.Managers
             ManagerProperties properties = new()
             {
                 Name = "PowerShell",
-                Description = Tools.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
+                Description = CoreTools.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
                 IconId = "powershell",
                 ColorIconId = "powershell_color",
                 ExecutableFriendlyName = "powershell.exe",

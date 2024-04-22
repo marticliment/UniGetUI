@@ -1,21 +1,20 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using UniGetUI.Core;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.IconEngine;
 using UniGetUI.Interface;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Managers;
-using UniGetUI.Core;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Windows.Foundation.Collections;
-using Windows.UI;
-using YamlDotNet.Serialization;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI
 {
@@ -36,7 +35,7 @@ namespace UniGetUI
         public Interface.SettingsInterface settings;
         public MainWindow MainWindow;
 
-        private BackgroundApiRunner BackgroundApi = new BackgroundApiRunner();
+        private BackgroundApiRunner BackgroundApi = new();
 
         private const int ManagerLoadTimeout = 10000; // 10 seconds timeout for Package Manager initialization
 
@@ -67,7 +66,7 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                AppTools.ReportFatalException(e);
+                CoreTools.ReportFatalException(e);
             }
         }
 
@@ -75,26 +74,26 @@ namespace UniGetUI
         {
             UnhandledException += (sender, e) =>
             {
-                var message = $"Unhandled Exception raised: {e.Message}";
-                var stackTrace = $"Stack Trace: \n{e.Exception.StackTrace}";
-                AppTools.Log(" -");
-                AppTools.Log(" -");
-                AppTools.Log("  ⚠️⚠️⚠️ START OF UNHANDLED ERROR TRACE ⚠️⚠️⚠️");
-                AppTools.Log(message);
-                AppTools.Log(stackTrace);
-                AppTools.Log("  ⚠️⚠️⚠️  END OF UNHANDLED ERROR TRACE  ⚠️⚠️⚠️");
-                AppTools.Log(" -");
-                AppTools.Log(" -");
+                string message = $"Unhandled Exception raised: {e.Message}";
+                string stackTrace = $"Stack Trace: \n{e.Exception.StackTrace}";
+                Logger.Log(" -");
+                Logger.Log(" -");
+                Logger.Log("  ⚠️⚠️⚠️ START OF UNHANDLED ERROR TRACE ⚠️⚠️⚠️");
+                Logger.Log(message);
+                Logger.Log(stackTrace);
+                Logger.Log("  ⚠️⚠️⚠️  END OF UNHANDLED ERROR TRACE  ⚠️⚠️⚠️");
+                Logger.Log(" -");
+                Logger.Log(" -");
                 if (Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal || MainWindow == null)
-                    AppTools.ReportFatalException(e.Exception);
+                    CoreTools.ReportFatalException(e.Exception);
                 else
                 {
                     MainWindow.ErrorBanner.Title = AppTools.Instance.Translate("Something went wrong");
-                    MainWindow.ErrorBanner.Message = AppTools.Instance.Translate("An interal error occurred. Please view the log for further details.");
+                    MainWindow.ErrorBanner.Message = AppTools.Instance.Translate("An interal error occurred. Please view the Logger.Log for further details.");
                     MainWindow.ErrorBanner.IsOpen = true;
-                    var button = new Button()
+                    Button button = new()
                     {
-                        Content = AppTools.Instance.Translate("WingetUI log"),
+                        Content = AppTools.Instance.Translate("WingetUI Logger.Log"),
                     };
                     button.Click += (sender, args) =>
                     {
@@ -117,7 +116,7 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                Logger.Log(e);
             }
         }
 
@@ -131,12 +130,12 @@ namespace UniGetUI
                 BlockLoading = true
             };
             MainWindow.Closed += (sender, args) => DisposeAndQuit(0);
-            
-            var hWnd = MainWindow.GetWindowHandle();
-            var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
-            var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
-            if(appWindow != null)
+            nint hWnd = MainWindow.GetWindowHandle();
+            Microsoft.UI.WindowId windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+            Microsoft.UI.Windowing.AppWindow appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+
+            if (appWindow != null)
                 appWindow.Closing += MainWindow.HandleClosingEvent;
         }
 
@@ -152,7 +151,7 @@ namespace UniGetUI
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Log(ex);
             }
         }
 
@@ -165,8 +164,8 @@ namespace UniGetUI
             {
                 ToastNotificationManagerCompat.OnActivated += toastArgs =>
                 {
-                    var args = ToastArguments.Parse(toastArgs.Argument);
-                    var userInput = toastArgs.UserInput;
+                    ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
+                    ValueSet userInput = toastArgs.UserInput;
 
                     MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
@@ -176,7 +175,7 @@ namespace UniGetUI
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Log(ex);
             }
         }
 
@@ -187,20 +186,20 @@ namespace UniGetUI
         private async Task LoadComponentsAsync()
         {
             try
-            { 
+            {
                 InitializePackageManagers();
 
                 // Run other initializations asynchronously
                 AppTools.Instance.UpdateUniGetUIIfPossible();
-                _ = CoreData.LoadIconAndScreenshotsDatabase();
-                if(!AppTools.Instance.GetSettings("DisableApi"))
+                _ = AppTools.IconDatabase.LoadIconAndScreenshotsDatabase();
+                if (!AppTools.Instance.GetSettings("DisableApi"))
                     _ = BackgroundApi.Start();
 
                 _ = MainWindow.DoEntryTextAnimationAsync();
 
                 await InitializeAllManagersAsync();
 
-                AppTools.Log("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
+                Logger.Log("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();
                 RaiseExceptionAsFatal = false;
 
@@ -209,7 +208,7 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                AppTools.ReportFatalException(e);
+                CoreTools.ReportFatalException(e);
             }
         }
 
@@ -244,25 +243,25 @@ namespace UniGetUI
         /// <returns></returns>
         private async Task InitializeAllManagersAsync()
         {
-            var initializeTasks = new List<Task>();
+            List<Task> initializeTasks = new();
 
-            foreach (var manager in PackageManagerList)
+            foreach (PackageManager manager in PackageManagerList)
             {
                 initializeTasks.Add(manager.InitializeAsync());
             }
 
 
-            var ManagersMetaTask = Task.WhenAll(initializeTasks);
+            Task ManagersMetaTask = Task.WhenAll(initializeTasks);
             try
             {
                 await ManagersMetaTask.WaitAsync(TimeSpan.FromMilliseconds(ManagerLoadTimeout));
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                Logger.Log(e);
             }
             if (ManagersMetaTask.IsCompletedSuccessfully == false)
-                AppTools.Log("Timeout: Not all package managers have finished initializing.");
+                Logger.Log("Timeout: Not all package managers have finished initializing.");
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
@@ -287,7 +286,7 @@ namespace UniGetUI
 
         public void DisposeAndQuit(int outputCode = 0)
         {
-            AppTools.Log("Quitting...");
+            Logger.Log("Quitting...");
             MainWindow?.Close();
             BackgroundApi?.Stop();
             Environment.Exit(outputCode);

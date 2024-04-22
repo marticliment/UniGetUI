@@ -32,9 +32,17 @@ src/packages/
 src/UniGetUI/bin
 src/UniGetUI/obj
 
-
 src/WindowsPackageManager.Interop/bin
 src/WindowsPackageManager.Interop/obj
+
+src/UniGetUI.Core.*/bin
+src/UniGetUI.Core.*/obj
+
+src/UniGetUI.PackageEngine.*/bin
+src/UniGetUI.PackageEngine.*/obj
+
+src/UniGetUI.Interface.*/bin
+src/UniGetUI.Interface.*/obj
 
 src/.vs
 src/.vscode

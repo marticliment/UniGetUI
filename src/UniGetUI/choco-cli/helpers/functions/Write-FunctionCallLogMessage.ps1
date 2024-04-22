@@ -52,7 +52,7 @@ Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParam
         [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
     )
 
-    # do not log function call - recursion?
+    # do not Logger.Log function call - recursion?
 
     $argumentsPassed = ''
     foreach ($param in $parameters.GetEnumerator()) {

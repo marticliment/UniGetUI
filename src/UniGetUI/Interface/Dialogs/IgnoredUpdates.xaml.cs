@@ -1,8 +1,5 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +7,12 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using UniGetUI.Core;
+using UniGetUI.Core.Data;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.Core.Logging;
+using UniGetUI.Interface.Enums;
+using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -78,7 +81,7 @@ namespace UniGetUI.Interface
         public IgnoredPackage(string id, string version, PackageManager manager, ListView list)
         {
             Id = id;
-            Name = AppTools.Instance.FormatAsName(id);
+            Name = CoreTools.FormatAsName(id);
             if (version == "*")
                 Version = AppTools.Instance.Translate("All versions");
             else
@@ -96,8 +99,9 @@ namespace UniGetUI.Interface
                 await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
             }
 
-            foreach(var package in AppTools.Instance.App.MainWindow.NavigationPage.InstalledPage.Packages)
-                if(package.Id == Id && Manager == package.Manager) {
+            foreach (Package package in AppTools.Instance.App.MainWindow.NavigationPage.InstalledPage.Packages)
+                if (package.Id == Id && Manager == package.Manager)
+                {
                     package.SetTag(PackageTag.Default);
                     break;
                 }

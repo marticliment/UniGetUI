@@ -1,15 +1,15 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.Pickers;
+using UniGetUI.Core;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.Core.Language;
+using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.Enums;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -161,7 +161,7 @@ namespace UniGetUI.Interface.Dialogs
 
         private void SelectDir_Click(object sender, RoutedEventArgs e)
         {
-            var openPicker = new UniGetUI.ExternalLibraries.Pickers.FolderPicker(Tools.App.MainWindow.GetWindowHandle());
+            ExternalLibraries.Pickers.FolderPicker openPicker = new(Tools.App.MainWindow.GetWindowHandle());
             string folder = openPicker.Show();
             if (folder != String.Empty)
                 CustomInstallLocation.Text = folder;

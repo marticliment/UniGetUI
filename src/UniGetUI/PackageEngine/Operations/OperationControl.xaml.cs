@@ -1,12 +1,8 @@
-using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,6 +10,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using UniGetUI.Core;
+using UniGetUI.Core.Data;
+using UniGetUI.Interface.Enums;
+using UniGetUI.Core.Logging;
+
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -274,7 +275,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected void RemoveFromQueue()
         {
-            while(Tools.OperationQueue.IndexOf(this) != -1)
+            while (Tools.OperationQueue.IndexOf(this) != -1)
                 Tools.OperationQueue.Remove(this);
         }
         protected void AddToQueue()
@@ -431,7 +432,7 @@ namespace UniGetUI.PackageEngine.Operations
                         if (Tools.OperationQueue.Count == 0)
                             if (Tools.GetSettings("DoCacheAdminRightsForBatches"))
                             {
-                                AppTools.Log("Erasing admin rights");
+                                Logger.Log("Erasing admin rights");
                                 Process p = new();
                                 p.StartInfo.FileName = CoreData.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
@@ -447,7 +448,7 @@ namespace UniGetUI.PackageEngine.Operations
                         if (Tools.OperationQueue.Count == 0)
                             if (Tools.GetSettings("DoCacheAdminRightsForBatches"))
                             {
-                                AppTools.Log("Erasing admin rights");
+                                Logger.Log("Erasing admin rights");
                                 Process p = new();
                                 p.StartInfo.FileName = CoreData.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
@@ -467,14 +468,14 @@ namespace UniGetUI.PackageEngine.Operations
                 ProcessOutput.Add("");
                 ProcessOutput.Add("");
 
-                var oldHistory = Tools.GetSettingsValue("OperationHistory").Split("\n");
+                string[] oldHistory = Tools.GetSettingsValue("OperationHistory").Split("\n");
 
-                if(oldHistory.Length > 1000)
+                if (oldHistory.Length > 1000)
                 {
                     oldHistory = oldHistory.Take(1000).ToArray();
                 }
 
-                var newHistory = new List<string>();
+                List<string> newHistory = new();
                 newHistory.AddRange(ProcessOutput);
                 newHistory.AddRange(oldHistory);
 
@@ -482,7 +483,7 @@ namespace UniGetUI.PackageEngine.Operations
             }
             catch (Exception e)
             {
-                AppTools.Log("Operation failed: " + e.ToString());
+                Logger.Log("Operation failed: " + e.ToString());
                 LineInfoText = Tools.Translate("An unexpected error occurred:") + " " + e.Message;
                 RemoveFromQueue();
                 try { Status = OperationStatus.Failed; } catch { }

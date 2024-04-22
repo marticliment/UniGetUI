@@ -1,17 +1,19 @@
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UniGetUI.Core;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.ExternalLibraries.Pickers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using UniGetUI.Core;
+using UniGetUI.Core.Classes;
+using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.Core.Logging;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -61,10 +63,10 @@ namespace UniGetUI.Interface
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
                 {
-                    AppTools.Log(e);
-                    AppTools.Log(e.OriginalSource);
-                    AppTools.Log(e.OriginalSource as FrameworkElement);
-                    AppTools.Log((e.OriginalSource as FrameworkElement).DataContext);
+                    Logger.Log(e);
+                    Logger.Log(e.OriginalSource);
+                    Logger.Log(e.OriginalSource as FrameworkElement);
+                    Logger.Log((e.OriginalSource as FrameworkElement).DataContext);
                     if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
                     {
                         TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
@@ -78,7 +80,7 @@ namespace UniGetUI.Interface
                     }
                     else
                     {
-                        AppTools.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
+                        Logger.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
                     }
                 }
             };
@@ -105,7 +107,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        AppTools.Log(ex);
+                        Logger.Log(ex);
                     }
                 }
             };
@@ -159,7 +161,7 @@ namespace UniGetUI.Interface
                 Tools.SetSettingsValue("SidepanelWidthDiscoverPage", "250");
             }
             BodyGrid.ColumnDefinitions.ElementAt(0).Width = new GridLength(width);
-                
+
             GenerateToolBar();
             LoadInterface();
             _ = __load_packages();
@@ -563,11 +565,12 @@ namespace UniGetUI.Interface
             foreach (AppBarButton toolButton in Icons.Keys)
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
-            PackageDetails.Click += (s, e) => { 
-                if (PackageList.SelectedItem != null) 
+            PackageDetails.Click += (s, e) =>
+            {
+                if (PackageList.SelectedItem != null)
                     _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Install);
             };
-            
+
             ExportSelection.Click += ExportSelection_Click;
             HelpButton.Click += (s, e) => { Tools.App.MainWindow.NavigationPage.ShowHelp(); };
 
@@ -604,9 +607,10 @@ namespace UniGetUI.Interface
                             new InstallationOptions(package) { InteractiveInstallation = true }));
             };
 
-            SharePackage.Click += (s, e) => {
-                if (PackageList.SelectedItem != null) 
-                    Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); 
+            SharePackage.Click += (s, e) =>
+            {
+                if (PackageList.SelectedItem != null)
+                    Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package);
             };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
@@ -709,7 +713,7 @@ namespace UniGetUI.Interface
             if (!Initialized)
                 return;
 
-            AppTools.Log("Showing shared package...");
+            Logger.Log("Showing shared package...");
 
             Tools.App.MainWindow.Activate();
 
@@ -721,27 +725,27 @@ namespace UniGetUI.Interface
             Tools.App.MainWindow.HideLoadingDialog();
             if (FilteredPackages.Count == 1)
             {
-                AppTools.Log("Only one package was found for pId=" + pId + ", showing it.");
+                Logger.Log("Only one package was found for pId=" + pId + ", showing it.");
                 await Tools.App.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
             }
             else if (FilteredPackages.Count > 1)
             {
-                var managerName = pSource.Contains(':')? pSource.Split(':')[0] : pSource;
-                foreach (var match in FilteredPackages)
+                string managerName = pSource.Contains(':') ? pSource.Split(':')[0] : pSource;
+                foreach (Package match in FilteredPackages)
                     if (match.Source.Manager.Name == managerName)
                     {
-                        AppTools.Log("Equivalent package for id=" + pId + " and source=" + pSource + " found: " + match.ToString());
+                        Logger.Log("Equivalent package for id=" + pId + " and source=" + pSource + " found: " + match.ToString());
                         await Tools.App.MainWindow.NavigationPage.ShowPackageDetails(match, OperationType.Install);
                         return;
                     }
-                AppTools.Log("No package found with the exact same manager, showing the first one.");
+                Logger.Log("No package found with the exact same manager, showing the first one.");
                 await Tools.App.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
             }
             else
             {
-                AppTools.Log("No packages were found matching the given pId=" + pId);
-                var c = new ContentDialog();
-                c.XamlRoot = this.XamlRoot;
+                Logger.Log("No packages were found matching the given pId=" + pId);
+                ContentDialog c = new();
+                c.XamlRoot = XamlRoot;
                 c.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
                 c.Title = Tools.Translate("Package not found");
                 c.Content = Tools.Translate("The package {0} from {1} was not found.").Replace("{0}", pId).Replace("{1}", pSource);
@@ -758,7 +762,7 @@ namespace UniGetUI.Interface
 
             lastSavedWidth = ((int)(e.NewSize.Width / 10));
             Tools.SetSettingsValue("SidepanelWidthDiscoverPage", ((int)e.NewSize.Width).ToString());
-            foreach(var control in SidePanelGrid.Children)
+            foreach (UIElement control in SidePanelGrid.Children)
             {
                 control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;
             }

@@ -1,12 +1,13 @@
-using UniGetUI.Core;
-using UniGetUI.PackageEngine.Operations;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Windows.Devices.Bluetooth.Advertisement;
+using UniGetUI.Core;
+using UniGetUI.Core.Classes;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.Operations;
 
 namespace UniGetUI.PackageEngine.Classes
 {
@@ -61,7 +62,7 @@ namespace UniGetUI.PackageEngine.Classes
                     else
                     {
                         ManagerReady = true;
-                        AppTools.Log(Name + " sources took too long to load, using known sources as default");
+                        Logger.Log(Name + " sources took too long to load, using known sources as default");
                     }
                 }
                 ManagerReady = true;
@@ -70,28 +71,28 @@ namespace UniGetUI.PackageEngine.Classes
                                  "\n█▀▀▀▀▀▀▀▀▀▀▀▀▀ MANAGER LOADED ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀" +
                                  "\n█ Name: " + Name +
                                  "\n█ Enabled: " + IsEnabled().ToString() +
-                                    ((IsEnabled())? (
+                                    ((IsEnabled()) ? (
                                  "\n█ Found: " + Status.Found.ToString() +
-                                    ((Status.Found)? (
+                                    ((Status.Found) ? (
                                  "\n█ Fancye exe name: " + Properties.ExecutableFriendlyName +
                                  "\n█ Executable path: " + Status.ExecutablePath +
                                  "\n█ Call arguments: " + Properties.ExecutableCallArgs +
                                  "\n█ Version: \n" + "█   " + Status.Version.Replace("\n", "\n█   "))
                                     :
-                                 "\n█ THE MANAGER WAS NOT FOUND. PERHAPS IT IS NOT " + 
+                                 "\n█ THE MANAGER WAS NOT FOUND. PERHAPS IT IS NOT " +
                                  "\n█ INSTALLED OR IT HAS BEEN MISCONFIGURED "
                                     ))
-                                    : 
+                                    :
                                  "\n█ THE MANAGER IS DISABLED"
                                     ) +
                                  "\n▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀\n";
-                
-                AppTools.Log(LogData);
+
+                Logger.Log(LogData);
             }
             catch (Exception e)
             {
                 ManagerReady = true; // We need this to unblock the main thread
-                AppTools.Log("Could not initialize Package Manager " + Name + ": \n" + e.ToString());
+                Logger.Log("Could not initialize Package Manager " + Name + ": \n" + e.ToString());
             }
         }
 
@@ -117,7 +118,7 @@ namespace UniGetUI.PackageEngine.Classes
         /// <returns></returns>
         public bool IsEnabled()
         {
-            return !Tools.GetSettings("Disable" + Name);
+            return !Settings.Get("Disable" + Name);
         }
 
         /// <summary>
@@ -130,7 +131,7 @@ namespace UniGetUI.PackageEngine.Classes
         {
             try
             {
-                var packages = await FindPackages_UnSafe(query);
+                Package[] packages = await FindPackages_UnSafe(query);
                 for (int i = 0; i < packages.Length; i++)
                 {
                     if (!__known_available_packages.ContainsKey(packages[i].GetHash()))
@@ -144,7 +145,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception e)
             {
-                AppTools.Log("Error finding packages on manager " + Name + " with query " + query + ": \n" + e.ToString());
+                Logger.Log("Error finding packages on manager " + Name + " with query " + query + ": \n" + e.ToString());
                 return new Package[] { };
             }
         }
@@ -159,7 +160,7 @@ namespace UniGetUI.PackageEngine.Classes
         {
             try
             {
-                var packages = await GetAvailableUpdates_UnSafe();
+                UpgradablePackage[] packages = await GetAvailableUpdates_UnSafe();
                 for (int i = 0; i < packages.Length; i++)
                 {
                     if (!__known_upgradable_packages.ContainsKey(packages[i].GetHash()))
@@ -173,7 +174,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception e)
             {
-                AppTools.Log("Error finding updates on manager " + Name + ": \n" + e.ToString());
+                Logger.Log("Error finding updates on manager " + Name + ": \n" + e.ToString());
                 return new UpgradablePackage[] { };
             }
         }
@@ -187,7 +188,7 @@ namespace UniGetUI.PackageEngine.Classes
         {
             try
             {
-                var packages = await GetInstalledPackages_UnSafe();
+                Package[] packages = await GetInstalledPackages_UnSafe();
                 for (int i = 0; i < packages.Length; i++)
                 {
                     if (!__known_installed_packages.ContainsKey(packages[i].GetHash()))
@@ -201,7 +202,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception e)
             {
-                AppTools.Log("Error finding installed packages on manager " + Name + ": \n" + e.ToString());
+                Logger.Log("Error finding installed packages on manager " + Name + ": \n" + e.ToString());
                 return new Package[] { };
             }
         }
@@ -221,7 +222,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception e)
             {
-                AppTools.Log("Error getting package details on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
+                Logger.Log("Error getting package details on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
                 return new PackageDetails(package);
             }
         }
@@ -244,7 +245,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception e)
             {
-                AppTools.Log("Error getting package versions on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
+                Logger.Log("Error getting package versions on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
                 return new string[0];
             }
         }
@@ -388,7 +389,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception e)
             {
-                AppTools.Log("Error finding sources for manager " + Name + ": \n" + e.ToString());
+                Logger.Log("Error finding sources for manager " + Name + ": \n" + e.ToString());
                 return new ManagerSource[0];
             }
         }
@@ -397,7 +398,7 @@ namespace UniGetUI.PackageEngine.Classes
         public abstract string[] GetAddSourceParameters(ManagerSource source);
         public abstract string[] GetRemoveSourceParameters(ManagerSource source);
         public abstract OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output);
-        
+
         public abstract OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output);
         protected abstract Task<ManagerSource[]> GetSources_UnSafe();
     }
@@ -496,7 +497,7 @@ namespace UniGetUI.PackageEngine.Classes
     {
         private PackageManager __manager;
         private Dictionary<string, ManagerSource> __reference;
-        private Uri __default_uri = new Uri("https://marticliment.com/unigetui/");
+        private Uri __default_uri = new("https://marticliment.com/unigetui/");
 
         public ManagerSourceFactory(PackageManager manager)
         {
@@ -522,7 +523,7 @@ namespace UniGetUI.PackageEngine.Classes
                 return source;
             }
 
-            var new_source = new ManagerSource(__manager, name, __default_uri);
+            ManagerSource new_source = new(__manager, name, __default_uri);
             __reference.Add(name, new_source);
             return new_source;
         }
@@ -544,10 +545,10 @@ namespace UniGetUI.PackageEngine.Classes
 
         public void AddSource(ManagerSource source)
         {
-            if(!__reference.TryAdd(source.Name, source))
+            if (!__reference.TryAdd(source.Name, source))
             {
-                var existing_source = __reference[source.Name];
-                if(existing_source.Url == __default_uri)
+                ManagerSource existing_source = __reference[source.Name];
+                if (existing_source.Url == __default_uri)
                     existing_source.ReplaceUrl(source.Url);
             }
         }

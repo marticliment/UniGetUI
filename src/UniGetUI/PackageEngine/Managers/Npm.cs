@@ -1,13 +1,15 @@
-﻿using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
+using UniGetUI.Core;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI.PackageEngine.Managers
 {
@@ -47,7 +49,7 @@ namespace UniGetUI.PackageEngine.Managers
                     {
                         string[] elements = line.Split('\t');
                         if (elements.Length >= 5)
-                            Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[4], MainSource, this));
+                            Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[4], MainSource, this));
                     }
             }
 
@@ -82,7 +84,7 @@ namespace UniGetUI.PackageEngine.Managers
                 string[] elements = line.Split(':');
                 if (elements.Length >= 4)
                 {
-                    Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], MainSource, this));
+                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], MainSource, this));
                 }
             }
 
@@ -114,7 +116,7 @@ namespace UniGetUI.PackageEngine.Managers
                     if (elements[3][0] == '@')
                         elements[3] = "%" + elements[3][1..];
 
-                    Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[2].Split('@')[0]).Replace('%', '@'), elements[2].Split('@')[0].Replace('%', '@'), elements[3].Split('@')[^1].Replace('%', '@'), elements[2].Split('@')[^1].Replace('%', '@'), MainSource, this, PackageScope.Global));
+                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[2].Split('@')[0]).Replace('%', '@'), elements[2].Split('@')[0].Replace('%', '@'), elements[3].Split('@')[^1].Replace('%', '@'), elements[2].Split('@')[^1].Replace('%', '@'), MainSource, this, PackageScope.Global));
                 }
             }
 
@@ -152,7 +154,7 @@ namespace UniGetUI.PackageEngine.Managers
                 if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
                 {
                     string[] elements = line[4..].Split('@');
-                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
                 }
             }
 
@@ -178,7 +180,7 @@ namespace UniGetUI.PackageEngine.Managers
                 {
                     line = line.Replace("- @", "- %");
                     string[] elements = line[4..].Split('@');
-                    Packages.Add(new Package(Tools.FormatAsName(elements[0].Replace('%', '@')), elements[0].Replace('%', '@'), elements[1], MainSource, this, PackageScope.Global));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0].Replace('%', '@')), elements[0].Replace('%', '@'), elements[1], MainSource, this, PackageScope.Global));
                 }
             }
 
@@ -295,7 +297,7 @@ namespace UniGetUI.PackageEngine.Managers
                             else if (outLine.StartsWith(".tarball"))
                             {
                                 details.InstallerUrl = new Uri(outLine.Replace(".tarball: ", "").Trim());
-                                details.InstallerSize = await Tools.GetFileSizeAsync(details.InstallerUrl);
+                                details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
                             }
                             else if (outLine.StartsWith(".integrity"))
                             {
@@ -318,14 +320,14 @@ namespace UniGetUI.PackageEngine.Managers
                         }
                         catch (Exception e)
                         {
-                            AppTools.Log(e);
+                            Logger.Log(e);
                         }
                     }
                 }
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                Logger.Log(e);
             }
 
             return details;
@@ -352,7 +354,7 @@ namespace UniGetUI.PackageEngine.Managers
             ManagerProperties properties = new()
             {
                 Name = "Npm",
-                Description = Tools.Translate("Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>"),
+                Description = CoreTools.Translate("Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>"),
                 IconId = "node",
                 ColorIconId = "node_color",
                 ExecutableFriendlyName = "npm",
@@ -370,7 +372,7 @@ namespace UniGetUI.PackageEngine.Managers
             ManagerStatus status = new();
 
             status.ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
-            status.Found = File.Exists(await Tools.Which("npm"));
+            status.Found = (await CoreTools.Which("npm")).Item1;
 
             if (!status.Found)
                 return status;

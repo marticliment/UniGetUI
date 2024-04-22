@@ -312,7 +312,7 @@ Pro / Business supports a single, ubiquitous install directory option.
     }
 
     try {
-        # make sure any logging folder exists
+        # make sure any Logger.Logging folder exists
         $pattern = "(?:['`"])([a-zA-Z]\:\\[^'`"]+)(?:[`"'])|([a-zA-Z]\:\\[\S]+)"
         $silentArgs, $additionalInstallArgs |
             ForEach-Object { Select-String $pattern -input $_ -AllMatches } |

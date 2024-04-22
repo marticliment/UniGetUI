@@ -46,7 +46,7 @@ Set-PowerShellExitCode 3010
         [parameter(ValueFromRemainingArguments = $true)][Object[]] $ignoredArguments
     )
 
-    # Do not log function call - can mess things up
+    # Do not Logger.Log function call - can mess things up
 
     if ($exitCode -eq $null -or $exitCode -eq '') {
         Write-Debug '$exitCode was passed null'

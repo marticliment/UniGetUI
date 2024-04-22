@@ -182,7 +182,7 @@
                                     <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will include the complete list of the installed packages and their installation options. Ignored updates and skipped versions will also be saved." />
                                     <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will NOT include any binary file nor any program's saved data." />
                                     <widgets:TranslatedTextBlock Prefix=" ● " Text="The size of the backup is estimated to be less than 1MB." />
-                                    <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will be performed after login." />
+                                    <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will be performed after Logger.Login." />
                                 </StackPanel>
                             </Toolkit:SettingsCard.Description>
                         </Toolkit:SettingsCard>

@@ -1,18 +1,11 @@
-﻿using Microsoft.UI.Xaml.Data;
-using UniGetUI.Core.Data;
-using UniGetUI.Core;
-using Nancy;
+﻿using Nancy;
 using Nancy.Hosting.Self;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.Graphics.DirectX.Direct3D11;
+using UniGetUI.Core;
+using UniGetUI.Core.Data;
+using UniGetUI.Core.Logging;
+using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Interface
 {
@@ -29,9 +22,9 @@ namespace UniGetUI.Interface
         {
             try
             {
-                if(AppTools.Instance.GetSettings("DisableWidgetsApi"))
+                if (AppTools.Instance.GetSettings("DisableWidgetsApi"))
                 {
-                    AppTools.Log("Widgets API is disabled");
+                    Logger.Log("Widgets API is disabled");
                     return;
                 }
 
@@ -49,18 +42,18 @@ namespace UniGetUI.Interface
                     host.Start();
                 }
 
-                AppTools.Log("Api running on http://localhost:7058");
-                
-                while(__running)
+                Logger.Log("Api running on http://localhost:7058");
+
+                while (__running)
                 {
                     await Task.Delay(100);
                 }
                 host.Stop();
-                AppTools.Log("Api was shut down");
+                Logger.Log("Api was shut down");
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                Logger.Log(e);
             }
         }
 
@@ -72,11 +65,11 @@ namespace UniGetUI.Interface
             __running = false;
         }
     }
-    
+
     /// <summary>
     /// The background api builder
     /// </summary>
-    public class BackgroundApi: NancyModule
+    public class BackgroundApi : NancyModule
     {
         public BackgroundApi()
         {
@@ -95,7 +88,7 @@ namespace UniGetUI.Interface
         /// Build the endpoints required for the Share Interface
         /// </summary>
         public void BuildShareApi()
-        { 
+        {
             // Show package from https://marticliment.com/unigetui/share
             Get("/v2/show-package", async (parameters) =>
             {
@@ -104,7 +97,7 @@ namespace UniGetUI.Interface
                     if (Request.Query.@pid == "" || Request.Query.@psource == "")
                         return 400;
 
-                    AppTools.Log(Request.Query.@pid);
+                    Logger.Log(Request.Query.@pid);
 
                     while (AppTools.Instance.App.MainWindow is null) await Task.Delay(100);
                     while (AppTools.Instance.App.MainWindow.NavigationPage is null) await Task.Delay(100);
@@ -116,7 +109,7 @@ namespace UniGetUI.Interface
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log(e);
+                    Logger.Log(e);
                     return 500;
                 }
             });
@@ -138,7 +131,7 @@ namespace UniGetUI.Interface
             // Basic version check
             Get("/widgets/v1/get_wingetui_version", (parameters) =>
             {
-                if(!AppTools.Instance.AuthenticateToken(Request.Query.@token))
+                if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))
                     return 401;
 
                 return CoreData.VersionNumber.ToString();
@@ -151,20 +144,20 @@ namespace UniGetUI.Interface
                     return 401;
 
                 string packages = "";
-                foreach(var package in AppTools.Instance.App.MainWindow.NavigationPage.UpdatesPage.Packages)
+                foreach (PackageEngine.Classes.UpgradablePackage package in AppTools.Instance.App.MainWindow.NavigationPage.UpdatesPage.Packages)
                 {
-                    if(package.Tag == PackageEngine.Classes.PackageTag.OnQueue || package.Tag == PackageEngine.Classes.PackageTag.BeingProcessed)
+                    if (package.Tag == PackageTag.OnQueue || package.Tag == PackageTag.BeingProcessed)
                         continue; // Do not show already processed packages on queue 
 
-                    var icon = package.GetIconUrl().ToString();
-                    if(icon == "ms-appx:///Assets/Images/package_color.png")
+                    string icon = package.GetIconUrl().ToString();
+                    if (icon == "ms-appx:///Assets/Images/package_color.png")
                         icon = "https://marticliment.com/resources/widgets/package_color.png";
                     packages += $"{package.Name.Replace('|', '-')}|{package.Id}|{package.Version}|{package.NewVersion}|{package.Source}|{package.Manager.Name}|{icon}&&";
                 }
-                
-                if(packages.Length > 2)
+
+                if (packages.Length > 2)
                     packages = packages[..(packages.Length - 2)];
-                AppTools.Log(packages);
+                Logger.Log(packages);
 
                 return packages;
             });
@@ -185,7 +178,8 @@ namespace UniGetUI.Interface
                 if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))
                     return 401;
 
-                AppTools.Instance.App.MainWindow.DispatcherQueue.TryEnqueue(() => {
+                AppTools.Instance.App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
                     AppTools.Instance.App.MainWindow.NavigationPage.UpdatesNavButton.ForceClick();
                     AppTools.Instance.App.MainWindow.Activate();
                 });
@@ -198,7 +192,7 @@ namespace UniGetUI.Interface
                 if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))
                     return 401;
 
-                if(Request.Query.@id == "")
+                if (Request.Query.@id == "")
                     return 400;
 
                 AppTools.Instance.App.MainWindow.DispatcherQueue.TryEnqueue(() =>

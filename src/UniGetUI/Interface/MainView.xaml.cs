@@ -4,18 +4,17 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media.Imaging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using UniGetUI.Core;
 using UniGetUI.Core.Data;
 using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Threading.Tasks;
-using Windows.Graphics.DirectX.Direct3D11;
+using UniGetUI.Core.Logging;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -85,7 +84,7 @@ namespace UniGetUI.Interface
                 WarnAboutNewName();
             }
 
-            var NextPageReference = new Dictionary<Page, NavButton>
+            Dictionary<Page, NavButton> NextPageReference = new()
             {
                 { DiscoverPage, UpdatesNavButton },
                 { UpdatesPage, InstalledNavButton },
@@ -94,7 +93,7 @@ namespace UniGetUI.Interface
                 { SettingsPage, DiscoverNavButton },
             };
 
-            var PreviousTabReference = new Dictionary<Page, NavButton>
+            Dictionary<Page, NavButton> PreviousTabReference = new()
             {
                 { DiscoverPage, SettingsNavButton },
                 { UpdatesPage, DiscoverNavButton },
@@ -120,7 +119,7 @@ namespace UniGetUI.Interface
                             PreviousTabReference[CurrentPage].ForceClick();
                         else
                             DiscoverNavButton.ForceClick();
-                        }
+                    }
                 }
             };
         }
@@ -213,12 +212,12 @@ namespace UniGetUI.Interface
             ContentDialog AdminDialog = new();
             AdminDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
 
-            while(this.XamlRoot == null)
+            while (XamlRoot == null)
             {
                 await Task.Delay(100);
             }
 
-            AdminDialog.XamlRoot = this.XamlRoot;
+            AdminDialog.XamlRoot = XamlRoot;
             AdminDialog.PrimaryButtonText = Tools.Translate("I understand");
             AdminDialog.DefaultButton = ContentDialogButton.Primary;
             AdminDialog.Title = Tools.Translate("Administrator privileges");
@@ -233,23 +232,23 @@ namespace UniGetUI.Interface
             ContentDialog AdminDialog = new();
             AdminDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
 
-            while (this.XamlRoot == null)
+            while (XamlRoot == null)
             {
                 await Task.Delay(100);
             }
 
             string NEW_NAME = "UnigetUI";
 
-            AdminDialog.XamlRoot = this.XamlRoot;
+            AdminDialog.XamlRoot = XamlRoot;
             AdminDialog.PrimaryButtonText = Tools.Translate("I understand");
             AdminDialog.DefaultButton = ContentDialogButton.Primary;
             AdminDialog.SecondaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
-            StackPanel p = new StackPanel() { Spacing = 16 };
+            StackPanel p = new() { Spacing = 16 };
             AdminDialog.Content = p;
 
             p.Children.Add(new Image() { Source = new BitmapImage() { UriSource = new Uri("ms-appx:///Assets/Images/icon.png") }, Height = 96 });
 
-            var par = new Paragraph();
+            Paragraph par = new();
             par.Inlines.Add(new Run() { Text = Tools.Translate("WingetUI will become {newname} soon!").Replace("{newname}", NEW_NAME), FontSize = 24, FontWeight = new Windows.UI.Text.FontWeight(700), FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI Variable Display Bold") });
             par.Inlines.Add(new LineBreak());
             par.Inlines.Add(new LineBreak());
@@ -260,7 +259,7 @@ namespace UniGetUI.Interface
             par.Inlines.Add(new LineBreak());
             par.Inlines.Add(new Run() { Text = Tools.Translate("While Winget can be used within WingetUI, WingetUI can be used with other package managers, which can be confusing. In the past, WingetUI was designed to work only with Winget, but this is not true anymore, and therefore WingetUI does not represent what this project aims to become."), FontSize = 12, FontStyle = Windows.UI.Text.FontStyle.Italic });
 
-            var text = new RichTextBlock();
+            RichTextBlock text = new();
             text.Blocks.Add(par);
             p.Children.Add(text);
 
@@ -411,17 +410,17 @@ namespace UniGetUI.Interface
 
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
         {
-            NavigateToPage(new LogPage(LogType.OperationHistory));
+            NavigateToPage(new Logger_LogPage(Logger_LogType.OperationHistory));
         }
 
         private void ManagerLogsMenu_Click(object sender, RoutedEventArgs e)
         {
-            NavigateToPage(new LogPage(LogType.ManagerLogs));
+            NavigateToPage(new Logger_LogPage(Logger_LogType.ManagerLogs));
         }
 
         public void UniGetUILogs_Click(object sender, RoutedEventArgs e)
         {
-            NavigateToPage(new LogPage(LogType.UniGetUILog));
+            NavigateToPage(new Logger_LogPage(Logger_LogType.UniGetUILog));
         }
 
 
@@ -431,7 +430,7 @@ namespace UniGetUI.Interface
         }
         public void ShowHelp()
         {
-            if(HelpPage == null)
+            if (HelpPage == null)
                 HelpPage = new HelpDialog();
             NavigateToPage(HelpPage);
         }

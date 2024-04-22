@@ -2,11 +2,6 @@ using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using UniGetUI.Core.Data;
-using UniGetUI.Core;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,7 +9,14 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Devices.Bluetooth.Advertisement;
+using UniGetUI.Core;
+using UniGetUI.Core.Classes;
+using UniGetUI.Core.Data;
+using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.Core.Logging;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -68,10 +70,10 @@ namespace UniGetUI.Interface
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
                 {
-                    AppTools.Log(e);
-                    AppTools.Log(e.OriginalSource);
-                    AppTools.Log(e.OriginalSource as FrameworkElement);
-                    AppTools.Log((e.OriginalSource as FrameworkElement).DataContext);
+                    Logger.Log(e);
+                    Logger.Log(e.OriginalSource);
+                    Logger.Log(e.OriginalSource as FrameworkElement);
+                    Logger.Log((e.OriginalSource as FrameworkElement).DataContext);
                     if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
                     {
                         TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
@@ -85,7 +87,7 @@ namespace UniGetUI.Interface
                     }
                     else
                     {
-                        AppTools.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
+                        Logger.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
                     }
                 }
             };
@@ -112,7 +114,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        AppTools.Log(ex);
+                        Logger.Log(ex);
                     }
                 }
             };
@@ -314,9 +316,9 @@ namespace UniGetUI.Interface
             FilterPackages(QueryBlock.Text);
             LoadingProgressBar.Visibility = Visibility.Collapsed;
 
-            if(!HasDoneBackup)
+            if (!HasDoneBackup)
             {
-                if(Tools.GetSettings("EnablePackageBackup"))
+                if (Tools.GetSettings("EnablePackageBackup"))
                     _ = BackupPackages();
             }
         }
@@ -326,21 +328,21 @@ namespace UniGetUI.Interface
 
             try
             {
-                AppTools.Log("Start backup");
-                var packagestoExport = new List<BundledPackage>();
-                foreach (var package in Packages)
+                Logger.Log("Start backup");
+                List<BundledPackage> packagestoExport = new();
+                foreach (Package package in Packages)
                     packagestoExport.Add(await BundledPackage.FromPackageAsync(package));
 
-                var BackupContents = await PackageBundlePage.GetBundleStringFromPackages(packagestoExport.ToArray(), BundleFormatType.JSON);
+                string BackupContents = await PackageBundlePage.GetBundleStringFromPackages(packagestoExport.ToArray(), BundleFormatType.JSON);
 
-                var dirName = Tools.GetSettingsValue("ChangeBackupOutputDirectory");
+                string dirName = Tools.GetSettingsValue("ChangeBackupOutputDirectory");
                 if (dirName == "")
                     dirName = CoreData.UniGetUI_DefaultBackupDirectory;
 
-                if(!Directory.Exists(dirName))
+                if (!Directory.Exists(dirName))
                     Directory.CreateDirectory(dirName);
 
-                var fileName = Tools.GetSettingsValue("ChangeBackupFileName");
+                string fileName = Tools.GetSettingsValue("ChangeBackupFileName");
                 if (fileName == "")
                     fileName = Tools.Translate("{pcName} installed packages").Replace("{pcName}", Environment.MachineName);
 
@@ -349,14 +351,14 @@ namespace UniGetUI.Interface
 
                 fileName += ".json";
 
-                var filePath = Path.Combine(dirName, fileName);
+                string filePath = Path.Combine(dirName, fileName);
                 await File.WriteAllTextAsync(filePath, BackupContents);
                 HasDoneBackup = true;
-                AppTools.Log("Backup saved to " + filePath);
-            } 
+                Logger.Log("Backup saved to " + filePath);
+            }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Log(ex);
             }
         }
 
@@ -436,7 +438,7 @@ namespace UniGetUI.Interface
         }
 
         public void UpdatePackageCount(bool StillLoading = false)
-        { 
+        {
             if (FilteredPackages.Count() == 0)
             {
                 if (!StillLoading)
@@ -581,11 +583,12 @@ namespace UniGetUI.Interface
             foreach (AppBarButton toolButton in Icons.Keys)
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
-            PackageDetails.Click += (s, e) => { 
-                if (PackageList.SelectedItem != null) 
-                    _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall); 
+            PackageDetails.Click += (s, e) =>
+            {
+                if (PackageList.SelectedItem != null)
+                    _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
             };
-            
+
             ExportSelection.Click += ExportSelection_Click;
             HelpButton.Click += (s, e) => { Tools.App.MainWindow.NavigationPage.ShowHelp(); };
 
@@ -608,9 +611,10 @@ namespace UniGetUI.Interface
             UninstallAsAdmin.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), AsAdmin: true); };
             UninstallInteractive.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), Interactive: true); };
 
-            SharePackage.Click += (s, e) => { 
-                if(PackageList.SelectedItem != null) 
-                    Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package); 
+            SharePackage.Click += (s, e) =>
+            {
+                if (PackageList.SelectedItem != null)
+                    Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package);
             };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
@@ -810,7 +814,7 @@ namespace UniGetUI.Interface
 
             lastSavedWidth = ((int)(e.NewSize.Width / 10));
             Tools.SetSettingsValue("SidepanelWidthInstalledPage", ((int)e.NewSize.Width).ToString());
-            foreach (var control in SidePanelGrid.Children)
+            foreach (UIElement control in SidePanelGrid.Children)
             {
                 control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;
             }

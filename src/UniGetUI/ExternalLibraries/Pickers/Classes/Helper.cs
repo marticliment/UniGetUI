@@ -1,9 +1,9 @@
-﻿using UniGetUI.ExternalLibraries.Pickers.Enums;
-using UniGetUI.ExternalLibraries.Pickers.Interfaces;
-using UniGetUI.ExternalLibraries.Pickers.Structures;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using UniGetUI.ExternalLibraries.Pickers.Enums;
+using UniGetUI.ExternalLibraries.Pickers.Interfaces;
+using UniGetUI.ExternalLibraries.Pickers.Structures;
 
 namespace UniGetUI.ExternalLibraries.Pickers.Classes;
 
@@ -18,7 +18,7 @@ internal static class Helper
     /// <returns>Path to selected file, folder or empty string.</returns>
     internal static string ShowOpen(nint windowHandle, FOS fos, List<string>? typeFilters = null)
     {
-        var dialog = new FileOpenDialog();
+        FileOpenDialog dialog = new();
         try
         {
             dialog.SetOptions(fos);
@@ -26,7 +26,7 @@ internal static class Helper
             if (typeFilters != null)
             {
                 typeFilters.Insert(0, string.Join("; ", typeFilters));
-                var filterSpecs = typeFilters.Select(f => new COMDLG_FILTERSPEC(f)).ToArray();
+                COMDLG_FILTERSPEC[] filterSpecs = typeFilters.Select(f => new COMDLG_FILTERSPEC(f)).ToArray();
 
                 dialog.SetFileTypes((uint)filterSpecs.Length, filterSpecs);
             }
@@ -34,8 +34,8 @@ internal static class Helper
             if (dialog.Show(windowHandle) != 0)
                 return string.Empty;
 
-            dialog.GetResult(out var item);
-            item.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, out var path);
+            dialog.GetResult(out IShellItem item);
+            item.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, out string path);
             return path;
         }
         finally
@@ -48,14 +48,14 @@ internal static class Helper
 
     internal static string ShowSave(nint windowHandle, FOS fos, List<string>? typeFilters = null, string name = "")
     {
-        var dialog = new FileSaveDialog();
+        FileSaveDialog dialog = new();
         try
         {
             dialog.SetOptions(fos);
 
             if (typeFilters != null)
             {
-                var filterSpecs = typeFilters.Select(f => new COMDLG_FILTERSPEC(f)).ToArray();
+                COMDLG_FILTERSPEC[] filterSpecs = typeFilters.Select(f => new COMDLG_FILTERSPEC(f)).ToArray();
 
                 dialog.SetFileTypes((uint)filterSpecs.Length, filterSpecs);
             }
@@ -66,8 +66,8 @@ internal static class Helper
             if (dialog.Show(windowHandle) != 0)
                 return string.Empty;
 
-            dialog.GetResult(out var item);
-            item.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, out var path);
+            dialog.GetResult(out IShellItem item);
+            item.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, out string path);
             return path;
         }
         finally

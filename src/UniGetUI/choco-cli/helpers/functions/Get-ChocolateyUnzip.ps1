@@ -70,11 +70,11 @@ OPTIONAL - This is a specific directory within zip file to extract. The
 folder and its contents will be extracted to the destination.
 
 .PARAMETER PackageName
-OPTIONAL - This will facilitate logging unzip activity for subsequent
+OPTIONAL - This will facilitate Logger.Logging unzip activity for subsequent
 uninstalls
 
 .PARAMETER DisableLogging
-OPTIONAL - This disables logging of the extracted items. It speeds up
+OPTIONAL - This disables Logger.Logging of the extracted items. It speeds up
 extraction of archives with many files.
 
 Usage of this parameter will prevent Uninstall-ChocolateyZipPackage

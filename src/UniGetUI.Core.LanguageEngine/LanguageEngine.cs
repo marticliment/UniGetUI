@@ -1,41 +1,18 @@
-﻿using UniGetUI.PackageEngine.Classes;
-using UniGetUI.Core;
-using Nancy.Extensions;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Runtime.InteropServices;
-using System.Text.Json.Nodes;
-using System.Threading.Tasks;
-using Windows.Media.Streaming.Adaptive;
+﻿using System.Text.Json.Nodes;
+using UniGetUI.Core.Data;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.Enums;
 
-namespace UniGetUI.Core.Data
+namespace UniGetUI.Core.Language
 {
-    public static class LanguageData
-    {
-        public static string TranslatorsJSON = File.ReadAllText(
-            Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "Translators.json")
-        );
-
-        public static Dictionary<string, string> LanguageList = (JsonObject.Parse(
-            File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "LanguagesReference.json"))
-        ) as JsonObject).ToDictionary(x => x.Key, x => x.Value.ToString());
-
-        public static Dictionary<string, string> TranslatedPercentages = (JsonObject.Parse(
-            File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "TranslatedPercentages.json"))
-        ) as JsonObject).ToDictionary(x => x.Key, x => x.Value.ToString());
-    }
-
     public class LanguageEngine
     {
         public static Dictionary<string, string> MainLangDict = new();
 
         public LanguageEngine()
         {
-            string LangName = AppTools.GetSettingsValue_Static("PreferredLanguage");
+            string LangName = Settings.GetValue("PreferredLanguage");
             if (LangName == "default" || LangName == "")
             {
                 LangName = System.Globalization.CultureInfo.CurrentCulture.ToString().Replace("-", "_");
@@ -57,7 +34,7 @@ namespace UniGetUI.Core.Data
                 MainLangDict.TryAdd("locale", "en");
             }
             LoadStaticTranslation();
-            AppTools.Log("Loaded language locale: " + MainLangDict["locale"]);
+            Logger.Log("Loaded language locale: " + MainLangDict["locale"]);
         }
 
         public Dictionary<string, string> LoadLanguageFile(string LangKey, bool ForceBundled = false)
@@ -66,9 +43,9 @@ namespace UniGetUI.Core.Data
             {
                 Dictionary<string, string> LangDict = new();
                 string LangFileToLoad = Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
-                AppTools.Log(LangFileToLoad);
+                Logger.Log(LangFileToLoad);
 
-                if (!File.Exists(LangFileToLoad) || AppTools.GetSettings_Static("DisableLangAutoUpdater"))
+                if (!File.Exists(LangFileToLoad) || Settings.Get("DisableLangAutoUpdater"))
                 {
                     ForceBundled = true;
                 }
@@ -76,20 +53,20 @@ namespace UniGetUI.Core.Data
                 if (ForceBundled)
                 {
                     LangFileToLoad = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
-                    AppTools.Log(LangFileToLoad);
+                    Logger.Log(LangFileToLoad);
                 }
 
                 LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject).ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
 
-                if (!AppTools.GetSettings_Static("DisableLangAutoUpdater"))
+                if (!Settings.Get("DisableLangAutoUpdater"))
                     _ = UpdateLanguageFile(LangKey);
 
                 return LangDict;
             }
             catch (Exception e)
             {
-                AppTools.Log($"LoadLanguageFile Failed for LangKey={LangKey}, ForceBundled={ForceBundled}");
-                AppTools.Log(e);
+                Logger.Log($"LoadLanguageFile Failed for LangKey={LangKey}, ForceBundled={ForceBundled}");
+                Logger.Log(e);
                 return new Dictionary<string, string>();
             }
         }
@@ -98,7 +75,7 @@ namespace UniGetUI.Core.Data
         {
             try
             {
-                Uri NewFile = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/src/" + (UseOldUrl? "wingetui": "UniGetUI") + "/Assets/Languages/lang_" + LangKey + ".json");
+                Uri NewFile = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/src/" + (UseOldUrl ? "wingetui" : "UniGetUI") + "/Assets/Languages/lang_" + LangKey + ".json");
 
                 HttpClient client = new();
                 string fileContents = await client.GetStringAsync(NewFile);
@@ -108,14 +85,14 @@ namespace UniGetUI.Core.Data
 
                 File.WriteAllText(Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json"), fileContents);
 
-                AppTools.Log("Lang files were updated successfully");
+                Logger.Log("Lang files were updated successfully");
             }
             catch (Exception e)
             {
                 if (e is HttpRequestException && !UseOldUrl)
                     await UpdateLanguageFile(LangKey, true);
                 else
-                    AppTools.Log(e);
+                    Logger.Log(e);
             }
         }
 
@@ -152,48 +129,4 @@ namespace UniGetUI.Core.Data
                 return key.Replace("WingetUI", "UniGetUI");
         }
     }
-
-    public static class CommonTranslations
-    {
-        public static Dictionary<Architecture, string> ArchNames = new()
-        {
-            { Architecture.X64, "x64" },
-            { Architecture.X86, "x86" },
-            { Architecture.Arm64, "arm64" },
-            { Architecture.Arm, "arm32" },
-        };
-
-        public static Dictionary<string, Architecture> InvertedArchNames = new()
-        {
-            { "x64", Architecture.X64 },
-            { "x86", Architecture.X86 },
-            { "arm64", Architecture.Arm64 },
-            { "arm32", Architecture.Arm },
-        };
-
-        public static Dictionary<PackageScope, string> ScopeNames = new()
-        {
-            { PackageScope.Global, "Machine | Global" },
-            { PackageScope.Local, "User | Local" },
-        };
-
-        public static Dictionary<string, PackageScope> InvertedScopeNames = new()
-        {
-            { "Machine | Global", PackageScope.Global },
-            { "User | Local", PackageScope.Local },
-        };
-
-        public static Dictionary<PackageScope, string> ScopeNames_NonLang = new()
-        {
-            { PackageScope.Global, "machine" },
-            { PackageScope.Local, "user" },
-        };
-
-        public static Dictionary<string, PackageScope> InvertedScopeNames_NonLang = new()
-        {
-            { "machine", PackageScope.Global },
-            { "user", PackageScope.Local },
-        };
-    }
 }
-

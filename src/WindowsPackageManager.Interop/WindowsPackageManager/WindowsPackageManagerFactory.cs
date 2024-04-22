@@ -1,8 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using Microsoft.Management.Deployment;
+using System;
 
 namespace WindowsPackageManager.Interop;
 
@@ -51,8 +51,8 @@ public abstract class WindowsPackageManagerFactory
     /// </remarks>
     private T CreateInstance<T>()
     {
-        var clsid = ClassesDefinition.GetClsid<T>(_clsidContext);
-        var iid = ClassesDefinition.GetIid<T>();
+        Guid clsid = ClassesDefinition.GetClsid<T>(_clsidContext);
+        Guid iid = ClassesDefinition.GetIid<T>();
         return CreateInstance<T>(clsid, iid);
     }
 }

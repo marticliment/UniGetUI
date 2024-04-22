@@ -47,7 +47,7 @@ Get-EnvironmentVariable
 Set-EnvironmentVariable
 #>
 
-    # Do not log function call
+    # Do not Logger.Log function call
 
     # HKCU:\Environment may not exist in all Windows OSes (such as Server Core).
     switch ($Scope) {

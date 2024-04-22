@@ -66,7 +66,7 @@ The working directory for the running process. Defaults to
 `$env:TEMP` for default.
 
 .PARAMETER SensitiveStatements
-Arguments to pass to  `ExeToRun` that are not logged.
+Arguments to pass to  `ExeToRun` that are not Logger.Logged.
 
 Note that only licensed versions of Chocolatey provide a way to pass
 those values completely through without having them in the install
@@ -326,7 +326,7 @@ $dbMessagePrepend [`"$exeToRun`" $wrappedStatements]. This may take a while, dep
             $exitErrorMessage = 'User (you) cancelled the installation.'; break
         }
         1603 {
-            $exitErrorMessage = "Generic MSI Error. This is a local environment error, not an issue with a package or the MSI itself - it could mean a pending reboot is necessary prior to install or something else (like the same version is already installed). Please see MSI log if available. If not, try again adding `'--install-arguments=`"`'/l*v c:\$($env:chocolateyPackageName)_msi_install.log`'`"`'. Then search the MSI Log for `"Return Value 3`" and look above that for the error."; break
+            $exitErrorMessage = "Generic MSI Error. This is a local environment error, not an issue with a package or the MSI itself - it could mean a pending reboot is necessary prior to install or something else (like the same version is already installed). Please see MSI Logger.Log if available. If not, try again adding `'--install-arguments=`"`'/l*v c:\$($env:chocolateyPackageName)_msi_install.log`'`"`'. Then search the MSI Logger.Log for `"Return Value 3`" and look above that for the error."; break
         }
         1618 {
             $exitErrorMessage = 'Another installation currently in progress. Try again later.'; break
@@ -338,7 +338,7 @@ $dbMessagePrepend [`"$exeToRun`" $wrappedStatements]. This may take a while, dep
             $exitErrorMessage = 'MSI could not be opened - it is possibly corrupt or not an MSI at all. If it was downloaded and the MSI is less than 30K, try opening it in an editor like Notepad++ as it is likely HTML.' + $errorMessageAddendum; break
         }
         1622 {
-            $exitErrorMessage = 'Something is wrong with the install log location specified. Please fix this in the package silent arguments (or in install arguments you specified). The directory specified as part of the log file path must exist for an MSI to be able to log to that directory.' + $errorMessageAddendum; break
+            $exitErrorMessage = 'Something is wrong with the install Logger.Log location specified. Please fix this in the package silent arguments (or in install arguments you specified). The directory specified as part of the Logger.Log file path must exist for an MSI to be able to Logger.Log to that directory.' + $errorMessageAddendum; break
         }
         1623 {
             $exitErrorMessage = 'This MSI has a language that is not supported by your system. Contact package maintainer(s) if there is an install available in your language and you would like it added to the packaging.'; break
@@ -371,7 +371,7 @@ $dbMessagePrepend [`"$exeToRun`" $wrappedStatements]. This may take a while, dep
         Write-Warning $exitErrorMessage
     }
     else {
-        $errorMessageSpecific = 'See log for possible error messages.'
+        $errorMessageSpecific = 'See Logger.Log for possible error messages.'
     }
 
     if ($validExitCodes -notcontains $exitCode) {

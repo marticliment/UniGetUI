@@ -1,11 +1,6 @@
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UniGetUI.Core;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.ExternalLibraries.Pickers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,8 +12,14 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using Windows.Devices.Bluetooth.Advertisement;
+using UniGetUI.Core;
+using UniGetUI.Core.Classes;
+using UniGetUI.ExternalLibraries.Pickers;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Operations;
 using Windows.UI.Core;
+using UniGetUI.Core.Logging;
 using YamlDotNet.Serialization;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -69,10 +70,10 @@ namespace UniGetUI.Interface
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
                 {
-                    AppTools.Log(e);
-                    AppTools.Log(e.OriginalSource);
-                    AppTools.Log(e.OriginalSource as FrameworkElement);
-                    AppTools.Log((e.OriginalSource as FrameworkElement).DataContext);
+                    Logger.Log(e);
+                    Logger.Log(e.OriginalSource);
+                    Logger.Log(e.OriginalSource as FrameworkElement);
+                    Logger.Log((e.OriginalSource as FrameworkElement).DataContext);
                     if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
                     {
                         TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
@@ -86,7 +87,7 @@ namespace UniGetUI.Interface
                     }
                     else
                     {
-                        AppTools.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
+                        Logger.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
                     }
                 }
             };
@@ -111,7 +112,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        AppTools.Log(ex);
+                        Logger.Log(ex);
                     }
                 }
             };
@@ -352,7 +353,7 @@ namespace UniGetUI.Interface
             FilteredPackages.SortingSelector = (a) => (a.GetType().GetProperty(Sorter).GetValue(a));
             FilteredPackages.Sort();
 
-            if(FilteredPackages.Count > 0)
+            if (FilteredPackages.Count > 0)
                 PackageList.ScrollIntoView(FilteredPackages[0]);
         }
 
@@ -518,9 +519,11 @@ namespace UniGetUI.Interface
                 SaveFile();
             };
 
-            SharePackage.Click += (s, e) => {
+            SharePackage.Click += (s, e) =>
+            {
                 if (PackageList.SelectedItem as BundledPackage != null)
-                    Tools.App.MainWindow.SharePackage((PackageList.SelectedItem as BundledPackage).Package); };
+                    Tools.App.MainWindow.SharePackage((PackageList.SelectedItem as BundledPackage).Package);
+            };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
@@ -584,8 +587,8 @@ namespace UniGetUI.Interface
         public async Task AddPackages(IEnumerable<Package> packages)
         {
             Tools.App.MainWindow.ShowLoadingDialog(Tools.Translate("Preparing packages, please wait..."));
-            var bundled = new List<BundledPackage>();
-            foreach (var pkg in packages)
+            List<BundledPackage> bundled = new();
+            foreach (Package pkg in packages)
             {
                 if (pkg.Source.IsVirtualManager)
                     bundled.Add(new InvalidBundledPackage(pkg));
@@ -593,7 +596,7 @@ namespace UniGetUI.Interface
                     bundled.Add(await BundledPackage.FromPackageAsync(pkg));
             }
 
-            foreach (var pkg in bundled)
+            foreach (BundledPackage pkg in bundled)
                 AddPackage(pkg);
             Tools.App.MainWindow.HideLoadingDialog();
 
@@ -615,8 +618,8 @@ namespace UniGetUI.Interface
             try
             {
                 // Select file
-                var picker = new UniGetUI.ExternalLibraries.Pickers.FileOpenPicker(Tools.App.MainWindow.GetWindowHandle());
-                var file = picker.Show(new List<string>() {"*.json", "*.yaml", "*.xml" });
+                FileOpenPicker picker = new(Tools.App.MainWindow.GetWindowHandle());
+                string file = picker.Show(new List<string>() { "*.json", "*.yaml", "*.xml" });
                 if (file == String.Empty)
                     return;
 
@@ -641,7 +644,7 @@ namespace UniGetUI.Interface
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Log(ex);
                 Tools.App.MainWindow.HideLoadingDialog();
             }
         }
@@ -741,7 +744,7 @@ namespace UniGetUI.Interface
                 else
                     exportable.packages.Add(package.AsSerializable());
 
-            AppTools.Log("Finished loading serializable objects. Serializing with format " + formatType.ToString());
+            Logger.Log("Finished loading serializable objects. Serializing with format " + formatType.ToString());
             string ExportableData;
 
             if (formatType == BundleFormatType.JSON)
@@ -764,7 +767,7 @@ namespace UniGetUI.Interface
 
             }
 
-            AppTools.Log("Finished serializing");
+            Logger.Log("Finished serializing");
 
             return ExportableData;
         }
@@ -774,7 +777,7 @@ namespace UniGetUI.Interface
             {
                 // Get file 
                 // Save file
-                var file = (new UniGetUI.ExternalLibraries.Pickers.FileSavePicker(Tools.App.MainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, Tools.Translate("Package bundle") + ".json") ;
+                string file = (new UniGetUI.ExternalLibraries.Pickers.FileSavePicker(Tools.App.MainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, Tools.Translate("Package bundle") + ".json");
                 if (file != String.Empty)
                 {
                     // Loading dialog
@@ -810,7 +813,7 @@ namespace UniGetUI.Interface
             catch (Exception ex)
             {
                 Tools.App.MainWindow.HideLoadingDialog();
-                AppTools.Log(ex);
+                Logger.Log(ex);
             }
         }
         private void SidepanelWidth_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -820,7 +823,7 @@ namespace UniGetUI.Interface
 
             lastSavedWidth = ((int)(e.NewSize.Width / 10));
             Tools.SetSettingsValue("SidepanelWidthBundlesPage", ((int)e.NewSize.Width).ToString());
-            foreach (var control in SidePanelGrid.Children)
+            foreach (UIElement control in SidePanelGrid.Children)
             {
                 control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;
             }

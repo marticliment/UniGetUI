@@ -1,16 +1,18 @@
-﻿using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using UniGetUI.Core;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI.PackageEngine.Managers
 {
@@ -52,7 +54,7 @@ namespace UniGetUI.PackageEngine.Managers
                 {
                     string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
                     if (elements.Length >= 2)
-                        Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
+                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
                     // Dotnet tool packages are installed globally by default, hence the Global flag
                 }
             }
@@ -67,8 +69,9 @@ namespace UniGetUI.PackageEngine.Managers
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            string path = await Tools.Which("dotnet-tools-outdated.exe");
-            if (!File.Exists(path))
+            var which_res = await CoreTools.Which("dotnet-tools-outdated.exe");
+            string path = which_res.Item2;
+            if (!which_res.Item1)
             {
                 Process proc = new()
                 {
@@ -123,7 +126,7 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, PackageScope.Global));
+                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
@@ -170,7 +173,7 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.User));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.User));
                 }
             }
 
@@ -210,7 +213,7 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
@@ -291,9 +294,9 @@ namespace UniGetUI.PackageEngine.Managers
                     string apiContents = await client.GetStringAsync(url);
 
                     details.InstallerUrl = new Uri($"https://globalcdn.nuget.org/packages/{package.Id}.{package.Version}.nupkg");
-                    details.InstallerType = Tools.Translate("NuPkg (zipped manifest)");
-                    details.InstallerSize = await Tools.GetFileSizeAsync(details.InstallerUrl);
-                    
+                    details.InstallerType = CoreTools.Translate("NuPkg (zipped manifest)");
+                    details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
+
 
                     foreach (Match match in Regex.Matches(apiContents, @"<name>[^<>]+<\/name>"))
                     {
@@ -348,7 +351,7 @@ namespace UniGetUI.PackageEngine.Managers
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                Logger.Log(e);
                 return details;
             }
         }
@@ -378,7 +381,7 @@ namespace UniGetUI.PackageEngine.Managers
             ManagerProperties properties = new()
             {
                 Name = ".NET Tool",
-                Description = Tools.Translate("A repository full of tools and executables designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related tools and scripts</b>"),
+                Description = CoreTools.Translate("A repository full of tools and executables designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related tools and scripts</b>"),
                 IconId = "dotnet",
                 ColorIconId = "dotnet_color",
                 ExecutableFriendlyName = "dotnet tool",
@@ -395,8 +398,9 @@ namespace UniGetUI.PackageEngine.Managers
         {
             ManagerStatus status = new();
 
-            status.ExecutablePath = await Tools.Which("dotnet.exe");
-            status.Found = File.Exists(status.ExecutablePath);
+            var which_res = await CoreTools.Which("dotnet.exe");
+            status.ExecutablePath = which_res.Item2;
+            status.Found = which_res.Item1;
 
             if (!status.Found)
                 return status;
@@ -426,7 +430,7 @@ namespace UniGetUI.PackageEngine.Managers
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
             await Task.Delay(0);
-            AppTools.Log("Manager " + Name + " does not support version retrieving, this function should have never been called");
+            Logger.Log("Manager " + Name + " does not support version retrieving, this function should have never been called");
             return new string[0];
         }
     }

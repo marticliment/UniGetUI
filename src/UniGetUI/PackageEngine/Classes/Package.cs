@@ -1,6 +1,4 @@
-﻿using UniGetUI.Core.Data;
-using UniGetUI.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -9,34 +7,16 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.Devices.Bluetooth.Advertisement;
-using System.ComponentModel.Design;
+using UniGetUI.Core;
+using UniGetUI.Core.Data;
+using UniGetUI.Core.Language;
+using UniGetUI.Interface.Enums;
+using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.PackageEngine.Classes
 {
-    /// <summary>
-    /// Represents the scope of a package. To be coherent with package manager naming, the values are repeated.
-    /// </summary>
-    public enum PackageScope
-    {
-        // Repeated entries for coherence with Package Managers
-        Global = 1,
-        Machine = 1,
-        Local = 0,
-        User = 0,
-    }
 
-    public enum PackageTag
-    {
-        Default,
-        AlreadyInstalled,
-        IsUpgradable,
-        Pinned,
-        OnQueue,
-        BeingProcessed,
-        Failed
-    }
 
     /// <summary>
     /// This class represents a installable package or a package that is already installed.
@@ -61,7 +41,7 @@ namespace UniGetUI.PackageEngine.Classes
             set
             {
                 __tag = value;
-                switch(__tag)
+                switch (__tag)
                 {
                     case PackageTag.Default:
                         ListedIconId = "install";
@@ -154,7 +134,7 @@ namespace UniGetUI.PackageEngine.Classes
         public ManagerSource Source { get; set; }
         public PackageManager Manager { get; }
         public string UniqueId { get; }
-        public string NewVersion { get; set;  }
+        public string NewVersion { get; set; }
         public virtual bool IsUpgradable { get; } = false;
         public PackageScope Scope { get; set; }
         public string SourceAsString
@@ -192,7 +172,7 @@ namespace UniGetUI.PackageEngine.Classes
 
         public string GetHash()
         {
-            return __hash ;
+            return __hash;
         }
 
 
@@ -232,9 +212,8 @@ namespace UniGetUI.PackageEngine.Classes
         public Uri GetIconUrl()
         {
             string iconId = GetIconId();
-            if (CoreData.IconDatabaseData.ContainsKey(iconId))
-                if (CoreData.IconDatabaseData[iconId].icon != "")
-                    return new Uri(CoreData.IconDatabaseData[iconId].icon);
+            if (AppTools.IconDatabase.GetIconUrlForId(iconId) != "")
+                return new Uri(AppTools.IconDatabase.GetIconUrlForId(iconId));
 
             return new Uri("ms-appx:///Assets/Images/package_color.png");
         }
@@ -292,7 +271,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Log(ex);
             }
         }
 
@@ -317,9 +296,9 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Log(ex);
             }
-}
+        }
 
         /// <summary>
         /// Returns true if the package's updates are ignored. If the version parameter
@@ -342,10 +321,10 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Log(ex);
                 return false;
             }
-            
+
         }
 
         /// <summary>
@@ -356,8 +335,8 @@ namespace UniGetUI.PackageEngine.Classes
         /// <returns></returns>
         public async Task<string> GetIgnoredUpdatesVersionAsync()
         {
-            try 
-            { 
+            try
+            {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
                 JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
@@ -367,7 +346,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Log(ex);
                 return "";
             }
         }
@@ -387,7 +366,7 @@ namespace UniGetUI.PackageEngine.Classes
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetInstalledPackage()
         {
-            foreach (var package in Tools.App.MainWindow.NavigationPage.InstalledPage.Packages)
+            foreach (Package package in Tools.App.MainWindow.NavigationPage.InstalledPage.Packages)
                 if (package.Equals(this))
                     return package;
             return null;
@@ -399,7 +378,7 @@ namespace UniGetUI.PackageEngine.Classes
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetAvailablePackage()
         {
-            foreach (var package in Tools.App.MainWindow.NavigationPage.DiscoverPage.Packages)
+            foreach (Package package in Tools.App.MainWindow.NavigationPage.DiscoverPage.Packages)
                 if (package.Equals(this))
                     return package;
             return null;
@@ -411,7 +390,7 @@ namespace UniGetUI.PackageEngine.Classes
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetUpgradablePackage()
         {
-            foreach (var package in Tools.App.MainWindow.NavigationPage.UpdatesPage.Packages)
+            foreach (UpgradablePackage package in Tools.App.MainWindow.NavigationPage.UpdatesPage.Packages)
                 if (package.Equals(this))
                     return package;
             return null;
@@ -598,7 +577,7 @@ namespace UniGetUI.PackageEngine.Classes
         /// <returns></returns>
         public static async Task<InstallationOptions> FromPackageAsync(Package package)
         {
-            var options = new InstallationOptions(package, reset: true);
+            InstallationOptions options = new(package, reset: true);
             await options.LoadOptionsFromDiskAsync();
             return options;
         }
@@ -666,7 +645,7 @@ namespace UniGetUI.PackageEngine.Classes
 
         private FileInfo GetPackageOptionsFile()
         {
-            var optionsFileName = Package.Manager.Name + "." + Package.Id + ".json";
+            string optionsFileName = Package.Manager.Name + "." + Package.Id + ".json";
             return new FileInfo(Path.Join(CoreData.UniGetUIInstallationOptionsDirectory, optionsFileName));
         }
 
@@ -677,16 +656,16 @@ namespace UniGetUI.PackageEngine.Classes
         {
             try
             {
-                var optionsFile = GetPackageOptionsFile();
+                FileInfo optionsFile = GetPackageOptionsFile();
                 if (optionsFile.Directory?.Exists == false)
                     optionsFile.Directory.Create();
-                
-                using var outputStream = optionsFile.OpenWrite();
+
+                using FileStream outputStream = optionsFile.OpenWrite();
                 JsonSerializer.Serialize(outputStream, Serialized());
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Log(ex);
             }
         }
 
@@ -697,16 +676,16 @@ namespace UniGetUI.PackageEngine.Classes
         {
             try
             {
-                var optionsFile = GetPackageOptionsFile();
+                FileInfo optionsFile = GetPackageOptionsFile();
                 if (optionsFile.Directory?.Exists == false)
                     optionsFile.Directory.Create();
 
-                await using var outputStream = optionsFile.OpenWrite();
+                await using FileStream outputStream = optionsFile.OpenWrite();
                 await JsonSerializer.SerializeAsync(outputStream, Serialized());
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Log(ex);
             }
         }
 
@@ -717,17 +696,17 @@ namespace UniGetUI.PackageEngine.Classes
         {
             try
             {
-                var optionsFile = GetPackageOptionsFile();
+                FileInfo optionsFile = GetPackageOptionsFile();
                 if (!optionsFile.Exists)
                     return;
 
-                using var inputStream = optionsFile.OpenRead();
-                var options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(inputStream);
+                using FileStream inputStream = optionsFile.OpenRead();
+                SerializableInstallationOptions_v1 options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(inputStream);
                 FromSerialized(options);
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                Logger.Log(e);
             }
         }
 
@@ -736,26 +715,26 @@ namespace UniGetUI.PackageEngine.Classes
         /// </summary>
         public async Task LoadOptionsFromDiskAsync()
         {
-            var optionsFile = GetPackageOptionsFile();
+            FileInfo optionsFile = GetPackageOptionsFile();
             try
             {
                 if (!optionsFile.Exists)
                     return;
-                
 
-                await using var inputStream = optionsFile.OpenRead();
-                var options = await JsonSerializer.DeserializeAsync<SerializableInstallationOptions_v1>(inputStream);
+
+                await using FileStream inputStream = optionsFile.OpenRead();
+                SerializableInstallationOptions_v1 options = await JsonSerializer.DeserializeAsync<SerializableInstallationOptions_v1>(inputStream);
                 FromSerialized(options);
             }
             catch (JsonException)
             {
-                AppTools.Log("An error occurred while parsing package " + optionsFile + ". The file will be overwritten");
+                Logger.Log("An error occurred while parsing package " + optionsFile + ". The file will be overwritten");
                 await File.WriteAllTextAsync(optionsFile.FullName, "{}");
             }
             catch (Exception e)
             {
-                AppTools.Log("Loading installation options for file " + optionsFile  + " have failed: ");
-                AppTools.Log(e);
+                Logger.Log("Loading installation options for file " + optionsFile + " have failed: ");
+                Logger.Log(e);
             }
         }
 

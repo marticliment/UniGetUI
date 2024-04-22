@@ -383,9 +383,9 @@ Chocolatey uses [Checksum](https://github.com/chocolatey/checksum) to determine 
 
 ```
 
-### log4net @ 2.0.12
+### Logger.Log4net @ 2.0.12
 
-Chocolatey uses [log4net](http://logging.apache.org/log4net/) for logging.
+Chocolatey uses [log4net](http://logging.apache.org/log4net/) for Logger.Logging.
 [License terms](http://logging.apache.org/log4net/license.html):
 
 ```txt

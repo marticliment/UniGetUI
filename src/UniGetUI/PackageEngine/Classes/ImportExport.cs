@@ -1,10 +1,10 @@
 ﻿using Microsoft.UI.Xaml;
-using UniGetUI.Core;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using static UniGetUI.PackageEngine.Classes.InstallationOptions;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core;
 
 namespace UniGetUI.PackageEngine.Classes
 {
@@ -13,7 +13,7 @@ namespace UniGetUI.PackageEngine.Classes
     {
         public double export_version { get; set; } = 2.0;
         public List<SerializableValidPackage_v1> packages { get; set; } = new();
-        public string incompatible_packages_info { get; set; } = "Incompatible packages cannot be installed from WingetUI, but they have been listed here for logging purposes.";
+        public string incompatible_packages_info { get; set; } = "Incompatible packages cannot be installed from WingetUI, but they have been listed here for Logger.Logging purposes.";
         public List<SerializableIncompatiblePackage_v1> incompatible_packages { get; set; } = new();
 
     }
@@ -138,8 +138,8 @@ namespace UniGetUI.PackageEngine.Classes
         }
         public static async Task<BundledPackage> FromPackageAsync(Package package)
         {
-            var iOptions = await InstallationOptions.FromPackageAsync(package);
-            var uOptions = await SerializableUpdatesOptions_v1.FromPackageAsync(package);
+            InstallationOptions iOptions = await InstallationOptions.FromPackageAsync(package);
+            SerializableUpdatesOptions_v1 uOptions = await SerializableUpdatesOptions_v1.FromPackageAsync(package);
 
             return new BundledPackage(package, iOptions, uOptions);
         }
@@ -179,8 +179,8 @@ namespace UniGetUI.PackageEngine.Classes
             Serializable.Version = Package.Version;
             Serializable.Source = Package.Source.Name;
             Serializable.ManagerName = Package.Manager.Name;
-            Serializable.InstallationOptions = this.InstallOptions.Serialized();
-            Serializable.Updates = this.UpdateOptions;
+            Serializable.InstallationOptions = InstallOptions.Serialized();
+            Serializable.Updates = UpdateOptions;
             return Serializable;
         }
 

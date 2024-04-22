@@ -1,6 +1,6 @@
-﻿using UniGetUI.ExternalLibraries.Pickers.Classes;
+﻿using System;
+using UniGetUI.ExternalLibraries.Pickers.Classes;
 using UniGetUI.ExternalLibraries.Pickers.Enums;
-using System;
 
 namespace UniGetUI.ExternalLibraries.Pickers;
 

@@ -1,15 +1,17 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
-using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using UniGetUI.Core;
+using UniGetUI.Core.Data;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.Core.Logging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 
@@ -98,16 +100,16 @@ namespace UniGetUI.Interface.Dialogs
             DownloadInstallerButton.IsEnabled = false;
             ReleaseNotesUrlButton.Content = LoadingString;
 
-            if (CoreData.IconDatabaseData.ContainsKey(Package.GetIconId()))
+
+            PackageHasScreenshots = AppTools.IconDatabase.GetScreenshotsUrlForId(package.Id).Count() > 0;
+
+            if (PackageHasScreenshots)
             {
-                if (CoreData.IconDatabaseData[Package.GetIconId()].images.Count > 0)
-                {
-                    PackageHasScreenshots = true;
-                    IconsExtraBanner.Visibility = Visibility.Visible;
-                    ScreenshotsCarroussel.Items.Clear();
-                    foreach (string image in CoreData.IconDatabaseData[Package.GetIconId()].images)
-                        ScreenshotsCarroussel.Items.Add(new Image() { Source = new BitmapImage(new Uri(image)) });
-                }
+                PackageHasScreenshots = true;
+                IconsExtraBanner.Visibility = Visibility.Visible;
+                ScreenshotsCarroussel.Items.Clear();
+                foreach (string image in AppTools.IconDatabase.GetScreenshotsUrlForId(package.Id))
+                    ScreenshotsCarroussel.Items.Add(new Image() { Source = new BitmapImage(new Uri(image)) });
             }
 
 
@@ -121,7 +123,7 @@ namespace UniGetUI.Interface.Dialogs
             string NotFound = Tools.Translate("Not available");
             Uri InvalidUri = new("about:blank");
             Info = await Package.Manager.GetPackageDetails(Package);
-            AppTools.Log("Received info " + Info);
+            Logger.Log("Received info " + Info);
 
             string command = "";
 
@@ -133,7 +135,7 @@ namespace UniGetUI.Interface.Dialogs
 
                 case OperationType.Uninstall:
                     command = Package.Manager.Properties.ExecutableFriendlyName + " " + String.Join(' ', Package.Manager.GetUninstallParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
-                    break;  
+                    break;
 
                 case OperationType.Update:
                     command = Package.Manager.Properties.ExecutableFriendlyName + " " + String.Join(' ', Package.Manager.GetUpdateParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
@@ -237,7 +239,7 @@ namespace UniGetUI.Interface.Dialogs
                 {
                     DownloadInstallerButton.Content = Tools.Translate("Downloading");
                     DownloadInstallerButtonProgress.Visibility = Visibility.Visible;
-                    AppTools.Log(file.Path.ToString());
+                    Logger.Log(file.Path.ToString());
                     using HttpClient httpClient = new();
                     await using Stream s = await httpClient.GetStreamAsync(Info.InstallerUrl);
                     await using FileStream fs = File.OpenWrite(file.Path.ToString());
@@ -250,7 +252,7 @@ namespace UniGetUI.Interface.Dialogs
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Log(ex);
                 DownloadInstallerButton.Content = Tools.Translate("An error occurred");
                 DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
                 ErrorOutput.Text = ex.Message;

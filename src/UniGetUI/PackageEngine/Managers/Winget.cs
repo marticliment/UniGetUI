@@ -1,18 +1,17 @@
-using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.Services.TargetedContent;
+using UniGetUI.Core;
+using UniGetUI.Core.Data;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.Core.Tools;
 
 
 namespace UniGetUI.PackageEngine.Managers
@@ -30,7 +29,7 @@ namespace UniGetUI.PackageEngine.Managers
         private static MicrosoftStoreSource MicrosoftStoreSource { get; } = new MicrosoftStoreSource();
 
         private IWinGetPackageHelper WinGetHelper;
-        
+
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             return await WinGetHelper.FindPackages_UnSafe(this, query);
@@ -38,9 +37,9 @@ namespace UniGetUI.PackageEngine.Managers
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            var Packages = new List<UpgradablePackage>();
+            List<UpgradablePackage> Packages = new();
 
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = "powershell.exe",
@@ -111,9 +110,9 @@ namespace UniGetUI.PackageEngine.Managers
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            var Packages = new List<Package>();
+            List<Package> Packages = new();
 
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = "powershell.exe",
@@ -217,7 +216,7 @@ namespace UniGetUI.PackageEngine.Managers
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Log(ex);
                 return LocalPcSource;
             }
         }
@@ -309,10 +308,10 @@ namespace UniGetUI.PackageEngine.Managers
             if (output_string.Contains("No applicable upgrade found") || output_string.Contains("No newer package versions are available from the configured sources"))
                 return OperationVeredict.Succeeded;
 
-            if(output_string.Contains("winget settings --enable InstallerHashOverride"))
+            if (output_string.Contains("winget settings --enable InstallerHashOverride"))
             {
-                AppTools.Log("Enabling skip hash ckeck for winget...");
-                Process p = new Process()
+                Logger.Log("Enabling skip hash ckeck for winget...");
+                Process p = new()
                 {
                     StartInfo = new ProcessStartInfo()
                     {
@@ -405,7 +404,7 @@ namespace UniGetUI.PackageEngine.Managers
             ManagerProperties properties = new()
             {
                 Name = "Winget",
-                Description = Tools.Translate("Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>"),
+                Description = CoreTools.Translate("Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>"),
                 IconId = "winget",
                 ColorIconId = "winget_color",
                 ExecutableFriendlyName = "winget.exe",
@@ -420,15 +419,15 @@ namespace UniGetUI.PackageEngine.Managers
         protected override async Task<ManagerStatus> LoadManager()
         {
             ManagerStatus status = new();
-            
-            status.ExecutablePath = await Tools.Which("winget.exe");
 
-            status.Found = File.Exists(status.ExecutablePath);
+            var which_res = await CoreTools.Which("winget.exe");
+            status.ExecutablePath = which_res.Item2;
+            status.Found = which_res.Item1;
 
             if (!status.Found)
                 return status;
 
-            var process = new Process()
+            Process process = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -452,7 +451,7 @@ namespace UniGetUI.PackageEngine.Managers
             }
             catch (Exception ex)
             {
-                AppTools.Log("Cannot create native WinGet instance due to error: " + ex.ToString());
+                Logger.Log("Cannot create native WinGet instance due to error: " + ex.ToString());
                 WinGetHelper = new BundledWinGetHelper();
                 status.Version += "\nUsing bundled WinGet helper (CLI parsing)";
             }

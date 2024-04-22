@@ -1,11 +1,12 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using UniGetUI.Core;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.Operations;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -123,7 +124,7 @@ namespace UniGetUI.Interface.Widgets
                     d.Content = Tools.Translate("An error occurred when adding the source: ") + ex.Message;
                     _ = Tools.App.MainWindow.ShowDialogAsync(d, HighPriority: true);
                     d.PrimaryButtonText = Tools.Translate("Close");
-                    AppTools.Log(ex);
+                    Logger.Log(ex);
                 }
             };
             this.Manager = Manager;

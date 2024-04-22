@@ -1,8 +1,9 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.Core;
 using System;
+using UniGetUI.Core;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Interface.Widgets
 {

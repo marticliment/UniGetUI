@@ -2,10 +2,11 @@ using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
-using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -111,7 +112,7 @@ namespace UniGetUI.Interface.Widgets
                 }
                 catch (Exception ex)
                 {
-                    AppTools.Log(ex);
+                    Logger.Log(ex);
                 }
             };
         }

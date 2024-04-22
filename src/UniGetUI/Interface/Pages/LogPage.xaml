@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="UniGetUI.Interface.Pages.LogPage"
+    x:Class="UniGetUI.Interface.Pages.Logger_LogPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniGetUI.Interface.Pages"
@@ -32,7 +32,7 @@
                 <widgets:TranslatedTextBlock Text="Export to a file"/>
             </Button>
             <Button Grid.Column="3" Name="ReloadButton" Click="ReloadButton_Click">
-                <widgets:TranslatedTextBlock Text="Reload log"/>
+                <widgets:TranslatedTextBlock Text="Reload Logger.Log"/>
             </Button>
         </Grid>
         <ScrollViewer Grid.Row="1" HorizontalScrollMode="Disabled" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" CornerRadius="8">

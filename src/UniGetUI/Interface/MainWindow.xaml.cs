@@ -7,19 +7,17 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
-using UniGetUI.Core.Data;
-using UniGetUI.Interface;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using UniGetUI.Core;
+using UniGetUI.Core.Data;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Classes;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.ApplicationModel.VoiceCommands;
+using UniGetUI.Core.Logging;
 using Windows.Foundation.Collections;
 
 
@@ -96,7 +94,7 @@ namespace UniGetUI.Interface
                     NavigationPage.InstalledPage.ReloadPackages();
                 Activate();
             }
-            AppTools.Log("Notification activated: " + args.ToString() + " " + input.ToString());
+            Logger.Log("Notification activated: " + args.ToString() + " " + input.ToString());
         }
 
 
@@ -118,7 +116,7 @@ namespace UniGetUI.Interface
                 catch (Exception ex)
                 {
                     // Somewhere, Sometimes, MS Window Efficiency mode just crashes
-                    AppTools.Log(ex);
+                    Logger.Log(ex);
                     this.Hide(enableEfficiencyMode: false);
                 }
             }
@@ -127,7 +125,7 @@ namespace UniGetUI.Interface
                 if (Tools.OperationQueue.Count > 0)
                 {
                     args.Cancel = true;
-                    ContentDialog d = new ContentDialog();
+                    ContentDialog d = new();
                     d.XamlRoot = NavigationPage.XamlRoot;
                     d.Title = Tools.Translate("Operation in progress");
                     d.Content = Tools.Translate("There are ongoing operations. Quitting WingetUI may cause them to fail. Do you want to continue?");
@@ -135,7 +133,7 @@ namespace UniGetUI.Interface
                     d.SecondaryButtonText = Tools.Translate("Cancel");
                     d.DefaultButton = ContentDialogButton.Secondary;
 
-                    var result = await ShowDialogAsync(d);
+                    ContentDialogResult result = await ShowDialogAsync(d);
                     if (result == ContentDialogResult.Primary)
                         Tools.App.DisposeAndQuit();
                 }
@@ -259,7 +257,7 @@ namespace UniGetUI.Interface
             else if (Tools.TooltipStatus.ErrorsOccurred > 0)
             {
                 modifier = "_orange";
-                tooltip = Tools.Translate("Attention required") + " - " + Title ;
+                tooltip = Tools.Translate("Attention required") + " - " + Title;
             }
             else if (Tools.TooltipStatus.RestartRequired)
             {
@@ -348,7 +346,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                AppTools.Log("Taskbar foreground color customization is not available");
+                Logger.Log("Taskbar foreground color customization is not available");
             }
 
 
@@ -357,7 +355,7 @@ namespace UniGetUI.Interface
 
         public void ShowLoadingDialog(string text)
         {
-            if(LoadingDialogCount == 0 && DialogQueue.Count == 0)
+            if (LoadingDialogCount == 0 && DialogQueue.Count == 0)
             {
                 LoadingSthDalog.Title = text;
                 LoadingSthDalog.XamlRoot = NavigationPage.XamlRoot;
@@ -369,7 +367,7 @@ namespace UniGetUI.Interface
         public void HideLoadingDialog()
         {
             LoadingDialogCount--;
-            if(LoadingDialogCount <= 0)
+            if (LoadingDialogCount <= 0)
             {
                 LoadingSthDalog.Hide();
             }
@@ -431,7 +429,7 @@ namespace UniGetUI.Interface
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                Logger.Log(e);
                 if (DialogQueue.Contains(dialog))
                     DialogQueue.Remove(dialog);
                 return ContentDialogResult.None;

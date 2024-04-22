@@ -1,16 +1,18 @@
-﻿using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using UniGetUI.Core;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI.PackageEngine.Managers
 {
@@ -23,8 +25,9 @@ namespace UniGetUI.PackageEngine.Managers
         {
             List<Package> Packages = new();
 
-            string path = await Tools.Which("parse_pip_search");
-            if (!File.Exists(path))
+            var which_res = await CoreTools.Which("parse_pip_search");
+            string path = which_res.Item2;
+            if (!which_res.Item1)
             {
                 Process proc = new()
                 {
@@ -78,7 +81,7 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, scope: PackageScope.Global));
+                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, scope: PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
@@ -126,7 +129,7 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, scope: PackageScope.Global));
+                    Packages.Add(new UpgradablePackage(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, scope: PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
@@ -175,7 +178,7 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, scope: PackageScope.Global));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, scope: PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
@@ -250,7 +253,7 @@ namespace UniGetUI.PackageEngine.Managers
         {
             PackageDetails details = new(package);
 
-            AppTools.Log("Getting package details for " + package.Id);
+            Logger.Log("Getting package details for " + package.Id);
 
             string JsonString;
             HttpClient client = new();
@@ -263,38 +266,38 @@ namespace UniGetUI.PackageEngine.Managers
                 if ((RawInfo["info"] as JsonObject).ContainsKey("author"))
                     details.Author = (RawInfo["info"] as JsonObject)["author"].ToString();
             }
-            catch (Exception ex) { AppTools.Log("Can't load author: " + ex); }
+            catch (Exception ex) { Logger.Log("Can't load author: " + ex); }
 
             try
             {
                 if ((RawInfo["info"] as JsonObject).ContainsKey("home_page"))
                     details.HomepageUrl = new Uri((RawInfo["info"] as JsonObject)["home_page"].ToString());
             }
-            catch (Exception ex) { AppTools.Log("Can't load home_page: " + ex); }
+            catch (Exception ex) { Logger.Log("Can't load home_page: " + ex); }
             try
             {
                 if ((RawInfo["info"] as JsonObject).ContainsKey("package_url"))
                     details.ManifestUrl = new Uri((RawInfo["info"] as JsonObject)["package_url"].ToString());
             }
-            catch (Exception ex) { AppTools.Log("Can't load package_url: " + ex); }
+            catch (Exception ex) { Logger.Log("Can't load package_url: " + ex); }
             try
             {
                 if ((RawInfo["info"] as JsonObject).ContainsKey("summary"))
                     details.Description = (RawInfo["info"] as JsonObject)["summary"].ToString();
             }
-            catch (Exception ex) { AppTools.Log("Can't load summary: " + ex); }
+            catch (Exception ex) { Logger.Log("Can't load summary: " + ex); }
             try
             {
                 if ((RawInfo["info"] as JsonObject).ContainsKey("license"))
                     details.License = (RawInfo["info"] as JsonObject)["license"].ToString();
             }
-            catch (Exception ex) { AppTools.Log("Can't load license: " + ex); }
+            catch (Exception ex) { Logger.Log("Can't load license: " + ex); }
             try
             {
                 if ((RawInfo["info"] as JsonObject).ContainsKey("maintainer"))
                     details.Publisher = (RawInfo["info"] as JsonObject)["maintainer"].ToString();
             }
-            catch (Exception ex) { AppTools.Log("Can't load maintainer: " + ex); }
+            catch (Exception ex) { Logger.Log("Can't load maintainer: " + ex); }
             try
             {
                 if ((RawInfo["info"] as JsonObject).ContainsKey("classifiers") && (RawInfo["info"] as JsonObject)["classifiers"] is JsonArray)
@@ -309,7 +312,7 @@ namespace UniGetUI.PackageEngine.Managers
                     details.Tags = Tags.ToArray();
                 }
             }
-            catch (Exception ex) { AppTools.Log("Can't load classifiers: " + ex); }
+            catch (Exception ex) { Logger.Log("Can't load classifiers: " + ex); }
 
             try
             {
@@ -330,11 +333,11 @@ namespace UniGetUI.PackageEngine.Managers
                     {
                         details.InstallerType = url["url"].ToString().Split('.')[^1].Replace("whl", "Wheel");
                         details.InstallerUrl = new Uri(url["url"].ToString());
-                        details.InstallerSize = await Tools.GetFileSizeAsync(details.InstallerUrl);
+                        details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
                     }
                 }
             }
-            catch (Exception ex) { AppTools.Log("Can't load installer data: " + ex); }
+            catch (Exception ex) { Logger.Log("Can't load installer data: " + ex); }
 
             return details;
         }
@@ -361,7 +364,7 @@ namespace UniGetUI.PackageEngine.Managers
             ManagerProperties properties = new()
             {
                 Name = "Pip",
-                Description = Tools.Translate("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"),
+                Description = CoreTools.Translate("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"),
                 IconId = "python",
                 ColorIconId = "pip_color",
                 ExecutableFriendlyName = "pip",
@@ -378,8 +381,9 @@ namespace UniGetUI.PackageEngine.Managers
         {
             ManagerStatus status = new();
 
-            status.ExecutablePath = await Tools.Which("python.exe");
-            status.Found = File.Exists(status.ExecutablePath);
+            var which_res = await CoreTools.Which("python.exe");
+            status.ExecutablePath = which_res.Item2;
+            status.Found = which_res.Item1;
 
             if (!status.Found)
                 return status;

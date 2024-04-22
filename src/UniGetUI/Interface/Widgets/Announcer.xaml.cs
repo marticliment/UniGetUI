@@ -3,11 +3,10 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Shapes;
-using UniGetUI.Core;
 using System;
-using Windows.ApplicationModel.Email;
+using UniGetUI.Core;
 using Windows.UI.Text;
+using UniGetUI.Core.Logging;
 using Windows.Web.Http;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -43,7 +42,7 @@ namespace UniGetUI.Interface.Widgets
             BringIntoViewRequested += (s, e) => { LoadAnnouncements(); };
 
             int i = 0;
-            PointerPressed += (s, e) => { if(i++ %3 != 0) LoadAnnouncements(); };
+            PointerPressed += (s, e) => { if (i++ % 3 != 0) LoadAnnouncements(); };
 
             SetText(binder.Translate("Fetching latest announcements, please wait..."));
             _textblock.TextWrapping = TextWrapping.Wrap;
@@ -78,7 +77,7 @@ namespace UniGetUI.Interface.Widgets
             }
             catch (Exception ex)
             {
-                AppTools.Log("Could not load announcements: " + ex.ToString());
+                Logger.Log("Could not load announcements: " + ex.ToString());
                 SetText(binder.Translate("Could not load announcements - ") + ex.ToString());
                 SetImage(new Uri("ms-appx:///Assets/Images/warn.png"));
             }

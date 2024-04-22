@@ -1,15 +1,18 @@
-﻿using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using UniGetUI.Core;
 using UniGetUI.Core.Data;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
+using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI.PackageEngine.Managers
 {
@@ -51,7 +54,7 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
                 }
             }
 
@@ -96,7 +99,7 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new UpgradablePackage(Tools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this));
+                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this));
                 }
             }
 
@@ -141,7 +144,7 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(Tools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
                 }
             }
 
@@ -237,7 +240,7 @@ namespace UniGetUI.PackageEngine.Managers
         {
             PackageDetails details = new(package);
 
-            AppTools.Log(package.Source.Url.ToString().Trim()[^1]);
+            Logger.Log(package.Source.Url.ToString().Trim()[^1]);
 
             if (package.Source.Name == "community")
                 details.ManifestUrl = new Uri("https://community.chocolatey.org/packages/" + package.Id);
@@ -250,13 +253,13 @@ namespace UniGetUI.PackageEngine.Managers
             {
                 try
                 {
-                    details.InstallerType = Tools.Translate("NuPkg (zipped manifest)");
+                    details.InstallerType = CoreTools.Translate("NuPkg (zipped manifest)");
                     details.InstallerUrl = new Uri("https://packages.chocolatey.org/" + package.Id + "." + package.Version + ".nupkg");
-                    details.InstallerSize = await Tools.GetFileSizeAsync(details.InstallerUrl);
+                    details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
                 }
                 catch (Exception ex)
                 {
-                    AppTools.Log(ex);
+                    Logger.Log(ex);
                 }
             }
 
@@ -281,7 +284,7 @@ namespace UniGetUI.PackageEngine.Managers
                 if (_line.Trim() != "")
                 {
                     output.Add(_line);
-                    AppTools.Log(_line);
+                    Logger.Log(_line);
                 }
 
             // Parse the output
@@ -350,8 +353,8 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log("Error occurred while parsing line value=\"" + _line + "\"");
-                    AppTools.Log(e.Message);
+                    Logger.Log("Error occurred while parsing line value=\"" + _line + "\"");
+                    Logger.Log(e.Message);
                 }
             }
 
@@ -400,7 +403,7 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log(e);
+                    Logger.Log(e);
                 }
             }
 
@@ -442,7 +445,7 @@ namespace UniGetUI.PackageEngine.Managers
             ManagerProperties properties = new()
             {
                 Name = "Chocolatey",
-                Description = Tools.Translate("The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"),
+                Description = CoreTools.Translate("The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"),
                 IconId = "choco",
                 ColorIconId = "choco_color",
                 ExecutableFriendlyName = "choco.exe",
@@ -459,20 +462,20 @@ namespace UniGetUI.PackageEngine.Managers
         {
             ManagerStatus status = new();
 
-            var old_choco_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli");
-            var new_choco_path = Path.Join(CoreData.UniGetUIDataDirectory, "Chocolatey");
+            string old_choco_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli");
+            string new_choco_path = Path.Join(CoreData.UniGetUIDataDirectory, "Chocolatey");
 
             if (Directory.Exists(old_choco_path))
                 try
                 {
-                    AppTools.Log("Moving Bundled Chocolatey from old path to new path...");
+                    Logger.Log("Moving Bundled Chocolatey from old path to new path...");
 
                     if (!Directory.Exists(new_choco_path))
                         Directory.CreateDirectory(new_choco_path);
 
-                    foreach (var old_subdir in Directory.GetDirectories(old_choco_path, "*", SearchOption.AllDirectories))
+                    foreach (string old_subdir in Directory.GetDirectories(old_choco_path, "*", SearchOption.AllDirectories))
                     {
-                        var new_subdir = old_subdir.Replace(old_choco_path, new_choco_path);
+                        string new_subdir = old_subdir.Replace(old_choco_path, new_choco_path);
                         if (!Directory.Exists(new_subdir))
                         {
                             Debug.WriteLine("New directory: " + new_subdir);
@@ -482,9 +485,9 @@ namespace UniGetUI.PackageEngine.Managers
                             Debug.WriteLine("Directory " + new_subdir + " already exists");
                     }
 
-                    foreach (var old_file in Directory.GetFiles(old_choco_path, "*", SearchOption.AllDirectories))
+                    foreach (string old_file in Directory.GetFiles(old_choco_path, "*", SearchOption.AllDirectories))
                     {
-                        var new_file = old_file.Replace(old_choco_path, new_choco_path);
+                        string new_file = old_file.Replace(old_choco_path, new_choco_path);
                         if (!File.Exists(new_file))
                         {
                             Debug.WriteLine("Copying " + old_file);
@@ -497,9 +500,9 @@ namespace UniGetUI.PackageEngine.Managers
                         }
                     }
 
-                    foreach (var old_subdir in Directory.GetDirectories(old_choco_path, "*", SearchOption.AllDirectories).Reverse())
-                    { 
-                        if(!Directory.EnumerateFiles(old_subdir).Any() && !Directory.EnumerateDirectories(old_subdir).Any())
+                    foreach (string old_subdir in Directory.GetDirectories(old_choco_path, "*", SearchOption.AllDirectories).Reverse())
+                    {
+                        if (!Directory.EnumerateFiles(old_subdir).Any() && !Directory.EnumerateDirectories(old_subdir).Any())
                         {
                             Debug.WriteLine("Deleting old empty subdirectory " + old_subdir);
                             Directory.Delete(old_subdir);
@@ -516,11 +519,11 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log(e);
+                    Logger.Log(e);
                 }
 
-            if (Tools.GetSettings("UseSystemChocolatey"))
-                status.ExecutablePath = await Tools.Which("choco.exe");
+            if (Settings.Get("UseSystemChocolatey"))
+                status.ExecutablePath = (await CoreTools.Which("choco.exe")).Item2;
             else if (File.Exists(Path.Join(new_choco_path, "choco.exe")))
                 status.ExecutablePath = Path.Join(new_choco_path, "choco.exe");
             else
@@ -546,14 +549,14 @@ namespace UniGetUI.PackageEngine.Managers
             };
             process.Start();
             status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
-    
+
             // If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
-            if (/*Tools.GetSettings("ShownWelcomeWizard") && */!Tools.GetSettings("UseSystemChocolatey") && !File.Exists(@"C:\ProgramData\Chocolatey\bin\choco.exe"))
+            if (/*Tools.GetSettings("ShownWelcomeWizard") && */!Settings.Get("UseSystemChocolatey") && !File.Exists(@"C:\ProgramData\Chocolatey\bin\choco.exe"))
             {
                 string path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
                 if (!path.Contains(status.ExecutablePath.Replace("\\choco.exe", "\\bin")))
                 {
-                    AppTools.Log("Adding chocolatey to path since it was not on path.");
+                    Logger.Log("Adding chocolatey to path since it was not on path.");
                     Environment.SetEnvironmentVariable("PATH", $"{status.ExecutablePath.Replace("\\choco.exe", "\\bin")};{path}", EnvironmentVariableTarget.User);
                     Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.User);
                 }
@@ -584,8 +587,8 @@ namespace UniGetUI.PackageEngine.Managers
                 }
             };
 
-            AppTools.Log(p.StartInfo.FileName);
-            AppTools.Log(p.StartInfo.Arguments.ToString());
+            Logger.Log(p.StartInfo.FileName);
+            Logger.Log(p.StartInfo.Arguments.ToString());
 
             p.Start();
             string line;
@@ -597,7 +600,7 @@ namespace UniGetUI.PackageEngine.Managers
                 if (!line.StartsWith("Chocolatey"))
                 {
                     string[] elements = line.Split(' ');
-                    AppTools.Log(line);
+                    Logger.Log(line);
                     if (elements.Length < 2 || elements[0].Trim() != package.Id)
                         continue;
 

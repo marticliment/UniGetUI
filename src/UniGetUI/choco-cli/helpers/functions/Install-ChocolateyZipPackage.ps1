@@ -152,7 +152,7 @@ This parameter provides compatibility, but should not be used directly
 and not with the community package repository until January 2018.
 
 .PARAMETER DisableLogging
-OPTIONAL - This disables logging of the extracted items. It speeds up
+OPTIONAL - This disables Logger.Logging of the extracted items. It speeds up
 extraction of archives with many files.
 
 Usage of this parameter will prevent Uninstall-ChocolateyZipPackage
