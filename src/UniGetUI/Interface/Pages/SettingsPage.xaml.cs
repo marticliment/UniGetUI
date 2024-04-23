@@ -1,7 +1,6 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Data;
 using UniGetUI.Interface.Widgets;
@@ -13,9 +12,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Windows.ApplicationModel.VoiceCommands;
-using Windows.Storage;
-using Windows.Storage.Pickers;
 using UniGetUI.ExternalLibraries.Clipboard;
 
 // To learn more about WinUI, the WinUI project structure,

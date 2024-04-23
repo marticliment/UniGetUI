@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.IO;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.ApplicationModel.DataTransfer;
 using UniGetUI.ExternalLibraries.Clipboard;
 
 // To learn more about WinUI, the WinUI project structure,

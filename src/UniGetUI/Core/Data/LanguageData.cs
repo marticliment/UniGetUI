@@ -1,16 +1,13 @@
 ﻿using UniGetUI.PackageEngine.Classes;
-using UniGetUI.Core;
 using Nancy.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using Windows.Media.Streaming.Adaptive;
 
 namespace UniGetUI.Core.Data
 {

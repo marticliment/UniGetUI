@@ -14,7 +14,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Devices.Bluetooth.Advertisement;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,

@@ -8,14 +8,9 @@ using UniGetUI.PackageEngine.Managers;
 using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Windows.Foundation.Collections;
-using Windows.UI;
-using YamlDotNet.Serialization;
 
 namespace UniGetUI
 {

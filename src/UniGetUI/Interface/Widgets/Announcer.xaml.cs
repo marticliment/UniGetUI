@@ -3,10 +3,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Shapes;
 using UniGetUI.Core;
 using System;
-using Windows.ApplicationModel.Email;
 using Windows.UI.Text;
 using Windows.Web.Http;
 

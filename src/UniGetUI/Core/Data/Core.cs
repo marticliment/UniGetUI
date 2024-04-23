@@ -1,13 +1,8 @@
-﻿using UniGetUI.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Windows.Storage.Search;
 using System.Net.Http;
 
 namespace UniGetUI.Core.Data

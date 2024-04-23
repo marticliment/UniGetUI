@@ -13,9 +13,7 @@ using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Threading.Tasks;
-using Windows.Graphics.DirectX.Direct3D11;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,

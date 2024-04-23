@@ -5,7 +5,6 @@ using UniGetUI.Core;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Operations;
-using UniGetUI.ExternalLibraries.Pickers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,7 +16,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using Windows.Devices.Bluetooth.Advertisement;
 using Windows.UI.Core;
 using YamlDotNet.Serialization;
 

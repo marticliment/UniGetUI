@@ -1,18 +1,9 @@
-﻿using Microsoft.UI.Xaml.Data;
-using UniGetUI.Core.Data;
+﻿using UniGetUI.Core.Data;
 using UniGetUI.Core;
 using Nancy;
 using Nancy.Hosting.Self;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.Graphics.DirectX.Direct3D11;
 
 namespace UniGetUI.Interface
 {

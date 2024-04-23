@@ -5,7 +5,6 @@ using UniGetUI.Core;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Operations;
-using UniGetUI.ExternalLibraries.Pickers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
