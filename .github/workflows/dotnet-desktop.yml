@@ -44,8 +44,13 @@ jobs:
         ./appsdk.exe
         cd ..
 
-    - name: build and run
+    - name: build
       run: |
         mkdir out
         msbuild src/UniGetUI.sln /noLogo /property:Configuration=Release /property:Platform=x64 /restore:True /interactive:False /property:OutputPath=.\out
         exit $LASTEXITCODE
+    
+    - name: tests
+      run: |
+        cd ../src
+        dotnet test
