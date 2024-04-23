@@ -19,8 +19,8 @@ namespace UniGetUI.Core.Classes
                     return;
                 Sort();
             }
-
         }
+
         public void Sort()
         {
             BlockSorting = true;
@@ -33,13 +33,5 @@ namespace UniGetUI.Core.Classes
             BlockSorting = false;
             base.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
-    }
-
-    public abstract class SingletonBase<T> where T : SingletonBase<T>
-    {
-        private static readonly Lazy<T> Lazy =
-            new(() => (Activator.CreateInstance(typeof(T), true) as T)!);
-
-        public static T Instance => Lazy.Value;
     }
 }
