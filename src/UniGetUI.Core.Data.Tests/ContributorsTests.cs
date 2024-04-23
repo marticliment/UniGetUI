@@ -13,7 +13,7 @@ namespace UniGetUI.Core.Data.Tests
         [TestMethod]
         public void CheckIfContributorListIsEmpty()
         {
-            Assert.AreNotEqual(ContributorsData.Contributors.Length, 0, "Contributor list is empty");
+            Assert.AreNotEqual(0, ContributorsData.Contributors.Length, "Contributor list is empty");
         }
     }
 }

@@ -23,12 +23,12 @@ namespace UniGetUI.Core.Classes.Tests
 
             SortableCollection.Sort();
 
-            Assert.AreEqual(EventTriggeredCount, 7, "The CollectionChanged event was not invoked the expected amount of times");
-            Assert.AreEqual(SortableCollection[0], 1, "Collection is not sorted");
-            Assert.AreEqual(SortableCollection[1], 2, "Collection is not sorted");
-            Assert.AreEqual(SortableCollection[2], 3, "Collection is not sorted");
-            Assert.AreEqual(SortableCollection[3], 4, "Collection is not sorted");
-            Assert.AreEqual(SortableCollection[4], 5, "Collection is not sorted");
+            Assert.AreEqual(7, EventTriggeredCount, "The CollectionChanged event was not invoked the expected amount of times");
+            Assert.AreEqual(1, SortableCollection[0], "Collection is not sorted");
+            Assert.AreEqual(2, SortableCollection[1], "Collection is not sorted");
+            Assert.AreEqual(3, SortableCollection[2], "Collection is not sorted");
+            Assert.AreEqual(4, SortableCollection[3], "Collection is not sorted");
+            Assert.AreEqual(5, SortableCollection[4], "Collection is not sorted");
         }
     }
 }

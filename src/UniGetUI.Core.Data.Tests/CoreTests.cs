@@ -28,8 +28,8 @@ namespace UniGetUI.Core.Data.Tests
         [TestMethod]
         public void CheckOtherAttributes()
         {
-            Assert.AreNotEqual(CoreData.VersionName, "", "Version Name must not be empty");
-            Assert.AreNotEqual(CoreData.VersionNumber, 0, "Version number must be different from 0");
+            Assert.AreNotEqual("", CoreData.VersionName, "Version Name must not be empty");
+            Assert.AreNotEqual(0, CoreData.VersionNumber, "Version number must be different from 0");
             Assert.IsTrue(File.Exists(CoreData.IgnoredUpdatesDatabaseFile), "The Ignored Updates database file does not exist, but it should have been created automatically.");
             var notif_1 = CoreData.VolatileNotificationIdCounter;
             var notif_2 = CoreData.VolatileNotificationIdCounter;
@@ -38,7 +38,7 @@ namespace UniGetUI.Core.Data.Tests
             var notif_3 = CoreData.UpdatesAvailableNotificationId;
             var notif_4 = CoreData.UpdatesAvailableNotificationId;
             Assert.AreEqual(notif_3, notif_4, "The UpdatesAvailableNotificationId must be always the same");
-            Assert.AreNotEqual(CoreData.UpdatesAvailableNotificationId, 0, "The UpdatesAvailableNotificationId must not be zero");
+            Assert.AreNotEqual(0, CoreData.UpdatesAvailableNotificationId, "The UpdatesAvailableNotificationId must not be zero");
 
             Assert.IsTrue(Directory.Exists(CoreData.UniGetUIExecutableDirectory), "Directory where the executable is located does not exist");
             Assert.IsTrue(File.Exists(CoreData.UniGetUIExecutableFile), "The executable file does not exist");
