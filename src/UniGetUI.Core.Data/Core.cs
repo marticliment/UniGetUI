@@ -26,7 +26,12 @@ namespace UniGetUI.Core.Data
         /// </summary>
         public static string UniGetUIInstallationOptionsDirectory
         {
-            get => Path.Join(UniGetUIDataDirectory, "InstallationOptions");
+            get
+            {
+                var path = Path.Join(UniGetUIDataDirectory, "InstallationOptions");
+                if(!Directory.Exists(path)) Directory.CreateDirectory(path);
+                return path;
+            }
         }
 
         /// <summary>
@@ -130,7 +135,10 @@ namespace UniGetUI.Core.Data
         /// <summary>
         /// A path pointing to the executable file of the app
         /// </summary>
-        public static string UniGetUIExecutableFile = Environment.ProcessPath;
+        public static string UniGetUIExecutableFile
+        {
+            get => Environment.ProcessPath;
+        }
 
 
         /// <summary>
