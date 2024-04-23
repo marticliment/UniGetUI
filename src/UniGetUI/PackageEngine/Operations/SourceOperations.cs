@@ -39,12 +39,12 @@ namespace UniGetUI.PackageEngine.Operations
                 {
                     Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
-                    p.StartInfo.FileName = CoreData.GSudoPath;
+                    p.StartInfo.FileName = AppTools.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
                     p.Start();
                     p.WaitForExit();
                 }
-                startInfo.FileName = CoreData.GSudoPath;
+                startInfo.FileName = AppTools.GSudoPath;
                 startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", (Source.Manager as PackageManagerWithSources).GetAddSourceParameters(Source));
 
             }
@@ -176,12 +176,12 @@ namespace UniGetUI.PackageEngine.Operations
                 {
                     Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
-                    p.StartInfo.FileName = CoreData.GSudoPath;
+                    p.StartInfo.FileName = AppTools.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
                     p.Start();
                     p.WaitForExit();
                 }
-                startInfo.FileName = CoreData.GSudoPath;
+                startInfo.FileName = AppTools.GSudoPath;
                 startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", (Source.Manager as PackageManagerWithSources).GetRemoveSourceParameters(Source));
 
             }

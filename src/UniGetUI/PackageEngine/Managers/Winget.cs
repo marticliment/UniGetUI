@@ -315,7 +315,7 @@ namespace UniGetUI.PackageEngine.Managers
                 {
                     StartInfo = new ProcessStartInfo()
                     {
-                        FileName = CoreData.GSudoPath,
+                        FileName = AppTools.GSudoPath,
                         Arguments = Status.ExecutablePath + " " + Properties.ExecutableCallArgs + " settings --enable InstallerHashOverride",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,

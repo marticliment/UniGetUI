@@ -436,7 +436,7 @@ namespace UniGetUI.PackageEngine.Operations
                             {
                                 Logger.Log("Erasing admin rights");
                                 Process p = new();
-                                p.StartInfo.FileName = CoreData.GSudoPath;
+                                p.StartInfo.FileName = AppTools.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
                                 p.Start();
                                 p.WaitForExit();
@@ -452,7 +452,7 @@ namespace UniGetUI.PackageEngine.Operations
                             {
                                 Logger.Log("Erasing admin rights");
                                 Process p = new();
-                                p.StartInfo.FileName = CoreData.GSudoPath;
+                                p.StartInfo.FileName = AppTools.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
                                 p.Start();
                                 p.WaitForExit();

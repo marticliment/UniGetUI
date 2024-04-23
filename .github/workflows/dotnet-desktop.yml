@@ -38,19 +38,35 @@ jobs:
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
 
-    - name: Setup App Sdk
-      run: |
-        cd InstallerExtras
-        ./appsdk.exe
-        cd ..
+    # - name: Setup App Sdk
+    #  run: |
+    #    cd InstallerExtras
+    #    ./appsdk.exe
+    #    cd ..
 
     - name: build
       run: |
         mkdir out
         msbuild src/UniGetUI.sln /noLogo /property:Configuration=Release /property:Platform=x64 /restore:True /interactive:False /property:OutputPath=.\out
         exit $LASTEXITCODE
-    
+
+  tests:
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
     - name: tests
       run: |
-        cd ../src
+        cd src
         dotnet test

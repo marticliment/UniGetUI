@@ -108,12 +108,12 @@ namespace UniGetUI.PackageEngine.Operations
                 {
                     Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
-                    p.StartInfo.FileName = CoreData.GSudoPath;
+                    p.StartInfo.FileName = AppTools.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
                     p.Start();
                     p.WaitForExit();
                 }
-                startInfo.FileName = CoreData.GSudoPath;
+                startInfo.FileName = AppTools.GSudoPath;
                 startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
 
             }
@@ -252,12 +252,12 @@ namespace UniGetUI.PackageEngine.Operations
                 {
                     Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
-                    p.StartInfo.FileName = CoreData.GSudoPath;
+                    p.StartInfo.FileName = AppTools.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
                     p.Start();
                     p.WaitForExit();
                 }
-                startInfo.FileName = CoreData.GSudoPath;
+                startInfo.FileName = AppTools.GSudoPath;
                 startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
             }
             else
@@ -398,12 +398,12 @@ namespace UniGetUI.PackageEngine.Operations
                 {
                     Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
-                    p.StartInfo.FileName = CoreData.GSudoPath;
+                    p.StartInfo.FileName = AppTools.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
                     p.Start();
                     p.WaitForExit();
                 }
-                startInfo.FileName = CoreData.GSudoPath;
+                startInfo.FileName = AppTools.GSudoPath;
                 startInfo.Arguments = "\"" + Package.Manager.Status.ExecutablePath + "\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUninstallParameters(Package, Options));
             }
             else
