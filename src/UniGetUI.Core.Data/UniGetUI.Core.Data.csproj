@@ -10,4 +10,10 @@
     <ProjectReference Include="..\UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Assets\Data\Contributors.list">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
