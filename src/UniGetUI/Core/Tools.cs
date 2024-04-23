@@ -18,6 +18,7 @@ using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Operations;
 
@@ -301,5 +302,12 @@ namespace UniGetUI.Core
             }
             return 0;
         }
+
+        /// <summary>
+        /// A path pointing to the gsudo executable bundled with the app
+        /// </summary>
+        public static string GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
+
+
     }
 }

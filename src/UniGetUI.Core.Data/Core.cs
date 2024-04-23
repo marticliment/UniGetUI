@@ -1,4 +1,5 @@
-﻿using UniGetUI.Core.Logging;
+﻿using System.Reflection.Metadata.Ecma335;
+using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Data
 {
@@ -113,23 +114,23 @@ namespace UniGetUI.Core.Data
         /// <summary>
         /// The ID of the notification that is used to inform the user that updates are available
         /// </summary>
-        public static int UpdatesAvailableNotificationId = 1234;
+        public static int UpdatesAvailableNotificationId
+        { 
+            get => 1234;
+        }
 
         /// <summary>
         /// A path pointing to the location where the app is installed
         /// </summary>
-        public static string UniGetUIExecutableDirectory = Directory.GetParent(Environment.ProcessPath).FullName;
+        public static string UniGetUIExecutableDirectory
+        {
+            get => Directory.GetParent(Environment.ProcessPath)?.FullName;
+        }
 
         /// <summary>
         /// A path pointing to the executable file of the app
         /// </summary>
         public static string UniGetUIExecutableFile = Environment.ProcessPath;
-
-        /// <summary>
-        /// A path pointing to the gsudo executable bundled with the app
-        /// </summary>
-        public static string GSudoPath = Path.Join(UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
-
 
 
         /// <summary>
