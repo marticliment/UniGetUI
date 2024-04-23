@@ -155,9 +155,6 @@
     <PRIResource Remove="Intereface\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Assets\Data\LanguagesReference.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Assets\Images\admin_color.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -1551,7 +1548,7 @@
     <ProjectReference Include="..\UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Data\UniGetUI.Core.Data.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.IconStore\UniGetUI.Core.IconEngine.csproj" />
-    <ProjectReference Include="..\UniGetUI.Core.LanguageEngine\UniGetUI.Core.Language.csproj" />
+    <ProjectReference Include="..\UniGetUI.Core.LanguageEngine\UniGetUI.Core.LanguageEngine.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Settings\UniGetUI.Core.Settings.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Tools\UniGetUI.Core.Tools.csproj" />

@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniGetUI.Core", "UniGetUI.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.Data", "UniGetUI.Core.Data\UniGetUI.Core.Data.csproj", "{5F5EF76B-D755-4C12-ADAE-11F08CE3D936}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.Language", "UniGetUI.Core.LanguageEngine\UniGetUI.Core.Language.csproj", "{B70A6F17-08C8-4194-BBE8-668CA920CFF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.LanguageEngine", "UniGetUI.Core.LanguageEngine\UniGetUI.Core.LanguageEngine.csproj", "{B70A6F17-08C8-4194-BBE8-668CA920CFF3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.Logging", "UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj", "{72180B0C-3D20-4AAD-B015-A9337B91406E}"
 EndProject
@@ -44,6 +44,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.Core.Classes.Tests", "UniGetUI.Core.Classes.Tests\UniGetUI.Core.Classes.Tests.csproj", "{1A51EA31-6D78-4E98-B767-41A02C6E34D8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.Core.IconEngine.Tests", "UniGetUI.Core.IconEngine.Tests\UniGetUI.Core.IconEngine.Tests.csproj", "{230BF08C-C039-473B-933F-3BF647440E0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.Core.Language.Tests", "UniGetUI.Core.Language.Tests\UniGetUI.Core.Language.Tests.csproj", "{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -319,6 +321,22 @@ Global
 		{230BF08C-C039-473B-933F-3BF647440E0E}.Release|x64.Build.0 = Release|Any CPU
 		{230BF08C-C039-473B-933F-3BF647440E0E}.Release|x86.ActiveCfg = Release|Any CPU
 		{230BF08C-C039-473B-933F-3BF647440E0E}.Release|x86.Build.0 = Release|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Debug|x64.Build.0 = Debug|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Debug|x86.Build.0 = Debug|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Release|ARM64.Build.0 = Release|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Release|x64.ActiveCfg = Release|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Release|x64.Build.0 = Release|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Release|x86.ActiveCfg = Release|Any CPU
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -339,6 +357,7 @@ Global
 		{562B4814-2A78-4692-90BE-A727AABCEC85} = {5B9575EA-B4F9-46E4-A75E-59D430779EC7}
 		{1A51EA31-6D78-4E98-B767-41A02C6E34D8} = {5B9575EA-B4F9-46E4-A75E-59D430779EC7}
 		{230BF08C-C039-473B-933F-3BF647440E0E} = {5B9575EA-B4F9-46E4-A75E-59D430779EC7}
+		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234} = {5B9575EA-B4F9-46E4-A75E-59D430779EC7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D044BB14-0B37-47E5-A579-8B30FCBA1F9F}

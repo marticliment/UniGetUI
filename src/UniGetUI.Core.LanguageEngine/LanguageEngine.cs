@@ -18,12 +18,12 @@ namespace UniGetUI.Core.Language
                 LangName = System.Globalization.CultureInfo.CurrentCulture.ToString().Replace("-", "_");
             }
 
-            if (LanguageData.LanguageList.ContainsKey(LangName))
+            if (LanguageData.LanguageReference.ContainsKey(LangName))
             {
                 MainLangDict = LoadLanguageFile(LangName);
                 MainLangDict.TryAdd("locale", LangName);
             }
-            else if (LanguageData.LanguageList.ContainsKey(LangName[0..2]))
+            else if (LanguageData.LanguageReference.ContainsKey(LangName[0..2]))
             {
                 MainLangDict = LoadLanguageFile(LangName[0..2]);
                 MainLangDict.TryAdd("locale", LangName[0..2]);

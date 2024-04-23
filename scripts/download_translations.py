@@ -133,10 +133,10 @@ try:
     # languageCredits = {json.dumps(langCredits, indent=2, ensure_ascii=False)}
     # """
 
-    with open(os.path.join(root_dir, "src/UniGetUI/Assets/Data/Translators.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(root_dir, "src/UniGetUI.Core.LanguageEngine/Assets/Data/Translators.json"), "w", encoding="utf-8") as f:
         f.write(json.dumps(langCredits, indent=2, ensure_ascii=False))
 
-    with open(os.path.join(root_dir, "src/UniGetUI/Assets/Data/TranslatedPercentages.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(root_dir, "src/UniGetUI.Core.LanguageEngine/Assets/Data/TranslatedPercentages.json"), "w", encoding="utf-8") as f:
         f.write(json.dumps(langPerc, indent=2, ensure_ascii=False))
 
     # translations_filepath = os.path.normpath(os.path.join(root_dir, "UniGetUI/Core/Data/Translations.py"))

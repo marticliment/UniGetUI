@@ -1,23 +1,110 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.Core.Classes;
+using System.Collections.ObjectModel;
 
 namespace UniGetUI.Core.Language
 {
     public static class LanguageData
     {
-        public static readonly string TranslatorsJSON = File.ReadAllText(
-            Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "Translators.json")
-        );
+        /// <summary>
+        /// Returns 
+        /// </summary>
+        private static Person[]? __translators_list;
+        
+        public static Person[] TranslatorsList
+        {
+            get
+            {
+                if (__translators_list == null)
+                    __translators_list = LoadLanguageTranslatorList();
 
-        public static readonly Dictionary<string, string> LanguageList = (JsonObject.Parse(
-            File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "LanguagesReference.json"))
-        ) as JsonObject).ToDictionary(x => x.Key, x => x.Value.ToString());
+                return __translators_list;
+            }
+        }
 
-        public static readonly Dictionary<string, string> TranslatedPercentages = (JsonObject.Parse(
-            File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "TranslatedPercentages.json"))
-        ) as JsonObject).ToDictionary(x => x.Key, x => x.Value.ToString());
+        private static ReadOnlyDictionary<string, string>? __language_reference;
+        public static ReadOnlyDictionary<string, string> LanguageReference
+        {
+            get {
+                if (__language_reference == null)
+                    __language_reference = LoadLanguageReference();
+                return __language_reference;
+            }
+        }
+
+        private static ReadOnlyDictionary<string, string>? __translation_percentages;
+        public static ReadOnlyDictionary<string, string> TranslationPercentages
+        {
+            get
+            {
+                if (__translation_percentages == null)
+                    __translation_percentages = LoadTranslationPercentages();
+                return __translation_percentages;
+            }
+        }
+
+        private static ReadOnlyDictionary<string, string> LoadTranslationPercentages()
+        {
+            JsonObject? val = JsonObject.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "TranslatedPercentages.json"))) as JsonObject;
+            if (val != null)
+                return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("404%" + x.Key)).ToString()));
+            else
+                return new(new Dictionary<string, string>());
+        }
+
+        private static ReadOnlyDictionary<string, string> LoadLanguageReference()
+        {
+            JsonObject? val = JsonObject.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "LanguagesReference.json"))) as JsonObject;
+            if (val != null)
+                return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("NoNameLang_" + x.Key)).ToString()));
+            else
+                return new(new Dictionary<string, string>());
+        }
+
+        private static Person[] LoadLanguageTranslatorList()
+        {
+            var JsonContents = File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "Translators.json"));
+            JsonObject? TranslatorsInfo = JsonNode.Parse(JsonContents) as JsonObject;
+
+            if (TranslatorsInfo == null) return [];
+
+            List<Person> result = new();
+            foreach (var langKey in TranslatorsInfo)
+            {
+                if (!LanguageReference.ContainsKey(langKey.Key))
+                {
+                    Logger.Log($"Language {langKey.Key} not in list, maybe has not been added yet?");
+                    continue;
+                }
+
+                JsonArray TranslatorsForLang = (langKey.Value ?? new JsonArray()).AsArray();
+                bool LangShown = false;
+                foreach (JsonNode? translator in TranslatorsForLang)
+                {
+                    if (translator is null) continue;
+
+                    Uri? url = null;
+                    if (translator["link"] != null && translator["link"]?.ToString() != "")
+                        url = new Uri((translator["link"] ?? "").ToString());
+
+                    Person person = new(
+                        Name: (url != null ? "@" : "") + (translator["name"] ?? "").ToString(),
+                        ProfilePicture: url != null ? new Uri(url.ToString() + ".png") : null,
+                        GitHubUrl: url,
+                        Language: !LangShown ? LanguageData.LanguageReference[langKey.Key] : ""
+                    );
+                    LangShown = true;
+                    result.Add(person);
+                }
+            }
+
+            return result.ToArray();
+        }
     }
 
     public static class CommonTranslations
@@ -52,7 +139,8 @@ namespace UniGetUI.Core.Language
 
         public static readonly Dictionary<PackageScope, string> ScopeNames_NonLang = new()
         {
-            { PackageScope.Global, "machine" },
+            { PackageScope.Global, "mac" +
+                "hine" },
             { PackageScope.Local, "user" },
         };
 
