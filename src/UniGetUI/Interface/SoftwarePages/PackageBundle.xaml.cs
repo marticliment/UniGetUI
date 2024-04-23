@@ -20,7 +20,7 @@ using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Operations;
 using Windows.UI.Core;
 using UniGetUI.Core.Logging;
-using YamlDotNet.Serialization;
+using UniGetUI.Core.SettingsEngine;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -150,11 +150,11 @@ namespace UniGetUI.Interface
             int width = 250;
             try
             {
-                width = int.Parse(Tools.GetSettingsValue("SidepanelWidthBundlesPage"));
+                width = int.Parse(Settings.GetValue("SidepanelWidthBundlesPage"));
             }
             catch
             {
-                Tools.SetSettingsValue("SidepanelWidthBundlesPage", "250");
+                Settings.SetValue("SidepanelWidthBundlesPage", "250");
             }
             BodyGrid.ColumnDefinitions.ElementAt(0).Width = new GridLength(width);
 
@@ -214,7 +214,7 @@ namespace UniGetUI.Interface
         {
             if (!Initialized)
                 return;
-            Tools.SetSettings(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
+            Settings.Set(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
         }
         private void SourcesTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
         {
@@ -361,6 +361,8 @@ namespace UniGetUI.Interface
         {
             if (!Initialized)
                 return;
+
+            InstantSearchCheckbox.IsChecked = Settings.Get(InstantSearchSettingString);
             MainTitle.Text = Tools.AutoTranslated("Package Bundles");
             HeaderIcon.Glyph = "\uF133";
             CheckboxHeader.Content = " ";
@@ -656,7 +658,7 @@ namespace UniGetUI.Interface
                 DeserializedData = JsonSerializer.Deserialize<SerializableBundle_v1>(content);
             else if (format == BundleFormatType.YAML)
             {
-                IDeserializer deserializer = new DeserializerBuilder()
+                YamlDotNet.Serialization.IDeserializer deserializer = new YamlDotNet.Serialization.DeserializerBuilder()
                     .Build();
                 DeserializedData = deserializer.Deserialize<SerializableBundle_v1>(content);
             }
@@ -751,7 +753,7 @@ namespace UniGetUI.Interface
                 ExportableData = JsonSerializer.Serialize<SerializableBundle_v1>(exportable, new JsonSerializerOptions() { WriteIndented = true });
             else if (formatType == BundleFormatType.YAML)
             {
-                ISerializer serializer = new SerializerBuilder()
+                YamlDotNet.Serialization.ISerializer serializer = new YamlDotNet.Serialization.SerializerBuilder()
                     .Build();
                 ExportableData = serializer.Serialize(exportable);
             }
@@ -822,7 +824,7 @@ namespace UniGetUI.Interface
                 return;
 
             lastSavedWidth = ((int)(e.NewSize.Width / 10));
-            Tools.SetSettingsValue("SidepanelWidthBundlesPage", ((int)e.NewSize.Width).ToString());
+            Settings.SetValue("SidepanelWidthBundlesPage", ((int)e.NewSize.Width).ToString());
             foreach (UIElement control in SidePanelGrid.Children)
             {
                 control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;

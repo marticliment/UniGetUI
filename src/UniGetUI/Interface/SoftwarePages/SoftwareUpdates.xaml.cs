@@ -17,6 +17,7 @@ using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Logging;
 using Windows.UI.Core;
+using UniGetUI.Core.SettingsEngine;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -157,11 +158,11 @@ namespace UniGetUI.Interface
             int width = 250;
             try
             {
-                width = int.Parse(Tools.GetSettingsValue("SidepanelWidthUpdatesPage"));
+                width = int.Parse(Settings.GetValue("SidepanelWidthUpdatesPage"));
             }
             catch
             {
-                Tools.SetSettingsValue("SidepanelWidthUpdatesPage", "250");
+                Settings.SetValue("SidepanelWidthUpdatesPage", "250");
             }
             BodyGrid.ColumnDefinitions.ElementAt(0).Width = new GridLength(width);
 
@@ -221,7 +222,7 @@ namespace UniGetUI.Interface
         {
             if (!Initialized)
                 return;
-            Tools.SetSettings(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
+            Settings.Set(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
         }
         private void SourcesTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
         {
@@ -325,7 +326,7 @@ namespace UniGetUI.Interface
                 string title = "";
                 string attribution = "";
                 bool ShowButtons = false;
-                if (Tools.GetSettings("AutomaticallyUpdatePackages") || Environment.GetCommandLineArgs().Contains("--updateapps"))
+                if (Settings.Get("AutomaticallyUpdatePackages") || Environment.GetCommandLineArgs().Contains("--updateapps"))
                 {
                     if (upgradablePackages.Count == 1)
                     {
@@ -366,7 +367,7 @@ namespace UniGetUI.Interface
                     ShowButtons = true;
                 }
 
-                if (!Tools.GetSettings("DisableUpdatesNotifications") && !Tools.GetSettings("DisableNotifications"))
+                if (!Settings.Get("DisableUpdatesNotifications") && !Settings.Get("DisableNotifications"))
                 {
                     try
                     {
@@ -397,12 +398,12 @@ namespace UniGetUI.Interface
                 }
             }
 
-            if (!Tools.GetSettings("DisableAutoCheckforUpdates") && !ManualCheck)
+            if (!Settings.Get("DisableAutoCheckforUpdates") && !ManualCheck)
             {
                 long waitTime = 3600;
                 try
                 {
-                    waitTime = long.Parse(Tools.GetSettingsValue("UpdatesCheckInterval"));
+                    waitTime = long.Parse(Settings.GetValue("UpdatesCheckInterval"));
                     Logger.Log($"Starting check for updates wait interval with waitTime={waitTime}");
                 }
                 catch
@@ -549,6 +550,9 @@ namespace UniGetUI.Interface
         {
             if (!Initialized)
                 return;
+
+            InstantSearchCheckbox.IsChecked = Settings.Get(InstantSearchSettingString);
+
             MainTitle.Text = Tools.AutoTranslated("Software Updates");
             HeaderIcon.Glyph = "\uE895";
             HeaderIcon.FontWeight = new Windows.UI.Text.FontWeight(700);
@@ -865,7 +869,7 @@ namespace UniGetUI.Interface
                 return;
 
             lastSavedWidth = ((int)(e.NewSize.Width / 10));
-            Tools.SetSettingsValue("SidepanelWidthUpdatesPage", ((int)e.NewSize.Width).ToString());
+            Settings.SetValue("SidepanelWidthUpdatesPage", ((int)e.NewSize.Width).ToString());
             foreach (UIElement control in SidePanelGrid.Children)
             {
                 control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;

@@ -16,6 +16,7 @@ using UniGetUI.PackageEngine.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Tools;
+using UniGetUI.Core.SettingsEngine;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -77,8 +78,8 @@ namespace UniGetUI.Interface
             }
             UpdatesCheckIntervalSelector.ShowAddedItems();
 
-            if (Tools.GetSettingsValue("PreferredTheme") == "")
-                Tools.SetSettingsValue("PreferredTheme", "auto");
+            if (Settings.GetValue("PreferredTheme") == "")
+                Settings.SetValue("PreferredTheme", "auto");
 
             ThemeSelector.AddItem(Tools.AutoTranslated("Light"), "light");
             ThemeSelector.AddItem(Tools.AutoTranslated("Dark"), "dark");
@@ -89,14 +90,14 @@ namespace UniGetUI.Interface
             BackupDirectoryLabel = (TextBlock)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(0));
             ResetBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(1));
             OpenBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2));
-            if (!Tools.GetSettings("ChangeBackupOutputDirectory"))
+            if (!Settings.Get("ChangeBackupOutputDirectory"))
             {
                 BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
                 ResetBackupDirectory.IsEnabled = false;
             }
             else
             {
-                BackupDirectoryLabel.Text = Tools.GetSettingsValue("ChangeBackupOutputDirectory");
+                BackupDirectoryLabel.Text = Settings.GetValue("ChangeBackupOutputDirectory");
                 ResetBackupDirectory.IsEnabled = true;
             }
 
@@ -239,7 +240,7 @@ namespace UniGetUI.Interface
                 };
                 ManagerSwitch.Toggled += (s, e) =>
                 {
-                    Tools.SetSettings("Disable" + Manager.Name, !ManagerSwitch.IsOn);
+                    Settings.Set("Disable" + Manager.Name, !ManagerSwitch.IsOn);
                     SetManagerStatus(Manager);
                     EnableOrDisableEntries();
                 };
@@ -331,7 +332,7 @@ namespace UniGetUI.Interface
                 ResetWingetUI(sender, e);
                 Dictionary<string, string> settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file));
                 foreach (KeyValuePair<string, string> entry in settings)
-                    Tools.SetSettingsValue(entry.Key, entry.Value);
+                    Settings.SetValue(entry.Key, entry.Value);
 
                 GeneralSettingsExpander.ShowRestartRequiredBanner();
             }
@@ -405,7 +406,7 @@ namespace UniGetUI.Interface
         private void ResetBackupPath_Click(object sender, dynamic e)
         {
             BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
-            Tools.SetSettings("ChangeBackupOutputDirectory", false);
+            Settings.Set("ChangeBackupOutputDirectory", false);
             ResetBackupDirectory.IsEnabled = false;
         }
 
@@ -416,7 +417,7 @@ namespace UniGetUI.Interface
             string folder = openPicker.Show();
             if (folder != String.Empty)
             {
-                Tools.SetSettingsValue("ChangeBackupOutputDirectory", folder);
+                Settings.SetValue("ChangeBackupOutputDirectory", folder);
                 BackupDirectoryLabel.Text = folder;
                 ResetBackupDirectory.IsEnabled = true;
             }
@@ -429,7 +430,7 @@ namespace UniGetUI.Interface
 
         private void OpenBackupPath_Click(object sender, RoutedEventArgs e)
         {
-            string directory = Tools.GetSettingsValue("ChangeBackupOutputDirectory");
+            string directory = Settings.GetValue("ChangeBackupOutputDirectory");
             if (directory == "")
                 directory = CoreData.UniGetUI_DefaultBackupDirectory;
 

@@ -15,6 +15,7 @@ using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Logging;
 using Windows.UI.Core;
+using UniGetUI.Core.SettingsEngine;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -154,11 +155,11 @@ namespace UniGetUI.Interface
             int width = 250;
             try
             {
-                width = int.Parse(Tools.GetSettingsValue("SidepanelWidthDiscoverPage"));
+                width = int.Parse(Settings.GetValue("SidepanelWidthDiscoverPage"));
             }
             catch
             {
-                Tools.SetSettingsValue("SidepanelWidthDiscoverPage", "250");
+                Settings.SetValue("SidepanelWidthDiscoverPage", "250");
             }
             BodyGrid.ColumnDefinitions.ElementAt(0).Width = new GridLength(width);
 
@@ -224,7 +225,7 @@ namespace UniGetUI.Interface
         {
             if (!Initialized)
                 return;
-            Tools.SetSettings(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
+            Settings.Set(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
         }
         private void SourcesTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
         {
@@ -469,6 +470,8 @@ namespace UniGetUI.Interface
         {
             if (!Initialized)
                 return;
+            InstantSearchCheckbox.IsChecked = Settings.Get(InstantSearchSettingString);
+
             MainTitle.Text = Tools.AutoTranslated("Discover Packages");
             HeaderIcon.Glyph = "\uF6FA";
             CheckboxHeader.Content = " ";
@@ -761,7 +764,7 @@ namespace UniGetUI.Interface
                 return;
 
             lastSavedWidth = ((int)(e.NewSize.Width / 10));
-            Tools.SetSettingsValue("SidepanelWidthDiscoverPage", ((int)e.NewSize.Width).ToString());
+            Settings.SetValue("SidepanelWidthDiscoverPage", ((int)e.NewSize.Width).ToString());
             foreach (UIElement control in SidePanelGrid.Children)
             {
                 control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;

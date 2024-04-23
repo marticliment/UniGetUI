@@ -19,6 +19,7 @@ using UniGetUI.PackageEngine.Classes;
 using Windows.ApplicationModel.DataTransfer;
 using UniGetUI.Core.Logging;
 using Windows.Foundation.Collections;
+using UniGetUI.Core.SettingsEngine;
 
 
 namespace UniGetUI.Interface
@@ -105,7 +106,7 @@ namespace UniGetUI.Interface
         /// <param name="args"></param>
         public async void HandleClosingEvent(AppWindow sender, AppWindowClosingEventArgs args)
         {
-            if (!Tools.GetSettings("DisableSystemTray"))
+            if (!Settings.Get("DisableSystemTray"))
             {
                 args.Cancel = true;
                 RecentlyActivated = false;
@@ -317,7 +318,7 @@ namespace UniGetUI.Interface
 
         public void ApplyTheme()
         {
-            string preferredTheme = Tools.GetSettingsValue("PreferredTheme");
+            string preferredTheme = Settings.GetValue("PreferredTheme");
             if (preferredTheme == "dark")
             {
                 Tools.ThemeListener.CurrentTheme = ApplicationTheme.Dark;

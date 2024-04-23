@@ -12,6 +12,7 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes;
+using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI.PackageEngine.Operations
 {
@@ -61,7 +62,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task WaitForAvailability()
         {
-            if (Tools.GetSettings("AllowParallelInstalls") || Tools.GetSettings("AllowParallelInstallsForManager" + Package.Manager.Name))
+            if (Settings.Get("AllowParallelInstalls") || Settings.Get("AllowParallelInstallsForManager" + Package.Manager.Name))
             {
                 Logger.Log("Parallel installs are allowed. Skipping queue check");
                 return;
@@ -101,9 +102,9 @@ namespace UniGetUI.PackageEngine.Operations
         public InstallPackageOperation(Package package) : base(package) { }
         protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
         {
-            if (Options.RunAsAdministrator || Tools.GetSettings("AlwaysElevate" + Package.Manager.Name))
+            if (Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
             {
-                if (Tools.GetSettings("DoCacheAdminRights") || Tools.GetSettings("DoCacheAdminRightsForBatches"))
+                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
                     Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
@@ -147,7 +148,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             Package.SetTag(PackageTag.Failed);
 
-            if (!Tools.GetSettings("DisableErrorNotifications") && !Tools.GetSettings("DisableNotifications"))
+            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
                 try
                 {
                     new ToastContentBuilder()
@@ -212,7 +213,7 @@ namespace UniGetUI.PackageEngine.Operations
             Package.SetTag(PackageTag.AlreadyInstalled);
             Tools.App.MainWindow.NavigationPage.InstalledPage.AddInstalledPackage(Package);
 
-            if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
 
                 try
                 {
@@ -245,9 +246,9 @@ namespace UniGetUI.PackageEngine.Operations
         public UpdatePackageOperation(Package package) : base(package) { }
         protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
         {
-            if (Options.RunAsAdministrator || Tools.GetSettings("AlwaysElevate" + Package.Manager.Name))
+            if (Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
             {
-                if (Tools.GetSettings("DoCacheAdminRights") || Tools.GetSettings("DoCacheAdminRightsForBatches"))
+                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
                     Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
@@ -290,7 +291,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             Package.SetTag(PackageTag.Failed);
 
-            if (!Tools.GetSettings("DisableErrorNotifications") && !Tools.GetSettings("DisableNotifications"))
+            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
                 try
                 {
                     new ToastContentBuilder()
@@ -356,7 +357,7 @@ namespace UniGetUI.PackageEngine.Operations
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
             Tools.App.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
 
-            if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
                 try
                 {
                     new ToastContentBuilder()
@@ -391,9 +392,9 @@ namespace UniGetUI.PackageEngine.Operations
         public UninstallPackageOperation(Package package) : base(package) { }
         protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
         {
-            if (Options.RunAsAdministrator || Tools.GetSettings("AlwaysElevate" + Package.Manager.Name))
+            if (Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
             {
-                if (Tools.GetSettings("DoCacheAdminRights") || Tools.GetSettings("DoCacheAdminRightsForBatches"))
+                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
                     Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
@@ -437,7 +438,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             Package.SetTag(PackageTag.Failed);
 
-            if (!Tools.GetSettings("DisableErrorNotifications") && !Tools.GetSettings("DisableNotifications"))
+            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
                 try
                 {
                     new ToastContentBuilder()
@@ -504,7 +505,7 @@ namespace UniGetUI.PackageEngine.Operations
             Tools.App.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
             Tools.App.MainWindow.NavigationPage.InstalledPage.RemoveCorrespondingPackages(Package);
 
-            if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
                 try
                 {
                     new ToastContentBuilder()

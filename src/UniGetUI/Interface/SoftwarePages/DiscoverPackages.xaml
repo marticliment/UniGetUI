@@ -7,7 +7,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
-    xmlns:engine="using:UniGetUI.PackageEngine"
     xmlns:pkgClasses="using:UniGetUI.PackageEngine.Classes"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
@@ -720,7 +719,7 @@
                         </Expander.Header>
                         <Expander.Content>
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Spacing="0">
-                                <CheckBox x:Name="InstantSearchCheckbox" Checked="InstantSearchValueChanged" Unchecked="InstantSearchValueChanged" IsChecked="{x:Bind Tools.GetSettings(InstantSearchSettingString, x:True)}">
+                                <CheckBox x:Name="InstantSearchCheckbox" Checked="InstantSearchValueChanged" Unchecked="InstantSearchValueChanged">
                                     <CheckBox.Content>
                                         <widgets:TranslatedTextBlock Text="Instant search" WrappingMode="Wrap"/>
                                     </CheckBox.Content>

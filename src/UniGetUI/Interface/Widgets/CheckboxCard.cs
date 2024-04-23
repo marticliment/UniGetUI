@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using UniGetUI.Core;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -66,7 +67,7 @@ namespace UniGetUI.Interface.Widgets
                 nameof(SettingName),
                 typeof(string),
                 typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.IsChecked = Tools.GetSettings((string)e.NewValue) ^ ((string)e.NewValue).StartsWith("Disable"); })));
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.IsChecked = Settings.Get((string)e.NewValue) ^ ((string)e.NewValue).StartsWith("Disable"); })));
 
 
             ContentAlignment = ContentAlignment.Left;
@@ -76,8 +77,8 @@ namespace UniGetUI.Interface.Widgets
             DefaultStyleKey = typeof(CheckboxCard);
             Content = _checkbox;
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            _checkbox.Checked += (s, e) => { Tools.SetSettings(SettingName, true ^ SettingName.StartsWith("Disable")); StateChanged?.Invoke(this, new CheckBoxEventArgs(true ^ SettingName.StartsWith("Disable"))); };
-            _checkbox.Unchecked += (s, e) => { Tools.SetSettings(SettingName, false ^ SettingName.StartsWith("Disable")); StateChanged?.Invoke(this, new CheckBoxEventArgs(false ^ SettingName.StartsWith("Disable"))); };
+            _checkbox.Checked += (s, e) => { Settings.Set(SettingName, true ^ SettingName.StartsWith("Disable")); StateChanged?.Invoke(this, new CheckBoxEventArgs(true ^ SettingName.StartsWith("Disable"))); };
+            _checkbox.Unchecked += (s, e) => { Settings.Set(SettingName, false ^ SettingName.StartsWith("Disable")); StateChanged?.Invoke(this, new CheckBoxEventArgs(false ^ SettingName.StartsWith("Disable"))); };
         }
     }
 }

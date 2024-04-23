@@ -15,6 +15,7 @@ using UniGetUI.PackageEngine.Managers;
 using Windows.Foundation.Collections;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
+using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI
 {
@@ -45,7 +46,7 @@ namespace UniGetUI
             {
                 InitializeComponent();
 
-                string preferredTheme = AppTools.GetSettingsValue_Static("PreferredTheme");
+                string preferredTheme = Settings.GetValue("PreferredTheme");
                 if (preferredTheme == "dark")
                 {
                     RequestedTheme = ApplicationTheme.Dark;
@@ -192,7 +193,7 @@ namespace UniGetUI
                 // Run other initializations asynchronously
                 AppTools.Instance.UpdateUniGetUIIfPossible();
                 _ = AppTools.IconDatabase.LoadIconAndScreenshotsDatabase();
-                if (!AppTools.Instance.GetSettings("DisableApi"))
+                if (!Settings.Get("DisableApi"))
                     _ = BackgroundApi.Start();
 
                 _ = MainWindow.DoEntryTextAnimationAsync();

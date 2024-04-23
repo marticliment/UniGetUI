@@ -11,6 +11,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI.PackageEngine.Operations
 {
@@ -34,7 +35,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
             {
-                if (Tools.GetSettings("DoCacheAdminRights") || Tools.GetSettings("DoCacheAdminRightsForBatches"))
+                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
                     Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
@@ -74,7 +75,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleFailure()
         {
             LineInfoText = Tools.Translate("Could not add source {source} to {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
-            if (!Tools.GetSettings("DisableErrorNotifications") && !Tools.GetSettings("DisableNotifications"))
+            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
                 try
                 {
                     new ToastContentBuilder()
@@ -136,7 +137,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             OperationSucceeded?.Invoke(this, new EventArgs());
             LineInfoText = Tools.Translate("The source {source} was added to {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
-            if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
 
                 try
                 {
@@ -171,7 +172,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
             {
-                if (Tools.GetSettings("DoCacheAdminRights") || Tools.GetSettings("DoCacheAdminRightsForBatches"))
+                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
                     Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
@@ -211,7 +212,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleFailure()
         {
             LineInfoText = Tools.Translate("Could not remove source {source} from {manager}").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
-            if (!Tools.GetSettings("DisableErrorNotifications") && !Tools.GetSettings("DisableNotifications"))
+            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
                 new ToastContentBuilder()
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
@@ -266,7 +267,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             OperationSucceeded?.Invoke(this, new EventArgs());
             LineInfoText = Tools.Translate("The source {source} was removed from {manager} successfully").Replace("{source}", Source.Name).Replace("{manager}", Source.Manager.Name);
-            if (!Tools.GetSettings("DisableSuccessNotifications") && !Tools.GetSettings("DisableNotifications"))
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
                 try
                 {
                     new ToastContentBuilder()

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using UniGetUI.Core;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Interface
@@ -22,7 +23,7 @@ namespace UniGetUI.Interface
         {
             try
             {
-                if (AppTools.Instance.GetSettings("DisableWidgetsApi"))
+                if (Settings.Get("DisableWidgetsApi"))
                 {
                     Logger.Log("Widgets API is disabled");
                     return;

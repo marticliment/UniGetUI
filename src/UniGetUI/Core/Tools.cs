@@ -83,29 +83,6 @@ namespace UniGetUI.Core
             return new string(chars.ToArray());
         }
 
-
-
-        // BEGIN DEPRECATED
-        public bool GetSettings(string setting, bool invert = false)
-        { return Settings.Get(setting) ^ invert; }
-        public static bool GetSettings_Static(string setting, bool invert = false)
-        { return Settings.Get(setting) ^ invert; }
-        public void SetSettings(string setting, bool value)
-        { Settings.Set(setting, value); }
-        public static void SetSettings_Static(string setting, bool value)
-        { Settings.Set(setting, value); }
-        public string GetSettingsValue(string setting)
-        { return Settings.GetValue(setting); }
-        public static string GetSettingsValue_Static(string setting)
-        { return Settings.GetValue(setting); }
-        public void SetSettingsValue(string setting, string value)
-        { Settings.SetValue(setting, value); }
-        public static void SetSettingsValue_Static(string setting, string value)
-        { Settings.SetValue(setting, value); }
-        // END DEPRECATED
-
-
-
         /// <summary>
         /// Translate a string to the current language
         /// </summary>
@@ -133,7 +110,6 @@ namespace UniGetUI.Core
             Environment.Exit(0);
         }
 
-        
         public void AddOperationToList(AbstractOperation operation)
         {
             App.MainWindow.NavigationPage.OperationStackPanel.Children.Add(operation);

@@ -15,6 +15,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Core.Logging;
 using ExternalLibraries.Clipboard;
+using UniGetUI.Core.SettingsEngine;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -431,7 +432,7 @@ namespace UniGetUI.PackageEngine.Operations
                 {
                     case AfterFinshAction.TimeoutClose:
                         if (Tools.OperationQueue.Count == 0)
-                            if (Tools.GetSettings("DoCacheAdminRightsForBatches"))
+                            if (Settings.Get("DoCacheAdminRightsForBatches"))
                             {
                                 Logger.Log("Erasing admin rights");
                                 Process p = new();
@@ -441,13 +442,13 @@ namespace UniGetUI.PackageEngine.Operations
                                 p.WaitForExit();
                             }
                         await Task.Delay(5000);
-                        if (!Tools.GetSettings("MaintainSuccessfulInstalls"))
+                        if (!Settings.Get("MaintainSuccessfulInstalls"))
                             _ = Close();
                         break;
 
                     case AfterFinshAction.ManualClose:
                         if (Tools.OperationQueue.Count == 0)
-                            if (Tools.GetSettings("DoCacheAdminRightsForBatches"))
+                            if (Settings.Get("DoCacheAdminRightsForBatches"))
                             {
                                 Logger.Log("Erasing admin rights");
                                 Process p = new();
@@ -469,7 +470,7 @@ namespace UniGetUI.PackageEngine.Operations
                 ProcessOutput.Add("");
                 ProcessOutput.Add("");
 
-                string[] oldHistory = Tools.GetSettingsValue("OperationHistory").Split("\n");
+                string[] oldHistory = Settings.GetValue("OperationHistory").Split("\n");
 
                 if (oldHistory.Length > 1000)
                 {
@@ -480,7 +481,7 @@ namespace UniGetUI.PackageEngine.Operations
                 newHistory.AddRange(ProcessOutput);
                 newHistory.AddRange(oldHistory);
 
-                Tools.SetSettingsValue("OperationHistory", String.Join('\n', newHistory).Replace(" | ", " ║ "));
+                Settings.SetValue("OperationHistory", String.Join('\n', newHistory).Replace(" | ", " ║ "));
             }
             catch (Exception e)
             {

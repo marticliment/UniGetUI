@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core;
+using UniGetUI.Core.SettingsEngine;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -96,7 +97,7 @@ namespace UniGetUI.Interface.Widgets
         {
             try
             {
-                string savedItem = Tools.GetSettingsValue(SettingName);
+                string savedItem = Settings.GetValue(SettingName);
                 _combobox.SelectedIndex = _elements.IndexOf(_inverted_val_ref[savedItem]);
             }
             catch
@@ -107,7 +108,7 @@ namespace UniGetUI.Interface.Widgets
             {
                 try
                 {
-                    Tools.SetSettingsValue(SettingName, _values_ref[_combobox.SelectedItem.ToString()]);
+                    Settings.SetValue(SettingName, _values_ref[_combobox.SelectedItem.ToString()]);
                     ValueChanged?.Invoke(this, new ComboCardEventArgs());
                 }
                 catch (Exception ex)

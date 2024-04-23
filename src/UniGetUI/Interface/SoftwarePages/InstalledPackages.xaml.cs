@@ -18,6 +18,7 @@ using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Logging;
 using Windows.UI.Core;
+using UniGetUI.Core.SettingsEngine;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -160,11 +161,11 @@ namespace UniGetUI.Interface
             int width = 250;
             try
             {
-                width = int.Parse(Tools.GetSettingsValue("SidepanelWidthInstalledPage"));
+                width = int.Parse(Settings.GetValue("SidepanelWidthInstalledPage"));
             }
             catch
             {
-                Tools.SetSettingsValue("SidepanelWidthInstalledPage", "250");
+                Settings.SetValue("SidepanelWidthInstalledPage", "250");
             }
             BodyGrid.ColumnDefinitions.ElementAt(0).Width = new GridLength(width);
 
@@ -228,7 +229,7 @@ namespace UniGetUI.Interface
         {
             if (!Initialized)
                 return;
-            Tools.SetSettings(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
+            Settings.Set(InstantSearchSettingString, InstantSearchCheckbox.IsChecked == false);
         }
         private void SourcesTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
         {
@@ -318,7 +319,7 @@ namespace UniGetUI.Interface
 
             if (!HasDoneBackup)
             {
-                if (Tools.GetSettings("EnablePackageBackup"))
+                if (Settings.Get("EnablePackageBackup"))
                     _ = BackupPackages();
             }
         }
@@ -335,18 +336,18 @@ namespace UniGetUI.Interface
 
                 string BackupContents = await PackageBundlePage.GetBundleStringFromPackages(packagestoExport.ToArray(), BundleFormatType.JSON);
 
-                string dirName = Tools.GetSettingsValue("ChangeBackupOutputDirectory");
+                string dirName = Settings.GetValue("ChangeBackupOutputDirectory");
                 if (dirName == "")
                     dirName = CoreData.UniGetUI_DefaultBackupDirectory;
 
                 if (!Directory.Exists(dirName))
                     Directory.CreateDirectory(dirName);
 
-                string fileName = Tools.GetSettingsValue("ChangeBackupFileName");
+                string fileName = Settings.GetValue("ChangeBackupFileName");
                 if (fileName == "")
                     fileName = Tools.Translate("{pcName} installed packages").Replace("{pcName}", Environment.MachineName);
 
-                if (Tools.GetSettings("EnableBackupTimestamping"))
+                if (Settings.Get("EnableBackupTimestamping"))
                     fileName += " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
 
                 fileName += ".json";
@@ -483,6 +484,8 @@ namespace UniGetUI.Interface
         {
             if (!Initialized)
                 return;
+            InstantSearchCheckbox.IsChecked = Settings.Get(InstantSearchSettingString);
+
             MainTitle.Text = Tools.AutoTranslated("Installed Packages");
             HeaderIcon.Glyph = "\uE977";
             CheckboxHeader.Content = " ";
@@ -813,7 +816,7 @@ namespace UniGetUI.Interface
                 return;
 
             lastSavedWidth = ((int)(e.NewSize.Width / 10));
-            Tools.SetSettingsValue("SidepanelWidthInstalledPage", ((int)e.NewSize.Width).ToString());
+            Settings.SetValue("SidepanelWidthInstalledPage", ((int)e.NewSize.Width).ToString());
             foreach (UIElement control in SidePanelGrid.Children)
             {
                 control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;

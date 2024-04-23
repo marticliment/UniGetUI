@@ -721,7 +721,7 @@
                         </Expander.Header>
                         <Expander.Content>
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Spacing="0">
-                                <CheckBox x:Name="InstantSearchCheckbox" Checked="InstantSearchValueChanged" Unchecked="InstantSearchValueChanged" IsChecked="{x:Bind Tools.GetSettings(InstantSearchSettingString, x:True)}">
+                                <CheckBox x:Name="InstantSearchCheckbox" Checked="InstantSearchValueChanged" Unchecked="InstantSearchValueChanged">
                                     <CheckBox.Content>
                                         <widgets:TranslatedTextBlock Text="Instant search" WrappingMode="Wrap"/>
                                     </CheckBox.Content>

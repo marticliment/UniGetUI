@@ -16,6 +16,7 @@ using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Logging;
 using Windows.UI.Core;
+using UniGetUI.Core.SettingsEngine;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -72,15 +73,15 @@ namespace UniGetUI.Interface
 
             DiscoverNavButton.ForceClick();
 
-            if (Tools.IsAdministrator() && !Tools.GetSettings("AlreadyWarnedAboutAdmin"))
+            if (Tools.IsAdministrator() && !Settings.Get("AlreadyWarnedAboutAdmin"))
             {
-                Tools.SetSettings("AlreadyWarnedAboutAdmin", true);
+                Settings.Set("AlreadyWarnedAboutAdmin", true);
                 WarnAboutAdminRights();
             }
 
-            if (!Tools.GetSettings("AlreadyWarnedAboutNameChange"))
+            if (!Settings.Get("AlreadyWarnedAboutNameChange"))
             {
-                Tools.SetSettings("AlreadyWarnedAboutNameChange", true);
+                Settings.Set("AlreadyWarnedAboutNameChange", true);
                 WarnAboutNewName();
             }
 

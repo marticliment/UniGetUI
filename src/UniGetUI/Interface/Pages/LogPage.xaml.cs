@@ -11,6 +11,7 @@ using ExternalLibraries.Clipboard;
 using UniGetUI.Core.Logging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using UniGetUI.Core.SettingsEngine;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -64,7 +65,7 @@ namespace UniGetUI.Interface.Pages
             }
             else if (Logger_LogType == Logger_LogType.OperationHistory)
             {
-                SetText(AppTools.GetSettingsValue_Static("OperationHistory"));
+                SetText(Settings.GetValue("OperationHistory"));
             }
         }
 
