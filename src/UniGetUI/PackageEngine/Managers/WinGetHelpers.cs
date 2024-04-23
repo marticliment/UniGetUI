@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using UniGetUI.Core;
 using UniGetUI.PackageEngine.Classes;
@@ -11,8 +10,6 @@ using Microsoft.Management.Deployment;
 using System.Diagnostics;
 using UniGetUI.Core.Data;
 using System.IO;
-using System.ComponentModel;
-using YamlDotNet.Core.Tokens;
 using System.Text.RegularExpressions;
 
 namespace UniGetUI.PackageEngine.Managers

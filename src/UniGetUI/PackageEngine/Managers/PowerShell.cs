@@ -1,10 +1,8 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using UniGetUI.PackageEngine.Classes;
+﻿using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;

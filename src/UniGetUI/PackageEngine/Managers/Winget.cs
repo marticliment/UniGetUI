@@ -4,15 +4,11 @@ using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.Services.TargetedContent;
 
 
 namespace UniGetUI.PackageEngine.Managers
