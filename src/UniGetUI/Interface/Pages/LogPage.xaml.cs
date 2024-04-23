@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using UniGetUI.Core;
 using UniGetUI.Core.Data;
-using UniGetUI.ExternalLibraries.Clipboard;
+using ExternalLibraries.Clipboard;
 using UniGetUI.Core.Logging;
 using Windows.Storage;
 using Windows.Storage.Pickers;

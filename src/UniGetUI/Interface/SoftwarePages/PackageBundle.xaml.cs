@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using UniGetUI.Core;
 using UniGetUI.Core.Classes;
-using UniGetUI.ExternalLibraries.Pickers;
+using ExternalLibraries.Pickers;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Operations;
@@ -777,7 +777,7 @@ namespace UniGetUI.Interface
             {
                 // Get file 
                 // Save file
-                string file = (new UniGetUI.ExternalLibraries.Pickers.FileSavePicker(Tools.App.MainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, Tools.Translate("Package bundle") + ".json");
+                string file = (new FileSavePicker(Tools.App.MainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, Tools.Translate("Package bundle") + ".json");
                 if (file != String.Empty)
                 {
                     // Loading dialog

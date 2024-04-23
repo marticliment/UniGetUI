@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using UniGetUI.Core;
 using UniGetUI.Core.Data;
-using UniGetUI.ExternalLibraries.Clipboard;
+using ExternalLibraries.Clipboard;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.Core.Logging;

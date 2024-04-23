@@ -5,36 +5,37 @@ VisualStudioVersion = 17.9.34407.89
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI", "UniGetUI\UniGetUI.csproj", "{80305A17-2534-48DC-8F75-41F70FCCEAAF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{91C79476-A7DF-4CC0-B610-FB095234847B}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsPackageManager Interop", "WindowsPackageManager.Interop\WindowsPackageManager Interop.csproj", "{52AC982E-7382-4746-BB66-4003698FCC02}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniGetUI.Core", "UniGetUI.Core", "{E05D1183-D360-4AFE-8968-314A34FAD3B2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.Data", "UniGetUI.Core.Data\UniGetUI.Core.Data.csproj", "{5F5EF76B-D755-4C12-ADAE-11F08CE3D936}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.Core.Language", "UniGetUI.Core.LanguageEngine\UniGetUI.Core.Language.csproj", "{B70A6F17-08C8-4194-BBE8-668CA920CFF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.Language", "UniGetUI.Core.LanguageEngine\UniGetUI.Core.Language.csproj", "{B70A6F17-08C8-4194-BBE8-668CA920CFF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.Core.Logging", "UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj", "{72180B0C-3D20-4AAD-B015-A9337B91406E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.Logging", "UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj", "{72180B0C-3D20-4AAD-B015-A9337B91406E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.Core.Settings", "UniGetUI.Core.Settings\UniGetUI.Core.Settings.csproj", "{1977360F-2E42-45E6-9369-AB1EE59CC5C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.Settings", "UniGetUI.Core.Settings\UniGetUI.Core.Settings.csproj", "{1977360F-2E42-45E6-9369-AB1EE59CC5C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.Core.Tools", "UniGetUI.Core.Tools\UniGetUI.Core.Tools.csproj", "{25C6CE64-2D61-4832-B6D2-45AFC52E2447}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.Tools", "UniGetUI.Core.Tools\UniGetUI.Core.Tools.csproj", "{25C6CE64-2D61-4832-B6D2-45AFC52E2447}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.Core.Classes", "UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj", "{8156B6D8-BD7E-4201-BD8B-8C9B00177F88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.Classes", "UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj", "{8156B6D8-BD7E-4201-BD8B-8C9B00177F88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.Core.IconEngine", "UniGetUI.Core.IconStore\UniGetUI.Core.IconEngine.csproj", "{990F5AFF-ABF6-4019-865D-604D2B23DE2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.IconEngine", "UniGetUI.Core.IconStore\UniGetUI.Core.IconEngine.csproj", "{990F5AFF-ABF6-4019-865D-604D2B23DE2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.PackageEngine.Enums", "UniGetUI.Core.Enums\UniGetUI.PackageEngine.Enums.csproj", "{380E9F5A-23DE-4F5A-9644-EFA51AD1D8E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.Enums", "UniGetUI.PackageEngine.Enums\UniGetUI.PackageEngine.Enums.csproj", "{380E9F5A-23DE-4F5A-9644-EFA51AD1D8E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.Interface.Enums", "UniGetUI.Interface.Enums\UniGetUI.Interface.Enums.csproj", "{5A48C2FD-16E4-4B44-BC2C-D793C50E66F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Interface.Enums", "UniGetUI.Interface.Enums\UniGetUI.Interface.Enums.csproj", "{5A48C2FD-16E4-4B44-BC2C-D793C50E66F2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniGetUI.PackageEngine", "UniGetUI.PackageEngine", "{7940E867-EEBA-4AFD-9904-1536F003239C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniGetUI.Interface", "UniGetUI.Interface", "{8CF74C87-534F-4017-A4ED-F2918025E31A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalLibraries", "ExternalLibraries", "{7648DA91-6239-4877-86C6-2E5A79755F1E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalLibraries.Clipboard", "ExternalLibraries.Clipboard\ExternalLibraries.Clipboard.csproj", "{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalLibraries.FilePickers", "ExternalLibraries.FilePickers\ExternalLibraries.FilePickers.csproj", "{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -230,6 +231,38 @@ Global
 		{5A48C2FD-16E4-4B44-BC2C-D793C50E66F2}.Release|x64.Build.0 = Release|Any CPU
 		{5A48C2FD-16E4-4B44-BC2C-D793C50E66F2}.Release|x86.ActiveCfg = Release|Any CPU
 		{5A48C2FD-16E4-4B44-BC2C-D793C50E66F2}.Release|x86.Build.0 = Release|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Debug|x64.Build.0 = Debug|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Debug|x86.Build.0 = Debug|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Release|ARM64.Build.0 = Release|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Release|x64.ActiveCfg = Release|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Release|x64.Build.0 = Release|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Release|x86.ActiveCfg = Release|Any CPU
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E}.Release|x86.Build.0 = Release|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Debug|x64.Build.0 = Debug|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Debug|x86.Build.0 = Debug|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Release|ARM64.Build.0 = Release|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Release|x64.ActiveCfg = Release|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Release|x64.Build.0 = Release|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Release|x86.ActiveCfg = Release|Any CPU
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -244,6 +277,8 @@ Global
 		{990F5AFF-ABF6-4019-865D-604D2B23DE2C} = {E05D1183-D360-4AFE-8968-314A34FAD3B2}
 		{380E9F5A-23DE-4F5A-9644-EFA51AD1D8E8} = {7940E867-EEBA-4AFD-9904-1536F003239C}
 		{5A48C2FD-16E4-4B44-BC2C-D793C50E66F2} = {8CF74C87-534F-4017-A4ED-F2918025E31A}
+		{9AD1DEC9-1561-4753-AB4B-E81FBDBA5C9E} = {7648DA91-6239-4877-86C6-2E5A79755F1E}
+		{E40BFCBB-7A02-4E2C-AFDB-A717359EF4FC} = {7648DA91-6239-4877-86C6-2E5A79755F1E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D044BB14-0B37-47E5-A579-8B30FCBA1F9F}

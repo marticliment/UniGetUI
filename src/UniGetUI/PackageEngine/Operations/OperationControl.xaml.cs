@@ -14,6 +14,7 @@ using UniGetUI.Core;
 using UniGetUI.Core.Data;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Core.Logging;
+using ExternalLibraries.Clipboard;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -258,7 +259,7 @@ namespace UniGetUI.PackageEngine.Operations
             if (await Tools.App.MainWindow.ShowDialogAsync(OutputDialog) == ContentDialogResult.Secondary)
             {
                 LiveOutputScrollBar.ScrollToVerticalOffset(LiveOutputScrollBar.ScrollableHeight);
-                UniGetUI.ExternalLibraries.Clipboard.WindowsClipboard.SetText(string.Join('\n', ProcessOutput.ToArray()));
+                WindowsClipboard.SetText(string.Join('\n', ProcessOutput.ToArray()));
             }
             IsDialogOpen = false;
         }

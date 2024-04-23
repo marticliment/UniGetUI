@@ -1546,15 +1546,17 @@
     <PRIResource Remove="PackageEngine\Managers\WinGetClasses\**" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ExternalLibraries.Clipboard\ExternalLibraries.Clipboard.csproj" />
+    <ProjectReference Include="..\ExternalLibraries.FilePickers\ExternalLibraries.FilePickers.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Data\UniGetUI.Core.Data.csproj" />
-    <ProjectReference Include="..\UniGetUI.Core.Enums\UniGetUI.PackageEngine.Enums.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.IconStore\UniGetUI.Core.IconEngine.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.LanguageEngine\UniGetUI.Core.Language.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Settings\UniGetUI.Core.Settings.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Tools\UniGetUI.Core.Tools.csproj" />
     <ProjectReference Include="..\UniGetUI.Interface.Enums\UniGetUI.Interface.Enums.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Enums\UniGetUI.PackageEngine.Enums.csproj" />
     <ProjectReference Include="..\WindowsPackageManager.Interop\WindowsPackageManager Interop.csproj" />
   </ItemGroup>
 </Project>
