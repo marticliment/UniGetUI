@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34407.89
@@ -13,6 +13,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsPackageManager Interop", "WindowsPackageManager.Interop\WindowsPackageManager Interop.csproj", "{52AC982E-7382-4746-BB66-4003698FCC02}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.lib", "UniGetUI.lib\UniGetUI.lib.csproj", "{862D2727-A38D-4758-B38C-C113788431FD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Tests", "UniGetUI.tests\UniGetUI.Tests.csproj", "{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +82,22 @@ Global
 		{862D2727-A38D-4758-B38C-C113788431FD}.Release|x64.Build.0 = Release|Any CPU
 		{862D2727-A38D-4758-B38C-C113788431FD}.Release|x86.ActiveCfg = Release|Any CPU
 		{862D2727-A38D-4758-B38C-C113788431FD}.Release|x86.Build.0 = Release|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Debug|x64.Build.0 = Debug|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Debug|x86.Build.0 = Debug|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Release|ARM64.Build.0 = Release|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Release|x64.ActiveCfg = Release|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Release|x64.Build.0 = Release|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Release|x86.ActiveCfg = Release|Any CPU
+		{ACAB175E-6DCC-47AD-A475-943A1FE1EE8F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
