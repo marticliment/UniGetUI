@@ -21,7 +21,7 @@ namespace UniGetUI.Interface.Widgets
     {
         private TextBox _textbox;
         private HyperlinkButton _helpbutton;
-        private static AppTools Tools = AppTools.Instance;
+        private static AppTools Tools => AppTools.Instance;
 
         public string SettingName
         {

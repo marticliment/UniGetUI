@@ -1,10 +1,6 @@
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UniGetUI.Core;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,6 +12,10 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using UniGetUI.Core;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Operations;
 using Windows.UI.Core;
 using YamlDotNet.Serialization;
 
@@ -24,15 +24,18 @@ using YamlDotNet.Serialization;
 
 namespace UniGetUI.Interface
 {
+
     public partial class PackageBundlePage : Page
     {
+        private ILogger AppLogger => Core.AppLogger.Instance;
+
         public ObservableCollection<BundledPackage> Packages = new();
         public SortableObservableCollection<BundledPackage> FilteredPackages = new() { SortingSelector = (a) => (a.Package.Name) };
         protected List<PackageManager> UsedManagers = new();
         protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
         protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
-        protected AppTools Tools = AppTools.Instance;
+        protected AppTools Tools => AppTools.Instance;
 
         protected TranslatedTextBlock MainTitle;
         protected TranslatedTextBlock MainSubtitle;
@@ -67,10 +70,10 @@ namespace UniGetUI.Interface
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
                 {
-                    AppTools.Log(e);
-                    AppTools.Log(e.OriginalSource);
-                    AppTools.Log(e.OriginalSource as FrameworkElement);
-                    AppTools.Log((e.OriginalSource as FrameworkElement).DataContext);
+                    AppLogger.Log(e);
+                    AppLogger.Log(e.OriginalSource);
+                    AppLogger.Log(e.OriginalSource as FrameworkElement);
+                    AppLogger.Log((e.OriginalSource as FrameworkElement).DataContext);
                     if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
                     {
                         TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
@@ -84,7 +87,7 @@ namespace UniGetUI.Interface
                     }
                     else
                     {
-                        AppTools.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
+                        AppLogger.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
                     }
                 }
             };
@@ -109,7 +112,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        AppTools.Log(ex);
+                        AppLogger.Log(ex);
                     }
                 }
             };
@@ -639,7 +642,7 @@ namespace UniGetUI.Interface
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
                 Tools.App.MainWindow.HideLoadingDialog();
             }
         }
@@ -730,7 +733,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        public async static Task<string> GetBundleStringFromPackages(BundledPackage[] packages, BundleFormatType formatType = BundleFormatType.JSON)
+        public static async Task<string> GetBundleStringFromPackages(BundledPackage[] packages, BundleFormatType formatType = BundleFormatType.JSON)
         {
             SerializableBundle_v1 exportable = new();
             foreach (BundledPackage package in packages)
@@ -739,7 +742,7 @@ namespace UniGetUI.Interface
                 else
                     exportable.packages.Add(package.AsSerializable());
 
-            AppTools.Log("Finished loading serializable objects. Serializing with format " + formatType.ToString());
+            ((ILogger)Core.AppLogger.Instance).Log("Finished loading serializable objects. Serializing with format " + formatType.ToString());
             string ExportableData;
 
             if (formatType == BundleFormatType.JSON)
@@ -762,7 +765,7 @@ namespace UniGetUI.Interface
 
             }
 
-            AppTools.Log("Finished serializing");
+            ((ILogger)Core.AppLogger.Instance).Log("Finished serializing");
 
             return ExportableData;
         }
@@ -808,7 +811,7 @@ namespace UniGetUI.Interface
             catch (Exception ex)
             {
                 Tools.App.MainWindow.HideLoadingDialog();
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
             }
         }
         private void SidepanelWidth_SizeChanged(object sender, SizeChangedEventArgs e)

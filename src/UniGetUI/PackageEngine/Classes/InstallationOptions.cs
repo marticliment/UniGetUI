@@ -14,6 +14,8 @@ namespace UniGetUI.PackageEngine.Classes
     /// </summary>
     public class InstallationOptions
     {
+        private ILogger AppLogger => Core.AppLogger.Instance;
+
         public bool SkipHashCheck { get; set; } = false;
         public bool InteractiveInstallation { get; set; } = false;
         public bool RunAsAdministrator { get; set; } = false;
@@ -142,7 +144,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
             }
         }
 
@@ -162,7 +164,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
             }
         }
 
@@ -183,7 +185,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                AppLogger.Log(e);
             }
         }
 
@@ -205,13 +207,13 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (JsonException)
             {
-                AppTools.Log("An error occurred while parsing package " + optionsFile + ". The file will be overwritten");
+                AppLogger.Log("An error occurred while parsing package " + optionsFile + ". The file will be overwritten");
                 await File.WriteAllTextAsync(optionsFile.FullName, "{}");
             }
             catch (Exception e)
             {
-                AppTools.Log("Loading installation options for file " + optionsFile  + " have failed: ");
-                AppTools.Log(e);
+                AppLogger.Log("Loading installation options for file " + optionsFile  + " have failed: ");
+                AppLogger.Log(e);
             }
         }
 

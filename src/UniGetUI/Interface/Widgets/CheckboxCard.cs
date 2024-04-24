@@ -21,7 +21,7 @@ namespace UniGetUI.Interface.Widgets
     public sealed class CheckboxCard : SettingsCard
     {
         public CheckBox _checkbox;
-        private AppTools Tools = AppTools.Instance;
+        private AppTools Tools => AppTools.Instance;
 
         public string SettingName
         {

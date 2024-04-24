@@ -21,13 +21,15 @@ namespace UniGetUI.Interface
 
     public partial class DiscoverPackagesPage : Page
     {
+        protected ILogger AppLogger => Core.AppLogger.Instance;
+
         public ObservableCollection<Package> Packages = new();
         public SortableObservableCollection<Package> FilteredPackages = new() { SortingSelector = (a) => (a.Name) };
         protected List<PackageManager> UsedManagers = new();
         protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
         protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
-        protected AppTools Tools = AppTools.Instance;
+        protected AppTools Tools => AppTools.Instance;
 
         protected TranslatedTextBlock MainTitle;
         protected TranslatedTextBlock MainSubtitle;
@@ -60,10 +62,10 @@ namespace UniGetUI.Interface
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
                 {
-                    AppTools.Log(e);
-                    AppTools.Log(e.OriginalSource);
-                    AppTools.Log(e.OriginalSource as FrameworkElement);
-                    AppTools.Log((e.OriginalSource as FrameworkElement).DataContext);
+                    AppLogger.Log(e);
+                    AppLogger.Log(e.OriginalSource);
+                    AppLogger.Log(e.OriginalSource as FrameworkElement);
+                    AppLogger.Log((e.OriginalSource as FrameworkElement).DataContext);
                     if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
                     {
                         TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
@@ -77,7 +79,7 @@ namespace UniGetUI.Interface
                     }
                     else
                     {
-                        AppTools.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
+                        AppLogger.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
                     }
                 }
             };
@@ -104,7 +106,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        AppTools.Log(ex);
+                        AppLogger.Log(ex);
                     }
                 }
             };
@@ -708,7 +710,7 @@ namespace UniGetUI.Interface
             if (!Initialized)
                 return;
 
-            AppTools.Log("Showing shared package...");
+            AppLogger.Log("Showing shared package...");
 
             Tools.App.MainWindow.Activate();
 
@@ -720,7 +722,7 @@ namespace UniGetUI.Interface
             Tools.App.MainWindow.HideLoadingDialog();
             if (FilteredPackages.Count == 1)
             {
-                AppTools.Log("Only one package was found for pId=" + pId + ", showing it.");
+                AppLogger.Log("Only one package was found for pId=" + pId + ", showing it.");
                 await Tools.App.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
             }
             else if (FilteredPackages.Count > 1)
@@ -729,16 +731,16 @@ namespace UniGetUI.Interface
                 foreach (var match in FilteredPackages)
                     if (match.Source.Manager.Name == managerName)
                     {
-                        AppTools.Log("Equivalent package for id=" + pId + " and source=" + pSource + " found: " + match.ToString());
+                        AppLogger.Log("Equivalent package for id=" + pId + " and source=" + pSource + " found: " + match.ToString());
                         await Tools.App.MainWindow.NavigationPage.ShowPackageDetails(match, OperationType.Install);
                         return;
                     }
-                AppTools.Log("No package found with the exact same manager, showing the first one.");
+                AppLogger.Log("No package found with the exact same manager, showing the first one.");
                 await Tools.App.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
             }
             else
             {
-                AppTools.Log("No packages were found matching the given pId=" + pId);
+                AppLogger.Log("No packages were found matching the given pId=" + pId);
                 var c = new ContentDialog();
                 c.XamlRoot = this.XamlRoot;
                 c.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;

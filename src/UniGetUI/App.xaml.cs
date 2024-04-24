@@ -16,6 +16,8 @@ namespace UniGetUI
 {
     public partial class MainApp : Application
     {
+        private ILogger AppLogger => Core.AppLogger.Instance;
+
         public Scoop Scoop;
         public Winget Winget;
         public Chocolatey Choco;
@@ -72,14 +74,14 @@ namespace UniGetUI
             {
                 var message = $"Unhandled Exception raised: {e.Message}";
                 var stackTrace = $"Stack Trace: \n{e.Exception.StackTrace}";
-                AppTools.Log(" -");
-                AppTools.Log(" -");
-                AppTools.Log("  ⚠️⚠️⚠️ START OF UNHANDLED ERROR TRACE ⚠️⚠️⚠️");
-                AppTools.Log(message);
-                AppTools.Log(stackTrace);
-                AppTools.Log("  ⚠️⚠️⚠️  END OF UNHANDLED ERROR TRACE  ⚠️⚠️⚠️");
-                AppTools.Log(" -");
-                AppTools.Log(" -");
+                AppLogger.Log(" -");
+                AppLogger.Log(" -");
+                AppLogger.Log("  ⚠️⚠️⚠️ START OF UNHANDLED ERROR TRACE ⚠️⚠️⚠️");
+                AppLogger.Log(message);
+                AppLogger.Log(stackTrace);
+                AppLogger.Log("  ⚠️⚠️⚠️  END OF UNHANDLED ERROR TRACE  ⚠️⚠️⚠️");
+                AppLogger.Log(" -");
+                AppLogger.Log(" -");
                 if (Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal || MainWindow == null)
                     AppTools.ReportFatalException(e.Exception);
                 else
@@ -112,7 +114,7 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                AppLogger.Log(e);
             }
         }
 
@@ -147,7 +149,7 @@ namespace UniGetUI
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
             }
         }
 
@@ -171,7 +173,7 @@ namespace UniGetUI
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
             }
         }
 
@@ -195,7 +197,7 @@ namespace UniGetUI
 
                 await InitializeAllManagersAsync();
 
-                AppTools.Log("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
+                AppLogger.Log("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();
                 RaiseExceptionAsFatal = false;
 
@@ -254,10 +256,10 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                AppLogger.Log(e);
             }
             if (ManagersMetaTask.IsCompletedSuccessfully == false)
-                AppTools.Log("Timeout: Not all package managers have finished initializing.");
+                AppLogger.Log("Timeout: Not all package managers have finished initializing.");
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
@@ -282,7 +284,7 @@ namespace UniGetUI
 
         public void DisposeAndQuit(int outputCode = 0)
         {
-            AppTools.Log("Quitting...");
+            AppLogger.Log("Quitting...");
             MainWindow?.Close();
             BackgroundApi?.Stop();
             Environment.Exit(outputCode);

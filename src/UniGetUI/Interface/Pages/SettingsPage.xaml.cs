@@ -24,7 +24,9 @@ namespace UniGetUI.Interface
     /// </summary>
     public sealed partial class SettingsInterface : Page
     {
-        private AppTools Tools = AppTools.Instance;
+        private AppTools Tools => AppTools.Instance;
+        private ILogger AppLogger => Core.AppLogger.Instance;
+
         HyperlinkButton ResetBackupDirectory;
         HyperlinkButton OpenBackupDirectory;
         TextBlock BackupDirectoryLabel;
@@ -363,7 +365,7 @@ namespace UniGetUI.Interface
             catch (Exception ex)
             {
                 Tools.App.MainWindow.HideLoadingDialog();
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
             }
 
         }
@@ -379,7 +381,7 @@ namespace UniGetUI.Interface
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
             }
             GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
@@ -474,7 +476,7 @@ namespace UniGetUI.Interface
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
             }
             ExperimentalSettingsExpander.ShowRestartRequiredBanner();
         }

@@ -9,13 +9,18 @@ namespace UniGetUI.PackageEngine.Classes
     /// <summary>
     /// Absract class that all managers must implement
     /// </summary>
-    public abstract class PackageManager : SingletonBase<PackageManager>
+    public abstract class PackageManager : SingletonBase<PackageManager>, IPackageManager
     {
+
         public ManagerProperties Properties { get; set; } = new();
         public ManagerCapabilities Capabilities { get; set; } = new();
         public ManagerStatus Status { get; set; } = new() { Found = false };
         public string Name { get; set; } = "Unset";
-        public static AppTools Tools = AppTools.Instance;
+
+        protected IAppTools Tools { get; private set; } = Core.AppTools.Instance;
+        protected ILogger Logger { get; private set; } = Core.AppLogger.Instance;
+        protected IAppConfig Config { get; private set; } = Core.AppTools.Instance;
+
         public ManagerSource MainSource { get; set; }
         public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
@@ -56,7 +61,7 @@ namespace UniGetUI.PackageEngine.Classes
                     else
                     {
                         ManagerReady = true;
-                        AppTools.Log(Name + " sources took too long to load, using known sources as default");
+                        Logger.Log(Name + " sources took too long to load, using known sources as default");
                     }
                 }
                 ManagerReady = true;
@@ -81,12 +86,12 @@ namespace UniGetUI.PackageEngine.Classes
                                     ) +
                                  "\n▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀\n";
                 
-                AppTools.Log(LogData);
+                Logger.Log(LogData);
             }
             catch (Exception e)
             {
                 ManagerReady = true; // We need this to unblock the main thread
-                AppTools.Log("Could not initialize Package Manager " + Name + ": \n" + e.ToString());
+                Logger.Log("Could not initialize Package Manager " + Name + ": \n" + e.ToString());
             }
         }
 
@@ -112,7 +117,7 @@ namespace UniGetUI.PackageEngine.Classes
         /// <returns></returns>
         public bool IsEnabled()
         {
-            return !Tools.GetSettings("Disable" + Name);
+            return !Config.GetSettings("Disable" + Name);
         }
 
         /// <summary>
@@ -139,7 +144,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception e)
             {
-                AppTools.Log("Error finding packages on manager " + Name + " with query " + query + ": \n" + e.ToString());
+                Logger.Log("Error finding packages on manager " + Name + " with query " + query + ": \n" + e.ToString());
                 return new Package[] { };
             }
         }
@@ -168,7 +173,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception e)
             {
-                AppTools.Log("Error finding updates on manager " + Name + ": \n" + e.ToString());
+                Logger.Log("Error finding updates on manager " + Name + ": \n" + e.ToString());
                 return new UpgradablePackage[] { };
             }
         }
@@ -196,7 +201,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception e)
             {
-                AppTools.Log("Error finding installed packages on manager " + Name + ": \n" + e.ToString());
+                Logger.Log("Error finding installed packages on manager " + Name + ": \n" + e.ToString());
                 return new Package[] { };
             }
         }
@@ -216,7 +221,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception e)
             {
-                AppTools.Log("Error getting package details on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
+                Logger.Log("Error getting package details on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
                 return new PackageDetails(package);
             }
         }
@@ -239,7 +244,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception e)
             {
-                AppTools.Log("Error getting package versions on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
+                Logger.Log("Error getting package versions on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
                 return new string[0];
             }
         }

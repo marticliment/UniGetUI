@@ -9,6 +9,7 @@ namespace UniGetUI.Interface
 {
     public class BackgroundApiRunner
     {
+        protected ILogger AppLogger => Core.AppLogger.Instance;
 
         private bool __running = false;
 
@@ -22,7 +23,7 @@ namespace UniGetUI.Interface
             {
                 if(AppTools.Instance.GetSettings("DisableWidgetsApi"))
                 {
-                    AppTools.Log("Widgets API is disabled");
+                    AppLogger.Log("Widgets API is disabled");
                     return;
                 }
 
@@ -40,18 +41,18 @@ namespace UniGetUI.Interface
                     host.Start();
                 }
 
-                AppTools.Log("Api running on http://localhost:7058");
+                AppLogger.Log("Api running on http://localhost:7058");
                 
                 while(__running)
                 {
                     await Task.Delay(100);
                 }
                 host.Stop();
-                AppTools.Log("Api was shut down");
+                AppLogger.Log("Api was shut down");
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                AppLogger.Log(e);
             }
         }
 
@@ -69,6 +70,8 @@ namespace UniGetUI.Interface
     /// </summary>
     public class BackgroundApi: NancyModule
     {
+        private ILogger AppLogger => Core.AppLogger.Instance;
+
         public BackgroundApi()
         {
             // Enable CORS
@@ -95,7 +98,7 @@ namespace UniGetUI.Interface
                     if (Request.Query.@pid == "" || Request.Query.@psource == "")
                         return 400;
 
-                    AppTools.Log(Request.Query.@pid);
+                    AppLogger.Log(Request.Query.@pid);
 
                     while (AppTools.Instance.App.MainWindow is null) await Task.Delay(100);
                     while (AppTools.Instance.App.MainWindow.NavigationPage is null) await Task.Delay(100);
@@ -107,7 +110,7 @@ namespace UniGetUI.Interface
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log(e);
+                    AppLogger.Log(e);
                     return 500;
                 }
             });
@@ -155,7 +158,7 @@ namespace UniGetUI.Interface
                 
                 if(packages.Length > 2)
                     packages = packages[..(packages.Length - 2)];
-                AppTools.Log(packages);
+                AppLogger.Log(packages);
 
                 return packages;
             });

@@ -13,6 +13,8 @@ namespace UniGetUI
 {
     public static class EntryPoint
     {
+        private static ILogger AppLogger => Core.AppLogger.Instance;
+
         [STAThread]
         static void Main(string[] args)
         {
@@ -46,9 +48,9 @@ namespace UniGetUI
             try
             {
 
-                AppTools.Log("Welcome to UniGetUI Version " + CoreData.VersionName);
-                AppTools.Log("               Version Code " + CoreData.VersionNumber.ToString());
-                AppTools.Log("              ");
+                AppLogger.Log("Welcome to UniGetUI Version " + CoreData.VersionName);
+                AppLogger.Log("               Version Code " + CoreData.VersionNumber.ToString());
+                AppLogger.Log("              ");
 
                 // WinRT single-instance fancy stuff
                 WinRT.ComWrappersSupport.InitializeComWrappers();
@@ -105,7 +107,7 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                AppLogger.Log(e);
                 return false;
             }
         }
@@ -151,28 +153,28 @@ namespace UniGetUI
                         {
                             var old_file = Path.Join(path, old_wingetui_icon);
                             var new_file = Path.Join(path, "UniGetUI (formerly WingetUI).lnk");
-                            AppTools.Log(old_file);
+                            AppLogger.Log(old_file);
                             if (!File.Exists(old_file))
                                 continue;
                             else if (File.Exists(old_file) && File.Exists(new_file))
                             {
-                                AppTools.Log("Deleting shortcut " + old_file + " since new shortcut already exists");
+                                AppLogger.Log("Deleting shortcut " + old_file + " since new shortcut already exists");
                                 File.Delete(old_file);
                             }
                             else if (File.Exists(old_file) && !File.Exists(new_file))
                             {
-                                AppTools.Log("Moving shortcut to " + new_file);
+                                AppLogger.Log("Moving shortcut to " + new_file);
                                 File.Move(old_file, new_file);
                             }
                         }
                         catch (Exception ex)
                         {
-                            AppTools.Log(ex);
+                            AppLogger.Log(ex);
                         }
             } 
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
             }
         }
     }

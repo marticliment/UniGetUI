@@ -7,35 +7,8 @@ namespace UniGetUI.PackageEngine.Classes
 
     public class InvalidBundledPackage : BundledPackage
     {
-        string __name;
-        string __id;
-        string __version;
         string __source;
         string __manager;
-
-        public override string Name
-        {
-            get
-            {
-                return __name;
-            }
-        }
-
-        public override string Id
-        {
-            get
-            {
-                return __id;
-            }
-        }
-
-        public override string version
-        {
-            get
-            {
-                return __version;
-            }
-        }
 
         public override string SourceAsString
         {
@@ -59,9 +32,6 @@ namespace UniGetUI.PackageEngine.Classes
         {
             IsValid = false;
             DrawOpacity = 0.5;
-            __name = name;
-            __id = id;
-            __version = version;
             __source = source;
             __manager = manager;
         }
@@ -69,9 +39,6 @@ namespace UniGetUI.PackageEngine.Classes
         {
             IsValid = false;
             DrawOpacity = 0.5;
-            __name = package.Name;
-            __id = package.Id;
-            __version = package.Version;
             if (!package.Manager.Capabilities.SupportsCustomSources)
             {
                 __source = "";

@@ -22,8 +22,10 @@ namespace UniGetUI.Interface.Widgets
 
     public sealed class ComboboxCard : SettingsCard
     {
+        private ILogger AppLogger => Core.AppLogger.Instance;
+
         private ComboBox _combobox;
-        private static AppTools Tools = AppTools.Instance;
+        private static AppTools Tools => AppTools.Instance;
         private ObservableCollection<string> _elements;
         private Dictionary<string, string> _values_ref;
         private Dictionary<string, string> _inverted_val_ref;
@@ -111,7 +113,7 @@ namespace UniGetUI.Interface.Widgets
                 }
                 catch (Exception ex)
                 {
-                    AppTools.Log(ex);
+                    AppLogger.Log(ex);
                 }
             };
         }

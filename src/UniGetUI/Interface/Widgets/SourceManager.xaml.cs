@@ -31,9 +31,11 @@ namespace UniGetUI.Interface.Widgets
     }
     public sealed partial class SourceManager : UserControl
     {
+        private ILogger AppLogger => Core.AppLogger.Instance;
+
         private PackageManagerWithSources Manager { get; set; }
         private ObservableCollection<SourceItem> Sources = new();
-        public AppTools Tools = AppTools.Instance;
+        public AppTools Tools => AppTools.Instance;
 
         private ListView _datagrid { get; set; }
         public SourceManager(PackageManagerWithSources Manager)
@@ -123,7 +125,7 @@ namespace UniGetUI.Interface.Widgets
                     d.Content = Tools.Translate("An error occurred when adding the source: ") + ex.Message;
                     _ = Tools.App.MainWindow.ShowDialogAsync(d, HighPriority: true);
                     d.PrimaryButtonText = Tools.Translate("Close");
-                    AppTools.Log(ex);
+                    AppLogger.Log(ex);
                 }
             };
             this.Manager = Manager;

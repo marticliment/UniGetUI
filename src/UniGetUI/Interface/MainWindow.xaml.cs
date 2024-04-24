@@ -24,6 +24,9 @@ namespace UniGetUI.Interface
 {
     public sealed partial class MainWindow : Window
     {
+
+        private ILogger AppLogger => Core.AppLogger.Instance;
+
         [System.Runtime.InteropServices.ComImport]
         [System.Runtime.InteropServices.Guid("3A3DCD6C-3EAB-43DC-BCDE-45671CE800C8")]
         [System.Runtime.InteropServices.InterfaceType(
@@ -41,7 +44,7 @@ namespace UniGetUI.Interface
         static readonly Guid _dtm_iid =
             new(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
 
-        AppTools Tools = AppTools.Instance;
+        AppTools Tools => AppTools.Instance;
         public MainView NavigationPage;
         public Grid ContentRoot;
         public bool BlockLoading = false;
@@ -93,7 +96,7 @@ namespace UniGetUI.Interface
                     NavigationPage.InstalledPage.ReloadPackages();
                 Activate();
             }
-            AppTools.Log("Notification activated: " + args.ToString() + " " + input.ToString());
+            AppLogger.Log("Notification activated: " + args.ToString() + " " + input.ToString());
         }
 
 
@@ -115,7 +118,7 @@ namespace UniGetUI.Interface
                 catch (Exception ex)
                 {
                     // Somewhere, Sometimes, MS Window Efficiency mode just crashes
-                    AppTools.Log(ex);
+                    AppLogger.Log(ex);
                     this.Hide(enableEfficiencyMode: false);
                 }
             }
@@ -345,7 +348,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                AppTools.Log("Taskbar foreground color customization is not available");
+                AppLogger.Log("Taskbar foreground color customization is not available");
             }
 
 
@@ -428,7 +431,7 @@ namespace UniGetUI.Interface
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                AppLogger.Log(e);
                 if (DialogQueue.Contains(dialog))
                     DialogQueue.Remove(dialog);
                 return ContentDialogResult.None;

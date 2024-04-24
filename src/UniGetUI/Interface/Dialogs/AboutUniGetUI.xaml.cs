@@ -15,7 +15,7 @@ namespace UniGetUI.Interface
     public sealed partial class AboutUniGetUI : Page
     {
 
-        AppTools Tools = AppTools.Instance;
+        AppTools Tools => AppTools.Instance;
 
         int previousSelectedIndex = 0;
         public AboutUniGetUI()

@@ -28,6 +28,8 @@ namespace UniGetUI.Core.Data
 
     public class LanguageEngine
     {
+        protected ILogger AppLogger => Core.AppLogger.Instance;
+
         public static Dictionary<string, string> MainLangDict = new();
 
         public LanguageEngine()
@@ -54,7 +56,7 @@ namespace UniGetUI.Core.Data
                 MainLangDict.TryAdd("locale", "en");
             }
             LoadStaticTranslation();
-            AppTools.Log("Loaded language locale: " + MainLangDict["locale"]);
+            AppLogger.Log("Loaded language locale: " + MainLangDict["locale"]);
         }
 
         public Dictionary<string, string> LoadLanguageFile(string LangKey, bool ForceBundled = false)
@@ -63,7 +65,7 @@ namespace UniGetUI.Core.Data
             {
                 Dictionary<string, string> LangDict = new();
                 string LangFileToLoad = Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
-                AppTools.Log(LangFileToLoad);
+                AppLogger.Log(LangFileToLoad);
 
                 if (!File.Exists(LangFileToLoad) || AppTools.GetSettings_Static("DisableLangAutoUpdater"))
                 {
@@ -73,7 +75,7 @@ namespace UniGetUI.Core.Data
                 if (ForceBundled)
                 {
                     LangFileToLoad = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
-                    AppTools.Log(LangFileToLoad);
+                    AppLogger.Log(LangFileToLoad);
                 }
 
                 LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject).ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
@@ -85,8 +87,8 @@ namespace UniGetUI.Core.Data
             }
             catch (Exception e)
             {
-                AppTools.Log($"LoadLanguageFile Failed for LangKey={LangKey}, ForceBundled={ForceBundled}");
-                AppTools.Log(e);
+                AppLogger.Log($"LoadLanguageFile Failed for LangKey={LangKey}, ForceBundled={ForceBundled}");
+                AppLogger.Log(e);
                 return new Dictionary<string, string>();
             }
         }
@@ -105,14 +107,14 @@ namespace UniGetUI.Core.Data
 
                 File.WriteAllText(Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json"), fileContents);
 
-                AppTools.Log("Lang files were updated successfully");
+                AppLogger.Log("Lang files were updated successfully");
             }
             catch (Exception e)
             {
                 if (e is HttpRequestException && !UseOldUrl)
                     await UpdateLanguageFile(LangKey, true);
                 else
-                    AppTools.Log(e);
+                    AppLogger.Log(e);
             }
         }
 

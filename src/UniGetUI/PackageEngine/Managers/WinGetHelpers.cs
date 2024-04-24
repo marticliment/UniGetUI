@@ -26,12 +26,15 @@ namespace UniGetUI.PackageEngine.Managers
 
     internal class NativeWinGetHelper: IWinGetPackageHelper
     {
+        private ILogger Logger => AppLogger.Instance;
+        private IAppTools Tools => AppTools.Instance;
+
         WindowsPackageManagerStandardFactory Factory;
         Deployment.PackageManager WinGetManager;
 
         public NativeWinGetHelper() {
-            if (Winget.Tools.IsAdministrator())
-                AppTools.Log("[WARNING] Running elevated, WinGet class registration is likely to fail");
+            if (Tools.IsAdministrator())
+                Logger.Log("[WARNING] Running elevated, WinGet class registration is likely to fail");
             Factory = new WindowsPackageManagerStandardFactory();
             WinGetManager = Factory.CreatePackageManager();
         }
@@ -82,13 +85,13 @@ namespace UniGetUI.PackageEngine.Managers
                     }
                     catch (Exception e)
                     {
-                        AppTools.Log("WinGet: Catalog " + CatalogReference.Info.Name + " failed to spawn FindPackages task.");
-                        AppTools.Log(e);
+                        Logger.Log("WinGet: Catalog " + CatalogReference.Info.Name + " failed to spawn FindPackages task.");
+                        Logger.Log(e);
                     }
                 }
                 else
                 {
-                    AppTools.Log("WinGet: Catalog " + CatalogReference.Info.Name + " failed to connect.");
+                    Logger.Log("WinGet: Catalog " + CatalogReference.Info.Name + " failed to connect.");
                 }
             }
 
@@ -117,8 +120,8 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log("WinGet: Catalog " + CatalogTaskPair.Key.Info.Name + " failed to get available packages.");
-                    AppTools.Log(e);
+                    Logger.Log("WinGet: Catalog " + CatalogTaskPair.Key.Info.Name + " failed to get available packages.");
+                    Logger.Log(e);
                 }
             }
 
@@ -136,7 +139,7 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log(e);
+                    Logger.Log(e);
                 }
 
             return sources.ToArray();
@@ -148,7 +151,7 @@ namespace UniGetUI.PackageEngine.Managers
             var Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
             if (Catalog == null)
             {
-                AppTools.Log("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+                Logger.Log("Failed to get catalog " + package.Source.Name + ". Is the package local?");
                 return [];
             }
 
@@ -157,7 +160,7 @@ namespace UniGetUI.PackageEngine.Managers
             var ConnectResult = await Task.Run(() => Catalog.Connect());
             if (ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
             {
-                AppTools.Log("Failed to connect to catalog " + package.Source.Name);
+                Logger.Log("Failed to connect to catalog " + package.Source.Name);
                 return [];
             }
 
@@ -173,7 +176,7 @@ namespace UniGetUI.PackageEngine.Managers
 
             if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
             {
-                AppTools.Log("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                Logger.Log("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
                 return [];
             }
 
@@ -199,7 +202,7 @@ namespace UniGetUI.PackageEngine.Managers
             var Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
             if (Catalog == null)
             {
-                AppTools.Log("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+                Logger.Log("Failed to get catalog " + package.Source.Name + ". Is the package local?");
                 return details;
             }
 
@@ -208,7 +211,7 @@ namespace UniGetUI.PackageEngine.Managers
             var ConnectResult = await Task.Run(() => Catalog.Connect());
             if (ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
             {
-                AppTools.Log("Failed to connect to catalog " + package.Source.Name);
+                Logger.Log("Failed to connect to catalog " + package.Source.Name);
                 return details;
             }
 
@@ -224,7 +227,7 @@ namespace UniGetUI.PackageEngine.Managers
 
             if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
             {
-                AppTools.Log("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                Logger.Log("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
                 return details;
             }
 
@@ -292,7 +295,7 @@ namespace UniGetUI.PackageEngine.Managers
             {
                 try
                 {
-                    AppTools.Log(__line);
+                    Logger.Log(__line);
                     string line = __line.Trim();
                     if (line.Contains("Installer SHA256:"))
                         details.InstallerHash = line.Split(":")[1].Trim();
@@ -300,7 +303,7 @@ namespace UniGetUI.PackageEngine.Managers
                     else if (line.Contains("Installer Url:"))
                     {
                         details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
-                        details.InstallerSize = await Winget.Tools.GetFileSizeAsync(details.InstallerUrl);
+                        details.InstallerSize = await AppTools.Instance.GetFileSizeAsync(details.InstallerUrl);
                     }
                     else if (line.Contains("Release Date:"))
                         details.UpdateDate = line.Split(":")[1].Trim();
@@ -310,8 +313,8 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log("Error occurred while parsing line value=\"" + __line + "\"");
-                    AppTools.Log(e.Message);
+                    Logger.Log("Error occurred while parsing line value=\"" + __line + "\"");
+                    Logger.Log(e.Message);
                 }
             }
 
@@ -322,6 +325,8 @@ namespace UniGetUI.PackageEngine.Managers
 
     internal class BundledWinGetHelper : IWinGetPackageHelper
     {
+        private ILogger AppLogger => Core.AppLogger.Instance;
+        private IAppTools Tools => AppTools.Instance;
 
         private string WinGetBundledPath;
         public BundledWinGetHelper() {
@@ -393,7 +398,7 @@ namespace UniGetUI.PackageEngine.Managers
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(ManagerInstance, p, output);
+            AppLogger.LogManagerOperation(ManagerInstance, p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
@@ -444,7 +449,7 @@ namespace UniGetUI.PackageEngine.Managers
                 if (_line.Trim() != "")
                 {
                     output.Add(_line);
-                    AppTools.Log(_line);
+                    AppLogger.Log(_line);
                     if (_line.Contains("The value provided for the `locale` argument is invalid") || _line.Contains("No applicable installer found; see logs for more details."))
                     {
                         LocaleFound = false;
@@ -456,7 +461,7 @@ namespace UniGetUI.PackageEngine.Managers
             if (!LocaleFound)
             {
                 output.Clear();
-                AppTools.Log("Winget could not found culture data for package Id=" + package.Id + " and Culture=" + System.Globalization.CultureInfo.CurrentCulture.ToString() + ". Trying to get data for en-US");
+                AppLogger.Log("Winget could not found culture data for package Id=" + package.Id + " and Culture=" + System.Globalization.CultureInfo.CurrentCulture.ToString() + ". Trying to get data for en-US");
                 process = new Process();
                 LocaleFound = true;
                 startInfo = new()
@@ -477,7 +482,7 @@ namespace UniGetUI.PackageEngine.Managers
                     if (_line.Trim() != "")
                     {
                         output.Add(_line);
-                        AppTools.Log(_line);
+                        AppLogger.Log(_line);
                         if (_line.Contains("The value provided for the `locale` argument is invalid") || _line.Contains("No applicable installer found; see logs for more details."))
                         {
                             LocaleFound = false;
@@ -490,7 +495,7 @@ namespace UniGetUI.PackageEngine.Managers
             if (!LocaleFound)
             {
                 output.Clear();
-                AppTools.Log("Winget could not found culture data for package Id=" + package.Id + " and Culture=en-US. Loading default");
+                AppLogger.Log("Winget could not found culture data for package Id=" + package.Id + " and Culture=en-US. Loading default");
                 LocaleFound = true;
                 process = new Process();
                 startInfo = new()
@@ -511,7 +516,7 @@ namespace UniGetUI.PackageEngine.Managers
                     if (_line.Trim() != "")
                     {
                         output.Add(_line);
-                        AppTools.Log(_line);
+                        AppLogger.Log(_line);
                     }
             }
 
@@ -565,7 +570,7 @@ namespace UniGetUI.PackageEngine.Managers
                     else if (line.Contains("Installer Url:"))
                     {
                         details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
-                        details.InstallerSize = await Winget.Tools.GetFileSizeAsync(details.InstallerUrl);
+                        details.InstallerSize = await Tools.GetFileSizeAsync(details.InstallerUrl);
                     }
                     else if (line.Contains("Release Date:"))
                         details.UpdateDate = line.Split(":")[1].Trim();
@@ -594,8 +599,8 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log("Error occurred while parsing line value=\"" + _line + "\"");
-                    AppTools.Log(e.Message);
+                    AppLogger.Log("Error occurred while parsing line value=\"" + _line + "\"");
+                    AppLogger.Log(e.Message);
                 }
             }
 
@@ -637,7 +642,7 @@ namespace UniGetUI.PackageEngine.Managers
                     versions.Add(line.Trim());
             }
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(ManagerInstance, p, output);
+            AppLogger.LogManagerOperation(ManagerInstance, p, output);
             return versions.ToArray();
         }
 
@@ -686,12 +691,12 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log(e);
+                    AppLogger.Log(e);
                 }
             }
 
             output += await process.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(ManagerInstance, process, output);
+            AppLogger.LogManagerOperation(ManagerInstance, process, output);
 
             await process.WaitForExitAsync();
             return sources.ToArray();

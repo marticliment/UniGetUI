@@ -16,6 +16,8 @@ namespace UniGetUI.Interface.Pages.AboutPages
     /// </summary>
     public sealed partial class Translators : Page
     {
+        private ILogger AppLogger => Core.AppLogger.Instance;
+
         public ObservableCollection<Person> TranslatorList = new();
         public Translators()
         {
@@ -27,7 +29,7 @@ namespace UniGetUI.Interface.Pages.AboutPages
             {
                 if (!LanguageData.LanguageList.ContainsKey(langKey.Key))
                 {
-                    AppTools.Log($"Language {langKey.Key} not in list, maybe has not been added yet?");
+                    AppLogger.Log($"Language {langKey.Key} not in list, maybe has not been added yet?");
                     continue;
                 }
                 JsonArray TranslatorsForLang = langKey.Value.AsArray();

@@ -1,6 +1,5 @@
 ﻿using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -59,7 +58,7 @@ namespace UniGetUI.PackageEngine.Managers
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            Logger.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -128,7 +127,7 @@ namespace UniGetUI.PackageEngine.Managers
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            Logger.LogManagerOperation(this, p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
@@ -175,7 +174,7 @@ namespace UniGetUI.PackageEngine.Managers
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            Logger.LogManagerOperation(this, p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
@@ -313,7 +312,7 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception ex)
                 {
-                    AppTools.Log(ex);
+                    Logger.Log(ex);
                 }
 
             }
@@ -366,11 +365,11 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log(e);
+                    Logger.Log(e);
                 }
             }
             output += await process.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, process, output);
+            Logger.LogManagerOperation(this, process, output);
             await process.WaitForExitAsync();
             return sources.ToArray();
         }

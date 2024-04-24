@@ -10,7 +10,7 @@ namespace UniGetUI.Interface.Widgets
 {
     public sealed class SettingsEntry : SettingsExpander
     {
-        public static AppTools Tools = AppTools.Instance;
+        public static AppTools Tools => AppTools.Instance;
         private InfoBar infoBar;
         private Button RestartButton;
         public string Text

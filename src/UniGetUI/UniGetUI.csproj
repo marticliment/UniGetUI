@@ -1546,6 +1546,7 @@
     <PRIResource Remove="PackageEngine\Managers\WinGetClasses\**" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\UniGetUI.lib\UniGetUI.lib.csproj" />
     <ProjectReference Include="..\WindowsPackageManager.Interop\WindowsPackageManager Interop.csproj" />
   </ItemGroup>
 </Project>

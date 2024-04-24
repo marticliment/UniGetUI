@@ -24,7 +24,8 @@ namespace UniGetUI.Interface.Pages.AboutPages
 
     public sealed partial class ThirdPartyLicenses : Page
     {
-        public AppTools Tools = AppTools.Instance;
+        public AppTools Tools => AppTools.Instance;
+
         public ObservableCollection<LibraryLicense> Licenses = new();
 
         public ThirdPartyLicenses()

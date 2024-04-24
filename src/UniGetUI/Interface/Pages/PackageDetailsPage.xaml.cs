@@ -23,7 +23,9 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class PackageDetailsPage : Page
     {
-        public AppTools Tools = AppTools.Instance;
+        private static AppTools Tools => AppTools.Instance;
+        private static ILogger AppLogger => Core.AppLogger.Instance;
+
         public Package Package;
         private InstallOptionsPage InstallOptionsPage;
         public event EventHandler Close;
@@ -121,7 +123,7 @@ namespace UniGetUI.Interface.Dialogs
             string NotFound = Tools.Translate("Not available");
             Uri InvalidUri = new("about:blank");
             Info = await Package.Manager.GetPackageDetails(Package);
-            AppTools.Log("Received info " + Info);
+            AppLogger.Log("Received info " + Info);
 
             string command = "";
 
@@ -237,7 +239,7 @@ namespace UniGetUI.Interface.Dialogs
                 {
                     DownloadInstallerButton.Content = Tools.Translate("Downloading");
                     DownloadInstallerButtonProgress.Visibility = Visibility.Visible;
-                    AppTools.Log(file.Path.ToString());
+                    AppLogger.Log(file.Path.ToString());
                     using HttpClient httpClient = new();
                     await using Stream s = await httpClient.GetStreamAsync(Info.InstallerUrl);
                     await using FileStream fs = File.OpenWrite(file.Path.ToString());
@@ -250,7 +252,7 @@ namespace UniGetUI.Interface.Dialogs
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
                 DownloadInstallerButton.Content = Tools.Translate("An error occurred");
                 DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
                 ErrorOutput.Text = ex.Message;

@@ -19,7 +19,7 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class InstallOptionsPage : Page
     {
-        AppTools Tools = AppTools.Instance;
+        AppTools Tools => AppTools.Instance;
         public InstallationOptions Options;
         public Package Package;
 

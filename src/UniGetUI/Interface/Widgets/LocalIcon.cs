@@ -8,7 +8,7 @@ namespace UniGetUI.Interface.Widgets
 {
     public class LocalIcon : ImageIcon
     {
-        public static AppTools Tools = AppTools.Instance;
+        public static AppTools Tools => AppTools.Instance;
         private bool __registered_theme_event = false;
         public DependencyProperty IconNameProperty;
 

@@ -15,7 +15,9 @@ namespace UniGetUI.Interface.Widgets
 {
     public sealed partial class Announcer : UserControl
     {
-        AppTools binder = AppTools.Instance;
+        AppTools binder => AppTools.Instance;
+        private ILogger AppLogger => Core.AppLogger.Instance;
+
         public Uri Url
         {
             get => (Uri)GetValue(UrlProperty);
@@ -76,7 +78,7 @@ namespace UniGetUI.Interface.Widgets
             }
             catch (Exception ex)
             {
-                AppTools.Log("Could not load announcements: " + ex.ToString());
+                AppLogger.Log("Could not load announcements: " + ex.ToString());
                 SetText(binder.Translate("Could not load announcements - ") + ex.ToString());
                 SetImage(new Uri("ms-appx:///Assets/Images/warn.png"));
             }

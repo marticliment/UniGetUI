@@ -23,13 +23,15 @@ namespace UniGetUI.Interface
 
     public partial class SoftwareUpdatesPage : Page
     {
+        protected ILogger AppLogger => Core.AppLogger.Instance;
+
         public ObservableCollection<UpgradablePackage> Packages = new();
         public SortableObservableCollection<UpgradablePackage> FilteredPackages = new() { SortingSelector = (a) => (a.Name) };
         protected List<PackageManager> UsedManagers = new();
         protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
         protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
-        protected AppTools Tools = AppTools.Instance;
+        protected AppTools Tools => AppTools.Instance;
 
         protected TranslatedTextBlock MainTitle;
         protected TextBlock MainSubtitle;
@@ -64,10 +66,10 @@ namespace UniGetUI.Interface
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
                 {
-                    AppTools.Log(e);
-                    AppTools.Log(e.OriginalSource);
-                    AppTools.Log(e.OriginalSource as FrameworkElement);
-                    AppTools.Log((e.OriginalSource as FrameworkElement).DataContext);
+                    AppLogger.Log(e);
+                    AppLogger.Log(e.OriginalSource);
+                    AppLogger.Log(e.OriginalSource as FrameworkElement);
+                    AppLogger.Log((e.OriginalSource as FrameworkElement).DataContext);
                     if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
                     {
                         TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
@@ -81,7 +83,7 @@ namespace UniGetUI.Interface
                     }
                     else
                     {
-                        AppTools.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
+                        AppLogger.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
                     }
                 }
             };
@@ -107,7 +109,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        AppTools.Log(ex);
+                        AppLogger.Log(ex);
                     }
                 }
             };
@@ -288,7 +290,7 @@ namespace UniGetUI.Interface
                                     continue;
 
                                 if (package.NewVersionIsInstalled())
-                                    AppTools.Log("Package Id={0} with NewVersion={1} is already installed, skipping it...".Replace("{0}", package.Id).Replace("{1}", package.NewVersion));
+                                    AppLogger.Log("Package Id={0} with NewVersion={1} is already installed, skipping it...".Replace("{0}", package.Id).Replace("{1}", package.NewVersion));
 
                                 package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);
                                 package.GetInstalledPackage()?.SetTag(PackageTag.IsUpgradable);
@@ -388,7 +390,7 @@ namespace UniGetUI.Interface
                         toast.Show();
                     } catch (Exception ex)
                     {
-                        AppTools.Log(ex);
+                        AppLogger.Log(ex);
                     }
                 }
             }
@@ -399,11 +401,11 @@ namespace UniGetUI.Interface
                 try
                 {
                     waitTime = long.Parse(Tools.GetSettingsValue("UpdatesCheckInterval"));
-                    AppTools.Log($"Starting check for updates wait interval with waitTime={waitTime}");
+                    AppLogger.Log($"Starting check for updates wait interval with waitTime={waitTime}");
                 }
                 catch
                 {
-                    AppTools.Log("Invalid value for UpdatesCheckInterval, using default value of 3600 seconds");
+                    AppLogger.Log("Invalid value for UpdatesCheckInterval, using default value of 3600 seconds");
                 }
                 await Task.Delay(TimeSpan.FromSeconds(waitTime));
                 _ = LoadPackages(ManualCheck: false);
@@ -829,16 +831,16 @@ namespace UniGetUI.Interface
                 if (package.Id == id)
                 {
                     Tools.AddOperationToList(new UpdatePackageOperation(package));
-                    AppTools.Log("Updating package with id " + id + ". Operation was launched from widgets");
+                    AppLogger.Log("Updating package with id " + id + ". Operation was launched from widgets");
                     break;
                 }
             }
-            AppTools.Log("WARNING! No package with id " + id + " was found. Operation was launched from widgets");
+            AppLogger.Log("WARNING! No package with id " + id + " was found. Operation was launched from widgets");
         }
         
         public void UpdateAllPackages()
         {
-            AppTools.Log("Updating all packages");
+            AppLogger.Log("Updating all packages");
             foreach (UpgradablePackage package in Packages)
                 if(package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
                     Tools.AddOperationToList(new UpdatePackageOperation(package));
@@ -846,7 +848,7 @@ namespace UniGetUI.Interface
 
         public void UpdateAllPackagesForManager(string manager)
         {
-            AppTools.Log("Updating all packages");
+            AppLogger.Log("Updating all packages");
             foreach (UpgradablePackage package in Packages)
                 if(package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
                     if (package.Manager.Name == manager)

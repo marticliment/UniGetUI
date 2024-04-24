@@ -1,7 +1,4 @@
-﻿using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,6 +7,8 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Operations;
 
 namespace UniGetUI.PackageEngine.Managers
 {
@@ -57,7 +56,7 @@ namespace UniGetUI.PackageEngine.Managers
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            Logger.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -126,7 +125,7 @@ namespace UniGetUI.PackageEngine.Managers
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            Logger.LogManagerOperation(this, p, output);
 
             return Packages.ToArray();
         }
@@ -213,7 +212,7 @@ namespace UniGetUI.PackageEngine.Managers
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            Logger.LogManagerOperation(this, p, output);
 
             return Packages.ToArray();
         }
@@ -347,7 +346,7 @@ namespace UniGetUI.PackageEngine.Managers
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                Logger.Log(e);
                 return details;
             }
         }
@@ -425,7 +424,7 @@ namespace UniGetUI.PackageEngine.Managers
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
             await Task.Delay(0);
-            AppTools.Log("Manager " + Name + " does not support version retrieving, this function should have never been called");
+            Logger.Log("Manager " + Name + " does not support version retrieving, this function should have never been called");
             return new string[0];
         }
     }

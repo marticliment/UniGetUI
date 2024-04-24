@@ -13,7 +13,8 @@ namespace UniGetUI.Interface.Pages.AboutPages
     /// </summary>
     public sealed partial class AboutUniGetUI : Page
     {
-        AppTools Tools = AppTools.Instance;
+        AppTools Tools => AppTools.Instance;
+
         public AboutUniGetUI()
         {
             this.InitializeComponent();

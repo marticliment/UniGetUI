@@ -1,7 +1,4 @@
-﻿using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,6 +7,8 @@ using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Operations;
 
 namespace UniGetUI.PackageEngine.Managers;
 
@@ -82,7 +81,7 @@ public class Scoop : PackageManagerWithSources
             }
         }
         output += await p.StandardError.ReadToEndAsync();
-        AppTools.LogManagerOperation(this, p, output);
+        Logger.LogManagerOperation(this, p, output);
         return Packages.ToArray();
     }
 
@@ -137,7 +136,7 @@ public class Scoop : PackageManagerWithSources
 
                 if (!InstalledPackages.ContainsKey(elements[0] + "." + elements[1]))
                 {
-                    AppTools.Log("Upgradable scoop package not listed on installed packages - id=" + elements[0]);
+                    Logger.Log("Upgradable scoop package not listed on installed packages - id=" + elements[0]);
                     continue;
                 }
 
@@ -145,7 +144,7 @@ public class Scoop : PackageManagerWithSources
             }
         }
         output += await p.StandardError.ReadToEndAsync();
-        AppTools.LogManagerOperation(this, p, output);
+        Logger.LogManagerOperation(this, p, output);
         return Packages.ToArray();
     }
 
@@ -199,7 +198,7 @@ public class Scoop : PackageManagerWithSources
             }
         }
         output += await p.StandardError.ReadToEndAsync();
-        AppTools.LogManagerOperation(this, p, output);
+        Logger.LogManagerOperation(this, p, output);
         return Packages.ToArray();
     }
 
@@ -219,7 +218,7 @@ public class Scoop : PackageManagerWithSources
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Log(ex);
             }
 
         Process p = new();
@@ -251,7 +250,7 @@ public class Scoop : PackageManagerWithSources
             else if (RawInfo.ContainsKey("description"))
                 details.Description = RawInfo["description"].ToString();
         }
-        catch (Exception ex) { AppTools.Log("Can't load description: " + ex); }
+        catch (Exception ex) { Logger.Log("Can't load description: " + ex); }
 
         try
         {
@@ -260,7 +259,7 @@ public class Scoop : PackageManagerWithSources
             else
                 details.InstallerType = Tools.Translate("Scoop package");
         }
-        catch (Exception ex) { AppTools.Log("Can't load installer type: " + ex); }
+        catch (Exception ex) { Logger.Log("Can't load installer type: " + ex); }
 
         try
         {
@@ -273,7 +272,7 @@ public class Scoop : PackageManagerWithSources
                     details.Author = details.HomepageUrl.Host.Split(".")[^2];
             }
         }
-        catch (Exception ex) { AppTools.Log("Can't load homepage: " + ex); }
+        catch (Exception ex) { Logger.Log("Can't load homepage: " + ex); }
 
         try
         {
@@ -287,7 +286,7 @@ public class Scoop : PackageManagerWithSources
             else if (RawInfo.ContainsKey("notes"))
                 details.ReleaseNotes = RawInfo["notes"].ToString();
         }
-        catch (Exception ex) { AppTools.Log("Can't load notes: " + ex); }
+        catch (Exception ex) { Logger.Log("Can't load notes: " + ex); }
 
         try
         {
@@ -302,7 +301,7 @@ public class Scoop : PackageManagerWithSources
                     details.License = RawInfo["license"].ToString();
             }
         }
-        catch (Exception ex) { AppTools.Log("Can't load license: " + ex); }
+        catch (Exception ex) { Logger.Log("Can't load license: " + ex); }
 
         try
         {
@@ -327,14 +326,14 @@ public class Scoop : PackageManagerWithSources
 
             details.InstallerSize = await Tools.GetFileSizeAsync(details.InstallerUrl);
         }
-        catch (Exception ex) { AppTools.Log("Can't load installer URL: " + ex); }
+        catch (Exception ex) { Logger.Log("Can't load installer URL: " + ex); }
 
         try
         {
             if (RawInfo.ContainsKey("checkver") && RawInfo["checkver"] is JsonObject && (RawInfo["checkver"] as JsonObject).ContainsKey("url"))
                 details.ReleaseNotesUrl = new Uri(RawInfo["checkver"]["url"].ToString());
         }
-        catch (Exception ex) { AppTools.Log("Can't load notes URL: " + ex); }
+        catch (Exception ex) { Logger.Log("Can't load notes URL: " + ex); }
 
         return details;
 
@@ -385,11 +384,11 @@ public class Scoop : PackageManagerWithSources
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log(e);
+                    Logger.Log(e);
                 }
             }
             _output += await process.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, process, _output);
+            Logger.LogManagerOperation(this, process, _output);
 
             await process.WaitForExitAsync();
 
@@ -572,7 +571,7 @@ public class Scoop : PackageManagerWithSources
 
 
         Status = status; // Wee need this for the RunCleanup method to get the executable path
-        if (status.Found && IsEnabled() && Tools.GetSettings("EnableScoopCleanup"))
+        if (status.Found && IsEnabled() && Config.GetSettings("EnableScoopCleanup"))
             RunCleanup();
 
         return status;
@@ -580,7 +579,7 @@ public class Scoop : PackageManagerWithSources
 
     private async void RunCleanup()
     {
-        AppTools.Log("Starting scoop cleanup...");
+        Logger.Log("Starting scoop cleanup...");
         foreach(var command in new string[] { " cache rm *", " cleanup --all --cache", " cleanup --all --global --cache" })
         {
             Process p = new Process()
@@ -604,7 +603,7 @@ public class Scoop : PackageManagerWithSources
     protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
     {
         await Task.Delay(0);
-        AppTools.Log("Manager " + Name + " does not support version retrieving, this function should have never been called");
+        Logger.Log("Manager " + Name + " does not support version retrieving, this function should have never been called");
         return new string[0];
     }
 

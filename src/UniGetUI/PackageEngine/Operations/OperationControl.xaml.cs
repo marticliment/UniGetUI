@@ -21,6 +21,8 @@ namespace UniGetUI.PackageEngine.Operations
 {
     public abstract partial class AbstractOperation : UserControl
     {
+        protected ILogger AppLogger => Core.AppLogger.Instance;
+
         protected enum AfterFinshAction
         {
             TimeoutClose,
@@ -34,7 +36,7 @@ namespace UniGetUI.PackageEngine.Operations
             Compact,
         }
 
-        public static AppTools Tools = AppTools.Instance;
+        public static AppTools Tools => AppTools.Instance;
 
         private string __button_text;
         private string __line_info_text = "Please wait...";
@@ -430,7 +432,7 @@ namespace UniGetUI.PackageEngine.Operations
                         if (Tools.OperationQueue.Count == 0)
                             if (Tools.GetSettings("DoCacheAdminRightsForBatches"))
                             {
-                                AppTools.Log("Erasing admin rights");
+                                AppLogger.Log("Erasing admin rights");
                                 Process p = new();
                                 p.StartInfo.FileName = CoreData.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
@@ -446,7 +448,7 @@ namespace UniGetUI.PackageEngine.Operations
                         if (Tools.OperationQueue.Count == 0)
                             if (Tools.GetSettings("DoCacheAdminRightsForBatches"))
                             {
-                                AppTools.Log("Erasing admin rights");
+                                AppLogger.Log("Erasing admin rights");
                                 Process p = new();
                                 p.StartInfo.FileName = CoreData.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
@@ -481,7 +483,7 @@ namespace UniGetUI.PackageEngine.Operations
             }
             catch (Exception e)
             {
-                AppTools.Log("Operation failed: " + e.ToString());
+                AppLogger.Log("Operation failed: " + e.ToString());
                 LineInfoText = Tools.Translate("An unexpected error occurred:") + " " + e.Message;
                 RemoveFromQueue();
                 try { Status = OperationStatus.Failed; } catch { }

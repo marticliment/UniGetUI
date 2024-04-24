@@ -9,7 +9,7 @@ namespace UniGetUI.Interface.Widgets
 {
     public sealed partial class TranslatedTextBlock : UserControl
     {
-        static AppTools Tools = AppTools.Instance;
+        static AppTools Tools => AppTools.Instance;
 
         public string Text
         {

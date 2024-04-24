@@ -16,7 +16,10 @@ namespace UniGetUI.PackageEngine.Classes
     public class Package : INotifyPropertyChanged
     {
         // Internal properties
-        public AppTools Tools = AppTools.Instance;
+        protected IAppTools Tools => AppTools.Instance;
+        protected ILogger AppLogger => Core.AppLogger.Instance;
+
+
         private bool __is_checked = false;
         public event PropertyChangedEventHandler PropertyChanged;
         private string __listed_icon_id;
@@ -188,11 +191,11 @@ namespace UniGetUI.PackageEngine.Classes
         public string GetIconId()
         {
             string iconId = Id.ToLower();
-            if (Manager == Tools.App.Winget)
+            if (Manager == AppTools.Instance.App.Winget)
                 iconId = string.Join('.', iconId.Split(".")[1..]);
-            else if (Manager == Tools.App.Choco)
+            else if (Manager == AppTools.Instance.App.Choco)
                 iconId = iconId.Replace(".install", "").Replace(".portable", "");
-            else if (Manager == Tools.App.Scoop)
+            else if (Manager == AppTools.Instance.App.Scoop)
                 iconId = iconId.Replace(".app", "");
             return iconId;
         }
@@ -258,13 +261,13 @@ namespace UniGetUI.PackageEngine.Classes
                     IgnoredUpdatesJson.Remove(IgnoredId);
                 IgnoredUpdatesJson.Add(IgnoredId, version);
                 await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
-                Tools.App.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(this);
+                AppTools.Instance.App.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(this);
 
                 GetInstalledPackage()?.SetTag(PackageTag.Pinned);
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
             }
         }
 
@@ -289,7 +292,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
             }
 }
 
@@ -314,7 +317,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
                 return false;
             }
             
@@ -339,7 +342,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
                 return "";
             }
         }
@@ -359,7 +362,7 @@ namespace UniGetUI.PackageEngine.Classes
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetInstalledPackage()
         {
-            foreach (var package in Tools.App.MainWindow.NavigationPage.InstalledPage.Packages)
+            foreach (var package in AppTools.Instance.App.MainWindow.NavigationPage.InstalledPage.Packages)
                 if (package.Equals(this))
                     return package;
             return null;
@@ -371,7 +374,7 @@ namespace UniGetUI.PackageEngine.Classes
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetAvailablePackage()
         {
-            foreach (var package in Tools.App.MainWindow.NavigationPage.DiscoverPage.Packages)
+            foreach (var package in AppTools.Instance.App.MainWindow.NavigationPage.DiscoverPage.Packages)
                 if (package.Equals(this))
                     return package;
             return null;
@@ -383,7 +386,7 @@ namespace UniGetUI.PackageEngine.Classes
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetUpgradablePackage()
         {
-            foreach (var package in Tools.App.MainWindow.NavigationPage.UpdatesPage.Packages)
+            foreach (var package in AppTools.Instance.App.MainWindow.NavigationPage.UpdatesPage.Packages)
                 if (package.Equals(this))
                     return package;
             return null;

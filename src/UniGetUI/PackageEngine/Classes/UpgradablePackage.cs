@@ -1,4 +1,5 @@
 ﻿using System;
+using UniGetUI.Core;
 
 namespace UniGetUI.PackageEngine.Classes
 {
@@ -73,7 +74,7 @@ namespace UniGetUI.PackageEngine.Classes
         /// <returns></returns>
         public bool NewVersionIsInstalled()
         {
-            foreach (Package package in Tools.App.MainWindow.NavigationPage.InstalledPage.Packages)
+            foreach (Package package in AppTools.Instance.App.MainWindow.NavigationPage.InstalledPage.Packages)
                 if (package.Manager == Manager && package.Id == Id && package.Version == NewVersion && package.Source.Name == Source.Name)
                     return true;
             return false;

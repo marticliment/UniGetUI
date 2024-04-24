@@ -1,6 +1,5 @@
 ﻿using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -55,7 +54,7 @@ namespace UniGetUI.PackageEngine.Managers
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            Logger.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -100,7 +99,7 @@ namespace UniGetUI.PackageEngine.Managers
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            Logger.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -145,7 +144,7 @@ namespace UniGetUI.PackageEngine.Managers
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            Logger.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -236,7 +235,7 @@ namespace UniGetUI.PackageEngine.Managers
         {
             PackageDetails details = new(package);
 
-            AppTools.Log(package.Source.Url.ToString().Trim()[^1]);
+            Logger.Log(package.Source.Url.ToString().Trim()[^1].ToString());
 
             if (package.Source.Name == "community")
                 details.ManifestUrl = new Uri("https://community.chocolatey.org/packages/" + package.Id);
@@ -255,7 +254,7 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception ex)
                 {
-                    AppTools.Log(ex);
+                    Logger.Log(ex);
                 }
             }
 
@@ -280,7 +279,7 @@ namespace UniGetUI.PackageEngine.Managers
                 if (_line.Trim() != "")
                 {
                     output.Add(_line);
-                    AppTools.Log(_line);
+                    Logger.Log(_line);
                 }
 
             // Parse the output
@@ -349,8 +348,8 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log("Error occurred while parsing line value=\"" + _line + "\"");
-                    AppTools.Log(e.Message);
+                    Logger.Log("Error occurred while parsing line value=\"" + _line + "\"");
+                    Logger.Log(e.Message);
                 }
             }
 
@@ -399,12 +398,12 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log(e);
+                    Logger.Log(e);
                 }
             }
 
             output += await process.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, process, output);
+            Logger.LogManagerOperation(this, process, output);
 
             await process.WaitForExitAsync();
             return sources.ToArray();
@@ -464,7 +463,7 @@ namespace UniGetUI.PackageEngine.Managers
             if (Directory.Exists(old_choco_path))
                 try
                 {
-                    AppTools.Log("Moving Bundled Chocolatey from old path to new path...");
+                    Logger.Log("Moving Bundled Chocolatey from old path to new path...");
 
                     if (!Directory.Exists(new_choco_path))
                         Directory.CreateDirectory(new_choco_path);
@@ -515,10 +514,10 @@ namespace UniGetUI.PackageEngine.Managers
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log(e);
+                    Logger.Log(e);
                 }
 
-            if (Tools.GetSettings("UseSystemChocolatey"))
+            if (Config.GetSettings("UseSystemChocolatey"))
                 status.ExecutablePath = await Tools.Which("choco.exe");
             else if (File.Exists(Path.Join(new_choco_path, "choco.exe")))
                 status.ExecutablePath = Path.Join(new_choco_path, "choco.exe");
@@ -547,12 +546,12 @@ namespace UniGetUI.PackageEngine.Managers
             status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
     
             // If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
-            if (/*Tools.GetSettings("ShownWelcomeWizard") && */!Tools.GetSettings("UseSystemChocolatey") && !File.Exists(@"C:\ProgramData\Chocolatey\bin\choco.exe"))
+            if (/*Tools.GetSettings("ShownWelcomeWizard") && */!Config.GetSettings("UseSystemChocolatey") && !File.Exists(@"C:\ProgramData\Chocolatey\bin\choco.exe"))
             {
                 string path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
                 if (!path.Contains(status.ExecutablePath.Replace("\\choco.exe", "\\bin")))
                 {
-                    AppTools.Log("Adding chocolatey to path since it was not on path.");
+                    Logger.Log("Adding chocolatey to path since it was not on path.");
                     Environment.SetEnvironmentVariable("PATH", $"{status.ExecutablePath.Replace("\\choco.exe", "\\bin")};{path}", EnvironmentVariableTarget.User);
                     Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.User);
                 }
@@ -583,8 +582,8 @@ namespace UniGetUI.PackageEngine.Managers
                 }
             };
 
-            AppTools.Log(p.StartInfo.FileName);
-            AppTools.Log(p.StartInfo.Arguments.ToString());
+            Logger.Log(p.StartInfo.FileName);
+            Logger.Log(p.StartInfo.Arguments.ToString());
 
             p.Start();
             string line;
@@ -596,7 +595,7 @@ namespace UniGetUI.PackageEngine.Managers
                 if (!line.StartsWith("Chocolatey"))
                 {
                     string[] elements = line.Split(' ');
-                    AppTools.Log(line);
+                    Logger.Log(line);
                     if (elements.Length < 2 || elements[0].Trim() != package.Id)
                         continue;
 
@@ -604,7 +603,7 @@ namespace UniGetUI.PackageEngine.Managers
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            Logger.LogManagerOperation(this, p, output);
 
             return versions.ToArray();
         }

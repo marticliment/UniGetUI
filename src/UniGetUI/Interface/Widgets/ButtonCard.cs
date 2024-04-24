@@ -20,7 +20,7 @@ namespace UniGetUI.Interface.Widgets
     public sealed class ButtonCard : SettingsCard
     {
         private static Button _button;
-        private static AppTools Tools = AppTools.Instance;
+        private static AppTools Tools => AppTools.Instance;
 
         public string ButtonText
         {

@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34407.89
@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsPackageManager Interop", "WindowsPackageManager.Interop\WindowsPackageManager Interop.csproj", "{52AC982E-7382-4746-BB66-4003698FCC02}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.lib", "UniGetUI.lib\UniGetUI.lib.csproj", "{862D2727-A38D-4758-B38C-C113788431FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +64,22 @@ Global
 		{52AC982E-7382-4746-BB66-4003698FCC02}.Release|x64.Build.0 = Release|x64
 		{52AC982E-7382-4746-BB66-4003698FCC02}.Release|x86.ActiveCfg = Release|x86
 		{52AC982E-7382-4746-BB66-4003698FCC02}.Release|x86.Build.0 = Release|x86
+		{862D2727-A38D-4758-B38C-C113788431FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Debug|x64.Build.0 = Debug|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Debug|x86.Build.0 = Debug|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Release|ARM64.Build.0 = Release|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Release|x64.ActiveCfg = Release|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Release|x64.Build.0 = Release|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Release|x86.ActiveCfg = Release|Any CPU
+		{862D2727-A38D-4758-B38C-C113788431FD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

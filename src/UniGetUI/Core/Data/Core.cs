@@ -9,6 +9,9 @@ namespace UniGetUI.Core.Data
 {
     public static class CoreData
     {
+
+        private static ILogger AppLogger => Core.AppLogger.Instance;
+
         public static string VersionName =  "3.1.0-beta"; // Do not modify this line, use file scripts/apply_versions.py
         public static double VersionNumber =  3.09; // Do not modify this line, use file scripts/apply_versions.py
 
@@ -182,19 +185,19 @@ namespace UniGetUI.Core.Data
                     await File.WriteAllTextAsync(IconsAndScreenshotsFile, fileContents);
                 }
 
-                AppTools.Log("Downloaded icons and screenshots successfully!");
+                AppLogger.Log("Downloaded icons and screenshots successfully!");
 
             }
             catch (Exception e)
             {
-                AppTools.Log("Failed to download icons and screenshots");
-                AppTools.Log(e);
+                AppLogger.Log("Failed to download icons and screenshots");
+                AppLogger.Log(e);
             }
 
 
             if (!File.Exists(IconsAndScreenshotsFile))
             {
-                AppTools.Log("WARNING: Icon Database file not found");
+                AppLogger.Log("WARNING: Icon Database file not found");
                 return;
             }
 
@@ -206,8 +209,8 @@ namespace UniGetUI.Core.Data
             }
             catch (Exception ex)
             {
-                AppTools.Log("Failed to load icon database");
-                AppTools.Log(ex);
+                AppLogger.Log("Failed to load icon database");
+                AppLogger.Log(ex);
             }
         }
 
@@ -233,14 +236,14 @@ namespace UniGetUI.Core.Data
                 }
                 catch (Exception e)
                 {
-                    AppTools.Log("WARNING: Cannot move old data directory to new location. Directory to move: " + old_path + ". Destination: " + new_path);
-                    AppTools.Log(e);
+                    AppLogger.Log("WARNING: Cannot move old data directory to new location. Directory to move: " + old_path + ". Destination: " + new_path);
+                    AppLogger.Log(e);
                     return old_path;
                 }
             }
             else
             {
-                AppTools.Log("Creating non-existing data directory at: " + new_path);
+                AppLogger.Log("Creating non-existing data directory at: " + new_path);
                 Directory.CreateDirectory(new_path);
                 return new_path;
             }

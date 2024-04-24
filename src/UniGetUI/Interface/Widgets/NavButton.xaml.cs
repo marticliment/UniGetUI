@@ -13,7 +13,7 @@ namespace UniGetUI.Interface.Widgets
     public sealed partial class NavButton : UserControl
     {
 
-        private AppTools Tools = AppTools.Instance;
+        private AppTools Tools => AppTools.Instance;
         public class NavButtonEventArgs : EventArgs
         {
             public NavButtonEventArgs()

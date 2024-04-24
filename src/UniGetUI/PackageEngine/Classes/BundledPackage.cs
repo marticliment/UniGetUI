@@ -8,7 +8,7 @@ namespace UniGetUI.PackageEngine.Classes
 {
     public class BundledPackage : INotifyPropertyChanged
     {
-        public AppTools Tools = AppTools.Instance;
+        public AppTools Tools => AppTools.Instance;
         public Package Package { get; }
         public bool IsValid { get; set; } = true;
         public InstallationOptions InstallOptions { get; set; }
@@ -22,7 +22,7 @@ namespace UniGetUI.PackageEngine.Classes
         public bool IsChecked { get { return __is_checked; } set { __is_checked = value; OnPropertyChanged(); } }
 
 
-        public virtual string Name
+        public string Name
         {
             get
             {
@@ -30,7 +30,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
         }
 
-        public virtual string Id
+        public string Id
         {
             get
             {
@@ -38,7 +38,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
         }
 
-        public virtual string version
+        public string version
         {
             get
             {
@@ -96,8 +96,6 @@ namespace UniGetUI.PackageEngine.Classes
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-
-
 
         public virtual SerializableValidPackage_v1 AsSerializable()
         {

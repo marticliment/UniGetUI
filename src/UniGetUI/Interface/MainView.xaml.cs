@@ -23,7 +23,7 @@ namespace UniGetUI.Interface
 {
     public sealed partial class MainView : UserControl
     {
-        public AppTools Tools = AppTools.Instance;
+        public AppTools Tools => AppTools.Instance;
         public SettingsInterface SettingsPage;
         public DiscoverPackagesPage DiscoverPage;
         public SoftwareUpdatesPage UpdatesPage;

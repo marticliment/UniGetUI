@@ -22,7 +22,7 @@ namespace UniGetUI.Interface
 
     public sealed partial class IgnoredUpdatesManager : Page
     {
-        AppTools Tools = AppTools.Instance;
+        AppTools Tools => AppTools.Instance;
         public IgnoredUpdatesManager()
         {
             InitializeComponent();

@@ -24,13 +24,15 @@ namespace UniGetUI.Interface
 
     public partial class InstalledPackagesPage : Page
     {
+        protected ILogger AppLogger => Core.AppLogger.Instance;
+
         public ObservableCollection<Package> Packages = new();
         public SortableObservableCollection<Package> FilteredPackages = new() { SortingSelector = (a) => (a.Name) };
         protected List<PackageManager> UsedManagers = new();
         protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
         protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
-        protected AppTools Tools = AppTools.Instance;
+        protected AppTools Tools => AppTools.Instance;
 
         protected TranslatedTextBlock MainTitle;
         protected TranslatedTextBlock MainSubtitle;
@@ -67,10 +69,10 @@ namespace UniGetUI.Interface
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
                 {
-                    AppTools.Log(e);
-                    AppTools.Log(e.OriginalSource);
-                    AppTools.Log(e.OriginalSource as FrameworkElement);
-                    AppTools.Log((e.OriginalSource as FrameworkElement).DataContext);
+                    AppLogger.Log(e);
+                    AppLogger.Log(e.OriginalSource);
+                    AppLogger.Log(e.OriginalSource as FrameworkElement);
+                    AppLogger.Log((e.OriginalSource as FrameworkElement).DataContext);
                     if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
                     {
                         TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
@@ -84,7 +86,7 @@ namespace UniGetUI.Interface
                     }
                     else
                     {
-                        AppTools.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
+                        AppLogger.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
                     }
                 }
             };
@@ -111,7 +113,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        AppTools.Log(ex);
+                        AppLogger.Log(ex);
                     }
                 }
             };
@@ -325,7 +327,7 @@ namespace UniGetUI.Interface
 
             try
             {
-                AppTools.Log("Start backup");
+                AppLogger.Log("Start backup");
                 var packagestoExport = new List<BundledPackage>();
                 foreach (var package in Packages)
                     packagestoExport.Add(await BundledPackage.FromPackageAsync(package));
@@ -351,11 +353,11 @@ namespace UniGetUI.Interface
                 var filePath = Path.Combine(dirName, fileName);
                 await File.WriteAllTextAsync(filePath, BackupContents);
                 HasDoneBackup = true;
-                AppTools.Log("Backup saved to " + filePath);
+                AppLogger.Log("Backup saved to " + filePath);
             } 
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                AppLogger.Log(ex);
             }
         }
 

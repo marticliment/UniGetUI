@@ -1,14 +1,7 @@
-﻿using CommunityToolkit.WinUI.Controls;
 using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine;
-using UniGetUI.PackageEngine.Classes;
-using Nancy;
-using Nancy.Conventions;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -18,15 +11,19 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Security.Principal;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using UniGetUI.Core.Data;
 using UniGetUI.PackageEngine.Operations;
 
 namespace UniGetUI.Core
 {
-    public class AppTools
+
+    public class AppTools : IAppTools, IAppConfig
     {
+        /// <summary>
+        /// This should resolved by DI
+        /// </summary>
+        private readonly ILogger Logger = AppLogger.Instance;
 
         public class __tooltip_options
         {
@@ -41,18 +38,21 @@ namespace UniGetUI.Core
         }
 
 
-        public MainApp App;
+        public MainApp App => (MainApp)Application.Current;
 
         public ThemeListener ThemeListener;
         public List<AbstractOperation> OperationQueue = new();
 
-        public __tooltip_options TooltipStatus = new();
+        public __tooltip_options TooltipStatus { get; private set;  } = new();
 
         private LanguageEngine LanguageEngine = new();
 
-        private static AppTools instance;
         string ApiAuthToken;
 
+        /// <summary>
+        /// This should only be accessed by DI or removed
+        /// </summary>
+        private static AppTools instance;
         public static AppTools Instance
         {
             get
@@ -65,14 +65,16 @@ namespace UniGetUI.Core
             }
         }
 
+        /// <summary>
+        /// This should only be accessed by DI or removed
+        /// </summary>
         private AppTools()
         {
-            App = (MainApp)Application.Current;
             ThemeListener = new ThemeListener();
 
             ApiAuthToken = RandomString(64);
             SetSettingsValue("CurrentSessionToken", ApiAuthToken);
-            AppTools.Log("Api auth token: " + ApiAuthToken);
+            Logger.Log("Api auth token: " + ApiAuthToken);
         }
 
         private string RandomString(int length)
@@ -111,7 +113,7 @@ namespace UniGetUI.Core
             }
             catch (Exception e)
             {
-                Log($"CRITICAL ERROR: CANNOT SET SETTING FOR setting={setting} enabled={value}: " + e.Message);
+                ((ILogger)Core.AppLogger.Instance).Log($"CRITICAL ERROR: CANNOT SET SETTING FOR setting={setting} enabled={value}: {e.Message}");
             }
         }
         public string GetSettingsValue(string setting)
@@ -134,7 +136,7 @@ namespace UniGetUI.Core
             }
             catch (Exception e)
             {
-                Log($"CRITICAL ERROR: CANNOT SET SETTING VALUE FOR setting={setting} value={value}: " + e.Message);
+                ((ILogger)Core.AppLogger.Instance).Log($"CRITICAL ERROR: CANNOT SET SETTING VALUE FOR setting={setting} value={value}: {e.Message}");
             }
         }
 
@@ -160,8 +162,8 @@ namespace UniGetUI.Core
 
         public void RestartApp()
         {
-            AppTools.Log(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
-            System.Diagnostics.Process.Start(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
+            Logger.Log(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
+            Process.Start(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
             App.DisposeAndQuit();
         }
 
@@ -210,34 +212,6 @@ namespace UniGetUI.Core
         public void AddOperationToList(AbstractOperation operation)
         {
             App.MainWindow.NavigationPage.OperationStackPanel.Children.Add(operation);
-        }
-
-        public static void Log(string s)
-        {
-            CoreData.UniGetUILog += s + "\n";
-            Debug.WriteLine(s);
-        }
-
-        public static void Log(Exception e)
-        { Log(e.ToString()); }
-
-        public static void Log(object o)
-        { if (o != null) Log(o.ToString()); else Log("null"); }
-
-
-        public static void LogManagerOperation(PackageManager manager, Process process, string output)
-        {
-            output = Regex.Replace(output, "\n.{0,6}\n", "\n");
-            CoreData.ManagerLogs += $"\n▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄";
-            CoreData.ManagerLogs += $"\n█▀▀▀▀▀▀▀▀▀ [{DateTime.Now}] {manager.Name} ▀▀▀▀▀▀▀▀▀▀▀";
-            CoreData.ManagerLogs += $"\n█  Executable: {process.StartInfo.FileName}";
-            CoreData.ManagerLogs += $"\n█  Arguments: {process.StartInfo.Arguments}";
-            CoreData.ManagerLogs += "\n";
-            CoreData.ManagerLogs += output;
-            CoreData.ManagerLogs += "\n";
-            CoreData.ManagerLogs += $"[{DateTime.Now}] Exit Code: {process.ExitCode}";
-            CoreData.ManagerLogs += "\n";
-            CoreData.ManagerLogs += "\n";
         }
 
         public static void ReportFatalException(Exception e)
@@ -311,7 +285,7 @@ Crash Traceback:
             InfoBar? banner = null; ;
             try
             {
-                AppTools.Log("Starting update check");
+                Logger.Log("Starting update check");
 
                 string fileContents = "";
 
@@ -327,9 +301,9 @@ Crash Traceback:
 
                 if (LatestVersion > CoreData.VersionNumber)
                 {
-                    AppTools.Log("Updates found, downloading installer...");
-                    Log("Current version: " + CoreData.VersionNumber.ToString(CultureInfo.InvariantCulture));
-                    Log("Latest version : " + LatestVersion.ToString(CultureInfo.InvariantCulture));
+                    Logger.Log("Updates found, downloading installer...");
+                    Logger.Log("Current version: " + CoreData.VersionNumber.ToString(CultureInfo.InvariantCulture));
+                    Logger.Log("Latest version : " + LatestVersion.ToString(CultureInfo.InvariantCulture));
 
                     banner = App.MainWindow.UpdatesBanner;
                     banner.Title= Translate("WingetUI version {0} is being downloaded.").Replace("{0}", LatestVersion.ToString(CultureInfo.InvariantCulture));
@@ -368,12 +342,12 @@ Crash Traceback:
                         banner.IsClosable = true;
 
                         if (Instance.App.MainWindow.Visible)
-                            Log("Waiting for mainWindow to be hidden");
+                            Logger.Log("Waiting for mainWindow to be hidden");
 
                         while (Instance.App.MainWindow.Visible)
                             await Task.Delay(100);
 
-                        Log("Hash ok, starting update");
+                        Logger.Log("Hash ok, starting update");
                         Process p = new Process();
                         p.StartInfo.FileName = "cmd.exe";
                         p.StartInfo.Arguments = $"/c start /B \"\" \"{InstallerPath}\" /silent";
@@ -384,9 +358,9 @@ Crash Traceback:
                     }
                     else
                     {
-                        Log("Hash mismatch, not updating!");
-                        Log("Current hash : " + Hash);
-                        Log("Expected hash: " + InstallerHash);
+                        Logger.Log("Hash mismatch, not updating!");
+                        Logger.Log("Current hash : " + Hash);
+                        Logger.Log("Expected hash: " + InstallerHash);
                         File.Delete(InstallerPath);
 
                         banner.Title = Translate("The installer hash does not match the expected value.");
@@ -401,7 +375,7 @@ Crash Traceback:
                 }
                 else
                 {
-                    Log("UniGetUI is up to date");
+                    Logger.Log("UniGetUI is up to date");
                     await Task.Delay(7200000); // Check again in 2 hours
                     UpdateUniGetUIIfPossible();
                 }
@@ -417,7 +391,7 @@ Crash Traceback:
                     banner.IsClosable = true;
                 }
 
-                Log(e);
+                Logger.Log(e);
 
                 if (round >= 3)
                     return;
@@ -435,7 +409,7 @@ Crash Traceback:
             }
             catch (Exception e)
             {
-                Log(e);
+                Logger.Log(e);
                 return false;
             }
         }
@@ -463,7 +437,7 @@ Crash Traceback:
             }
             catch (Exception e)
             {
-                Log(e);
+                Logger.Log(e);
             }
             return 0;
         }

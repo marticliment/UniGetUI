@@ -1,5 +1,4 @@
-﻿using UniGetUI.Core;
-using UniGetUI.PackageEngine.Operations;
+﻿using UniGetUI.PackageEngine.Operations;
 using System;
 using System.Threading.Tasks;
 
@@ -27,7 +26,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
             catch (Exception e)
             {
-                AppTools.Log("Error finding sources for manager " + Name + ": \n" + e.ToString());
+                Logger.Log("Error finding sources for manager " + Name + ": \n" + e.ToString());
                 return new ManagerSource[0];
             }
         }

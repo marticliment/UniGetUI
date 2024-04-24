@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Data;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Classes;
-using UniGetUI.Core;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -35,7 +34,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 if (Tools.GetSettings("DoCacheAdminRights") || Tools.GetSettings("DoCacheAdminRightsForBatches"))
                 {
-                    AppTools.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    AppLogger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
                     p.StartInfo.FileName = CoreData.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
@@ -85,7 +84,7 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 catch (Exception ex)
                 {
-                    AppTools.Log(ex);
+                    AppLogger.Log(ex);
                 }
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -147,7 +146,7 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 catch (Exception ex)
                 {
-                    AppTools.Log(ex);
+                    AppLogger.Log(ex);
                 }
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
@@ -171,7 +170,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 if (Tools.GetSettings("DoCacheAdminRights") || Tools.GetSettings("DoCacheAdminRightsForBatches"))
                 {
-                    AppTools.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    AppLogger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
                     p.StartInfo.FileName = CoreData.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
@@ -275,7 +274,7 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 catch (Exception ex)
                 {
-                    AppTools.Log(ex);
+                    AppLogger.Log(ex);
                 }
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
