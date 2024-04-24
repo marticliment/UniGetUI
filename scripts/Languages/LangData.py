@@ -88,7 +88,7 @@ def getMarkdownSupportLangs():
 
     dir = os.path.dirname(__file__)
     for lang, langName in languageReference.items():
-        if (not os.path.exists(f"{dir}/../../src/UniGetUI/Assets/Languages/lang_{lang}.json")):
+        if (not os.path.exists(f"{dir}/../../src/UniGetUI.Core.LanguageEngine/Assets/Languages/lang_{lang}.json")):
             continue
 
         perc = untranslatedPercentage[lang] if (lang in untranslatedPercentage) else "100%"

@@ -139,7 +139,7 @@ try:
     with open(os.path.join(root_dir, "src/UniGetUI.Core.LanguageEngine/Assets/Data/TranslatedPercentages.json"), "w", encoding="utf-8") as f:
         f.write(json.dumps(langPerc, indent=2, ensure_ascii=False))
 
-    # translations_filepath = os.path.normpath(os.path.join(root_dir, "UniGetUI/Core/Data/Translations.py"))
+    # translations_filepath = os.path.normpath(os.path.join(root_dir, "UniGetUI.Core.LanguageEngine/Core/Data/Translations.py"))
     # with open(translations_filepath, "w", encoding="utf-8") as f:
     #     f.write(outputString.strip())
 
