@@ -17,16 +17,24 @@ namespace UniGetUI.Core.Language
             {
                 LangName = System.Globalization.CultureInfo.CurrentCulture.ToString().Replace("-", "_");
             }
+            LoadLanguage(LangName);
+        }
 
-            if (LanguageData.LanguageReference.ContainsKey(LangName))
+        /// <summary>
+        /// Loads the specified language into the current instance
+        /// </summary>
+        /// <param name="lang">the language code</param>
+        public void LoadLanguage(string lang)
+        {
+            if (LanguageData.LanguageReference.ContainsKey(lang))
             {
-                MainLangDict = LoadLanguageFile(LangName);
-                MainLangDict.TryAdd("locale", LangName);
+                MainLangDict = LoadLanguageFile(lang);
+                MainLangDict.TryAdd("locale", lang);
             }
-            else if (LanguageData.LanguageReference.ContainsKey(LangName[0..2]))
+            else if (LanguageData.LanguageReference.ContainsKey(lang[0..2]))
             {
-                MainLangDict = LoadLanguageFile(LangName[0..2]);
-                MainLangDict.TryAdd("locale", LangName[0..2]);
+                MainLangDict = LoadLanguageFile(lang[0..2]);
+                MainLangDict.TryAdd("locale", lang[0..2]);
             }
             else
             {
@@ -59,7 +67,7 @@ namespace UniGetUI.Core.Language
                 LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject).ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
 
                 if (!Settings.Get("DisableLangAutoUpdater"))
-                    _ = UpdateLanguageFile(LangKey);
+                    _ = DownloadUpdatedLanguageFile(LangKey);
 
                 return LangDict;
             }
@@ -71,7 +79,13 @@ namespace UniGetUI.Core.Language
             }
         }
 
-        public async Task UpdateLanguageFile(string LangKey, bool UseOldUrl = false)
+        /// <summary>
+        /// Downloads and saves an updated version of the translations for the specified language.
+        /// </summary>
+        /// <param name="LangKey">The Id of the language to download</param>
+        /// <param name="UseOldUrl">Use the new or the old Url (should not be used manually)</param>
+        /// <returns></returns>
+        public async Task DownloadUpdatedLanguageFile(string LangKey, bool UseOldUrl = false)
         {
             try
             {
@@ -90,7 +104,7 @@ namespace UniGetUI.Core.Language
             catch (Exception e)
             {
                 if (e is HttpRequestException && !UseOldUrl)
-                    await UpdateLanguageFile(LangKey, true);
+                    await DownloadUpdatedLanguageFile(LangKey, true);
                 else
                     Logger.Log(e);
             }

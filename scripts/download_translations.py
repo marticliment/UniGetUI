@@ -29,7 +29,7 @@ try:
             print("nocommit")
             print(sys.argv[1])
 
-    os.chdir(os.path.normpath(os.path.join(root_dir, "src/UniGetUI/Assets/Languages")))
+    os.chdir(os.path.normpath(os.path.join(root_dir, "src/UniGetUI.Core.LanguageEngine/Assets/Languages")))
 
     print()
     print("-------------------------------------------------------")
