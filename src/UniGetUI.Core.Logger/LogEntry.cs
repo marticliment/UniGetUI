@@ -6,12 +6,14 @@
         {
             Debug,
             Info,
+            Success,
             Warning,
             Error,
         }
-        public DateTime Time { get; }
-        public String Content { get; }
-        public SeverityLevel Severity { get; }
+
+        public readonly DateTime Time { get; }
+        public readonly String Content { get; }
+        public readonly SeverityLevel Severity { get; }
 
         public LogEntry(string content, SeverityLevel severity)
         {
