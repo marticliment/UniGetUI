@@ -6,7 +6,7 @@ namespace UniGetUI.Core.Language.Tests
     public class LanguageDataTests
     {
         [TestMethod]
-        public void LanguageDataTester()
+        public void TranslatorsListTest()
         {
             var Translators = LanguageData.TranslatorsList;
             Assert.AreNotEqual(0, Translators.Length, "Translator list is empty");
@@ -14,11 +14,18 @@ namespace UniGetUI.Core.Language.Tests
             {
                 Assert.AreNotEqual("", translator.Name, "Translator name cannot be null");
             }
+        }
 
+        [TestMethod]
+        public void LanguageReferenceTest() {
             Assert.AreNotEqual(0, LanguageData.LanguageReference.Count, "The LanguageReference cannot be empty");
-            foreach ( var language in LanguageData.LanguageReference )
+            foreach (var language in LanguageData.LanguageReference)
                 Assert.IsFalse(language.Value.Contains("NoNameLang_"), $"The language with key {language.Key} has no assigned name");
+        }
 
+        [TestMethod]
+        public void TranslatedPercentageTests()
+        { 
             var TranslatedPercent = LanguageData.TranslationPercentages;
             foreach (var key in TranslatedPercent.Keys)
             {
