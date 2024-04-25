@@ -1,11 +1,13 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.Text.Json;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI.Core.IconEngine
 {
-    public class IconStore
+    public class IconDatabase
     {
         public struct IconCount
         {
@@ -13,6 +15,21 @@ namespace UniGetUI.Core.IconEngine
             public int TotalScreenshotCount = 0;
             public int PackagesWithScreenshotCount = 0;
             public IconCount() { }
+        }
+
+        private static IconDatabase? __instance = null;
+
+        public static IconDatabase Instance
+        {
+            get
+            {
+                if(__instance is  null)
+                {
+                    Logger.Error("IconStore.Instance was not initialized, creating an empty instance.");
+                    __instance = new();
+                }
+                return __instance;
+            }
         }
 
         /// <summary>

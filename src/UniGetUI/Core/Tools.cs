@@ -26,7 +26,7 @@ namespace UniGetUI.Core
 {
     public class AppTools
     {
-        public static IconStore IconDatabase;
+        public static IconDatabase IconDatabase;
         public class __tooltip_options
         {
             private int _errors_occurred = 0;
@@ -59,7 +59,7 @@ namespace UniGetUI.Core
                 if (instance == null)
                 {
                     instance = new AppTools();
-                    IconDatabase = new IconStore();
+                    IconDatabase = new IconDatabase();
                 }
                 return instance;
             }

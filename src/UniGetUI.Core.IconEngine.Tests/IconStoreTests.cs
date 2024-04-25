@@ -3,7 +3,7 @@ namespace UniGetUI.Core.IconEngine.Tests
     [TestClass]
     public class IconStoreTests
     {
-        IconStore iconStore = new IconStore();
+        IconDatabase iconStore = new IconDatabase();
 
         [TestMethod]
         public void LoadIconsAndScreenshotsDatabaseTest()
