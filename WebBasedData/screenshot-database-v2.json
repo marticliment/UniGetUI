@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11700,
-        "done": 5043,
-        "packages_with_icon": 5043,
-        "packages_with_screenshot": 550,
-        "total_screenshots": 1722
+        "total": 11702,
+        "done": 5044,
+        "packages_with_icon": 5044,
+        "packages_with_screenshot": 552,
+        "total_screenshots": 1726
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -5891,6 +5891,10 @@
             "images": []
         },
         "bugn": {
+            "icon": "",
+            "images": []
+        },
+        "bugs": {
             "icon": "",
             "images": []
         },
@@ -20831,7 +20835,9 @@
         },
         "kakaotalk": {
             "icon": "https://community.chocolatey.org/content/packageimages/kakaotalk.3.4.7.3369.png",
-            "images": []
+            "images": [
+                "https://t1.kakaocdn.net/kakaocorp/kakaocorp/admin/service/e9d4e476018e00001.png"
+            ]
         },
         "kakaowork": {
             "icon": "",
@@ -49078,6 +49084,14 @@
         "zyplayer": {
             "icon": "",
             "images": []
+        },
+        "__test_entry_DO_NOT_EDIT_PLEASE": {
+            "icon": "https://this.is.a.test/url/used_for/automated_unit_testing.png",
+            "images": [
+                "https://image_number.com/1.png",
+                "https://image_number.com/2.png",
+                "https://image_number.com/3.png"
+            ]
         }
     }
 }

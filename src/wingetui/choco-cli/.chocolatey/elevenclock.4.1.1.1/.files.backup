@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<fileSnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <files>
-    <file path="c:\SomePrograms\WingetUI-Store\wingetui\choco-cli\lib\elevenclock\elevenclock.nupkg" checksum="E480205913AF2727AFD8CAA7050E2236" />
-    <file path="c:\SomePrograms\WingetUI-Store\wingetui\choco-cli\lib\elevenclock\elevenclock.nuspec" checksum="BE019E781EE079084EBD5CD5054721F1" />
-    <file path="c:\SomePrograms\WingetUI-Store\wingetui\choco-cli\lib\elevenclock\tools\chocolateyinstall.ps1" checksum="6C16815933451F62EC0F63886B2DE12C" />
-    <file path="c:\SomePrograms\WingetUI-Store\wingetui\choco-cli\lib\elevenclock\tools\chocolateyuninstall.ps1" checksum="5E2FB88CC02A187D778E2B1C7857CD51" />
-  </files>
-</fileSnapshot>

@@ -47,5 +47,5 @@ jobs:
     - name: build and run
       run: |
         mkdir out
-        msbuild src/wingetui.sln /noLogo /property:Configuration=Release /property:Platform=x64 /restore:True /interactive:False /property:OutputPath=.\out
+        msbuild src/UniGetUI.sln /noLogo /property:Configuration=Release /property:Platform=x64 /restore:True /interactive:False /property:OutputPath=.\out
         exit $LASTEXITCODE
