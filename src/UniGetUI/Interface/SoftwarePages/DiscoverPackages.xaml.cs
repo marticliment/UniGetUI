@@ -16,6 +16,9 @@ using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Logging;
 using Windows.UI.Core;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Enums;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

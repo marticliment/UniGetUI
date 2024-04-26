@@ -1,36 +1,24 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.Core.Classes;
+﻿using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
-using UniGetUI.PackageEngine.Operations;
+using UniGetUI.PackageEngine.Classes.Packages;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.PackageClasses;
 
-namespace UniGetUI.PackageEngine.Classes
+namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
-
-    /// <summary>
-    /// Absract class that all managers must implement
-    /// </summary>
     public abstract class PackageManager : SingletonBase<PackageManager>
     {
         public ManagerProperties Properties { get; set; } = new();
         public ManagerCapabilities Capabilities { get; set; } = new();
         public ManagerStatus Status { get; set; } = new() { Found = false };
         public string Name { get; set; } = "Unset";
-        public static AppTools Tools = AppTools.Instance;
         public ManagerSource MainSource { get; set; }
         public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
         public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
         public bool ManagerReady { get; set; } = false;
 
-        private Dictionary<string, Package> __known_installed_packages = new();
-        private Dictionary<string, Package> __known_available_packages = new();
-        private Dictionary<string, UpgradablePackage> __known_upgradable_packages = new();
 
         /// <summary>
         /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.
@@ -71,17 +59,17 @@ namespace UniGetUI.PackageEngine.Classes
                                  "\n█▀▀▀▀▀▀▀▀▀▀▀▀▀ MANAGER LOADED ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀" +
                                  "\n█ Name: " + Name +
                                  "\n█ Enabled: " + IsEnabled().ToString() +
-                                    ((IsEnabled()) ? (
+                                    (IsEnabled() ? 
                                  "\n█ Found: " + Status.Found.ToString() +
-                                    ((Status.Found) ? (
+                                    (Status.Found ? 
                                  "\n█ Fancye exe name: " + Properties.ExecutableFriendlyName +
                                  "\n█ Executable path: " + Status.ExecutablePath +
                                  "\n█ Call arguments: " + Properties.ExecutableCallArgs +
-                                 "\n█ Version: \n" + "█   " + Status.Version.Replace("\n", "\n█   "))
+                                 "\n█ Version: \n" + "█   " + Status.Version.Replace("\n", "\n█   ")
                                     :
                                  "\n█ THE MANAGER WAS NOT FOUND. PERHAPS IT IS NOT " +
                                  "\n█ INSTALLED OR IT HAS BEEN MISCONFIGURED "
-                                    ))
+                                    )
                                     :
                                  "\n█ THE MANAGER IS DISABLED"
                                     ) +
@@ -134,12 +122,7 @@ namespace UniGetUI.PackageEngine.Classes
                 Package[] packages = await FindPackages_UnSafe(query);
                 for (int i = 0; i < packages.Length; i++)
                 {
-                    if (!__known_available_packages.ContainsKey(packages[i].GetHash()))
-                        __known_available_packages.Add(packages[i].GetHash(), packages[i]);
-                    else
-                    {
-                        packages[i] = __known_available_packages[packages[i].GetHash()];
-                    }
+                    packages[i] = PackageFactory.GetAvailablePackageIfRepeated(packages[i]);
                 }
                 return packages;
             }
@@ -162,14 +145,7 @@ namespace UniGetUI.PackageEngine.Classes
             {
                 UpgradablePackage[] packages = await GetAvailableUpdates_UnSafe();
                 for (int i = 0; i < packages.Length; i++)
-                {
-                    if (!__known_upgradable_packages.ContainsKey(packages[i].GetHash()))
-                        __known_upgradable_packages.Add(packages[i].GetHash(), packages[i]);
-                    else
-                    {
-                        packages[i] = __known_upgradable_packages[packages[i].GetHash()];
-                    }
-                }
+                    packages[i] = PackageFactory.GetUpgradablePackageIfRepeated(packages[i]);
                 return packages;
             }
             catch (Exception e)
@@ -190,14 +166,7 @@ namespace UniGetUI.PackageEngine.Classes
             {
                 Package[] packages = await GetInstalledPackages_UnSafe();
                 for (int i = 0; i < packages.Length; i++)
-                {
-                    if (!__known_installed_packages.ContainsKey(packages[i].GetHash()))
-                        __known_installed_packages.Add(packages[i].GetHash(), packages[i]);
-                    else
-                    {
-                        packages[i] = __known_installed_packages[packages[i].GetHash()];
-                    }
-                }
+                    packages[i] = PackageFactory.GetInstalledPackageIfRepeated(packages[i]);
                 return packages;
             }
             catch (Exception e)
@@ -401,161 +370,5 @@ namespace UniGetUI.PackageEngine.Classes
 
         public abstract OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output);
         protected abstract Task<ManagerSource[]> GetSources_UnSafe();
-    }
-
-    public class ManagerStatus
-    {
-        public string Version = "";
-        public bool Found = false;
-        public string ExecutablePath = "";
-        public ManagerStatus()
-        { }
-
-    }
-    public class ManagerProperties
-    {
-        public string Name { get; set; } = "Unset";
-        public string Description { get; set; } = "Unset";
-        public string IconId { get; set; } = "Unset";
-        public string ColorIconId { get; set; } = "Unset";
-        public string ExecutableCallArgs { get; set; } = "Unset";
-        public string ExecutableFriendlyName { get; set; } = "Unset";
-        public string InstallVerb { get; set; } = "Unset";
-        public string UpdateVerb { get; set; } = "Unset";
-        public string UninstallVerb { get; set; } = "Unset";
-
-    }
-    public struct ManagerCapabilities
-    {
-        public bool CanRunAsAdmin = false;
-        public bool CanSkipIntegrityChecks = false;
-        public bool CanRunInteractively = false;
-        public bool CanRemoveDataOnUninstall = false;
-        public bool SupportsCustomVersions = false;
-        public bool SupportsCustomArchitectures = false;
-        public Architecture[] SupportedCustomArchitectures = new Architecture[0];
-        public bool SupportsCustomScopes = false;
-        public bool SupportsPreRelease = false;
-        public bool SupportsCustomLocations = false;
-        public bool SupportsCustomSources = false;
-        public ManagerSource.Capabilities Sources { get; set; }
-        public ManagerCapabilities()
-        {
-            Sources = new ManagerSource.Capabilities();
-        }
-    }
-
-    public class ManagerSource
-    {
-        public virtual string IconId { get { return Manager.Properties.IconId; } }
-        public bool IsVirtualManager = false;
-        public struct Capabilities
-        {
-            public bool KnowsUpdateDate { get; set; } = false;
-            public bool KnowsPackageCount { get; set; } = false;
-            public bool MustBeInstalledAsAdmin { get; set; } = false;
-            public Capabilities()
-            { }
-        }
-
-        public PackageManager Manager { get; }
-        public string Name { get; }
-        public Uri Url { get; private set; }
-        public int? PackageCount { get; }
-        public string UpdateDate { get; }
-
-        public ManagerSource(PackageManager manager, string name, Uri url = null, int? packageCount = 0, string updateDate = null)
-        {
-            Manager = manager;
-            Name = name;
-            Url = url;
-            if (manager.Capabilities.Sources.KnowsPackageCount)
-                PackageCount = packageCount;
-            if (manager.Capabilities.Sources.KnowsUpdateDate)
-                UpdateDate = updateDate;
-        }
-
-        public override string ToString()
-        {
-            if (Manager.Capabilities.SupportsCustomSources)
-                return Manager.Name + ": " + Name;
-            else
-                return Manager.Name;
-        }
-
-        /// <summary>
-        /// Replaces the current URL with the new one. Must be used only when a placeholder URL is used.
-        /// </summary>
-        /// <param name="newUrl"></param>
-        public void ReplaceUrl(Uri newUrl)
-        {
-            Url = newUrl;
-        }
-    }
-
-    public class ManagerSourceFactory
-    {
-        private PackageManager __manager;
-        private Dictionary<string, ManagerSource> __reference;
-        private Uri __default_uri = new("https://marticliment.com/unigetui/");
-
-        public ManagerSourceFactory(PackageManager manager)
-        {
-            __reference = new();
-            __manager = manager;
-        }
-
-        public void Reset()
-        {
-            __reference.Clear();
-        }
-
-        /// <summary>
-        /// Returns the existing source for the given name, or creates a new one if it does not exist.
-        /// </summary>
-        /// <param name="name">The name of the source</param>
-        /// <returns>A valid ManagerSource</returns>
-        public ManagerSource GetSourceOrDefault(string name)
-        {
-            ManagerSource source;
-            if (__reference.TryGetValue(name, out source))
-            {
-                return source;
-            }
-
-            ManagerSource new_source = new(__manager, name, __default_uri);
-            __reference.Add(name, new_source);
-            return new_source;
-        }
-
-        /// <summary>
-        /// Returns the existing source for the given name, or null if it does not exist.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public ManagerSource? GetSourceIfExists(string name)
-        {
-            ManagerSource source;
-            if (__reference.TryGetValue(name, out source))
-            {
-                return source;
-            }
-            return null;
-        }
-
-        public void AddSource(ManagerSource source)
-        {
-            if (!__reference.TryAdd(source.Name, source))
-            {
-                ManagerSource existing_source = __reference[source.Name];
-                if (existing_source.Url == __default_uri)
-                    existing_source.ReplaceUrl(source.Url);
-            }
-        }
-
-        public ManagerSource[] GetAvailableSources()
-        {
-            return __reference.Values.ToArray();
-        }
     }
 }

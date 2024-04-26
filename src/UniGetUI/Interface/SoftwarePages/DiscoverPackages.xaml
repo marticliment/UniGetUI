@@ -7,10 +7,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
-    xmlns:pkgClasses="using:UniGetUI.PackageEngine.Classes"
+    xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
-    xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:engine1="using:UniGetUI.PackageEngine.Classes"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:engine1="using:UniGetUI.PackageEngine.PackageClasses"
     mc:Ignorable="d"
     Name="DiscoverPage"
     NavigationCacheMode="Required">

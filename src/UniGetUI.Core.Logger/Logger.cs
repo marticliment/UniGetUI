@@ -1,4 +1,6 @@
-﻿namespace UniGetUI.Core.Logging
+﻿using Diagnostics = System.Diagnostics;
+
+namespace UniGetUI.Core.Logging
 {
     public static class Logger
     {
@@ -6,11 +8,13 @@
 
         public static void Log(string s)
         {
+            Diagnostics.Debug.WriteLine(s);
             LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Debug));
         }
 
         public static void Log(object e)
         {
+            Diagnostics.Debug.WriteLine(e.ToString() ?? "[NullObject]");
             LogContents.Add(new LogEntry(e.ToString() ?? "[NullObject]", LogEntry.SeverityLevel.Debug));
         }
 

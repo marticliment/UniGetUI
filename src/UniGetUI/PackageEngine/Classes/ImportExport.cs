@@ -5,6 +5,10 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core;
+using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Serializable;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Classes
 {
@@ -17,14 +21,7 @@ namespace UniGetUI.PackageEngine.Classes
         public List<SerializableIncompatiblePackage_v1> incompatible_packages { get; set; } = new();
 
     }
-    public enum DeserializedPackageStatus
-    {
-        ManagerNotFound,
-        ManagerNotEnabled,
-        ManagerNotReady,
-        SourceNotFound,
-        IsAvailable
-    }
+    
     public class SerializableUpdatesOptions_v1
     {
         public bool UpdatesIgnored { get; set; } = false;
@@ -37,6 +34,7 @@ namespace UniGetUI.PackageEngine.Classes
             return Serializable;
         }
     }
+
     public class SerializableValidPackage_v1
     {
         public string Id { get; set; } = "";
@@ -48,18 +46,7 @@ namespace UniGetUI.PackageEngine.Classes
         public SerializableUpdatesOptions_v1 Updates { get; set; }
     }
 
-    public class SerializableInstallationOptions_v1
-    {
-        public bool SkipHashCheck { get; set; } = false;
-        public bool InteractiveInstallation { get; set; } = false;
-        public bool RunAsAdministrator { get; set; } = false;
-        public string Architecture { get; set; } = "";
-        public string InstallationScope { get; set; } = "";
-        public List<string> CustomParameters { get; set; }
-        public bool PreRelease { get; set; } = false;
-        public string CustomInstallLocation { get; set; } = "";
-        public string Version { get; set; } = "";
-    }
+    
 
     public class SerializableIncompatiblePackage_v1
     {
@@ -71,12 +58,7 @@ namespace UniGetUI.PackageEngine.Classes
 
 
 
-    public enum BundleFormatType
-    {
-        JSON,
-        YAML,
-        XML
-    }
+    
 
     public class BundledPackage : INotifyPropertyChanged
     {

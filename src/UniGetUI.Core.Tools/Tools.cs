@@ -13,7 +13,7 @@ namespace UniGetUI.Core.Tools
         private static LanguageEngine LanguageEngine;
         private static CoreTools? instance = null;
 
-        static CoreTools Instance
+        private static CoreTools Instance
         {
             get
             {
@@ -195,7 +195,7 @@ Crash Traceback:
         /// Checks whether the current process has administrator privileges
         /// </summary>
         /// <returns>True if the process has administrator privileges</returns>
-        public bool IsAdministrator()
+        public static bool IsAdministrator()
         {
             try
             {

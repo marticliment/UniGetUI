@@ -16,6 +16,7 @@ using Windows.Foundation.Collections;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI
 {

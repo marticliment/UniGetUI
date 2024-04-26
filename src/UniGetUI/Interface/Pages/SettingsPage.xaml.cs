@@ -17,6 +17,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Tools;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -137,13 +138,13 @@ namespace UniGetUI.Interface
             Scoop_Install.Click += (s, e) =>
             {
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"), Tools.Translate("Scoop Installer - WingetUI"));
-                PackageManagerExpanders[Tools.App.Scoop].ShowRestartRequiredBanner();
+                PackageManagerExpanders[AppTools.Instance.App.Scoop].ShowRestartRequiredBanner();
             };
             ButtonCard Scoop_Uninstall = new() { Text = Tools.AutoTranslated("Uninstall Scoop (and its packages)"), ButtonText = Tools.AutoTranslated("Uninstall") };
             Scoop_Uninstall.Click += (s, e) =>
             {
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"), Tools.Translate("Scoop Uninstaller - WingetUI"));
-                PackageManagerExpanders[Tools.App.Scoop].ShowRestartRequiredBanner();
+                PackageManagerExpanders[AppTools.Instance.App.Scoop].ShowRestartRequiredBanner();
             };
             ButtonCard Scoop_ResetAppCache = new() { Text = Tools.AutoTranslated("Run cleanup and clear cache"), ButtonText = Tools.AutoTranslated("Run") };
             Scoop_ResetAppCache.Click += (s, e) =>
@@ -151,17 +152,17 @@ namespace UniGetUI.Interface
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"), Tools.Translate("Clearing Scoop cache - WingetUI"), RunAsAdmin: true);
             };
 
-            ExtraSettingsCards[Tools.App.Scoop].Add(Scoop_Install);
-            ExtraSettingsCards[Tools.App.Scoop].Add(Scoop_Uninstall);
-            ExtraSettingsCards[Tools.App.Scoop].Add(Scoop_ResetAppCache);
+            ExtraSettingsCards[AppTools.Instance.App.Scoop].Add(Scoop_Install);
+            ExtraSettingsCards[AppTools.Instance.App.Scoop].Add(Scoop_Uninstall);
+            ExtraSettingsCards[AppTools.Instance.App.Scoop].Add(Scoop_ResetAppCache);
 
             CheckboxCard Chocolatey_SystemChoco = new() { Text = Tools.AutoTranslated("Use system Chocolatey"), SettingName = "UseSystemChocolatey" };
             Chocolatey_SystemChoco.StateChanged += (s, e) =>
             {
-                PackageManagerExpanders[Tools.App.Choco].ShowRestartRequiredBanner();
+                PackageManagerExpanders[AppTools.Instance.App.Choco].ShowRestartRequiredBanner();
             };
 
-            ExtraSettingsCards[Tools.App.Choco].Add(Chocolatey_SystemChoco);
+            ExtraSettingsCards[AppTools.Instance.App.Choco].Add(Chocolatey_SystemChoco);
 
 
 

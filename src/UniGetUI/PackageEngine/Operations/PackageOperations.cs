@@ -13,31 +13,12 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.ManagerClasses;
 
 namespace UniGetUI.PackageEngine.Operations
 {
-    public enum OperationVeredict
-    {
-        Succeeded,
-        Failed,
-        AutoRetry,
-    }
-    public enum OperationStatus
-    {
-        Pending,
-        Running,
-        Succeeded,
-        Failed,
-        Cancelled
-    }
-
-    public enum OperationType
-    {
-        Install,
-        Update,
-        Uninstall,
-        None
-    }
 
     public class OperationCancelledEventArgs : EventArgs
     {

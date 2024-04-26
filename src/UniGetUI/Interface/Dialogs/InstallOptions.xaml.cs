@@ -10,6 +10,7 @@ using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.PackageClasses;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

@@ -20,6 +20,7 @@ using Windows.ApplicationModel.DataTransfer;
 using UniGetUI.Core.Logging;
 using Windows.Foundation.Collections;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.PackageClasses;
 
 
 namespace UniGetUI.Interface

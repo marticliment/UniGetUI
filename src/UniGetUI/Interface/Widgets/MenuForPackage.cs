@@ -4,6 +4,7 @@ using System;
 using UniGetUI.Core;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.Interface.Widgets
 {

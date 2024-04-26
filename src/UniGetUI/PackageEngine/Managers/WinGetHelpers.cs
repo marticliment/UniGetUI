@@ -13,6 +13,8 @@ using WindowsPackageManager.Interop;
 using UniGetUI.Core.Logging;
 using Deployment = Microsoft.Management.Deployment;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers
 {
@@ -33,7 +35,7 @@ namespace UniGetUI.PackageEngine.Managers
 
         public NativeWinGetHelper()
         {
-            if (Winget.Tools.IsAdministrator())
+            if (CoreTools.IsAdministrator())
                 Logger.Log("[WARNING] Running elevated, WinGet class registration is likely to fail");
             Factory = new WindowsPackageManagerStandardFactory();
             WinGetManager = Factory.CreatePackageManager();
@@ -303,7 +305,7 @@ namespace UniGetUI.PackageEngine.Managers
                     else if (line.Contains("Installer Url:"))
                     {
                         details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
-                        details.InstallerSize = await Winget.Tools.GetFileSizeAsync(details.InstallerUrl);
+                        details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
                     }
                     else if (line.Contains("Release Date:"))
                         details.UpdateDate = line.Split(":")[1].Trim();
@@ -569,7 +571,7 @@ namespace UniGetUI.PackageEngine.Managers
                     else if (line.Contains("Installer Url:"))
                     {
                         details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
-                        details.InstallerSize = await Winget.Tools.GetFileSizeAsync(details.InstallerUrl);
+                        details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
                     }
                     else if (line.Contains("Release Date:"))
                         details.UpdateDate = line.Split(":")[1].Trim();

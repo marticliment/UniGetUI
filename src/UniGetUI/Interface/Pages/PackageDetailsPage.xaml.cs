@@ -14,6 +14,8 @@ using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Logging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Enums;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

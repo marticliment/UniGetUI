@@ -16,6 +16,7 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.Core.Logging;
 using ExternalLibraries.Clipboard;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.Enums;
 
 
 // To learn more about WinUI, the WinUI project structure,
