@@ -11,14 +11,13 @@ using UniGetUI.Core;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.Core.Logging;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
-namespace UniGetUI.PackageEngine.Managers
+namespace UniGetUI.PackageEngine.Managers.DotNetManager
 {
-    public class Dotnet : PackageManager
+    public class DotNet : PackageManager
     {
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
@@ -56,13 +55,13 @@ namespace UniGetUI.PackageEngine.Managers
                 {
                     string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
                     if (elements.Length >= 2)
-                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
+                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, PackageScope.Global));
                     // Dotnet tool packages are installed globally by default, hence the Global flag
                 }
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -128,11 +127,11 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, PackageScope.Global));
+                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
 
             return Packages.ToArray();
         }
@@ -175,7 +174,7 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.User));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, PackageScope.User));
                 }
             }
 
@@ -215,11 +214,11 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, PackageScope.Global));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
 
             return Packages.ToArray();
         }
@@ -275,11 +274,6 @@ namespace UniGetUI.PackageEngine.Managers
                 parameters.Add("--global");
 
             return parameters.ToArray();
-        }
-
-        public override ManagerSource GetMainSource()
-        {
-            return new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/"));
         }
 
         public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
@@ -391,7 +385,8 @@ namespace UniGetUI.PackageEngine.Managers
                 UninstallVerb = "uninstall",
                 UpdateVerb = "update",
                 ExecutableCallArgs = "tool",
-
+                DefaultSource = new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/")),
+                KnownSources = [new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/"))],
             };
             return properties;
         }

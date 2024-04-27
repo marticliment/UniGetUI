@@ -288,11 +288,11 @@ namespace UniGetUI.Interface
                 ExtraSettingsCards[Manager].Insert(index++, ParallelCard);
 
 
-                if (Manager is PackageManagerWithSources)
+                if (Manager.Capabilities.SupportsCustomSources)
                 {
                     SettingsCard SourceManagerCard = new();
                     SourceManagerCard.Resources["SettingsCardLeftIndention"] = 10;
-                    SourceManager SourceManager = new(Manager as PackageManagerWithSources);
+                    SourceManager SourceManager = new(Manager);
                     SourceManagerCard.Description = SourceManager;
                     ExtraSettingsCards[Manager].Insert(index++, SourceManagerCard);
                 }

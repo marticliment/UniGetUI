@@ -1,6 +1,8 @@
-﻿using UniGetUI.Core.Classes;
+﻿using System.ComponentModel;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -13,11 +15,21 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public ManagerCapabilities Capabilities { get; set; } = new();
         public ManagerStatus Status { get; set; } = new() { Found = false };
         public string Name { get; set; } = "Unset";
-        public ManagerSource MainSource { get; set; }
+        public ManagerSource DefaultSource { get; set; }
         public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
         public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
         public bool ManagerReady { get; set; } = false;
+
+        public BaseSourceProvider<PackageManager>? SourceProvider;
+
+        public PackageManager()
+        {
+            Properties = GetProperties();
+            DefaultSource = Properties.DefaultSource;
+            Name = Properties.Name;
+            Capabilities = GetCapabilities();
+        }
 
 
         /// <summary>
@@ -26,20 +38,20 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <returns></returns>
         public async Task InitializeAsync()
         {
+            // BEGIN integrity check
+            if (Capabilities.SupportsCustomSources && SourceProvider == null)
+                throw new Exception($"Manager {Name} has been declared as SupportsCustomSources but has no helper associated with it");
+            // END integrity check
+
             try
             {
-                Properties = GetProperties();
-                Name = Properties.Name;
-                Capabilities = GetCapabilities();
-                MainSource = GetMainSource();
                 Status = await LoadManager();
 
 
-                if (this is PackageManagerWithSources && Status.Found)
+                if (SourceProvider != null && Status.Found)
                 {
-                    (this as PackageManagerWithSources).KnownSources = (this as PackageManagerWithSources).GetKnownSources();
 
-                    Task<ManagerSource[]> SourcesTask = (this as PackageManagerWithSources).GetSources();
+                    Task<ManagerSource[]> SourcesTask = GetSources();
                     Task winner = await Task.WhenAny(
                         SourcesTask,
                         Task.Delay(10000));
@@ -328,47 +340,73 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <returns></returns>
         public abstract Task RefreshPackageIndexes();
 
-        /// <summary>
-        /// Returns the main source for the manager, even if the manager does not support custom sources.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <returns>A ManagerSource object representing the main source/index</returns>
-        public abstract ManagerSource GetMainSource();
-    }
-
-    public abstract class PackageManagerWithSources : PackageManager
-    {
-        public ManagerSourceFactory SourceFactory { get; private set; }
-        public ManagerSource[] KnownSources { get; set; }
-
-        public PackageManagerWithSources() : base()
-        {
-            SourceFactory = new(this);
-        }
-
         public virtual async Task<ManagerSource[]> GetSources()
         {
             try
             {
-                ManagerSource[] sources = await GetSources_UnSafe();
-                SourceFactory.Reset();
-                foreach (ManagerSource source in sources)
-                    SourceFactory.AddSource(source);
-                return sources;
+                if (SourceProvider == null)
+                    throw new Exception($"GetSources() called on Manager {Name} when ManagerSourceProvider helper is null");
+
+                return await SourceProvider.GetSources();
             }
             catch (Exception e)
             {
-                Logger.Log("Error finding sources for manager " + Name + ": \n" + e.ToString());
-                return new ManagerSource[0];
+                Logger.Log($"Error finding sources for Manager {Name}: \n" + e.ToString());
+                return [];
             }
         }
 
-        public abstract ManagerSource[] GetKnownSources();
-        public abstract string[] GetAddSourceParameters(ManagerSource source);
-        public abstract string[] GetRemoveSourceParameters(ManagerSource source);
-        public abstract OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output);
+        /// <summary>
+        /// Will check if the Manager supports custom sources, and throw an exception if not
+        /// </summary>
+        /// <param name="MethodName"></param>
+        /// <exception cref="Exception"></exception>
+        private void AssertSourceCompatibility(string MethodName)
+        {
+            if (!Capabilities.SupportsCustomSources)
+                throw new Exception($"Manager {Name} does not support custom sources but yet a GetKnownSources method was called");
+            else if (SourceProvider == null)
+                throw new Exception($"Manager {Name} does support custom sources but yet the source helper is null");
+        }
 
-        public abstract OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output);
-        protected abstract Task<ManagerSource[]> GetSources_UnSafe();
+#pragma warning disable CS8602
+        public ManagerSource GetSourceOrDefault(string SourceName)
+        {
+            AssertSourceCompatibility("GetSourceFromName");
+            return SourceProvider.SourceFactory.GetSourceOrDefault(SourceName);
+        }
+        public ManagerSource? GetSourceIfExists(string SourceName)
+        {
+            AssertSourceCompatibility("GetSourceIfExists");
+            return SourceProvider.SourceFactory.GetSourceIfExists(SourceName);
+        }
+
+        public string[] GetAddSourceParameters(ManagerSource source)
+        {
+            AssertSourceCompatibility("GetAddSourceParameters");
+            return SourceProvider.GetAddSourceParameters(source);
+        }
+        
+        public string[] GetRemoveSourceParameters(ManagerSource source)
+        {
+            AssertSourceCompatibility("GetRemoveSourceParameters");
+            return SourceProvider.GetRemoveSourceParameters(source);
+        }
+        
+        public OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        {
+            AssertSourceCompatibility("GetAddSourceOperationVeredict");
+            return SourceProvider.GetAddSourceOperationVeredict(source, ReturnCode, Output);
+        }
+        
+        public OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        {
+            AssertSourceCompatibility("GetRemoveSourceOperationVeredict");
+            return SourceProvider.GetRemoveSourceOperationVeredict(source, ReturnCode, Output);
+        }
+#pragma warning restore CS8602
+
+
+
     }
 }

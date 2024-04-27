@@ -31,13 +31,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Intereface\**" />
-    <Compile Remove="PackageEngine\Managers\WinGetClasses\**" />
     <EmbeddedResource Remove="Intereface\**" />
-    <EmbeddedResource Remove="PackageEngine\Managers\WinGetClasses\**" />
     <None Remove="Intereface\**" />
-    <None Remove="PackageEngine\Managers\WinGetClasses\**" />
     <Page Remove="Intereface\**" />
-    <Page Remove="PackageEngine\Managers\WinGetClasses\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Interface\Dialogs\HelpInterface.xaml" />
@@ -1324,51 +1320,6 @@
     <Page Update="Interface\Pages\AboutPages\AboutUniGetUI.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <None Update="PackageEngine\Managers\winget-cli_x64\AppInstallerBackgroundTasks.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\concrt140_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\Microsoft.Management.Configuration.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\msvcp140_1_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\msvcp140_2_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\msvcp140_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\resources.pri">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\vcamp140_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\vccorlib140_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\vcomp140_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\vcruntime140_1_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\vcruntime140_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\WindowsPackageManager.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\WindowsPackageManagerServer.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\winget.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Interface\Dialogs\PackageDetailsPage.xaml">
@@ -1425,9 +1376,6 @@
     <Folder Include="PackageEngine\Operations\" />
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Remove="PackageEngine\Managers\WinGetClasses\**" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\ExternalLibraries.Clipboard\ExternalLibraries.Clipboard.csproj" />
     <ProjectReference Include="..\ExternalLibraries.FilePickers\ExternalLibraries.FilePickers.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj" />
@@ -1439,8 +1387,14 @@
     <ProjectReference Include="..\UniGetUI.Core.Tools\UniGetUI.Core.Tools.csproj" />
     <ProjectReference Include="..\UniGetUI.Interface.Enums\UniGetUI.Interface.Enums.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Enums\UniGetUI.PackageEngine.Enums.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Chocolatey\UniGetUI.PackageEngine.Managers.Chocolatey.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Dotnet\UniGetUI.PackageEngine.Managers.Dotnet.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Npm\UniGetUI.PackageEngine.Managers.Npm.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Pip\UniGetUI.PackageEngine.Managers.Pip.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.PowerShell\UniGetUI.PackageEngine.Managers.PowerShell.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Scoop\UniGetUI.PackageEngine.Managers.Scoop.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.WinGet\UniGetUI.PackageEngine.Managers.WinGet.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.PackageManagerClasses\UniGetUI.PackageEngine.Classes.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Serializable\UniGetUI.PackageEngine.Serializable.csproj" />
-    <ProjectReference Include="..\WindowsPackageManager.Interop\WindowsPackageManager Interop.csproj" />
   </ItemGroup>
 </Project>

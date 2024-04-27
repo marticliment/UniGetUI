@@ -17,17 +17,24 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Managers.ScoopManager;
+using UniGetUI.PackageEngine.Managers.WingetManager;
+using UniGetUI.PackageEngine.Managers.ChocolateyManager;
+using UniGetUI.PackageEngine.Managers.PowerShellManager;
+using UniGetUI.PackageEngine.Managers.DotNetManager;
+using UniGetUI.PackageEngine.Managers.PipManager;
+using UniGetUI.PackageEngine.Managers.NpmManager;
 
 namespace UniGetUI
 {
     public partial class MainApp : Application
     {
         public Scoop Scoop;
-        public Winget Winget;
+        public WinGet_ Winget;
         public Chocolatey Choco;
         public Pip Pip;
         public Npm Npm;
-        public Dotnet Dotnet;
+        public DotNet Dotnet;
         public PowerShell PowerShell;
 
         public bool RaiseExceptionAsFatal = true;
@@ -219,12 +226,12 @@ namespace UniGetUI
         /// </summary>
         private void InitializePackageManagers()
         {
-            Winget = new Winget();
+            Winget = new WinGet_();
             Scoop = new Scoop();
             Choco = new Chocolatey();
             Pip = new Pip();
             Npm = new Npm();
-            Dotnet = new Dotnet();
+            Dotnet = new DotNet();
             PowerShell = new PowerShell();
 
             PackageManagerList.AddRange(new PackageManager[]

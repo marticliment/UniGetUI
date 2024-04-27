@@ -9,18 +9,22 @@ using UniGetUI.Core;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.Core.Logging;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
-namespace UniGetUI.PackageEngine.Managers
+namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
-    public class PowerShell : PackageManagerWithSources
+    public class PowerShell : PackageManager
     {
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
+
+        public PowerShell(): base()
+        {
+            SourceProvider = new PowerShellSourceProvider(this);
+        }
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
@@ -59,12 +63,12 @@ namespace UniGetUI.PackageEngine.Managers
 
                     for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
 
-                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[1]), elements[1], elements[0], SourceFactory.GetSourceOrDefault(elements[2]), this));
+                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[1]), elements[1], elements[0], GetSourceOrDefault(elements[2]), this));
                 }
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -129,11 +133,11 @@ namespace UniGetUI.PackageEngine.Managers
                 if (elements[1] + ".0" == elements[2] || elements[1] + ".0.0" == elements[2])
                     continue;
 
-                Packages.Add(new UpgradablePackage(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], SourceFactory.GetSourceOrDefault(elements[3]), this));
+                Packages.Add(new UpgradablePackage(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], GetSourceOrDefault(elements[3]), this));
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
@@ -175,12 +179,12 @@ namespace UniGetUI.PackageEngine.Managers
 
                     for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[1]), elements[1], elements[0], SourceFactory.GetSourceOrDefault(elements[2]), this));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[1]), elements[1], elements[0], GetSourceOrDefault(elements[2]), this));
                 }
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
@@ -247,10 +251,6 @@ namespace UniGetUI.PackageEngine.Managers
                 parameters.AddRange(options.CustomParameters);
 
             return parameters.ToArray();
-        }
-        public override ManagerSource GetMainSource()
-        {
-            return new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2"));
         }
 
         public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
@@ -326,59 +326,7 @@ namespace UniGetUI.PackageEngine.Managers
             return details;
         }
 
-        protected override async Task<ManagerSource[]> GetSources_UnSafe()
-        {
-            List<ManagerSource> sources = new();
-
-            Process process = new();
-            ProcessStartInfo startInfo = new()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " Get-PSRepository",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-
-            process.StartInfo = startInfo;
-            process.Start();
-
-            bool dashesPassed = false;
-            string line;
-            string output = "";
-            while ((line = await process.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
-                try
-                {
-                    if (string.IsNullOrEmpty(line))
-                        continue;
-
-                    if (!dashesPassed)
-                    {
-                        if (line.Contains("---"))
-                            dashesPassed = true;
-                    }
-                    else
-                    {
-                        string[] parts = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
-                        if (parts.Length >= 3)
-                            sources.Add(new ManagerSource(this, parts[0].Trim(), new Uri(parts[2].Trim())));
-                    }
-                }
-                catch (Exception e)
-                {
-                    Logger.Log(e);
-                }
-            }
-            output += await process.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, process, output);
-            await process.WaitForExitAsync();
-            return sources.ToArray();
-        }
+        
 
 #pragma warning disable CS1998
         public override async Task RefreshPackageIndexes()
@@ -417,7 +365,9 @@ namespace UniGetUI.PackageEngine.Managers
                 UninstallVerb = "Uninstall-Module",
                 UpdateVerb = "Update-Module",
                 ExecutableCallArgs = " -NoProfile -Command",
-
+                KnownSources = [new(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
+                                new(this, "PoshTestGallery", new Uri("https://www.poshtestgallery.com/api/v2"))],
+                DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
             };
             return properties;
         }
@@ -496,36 +446,6 @@ namespace UniGetUI.PackageEngine.Managers
             }
 
             return versions.ToArray();
-        }
-
-        public override ManagerSource[] GetKnownSources()
-        {
-            return new ManagerSource[] {
-                new(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
-                new(this, "PoshTestGallery", new Uri("https://www.poshtestgallery.com/api/v2"))
-            };
-        }
-
-        public override string[] GetAddSourceParameters(ManagerSource source)
-        {
-            if (source.Url.ToString() == "https://www.powershellgallery.com/api/v2")
-                return new string[] { "Register-PSRepository", "-Default" };
-            return new string[] { "Register-PSRepository", "-Name", source.Name, "-SourceLocation", source.Url.ToString() };
-        }
-
-        public override string[] GetRemoveSourceParameters(ManagerSource source)
-        {
-            return new string[] { "Unregister-PSRepository", "-Name", source.Name };
-        }
-
-        public override OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
-        {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
-        }
-
-        public override OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
-        {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
     }
 

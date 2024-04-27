@@ -9,22 +9,28 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UniGetUI.Core;
 using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 
-namespace UniGetUI.PackageEngine.Managers
+namespace UniGetUI.PackageEngine.Managers.ScoopManager
 {
 
-    public class Scoop : PackageManagerWithSources
+    public class Scoop : PackageManager
     {
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "No" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "Matches" };
+
+        public Scoop(): base()
+        {
+            SourceProvider = new ScoopSourceProvider(this);
+        }
+
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = new();
@@ -65,7 +71,7 @@ namespace UniGetUI.PackageEngine.Managers
             p.Start();
 
             string line;
-            ManagerSource source = GetMainSource();
+            ManagerSource source = Properties.DefaultSource;
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
@@ -73,7 +79,7 @@ namespace UniGetUI.PackageEngine.Managers
                 if (line.StartsWith("'"))
                 {
                     string sourceName = line.Split(" ")[0].Replace("'", "");
-                    source = SourceFactory.GetSourceOrDefault(sourceName);
+                    source = GetSourceOrDefault(sourceName);
                 }
                 else if (line.Trim() != "")
                 {
@@ -90,7 +96,7 @@ namespace UniGetUI.PackageEngine.Managers
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
             return Packages.ToArray();
         }
 
@@ -153,7 +159,7 @@ namespace UniGetUI.PackageEngine.Managers
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
             return Packages.ToArray();
         }
 
@@ -203,17 +209,12 @@ namespace UniGetUI.PackageEngine.Managers
                     if (line.Contains("Global install"))
                         scope = PackageScope.Global;
 
-                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], SourceFactory.GetSourceOrDefault(elements[2]), this, scope));
+                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], GetSourceOrDefault(elements[2]), this, scope));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
             return Packages.ToArray();
-        }
-
-        public override ManagerSource GetMainSource()
-        {
-            return new ManagerSource(this, "main", new Uri("https://github.com/ScoopInstaller/Main"), 0, "");
         }
 
         public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
@@ -346,64 +347,6 @@ namespace UniGetUI.PackageEngine.Managers
 
             return details;
 
-        }
-
-        protected override async Task<ManagerSource[]> GetSources_UnSafe()
-        {
-            using (Process process = new())
-            {
-                process.StartInfo.FileName = Status.ExecutablePath;
-                process.StartInfo.Arguments = Properties.ExecutableCallArgs + " bucket list";
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.RedirectStandardInput = true;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-                process.StartInfo.StandardInputEncoding = System.Text.Encoding.UTF8;
-                process.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
-
-                List<ManagerSource> sources = new();
-
-                process.Start();
-
-                string _output = "";
-                bool DashesPassed = false;
-
-                string line;
-                while ((line = await process.StandardOutput.ReadLineAsync()) != null)
-                {
-                    _output += line + "\n";
-                    try
-                    {
-                        if (!DashesPassed)
-                        {
-                            if (line.Contains("---"))
-                                DashesPassed = true;
-                        }
-                        else if (line.Trim() != "")
-                        {
-                            string[] elements = Regex.Replace(line.Replace("AM", "").Replace("PM", "").Trim(), " {2,}", " ").Split(' ');
-                            if (elements.Length >= 5)
-                            {
-                                if (!elements[1].Contains("https://"))
-                                    elements[1] = "https://scoop.sh/"; // If the URI is invalid, we'll use the main website
-                                sources.Add(new ManagerSource(this, elements[0].Trim(), new Uri(elements[1].Trim()), int.Parse(elements[4].Trim()), elements[2].Trim() + " " + elements[3].Trim()));
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Log(e);
-                    }
-                }
-                _output += await process.StandardError.ReadToEndAsync();
-                AppTools.LogManagerOperation(this, process, _output);
-
-                await process.WaitForExitAsync();
-
-
-                return sources.ToArray();
-            }
         }
 
         public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
@@ -546,7 +489,18 @@ namespace UniGetUI.PackageEngine.Managers
                 ExecutableFriendlyName = "scoop",
                 InstallVerb = "install",
                 UpdateVerb = "update",
-                UninstallVerb = "uninstall"
+                UninstallVerb = "uninstall",
+                KnownSources = [new(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
+                                new(this, "extras", new Uri("https://github.com/ScoopInstaller/Extras")),
+                                new(this, "versions", new Uri("https://github.com/ScoopInstaller/Versions")),
+                                new(this, "nirsoft", new Uri("https://github.com/kodybrown/scoop-nirsoft")),
+                                new(this, "sysinternals", new Uri("https://github.com/niheaven/scoop-sysinternals")),
+                                new(this, "php", new Uri("https://github.com/ScoopInstaller/PHP")),
+                                new(this, "nerd-fonts", new Uri("https://github.com/matthewjberger/scoop-nerd-fonts")),
+                                new(this, "nonportable", new Uri("https://github.com/ScoopInstaller/Nonportable")),
+                                new(this, "java", new Uri("https://github.com/ScoopInstaller/Java")),
+                                new(this, "games", new Uri("https://github.com/Calinou/scoop-games"))],
+                DefaultSource = new(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
             };
         }
 
@@ -614,43 +568,6 @@ namespace UniGetUI.PackageEngine.Managers
             await Task.Delay(0);
             Logger.Log("Manager " + Name + " does not support version retrieving, this function should have never been called");
             return new string[0];
-        }
-
-        public override ManagerSource[] GetKnownSources()
-        {
-            return new ManagerSource[]
-            {
-            new(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
-            new(this, "extras", new Uri("https://github.com/ScoopInstaller/Extras")),
-            new(this, "versions", new Uri("https://github.com/ScoopInstaller/Versions")),
-            new(this, "nirsoft", new Uri("https://github.com/kodybrown/scoop-nirsoft")),
-            new(this, "sysinternals", new Uri("https://github.com/niheaven/scoop-sysinternals")),
-            new(this, "php", new Uri("https://github.com/ScoopInstaller/PHP")),
-            new(this, "nerd-fonts", new Uri("https://github.com/matthewjberger/scoop-nerd-fonts")),
-            new(this, "nonportable", new Uri("https://github.com/ScoopInstaller/Nonportable")),
-            new(this, "java", new Uri("https://github.com/ScoopInstaller/Java")),
-            new(this, "games", new Uri("https://github.com/Calinou/scoop-games")),
-            };
-        }
-
-        public override string[] GetAddSourceParameters(ManagerSource source)
-        {
-            return new string[] { "bucket", "add", source.Name, source.Url.ToString() };
-        }
-
-        public override string[] GetRemoveSourceParameters(ManagerSource source)
-        {
-            return new string[] { "bucket", "rm", source.Name };
-        }
-
-        public override OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
-        {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
-        }
-
-        public override OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
-        {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
     }
 }

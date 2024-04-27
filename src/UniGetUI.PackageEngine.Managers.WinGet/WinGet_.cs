@@ -10,31 +10,41 @@ using UniGetUI.Core.Data;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.Core.Logging;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using Windows.Graphics.Display;
 
 
-namespace UniGetUI.PackageEngine.Managers
+namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
-    public class Winget : PackageManagerWithSources
+    public class WinGet_ : PackageManager
     {
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "", "e(s)", "have", "the", "Id" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "", "e(s)", "have", "an", "'winget", "pin'", "have", "an", "Version" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "have", "an", "'winget", "pin'", "have", "an", "Version" };
-        private static LocalPcSource LocalPcSource { get; } = new LocalPcSource();
-        private static AndroidSubsystemSource AndroidSubsystemSource { get; } = new AndroidSubsystemSource();
-        private static SteamSource SteamSource { get; } = new SteamSource();
-        private static UbisoftConnectSource UbisoftConnectSource { get; } = new UbisoftConnectSource();
-        private static GOGSource GOGSource { get; } = new GOGSource();
-        private static MicrosoftStoreSource MicrosoftStoreSource { get; } = new MicrosoftStoreSource();
+        private LocalWingetSource LocalPcSource { get; set; }
+        private LocalWingetSource AndroidSubsystemSource { get; set; }
+        private LocalWingetSource SteamSource { get; set; }
+        private LocalWingetSource UbisoftConnectSource { get; set; }
+        private LocalWingetSource GOGSource { get; set; }
+        private LocalWingetSource MicrosoftStoreSource { get; set; }
 
-        private IWinGetPackageHelper WinGetHelper;
+        public WinGet_(): base()
+        {
+            SourceProvider = new WinGetSourceProvider(this);
+            LocalPcSource = new(this, CoreTools.Translate("Local PC"), "localpc");
+            AndroidSubsystemSource = new(this, CoreTools.Translate("Android Subsystem"), "android");
+            SteamSource = new(this, "Steam", "steam");
+            UbisoftConnectSource = new(this, "Ubisoft Connect", "uplay");
+            GOGSource = new(this, "GOG", "gog");
+            MicrosoftStoreSource = new(this, "Microsoft Store", "msstore");
+        }
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            return await WinGetHelper.FindPackages_UnSafe(this, query);
+            return await WinGetHelper.Instance.FindPackages_UnSafe(this, query);
         }
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
@@ -98,13 +108,13 @@ namespace UniGetUI.PackageEngine.Managers
                 if (elements.Length < 5)
                     continue;
 
-                ManagerSource source = SourceFactory.GetSourceOrDefault(elements[4]);
+                ManagerSource source = GetSourceOrDefault(elements[4]);
 
                 Packages.Add(new UpgradablePackage(elements[0][1..], elements[1], elements[2], elements[3], source, this));
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // CoreTools.LogManagerOperation(this, p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
@@ -168,7 +178,7 @@ namespace UniGetUI.PackageEngine.Managers
 
                 ManagerSource source;
                 if (elements[3] != "")
-                    source = SourceFactory.GetSourceOrDefault(elements[3]);
+                    source = GetSourceOrDefault(elements[3]);
                 else
                     source = GetLocalSource(elements[1]);
 
@@ -176,7 +186,7 @@ namespace UniGetUI.PackageEngine.Managers
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
@@ -317,7 +327,7 @@ namespace UniGetUI.PackageEngine.Managers
                 {
                     StartInfo = new ProcessStartInfo()
                     {
-                        FileName = AppTools.GSudoPath,
+                        // FileName = AppTools.GSudoPath,
                         Arguments = Status.ExecutablePath + " " + Properties.ExecutableCallArgs + " settings --enable InstallerHashOverride",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
@@ -352,26 +362,17 @@ namespace UniGetUI.PackageEngine.Managers
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
-
-        public override ManagerSource GetMainSource()
-        {
-            return new ManagerSource(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache"));
-        }
-
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
-            return await WinGetHelper.GetPackageVersions_Unsafe(this, package);
+            return await WinGetHelper.Instance.GetPackageVersions_Unsafe(this, package);
         }
 
         public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
-            return await WinGetHelper.GetPackageDetails_UnSafe(this, package);
+            return await WinGetHelper.Instance.GetPackageDetails_UnSafe(this, package);
         }
 
-        protected override async Task<ManagerSource[]> GetSources_UnSafe()
-        {
-            return await WinGetHelper.GetSources_UnSafe(this);
-        }
+        
 
         public override async Task RefreshPackageIndexes()
         {
@@ -414,6 +415,9 @@ namespace UniGetUI.PackageEngine.Managers
                 UninstallVerb = "uninstall",
                 UpdateVerb = "update",
                 ExecutableCallArgs = "",
+                KnownSources = [ new(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache")),
+                                 new(this, "msstore", new Uri("https://storeedgefd.dsx.mp.microsoft.com/v9.0")) ],
+                DefaultSource = new(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache"))
             };
             return properties;
         }
@@ -448,13 +452,13 @@ namespace UniGetUI.PackageEngine.Managers
 
             try
             {
-                await Task.Run(() => WinGetHelper = new NativeWinGetHelper());
+                await Task.Run(() => WinGetHelper.Instance = new NativeWinGetHelper());
                 status.Version += "\nUsing Native WinGet helper (COM Api)";
             }
             catch (Exception ex)
             {
                 Logger.Log("Cannot create native WinGet instance due to error: " + ex.ToString());
-                WinGetHelper = new BundledWinGetHelper();
+                WinGetHelper.Instance = new BundledWinGetHelper();
                 status.Version += "\nUsing bundled WinGet helper (CLI parsing)";
             }
 
@@ -464,100 +468,28 @@ namespace UniGetUI.PackageEngine.Managers
 
             return status;
         }
-
-        public override ManagerSource[] GetKnownSources()
-        {
-            return new ManagerSource[]
-            {
-                new(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache")),
-                new(this, "msstore", new Uri("https://storeedgefd.dsx.mp.microsoft.com/v9.0")),
-            };
-        }
-
-        public override string[] GetAddSourceParameters(ManagerSource source)
-        {
-            return new string[] { "source", "add", "--name", source.Name, "--arg", source.Url.ToString(), "--accept-source-agreements", "--disable-interactivity" };
-        }
-
-        public override string[] GetRemoveSourceParameters(ManagerSource source)
-        {
-            return new string[] { "source", "remove", "--name", source.Name, "--disable-interactivity" };
-        }
-
-        public override OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
-        {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
-        }
-
-        public override OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
-        {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
-        }
     }
 
-    public class LocalPcSource : ManagerSource
+    internal class LocalWingetSource: ManagerSource
     {
-        public override string IconId { get { return "localpc"; } }
-        public LocalPcSource() : base(AppTools.Instance.App.Winget, CoreTools.Translate("Local PC"), new Uri("https://microsoft.com/local-pc-source"))
-        { IsVirtualManager = true; }
-        public override string ToString()
-        {
-            return CoreTools.Translate("Local PC");
-        }
-    }
+        private string name;
+        private Uri url = new Uri("https://microsoft.com/local-pc-source");
+        private string __icon_id;
+        public override string IconId { get { return __icon_id; } }
 
-    public class AndroidSubsystemSource : ManagerSource
-    {
-        public override string IconId { get { return "android"; } }
-        public AndroidSubsystemSource() : base(AppTools.Instance.App.Winget, CoreTools.Translate("Android Subsystem"), new Uri("https://microsoft.com/local-pc-source"))
-        { IsVirtualManager = true; }
-        public override string ToString()
+        public LocalWingetSource(WinGet_ manager, string name, string iconId) : base(manager, name)
         {
-            return CoreTools.Translate("Android Subsystem");
+            this.name = name;
+            __icon_id = iconId;
         }
-    }
 
-    public class SteamSource : ManagerSource
-    {
-        public override string IconId { get { return "steam"; } }
-        public SteamSource() : base(AppTools.Instance.App.Winget, "Steam", new Uri("https://microsoft.com/local-pc-source"))
-        { IsVirtualManager = true; }
         public override string ToString()
         {
-            return "Steam";
-        }
-    }
-
-    public class UbisoftConnectSource : ManagerSource
-    {
-        public override string IconId { get { return "uplay"; } }
-        public UbisoftConnectSource() : base(AppTools.Instance.App.Winget, "Ubisoft Connect", new Uri("https://microsoft.com/local-pc-source"))
-        { IsVirtualManager = true; }
-        public override string ToString()
-        {
-            return "Ubisoft Connect";
-        }
-    }
-
-    public class GOGSource : ManagerSource
-    {
-        public override string IconId { get { return "gog"; } }
-        public GOGSource() : base(AppTools.Instance.App.Winget, "GOG", new Uri("https://microsoft.com/gog-source"))
-        { IsVirtualManager = true; }
-        public override string ToString()
-        {
-            return "GOG";
-        }
-    }
-
-    public class MicrosoftStoreSource : ManagerSource
-    {
-        public override string IconId { get { return "msstore"; } }
-        public MicrosoftStoreSource() : base(AppTools.Instance.App.Winget, "Microsoft Store", new Uri("https://microsoft.com/microsoft-store-source"))
-        { IsVirtualManager = true; }
-        public override string ToString()
-        {
-            return "Microsoft Store";
+            return name;
         }
     }
 }
+
+
+
+

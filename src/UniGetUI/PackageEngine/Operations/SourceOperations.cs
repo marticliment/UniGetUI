@@ -47,13 +47,13 @@ namespace UniGetUI.PackageEngine.Operations
                     p.WaitForExit();
                 }
                 startInfo.FileName = AppTools.GSudoPath;
-                startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", (Source.Manager as PackageManagerWithSources).GetAddSourceParameters(Source));
+                startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetAddSourceParameters(Source));
 
             }
             else
             {
                 startInfo.FileName = Source.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", (Source.Manager as PackageManagerWithSources).GetAddSourceParameters(Source));
+                startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetAddSourceParameters(Source));
             }
             Process process = new();
             process.StartInfo = startInfo;
@@ -71,7 +71,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
         {
-            return (Source.Manager as PackageManagerWithSources).GetAddSourceOperationVeredict(Source, ReturnCode, Output);
+            return Source.Manager.GetAddSourceOperationVeredict(Source, ReturnCode, Output);
         }
 
         protected override async Task<AfterFinshAction> HandleFailure()
@@ -184,13 +184,13 @@ namespace UniGetUI.PackageEngine.Operations
                     p.WaitForExit();
                 }
                 startInfo.FileName = AppTools.GSudoPath;
-                startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", (Source.Manager as PackageManagerWithSources).GetRemoveSourceParameters(Source));
+                startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetRemoveSourceParameters(Source));
 
             }
             else
             {
                 startInfo.FileName = Source.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", (Source.Manager as PackageManagerWithSources).GetRemoveSourceParameters(Source));
+                startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetRemoveSourceParameters(Source));
             }
             Process process = new();
             process.StartInfo = startInfo;
@@ -208,7 +208,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
         {
-            return (Source.Manager as PackageManagerWithSources).GetRemoveSourceOperationVeredict(Source, ReturnCode, Output);
+            return Source.Manager.GetRemoveSourceOperationVeredict(Source, ReturnCode, Output);
         }
 
         protected override async Task<AfterFinshAction> HandleFailure()

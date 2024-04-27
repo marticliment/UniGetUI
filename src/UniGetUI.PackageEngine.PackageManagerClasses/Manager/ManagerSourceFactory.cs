@@ -30,8 +30,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <returns>A valid ManagerSource</returns>
         public ManagerSource GetSourceOrDefault(string name)
         {
-            ManagerSource source;
-            if (__reference.TryGetValue(name, out source))
+            ManagerSource? source;
+            if (__reference.TryGetValue(name, out source) && source != null)
             {
                 return source;
             }
@@ -48,7 +48,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <returns></returns>
         public ManagerSource? GetSourceIfExists(string name)
         {
-            ManagerSource source;
+            ManagerSource? source;
             if (__reference.TryGetValue(name, out source))
             {
                 return source;

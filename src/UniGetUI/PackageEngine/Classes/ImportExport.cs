@@ -235,7 +235,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
         }
 
-        public InvalidBundledPackage(string name, string id, string version, string source, string manager) : this(new Package(name, id, version, AppTools.Instance.App.Winget.MainSource, AppTools.Instance.App.Winget))
+        public InvalidBundledPackage(string name, string id, string version, string source, string manager) : this(new Package(name, id, version, AppTools.Instance.App.Winget.DefaultSource, AppTools.Instance.App.Winget))
         {
             IsValid = false;
             DrawOpacity = 0.5;

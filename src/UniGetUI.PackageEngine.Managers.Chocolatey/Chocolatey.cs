@@ -1,28 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using UniGetUI.Core;
 using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core.Tools;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
-namespace UniGetUI.PackageEngine.Managers
+namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 {
-    public class Chocolatey : PackageManagerWithSources
+    public class Chocolatey : PackageManager
     {
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "Directory", "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no" };
+        
+        public Chocolatey()
+        {
+            SourceProvider = new ChocolateySourceProvider(this);
+        }
+        
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             Process p = new();
@@ -56,12 +54,12 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this));
                 }
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -101,12 +99,12 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this));
+                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this));
                 }
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -146,12 +144,12 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this));
                 }
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -233,16 +231,10 @@ namespace UniGetUI.PackageEngine.Managers
             return parameters.ToArray();
         }
 
-        public override ManagerSource GetMainSource()
-        {
-            return new ManagerSource(this, "community", new Uri("https://community.chocolatey.org/api/v2/"));
-        }
 
         public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
             PackageDetails details = new(package);
-
-            Logger.Log(package.Source.Url.ToString().Trim()[^1]);
 
             if (package.Source.Name == "community")
                 details.ManifestUrl = new Uri("https://community.chocolatey.org/packages/" + package.Id);
@@ -363,59 +355,6 @@ namespace UniGetUI.PackageEngine.Managers
             return details;
         }
 
-        protected override async Task<ManagerSource[]> GetSources_UnSafe()
-        {
-            List<ManagerSource> sources = new();
-
-            Process process = new();
-            ProcessStartInfo startInfo = new()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " source list",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-
-            process.StartInfo = startInfo;
-            process.Start();
-
-
-            string output = "";
-            string line;
-            while ((line = await process.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
-                try
-                {
-                    if (string.IsNullOrEmpty(line))
-                        continue;
-
-                    if (line.Contains(" - ") && line.Contains(" | "))
-                    {
-                        string[] parts = line.Trim().Split('|')[0].Trim().Split(" - ");
-                        if (parts[1].Trim() == "https://community.chocolatey.org/api/v2/")
-                            sources.Add(new ManagerSource(this, "community", new Uri("https://community.chocolatey.org/api/v2/")));
-                        else
-                            sources.Add(new ManagerSource(this, parts[0].Trim(), new Uri(parts[1].Trim())));
-                    }
-                }
-                catch (Exception e)
-                {
-                    Logger.Log(e);
-                }
-            }
-
-            output += await process.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, process, output);
-
-            await process.WaitForExitAsync();
-            return sources.ToArray();
-        }
-
 #pragma warning disable CS1998
         public override async Task RefreshPackageIndexes()
         {
@@ -455,6 +394,8 @@ namespace UniGetUI.PackageEngine.Managers
                 UninstallVerb = "uninstall",
                 UpdateVerb = "upgrade",
                 ExecutableCallArgs = "",
+                KnownSources = [new ManagerSource(this, "chocolatey", new Uri("https://community.chocolatey.org/api/v2/"))],
+                DefaultSource = new ManagerSource(this, "chocolatey", new Uri("https://community.chocolatey.org/api/v2/")),
 
             };
             return properties;
@@ -610,34 +551,9 @@ namespace UniGetUI.PackageEngine.Managers
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
 
             return versions.ToArray();
-        }
-
-        public override ManagerSource[] GetKnownSources()
-        {
-            return new ManagerSource[] { new(this, "chocolatey", new Uri("https://community.chocolatey.org/api/v2/")) };
-        }
-
-        public override string[] GetAddSourceParameters(ManagerSource source)
-        {
-            return new string[] { "source", "add", "--name", source.Name, "--source", source.Url.ToString(), "-y" };
-        }
-
-        public override string[] GetRemoveSourceParameters(ManagerSource source)
-        {
-            return new string[] { "source", "remove", "--name", source.Name, "-y" };
-        }
-
-        public override OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
-        {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
-        }
-
-        public override OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
-        {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
     }
 }

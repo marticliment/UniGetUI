@@ -715,13 +715,13 @@ namespace UniGetUI.Interface
                     continue;
                 }
 
-                ManagerSource Source = PackageManager.GetMainSource();
+                ManagerSource Source = PackageManager.Properties.DefaultSource;
 
-                if (PackageManager.Capabilities.SupportsCustomSources && PackageManager is PackageManagerWithSources)
+                if (PackageManager.Capabilities.SupportsCustomSources)
                 {
                     // Check if the source exists
                     string SourceName = DeserializedPackage.Source.Split(':')[^1].Trim();
-                    Source = (PackageManager as PackageManagerWithSources).SourceFactory.GetSourceIfExists(SourceName);
+                    Source = PackageManager.GetSourceIfExists(SourceName);
 
                     if (Source == null)
                     {

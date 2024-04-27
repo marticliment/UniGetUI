@@ -33,14 +33,18 @@ namespace UniGetUI.Interface.Widgets
     }
     public sealed partial class SourceManager : UserControl
     {
-        private PackageManagerWithSources Manager { get; set; }
+        private PackageManager Manager { get; set; }
         private ObservableCollection<SourceItem> Sources = new();
         public AppTools Tools = AppTools.Instance;
 
         private ListView _datagrid { get; set; }
-        public SourceManager(PackageManagerWithSources Manager)
+        public SourceManager(PackageManager Manager)
         {
             InitializeComponent();
+
+            if (!Manager.Capabilities.SupportsCustomSources)
+                throw new Exception($"Attempted to create a SourceManager class from Manager {Manager.Name}, which does not support custom sources");
+
             Header.Text = Tools.Translate("Manage {0} sources").Replace("{0}", Manager.Properties.Name);
             AddSourceButton.Content = Tools.Translate("Add source");
             AddSourceButton.Click += async (sender, e) =>
@@ -53,7 +57,7 @@ namespace UniGetUI.Interface.Widgets
 
                     ComboBox SourcesCombo = new();
                     Dictionary<string, ManagerSource> NameSourceRef = new();
-                    foreach (ManagerSource source in Manager.KnownSources)
+                    foreach (ManagerSource source in Manager.Properties.KnownSources)
                     {
                         SourcesCombo.Items.Add(source.Name);
                         NameSourceRef.Add(source.Name, source);

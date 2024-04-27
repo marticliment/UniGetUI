@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Enums;
+﻿using System.Diagnostics;
 using UniGetUI.Core.Logging;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
-namespace UniGetUI.PackageEngine.Managers
+namespace UniGetUI.PackageEngine.Managers.NpmManager
 {
     public class Npm : PackageManager
     {
@@ -51,7 +43,7 @@ namespace UniGetUI.PackageEngine.Managers
                     {
                         string[] elements = line.Split('\t');
                         if (elements.Length >= 5)
-                            Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[4], MainSource, this));
+                            Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[4], DefaultSource, this));
                     }
             }
 
@@ -86,7 +78,7 @@ namespace UniGetUI.PackageEngine.Managers
                 string[] elements = line.Split(':');
                 if (elements.Length >= 4)
                 {
-                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], MainSource, this));
+                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], DefaultSource, this));
                 }
             }
 
@@ -118,12 +110,12 @@ namespace UniGetUI.PackageEngine.Managers
                     if (elements[3][0] == '@')
                         elements[3] = "%" + elements[3][1..];
 
-                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[2].Split('@')[0]).Replace('%', '@'), elements[2].Split('@')[0].Replace('%', '@'), elements[3].Split('@')[^1].Replace('%', '@'), elements[2].Split('@')[^1].Replace('%', '@'), MainSource, this, PackageScope.Global));
+                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[2].Split('@')[0]).Replace('%', '@'), elements[2].Split('@')[0].Replace('%', '@'), elements[3].Split('@')[^1].Replace('%', '@'), elements[2].Split('@')[^1].Replace('%', '@'), DefaultSource, this, PackageScope.Global));
                 }
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
 
             await p.WaitForExitAsync();
 
@@ -156,7 +148,7 @@ namespace UniGetUI.PackageEngine.Managers
                 if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
                 {
                     string[] elements = line[4..].Split('@');
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this));
                 }
             }
 
@@ -182,12 +174,12 @@ namespace UniGetUI.PackageEngine.Managers
                 {
                     line = line.Replace("- @", "- %");
                     string[] elements = line[4..].Split('@');
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0].Replace('%', '@')), elements[0].Replace('%', '@'), elements[1], MainSource, this, PackageScope.Global));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0].Replace('%', '@')), elements[0].Replace('%', '@'), elements[1], DefaultSource, this, PackageScope.Global));
                 }
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
@@ -238,10 +230,6 @@ namespace UniGetUI.PackageEngine.Managers
 
             return parameters.ToArray();
 
-        }
-        public override ManagerSource GetMainSource()
-        {
-            return new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/"));
         }
 
         public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
@@ -364,6 +352,8 @@ namespace UniGetUI.PackageEngine.Managers
                 UninstallVerb = "uninstall",
                 UpdateVerb = "install",
                 ExecutableCallArgs = " -NoProfile -ExecutionPolicy Bypass -Command npm",
+                DefaultSource = new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/")),
+                KnownSources = [new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/"))],
 
             };
             return properties;

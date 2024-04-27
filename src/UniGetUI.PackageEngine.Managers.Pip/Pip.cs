@@ -1,22 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Diagnostics;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Logging;
-using UniGetUI.PackageEngine.Enums;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
-namespace UniGetUI.PackageEngine.Managers
+namespace UniGetUI.PackageEngine.Managers.PipManager
 {
     public class Pip : PackageManager
     {
@@ -83,11 +74,11 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, scope: PackageScope.Global));
+                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, scope: PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
             return Packages.ToArray();
         }
 
@@ -131,11 +122,11 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new UpgradablePackage(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], MainSource, this, scope: PackageScope.Global));
+                    Packages.Add(new UpgradablePackage(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, scope: PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
             return Packages.ToArray();
         }
 
@@ -180,11 +171,11 @@ namespace UniGetUI.PackageEngine.Managers
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], MainSource, this, scope: PackageScope.Global));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, scope: PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
             return Packages.ToArray();
         }
 
@@ -246,16 +237,11 @@ namespace UniGetUI.PackageEngine.Managers
 
             return parameters.ToArray();
         }
-        public override ManagerSource GetMainSource()
-        {
-            return new ManagerSource(this, "pip", new Uri("https://pypi.org/"));
-        }
 
         public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
         {
             PackageDetails details = new(package);
 
-            Logger.Log("Getting package details for " + package.Id);
 
             string JsonString;
             HttpClient client = new();
@@ -374,6 +360,8 @@ namespace UniGetUI.PackageEngine.Managers
                 UninstallVerb = "uninstall",
                 UpdateVerb = "install --upgrade",
                 ExecutableCallArgs = " -m pip",
+                DefaultSource = new ManagerSource(this, "pip", new Uri("https://pypi.org/")),
+                KnownSources = [new ManagerSource(this, "pip", new Uri("https://pypi.org/"))],
 
             };
             return properties;
@@ -442,8 +430,9 @@ namespace UniGetUI.PackageEngine.Managers
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            AppTools.LogManagerOperation(this, p, output);
+            // AppTools.LogManagerOperation(this, p, output);
             return result;
         }
     }
 }
+
