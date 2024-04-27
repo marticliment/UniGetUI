@@ -48,7 +48,6 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 startInfo.FileName = AppTools.GSudoPath;
                 startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetAddSourceParameters(Source));
-
             }
             else
             {
