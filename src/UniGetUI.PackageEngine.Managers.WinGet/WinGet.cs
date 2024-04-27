@@ -19,7 +19,7 @@ using Windows.Graphics.Display;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
-    public class WinGet_ : PackageManager
+    public class WinGet : PackageManager
     {
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "", "e(s)", "have", "the", "Id" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "", "e(s)", "have", "an", "'winget", "pin'", "have", "an", "Version" };
@@ -31,7 +31,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         private LocalWingetSource GOGSource { get; set; }
         private LocalWingetSource MicrosoftStoreSource { get; set; }
 
-        public WinGet_(): base()
+        public WinGet(): base()
         {
             SourceProvider = new WinGetSourceProvider(this);
             LocalPcSource = new(this, CoreTools.Translate("Local PC"), "localpc");
@@ -477,7 +477,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         private string __icon_id;
         public override string IconId { get { return __icon_id; } }
 
-        public LocalWingetSource(WinGet_ manager, string name, string iconId) : base(manager, name)
+        public LocalWingetSource(WinGet manager, string name, string iconId) : base(manager, name)
         {
             this.name = name;
             __icon_id = iconId;

@@ -11,7 +11,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
     internal class WinGetSourceProvider : BaseSourceProvider<PackageManager>
     {
-        public WinGetSourceProvider(WinGet_ manager) : base(manager) { }
+        public WinGetSourceProvider(WinGet manager) : base(manager) { }
 
         public override string[] GetAddSourceParameters(ManagerSource source)
         {
@@ -35,7 +35,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()
         {
-            return await WinGetHelper.Instance.GetSources_UnSafe(Manager as WinGet_);
+            return await WinGetHelper.Instance.GetSources_UnSafe(Manager as WinGet);
         }
     }
 }

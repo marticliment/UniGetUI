@@ -2,6 +2,7 @@
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.Classes.Manager.Interfaces;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Enums;
@@ -9,7 +10,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
-    public abstract class PackageManager : SingletonBase<PackageManager>
+    public abstract class PackageManager : SingletonBase<PackageManager>, ISourceProvider
     {
         public ManagerProperties Properties { get; set; } = new();
         public ManagerCapabilities Capabilities { get; set; } = new();
@@ -340,6 +341,55 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <returns></returns>
         public abstract Task RefreshPackageIndexes();
 
+
+
+
+        // BEGIN SOURCE-RELATED METHODS
+
+        /// <summary>
+        /// Will check if the Manager supports custom sources, and throw an exception if not
+        /// </summary>
+        /// <param name="MethodName"></param>
+        /// <exception cref="Exception"></exception>
+        private void AssertSourceCompatibility(string MethodName)
+        {
+            if (!Capabilities.SupportsCustomSources)
+                throw new Exception($"Manager {Name} does not support custom sources but yet a GetKnownSources method was called");
+            else if (SourceProvider == null)
+                throw new Exception($"Manager {Name} does support custom sources but yet the source helper is null");
+        }
+#pragma warning disable CS8602
+        public ManagerSource GetSourceOrDefault(string SourceName)
+        {
+            AssertSourceCompatibility("GetSourceFromName");
+            return SourceProvider.SourceFactory.GetSourceOrDefault(SourceName);
+        }
+        public ManagerSource? GetSourceIfExists(string SourceName)
+        {
+            AssertSourceCompatibility("GetSourceIfExists");
+            return SourceProvider.SourceFactory.GetSourceIfExists(SourceName);
+        }
+        public string[] GetAddSourceParameters(ManagerSource source)
+        {
+            AssertSourceCompatibility("GetAddSourceParameters");
+            return SourceProvider.GetAddSourceParameters(source);
+        }
+        public string[] GetRemoveSourceParameters(ManagerSource source)
+        {
+            AssertSourceCompatibility("GetRemoveSourceParameters");
+            return SourceProvider.GetRemoveSourceParameters(source);
+        }
+        public OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        {
+            AssertSourceCompatibility("GetAddSourceOperationVeredict");
+            return SourceProvider.GetAddSourceOperationVeredict(source, ReturnCode, Output);
+        }
+        public OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        {
+            AssertSourceCompatibility("GetRemoveSourceOperationVeredict");
+            return SourceProvider.GetRemoveSourceOperationVeredict(source, ReturnCode, Output);
+        }
+#pragma warning restore CS8602
         public virtual async Task<ManagerSource[]> GetSources()
         {
             try
@@ -355,56 +405,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 return [];
             }
         }
-
-        /// <summary>
-        /// Will check if the Manager supports custom sources, and throw an exception if not
-        /// </summary>
-        /// <param name="MethodName"></param>
-        /// <exception cref="Exception"></exception>
-        private void AssertSourceCompatibility(string MethodName)
-        {
-            if (!Capabilities.SupportsCustomSources)
-                throw new Exception($"Manager {Name} does not support custom sources but yet a GetKnownSources method was called");
-            else if (SourceProvider == null)
-                throw new Exception($"Manager {Name} does support custom sources but yet the source helper is null");
-        }
-
-#pragma warning disable CS8602
-        public ManagerSource GetSourceOrDefault(string SourceName)
-        {
-            AssertSourceCompatibility("GetSourceFromName");
-            return SourceProvider.SourceFactory.GetSourceOrDefault(SourceName);
-        }
-        public ManagerSource? GetSourceIfExists(string SourceName)
-        {
-            AssertSourceCompatibility("GetSourceIfExists");
-            return SourceProvider.SourceFactory.GetSourceIfExists(SourceName);
-        }
-
-        public string[] GetAddSourceParameters(ManagerSource source)
-        {
-            AssertSourceCompatibility("GetAddSourceParameters");
-            return SourceProvider.GetAddSourceParameters(source);
-        }
-        
-        public string[] GetRemoveSourceParameters(ManagerSource source)
-        {
-            AssertSourceCompatibility("GetRemoveSourceParameters");
-            return SourceProvider.GetRemoveSourceParameters(source);
-        }
-        
-        public OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
-        {
-            AssertSourceCompatibility("GetAddSourceOperationVeredict");
-            return SourceProvider.GetAddSourceOperationVeredict(source, ReturnCode, Output);
-        }
-        
-        public OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
-        {
-            AssertSourceCompatibility("GetRemoveSourceOperationVeredict");
-            return SourceProvider.GetRemoveSourceOperationVeredict(source, ReturnCode, Output);
-        }
-#pragma warning restore CS8602
+        /// END SOURCE-RELATED METHODS
 
 
 

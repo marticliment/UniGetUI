@@ -30,7 +30,7 @@ namespace UniGetUI
     public partial class MainApp : Application
     {
         public Scoop Scoop;
-        public WinGet_ Winget;
+        public WinGet Winget;
         public Chocolatey Choco;
         public Pip Pip;
         public Npm Npm;
@@ -226,7 +226,7 @@ namespace UniGetUI
         /// </summary>
         private void InitializePackageManagers()
         {
-            Winget = new WinGet_();
+            Winget = new WinGet();
             Scoop = new Scoop();
             Choco = new Chocolatey();
             Pip = new Pip();

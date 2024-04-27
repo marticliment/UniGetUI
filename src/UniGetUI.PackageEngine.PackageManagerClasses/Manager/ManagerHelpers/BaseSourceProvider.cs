@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.Classes.Manager.Interfaces;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
 {
-    public abstract class BaseSourceProvider<T> where T : PackageManager
+    public abstract class BaseSourceProvider<T>: ISourceProvider where T : PackageManager
     {
         public readonly ManagerSourceFactory SourceFactory;
         protected T Manager;
@@ -25,8 +26,12 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
         public abstract string[] GetRemoveSourceParameters(ManagerSource source);
         public abstract OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output);
         public abstract OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output);
-        protected abstract Task<ManagerSource[]> GetSources_UnSafe();
 
+        /// <summary>
+        /// Loads the sources for the manager. This method SHOULD NOT handle exceptions
+        /// </summary>
+        /// <returns></returns>
+        protected abstract Task<ManagerSource[]> GetSources_UnSafe();
         public virtual async Task<ManagerSource[]> GetSources()
         {
             ManagerSource[] sources = await GetSources_UnSafe();
