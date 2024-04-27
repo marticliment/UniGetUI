@@ -33,6 +33,41 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public WinGet(): base()
         {
+            Capabilities = new ManagerCapabilities()
+            {
+                CanRunAsAdmin = true,
+                CanSkipIntegrityChecks = true,
+                CanRunInteractively = true,
+                SupportsCustomVersions = true,
+                SupportsCustomArchitectures = true,
+                SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64 },
+                SupportsCustomScopes = true,
+                SupportsCustomLocations = true,
+                SupportsCustomSources = true,
+                Sources = new ManagerSource.Capabilities()
+                {
+                    KnowsPackageCount = false,
+                    KnowsUpdateDate = true,
+                    MustBeInstalledAsAdmin = true,
+                }
+            };
+
+            Properties = new ManagerProperties()
+            {
+                Name = "Winget",
+                Description = CoreTools.Translate("Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>"),
+                IconId = "winget",
+                ColorIconId = "winget_color",
+                ExecutableFriendlyName = "winget.exe",
+                InstallVerb = "install",
+                UninstallVerb = "uninstall",
+                UpdateVerb = "update",
+                ExecutableCallArgs = "",
+                KnownSources = [ new(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache")),
+                                 new(this, "msstore", new Uri("https://storeedgefd.dsx.mp.microsoft.com/v9.0")) ],
+                DefaultSource = new(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache"))
+            };
+
             SourceProvider = new WinGetSourceProvider(this);
             LocalPcSource = new(this, CoreTools.Translate("Local PC"), "localpc");
             AndroidSubsystemSource = new(this, CoreTools.Translate("Android Subsystem"), "android");
@@ -372,54 +407,10 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return await WinGetHelper.Instance.GetPackageDetails_UnSafe(this, package);
         }
 
-        
-
         public override async Task RefreshPackageIndexes()
         {
             await Task.Delay(0);
             // As of WinGet 1.6, WinGet does handle updating package indexes automatically
-        }
-
-        protected override ManagerCapabilities GetCapabilities()
-        {
-            return new ManagerCapabilities()
-            {
-                CanRunAsAdmin = true,
-                CanSkipIntegrityChecks = true,
-                CanRunInteractively = true,
-                SupportsCustomVersions = true,
-                SupportsCustomArchitectures = true,
-                SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64 },
-                SupportsCustomScopes = true,
-                SupportsCustomLocations = true,
-                SupportsCustomSources = true,
-                Sources = new ManagerSource.Capabilities()
-                {
-                    KnowsPackageCount = false,
-                    KnowsUpdateDate = true,
-                    MustBeInstalledAsAdmin = true,
-                }
-            };
-        }
-
-        protected override ManagerProperties GetProperties()
-        {
-            ManagerProperties properties = new()
-            {
-                Name = "Winget",
-                Description = CoreTools.Translate("Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>"),
-                IconId = "winget",
-                ColorIconId = "winget_color",
-                ExecutableFriendlyName = "winget.exe",
-                InstallVerb = "install",
-                UninstallVerb = "uninstall",
-                UpdateVerb = "update",
-                ExecutableCallArgs = "",
-                KnownSources = [ new(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache")),
-                                 new(this, "msstore", new Uri("https://storeedgefd.dsx.mp.microsoft.com/v9.0")) ],
-                DefaultSource = new(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache"))
-            };
-            return properties;
         }
 
         protected override async Task<ManagerStatus> LoadManager()

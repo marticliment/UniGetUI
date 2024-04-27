@@ -14,7 +14,7 @@ using UniGetUI.Core.Logging;
 using Deployment = Microsoft.Management.Deployment;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {

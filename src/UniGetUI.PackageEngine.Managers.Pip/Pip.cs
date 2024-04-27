@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -14,6 +15,34 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "", "WARNING:", "[notice]", "Package", "DEPRECATION:" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "", "WARNING:", "[notice]", "Package", "DEPRECATION:" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "Ignoring", "invalid" };
+        
+        public Pip() : base()
+        {
+            Capabilities = new ManagerCapabilities()
+            {
+                CanRunAsAdmin = true,
+                SupportsCustomVersions = true,
+                SupportsCustomScopes = true,
+                SupportsPreRelease = true,
+            };
+
+            Properties= new ManagerProperties()
+            {
+                Name = "Pip",
+                Description = CoreTools.Translate("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"),
+                IconId = "python",
+                ColorIconId = "pip_color",
+                ExecutableFriendlyName = "pip",
+                InstallVerb = "install",
+                UninstallVerb = "uninstall",
+                UpdateVerb = "install --upgrade",
+                ExecutableCallArgs = " -m pip",
+                DefaultSource = new ManagerSource(this, "pip", new Uri("https://pypi.org/")),
+                KnownSources = [new ManagerSource(this, "pip", new Uri("https://pypi.org/"))],
+
+            };
+        }
+        
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = new();
@@ -334,37 +363,6 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         public override async Task RefreshPackageIndexes()
         {
             // Pip does not support manual source refreshing
-        }
-
-        protected override ManagerCapabilities GetCapabilities()
-        {
-            return new ManagerCapabilities()
-            {
-                CanRunAsAdmin = true,
-                SupportsCustomVersions = true,
-                SupportsCustomScopes = true,
-                SupportsPreRelease = true,
-            };
-        }
-
-        protected override ManagerProperties GetProperties()
-        {
-            ManagerProperties properties = new()
-            {
-                Name = "Pip",
-                Description = CoreTools.Translate("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"),
-                IconId = "python",
-                ColorIconId = "pip_color",
-                ExecutableFriendlyName = "pip",
-                InstallVerb = "install",
-                UninstallVerb = "uninstall",
-                UpdateVerb = "install --upgrade",
-                ExecutableCallArgs = " -m pip",
-                DefaultSource = new ManagerSource(this, "pip", new Uri("https://pypi.org/")),
-                KnownSources = [new ManagerSource(this, "pip", new Uri("https://pypi.org/"))],
-
-            };
-            return properties;
         }
 
         protected override async Task<ManagerStatus> LoadManager()

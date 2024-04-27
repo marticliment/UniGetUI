@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
     public struct ManagerCapabilities
     {
+        public bool IsDummy = false;
         public bool CanRunAsAdmin = false;
         public bool CanSkipIntegrityChecks = false;
         public bool CanRunInteractively = false;
@@ -24,6 +26,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public ManagerCapabilities()
         {
             Sources = new ManagerSource.Capabilities();
+        }
+
+        public ManagerCapabilities(bool IsDummy)
+        {
+            Sources = new ManagerSource.Capabilities();
+            this.IsDummy = IsDummy;
         }
     }
 }

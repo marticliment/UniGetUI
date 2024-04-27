@@ -12,8 +12,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
     public abstract class PackageManager : SingletonBase<PackageManager>, ISourceProvider
     {
-        public ManagerProperties Properties { get; set; } = new();
-        public ManagerCapabilities Capabilities { get; set; } = new();
+        public ManagerProperties Properties { get; set; } = new(IsDummy: true);
+        public ManagerCapabilities Capabilities { get; set; } = new(IsDummy: true);
         public ManagerStatus Status { get; set; } = new() { Found = false };
         public string Name { get; set; } = "Unset";
         public ManagerSource DefaultSource { get; set; }
@@ -24,12 +24,13 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         public BaseSourceProvider<PackageManager>? SourceProvider;
 
+        private bool __base_constructor_called = false;
+
         public PackageManager()
         {
-            Properties = GetProperties();
             DefaultSource = Properties.DefaultSource;
             Name = Properties.Name;
-            Capabilities = GetCapabilities();
+            __base_constructor_called = true;
         }
 
 
@@ -40,10 +41,18 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public async Task InitializeAsync()
         {
             // BEGIN integrity check
-            if (Capabilities.SupportsCustomSources && SourceProvider == null)
+            if (!__base_constructor_called)
+                throw new Exception($"The Manager {Properties.Name} has not called the base constructor.");
+            else if (Capabilities.IsDummy)
+                throw new Exception($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Capabilities object");
+            else if (Properties.IsDummy)
+                throw new Exception($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Properties object");
+            else if (Capabilities.SupportsCustomSources && SourceProvider == null)
                 throw new Exception($"Manager {Name} has been declared as SupportsCustomSources but has no helper associated with it");
             // END integrity check
 
+            DefaultSource = Properties.DefaultSource;
+            Name = Properties.Name;
             try
             {
                 Status = await LoadManager();
@@ -97,16 +106,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
         }
 
-        /// <summary>
-        /// Returns a ManagerProperties object representing the properties of the package manager
-        /// </summary>
-        /// <returns></returns>
-        protected abstract ManagerProperties GetProperties();
-        /// <summary>
-        /// Returns a ManagerCapabilities object representing the capabilities of the package manager
-        /// </summary>
-        /// <returns></returns>
-        protected abstract ManagerCapabilities GetCapabilities();
+
         /// <summary>
         /// Returns a ManagerStatus object representing the current status of the package manager. This method runs asynchronously.
         /// </summary>

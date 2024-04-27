@@ -4,6 +4,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -16,9 +17,43 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "Directory", "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no" };
         
-        public Chocolatey()
+        public Chocolatey() : base()
         {
+            Capabilities = new ManagerCapabilities()
+            {
+                CanRunAsAdmin = true,
+                CanSkipIntegrityChecks = true,
+                CanRunInteractively = true,
+                SupportsCustomVersions = true,
+                SupportsCustomArchitectures = true,
+                SupportedCustomArchitectures = new Architecture[] { Architecture.X86 },
+                SupportsPreRelease = true,
+                SupportsCustomSources = true,
+                Sources = new ManagerSource.Capabilities()
+                {
+                    KnowsPackageCount = false,
+                    KnowsUpdateDate = false,
+                }
+            };
+
+            Properties = new ManagerProperties()
+            {
+                Name = "Chocolatey",
+                Description = CoreTools.Translate("The classic package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"),
+                IconId = "choco",
+                ColorIconId = "choco_color",
+                ExecutableFriendlyName = "choco.exe",
+                InstallVerb = "install",
+                UninstallVerb = "uninstall",
+                UpdateVerb = "upgrade",
+                ExecutableCallArgs = "",
+                KnownSources = [new ManagerSource(this, "chocolatey", new Uri("https://community.chocolatey.org/api/v2/"))],
+                DefaultSource = new ManagerSource(this, "chocolatey", new Uri("https://community.chocolatey.org/api/v2/")),
+
+            };
+
             SourceProvider = new ChocolateySourceProvider(this);
+            
         }
         
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
@@ -359,46 +394,6 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         public override async Task RefreshPackageIndexes()
         {
             // Chocolatey does not support source refreshing
-        }
-
-        protected override ManagerCapabilities GetCapabilities()
-        {
-            return new ManagerCapabilities()
-            {
-                CanRunAsAdmin = true,
-                CanSkipIntegrityChecks = true,
-                CanRunInteractively = true,
-                SupportsCustomVersions = true,
-                SupportsCustomArchitectures = true,
-                SupportedCustomArchitectures = new Architecture[] { Architecture.X86 },
-                SupportsPreRelease = true,
-                SupportsCustomSources = true,
-                Sources = new ManagerSource.Capabilities()
-                {
-                    KnowsPackageCount = false,
-                    KnowsUpdateDate = false,
-                }
-            };
-        }
-
-        protected override ManagerProperties GetProperties()
-        {
-            ManagerProperties properties = new()
-            {
-                Name = "Chocolatey",
-                Description = CoreTools.Translate("The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"),
-                IconId = "choco",
-                ColorIconId = "choco_color",
-                ExecutableFriendlyName = "choco.exe",
-                InstallVerb = "install",
-                UninstallVerb = "uninstall",
-                UpdateVerb = "upgrade",
-                ExecutableCallArgs = "",
-                KnownSources = [new ManagerSource(this, "chocolatey", new Uri("https://community.chocolatey.org/api/v2/"))],
-                DefaultSource = new ManagerSource(this, "chocolatey", new Uri("https://community.chocolatey.org/api/v2/")),
-
-            };
-            return properties;
         }
 
         protected override async Task<ManagerStatus> LoadManager()

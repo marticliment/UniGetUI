@@ -12,6 +12,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
@@ -21,8 +22,39 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
 
-        public PowerShell(): base()
+        public PowerShell() : base()
         {
+            Capabilities = new ManagerCapabilities()
+            {
+                CanRunAsAdmin = true,
+                CanSkipIntegrityChecks = true,
+                SupportsCustomVersions = true,
+                SupportsCustomScopes = true,
+                SupportsCustomSources = true,
+                SupportsPreRelease = true,
+                Sources = new ManagerSource.Capabilities()
+                {
+                    KnowsPackageCount = false,
+                    KnowsUpdateDate = false,
+                }
+            };
+
+            Properties = new ManagerProperties()
+            {
+                Name = "PowerShell",
+                Description = CoreTools.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
+                IconId = "powershell",
+                ColorIconId = "powershell_color",
+                ExecutableFriendlyName = "powershell.exe",
+                InstallVerb = "Install-Module",
+                UninstallVerb = "Uninstall-Module",
+                UpdateVerb = "Update-Module",
+                ExecutableCallArgs = " -NoProfile -Command",
+                KnownSources = [new(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
+                                new(this, "PoshTestGallery", new Uri("https://www.poshtestgallery.com/api/v2"))],
+                DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
+            };
+
             SourceProvider = new PowerShellSourceProvider(this);
         }
 
@@ -332,44 +364,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         public override async Task RefreshPackageIndexes()
         {
             // PowerShell does not allow manual refresh of sources;
-        }
-
-        protected override ManagerCapabilities GetCapabilities()
-        {
-            return new ManagerCapabilities()
-            {
-                CanRunAsAdmin = true,
-                CanSkipIntegrityChecks = true,
-                SupportsCustomVersions = true,
-                SupportsCustomScopes = true,
-                SupportsCustomSources = true,
-                SupportsPreRelease = true,
-                Sources = new ManagerSource.Capabilities()
-                {
-                    KnowsPackageCount = false,
-                    KnowsUpdateDate = false,
-                }
-            };
-        }
-
-        protected override ManagerProperties GetProperties()
-        {
-            ManagerProperties properties = new()
-            {
-                Name = "PowerShell",
-                Description = CoreTools.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
-                IconId = "powershell",
-                ColorIconId = "powershell_color",
-                ExecutableFriendlyName = "powershell.exe",
-                InstallVerb = "Install-Module",
-                UninstallVerb = "Uninstall-Module",
-                UpdateVerb = "Update-Module",
-                ExecutableCallArgs = " -NoProfile -Command",
-                KnownSources = [new(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
-                                new(this, "PoshTestGallery", new Uri("https://www.poshtestgallery.com/api/v2"))],
-                DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
-            };
-            return properties;
         }
 
         protected override async Task<ManagerStatus> LoadManager()

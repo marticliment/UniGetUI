@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UniGetUI.PackageEngine.ManagerClasses.Manager
+namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
 {
     public class ManagerStatus
     {

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -12,6 +13,33 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
+        
+        public Npm() : base()
+        {
+            Capabilities = new ManagerCapabilities()
+            {
+                CanRunAsAdmin = true,
+                SupportsCustomVersions = true,
+                SupportsCustomScopes = true,
+            };
+
+            Properties = new ManagerProperties()
+            {
+                Name = "Npm",
+                Description = CoreTools.Translate("Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>"),
+                IconId = "node",
+                ColorIconId = "node_color",
+                ExecutableFriendlyName = "npm",
+                InstallVerb = "install",
+                UninstallVerb = "uninstall",
+                UpdateVerb = "install",
+                ExecutableCallArgs = " -NoProfile -ExecutionPolicy Bypass -Command npm",
+                DefaultSource = new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/")),
+                KnownSources = [new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/"))],
+
+            };
+        }
+        
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             Process p = new();
@@ -327,36 +355,6 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         public override async Task RefreshPackageIndexes()
         {
             // Npm does not support manual source refreshing
-        }
-
-        protected override ManagerCapabilities GetCapabilities()
-        {
-            return new ManagerCapabilities()
-            {
-                CanRunAsAdmin = true,
-                SupportsCustomVersions = true,
-                SupportsCustomScopes = true,
-            };
-        }
-
-        protected override ManagerProperties GetProperties()
-        {
-            ManagerProperties properties = new()
-            {
-                Name = "Npm",
-                Description = CoreTools.Translate("Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>"),
-                IconId = "node",
-                ColorIconId = "node_color",
-                ExecutableFriendlyName = "npm",
-                InstallVerb = "install",
-                UninstallVerb = "uninstall",
-                UpdateVerb = "install",
-                ExecutableCallArgs = " -NoProfile -ExecutionPolicy Bypass -Command npm",
-                DefaultSource = new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/")),
-                KnownSources = [new ManagerSource(this, "npm", new Uri("https://www.npmjs.com/"))],
-
-            };
-            return properties;
         }
 
         protected override async Task<ManagerStatus> LoadManager()

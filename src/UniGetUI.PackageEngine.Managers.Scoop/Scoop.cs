@@ -28,6 +28,46 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         public Scoop(): base()
         {
+            Capabilities = new ManagerCapabilities()
+            {
+                CanRunAsAdmin = true,
+                CanSkipIntegrityChecks = true,
+                CanRemoveDataOnUninstall = true,
+                SupportsCustomArchitectures = true,
+                SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64 },
+                SupportsCustomScopes = true,
+                SupportsCustomSources = true,
+                Sources = new ManagerSource.Capabilities()
+                {
+                    KnowsPackageCount = true,
+                    KnowsUpdateDate = true
+                }
+            };
+
+            Properties = new ManagerProperties()
+            {
+                Name = "Scoop",
+                Description = CoreTools.Translate("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"),
+                IconId = "scoop",
+                ColorIconId = "scoop_color",
+                ExecutableCallArgs = " -NoProfile -ExecutionPolicy Bypass -Command scoop",
+                ExecutableFriendlyName = "scoop",
+                InstallVerb = "install",
+                UpdateVerb = "update",
+                UninstallVerb = "uninstall",
+                KnownSources = [new(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
+                                new(this, "extras", new Uri("https://github.com/ScoopInstaller/Extras")),
+                                new(this, "versions", new Uri("https://github.com/ScoopInstaller/Versions")),
+                                new(this, "nirsoft", new Uri("https://github.com/kodybrown/scoop-nirsoft")),
+                                new(this, "sysinternals", new Uri("https://github.com/niheaven/scoop-sysinternals")),
+                                new(this, "php", new Uri("https://github.com/ScoopInstaller/PHP")),
+                                new(this, "nerd-fonts", new Uri("https://github.com/matthewjberger/scoop-nerd-fonts")),
+                                new(this, "nonportable", new Uri("https://github.com/ScoopInstaller/Nonportable")),
+                                new(this, "java", new Uri("https://github.com/ScoopInstaller/Java")),
+                                new(this, "games", new Uri("https://github.com/Calinou/scoop-games"))],
+                DefaultSource = new(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
+            };
+
             SourceProvider = new ScoopSourceProvider(this);
         }
 
@@ -456,52 +496,6 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             process.StartInfo = StartInfo;
             process.Start();
             await process.WaitForExitAsync();
-        }
-
-        protected override ManagerCapabilities GetCapabilities()
-        {
-            return new ManagerCapabilities()
-            {
-                CanRunAsAdmin = true,
-                CanSkipIntegrityChecks = true,
-                CanRemoveDataOnUninstall = true,
-                SupportsCustomArchitectures = true,
-                SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64 },
-                SupportsCustomScopes = true,
-                SupportsCustomSources = true,
-                Sources = new ManagerSource.Capabilities()
-                {
-                    KnowsPackageCount = true,
-                    KnowsUpdateDate = true
-                }
-            };
-        }
-
-        protected override ManagerProperties GetProperties()
-        {
-            return new ManagerProperties()
-            {
-                Name = "Scoop",
-                Description = CoreTools.Translate("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"),
-                IconId = "scoop",
-                ColorIconId = "scoop_color",
-                ExecutableCallArgs = " -NoProfile -ExecutionPolicy Bypass -Command scoop",
-                ExecutableFriendlyName = "scoop",
-                InstallVerb = "install",
-                UpdateVerb = "update",
-                UninstallVerb = "uninstall",
-                KnownSources = [new(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
-                                new(this, "extras", new Uri("https://github.com/ScoopInstaller/Extras")),
-                                new(this, "versions", new Uri("https://github.com/ScoopInstaller/Versions")),
-                                new(this, "nirsoft", new Uri("https://github.com/kodybrown/scoop-nirsoft")),
-                                new(this, "sysinternals", new Uri("https://github.com/niheaven/scoop-sysinternals")),
-                                new(this, "php", new Uri("https://github.com/ScoopInstaller/PHP")),
-                                new(this, "nerd-fonts", new Uri("https://github.com/matthewjberger/scoop-nerd-fonts")),
-                                new(this, "nonportable", new Uri("https://github.com/ScoopInstaller/Nonportable")),
-                                new(this, "java", new Uri("https://github.com/ScoopInstaller/Java")),
-                                new(this, "games", new Uri("https://github.com/Calinou/scoop-games"))],
-                DefaultSource = new(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
-            };
         }
 
         protected override async Task<ManagerStatus> LoadManager()

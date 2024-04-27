@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
     public class ManagerProperties
     {
+        public bool IsDummy = false;
         public string Name { get; set; } = "Unset";
         public string Description { get; set; } = "Unset";
         public string IconId { get; set; } = "Unset";
@@ -19,6 +21,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public string UninstallVerb { get; set; } = "Unset";
         public ManagerSource[] KnownSources { get; set; } = [];
         public ManagerSource DefaultSource { get; set; }
-
+#pragma warning disable CS8618
+        public ManagerProperties() { }
+        public ManagerProperties(bool IsDummy) { this.IsDummy = IsDummy; }
+#pragma warning restore CS8618
     }
 }

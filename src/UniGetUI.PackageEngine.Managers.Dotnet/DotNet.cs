@@ -12,8 +12,10 @@ using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Managers;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.DotNetManager
 {
@@ -22,6 +24,37 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
+
+        public DotNet() : base()
+        {
+            Capabilities = new ManagerCapabilities()
+            {
+                CanRunAsAdmin = true,
+                SupportsCustomScopes = true,
+                SupportsCustomArchitectures = true,
+                SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64, Architecture.Arm },
+                SupportsPreRelease = true,
+                SupportsCustomLocations = true
+            };
+
+            Properties = new ManagerProperties()
+            {
+                Name = ".NET Tool",
+                Description = CoreTools.Translate("A repository full of tools and executables designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related tools and scripts</b>"),
+                IconId = "dotnet",
+                ColorIconId = "dotnet_color",
+                ExecutableFriendlyName = "dotnet tool",
+                InstallVerb = "install",
+                UninstallVerb = "uninstall",
+                UpdateVerb = "update",
+                ExecutableCallArgs = "tool",
+                DefaultSource = new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/")),
+                KnownSources = [new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/"))],
+            };
+        }
+
+
+
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
 
@@ -357,38 +390,6 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
         public override async Task RefreshPackageIndexes()
         {
             // .NET Tool does not support manual source refreshing
-        }
-
-        protected override ManagerCapabilities GetCapabilities()
-        {
-            return new ManagerCapabilities()
-            {
-                CanRunAsAdmin = true,
-                SupportsCustomScopes = true,
-                SupportsCustomArchitectures = true,
-                SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64, Architecture.Arm },
-                SupportsPreRelease = true,
-                SupportsCustomLocations = true
-            };
-        }
-
-        protected override ManagerProperties GetProperties()
-        {
-            ManagerProperties properties = new()
-            {
-                Name = ".NET Tool",
-                Description = CoreTools.Translate("A repository full of tools and executables designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related tools and scripts</b>"),
-                IconId = "dotnet",
-                ColorIconId = "dotnet_color",
-                ExecutableFriendlyName = "dotnet tool",
-                InstallVerb = "install",
-                UninstallVerb = "uninstall",
-                UpdateVerb = "update",
-                ExecutableCallArgs = "tool",
-                DefaultSource = new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/")),
-                KnownSources = [new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/"))],
-            };
-            return properties;
         }
 
         protected override async Task<ManagerStatus> LoadManager()
