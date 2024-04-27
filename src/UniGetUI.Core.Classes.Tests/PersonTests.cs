@@ -1,30 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using Xunit;
+using Assert = Xunit.Assert;
 
 namespace UniGetUI.Core.Classes.Tests
 {
-    [TestClass]
     public class PersonTests
     {
-        [TestMethod]
-        public void TestPerson()
+        [Theory]
+        [InlineData("Bernat-Miquel Guimerà", "https://github.com/BernatMiquelG.png", "https://github.com/BernatMiquelG")]
+        [InlineData("Bernat-Miquel Guimerà", "https://github.com/BernatMiquelG.png", null)]
+        [InlineData("Bernat-Miquel Guimerà", null, "https://github.com/BernatMiquelG")]
+        [InlineData("Bernat-Miquel Guimerà", null, null)]
+        public void TestPerson(string name, string? profilePicture, string? gitHubUrl)
         {
-            Person p1 = new Person("Bernat-Miquel Guimerà", new Uri("https://github.com/BernatMiquelG.png"), new Uri("https://github.com/BernatMiquelG"));
-            Person p2 = new Person("Bernat-Miquel Guimerà", ProfilePicture: new Uri("https://github.com/BernatMiquelG.png"), null);
-            Person p3 = new Person("Bernat-Miquel Guimerà", GitHubUrl: new Uri("https://github.com/BernatMiquelG"));
-            Person p4 = new Person("Bernat-Miquel Guimerà");
 
-            Assert.IsTrue(p1.HasGitHubProfile, "Invalid automatically generated field for p1");
-            Assert.IsTrue(p1.HasPicture, "Invalid automatically generated field for p1");
-            Assert.IsFalse(p2.HasGitHubProfile, "Invalid automatically generated field for p2");
-            Assert.IsTrue(p2.HasPicture, "Invalid automatically generated field for p2");
-            Assert.IsTrue(p3.HasGitHubProfile, "Invalid automatically generated field for p3");
-            Assert.IsFalse(p3.HasPicture, "Invalid automatically generated field for p3");
-            Assert.IsFalse(p4.HasGitHubProfile, "Invalid automatically generated field for p4");
-            Assert.IsFalse(p4.HasPicture, "Invalid automatically generated field for p4");
+            //arrange
+            Person actual = new(Name: name, 
+                                ProfilePicture: profilePicture is null ? null : new Uri(profilePicture), 
+                                GitHubUrl: gitHubUrl is null ? null : new Uri(gitHubUrl));
+
+            //Assert
+            if (string.IsNullOrEmpty(profilePicture))
+                Assert.False(actual.HasPicture);
+            else
+                Assert.True(actual.HasPicture);
+
+            if (string.IsNullOrEmpty(gitHubUrl))
+                Assert.False(actual.HasGitHubProfile);
+            else
+                Assert.True(actual.HasGitHubProfile);
         }
     }
 }
