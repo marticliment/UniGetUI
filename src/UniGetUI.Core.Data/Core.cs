@@ -102,7 +102,6 @@ namespace UniGetUI.Core.Data
         }
         public static bool IsDaemon = false;
 
-        public static string UniGetUILog = "";
         public static string ManagerLogs = "";
 
 

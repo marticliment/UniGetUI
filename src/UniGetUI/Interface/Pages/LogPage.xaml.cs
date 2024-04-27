@@ -13,6 +13,13 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using System.Linq;
+using Windows.UI.WebUI;
+using Microsoft.UI.Xaml.Media;
+using Windows.Media.Playback;
+using Windows.UI;
+using CommunityToolkit.WinUI.Controls;
+using CommunityToolkit.WinUI.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -56,9 +63,75 @@ namespace UniGetUI.Interface.Pages
 
         public void LoadLog()
         {
+
+
             if (Logger_LogType == Logger_LogType.UniGetUILog)
             {
-                SetText(CoreData.UniGetUILog);
+                // Dark theme colors
+                Color DARK_GREY = Color.FromArgb(255, 128, 128, 128);
+                Color DARK_BLUE = Color.FromArgb(255, 115, 121, 191);
+                Color DARK_GREEN = Color.FromArgb(255, 90, 204, 94);
+                Color DARK_YELLOW = Color.FromArgb(255, 255, 201, 51);
+                Color DARK_RED = Color.FromArgb(255, 209, 38, 38);
+
+                // Light theme colors
+                Color LIGHT_GREY = Color.FromArgb(255, 100, 100, 100);
+                Color LIGHT_BLUE = Color.FromArgb(255, 52, 58, 168);
+                Color LIGHT_GREEN = Color.FromArgb(255, 56, 150, 18);
+                Color LIGHT_YELLOW = Color.FromArgb(255, 179, 156, 2);
+                Color LIGHT_RED = Color.FromArgb(255, 209, 38, 38);
+
+                bool IS_DARK = MainApp.Instance.ThemeListener.CurrentTheme == ApplicationTheme.Dark;
+
+                var logs = Logger.GetLogs();
+                LogTextBox.Blocks.Clear();
+                foreach (var log_entry in logs)
+                {
+                    var p = new Paragraph();
+                    if (log_entry.Content == "")
+                        continue;
+
+                    Brush color;
+
+
+                    switch (log_entry.Severity)
+                    {
+                        case LogEntry.SeverityLevel.Debug:
+                            color = new SolidColorBrush() { Color = IS_DARK? DARK_GREY: LIGHT_GREY };
+                            break;
+                        case LogEntry.SeverityLevel.Info:
+                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_BLUE : LIGHT_BLUE };
+                            break;
+                        case LogEntry.SeverityLevel.Success:
+                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_GREEN : LIGHT_GREEN };
+                            break;
+                        case LogEntry.SeverityLevel.Warning:
+                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW };
+                            break;
+                        case LogEntry.SeverityLevel.Error:
+                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_RED : LIGHT_RED };
+                            break;
+                        default:
+                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_GREY : LIGHT_GREY };
+                            break;
+                    }
+
+                    var lines = log_entry.Content.Split('\n');
+                    var date_length = -1;
+                    foreach(var line in lines)
+                        if (date_length == -1)
+                        {
+                            p.Inlines.Add(new Run() { Text = $"[{log_entry.Time}] {line}\n", Foreground = color });
+                            date_length = $"[{log_entry.Time}] ".Length;
+                        }
+                        else
+                        {
+                            p.Inlines.Add(new Run() { Text = new string(' ', date_length) + line + "\n", Foreground = color });
+                        }
+                    (p.Inlines[^1] as Run).Text = (p.Inlines[^1] as Run).Text.TrimEnd();
+                    LogTextBox.Blocks.Add(p);
+                }
+                //SetText(text);
             }
             else if (Logger_LogType == Logger_LogType.ManagerLogs)
             {
