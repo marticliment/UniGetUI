@@ -56,7 +56,7 @@ namespace UniGetUI.Core.Tools
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public string AutoTranslated(string text)
+        public static string AutoTranslated(string text)
         {
             return text;
         }
@@ -121,6 +121,20 @@ namespace UniGetUI.Core.Tools
                     newName += name[i];
             }
             return newName;
+        }
+
+        /// <summary>
+        /// Generates a random string composed of alphanumeric characters and numbers
+        /// </summary>
+        /// <param name="length">The length of the string</param>
+        /// <returns>A string</returns>
+        public static string RandomString(int length)
+        {
+            Random random = new();
+            const string pool = "abcdefghijklmnopqrstuvwxyz0123456789";
+            IEnumerable<char> chars = Enumerable.Range(0, length)
+                .Select(x => pool[random.Next(0, pool.Length)]);
+            return new string(chars.ToArray());
         }
 
         public static void Log(Exception e)

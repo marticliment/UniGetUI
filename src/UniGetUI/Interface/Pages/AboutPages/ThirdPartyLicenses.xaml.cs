@@ -3,6 +3,7 @@ using System;
 using System.Collections.ObjectModel;
 using UniGetUI.Core;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -24,7 +25,6 @@ namespace UniGetUI.Interface.Pages.AboutPages
 
     public sealed partial class ThirdPartyLicenses : Page
     {
-        public AppTools Tools = AppTools.Instance;
         public ObservableCollection<LibraryLicense> Licenses = new();
 
         public ThirdPartyLicenses()
@@ -38,7 +38,7 @@ namespace UniGetUI.Interface.Pages.AboutPages
                     License = LicenseData.LicenseNames[license],
                     LicenseURL = LicenseData.LicenseURLs[license],
                     HomepageUrl = LicenseData.HomepageUrls[license],
-                    HomepageText = Tools.Translate("{0} homepage").Replace("{0}", license)
+                    HomepageText = CoreTools.Translate("{0} homepage").Replace("{0}", license)
                 });
             }
 

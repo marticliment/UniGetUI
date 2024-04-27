@@ -5,12 +5,12 @@ using UniGetUI.Core;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Widgets
 {
     public class BetterMenu : MenuFlyout
     {
-        public AppTools Tools = AppTools.Instance;
         public BetterMenu() : base()
         {
             MenuFlyoutPresenterStyle = (Style)Application.Current.Resources["BetterContextMenu"];
@@ -19,7 +19,6 @@ namespace UniGetUI.Interface.Widgets
 
     public class BetterMenuItem : MenuFlyoutItem
     {
-        public AppTools Tools = AppTools.Instance;
         DependencyProperty IconNameProperty;
 
         public string IconName
@@ -55,7 +54,7 @@ namespace UniGetUI.Interface.Widgets
                 typeof(CheckboxCard),
                 new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
                 {
-                    (this as MenuFlyoutItem).Text = AppTools.Instance.Translate(e.NewValue as string);
+                    (this as MenuFlyoutItem).Text = CoreTools.Translate(e.NewValue as string);
                 })));
 
         }

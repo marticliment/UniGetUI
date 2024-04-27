@@ -6,6 +6,7 @@ using UniGetUI.Core;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -73,8 +74,14 @@ namespace UniGetUI.Interface
     /// </summary>
     public class BackgroundApi : NancyModule
     {
+        private static string ApiAuthToken;
         public BackgroundApi()
         {
+
+            ApiAuthToken = CoreTools.RandomString(64);
+            Settings.SetValue("CurrentSessionToken", ApiAuthToken);
+            Logger.Log("Api auth token: " + ApiAuthToken);
+
             // Enable CORS
             After.AddItemToEndOfPipeline((ctx) =>
             {
@@ -84,6 +91,11 @@ namespace UniGetUI.Interface
             });
             BuildShareApi();
             BuildV1WidgetsApi();
+        }
+
+        public static bool AuthenticateToken(string token)
+        {
+            return token == ApiAuthToken;
         }
 
         /// <summary>
@@ -101,11 +113,11 @@ namespace UniGetUI.Interface
 
                     Logger.Log(Request.Query.@pid);
 
-                    while (AppTools.Instance.App.MainWindow is null) await Task.Delay(100);
-                    while (AppTools.Instance.App.MainWindow.NavigationPage is null) await Task.Delay(100);
-                    while (AppTools.Instance.App.MainWindow.NavigationPage.DiscoverPage is null) await Task.Delay(100);
+                    while (MainApp.Instance.MainWindow is null) await Task.Delay(100);
+                    while (MainApp.Instance.MainWindow.NavigationPage is null) await Task.Delay(100);
+                    while (MainApp.Instance.MainWindow.NavigationPage.DiscoverPage is null) await Task.Delay(100);
 
-                    AppTools.Instance.App.MainWindow.NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Request.Query.@pid.ToString(), Request.Query.@psource.ToString());
+                    MainApp.Instance.MainWindow.NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Request.Query.@pid.ToString(), Request.Query.@psource.ToString());
 
                     return "{\"status\": \"success\"}";
                 }
@@ -126,14 +138,14 @@ namespace UniGetUI.Interface
 
         /// <summary>
         /// Build the endpoints required for the /widgets/v1 endpoint. All of these 
-        /// endpoints are authenticated with AppTools.Instance.AuthenticateToken
+        /// endpoints are authenticated with MainApp.Instance.AuthenticateToken
         /// </summary>
         public void BuildV1WidgetsApi()
         {
             // Basic version check
             Get("/widgets/v1/get_wingetui_version", (parameters) =>
             {
-                if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))
+                if (!AuthenticateToken(Request.Query.@token))
                     return 401;
 
                 return CoreData.VersionNumber.ToString();
@@ -142,11 +154,11 @@ namespace UniGetUI.Interface
             // Return found updates
             Get("/widgets/v1/get_updates", (parameters) =>
             {
-                if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))
+                if (!AuthenticateToken(Request.Query.@token))
                     return 401;
 
                 string packages = "";
-                foreach (UpgradablePackage package in AppTools.Instance.App.MainWindow.NavigationPage.UpdatesPage.Packages)
+                foreach (UpgradablePackage package in MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.Packages)
                 {
                     if (package.Tag == PackageTag.OnQueue || package.Tag == PackageTag.BeingProcessed)
                         continue; // Do not show already processed packages on queue 
@@ -167,23 +179,23 @@ namespace UniGetUI.Interface
             // Open UniGetUI (as it was)
             Get("/widgets/v1/open_wingetui", (parameters) =>
             {
-                if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))
+                if (!AuthenticateToken(Request.Query.@token))
                     return 401;
 
-                AppTools.Instance.App.MainWindow.DispatcherQueue.TryEnqueue(() => { AppTools.Instance.App.MainWindow.Activate(); });
+                MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() => { MainApp.Instance.MainWindow.Activate(); });
                 return 200;
             });
 
             // Open UniGetUI with the Updates page shown
             Get("/widgets/v1/view_on_wingetui", (parameters) =>
             {
-                if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))
+                if (!AuthenticateToken(Request.Query.@token))
                     return 401;
 
-                AppTools.Instance.App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+                MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
-                    AppTools.Instance.App.MainWindow.NavigationPage.UpdatesNavButton.ForceClick();
-                    AppTools.Instance.App.MainWindow.Activate();
+                    MainApp.Instance.MainWindow.NavigationPage.UpdatesNavButton.ForceClick();
+                    MainApp.Instance.MainWindow.Activate();
                 });
                 return 200;
             });
@@ -191,15 +203,15 @@ namespace UniGetUI.Interface
             // Update a specific package given its Id
             Get("/widgets/v1/update_package", (parameters) =>
             {
-                if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))
+                if (!AuthenticateToken(Request.Query.@token))
                     return 401;
 
                 if (Request.Query.@id == "")
                     return 400;
 
-                AppTools.Instance.App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+                MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
-                    AppTools.Instance.App.MainWindow.NavigationPage.UpdatesPage.UpdatePackageForId(Request.Query.@id);
+                    MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.UpdatePackageForId(Request.Query.@id);
                 });
                 return 200;
             });
@@ -207,12 +219,12 @@ namespace UniGetUI.Interface
             // Update all packages
             Get("/widgets/v1/update_all_packages", (parameters) =>
             {
-                if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))
+                if (!AuthenticateToken(Request.Query.@token))
                     return 401;
 
-                AppTools.Instance.App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+                MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
-                    AppTools.Instance.App.MainWindow.NavigationPage.UpdatesPage.UpdateAllPackages();
+                    MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.UpdateAllPackages();
                 });
                 return 200;
             });
@@ -220,15 +232,15 @@ namespace UniGetUI.Interface
             // Update all packages for a specific manager
             Get("/widgets/v1/update_all_packages_for_source", (parameters) =>
             {
-                if (!AppTools.Instance.AuthenticateToken(Request.Query.@token))
+                if (!AuthenticateToken(Request.Query.@token))
                     return 401;
 
                 if (Request.Query.@source == "")
                     return 400;
 
-                AppTools.Instance.App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+                MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
-                    AppTools.Instance.App.MainWindow.NavigationPage.UpdatesPage.UpdateAllPackagesForManager(Request.Query.@source);
+                    MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.UpdateAllPackagesForManager(Request.Query.@source);
                 });
                 return 200;
             });

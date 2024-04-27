@@ -5,6 +5,7 @@ using System;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,7 +24,6 @@ namespace UniGetUI.Interface.Widgets
     {
         private TextBox _textbox;
         private HyperlinkButton _helpbutton;
-        private static AppTools Tools = AppTools.Instance;
 
         public string SettingName
         {
@@ -65,13 +65,13 @@ namespace UniGetUI.Interface.Widgets
             nameof(Text),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = Tools.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = CoreTools.Translate((string)e.NewValue); })));
 
             PlaceholderProperty = DependencyProperty.Register(
             nameof(Placeholder),
             typeof(string),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _textbox.PlaceholderText = Tools.Translate((string)e.NewValue); })));
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _textbox.PlaceholderText = CoreTools.Translate((string)e.NewValue); })));
 
             SettingProperty = DependencyProperty.Register(
             nameof(SettingName),
@@ -91,7 +91,7 @@ namespace UniGetUI.Interface.Widgets
             {
                 _helpbutton.NavigateUri = (Uri)e.NewValue;
                 _helpbutton.Visibility = Visibility.Visible;
-                _helpbutton.Content = Tools.Translate("More info");
+                _helpbutton.Content = CoreTools.Translate("More info");
             })));
 
             _helpbutton = new HyperlinkButton();

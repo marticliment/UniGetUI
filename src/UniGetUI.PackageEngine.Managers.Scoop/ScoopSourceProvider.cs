@@ -85,7 +85,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     }
                 }
                 _output += await process.StandardError.ReadToEndAsync();
-                // AppTools.LogManagerOperation(Manager, process, _output);
+                Manager.LogOperation(process, _output);
 
                 await process.WaitForExitAsync();
 

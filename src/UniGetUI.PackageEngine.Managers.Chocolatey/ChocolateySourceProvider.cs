@@ -82,7 +82,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             }
 
             output += await process.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(this, process, output);
+            Manager.LogOperation(process, output);
 
             await process.WaitForExitAsync();
             return sources.ToArray();

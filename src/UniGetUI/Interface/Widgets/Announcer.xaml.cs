@@ -8,6 +8,7 @@ using UniGetUI.Core;
 using Windows.UI.Text;
 using UniGetUI.Core.Logging;
 using Windows.Web.Http;
+using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -16,7 +17,6 @@ namespace UniGetUI.Interface.Widgets
 {
     public sealed partial class Announcer : UserControl
     {
-        AppTools binder = AppTools.Instance;
         public Uri Url
         {
             get => (Uri)GetValue(UrlProperty);
@@ -44,7 +44,7 @@ namespace UniGetUI.Interface.Widgets
             int i = 0;
             PointerPressed += (s, e) => { if (i++ % 3 != 0) LoadAnnouncements(); };
 
-            SetText(binder.Translate("Fetching latest announcements, please wait..."));
+            SetText(CoreTools.Translate("Fetching latest announcements, please wait..."));
             _textblock.TextWrapping = TextWrapping.Wrap;
         }
 
@@ -69,7 +69,7 @@ namespace UniGetUI.Interface.Widgets
                 }
                 else
                 {
-                    SetText(binder.Translate("Could not load announcements - HTTP status code is $CODE").Replace("$CODE", response.StatusCode.ToString()));
+                    SetText(CoreTools.Translate("Could not load announcements - HTTP status code is $CODE").Replace("$CODE", response.StatusCode.ToString()));
                     SetImage(new Uri("ms-appx:///Assets/Images/warn.png"));
                     if (!retry)
                         LoadAnnouncements(true);
@@ -78,7 +78,7 @@ namespace UniGetUI.Interface.Widgets
             catch (Exception ex)
             {
                 Logger.Log("Could not load announcements: " + ex.ToString());
-                SetText(binder.Translate("Could not load announcements - ") + ex.ToString());
+                SetText(CoreTools.Translate("Could not load announcements - ") + ex.ToString());
                 SetImage(new Uri("ms-appx:///Assets/Images/warn.png"));
             }
         }

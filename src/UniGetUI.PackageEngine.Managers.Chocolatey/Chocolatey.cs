@@ -94,7 +94,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(this, p, output);
+            LogOperation(p, output);
 
             await p.WaitForExitAsync();
 
@@ -139,7 +139,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(this, p, output);
+            LogOperation(p, output);
 
             await p.WaitForExitAsync();
 
@@ -184,7 +184,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(this, p, output);
+            LogOperation(p, output);
 
             await p.WaitForExitAsync();
 
@@ -546,7 +546,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(this, p, output);
+            LogOperation(p, output);
 
             return versions.ToArray();
         }

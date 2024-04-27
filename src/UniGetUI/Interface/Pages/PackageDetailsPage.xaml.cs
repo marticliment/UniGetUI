@@ -16,6 +16,8 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.Core.Tools;
+using UniGetUI.Core.IconEngine;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,7 +29,6 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class PackageDetailsPage : Page
     {
-        public AppTools Tools = AppTools.Instance;
         public Package Package;
         private InstallOptionsPage InstallOptionsPage;
         public event EventHandler Close;
@@ -62,26 +63,26 @@ namespace UniGetUI.Interface.Dialogs
             switch (futureOperation)
             {
                 case OperationType.Install:
-                    ActionButton.Content = Tools.Translate("Install");
+                    ActionButton.Content = CoreTools.Translate("Install");
                     break;
                 case OperationType.Uninstall:
-                    ActionButton.Content = Tools.Translate("Uninstall");
+                    ActionButton.Content = CoreTools.Translate("Uninstall");
                     break;
                 case OperationType.Update:
-                    ActionButton.Content = Tools.Translate("Update");
+                    ActionButton.Content = CoreTools.Translate("Update");
                     break;
             }
 
             IdTextBlock.Text = package.Id;
             VersionTextBlock.Text = package.Version;
             if (package is UpgradablePackage)
-                VersionTextBlock.Text += " - " + Tools.Translate("Update to {0} available").Replace("{0}", (package as UpgradablePackage).NewVersion);
+                VersionTextBlock.Text += " - " + CoreTools.Translate("Update to {0} available").Replace("{0}", (package as UpgradablePackage).NewVersion);
             PackageName.Text = package.Name;
             PackageIcon.Source = new BitmapImage() { UriSource = package.GetIconUrl() };
             SourceNameTextBlock.Text = package.SourceAsString;
 
 
-            string LoadingString = Tools.Translate("Loading...");
+            string LoadingString = CoreTools.Translate("Loading...");
             LoadingIndicator.Visibility = Visibility.Visible;
 
 
@@ -103,14 +104,14 @@ namespace UniGetUI.Interface.Dialogs
             ReleaseNotesUrlButton.Content = LoadingString;
 
 
-            PackageHasScreenshots = AppTools.IconDatabase.GetScreenshotsUrlForId(package.Id).Count() > 0;
+            PackageHasScreenshots = IconDatabase.Instance.GetScreenshotsUrlForId(package.Id).Count() > 0;
 
             if (PackageHasScreenshots)
             {
                 PackageHasScreenshots = true;
                 IconsExtraBanner.Visibility = Visibility.Visible;
                 ScreenshotsCarroussel.Items.Clear();
-                foreach (string image in AppTools.IconDatabase.GetScreenshotsUrlForId(package.Id))
+                foreach (string image in IconDatabase.Instance.GetScreenshotsUrlForId(package.Id))
                     ScreenshotsCarroussel.Items.Add(new Image() { Source = new BitmapImage(new Uri(image)) });
             }
 
@@ -122,7 +123,7 @@ namespace UniGetUI.Interface.Dialogs
         {
             LoadingIndicator.Visibility = Visibility.Visible;
 
-            string NotFound = Tools.Translate("Not available");
+            string NotFound = CoreTools.Translate("Not available");
             Uri InvalidUri = new("about:blank");
             Info = await Package.Manager.GetPackageDetails(Package);
             Logger.Log("Received info " + Info);
@@ -203,20 +204,20 @@ namespace UniGetUI.Interface.Dialogs
             switch (FutureOperation)
             {
                 case OperationType.Install:
-                    Tools.AddOperationToList(new InstallPackageOperation(Package, InstallOptionsPage.Options));
+                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(Package, InstallOptionsPage.Options));
                     break;
                 case OperationType.Uninstall:
-                    Tools.App.MainWindow.NavigationPage.InstalledPage.ConfirmAndUninstall(Package, InstallOptionsPage.Options);
+                    MainApp.Instance.MainWindow.NavigationPage.InstalledPage.ConfirmAndUninstall(Package, InstallOptionsPage.Options);
                     break;
                 case OperationType.Update:
-                    Tools.AddOperationToList(new UpdatePackageOperation(Package, InstallOptionsPage.Options));
+                    MainApp.Instance.AddOperationToList(new UpdatePackageOperation(Package, InstallOptionsPage.Options));
                     break;
             }
         }
 
         public void ShareButton_Click(object sender, RoutedEventArgs e)
         {
-            Tools.App.MainWindow.SharePackage(Package);
+            MainApp.Instance.MainWindow.SharePackage(Package);
         }
 
         public async void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)
@@ -228,7 +229,7 @@ namespace UniGetUI.Interface.Dialogs
 
                 ErrorOutput.Text = "";
                 FileSavePicker savePicker = new();
-                MainWindow window = Tools.App.MainWindow;
+                MainWindow window = MainApp.Instance.MainWindow;
                 IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
@@ -239,7 +240,7 @@ namespace UniGetUI.Interface.Dialogs
                 StorageFile file = await savePicker.PickSaveFileAsync();
                 if (file != null)
                 {
-                    DownloadInstallerButton.Content = Tools.Translate("Downloading");
+                    DownloadInstallerButton.Content = CoreTools.Translate("Downloading");
                     DownloadInstallerButtonProgress.Visibility = Visibility.Visible;
                     Logger.Log(file.Path.ToString());
                     using HttpClient httpClient = new();
@@ -249,13 +250,13 @@ namespace UniGetUI.Interface.Dialogs
                     fs.Dispose();
                     DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
                     System.Diagnostics.Process.Start("explorer.exe", "/select," + file.Path.ToString());
-                    DownloadInstallerButton.Content = Tools.Translate("Download succeeded");
+                    DownloadInstallerButton.Content = CoreTools.Translate("Download succeeded");
                 }
             }
             catch (Exception ex)
             {
                 Logger.Log(ex);
-                DownloadInstallerButton.Content = Tools.Translate("An error occurred");
+                DownloadInstallerButton.Content = CoreTools.Translate("An error occurred");
                 DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
                 ErrorOutput.Text = ex.Message;
             }

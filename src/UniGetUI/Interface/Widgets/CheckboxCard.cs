@@ -5,6 +5,7 @@ using System;
 using UniGetUI.Core;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,7 +24,6 @@ namespace UniGetUI.Interface.Widgets
     public sealed class CheckboxCard : SettingsCard
     {
         public CheckBox _checkbox;
-        private AppTools Tools = AppTools.Instance;
 
         public string SettingName
         {
@@ -61,7 +61,7 @@ namespace UniGetUI.Interface.Widgets
                 nameof(Text),
                 typeof(string),
                 typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.Content = Tools.Translate((string)e.NewValue); })));
+                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.Content = CoreTools.Translate((string)e.NewValue); })));
 
             SettingProperty = DependencyProperty.Register(
                 nameof(SettingName),

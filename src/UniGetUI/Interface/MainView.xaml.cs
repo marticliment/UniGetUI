@@ -20,6 +20,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.PackageClasses;
 using System.Reflection.Emit;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,7 +29,6 @@ namespace UniGetUI.Interface
 {
     public sealed partial class MainView : UserControl
     {
-        public AppTools Tools = AppTools.Instance;
         public SettingsInterface SettingsPage;
         public DiscoverPackagesPage DiscoverPage;
         public SoftwareUpdatesPage UpdatesPage;
@@ -76,7 +76,7 @@ namespace UniGetUI.Interface
 
             DiscoverNavButton.ForceClick();
 
-            if (Tools.IsAdministrator() && !Settings.Get("AlreadyWarnedAboutAdmin"))
+            if (CoreTools.IsAdministrator() && !Settings.Get("AlreadyWarnedAboutAdmin"))
             {
                 Settings.Set("AlreadyWarnedAboutAdmin", true);
                 WarnAboutAdminRights();
@@ -151,16 +151,16 @@ namespace UniGetUI.Interface
         private void MoreNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
 
-            foreach (NavButton button in Tools.App.MainWindow.NavButtonList)
+            foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
                 button.ToggleButton.IsChecked = false;
             MoreNavButton.ToggleButton.IsChecked = true;
 
-            (VersionMenuItem as MenuFlyoutItem).Text = Tools.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
+            (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
             MoreNavButtonMenu.ShowAt(MoreNavButton, new FlyoutShowOptions() { ShowMode = FlyoutShowMode.Standard });
 
             MoreNavButtonMenu.Closed += (s, e) =>
             {
-                foreach (NavButton button in Tools.App.MainWindow.NavButtonList)
+                foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
                     button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage]);
             };
         }
@@ -178,14 +178,14 @@ namespace UniGetUI.Interface
             AboutDialog.Resources["ContentDialogMaxWidth"] = 1200;
             AboutDialog.Resources["ContentDialogMaxHeight"] = 1000;
             AboutDialog.Content = AboutPage;
-            AboutDialog.PrimaryButtonText = Tools.Translate("Close");
-            foreach (NavButton button in Tools.App.MainWindow.NavButtonList)
+            AboutDialog.PrimaryButtonText = CoreTools.Translate("Close");
+            foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
                 button.ToggleButton.IsChecked = false;
 
-            await Tools.App.MainWindow.ShowDialogAsync(AboutDialog);
+            await MainApp.Instance.MainWindow.ShowDialogAsync(AboutDialog);
 
             AboutDialog.Content = null;
-            foreach (NavButton button in Tools.App.MainWindow.NavButtonList)
+            foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
                 button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage]);
             AboutDialog = null;
         }
@@ -197,15 +197,15 @@ namespace UniGetUI.Interface
             UpdatesDialog.XamlRoot = XamlRoot;
             UpdatesDialog.Resources["ContentDialogMaxWidth"] = 1200;
             UpdatesDialog.Resources["ContentDialogMaxHeight"] = 1000;
-            UpdatesDialog.SecondaryButtonText = Tools.Translate("Close");
-            UpdatesDialog.PrimaryButtonText = Tools.Translate("Reset");
+            UpdatesDialog.SecondaryButtonText = CoreTools.Translate("Close");
+            UpdatesDialog.PrimaryButtonText = CoreTools.Translate("Reset");
             UpdatesDialog.DefaultButton = ContentDialogButton.Secondary;
-            UpdatesDialog.Title = Tools.Translate("Manage ignored updates");
+            UpdatesDialog.Title = CoreTools.Translate("Manage ignored updates");
             UpdatesDialog.PrimaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
             UpdatesDialog.Content = IgnoredUpdatesPage;
 
             _ = IgnoredUpdatesPage.UpdateData();
-            await Tools.App.MainWindow.ShowDialogAsync(UpdatesDialog);
+            await MainApp.Instance.MainWindow.ShowDialogAsync(UpdatesDialog);
 
             UpdatesDialog.Content = null;
             UpdatesDialog = null;
@@ -222,13 +222,13 @@ namespace UniGetUI.Interface
             }
 
             AdminDialog.XamlRoot = XamlRoot;
-            AdminDialog.PrimaryButtonText = Tools.Translate("I understand");
+            AdminDialog.PrimaryButtonText = CoreTools.Translate("I understand");
             AdminDialog.DefaultButton = ContentDialogButton.Primary;
-            AdminDialog.Title = Tools.Translate("Administrator privileges");
+            AdminDialog.Title = CoreTools.Translate("Administrator privileges");
             AdminDialog.SecondaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
-            AdminDialog.Content = Tools.Translate("WingetUI has been ran as administrator, which is not recommended. When running WingetUI as administrator, EVERY operation launched from WingetUI will have administrator privileges. You can still use the program, but we highly recommend not running WingetUI with administrator privileges.");
+            AdminDialog.Content = CoreTools.Translate("WingetUI has been ran as administrator, which is not recommended. When running WingetUI as administrator, EVERY operation launched from WingetUI will have administrator privileges. You can still use the program, but we highly recommend not running WingetUI with administrator privileges.");
 
-            await Tools.App.MainWindow.ShowDialogAsync(AdminDialog);
+            await MainApp.Instance.MainWindow.ShowDialogAsync(AdminDialog);
         }
 
         public async void WarnAboutNewName()
@@ -244,7 +244,7 @@ namespace UniGetUI.Interface
             string NEW_NAME = "UnigetUI";
 
             AdminDialog.XamlRoot = XamlRoot;
-            AdminDialog.PrimaryButtonText = Tools.Translate("I understand");
+            AdminDialog.PrimaryButtonText = CoreTools.Translate("I understand");
             AdminDialog.DefaultButton = ContentDialogButton.Primary;
             AdminDialog.SecondaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
             StackPanel p = new() { Spacing = 16 };
@@ -253,21 +253,21 @@ namespace UniGetUI.Interface
             p.Children.Add(new Image() { Source = new BitmapImage() { UriSource = new Uri("ms-appx:///Assets/Images/icon.png") }, Height = 96 });
 
             Paragraph par = new();
-            par.Inlines.Add(new Run() { Text = Tools.Translate("WingetUI will become {newname} soon!").Replace("{newname}", NEW_NAME), FontSize = 24, FontWeight = new Windows.UI.Text.FontWeight(700), FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI Variable Display Bold") });
+            par.Inlines.Add(new Run() { Text = CoreTools.Translate("WingetUI will become {newname} soon!").Replace("{newname}", NEW_NAME), FontSize = 24, FontWeight = new Windows.UI.Text.FontWeight(700), FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI Variable Display Bold") });
             par.Inlines.Add(new LineBreak());
             par.Inlines.Add(new LineBreak());
-            par.Inlines.Add(new Run() { Text = Tools.Translate("WingetUI will soon be named {newname}. This will not represent any change in the application. I (the developer) will continue the development of this project as I am doing right now, but under a different name.").Replace("{newname}", NEW_NAME) });
+            par.Inlines.Add(new Run() { Text = CoreTools.Translate("WingetUI will soon be named {newname}. This will not represent any change in the application. I (the developer) will continue the development of this project as I am doing right now, but under a different name.").Replace("{newname}", NEW_NAME) });
             par.Inlines.Add(new LineBreak());
             par.Inlines.Add(new LineBreak());
-            par.Inlines.Add(new Run() { Text = Tools.Translate("WingetUI is being renamed in order to emphasize the difference between WingetUI (the interface you are using right now) and Winget (a package manager developed by Microsoft with which I am not related)"), FontSize = 12, FontStyle = Windows.UI.Text.FontStyle.Italic });
+            par.Inlines.Add(new Run() { Text = CoreTools.Translate("WingetUI is being renamed in order to emphasize the difference between WingetUI (the interface you are using right now) and Winget (a package manager developed by Microsoft with which I am not related)"), FontSize = 12, FontStyle = Windows.UI.Text.FontStyle.Italic });
             par.Inlines.Add(new LineBreak());
-            par.Inlines.Add(new Run() { Text = Tools.Translate("While Winget can be used within WingetUI, WingetUI can be used with other package managers, which can be confusing. In the past, WingetUI was designed to work only with Winget, but this is not true anymore, and therefore WingetUI does not represent what this project aims to become."), FontSize = 12, FontStyle = Windows.UI.Text.FontStyle.Italic });
+            par.Inlines.Add(new Run() { Text = CoreTools.Translate("While Winget can be used within WingetUI, WingetUI can be used with other package managers, which can be confusing. In the past, WingetUI was designed to work only with Winget, but this is not true anymore, and therefore WingetUI does not represent what this project aims to become."), FontSize = 12, FontStyle = Windows.UI.Text.FontStyle.Italic });
 
             RichTextBlock text = new();
             text.Blocks.Add(par);
             p.Children.Add(text);
 
-            await Tools.App.MainWindow.ShowDialogAsync(AdminDialog);
+            await MainApp.Instance.MainWindow.ShowDialogAsync(AdminDialog);
         }
 
 
@@ -281,19 +281,19 @@ namespace UniGetUI.Interface
             OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
             if (Operation == OperationType.Install)
-                OptionsDialog.SecondaryButtonText = Tools.Translate("Install");
+                OptionsDialog.SecondaryButtonText = CoreTools.Translate("Install");
             else if (Operation == OperationType.Update)
-                OptionsDialog.SecondaryButtonText = Tools.Translate("Update");
+                OptionsDialog.SecondaryButtonText = CoreTools.Translate("Update");
             else if (Operation == OperationType.Uninstall)
-                OptionsDialog.SecondaryButtonText = Tools.Translate("Uninstall");
+                OptionsDialog.SecondaryButtonText = CoreTools.Translate("Uninstall");
             else
                 OptionsDialog.SecondaryButtonText = "";
-            OptionsDialog.PrimaryButtonText = Tools.Translate("Save and close");
+            OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
-            OptionsDialog.Title = Tools.Translate("{0} installation options").Replace("{0}", package.Name);
+            OptionsDialog.Title = CoreTools.Translate("{0} installation options").Replace("{0}", package.Name);
             OptionsDialog.Content = OptionsPage;
 
-            ContentDialogResult result = await Tools.App.MainWindow.ShowDialogAsync(OptionsDialog);
+            ContentDialogResult result = await MainApp.Instance.MainWindow.ShowDialogAsync(OptionsDialog);
             OptionsPage.SaveToDisk();
 
             OptionsDialog.Content = null;
@@ -313,11 +313,11 @@ namespace UniGetUI.Interface
             OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
             OptionsDialog.SecondaryButtonText = "";
-            OptionsDialog.PrimaryButtonText = Tools.Translate("Save and close");
+            OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
-            OptionsDialog.Title = Tools.Translate("{0} installation options").Replace("{0}", package.Name);
+            OptionsDialog.Title = CoreTools.Translate("{0} installation options").Replace("{0}", package.Name);
             OptionsDialog.Content = OptionsPage;
-            await Tools.App.MainWindow.ShowDialogAsync(OptionsDialog);
+            await MainApp.Instance.MainWindow.ShowDialogAsync(OptionsDialog);
 
             OptionsDialog.Content = null;
             OptionsDialog = null;
@@ -338,7 +338,7 @@ namespace UniGetUI.Interface
                 Grid.SetRow(TargetPage, 0);
                 MainContentPresenterGrid.Children.Add(TargetPage);
             }
-            foreach (NavButton button in Tools.App.MainWindow.NavButtonList)
+            foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
             {
 
                 button.ToggleButton.IsChecked = (button == PageButtonReference[TargetPage]);
@@ -367,8 +367,8 @@ namespace UniGetUI.Interface
             NotesDialog.XamlRoot = XamlRoot;
             NotesDialog.Resources["ContentDialogMaxWidth"] = 12000;
             NotesDialog.Resources["ContentDialogMaxHeight"] = 10000;
-            NotesDialog.CloseButtonText = Tools.Translate("Close");
-            NotesDialog.Title = Tools.Translate("Release notes");
+            NotesDialog.CloseButtonText = CoreTools.Translate("Close");
+            NotesDialog.Title = CoreTools.Translate("Release notes");
             ReleaseNotes notes = new();
             NotesDialog.Content = notes;
             NotesDialog.SizeChanged += (s, e) =>
@@ -377,7 +377,7 @@ namespace UniGetUI.Interface
                 notes.MinHeight = ActualHeight - 200;
             };
 
-            await Tools.App.MainWindow.ShowDialogAsync(NotesDialog);
+            await MainApp.Instance.MainWindow.ShowDialogAsync(NotesDialog);
 
             notes.Dispose();
             notes = null;
@@ -405,7 +405,7 @@ namespace UniGetUI.Interface
 
             DetailsPage.Close += (s, e) => { DetailsDialog.Hide(); };
 
-            await Tools.App.MainWindow.ShowDialogAsync(DetailsDialog);
+            await MainApp.Instance.MainWindow.ShowDialogAsync(DetailsDialog);
 
             DetailsDialog.Content = null;
             DetailsDialog = null;
@@ -441,7 +441,7 @@ namespace UniGetUI.Interface
 
         private void QuitUniGetUI_Click(object sender, RoutedEventArgs e)
         {
-            Tools.App.DisposeAndQuit();
+            MainApp.Instance.DisposeAndQuit();
         }
     }
 }

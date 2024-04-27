@@ -100,7 +100,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(this, p, output);
+            LogOperation(p, output);
 
             await p.WaitForExitAsync();
 
@@ -169,7 +169,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(this, p, output);
+            LogOperation(p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
@@ -216,7 +216,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(this, p, output);
+            LogOperation(p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();

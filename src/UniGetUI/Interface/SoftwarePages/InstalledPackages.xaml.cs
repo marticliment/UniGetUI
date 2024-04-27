@@ -23,6 +23,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,7 +39,6 @@ namespace UniGetUI.Interface
         protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
         protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
-        protected AppTools Tools = AppTools.Instance;
 
         protected TranslatedTextBlock MainTitle;
         protected TranslatedTextBlock MainSubtitle;
@@ -64,7 +64,7 @@ namespace UniGetUI.Interface
             PackageList = __package_list;
             LoadingProgressBar = __loading_progressbar;
             LoadingProgressBar.Visibility = Visibility.Collapsed;
-            LocalPackagesNode = new TreeViewNode() { Content = Tools.Translate("Local"), IsExpanded = false };
+            LocalPackagesNode = new TreeViewNode() { Content = CoreTools.Translate("Local"), IsExpanded = false };
             Initialized = true;
             ReloadButton.Click += async (s, e) => { await LoadPackages(); };
             FindButton.Click += (s, e) => { FilterPackages(QueryBlock.Text); };
@@ -99,7 +99,7 @@ namespace UniGetUI.Interface
 
             PackageList.DoubleTapped += (s, e) =>
             {
-                _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
+                _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
             };
 
             PackageList.RightTapped += (s, e) =>
@@ -130,13 +130,13 @@ namespace UniGetUI.Interface
                 {
                     if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down))
                     {
-                        if (await Tools.App.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
-                            Tools.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as Package));
+                        if (await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
+                            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as Package));
                     }
                     else if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                         ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
                     else
-                        _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
+                        _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
                 }
                 else if (e.Key == Windows.System.VirtualKey.A && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                 {
@@ -155,7 +155,7 @@ namespace UniGetUI.Interface
                 }
                 else if (e.Key == Windows.System.VirtualKey.F1)
                 {
-                    Tools.App.MainWindow.NavigationPage.ShowHelp();
+                    MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
                 }
                 else if (e.Key == Windows.System.VirtualKey.F && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                 {
@@ -177,7 +177,7 @@ namespace UniGetUI.Interface
             LoadInterface();
             _ = LoadPackages();
 
-            QueryBlock.PlaceholderText = Tools.Translate("Search for packages");
+            QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
         }
 
         public void ReloadPackages()
@@ -256,13 +256,13 @@ namespace UniGetUI.Interface
             if (LoadingProgressBar.Visibility == Visibility.Visible)
                 return; // If already loading, don't load again
 
-            MainSubtitle.Text = Tools.AutoTranslated("Loading...");
-            BackgroundText.Text = Tools.AutoTranslated("Loading...");
+            MainSubtitle.Text = CoreTools.AutoTranslated("Loading...");
+            BackgroundText.Text = CoreTools.AutoTranslated("Loading...");
             BackgroundText.Visibility = Visibility.Visible;
             LoadingProgressBar.Visibility = Visibility.Visible;
             SourcesPlaceholderText.Visibility = Visibility.Visible;
             SourcesTreeViewGrid.Visibility = Visibility.Collapsed;
-            SourcesPlaceholderText.Text = Tools.AutoTranslated("Loading...");
+            SourcesPlaceholderText.Text = CoreTools.AutoTranslated("Loading...");
 
             Packages.Clear();
             FilteredPackages.Clear();
@@ -277,7 +277,7 @@ namespace UniGetUI.Interface
 
             List<Task<Package[]>> tasks = new();
 
-            foreach (PackageManager manager in Tools.App.PackageManagerList)
+            foreach (PackageManager manager in MainApp.Instance.PackageManagerList)
             {
                 if (manager.IsEnabled() && manager.Status.Found)
                 {
@@ -351,7 +351,7 @@ namespace UniGetUI.Interface
 
                 string fileName = Settings.GetValue("ChangeBackupFileName");
                 if (fileName == "")
-                    fileName = Tools.Translate("{pcName} installed packages").Replace("{pcName}", Environment.MachineName);
+                    fileName = CoreTools.Translate("{pcName} installed packages").Replace("{pcName}", Environment.MachineName);
 
                 if (Settings.Get("EnableBackupTimestamping"))
                     fileName += " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
@@ -434,7 +434,7 @@ namespace UniGetUI.Interface
             int HiddenPackagesDueToSource = 0;
             foreach (Package match in MatchingList)
             {
-                if ((VisibleManagers.Contains(match.Manager) && match.Manager != Tools.App.Winget) || VisibleSources.Contains(match.Source))
+                if ((VisibleManagers.Contains(match.Manager) && match.Manager != MainApp.Winget) || VisibleSources.Contains(match.Source))
                     FilteredPackages.Add(match);
                 else
                     HiddenPackagesDueToSource++;
@@ -452,15 +452,15 @@ namespace UniGetUI.Interface
                 {
                     if (Packages.Count() == 0)
                     {
-                        BackgroundText.Text = SourcesPlaceholderText.Text = Tools.AutoTranslated("We couldn't find any package");
-                        SourcesPlaceholderText.Text = Tools.AutoTranslated("No sources found");
-                        MainSubtitle.Text = Tools.AutoTranslated("No packages found");
+                        BackgroundText.Text = SourcesPlaceholderText.Text = CoreTools.AutoTranslated("We couldn't find any package");
+                        SourcesPlaceholderText.Text = CoreTools.AutoTranslated("No sources found");
+                        MainSubtitle.Text = CoreTools.AutoTranslated("No packages found");
                     }
                     else
                     {
-                        BackgroundText.Text = Tools.AutoTranslated("No results were found matching the input criteria");
-                        SourcesPlaceholderText.Text = Tools.AutoTranslated("No packages were found");
-                        MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
+                        BackgroundText.Text = CoreTools.AutoTranslated("No results were found matching the input criteria");
+                        SourcesPlaceholderText.Text = CoreTools.AutoTranslated("No packages were found");
+                        MainSubtitle.Text = CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
                     }
                     BackgroundText.Visibility = Visibility.Visible;
                 }
@@ -469,7 +469,7 @@ namespace UniGetUI.Interface
             else
             {
                 BackgroundText.Visibility = Visibility.Collapsed;
-                MainSubtitle.Text = Tools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
+                MainSubtitle.Text = CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.").Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString());
             }
         }
 
@@ -492,13 +492,13 @@ namespace UniGetUI.Interface
                 return;
             InstantSearchCheckbox.IsChecked = Settings.Get(InstantSearchSettingString);
 
-            MainTitle.Text = Tools.AutoTranslated("Installed Packages");
+            MainTitle.Text = CoreTools.AutoTranslated("Installed Packages");
             HeaderIcon.Glyph = "\uE977";
             CheckboxHeader.Content = " ";
-            NameHeader.Content = Tools.Translate("Package Name");
-            IdHeader.Content = Tools.Translate("Package ID");
-            VersionHeader.Content = Tools.Translate("Version");
-            SourceHeader.Content = Tools.Translate("Source");
+            NameHeader.Content = CoreTools.Translate("Package Name");
+            IdHeader.Content = CoreTools.Translate("Package ID");
+            VersionHeader.Content = CoreTools.Translate("Version");
+            SourceHeader.Content = CoreTools.Translate("Source");
 
             CheckboxHeader.Click += (s, e) => { SortPackages("IsCheckedAsString"); };
             NameHeader.Click += (s, e) => { SortPackages("Name"); };
@@ -551,18 +551,18 @@ namespace UniGetUI.Interface
             Dictionary<AppBarButton, string> Labels = new()
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
-                { UninstallSelected,    Tools.Translate("Uninstall selected packages") },
-                { UninstallAsAdmin,     " " + Tools.Translate("Uninstall as administrator") },
-                { UninstallInteractive, " " + Tools.Translate("Interactive uninstall") },
-                { InstallationSettings, " " + Tools.Translate("Installation options") },
-                { PackageDetails,       " " + Tools.Translate("Package details") },
-                { SharePackage,         " " + Tools.Translate("Share") },
-                { SelectAll,            " " + Tools.Translate("Select all") },
-                { SelectNone,           " " + Tools.Translate("Clear selection") },
-                { IgnoreSelected,       Tools.Translate("Ignore selected packages") },
-                { ManageIgnored,        Tools.Translate("Manage ignored updates") },
-                { ExportSelection,      Tools.Translate("Add selection to bundle") },
-                { HelpButton,           Tools.Translate("Help") }
+                { UninstallSelected,    CoreTools.Translate("Uninstall selected packages") },
+                { UninstallAsAdmin,     " " + CoreTools.Translate("Uninstall as administrator") },
+                { UninstallInteractive, " " + CoreTools.Translate("Interactive uninstall") },
+                { InstallationSettings, " " + CoreTools.Translate("Installation options") },
+                { PackageDetails,       " " + CoreTools.Translate("Package details") },
+                { SharePackage,         " " + CoreTools.Translate("Share") },
+                { SelectAll,            " " + CoreTools.Translate("Select all") },
+                { SelectNone,           " " + CoreTools.Translate("Clear selection") },
+                { IgnoreSelected,       CoreTools.Translate("Ignore selected packages") },
+                { ManageIgnored,        CoreTools.Translate("Manage ignored updates") },
+                { ExportSelection,      CoreTools.Translate("Add selection to bundle") },
+                { HelpButton,           CoreTools.Translate("Help") }
             };
 
             foreach (AppBarButton toolButton in Labels.Keys)
@@ -595,21 +595,21 @@ namespace UniGetUI.Interface
             PackageDetails.Click += (s, e) =>
             {
                 if (PackageList.SelectedItem != null)
-                    _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
+                    _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
             };
 
             ExportSelection.Click += ExportSelection_Click;
-            HelpButton.Click += (s, e) => { Tools.App.MainWindow.NavigationPage.ShowHelp(); };
+            HelpButton.Click += (s, e) => { MainApp.Instance.MainWindow.NavigationPage.ShowHelp(); };
 
 
             InstallationSettings.Click += async (s, e) =>
             {
-                if (PackageList.SelectedItem != null && await Tools.App.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
+                if (PackageList.SelectedItem != null && await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
                     ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
             };
 
 
-            ManageIgnored.Click += async (s, e) => { await Tools.App.MainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
+            ManageIgnored.Click += async (s, e) => { await MainApp.Instance.MainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
             IgnoreSelected.Click += async (s, e) =>
             {
                 foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
@@ -623,7 +623,7 @@ namespace UniGetUI.Interface
             SharePackage.Click += (s, e) =>
             {
                 if (PackageList.SelectedItem != null)
-                    Tools.App.MainWindow.SharePackage(PackageList.SelectedItem as Package);
+                    MainApp.Instance.MainWindow.SharePackage(PackageList.SelectedItem as Package);
             };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
@@ -633,8 +633,8 @@ namespace UniGetUI.Interface
 
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
-            Tools.App.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
-            await Tools.App.MainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.ToArray().Where(x => x.IsChecked));
+            MainApp.Instance.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
+            await MainApp.Instance.MainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.ToArray().Where(x => x.IsChecked));
         }
 
         public async void ConfirmAndUninstall(Package package, InstallationOptions options)
@@ -643,14 +643,14 @@ namespace UniGetUI.Interface
 
             dialog.XamlRoot = XamlRoot;
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.Title = Tools.Translate("Are you sure?");
-            dialog.PrimaryButtonText = Tools.Translate("No");
-            dialog.SecondaryButtonText = Tools.Translate("Yes");
+            dialog.Title = CoreTools.Translate("Are you sure?");
+            dialog.PrimaryButtonText = CoreTools.Translate("No");
+            dialog.SecondaryButtonText = CoreTools.Translate("Yes");
             dialog.DefaultButton = ContentDialogButton.Primary;
-            dialog.Content = Tools.Translate("Do you really want to uninstall {0}?").Replace("{0}", package.Name);
+            dialog.Content = CoreTools.Translate("Do you really want to uninstall {0}?").Replace("{0}", package.Name);
 
-            if (await Tools.App.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary)
-                Tools.AddOperationToList(new UninstallPackageOperation(package, options));
+            if (await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary)
+                MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, options));
 
         }
         public async void ConfirmAndUninstall(Package[] packages, bool AsAdmin = false, bool Interactive = false, bool RemoveData = false)
@@ -667,13 +667,13 @@ namespace UniGetUI.Interface
 
             dialog.XamlRoot = XamlRoot;
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.Title = Tools.Translate("Are you sure?");
-            dialog.PrimaryButtonText = Tools.Translate("No");
-            dialog.SecondaryButtonText = Tools.Translate("Yes");
+            dialog.Title = CoreTools.Translate("Are you sure?");
+            dialog.PrimaryButtonText = CoreTools.Translate("No");
+            dialog.SecondaryButtonText = CoreTools.Translate("Yes");
             dialog.DefaultButton = ContentDialogButton.Primary;
 
             StackPanel p = new();
-            p.Children.Add(new TextBlock() { Text = Tools.Translate("Do you really want to uninstall the following {0} packages?").Replace("{0}", packages.Length.ToString()), Margin = new Thickness(0, 0, 0, 5) });
+            p.Children.Add(new TextBlock() { Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?").Replace("{0}", packages.Length.ToString()), Margin = new Thickness(0, 0, 0, 5) });
 
             string pkgList = "";
             foreach (Package package in packages)
@@ -684,9 +684,9 @@ namespace UniGetUI.Interface
 
             dialog.Content = p;
 
-            if (await Tools.App.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary)
+            if (await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary)
                 foreach (Package package in packages)
-                    Tools.AddOperationToList(new UninstallPackageOperation(package, new InstallationOptions(package)
+                    MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, new InstallationOptions(package)
                     {
                         RunAsAdministrator = AsAdmin,
                         InteractiveInstallation = Interactive,
@@ -730,15 +730,15 @@ namespace UniGetUI.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            Tools.AddOperationToList(new InstallPackageOperation((PackageList.SelectedItem as Package)));
+            MainApp.Instance.AddOperationToList(new InstallPackageOperation((PackageList.SelectedItem as Package)));
         }
 
         private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs package)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            Tools.AddOperationToList(new UninstallPackageOperation((PackageList.SelectedItem as Package)));
-            Tools.AddOperationToList(new InstallPackageOperation((PackageList.SelectedItem as Package)));
+            MainApp.Instance.AddOperationToList(new UninstallPackageOperation((PackageList.SelectedItem as Package)));
+            MainApp.Instance.AddOperationToList(new InstallPackageOperation((PackageList.SelectedItem as Package)));
 
         }
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs package)
@@ -752,14 +752,14 @@ namespace UniGetUI.Interface
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            Tools.App.MainWindow.SharePackage((PackageList.SelectedItem as Package));
+            MainApp.Instance.MainWindow.SharePackage((PackageList.SelectedItem as Package));
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs package)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            _ = Tools.App.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
+            _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
         }
 
 
@@ -777,7 +777,7 @@ namespace UniGetUI.Interface
         private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
             if (PackageList.SelectedItem as Package != null
-                && await Tools.App.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
+                && await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
             {
                 ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
             }

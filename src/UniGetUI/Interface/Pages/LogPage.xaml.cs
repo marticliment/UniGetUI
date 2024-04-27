@@ -12,6 +12,7 @@ using UniGetUI.Core.Logging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -80,9 +81,9 @@ namespace UniGetUI.Interface.Pages
         {
             FileSavePicker savePicker = new();
             savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            WinRT.Interop.InitializeWithWindow.Initialize(savePicker, WinRT.Interop.WindowNative.GetWindowHandle(AppTools.Instance.App.MainWindow));
-            savePicker.FileTypeChoices.Add(AppTools.Instance.Translate("Text"), new List<string>() { ".txt" });
-            savePicker.SuggestedFileName = AppTools.Instance.Translate("WingetUI Logger.Log");
+            WinRT.Interop.InitializeWithWindow.Initialize(savePicker, WinRT.Interop.WindowNative.GetWindowHandle(MainApp.Instance.MainWindow));
+            savePicker.FileTypeChoices.Add(CoreTools.Translate("Text"), new List<string>() { ".txt" });
+            savePicker.SuggestedFileName = CoreTools.Translate("WingetUI Logger.Log");
 
             StorageFile file = await savePicker.PickSaveFileAsync();
             if (file != null)

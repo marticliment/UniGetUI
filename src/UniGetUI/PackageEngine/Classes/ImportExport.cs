@@ -10,6 +10,7 @@ using UniGetUI.PackageEngine.Serializable;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI.PackageEngine.Classes
 {
@@ -63,7 +64,6 @@ namespace UniGetUI.PackageEngine.Classes
 
     public class BundledPackage : INotifyPropertyChanged
     {
-        public AppTools Tools = AppTools.Instance;
         public Package Package { get; }
         public bool IsValid { get; set; } = true;
         public InstallationOptions InstallOptions { get; set; }
@@ -98,7 +98,7 @@ namespace UniGetUI.PackageEngine.Classes
             get
             {
                 if (UpdateOptions == null || !UpdateOptions.UpdatesIgnored)
-                    return Tools.Translate("Latest");
+                    return CoreTools.Translate("Latest");
                 else
                     return Package.Version;
             }
@@ -137,14 +137,14 @@ namespace UniGetUI.PackageEngine.Classes
 
         public async virtual void ShowOptions(object sender, RoutedEventArgs e)
         {
-            InstallOptions = await Tools.App.MainWindow.NavigationPage.UpdateInstallationSettings(Package, InstallOptions);
+            InstallOptions = await MainApp.Instance.MainWindow.NavigationPage.UpdateInstallationSettings(Package, InstallOptions);
         }
 
         public void RemoveFromList(object sender, RoutedEventArgs e)
         {
-            Tools.App.MainWindow.NavigationPage.BundlesPage.Packages.Remove(this);
-            Tools.App.MainWindow.NavigationPage.BundlesPage.FilteredPackages.Remove(this);
-            Tools.App.MainWindow.NavigationPage.BundlesPage.UpdateCount();
+            MainApp.Instance.MainWindow.NavigationPage.BundlesPage.Packages.Remove(this);
+            MainApp.Instance.MainWindow.NavigationPage.BundlesPage.FilteredPackages.Remove(this);
+            MainApp.Instance.MainWindow.NavigationPage.BundlesPage.UpdateCount();
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
@@ -236,7 +236,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
         }
 
-        public InvalidBundledPackage(string name, string id, string version, string source, string manager) : this(new Package(name, id, version, AppTools.Instance.App.Winget.DefaultSource, AppTools.Instance.App.Winget))
+        public InvalidBundledPackage(string name, string id, string version, string source, string manager) : this(new Package(name, id, version, MainApp.Winget.DefaultSource, MainApp.Winget))
         {
             IsValid = false;
             DrawOpacity = 0.5;
@@ -246,6 +246,7 @@ namespace UniGetUI.PackageEngine.Classes
             __source = source;
             __manager = manager;
         }
+
         public InvalidBundledPackage(Package package) : base(package, new InstallationOptions(package, reset: true), new SerializableUpdatesOptions_v1())
         {
             IsValid = false;

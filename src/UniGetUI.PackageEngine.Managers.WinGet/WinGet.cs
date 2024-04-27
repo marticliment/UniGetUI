@@ -149,7 +149,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            // CoreTools.LogManagerOperation(this, p, output);
+            LogOperation(p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
@@ -221,7 +221,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(this, p, output);
+            LogOperation(p, output);
             await p.WaitForExitAsync();
 
             return Packages.ToArray();

@@ -21,6 +21,7 @@ using UniGetUI.Core.Logging;
 using Windows.Foundation.Collections;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.Core.Tools;
 
 
 namespace UniGetUI.Interface
@@ -44,7 +45,6 @@ namespace UniGetUI.Interface
         static readonly Guid _dtm_iid =
             new(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
 
-        AppTools Tools = AppTools.Instance;
         public MainView NavigationPage;
         public Grid ContentRoot;
         public bool BlockLoading = false;
@@ -65,15 +65,15 @@ namespace UniGetUI.Interface
             ApplyTheme();
 
             AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
-            if (Tools.IsAdministrator())
+            if (CoreTools.IsAdministrator())
             {
-                Title = "UniGetUI " + Tools.Translate("[RAN AS ADMINISTRATOR]");
+                Title = "UniGetUI " + CoreTools.Translate("[RAN AS ADMINISTRATOR]");
                 AppTitle.Text = Title;
             }
 
             LoadingSthDalog = new ContentDialog();
             LoadingSthDalog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            LoadingSthDalog.Title = Tools.Translate("Please wait");
+            LoadingSthDalog.Title = CoreTools.Translate("Please wait");
             LoadingSthDalog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
         }
 
@@ -124,20 +124,20 @@ namespace UniGetUI.Interface
             }
             else
             {
-                if (Tools.OperationQueue.Count > 0)
+                if (MainApp.Instance.OperationQueue.Count > 0)
                 {
                     args.Cancel = true;
                     ContentDialog d = new();
                     d.XamlRoot = NavigationPage.XamlRoot;
-                    d.Title = Tools.Translate("Operation in progress");
-                    d.Content = Tools.Translate("There are ongoing operations. Quitting WingetUI may cause them to fail. Do you want to continue?");
-                    d.PrimaryButtonText = Tools.Translate("Quit");
-                    d.SecondaryButtonText = Tools.Translate("Cancel");
+                    d.Title = CoreTools.Translate("Operation in progress");
+                    d.Content = CoreTools.Translate("There are ongoing operations. Quitting WingetUI may cause them to fail. Do you want to continue?");
+                    d.PrimaryButtonText = CoreTools.Translate("Quit");
+                    d.SecondaryButtonText = CoreTools.Translate("Cancel");
                     d.DefaultButton = ContentDialogButton.Secondary;
 
                     ContentDialogResult result = await ShowDialogAsync(d);
                     if (result == ContentDialogResult.Primary)
-                        Tools.App.DisposeAndQuit();
+                        MainApp.Instance.DisposeAndQuit();
                 }
             }
         }
@@ -178,7 +178,7 @@ namespace UniGetUI.Interface
 
             foreach (KeyValuePair<XamlUICommand, string> item in Labels)
             {
-                item.Key.Label = Tools.Translate(item.Value);
+                item.Key.Label = CoreTools.Translate(item.Value);
             }
 
             Dictionary<XamlUICommand, string> Icons = new()
@@ -199,9 +199,9 @@ namespace UniGetUI.Interface
             DiscoverPackages.ExecuteRequested += (s, e) => { NavigationPage.DiscoverNavButton.ForceClick(); Activate(); };
             AvailableUpdates.ExecuteRequested += (s, e) => { NavigationPage.UpdatesNavButton.ForceClick(); Activate(); };
             InstalledPackages.ExecuteRequested += (s, e) => { NavigationPage.InstalledNavButton.ForceClick(); Activate(); };
-            AboutUniGetUI.Label = Tools.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
+            AboutUniGetUI.Label = CoreTools.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
             ShowUniGetUI.ExecuteRequested += (s, e) => { Activate(); };
-            QuitUniGetUI.ExecuteRequested += (s, e) => { Tools.App.DisposeAndQuit(); };
+            QuitUniGetUI.ExecuteRequested += (s, e) => { MainApp.Instance.DisposeAndQuit(); };
 
             TrayMenu.Items.Add(new MenuFlyoutItem() { Command = DiscoverPackages });
             TrayMenu.Items.Add(new MenuFlyoutItem() { Command = AvailableUpdates });
@@ -249,30 +249,30 @@ namespace UniGetUI.Interface
         public void UpdateSystemTrayStatus()
         {
             string modifier = "_empty";
-            string tooltip = Tools.Translate("Everything is up to date") + " - " + Title;
+            string tooltip = CoreTools.Translate("Everything is up to date") + " - " + Title;
 
-            if (Tools.TooltipStatus.OperationsInProgress > 0)
+            if (MainApp.Instance.TooltipStatus.OperationsInProgress > 0)
             {
                 modifier = "_blue";
-                tooltip = Tools.Translate("Operation in progress") + " - " + Title;
+                tooltip = CoreTools.Translate("Operation in progress") + " - " + Title;
             }
-            else if (Tools.TooltipStatus.ErrorsOccurred > 0)
+            else if (MainApp.Instance.TooltipStatus.ErrorsOccurred > 0)
             {
                 modifier = "_orange";
-                tooltip = Tools.Translate("Attention required") + " - " + Title;
+                tooltip = CoreTools.Translate("Attention required") + " - " + Title;
             }
-            else if (Tools.TooltipStatus.RestartRequired)
+            else if (MainApp.Instance.TooltipStatus.RestartRequired)
             {
                 modifier = "_turquoise";
-                tooltip = Tools.Translate("Restart required") + " - " + Title;
+                tooltip = CoreTools.Translate("Restart required") + " - " + Title;
             }
-            else if (Tools.TooltipStatus.AvailableUpdates > 0)
+            else if (MainApp.Instance.TooltipStatus.AvailableUpdates > 0)
             {
                 modifier = "_green";
-                if (Tools.TooltipStatus.AvailableUpdates == 1)
-                    tooltip = Tools.Translate("1 update is available") + " - " + Title;
+                if (MainApp.Instance.TooltipStatus.AvailableUpdates == 1)
+                    tooltip = CoreTools.Translate("1 update is available") + " - " + Title;
                 else
-                    tooltip = Tools.Translate("{0} updates are available").Replace("{0}", Tools.TooltipStatus.AvailableUpdates.ToString()) + " - " + Title;
+                    tooltip = CoreTools.Translate("{0} updates are available").Replace("{0}", MainApp.Instance.TooltipStatus.AvailableUpdates.ToString()) + " - " + Title;
             }
 
             TrayIcon.ToolTipText = tooltip;
@@ -322,26 +322,26 @@ namespace UniGetUI.Interface
             string preferredTheme = Settings.GetValue("PreferredTheme");
             if (preferredTheme == "dark")
             {
-                Tools.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
+                MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
                 ContentRoot.RequestedTheme = ElementTheme.Dark;
             }
             else if (preferredTheme == "light")
             {
-                Tools.ThemeListener.CurrentTheme = ApplicationTheme.Light;
+                MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Light;
                 ContentRoot.RequestedTheme = ElementTheme.Light;
             }
             else
             {
                 if (ContentRoot.ActualTheme == ElementTheme.Dark)
-                    Tools.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
+                    MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
                 else
-                    Tools.ThemeListener.CurrentTheme = ApplicationTheme.Light;
+                    MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Light;
                 ContentRoot.RequestedTheme = ElementTheme.Default;
             }
 
             if (AppWindowTitleBar.IsCustomizationSupported())
             {
-                if (Tools.ThemeListener.CurrentTheme == ApplicationTheme.Light)
+                if (MainApp.Instance.ThemeListener.CurrentTheme == ApplicationTheme.Light)
                     AppWindow.TitleBar.ButtonForegroundColor = Colors.Black;
                 else
                     AppWindow.TitleBar.ButtonForegroundColor = Colors.White;

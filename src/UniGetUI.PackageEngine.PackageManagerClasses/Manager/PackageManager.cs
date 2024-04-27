@@ -1,5 +1,8 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 using UniGetUI.Core.Classes;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Interfaces;
@@ -405,9 +408,25 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 return [];
             }
         }
-        /// END SOURCE-RELATED METHODS
+        // END SOURCE-RELATED METHODS
 
 
+
+
+        public void LogOperation(Process process, string output)
+        {
+            output = Regex.Replace(output, "\n.{0,6}\n", "\n");
+            CoreData.ManagerLogs += $"\n▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄";
+            CoreData.ManagerLogs += $"\n█▀▀▀▀▀▀▀▀▀ [{DateTime.Now}] {this.Name} ▀▀▀▀▀▀▀▀▀▀▀";
+            CoreData.ManagerLogs += $"\n█  Executable: {process.StartInfo.FileName}";
+            CoreData.ManagerLogs += $"\n█  Arguments: {process.StartInfo.Arguments}";
+            CoreData.ManagerLogs += "\n";
+            CoreData.ManagerLogs += output;
+            CoreData.ManagerLogs += "\n";
+            CoreData.ManagerLogs += $"[{DateTime.Now}] Exit Code: {process.ExitCode}";
+            CoreData.ManagerLogs += "\n";
+            CoreData.ManagerLogs += "\n";
+        }
 
     }
 }

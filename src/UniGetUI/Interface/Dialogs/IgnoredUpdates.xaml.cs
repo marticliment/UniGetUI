@@ -27,7 +27,6 @@ namespace UniGetUI.Interface
 
     public sealed partial class IgnoredUpdatesManager : Page
     {
-        AppTools Tools = AppTools.Instance;
         public IgnoredUpdatesManager()
         {
             InitializeComponent();
@@ -39,7 +38,7 @@ namespace UniGetUI.Interface
 
             Dictionary<string, PackageManager> ManagerNameReference = new();
 
-            foreach (PackageManager Manager in Tools.App.PackageManagerList)
+            foreach (PackageManager Manager in MainApp.Instance.PackageManagerList)
             {
                 ManagerNameReference.Add(Manager.Name.ToLower(), Manager);
             }
@@ -50,7 +49,7 @@ namespace UniGetUI.Interface
 
             foreach (KeyValuePair<string, JsonNode> keypair in IgnoredUpdatesJson)
             {
-                PackageManager manager = Tools.App.Winget; // Manager by default
+                PackageManager manager = MainApp.Winget; // Manager by default
                 if (ManagerNameReference.ContainsKey(keypair.Key.Split("\\")[0]))
                     manager = ManagerNameReference[keypair.Key.Split("\\")[0]];
 
@@ -85,7 +84,7 @@ namespace UniGetUI.Interface
             Id = id;
             Name = CoreTools.FormatAsName(id);
             if (version == "*")
-                Version = AppTools.Instance.Translate("All versions");
+                Version = CoreTools.Translate("All versions");
             else
                 Version = version;
             Manager = manager;
@@ -101,7 +100,7 @@ namespace UniGetUI.Interface
                 await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
             }
 
-            foreach (Package package in AppTools.Instance.App.MainWindow.NavigationPage.InstalledPage.Packages)
+            foreach (Package package in MainApp.Instance.MainWindow.NavigationPage.InstalledPage.Packages)
                 if (package.Id == Id && Manager == package.Manager)
                 {
                     package.SetTag(PackageTag.Default);

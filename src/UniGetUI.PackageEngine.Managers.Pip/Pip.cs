@@ -107,7 +107,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(this, p, output);
+            LogOperation(p, output);
             return Packages.ToArray();
         }
 
@@ -155,7 +155,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(this, p, output);
+            LogOperation(p, output);
             return Packages.ToArray();
         }
 
@@ -204,7 +204,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(this, p, output);
+            LogOperation(p, output);
             return Packages.ToArray();
         }
 
@@ -428,7 +428,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             }
 
             output += await p.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(this, p, output);
+            LogOperation(p, output);
             return result;
         }
     }

@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using UniGetUI.Core;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Pages.AboutPages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -16,12 +17,16 @@ namespace UniGetUI.Interface
     public sealed partial class AboutUniGetUI : Page
     {
 
-        AppTools Tools = AppTools.Instance;
 
         int previousSelectedIndex = 0;
         public AboutUniGetUI()
         {
             InitializeComponent();
+            SelectorBarItemPage1.Text = CoreTools.Translate("About");
+            SelectorBarItemPage2.Text = CoreTools.Translate("Third-party licenses");
+            SelectorBarItemPage3.Text = CoreTools.Translate("Contributors");
+            SelectorBarItemPage4.Text = CoreTools.Translate("Translators");
+            SelectorBarItemPage5.Text = CoreTools.Translate("Support me");
         }
 
         private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
