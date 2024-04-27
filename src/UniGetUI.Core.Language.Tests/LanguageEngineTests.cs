@@ -1,63 +1,69 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UniGetUI.Core.Data;
+﻿using UniGetUI.Core.Data;
 using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.Core.Language.Tests
 {
-    [TestClass]
     public class LanguageEngineTests
     {
-        [TestMethod]
-        public void TestLoadingLanguage()
+        [Theory]
+        [InlineData("ca", "Fes una còpia de seguretat dels paquets instal·lats")]
+        [InlineData("es", "Respaldar paquetes instalados")]
+        public void TestLoadingLanguage(string language, string translation)
         {
             var engine = new LanguageEngine();
-            
-            engine.LoadLanguage("ca");
-            Assert.AreEqual("Fes una còpia de seguretat dels paquets instal·lats", engine.Translate("Backup installed packages"), "The translation for the first loaded language does not match the expected value");
 
+            engine.LoadLanguage(language);
+            Assert.Equal(translation, engine.Translate("Backup installed packages"));
+        }
+
+        [Fact]
+        public void TestLoadingLanguageForNonExistentKey()
+        {
+            //arrange
+            var engine = new LanguageEngine();
             engine.LoadLanguage("es");
-            Assert.AreEqual("Respaldar paquetes instalados", engine.Translate("Backup installed packages"), "The translation for the second loaded language does not match the expected value");
-
+            //act
             var NONEXISTENT_KEY = "This is a nonexistent key thay should be returned as-is";
-            Assert.AreEqual(NONEXISTENT_KEY, engine.Translate(NONEXISTENT_KEY), "The nonexistent key got modified when it should have not!");
+            //assert
+            Assert.Equal(NONEXISTENT_KEY, engine.Translate(NONEXISTENT_KEY));
         }
 
-        [TestMethod]
-        public void TestUniGetUIRefactoring()
+        [Theory]
+        [InlineData("en", "UniGetUI Log", "UniGetUI (formerly WingetUI)")]
+        [InlineData("ca", "Registre del UniGetUI", "UniGetUI (abans WingetUI)")]
+        public void TestUniGetUIRefactoring(string language, string uniGetUILogTranslation, string uniGetUITranslation)
         {
             var engine = new LanguageEngine();
 
-            engine.LoadLanguage("en");
-            Assert.AreEqual("UniGetUI Log", engine.Translate("WingetUI Log"), "The WingetUI language was not properly translated on english");
-            Assert.AreEqual("UniGetUI (formerly WingetUI)", engine.Translate("WingetUI"), "The WingetUI language was not properly translated on english");
-
-            engine.LoadLanguage("ca");
-            Assert.AreEqual("Registre del UniGetUI", engine.Translate("WingetUI Log"), "The WingetUI language was not properly translated on non-english");
-            Assert.AreEqual("UniGetUI (abans WingetUI)", engine.Translate("WingetUI"), "The WingetUI language was not properly translated on non-english");
-
-            engine.LoadLanguage("random-nonexistent-language");
-            Assert.AreEqual("en", engine.Translate("locale"), "Fallback locale not loaded");
+            engine.LoadLanguage(language);
+            Assert.Equal(uniGetUILogTranslation, engine.Translate("WingetUI Log"));
+            Assert.Equal(uniGetUITranslation, engine.Translate("WingetUI"));
         }
 
-        [TestMethod]
+
+        [Fact]
+        public void LocalFallbackTest()
+        {
+            var engine = new LanguageEngine();
+            engine.LoadLanguage("random-nonexistent-language");
+            Assert.Equal("en", engine.Translate("locale"));
+        }
+
+        [Fact]
         public void TestStaticallyLoadedLanguages()
         {
             var engine = new LanguageEngine();
             engine.LoadLanguage("ca");
             engine.LoadStaticTranslation();
-            Assert.AreEqual("Usuari | Local", CommonTranslations.ScopeNames[PackageScope.Local], "Invalid common translation");
-            Assert.AreEqual("Màquina | Global", CommonTranslations.ScopeNames[PackageScope.Global], "Invalid common translation");
+            Assert.Equal("Usuari | Local", CommonTranslations.ScopeNames[PackageScope.Local]);
+            Assert.Equal("Màquina | Global", CommonTranslations.ScopeNames[PackageScope.Global]);
 
-            Assert.AreEqual(PackageScope.Global, CommonTranslations.InvertedScopeNames["Màquina | Global"], "Invalid common tranalation");
-            Assert.AreEqual(PackageScope.Local, CommonTranslations.InvertedScopeNames["Usuari | Local"], "Invalid common tranalation");
+            Assert.Equal(PackageScope.Global, CommonTranslations.InvertedScopeNames["Màquina | Global"]);
+            Assert.Equal(PackageScope.Local, CommonTranslations.InvertedScopeNames["Usuari | Local"]);
         }
 
-        [TestMethod]
-        public void TestDownloadUpdatedTranslations()
+        [Fact]
+        public async Task TestDownloadUpdatedTranslationsAsync()
         {
             var expected_file = Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_ca.json");
             if (File.Exists(expected_file))
@@ -65,9 +71,9 @@ namespace UniGetUI.Core.Language.Tests
 
             var engine = new LanguageEngine();
             engine.LoadLanguage("ca");
-            engine.DownloadUpdatedLanguageFile("ca").Wait();
+            await engine.DownloadUpdatedLanguageFile("ca");
 
-            Assert.IsTrue(File.Exists(expected_file), "The updated file was not created");
+            Assert.True(File.Exists(expected_file), "The updated file was not created");
             File.Delete(expected_file);
         }
     }

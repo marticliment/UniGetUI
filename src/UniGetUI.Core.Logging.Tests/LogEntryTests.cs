@@ -1,9 +1,8 @@
 namespace UniGetUI.Core.Logging.Tests
 {
-    [TestClass]
     public class LogEntryTests
     {
-        [TestMethod]
+        [Fact]
         public void TestLogEntry()
         {
             var startTime = DateTime.Now;
@@ -13,17 +12,17 @@ namespace UniGetUI.Core.Logging.Tests
 
             var endTime = DateTime.Now;
 
-            Assert.AreEqual(logEntry1.Content, "Hello World");
-            Assert.AreEqual(logEntry2.Content, "Hello World 2");
-            Assert.AreEqual(logEntry3.Content, "Hello World 3");
+            Assert.Equal("Hello World", logEntry1.Content);
+            Assert.Equal("Hello World 2", logEntry2.Content);
+            Assert.Equal("Hello World 3", logEntry3.Content);
 
-            Assert.AreEqual(logEntry1.Severity, LogEntry.SeverityLevel.Info);
-            Assert.AreEqual(logEntry2.Severity, LogEntry.SeverityLevel.Debug);
-            Assert.AreEqual(logEntry3.Severity, LogEntry.SeverityLevel.Error);
+            Assert.Equal(LogEntry.SeverityLevel.Info, logEntry1.Severity);
+            Assert.Equal(LogEntry.SeverityLevel.Debug, logEntry2.Severity);
+            Assert.Equal(LogEntry.SeverityLevel.Error, logEntry3.Severity);
 
-            Assert.IsTrue(logEntry1.Time > startTime && logEntry1.Time < endTime);
-            Assert.IsTrue(logEntry2.Time > startTime && logEntry2.Time < endTime);
-            Assert.IsTrue(logEntry3.Time > startTime && logEntry3.Time < endTime);
+            Assert.True(logEntry1.Time > startTime && logEntry1.Time < endTime);
+            Assert.True(logEntry2.Time > startTime && logEntry2.Time < endTime);
+            Assert.True(logEntry3.Time > startTime && logEntry3.Time < endTime);
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿
-using Xunit;
-using Assert = Xunit.Assert;
+﻿using Xunit;
 
 namespace UniGetUI.Core.Classes.Tests
 {
