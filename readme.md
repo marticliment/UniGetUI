@@ -229,7 +229,7 @@ To mitigate the risks of downloading malware, Microsoft has implemented a few ch
 ## Command-line parameters:
 `--daemon`: Start WingetUI without spawning a new window. WingetUI will run minimized on the system tray. WingetUI is called with this parameter when launched at startup. **Autostart WingetUI in the notifications area** must be enabled for this parameter to work.<br>
 `--welcomewizard` (or simply `--welcome`): Show a window to choose which package managers to use.<br>
-`--updateapps`: Enable automatic installation of available updates.
+`--updateapps`: Enable automatic installation of available updates.<br>
 `--report-all-errors`: May help debug crashes (WingetUI 3.0 and newer)
 
 ### Installer command-line parameters:
