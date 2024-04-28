@@ -1,9 +1,8 @@
 namespace UniGetUI.Core.Data.Tests
 {
-    [TestClass]
     public class LicensesTest
     {
-        [TestMethod]
+        [Fact]
         public void EnsureLicenseUrlsExist()
         {
             List<string> MissingUrls = new();
@@ -12,10 +11,10 @@ namespace UniGetUI.Core.Data.Tests
                 if(!LicenseData.LicenseURLs.ContainsKey(library))
                     MissingUrls.Add(library);
 
-            Assert.AreEqual(0, MissingUrls.Count, "The list of missing licenses is not empty: " + MissingUrls.ToArray().ToString());
+            Assert.True(MissingUrls.Count == 0, "The list of missing licenses is not empty: " + MissingUrls.ToArray().ToString());
         }
 
-        [TestMethod]
+        [Fact]
         public void EnsureHomepageUrlsExist()
         {
             List<string> MissingUrls = new();
@@ -24,7 +23,7 @@ namespace UniGetUI.Core.Data.Tests
                 if (!LicenseData.HomepageUrls.ContainsKey(library))
                     MissingUrls.Add(library);
 
-            Assert.AreEqual(0, MissingUrls.Count, "The list of missing licenses is not empty: " + MissingUrls.ToArray().ToString());
+            Assert.True(MissingUrls.Count == 0, "The list of missing licenses is not empty: " + MissingUrls.ToArray().ToString());
         }
 
     }

@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UniGetUI.Core.Logging.Tests
+﻿namespace UniGetUI.Core.Logging.Tests
 {
-    [TestClass]
     public class LoggerTests
     {
-        [TestMethod]
+        [Fact]
         public void TestLogger()
         {
             var startTime = DateTime.Now;
@@ -22,20 +15,20 @@ namespace UniGetUI.Core.Logging.Tests
 
             var logs = Logger.GetLogs();
 
-            Assert.AreEqual(logs[0].Content, "Hello World");
-            Assert.AreEqual(logs[1].Content, "Hello World 2");
-            Assert.AreEqual(logs[2].Content, "Hello World 3");
-            Assert.AreEqual(logs[3].Content, "System.Exception: Test exception");
+            Assert.Equal("Hello World", logs[0].Content);
+            Assert.Equal("Hello World 2", logs[1].Content);
+            Assert.Equal("Hello World 3", logs[2].Content);
+            Assert.Equal("System.Exception: Test exception", logs[3].Content);
 
-            Assert.AreEqual(logs[0].Severity, LogEntry.SeverityLevel.Info);
-            Assert.AreEqual(logs[1].Severity, LogEntry.SeverityLevel.Debug);
-            Assert.AreEqual(logs[2].Severity, LogEntry.SeverityLevel.Error);
-            Assert.AreEqual(logs[3].Severity, LogEntry.SeverityLevel.Warning);
+            Assert.Equal(LogEntry.SeverityLevel.Info, logs[0].Severity);
+            Assert.Equal(LogEntry.SeverityLevel.Debug, logs[1].Severity);
+            Assert.Equal(LogEntry.SeverityLevel.Error, logs[2].Severity);
+            Assert.Equal(LogEntry.SeverityLevel.Warning, logs[3].Severity);
 
-            Assert.IsTrue(logs[0].Time > startTime && logs[0].Time < endTime);
-            Assert.IsTrue(logs[1].Time > startTime && logs[1].Time < endTime);
-            Assert.IsTrue(logs[2].Time > startTime && logs[2].Time < endTime);
-            Assert.IsTrue(logs[3].Time > startTime && logs[3].Time < endTime);
+            Assert.True(logs[0].Time > startTime && logs[0].Time < endTime);
+            Assert.True(logs[1].Time > startTime && logs[1].Time < endTime);
+            Assert.True(logs[2].Time > startTime && logs[2].Time < endTime);
+            Assert.True(logs[3].Time > startTime && logs[3].Time < endTime);
         }
     }
 }
