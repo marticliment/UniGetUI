@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager.Interfaces;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
-namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
+namespace UniGetUI.PackageEngine.Classes.Manager.Providers
 {
-    public abstract class BaseSourceProvider<T>: ISourceProvider where T : PackageManager
+    public abstract class BaseSourceProvider<T> : ISourceProvider where T : PackageManager
     {
         public readonly ManagerSourceFactory SourceFactory;
         protected T Manager;

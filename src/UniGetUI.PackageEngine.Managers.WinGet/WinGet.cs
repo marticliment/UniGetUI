@@ -69,6 +69,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             };
 
             SourceProvider = new WinGetSourceProvider(this);
+            PackageDetailsProvider = new WinGetPackageDetailsProvider(this);
+
             LocalPcSource = new(this, CoreTools.Translate("Local PC"), "localpc");
             AndroidSubsystemSource = new(this, CoreTools.Translate("Android Subsystem"), "android");
             SteamSource = new(this, "Steam", "steam");
@@ -398,15 +400,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
-        protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
-        {
-            return await WinGetHelper.Instance.GetPackageVersions_Unsafe(this, package);
-        }
-
-        public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
-        {
-            return await WinGetHelper.Instance.GetPackageDetails_UnSafe(this, package);
-        }
 
         public override async Task RefreshPackageIndexes()
         {
