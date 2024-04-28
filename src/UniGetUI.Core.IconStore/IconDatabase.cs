@@ -52,8 +52,12 @@ namespace UniGetUI.Core.IconEngine
         /// Download the icon and screenshots database to a local file, and load it into memory
         /// </summary>
         /// <returns></returns>
-
         public async void LoadIconAndScreenshotsDatabase()
+        {
+            await LoadIconAndScreenshotsDatabaseAsync();
+        }
+
+        public async Task LoadIconAndScreenshotsDatabaseAsync()
         {
             string IconsAndScreenshotsFile = Path.Join(CoreData.UniGetUICacheDirectory_Data, "Icon Database.json");
             try

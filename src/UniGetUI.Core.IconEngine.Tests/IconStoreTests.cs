@@ -10,7 +10,7 @@ namespace UniGetUI.Core.IconEngine.Tests
             // Serializable is implicitly tested when calling the method
             // LoadIconAndScreenshotsDatabase()
 
-            await iconStore.LoadIconAndScreenshotsDatabase();
+            await iconStore.LoadIconAndScreenshotsDatabaseAsync();
 
             var iconCount = iconStore.GetIconCount();
             Assert.NotEqual(0, iconCount.PackagesWithIconCount);
@@ -21,7 +21,7 @@ namespace UniGetUI.Core.IconEngine.Tests
         [Fact]
         public async Task TestGetExistingIconAndImagesAsync()
         {
-            await iconStore.LoadIconAndScreenshotsDatabase();
+            await iconStore.LoadIconAndScreenshotsDatabaseAsync();
 
             var icon = iconStore.GetIconUrlForId("__test_entry_DO_NOT_EDIT_PLEASE");
             Assert.Equal("https://this.is.a.test/url/used_for/automated_unit_testing.png", icon);
@@ -36,7 +36,7 @@ namespace UniGetUI.Core.IconEngine.Tests
         [Fact]
         public async Task TestGetNonExistingIconAndImagesAsync()
         {
-            await iconStore.LoadIconAndScreenshotsDatabase();
+            await iconStore.LoadIconAndScreenshotsDatabaseAsync();
 
             var nonexistent_icon = iconStore.GetIconUrlForId("__test_entry_THIS_ICON_DOES_NOT_EXTST");
             Assert.Empty(nonexistent_icon);
