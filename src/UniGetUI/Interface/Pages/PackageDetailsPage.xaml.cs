@@ -78,7 +78,6 @@ namespace UniGetUI.Interface.Dialogs
             if (package is UpgradablePackage)
                 VersionTextBlock.Text += " - " + CoreTools.Translate("Update to {0} available").Replace("{0}", (package as UpgradablePackage).NewVersion);
             PackageName.Text = package.Name;
-            PackageIcon.Source = new BitmapImage() { UriSource = package.GetIconUrl() };
             SourceNameTextBlock.Text = package.SourceAsString;
 
 
@@ -122,6 +121,8 @@ namespace UniGetUI.Interface.Dialogs
         public async Task LoadInformation()
         {
             LoadingIndicator.Visibility = Visibility.Visible;
+
+            PackageIcon.Source = new BitmapImage() { UriSource = (await Package.GetIconUrl()) };
 
             string NotFound = CoreTools.Translate("Not available");
             Uri InvalidUri = new("about:blank");

@@ -408,27 +408,27 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
         }
 
-        public async Task<string> GetPackageIcon(Package package)
+        public async Task<Uri> GetPackageIconUrl(Package package)
         {
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageIcon");
-                return await PackageDetailsProvider.GetPackageIcon(package);
+                return await PackageDetailsProvider.GetPackageIconUrl(package);
             }
             catch (Exception e)
             {
                 Logger.Error($"Error when loading the package icon for the package {package.Id} on manager " + Name);
                 Logger.Error(e);
-                return Path.Join(CoreData.UniGetUIExecutableFile, "Assets", "Images", "package_color.png");
+                return new Uri("ms-appx:///Assets/Images/package_color.png");
             }
         }
 
-        public async Task<string[]> GetPackageScreenshots(Package package)
+        public async Task<Uri[]> GetPackageScreenshotsUrl(Package package)
         {
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageScreenshots");
-                return await PackageDetailsProvider.GetPackageScreenshots(package);
+                return await PackageDetailsProvider.GetPackageScreenshotsUrl(package);
             }
             catch (Exception e)
             {

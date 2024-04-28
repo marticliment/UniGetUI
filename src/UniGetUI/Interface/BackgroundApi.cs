@@ -156,7 +156,7 @@ namespace UniGetUI.Interface
             });
 
             // Return found updates
-            Get("/widgets/v1/get_updates", (parameters) =>
+            Get("/widgets/v1/get_updates", async (parameters) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                     return 401;
@@ -167,7 +167,7 @@ namespace UniGetUI.Interface
                     if (package.Tag == PackageTag.OnQueue || package.Tag == PackageTag.BeingProcessed)
                         continue; // Do not show already processed packages on queue 
 
-                    string icon = package.GetIconUrl().ToString();
+                    string icon = (await package.GetIconUrl()).ToString();
                     if (icon == "ms-appx:///Assets/Images/package_color.png")
                         icon = "https://marticliment.com/resources/widgets/package_color.png";
                     packages += $"{package.Name.Replace('|', '-')}|{package.Id}|{package.Version}|{package.NewVersion}|{package.Source}|{package.Manager.Name}|{icon}&&";

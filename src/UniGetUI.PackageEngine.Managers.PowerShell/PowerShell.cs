@@ -32,6 +32,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 SupportsCustomScopes = true,
                 SupportsCustomSources = true,
                 SupportsPreRelease = true,
+                SupportsCustomPackageIcons = true,
                 Sources = new ManagerSource.Capabilities()
                 {
                     KnowsPackageCount = false,

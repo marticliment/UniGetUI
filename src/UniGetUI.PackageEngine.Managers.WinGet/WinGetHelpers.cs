@@ -51,8 +51,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
     internal class NativeWinGetHelper : IWinGetPackageHelper
     {
-        WindowsPackageManagerStandardFactory Factory;
-        Deployment.PackageManager WinGetManager;
+        public WindowsPackageManagerStandardFactory Factory;
+        public Deployment.PackageManager WinGetManager;
 
         public NativeWinGetHelper()
         {
@@ -295,7 +295,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             List<string> output = new();
             ProcessStartInfo startInfo = new()
             {
-                FileName = Path.Join(CoreData.UniGetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_x64", "winget.exe"),
+                FileName = Path.Join(CoreData.UniGetUIExecutableDirectory, "winget-cli_x64", "winget.exe"),
                 Arguments = ManagerInstance.Properties.ExecutableCallArgs + " show --id " + package.Id + " --exact --disable-interactivity --accept-source-agreements --source " + package.Source.Name,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,

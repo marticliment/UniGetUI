@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Managers.Generic.NuGet;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager
@@ -89,12 +90,12 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             return details;
         }
 
-        protected override Task<string> GetPackageIcon_Unsafe(Package package)
+        protected override async Task<Uri?> GetPackageIcon_Unsafe(Package package)
         {
-            throw new NotImplementedException();
+            return await NuGetIconLoader.GetIconFromManifest(package);
         }
 
-        protected override Task<string[]> GetPackageScreenshots_Unsafe(Package package)
+        protected override Task<Uri[]> GetPackageScreenshots_Unsafe(Package package)
         {
             throw new NotImplementedException();
         }

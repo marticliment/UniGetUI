@@ -61,13 +61,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.Mana
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.Managers.PowerShell", "UniGetUI.PackageEngine.Managers.PowerShell\UniGetUI.PackageEngine.Managers.PowerShell.csproj", "{E454D3A5-C5C6-4291-BE96-220CF0D5CFFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.PackageEngine.Managers.Chocolatey", "UniGetUI.PackageEngine.Managers.Chocolatey\UniGetUI.PackageEngine.Managers.Chocolatey.csproj", "{57D094C1-6913-46BF-A657-84A5F46D4EE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.Managers.Chocolatey", "UniGetUI.PackageEngine.Managers.Chocolatey\UniGetUI.PackageEngine.Managers.Chocolatey.csproj", "{57D094C1-6913-46BF-A657-84A5F46D4EE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.PackageEngine.Managers.Dotnet", "UniGetUI.PackageEngine.Managers.Dotnet\UniGetUI.PackageEngine.Managers.Dotnet.csproj", "{740E2894-903D-4B94-9C32-B630593BEB16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.Managers.Dotnet", "UniGetUI.PackageEngine.Managers.Dotnet\UniGetUI.PackageEngine.Managers.Dotnet.csproj", "{740E2894-903D-4B94-9C32-B630593BEB16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.PackageEngine.Managers.Pip", "UniGetUI.PackageEngine.Managers.Pip\UniGetUI.PackageEngine.Managers.Pip.csproj", "{D401F706-A182-46E3-A25C-B0BF5AA0D07E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.Managers.Pip", "UniGetUI.PackageEngine.Managers.Pip\UniGetUI.PackageEngine.Managers.Pip.csproj", "{D401F706-A182-46E3-A25C-B0BF5AA0D07E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.PackageEngine.Managers.Npm", "UniGetUI.PackageEngine.Managers.Npm\UniGetUI.PackageEngine.Managers.Npm.csproj", "{0FFA3F96-A68A-453F-A5FE-0C281EC371C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.Managers.Npm", "UniGetUI.PackageEngine.Managers.Npm\UniGetUI.PackageEngine.Managers.Npm.csproj", "{0FFA3F96-A68A-453F-A5FE-0C281EC371C7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Generic", "Generic", "{9BF1CD59-1A2C-4023-9C8D-171DCB728078}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.PackageEngine.Managers.Generic.NuGet", "UniGetUI.PackageEngine.Managers.Generic.NuGet\UniGetUI.PackageEngine.Managers.Generic.NuGet.csproj", "{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -513,6 +517,22 @@ Global
 		{0FFA3F96-A68A-453F-A5FE-0C281EC371C7}.Release|x64.Build.0 = Release|Any CPU
 		{0FFA3F96-A68A-453F-A5FE-0C281EC371C7}.Release|x86.ActiveCfg = Release|Any CPU
 		{0FFA3F96-A68A-453F-A5FE-0C281EC371C7}.Release|x86.Build.0 = Release|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Debug|x64.Build.0 = Debug|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Debug|x86.Build.0 = Debug|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Release|ARM64.Build.0 = Release|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Release|x64.ActiveCfg = Release|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Release|x64.Build.0 = Release|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Release|x86.ActiveCfg = Release|Any CPU
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -546,6 +566,8 @@ Global
 		{740E2894-903D-4B94-9C32-B630593BEB16} = {95168D0B-1B2C-4295-B6D4-D5BAF781B9FA}
 		{D401F706-A182-46E3-A25C-B0BF5AA0D07E} = {95168D0B-1B2C-4295-B6D4-D5BAF781B9FA}
 		{0FFA3F96-A68A-453F-A5FE-0C281EC371C7} = {95168D0B-1B2C-4295-B6D4-D5BAF781B9FA}
+		{9BF1CD59-1A2C-4023-9C8D-171DCB728078} = {95168D0B-1B2C-4295-B6D4-D5BAF781B9FA}
+		{5FA79592-DE5B-46FF-9E05-34A2E72A7AF7} = {9BF1CD59-1A2C-4023-9C8D-171DCB728078}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D044BB14-0B37-47E5-A579-8B30FCBA1F9F}

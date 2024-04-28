@@ -29,6 +29,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 SupportedCustomArchitectures = new Architecture[] { Architecture.X86 },
                 SupportsPreRelease = true,
                 SupportsCustomSources = true,
+                SupportsCustomPackageIcons = true,
                 Sources = new ManagerSource.Capabilities()
                 {
                     KnowsPackageCount = false,

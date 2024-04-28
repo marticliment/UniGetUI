@@ -216,10 +216,10 @@ namespace UniGetUI.PackageEngine.Operations
             return AfterFinshAction.TimeoutClose;
         }
 
-        protected override void Initialize()
+        protected override async void Initialize()
         {
             OperationTitle = CoreTools.Translate("{package} Installation").Replace("{package}", Package.Name);
-            IconSource = Package.GetIconUrl();
+            IconSource = await Package.GetIconUrl();
         }
     }
 
@@ -364,10 +364,10 @@ namespace UniGetUI.PackageEngine.Operations
             return AfterFinshAction.TimeoutClose;
         }
 
-        protected override void Initialize()
+        protected override async void Initialize()
         {
             OperationTitle = CoreTools.Translate("{package} Update").Replace("{package}", Package.Name);
-            IconSource = Package.GetIconUrl();
+            IconSource = await Package.GetIconUrl();
         }
     }
 
@@ -511,10 +511,10 @@ namespace UniGetUI.PackageEngine.Operations
             return AfterFinshAction.TimeoutClose;
         }
 
-        protected override void Initialize()
+        protected override async void Initialize()
         {
             OperationTitle = CoreTools.Translate("{package} Uninstall").Replace("{package}", Package.Name);
-            IconSource = Package.GetIconUrl();
+            IconSource = await Package.GetIconUrl();
         }
     }
 }

@@ -22,6 +22,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public bool SupportsPreRelease = false;
         public bool SupportsCustomLocations = false;
         public bool SupportsCustomSources = false;
+        public bool SupportsCustomPackageIcons = false;
+        public bool SupportsCustomPackageScreenshots = false;
         public ManagerSource.Capabilities Sources { get; set; }
         public ManagerCapabilities()
         {

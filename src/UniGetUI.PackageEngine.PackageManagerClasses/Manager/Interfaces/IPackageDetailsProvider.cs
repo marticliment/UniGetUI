@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -31,22 +32,19 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Interfaces
         public abstract Task<string[]> GetPackageVersions(Package package);
 
         /// <summary>
-        /// Returns the path to the icon of this package. 
-        /// The icon will be downloaded and cached
-        /// This method is fail-safe and will return the path to the generic package icon if it fails.
+        /// Returns an Uri pointing to the icon of this package. 
+        /// The uri may be either a ms-appx:/// url or a http(s):// protocol url
         /// </summary>
         /// <param name="package">The package from which to load the icon</param>
         /// <returns>A full path to a valid icon file</returns>
-        public abstract Task<string> GetPackageIcon(Package package);
+        public abstract Task<Uri> GetPackageIconUrl(Package package);
+
 
         /// <summary>
-        /// Returns the path to the screenshots (if any) of this package. 
-        /// The screenshots will be downloaded and cached
-        /// This method is fail-safe and will return an empty array if it fails.
+        /// Returns the URLs to the screenshots (if any) of this package. 
         /// </summary>
         /// <param name="package">The package from which to load the screenshots</param>
-        /// <returns>An array with valid paths to screenshots</returns>
-        public abstract Task<string[]> GetPackageScreenshots(Package package);
-
+        /// <returns>An array with valid URIs to the screenshots</returns>
+        public abstract Task<Uri[]> GetPackageScreenshotsUrl(Package package);
     }
 }

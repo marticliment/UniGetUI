@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Managers.ChocolateyManager;
+using UniGetUI.PackageEngine.Managers.Generic.NuGet;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
@@ -21,14 +23,13 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         {
             PackageDetails details = new(package);
 
-            if (package.Source.Name == "community")
+            if (package.Source == Manager.Properties.DefaultSource)
                 details.ManifestUrl = new Uri("https://community.chocolatey.org/packages/" + package.Id);
             else if (package.Source.Url != null && package.Source.Url.ToString().Trim()[^1].ToString() == "/")
                 details.ManifestUrl = new Uri((package.Source.Url.ToString().Trim() + "package/" + package.Id).Replace("//", "/").Replace(":/", "://"));
 
 
-
-            if (package.Source.Name == "community")
+            if (package.Source == Manager.Properties.DefaultSource)
             {
                 try
                 {
@@ -139,12 +140,12 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             return details;
         }
 
-        protected override Task<string> GetPackageIcon_Unsafe(Package package)
+        protected override async Task<Uri?> GetPackageIcon_Unsafe(Package package)
         {
-            throw new NotImplementedException();
+           return await NuGetIconLoader.GetIconFromManifest(package);
         }
 
-        protected override Task<string[]> GetPackageScreenshots_Unsafe(Package package)
+        protected override Task<Uri[]> GetPackageScreenshots_Unsafe(Package package)
         {
             throw new NotImplementedException();
         }

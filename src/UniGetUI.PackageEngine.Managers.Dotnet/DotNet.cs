@@ -34,7 +34,8 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 SupportsCustomArchitectures = true,
                 SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64, Architecture.Arm },
                 SupportsPreRelease = true,
-                SupportsCustomLocations = true
+                SupportsCustomLocations = true,
+                SupportsCustomPackageIcons = true,
             };
 
             Properties = new ManagerProperties()
@@ -48,8 +49,8 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 UninstallVerb = "uninstall",
                 UpdateVerb = "update",
                 ExecutableCallArgs = "tool",
-                DefaultSource = new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/")),
-                KnownSources = [new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/"))],
+                DefaultSource = new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/api/v2")),
+                KnownSources = [new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/api/v2"))],
             };
 
             PackageDetailsProvider = new DotNetPackageDetailsProvider(this);

@@ -109,12 +109,12 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return details;
         }
 
-        protected override Task<string> GetPackageIcon_Unsafe(Package package)
+        protected override Task<Uri?> GetPackageIcon_Unsafe(Package package)
         {
             throw new NotImplementedException();
         }
 
-        protected override Task<string[]> GetPackageScreenshots_Unsafe(Package package)
+        protected override Task<Uri[]> GetPackageScreenshots_Unsafe(Package package)
         {
             throw new NotImplementedException();
         }
