@@ -43,7 +43,10 @@ namespace UniGetUI.Core.SettingsEngine
         {
             try
             {
-                File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), value);
+                if (value == "")
+                    Set(setting, false);
+                else
+                    File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), value);
             }
             catch (Exception e)
             {
