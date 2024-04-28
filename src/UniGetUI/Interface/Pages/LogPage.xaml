@@ -18,21 +18,27 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" ColumnSpacing="4">
+        <Grid Grid.Row="0" ColumnSpacing="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Name="CopyButton" Click="CopyButton_Click">
+            <Button Grid.Column="0" Name="CopyButton" Click="CopyButton_Click" CornerRadius="6,0,0,6">
                 <widgets:TranslatedTextBlock Text="Copy to clipboard"/>
             </Button>
-            <Button Grid.Column="1" Name="ExportButton" Click="ExportButton_Click">
+            <Button Grid.Column="1" Name="ExportButton" Click="ExportButton_Click" CornerRadius="0,6,6,0">
                 <widgets:TranslatedTextBlock Text="Export to a file"/>
             </Button>
-            <Button Grid.Column="3" Name="ReloadButton" Click="ReloadButton_Click">
-                <widgets:TranslatedTextBlock Text="Reload Logger.Log"/>
+            <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="10">
+                <widgets:TranslatedTextBlock Text="Log level:" VerticalAlignment="Center"/>
+                <ComboBox Name="LogLevelCombo" SelectionChanged="LogLevelCombo_SelectionChanged" PlaceholderText="Pick a color" Width="250" CornerRadius="6"/>
+            </StackPanel>
+            <Button Grid.Column="5" Name="ReloadButton" Click="ReloadButton_Click">
+                <widgets:TranslatedTextBlock Text="Reload log"/>
             </Button>
         </Grid>
         <ScrollViewer Grid.Row="1" HorizontalScrollMode="Disabled" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" CornerRadius="8">

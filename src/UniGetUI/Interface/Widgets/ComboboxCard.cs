@@ -113,7 +113,7 @@ namespace UniGetUI.Interface.Widgets
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    Logger.Warn(ex);
                 }
             };
         }

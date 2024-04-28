@@ -162,14 +162,14 @@ namespace UniGetUI.Core.Data
                 }
                 catch (Exception e)
                 {
-                    Logger.Log("WARNING: Cannot move old data directory to new location. Directory to move: " + old_path + ". Destination: " + new_path);
-                    Logger.Log(e);
+                    Logger.Error("Cannot move old data directory to new location. Directory to move: " + old_path + ". Destination: " + new_path);
+                    Logger.Error(e);
                     return old_path;
                 }
             }
             else
             {
-                Logger.Log("Creating non-existing data directory at: " + new_path);
+                Logger.Debug("Creating non-existing data directory at: " + new_path);
                 Directory.CreateDirectory(new_path);
                 return new_path;
             }

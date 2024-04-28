@@ -206,13 +206,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// Get the package's icon url. If the package has no icon, a fallback image is returned.
         /// </summary>
         /// <returns>An always-valid URI object</returns>
-        public Uri GetIconUrl()
+        public async Task<Uri> GetIconUrl()
         {
             string iconId = GetIconId();
-            if (IconDatabase.Instance.GetIconUrlForId(iconId) != "")
-                return new Uri(IconDatabase.Instance.GetIconUrlForId(iconId));
-
-            return new Uri("ms-appx:///Assets/Images/package_color.png");
+            return await Manager.GetPackageIconUrl(this);
         }
 
         /// <summary>
@@ -268,7 +265,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error($"Could not add package {Id} to ignored updates");
+                Logger.Error(ex);
             }
         }
 
@@ -293,7 +291,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error($"Could not remove package {Id} from ignored updates");
+                Logger.Error(ex);
             }
         }
 
@@ -318,7 +317,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error($"Could not check whether package {Id} has updates ignored");
+                Logger.Error(ex);
                 return false;
             }
 
@@ -343,7 +343,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error($"Could not retrieve the ignored updates version for package {Id}");
+                Logger.Error(ex);
                 return "";
             }
         }

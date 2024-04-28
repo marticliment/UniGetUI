@@ -130,7 +130,8 @@ namespace UniGetUI.Interface.Widgets
                     d.Content = CoreTools.Translate("An error occurred when adding the source: ") + ex.Message;
                     _ = MainApp.Instance.MainWindow.ShowDialogAsync(d, HighPriority: true);
                     d.PrimaryButtonText = CoreTools.Translate("Close");
-                    Logger.Log(ex);
+                    Logger.Error("An error occurred when adding the source");
+                    Logger.Error(ex);
                 }
             };
             this.Manager = Manager;

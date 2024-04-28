@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
@@ -77,7 +78,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(e);
+                    Logger.Error(e);
                 }
             }
 

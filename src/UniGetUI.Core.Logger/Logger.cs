@@ -6,7 +6,7 @@ namespace UniGetUI.Core.Logging
     {
         private static readonly List<LogEntry> LogContents = new();
 
-        public static void Log(string s)
+        /*public static void Log(string s)
         {
             Diagnostics.Debug.WriteLine(s);
             LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Debug));
@@ -16,42 +16,72 @@ namespace UniGetUI.Core.Logging
         {
             Diagnostics.Debug.WriteLine(e.ToString() ?? "[NullObject]");
             LogContents.Add(new LogEntry(e.ToString() ?? "[NullObject]", LogEntry.SeverityLevel.Debug));
-        }
+        }*/
 
 
         
         // String parameter log functions
-        public static void Success(string s)
-        { LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Success)); }
+        public static void ImportantInfo(string s)
+        {
+            Diagnostics.Debug.WriteLine(s);
+            LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Success));
+        }
 
         public static void Debug(string s)
-        { LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Debug)); }
+        {
+            Diagnostics.Debug.WriteLine(s); 
+            LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Debug));
+        }
 
         public static void Info(string s)
-        { LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Info)); }
+        {
+            Diagnostics.Debug.WriteLine(s);
+            LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Info));
+        }
 
         public static void Warn(string s)
-        { LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Warning)); }
+        {
+            Diagnostics.Debug.WriteLine(s);
+            LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Warning));
+        }
 
         public static void Error(string s)
-        { LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Error)); }
+        {
+            Diagnostics.Debug.WriteLine(s);
+            LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Error));
+        }
 
 
         // Exception parameter log functions
-        public static void Success(Exception e)
-        { LogContents.Add(new LogEntry(e.ToString() , LogEntry.SeverityLevel.Success)); }
+        public static void ImportantInfo(Exception e)
+        {
+            Diagnostics.Debug.WriteLine(e.ToString());
+            LogContents.Add(new LogEntry(e.ToString() , LogEntry.SeverityLevel.Success));
+        }
 
         public static void Debug(Exception e)
-        { LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Debug)); }
+        {
+            Diagnostics.Debug.WriteLine(e.ToString());
+            LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Debug));
+        }
 
         public static void Info(Exception e)
-        { LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Info)); }
+        {
+            Diagnostics.Debug.WriteLine(e.ToString());
+            LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Info));
+        }
 
         public static void Warn(Exception e)
-        { LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Warning)); }
+        {
+            Diagnostics.Debug.WriteLine(e.ToString());
+            LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Warning));
+        }
 
         public static void Error(Exception e)
-        { LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Error)); }
+        {
+            Diagnostics.Debug.WriteLine(e.ToString());
+            LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Error));
+        }
 
 
         public static LogEntry[] GetLogs()

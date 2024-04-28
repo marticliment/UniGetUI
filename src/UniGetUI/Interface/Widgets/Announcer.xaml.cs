@@ -77,7 +77,8 @@ namespace UniGetUI.Interface.Widgets
             }
             catch (Exception ex)
             {
-                Logger.Log("Could not load announcements: " + ex.ToString());
+                Logger.Warn("Could not load announcements");
+                Logger.Warn(ex);
                 SetText(CoreTools.Translate("Could not load announcements - ") + ex.ToString());
                 SetImage(new Uri("ms-appx:///Assets/Images/warn.png"));
             }

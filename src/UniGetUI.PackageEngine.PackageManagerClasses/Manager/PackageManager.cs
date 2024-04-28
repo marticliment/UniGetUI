@@ -5,15 +5,17 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Classes.Manager.Interfaces;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
-    public abstract class PackageManager : SingletonBase<PackageManager>, ISourceProvider
+    public abstract class PackageManager : SingletonBase<PackageManager>, ISourceProvider, IPackageDetailsProvider
     {
         public ManagerProperties Properties { get; set; } = new(IsDummy: true);
         public ManagerCapabilities Capabilities { get; set; } = new(IsDummy: true);
@@ -26,7 +28,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public bool ManagerReady { get; set; } = false;
 
         public BaseSourceProvider<PackageManager>? SourceProvider;
-
+        public BasePackageDetailsProvider<PackageManager>? PackageDetailsProvider;
         private bool __base_constructor_called = false;
 
         public PackageManager()
@@ -75,37 +77,38 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                     else
                     {
                         ManagerReady = true;
-                        Logger.Log(Name + " sources took too long to load, using known sources as default");
+                        Logger.Warn(Name + " sources took too long to load, using known sources as default");
                     }
                 }
                 ManagerReady = true;
 
-                string LogData = "\n▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄" +
-                                 "\n█▀▀▀▀▀▀▀▀▀▀▀▀▀ MANAGER LOADED ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀" +
-                                 "\n█ Name: " + Name +
-                                 "\n█ Enabled: " + IsEnabled().ToString() +
-                                    (IsEnabled() ? 
-                                 "\n█ Found: " + Status.Found.ToString() +
-                                    (Status.Found ? 
-                                 "\n█ Fancye exe name: " + Properties.ExecutableFriendlyName +
-                                 "\n█ Executable path: " + Status.ExecutablePath +
-                                 "\n█ Call arguments: " + Properties.ExecutableCallArgs +
-                                 "\n█ Version: \n" + "█   " + Status.Version.Replace("\n", "\n█   ")
-                                    :
-                                 "\n█ THE MANAGER WAS NOT FOUND. PERHAPS IT IS NOT " +
-                                 "\n█ INSTALLED OR IT HAS BEEN MISCONFIGURED "
-                                    )
-                                    :
-                                 "\n█ THE MANAGER IS DISABLED"
-                                    ) +
-                                 "\n▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀\n";
+                string LogData = "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄" +
+                               "\n█▀▀▀▀▀▀▀▀▀▀▀▀▀ MANAGER LOADED ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀" +
+                               "\n█ Name: " + Name +
+                               "\n█ Enabled: " + IsEnabled().ToString() +
+                               (IsEnabled() ? 
+                               "\n█ Found: " + Status.Found.ToString() +
+                               (Status.Found ? 
+                               "\n█ Fancye exe name: " + Properties.ExecutableFriendlyName +
+                               "\n█ Executable path: " + Status.ExecutablePath +
+                               "\n█ Call arguments: " + Properties.ExecutableCallArgs +
+                               "\n█ Version: \n" + "█   " + Status.Version.Replace("\n", "\n█   ")
+                               :
+                               "\n█ THE MANAGER WAS NOT FOUND. PERHAPS IT IS NOT " +
+                               "\n█ INSTALLED OR IT HAS BEEN MISCONFIGURED "
+                               )
+                               :
+                               "\n█ THE MANAGER IS DISABLED"
+                               ) +
+                               "\n▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀";
 
-                Logger.Log(LogData);
+                Logger.Info(LogData);
             }
             catch (Exception e)
             {
                 ManagerReady = true; // We need this to unblock the main thread
-                Logger.Log("Could not initialize Package Manager " + Name + ": \n" + e.ToString());
+                Logger.Error("Could not initialize Package Manager " + Name);
+                Logger.Error(e);
             }
         }
 
@@ -140,12 +143,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 {
                     packages[i] = PackageFactory.GetAvailablePackageIfRepeated(packages[i]);
                 }
+                Logger.Info($"Found {packages.Length} available packages from {Name} with the query {query}");
                 return packages;
             }
             catch (Exception e)
             {
-                Logger.Log("Error finding packages on manager " + Name + " with query " + query + ": \n" + e.ToString());
-                return new Package[] { };
+                Logger.Error("Error finding packages on manager " + Name + " with query " + query);
+                Logger.Error(e);
+                return [];
             }
         }
 
@@ -162,12 +167,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 UpgradablePackage[] packages = await GetAvailableUpdates_UnSafe();
                 for (int i = 0; i < packages.Length; i++)
                     packages[i] = PackageFactory.GetUpgradablePackageIfRepeated(packages[i]);
+                Logger.Info($"Found {packages.Length} available updates from {Name}");
                 return packages;
             }
             catch (Exception e)
             {
-                Logger.Log("Error finding updates on manager " + Name + ": \n" + e.ToString());
-                return new UpgradablePackage[] { };
+                Logger.Error("Error finding updates on manager " + Name);
+                Logger.Error(e);
+                return [];
             }
         }
 
@@ -183,66 +190,17 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 Package[] packages = await GetInstalledPackages_UnSafe();
                 for (int i = 0; i < packages.Length; i++)
                     packages[i] = PackageFactory.GetInstalledPackageIfRepeated(packages[i]);
+                Logger.Info($"Found {packages.Length} installed packages from {Name}");
                 return packages;
             }
             catch (Exception e)
             {
-                Logger.Log("Error finding installed packages on manager " + Name + ": \n" + e.ToString());
-                return new Package[] { };
+                Logger.Error("Error finding installed packages on manager " + Name);
+                Logger.Error(e); 
+                return [];
             }
         }
 
-        /// <summary>
-        /// Returns a PackageDetails object that represents the details for the given Package object.
-        /// This method is fail-safe and will return a valid but empty PackageDetails object with the package 
-        /// id if an error occurs.
-        /// </summary>
-        /// <param name="package"></param>
-        /// <returns></returns>
-        public async Task<PackageDetails> GetPackageDetails(Package package)
-        {
-            try
-            {
-                return await GetPackageDetails_UnSafe(package);
-            }
-            catch (Exception e)
-            {
-                Logger.Log("Error getting package details on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
-                return new PackageDetails(package);
-            }
-        }
-
-        /// <summary>
-        /// Returns the available versions to install for the given package. 
-        /// If the manager does not support listing the versions, an empty array will be returned.
-        /// This method is fail-safe and will return an empty array if an error occurs.
-        /// </summary>
-        /// <param name="package">The package from which to load its versions</param>
-        /// <returns>An array of stings containing the found versions, an empty array if none.</returns>
-        public async Task<string[]> GetPackageVersions(Package package)
-        {
-            try
-            {
-                if (package.Manager.Capabilities.SupportsCustomVersions)
-                    return await GetPackageVersions_Unsafe(package);
-                else
-                    return new string[0];
-            }
-            catch (Exception e)
-            {
-                Logger.Log("Error getting package versions on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
-                return new string[0];
-            }
-        }
-
-        /// <summary>
-        /// Returns the available versions to install for the given package. 
-        /// If the manager does not support listing the versions, an empty array must be returned.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <param name="package">The package from which to load its versions</param>
-        /// <returns>An array of stings containing the found versions, an empty array if none.</returns>
-        protected abstract Task<string[]> GetPackageVersions_Unsafe(Package package);
 
         /// <summary>
         /// Returns the available packages to install for the given query.
@@ -265,14 +223,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// </summary>
         /// <returns>An array of Package objects</returns>
         protected abstract Task<Package[]> GetInstalledPackages_UnSafe();
-
-        /// <summary>
-        /// Returns the specific details and info for the given package.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <param name="package">The package for which to load the details</param>
-        /// <returns>A PackageDetails with the package details loaded</returns>
-        public abstract Task<PackageDetails> GetPackageDetails_UnSafe(Package package);
 
 
         /// <summary>
@@ -392,24 +342,103 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             AssertSourceCompatibility("GetRemoveSourceOperationVeredict");
             return SourceProvider.GetRemoveSourceOperationVeredict(source, ReturnCode, Output);
         }
-#pragma warning restore CS8602
         public virtual async Task<ManagerSource[]> GetSources()
         {
             try
             {
-                if (SourceProvider == null)
-                    throw new Exception($"GetSources() called on Manager {Name} when ManagerSourceProvider helper is null");
-
+                AssertSourceCompatibility("GetSources");
                 return await SourceProvider.GetSources();
             }
             catch (Exception e)
             {
-                Logger.Log($"Error finding sources for Manager {Name}: \n" + e.ToString());
+                Logger.Error($"Error finding sources for manager " + Name);
+                Logger.Error(e);
                 return [];
             }
         }
+#pragma warning restore CS8602
         // END SOURCE-RELATED METHODS
 
+
+
+
+
+
+
+
+        // BEGIN PACKAGEDEAILS-RELATED METHODS
+        private void AssertPackageDetailsCompatibility(string MethodName)
+        {
+            if (PackageDetailsProvider == null)
+                throw new Exception($"Manager {Name} does not have a valid PackageDetailsProvider helper");
+        }
+#pragma warning disable CS8602
+        public async Task<PackageDetails> GetPackageDetails(Package package)
+        {
+            try
+            {
+                AssertPackageDetailsCompatibility("GetPackageDetails");
+                var details = await PackageDetailsProvider.GetPackageDetails(package);
+                Logger.Info($"Loaded details for package {package.Id} on manager {Name}");
+                return details;
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Error finding installed packages on manager " + Name);
+                Logger.Error(e);
+                return new PackageDetails(package);
+            }
+        }
+
+        public async Task<string[]> GetPackageVersions(Package package)
+        {
+            try
+            {
+                AssertPackageDetailsCompatibility("GetPackageVersions");
+                if (package.Manager.Capabilities.SupportsCustomVersions)
+                    return await PackageDetailsProvider.GetPackageVersions(package);
+                else
+                    return [];
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Error finding available package versions for package {package.Id} on manager " + Name);
+                Logger.Error(e);
+                return [];
+            }
+        }
+
+        public async Task<Uri> GetPackageIconUrl(Package package)
+        {
+            try
+            {
+                AssertPackageDetailsCompatibility("GetPackageIcon");
+                return await PackageDetailsProvider.GetPackageIconUrl(package);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Error when loading the package icon for the package {package.Id} on manager " + Name);
+                Logger.Error(e);
+                return new Uri("ms-appx:///Assets/Images/package_color.png");
+            }
+        }
+
+        public async Task<Uri[]> GetPackageScreenshotsUrl(Package package)
+        {
+            try
+            {
+                AssertPackageDetailsCompatibility("GetPackageScreenshots");
+                return await PackageDetailsProvider.GetPackageScreenshotsUrl(package);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Error when loading the package icon for the package {package.Id} on manager " + Name);
+                Logger.Error(e);
+                return [];
+            }
+        }
+#pragma warning restore CS8602
+        // END PACKAGEDETAILS-RELATED METHODS
 
 
 

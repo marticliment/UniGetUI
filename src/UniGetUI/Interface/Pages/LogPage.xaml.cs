@@ -39,12 +39,20 @@ namespace UniGetUI.Interface.Pages
 
     public sealed partial class Logger_LogPage : Page
     {
+        private int LOG_LEVEL = 4;
         public Logger_LogType Logger_LogType;
         public Logger_LogPage(Logger_LogType logger_LogType = Logger_LogType.UniGetUILog)
         {
             InitializeComponent();
             Logger_LogType = logger_LogType;
             LoadLog();
+
+            LogLevelCombo.Items.Add(CoreTools.Translate("1 - Errors"));
+            LogLevelCombo.Items.Add(CoreTools.Translate("2 - Warnings"));
+            LogLevelCombo.Items.Add(CoreTools.Translate("3 - Information (less)"));
+            LogLevelCombo.Items.Add(CoreTools.Translate("4 - Information (more)"));
+            LogLevelCombo.Items.Add(CoreTools.Translate("5 - information (debug)"));
+            LogLevelCombo.SelectedIndex = 3;
         }
 
         public void SetText(string body)
@@ -68,18 +76,18 @@ namespace UniGetUI.Interface.Pages
             if (Logger_LogType == Logger_LogType.UniGetUILog)
             {
                 // Dark theme colors
-                Color DARK_GREY = Color.FromArgb(255, 128, 128, 128);
-                Color DARK_BLUE = Color.FromArgb(255, 115, 121, 191);
-                Color DARK_GREEN = Color.FromArgb(255, 90, 204, 94);
-                Color DARK_YELLOW = Color.FromArgb(255, 255, 201, 51);
-                Color DARK_RED = Color.FromArgb(255, 209, 38, 38);
+                Color DARK_GREY = Color.FromArgb(255, 130, 130, 130);
+                Color DARK_BLUE = Color.FromArgb(255, 190, 190, 190);
+                Color DARK_WHITE = Color.FromArgb(255, 250, 250, 250);
+                Color DARK_YELLOW = Color.FromArgb(255, 255, 255, 90);
+                Color DARK_RED = Color.FromArgb(255, 255, 80, 80);
 
                 // Light theme colors
-                Color LIGHT_GREY = Color.FromArgb(255, 100, 100, 100);
-                Color LIGHT_BLUE = Color.FromArgb(255, 52, 58, 168);
-                Color LIGHT_GREEN = Color.FromArgb(255, 56, 150, 18);
-                Color LIGHT_YELLOW = Color.FromArgb(255, 179, 156, 2);
-                Color LIGHT_RED = Color.FromArgb(255, 209, 38, 38);
+                Color LIGHT_GREY = Color.FromArgb(255, 125, 125, 225);
+                Color LIGHT_BLUE = Color.FromArgb(255, 50, 50, 150);
+                Color LIGHT_WHITE = Color.FromArgb(255, 0, 0, 0);
+                Color LIGHT_YELLOW = Color.FromArgb(255, 150, 150, 0);
+                Color LIGHT_RED = Color.FromArgb(255, 205, 0, 0);
 
                 bool IS_DARK = MainApp.Instance.ThemeListener.CurrentTheme == ApplicationTheme.Dark;
 
@@ -89,6 +97,15 @@ namespace UniGetUI.Interface.Pages
                 {
                     var p = new Paragraph();
                     if (log_entry.Content == "")
+                        continue;
+
+                    if (LOG_LEVEL == 1 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info || log_entry.Severity == LogEntry.SeverityLevel.Success || log_entry.Severity == LogEntry.SeverityLevel.Warning))
+                        continue;
+                    else if(LOG_LEVEL == 2 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info || log_entry.Severity == LogEntry.SeverityLevel.Success))
+                        continue;
+                    else if(LOG_LEVEL == 3 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info))
+                        continue;
+                    else if(LOG_LEVEL == 4 && (log_entry.Severity == LogEntry.SeverityLevel.Debug))
                         continue;
 
                     Brush color;
@@ -103,7 +120,7 @@ namespace UniGetUI.Interface.Pages
                             color = new SolidColorBrush() { Color = IS_DARK ? DARK_BLUE : LIGHT_BLUE };
                             break;
                         case LogEntry.SeverityLevel.Success:
-                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_GREEN : LIGHT_GREEN };
+                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE};
                             break;
                         case LogEntry.SeverityLevel.Warning:
                             color = new SolidColorBrush() { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW };
@@ -175,6 +192,13 @@ namespace UniGetUI.Interface.Pages
 
         public void ReloadButton_Click(object sender, RoutedEventArgs e)
         {
+            LoadLog();
+        }
+
+
+        private void LogLevelCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            LOG_LEVEL = LogLevelCombo.SelectedIndex + 1;
             LoadLog();
         }
     }

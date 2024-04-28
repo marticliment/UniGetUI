@@ -78,7 +78,6 @@ namespace UniGetUI.Interface.Dialogs
             if (package is UpgradablePackage)
                 VersionTextBlock.Text += " - " + CoreTools.Translate("Update to {0} available").Replace("{0}", (package as UpgradablePackage).NewVersion);
             PackageName.Text = package.Name;
-            PackageIcon.Source = new BitmapImage() { UriSource = package.GetIconUrl() };
             SourceNameTextBlock.Text = package.SourceAsString;
 
 
@@ -123,10 +122,12 @@ namespace UniGetUI.Interface.Dialogs
         {
             LoadingIndicator.Visibility = Visibility.Visible;
 
+            PackageIcon.Source = new BitmapImage() { UriSource = (await Package.GetIconUrl()) };
+
             string NotFound = CoreTools.Translate("Not available");
             Uri InvalidUri = new("about:blank");
             Info = await Package.Manager.GetPackageDetails(Package);
-            Logger.Log("Received info " + Info);
+            Logger.Debug("Received info " + Info);
 
             string command = "";
 
@@ -242,12 +243,13 @@ namespace UniGetUI.Interface.Dialogs
                 {
                     DownloadInstallerButton.Content = CoreTools.Translate("Downloading");
                     DownloadInstallerButtonProgress.Visibility = Visibility.Visible;
-                    Logger.Log(file.Path.ToString());
+                    Logger.Debug($"Downloading installer ${file.Path.ToString()}");
                     using HttpClient httpClient = new();
                     await using Stream s = await httpClient.GetStreamAsync(Info.InstallerUrl);
                     await using FileStream fs = File.OpenWrite(file.Path.ToString());
                     await s.CopyToAsync(fs);
                     fs.Dispose();
+                    Logger.ImportantInfo($"Installer for {Package.Id} has been downloaded successfully");
                     DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
                     System.Diagnostics.Process.Start("explorer.exe", "/select," + file.Path.ToString());
                     DownloadInstallerButton.Content = CoreTools.Translate("Download succeeded");
@@ -255,7 +257,8 @@ namespace UniGetUI.Interface.Dialogs
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error($"An error occurred while downloading the installer for the package {Package.Id}");
+                Logger.Error(ex);
                 DownloadInstallerButton.Content = CoreTools.Translate("An error occurred");
                 DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
                 ErrorOutput.Text = ex.Message;

@@ -47,10 +47,17 @@ namespace UniGetUI
         {
             try
             {
+                var textart = @"
+   __  __      _ ______     __  __  ______
+  / / / /___  (_) ____/__  / /_/ / / /  _/
+ / / / / __ \/ / / __/ _ \/ __/ / / // /  
+/ /_/ / / / / / /_/ /  __/ /_/ /_/ // /   
+\____/_/ /_/_/\____/\___/\__/\____/___/   
+    Welcome to UniGetUI Version " + CoreData.VersionName;
 
-                Logger.Log("Welcome to UniGetUI Version " + CoreData.VersionName);
-                Logger.Log("               Version Code " + CoreData.VersionNumber.ToString());
-                Logger.Log("              ");
+                Logger.ImportantInfo(textart);
+                Logger.ImportantInfo("  ");
+                Logger.ImportantInfo("Version Code:  " + CoreData.VersionNumber.ToString());
 
                 // WinRT single-instance fancy stuff
                 WinRT.ComWrappersSupport.InitializeComWrappers();
@@ -107,7 +114,7 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                Logger.Log(e);
+                Logger.Warn(e);
                 return false;
             }
         }
@@ -153,28 +160,28 @@ namespace UniGetUI
                         {
                             string old_file = Path.Join(path, old_wingetui_icon);
                             string new_file = Path.Join(path, "UniGetUI (formerly WingetUI).lnk");
-                            Logger.Log(old_file);
                             if (!File.Exists(old_file))
                                 continue;
                             else if (File.Exists(old_file) && File.Exists(new_file))
                             {
-                                Logger.Log("Deleting shortcut " + old_file + " since new shortcut already exists");
+                                Logger.Info("Deleting shortcut " + old_file + " since new shortcut already exists");
                                 File.Delete(old_file);
                             }
                             else if (File.Exists(old_file) && !File.Exists(new_file))
                             {
-                                Logger.Log("Moving shortcut to " + new_file);
+                                Logger.Info("Moving shortcut to " + new_file);
                                 File.Move(old_file, new_file);
                             }
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(ex);
+                            Logger.Warn($"An error occurred while migrating the shortcut {Path.Join(path, old_wingetui_icon)}");
+                            Logger.Warn(ex);
                         }
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error(ex);
             }
         }
     }

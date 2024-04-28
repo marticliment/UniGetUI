@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
@@ -78,7 +79,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(e);
+                    Logger.Warn(e);
                 }
             }
             output += await process.StandardError.ReadToEndAsync();

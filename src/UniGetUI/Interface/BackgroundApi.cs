@@ -16,6 +16,12 @@ namespace UniGetUI.Interface
     {
 
         private bool __running = false;
+        private static string ApiAuthToken = "";
+
+        public static bool AuthenticateToken(string token)
+        {
+            return token == ApiAuthToken;
+        }
 
         /// <summary>
         /// Run the background api and wait for it for being stopped with the Stop() method
@@ -25,11 +31,17 @@ namespace UniGetUI.Interface
         {
             try
             {
+
                 if (Settings.Get("DisableWidgetsApi"))
                 {
-                    Logger.Log("Widgets API is disabled");
+                    Logger.Warn("Widgets API is disabled");
                     return;
                 }
+
+
+                ApiAuthToken = CoreTools.RandomString(64);
+                Settings.SetValue("CurrentSessionToken", ApiAuthToken);
+                Logger.Info("Api auth token: " + ApiAuthToken);
 
                 __running = true;
                 NancyHost host;
@@ -45,18 +57,19 @@ namespace UniGetUI.Interface
                     host.Start();
                 }
 
-                Logger.Log("Api running on http://localhost:7058");
+                Logger.Info("Api running on http://localhost:7058");
 
                 while (__running)
                 {
                     await Task.Delay(100);
                 }
                 host.Stop();
-                Logger.Log("Api was shut down");
+                Logger.Info("Api was shut down");
             }
             catch (Exception e)
             {
-                Logger.Log(e);
+                Logger.Error("An error occurred while initializing the API");
+                Logger.Error(e);
             }
         }
 
@@ -74,13 +87,9 @@ namespace UniGetUI.Interface
     /// </summary>
     public class BackgroundApi : NancyModule
     {
-        private static string ApiAuthToken;
         public BackgroundApi()
         {
 
-            ApiAuthToken = CoreTools.RandomString(64);
-            Settings.SetValue("CurrentSessionToken", ApiAuthToken);
-            Logger.Log("Api auth token: " + ApiAuthToken);
 
             // Enable CORS
             After.AddItemToEndOfPipeline((ctx) =>
@@ -93,10 +102,7 @@ namespace UniGetUI.Interface
             BuildV1WidgetsApi();
         }
 
-        public static bool AuthenticateToken(string token)
-        {
-            return token == ApiAuthToken;
-        }
+        
 
         /// <summary>
         /// Build the endpoints required for the Share Interface
@@ -111,8 +117,6 @@ namespace UniGetUI.Interface
                     if (Request.Query.@pid == "" || Request.Query.@psource == "")
                         return 400;
 
-                    Logger.Log(Request.Query.@pid);
-
                     while (MainApp.Instance.MainWindow is null) await Task.Delay(100);
                     while (MainApp.Instance.MainWindow.NavigationPage is null) await Task.Delay(100);
                     while (MainApp.Instance.MainWindow.NavigationPage.DiscoverPage is null) await Task.Delay(100);
@@ -123,7 +127,7 @@ namespace UniGetUI.Interface
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(e);
+                    Logger.Error(e);
                     return 500;
                 }
             });
@@ -145,16 +149,16 @@ namespace UniGetUI.Interface
             // Basic version check
             Get("/widgets/v1/get_wingetui_version", (parameters) =>
             {
-                if (!AuthenticateToken(Request.Query.@token))
+                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                     return 401;
 
                 return CoreData.VersionNumber.ToString();
             });
 
             // Return found updates
-            Get("/widgets/v1/get_updates", (parameters) =>
+            Get("/widgets/v1/get_updates", async (parameters) =>
             {
-                if (!AuthenticateToken(Request.Query.@token))
+                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                     return 401;
 
                 string packages = "";
@@ -163,7 +167,7 @@ namespace UniGetUI.Interface
                     if (package.Tag == PackageTag.OnQueue || package.Tag == PackageTag.BeingProcessed)
                         continue; // Do not show already processed packages on queue 
 
-                    string icon = package.GetIconUrl().ToString();
+                    string icon = (await package.GetIconUrl()).ToString();
                     if (icon == "ms-appx:///Assets/Images/package_color.png")
                         icon = "https://marticliment.com/resources/widgets/package_color.png";
                     packages += $"{package.Name.Replace('|', '-')}|{package.Id}|{package.Version}|{package.NewVersion}|{package.Source}|{package.Manager.Name}|{icon}&&";
@@ -171,7 +175,6 @@ namespace UniGetUI.Interface
 
                 if (packages.Length > 2)
                     packages = packages[..(packages.Length - 2)];
-                Logger.Log(packages);
 
                 return packages;
             });
@@ -179,7 +182,7 @@ namespace UniGetUI.Interface
             // Open UniGetUI (as it was)
             Get("/widgets/v1/open_wingetui", (parameters) =>
             {
-                if (!AuthenticateToken(Request.Query.@token))
+                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                     return 401;
 
                 MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() => { MainApp.Instance.MainWindow.Activate(); });
@@ -189,7 +192,7 @@ namespace UniGetUI.Interface
             // Open UniGetUI with the Updates page shown
             Get("/widgets/v1/view_on_wingetui", (parameters) =>
             {
-                if (!AuthenticateToken(Request.Query.@token))
+                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                     return 401;
 
                 MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() =>
@@ -203,7 +206,7 @@ namespace UniGetUI.Interface
             // Update a specific package given its Id
             Get("/widgets/v1/update_package", (parameters) =>
             {
-                if (!AuthenticateToken(Request.Query.@token))
+                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                     return 401;
 
                 if (Request.Query.@id == "")
@@ -219,7 +222,7 @@ namespace UniGetUI.Interface
             // Update all packages
             Get("/widgets/v1/update_all_packages", (parameters) =>
             {
-                if (!AuthenticateToken(Request.Query.@token))
+                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                     return 401;
 
                 MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() =>
@@ -232,7 +235,7 @@ namespace UniGetUI.Interface
             // Update all packages for a specific manager
             Get("/widgets/v1/update_all_packages_for_source", (parameters) =>
             {
-                if (!AuthenticateToken(Request.Query.@token))
+                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                     return 401;
 
                 if (Request.Query.@source == "")

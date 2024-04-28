@@ -66,8 +66,9 @@ namespace UniGetUI.Core.Tools
         /// </summary>
         public static void RelaunchProcess()
         {
-            Logger.Log(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
-            System.Diagnostics.Process.Start(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
+            Logger.Debug("Launching process: " + Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
+            Process.Start(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
+            Logger.Warn("About to kill process");
             Environment.Exit(0);
         }
 
@@ -136,12 +137,6 @@ namespace UniGetUI.Core.Tools
                 .Select(x => pool[random.Next(0, pool.Length)]);
             return new string(chars.ToArray());
         }
-
-        public static void Log(Exception e)
-        { Log(e.ToString()); }
-
-        public static void Log(object o)
-        { if (o != null) Log(o.ToString()); else Log("null"); }
 
         public static void ReportFatalException(Exception e)
         {
@@ -218,7 +213,8 @@ Crash Traceback:
             }
             catch (Exception e)
             {
-                Log(e);
+                Logger.Warn("Could not check if user is administrator");
+                Logger.Warn(e);
                 return false;
             }
         }
@@ -246,7 +242,8 @@ Crash Traceback:
             }
             catch (Exception e)
             {
-                Log(e);
+                Logger.Warn($"Could not load file size for url={url}");
+                Logger.Warn(e);
             }
             return 0;
         }

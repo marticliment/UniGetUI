@@ -46,7 +46,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             if (Settings.Get("AllowParallelInstalls") || Settings.Get("AllowParallelInstallsForManager" + Package.Manager.Name))
             {
-                Logger.Log("Parallel installs are allowed. Skipping queue check");
+                Logger.Debug("Parallel installs are allowed. Skipping queue check");
                 return;
             }
 
@@ -88,7 +88,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
                     p.StartInfo.FileName = MainApp.Instance.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
@@ -142,7 +142,8 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    Logger.Warn("Failed to show toast notification");
+                    Logger.Warn(ex);
                 }
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -208,16 +209,17 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    Logger.Warn("Failed to show toast notification");
+                    Logger.Warn(ex);
                 }
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
 
-        protected override void Initialize()
+        protected override async void Initialize()
         {
             OperationTitle = CoreTools.Translate("{package} Installation").Replace("{package}", Package.Name);
-            IconSource = Package.GetIconUrl();
+            IconSource = await Package.GetIconUrl();
         }
     }
 
@@ -232,7 +234,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
                     p.StartInfo.FileName = MainApp.Instance.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
@@ -285,7 +287,8 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    Logger.Warn("Failed to show toast notification");
+                    Logger.Warn(ex);
                 }
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -351,7 +354,8 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    Logger.Warn("Failed to show toast notification");
+                    Logger.Warn(ex);
                 }
 
             if (Package.Version == "Unknown")
@@ -360,10 +364,10 @@ namespace UniGetUI.PackageEngine.Operations
             return AfterFinshAction.TimeoutClose;
         }
 
-        protected override void Initialize()
+        protected override async void Initialize()
         {
             OperationTitle = CoreTools.Translate("{package} Update").Replace("{package}", Package.Name);
-            IconSource = Package.GetIconUrl();
+            IconSource = await Package.GetIconUrl();
         }
     }
 
@@ -378,7 +382,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
                     p.StartInfo.FileName = MainApp.Instance.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
@@ -432,7 +436,8 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    Logger.Warn("Failed to show toast notification");
+                    Logger.Warn(ex);
                 }
 
             ContentDialog dialog = new();
@@ -499,16 +504,17 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    Logger.Warn("Failed to show toast notification");
+                    Logger.Warn(ex);
                 }
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
 
-        protected override void Initialize()
+        protected override async void Initialize()
         {
             OperationTitle = CoreTools.Translate("{package} Uninstall").Replace("{package}", Package.Name);
-            IconSource = Package.GetIconUrl();
+            IconSource = await Package.GetIconUrl();
         }
     }
 }

@@ -34,7 +34,8 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 SupportsCustomArchitectures = true,
                 SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64, Architecture.Arm },
                 SupportsPreRelease = true,
-                SupportsCustomLocations = true
+                SupportsCustomLocations = true,
+                SupportsCustomPackageIcons = true,
             };
 
             Properties = new ManagerProperties()
@@ -48,9 +49,11 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 UninstallVerb = "uninstall",
                 UpdateVerb = "update",
                 ExecutableCallArgs = "tool",
-                DefaultSource = new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/")),
-                KnownSources = [new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/"))],
+                DefaultSource = new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/api/v2")),
+                KnownSources = [new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/api/v2"))],
             };
+
+            PackageDetailsProvider = new DotNetPackageDetailsProvider(this);
         }
 
 
@@ -309,83 +312,6 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             return parameters.ToArray();
         }
 
-        public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
-        {
-            PackageDetails details = new(package);
-
-            try
-            {
-                details.ManifestUrl = new Uri("https://www.nuget.org/packages/" + package.Id);
-                string url = $"http://www.nuget.org/api/v2/Packages(Id='{package.Id}',Version='')";
-
-                using (HttpClient client = new())
-                {
-                    string apiContents = await client.GetStringAsync(url);
-
-                    details.InstallerUrl = new Uri($"https://globalcdn.nuget.org/packages/{package.Id}.{package.Version}.nupkg");
-                    details.InstallerType = CoreTools.Translate("NuPkg (zipped manifest)");
-                    details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
-
-
-                    foreach (Match match in Regex.Matches(apiContents, @"<name>[^<>]+<\/name>"))
-                    {
-                        details.Author = match.Value.Replace("<name>", "").Replace("</name>", "");
-                        details.Publisher = match.Value.Replace("<name>", "").Replace("</name>", "");
-                        break;
-                    }
-
-                    foreach (Match match in Regex.Matches(apiContents, @"<d:Description>[^<>]+<\/d:Description>"))
-                    {
-                        details.Description = match.Value.Replace("<d:Description>", "").Replace("</d:Description>", "");
-                        break;
-                    }
-
-                    foreach (Match match in Regex.Matches(apiContents, @"<updated>[^<>]+<\/updated>"))
-                    {
-                        details.UpdateDate = match.Value.Replace("<updated>", "").Replace("</updated>", "");
-                        break;
-                    }
-
-                    foreach (Match match in Regex.Matches(apiContents, @"<d:ProjectUrl>[^<>]+<\/d:ProjectUrl>"))
-                    {
-                        details.HomepageUrl = new Uri(match.Value.Replace("<d:ProjectUrl>", "").Replace("</d:ProjectUrl>", ""));
-                        break;
-                    }
-
-                    foreach (Match match in Regex.Matches(apiContents, @"<d:LicenseUrl>[^<>]+<\/d:LicenseUrl>"))
-                    {
-                        details.LicenseUrl = new Uri(match.Value.Replace("<d:LicenseUrl>", "").Replace("</d:LicenseUrl>", ""));
-                        break;
-                    }
-
-                    foreach (Match match in Regex.Matches(apiContents, @"<d:PackageHash>[^<>]+<\/d:PackageHash>"))
-                    {
-                        details.InstallerHash = match.Value.Replace("<d:PackageHash>", "").Replace("</d:PackageHash>", "");
-                        break;
-                    }
-
-                    foreach (Match match in Regex.Matches(apiContents, @"<d:ReleaseNotes>[^<>]+<\/d:ReleaseNotes>"))
-                    {
-                        details.ReleaseNotes = match.Value.Replace("<d:ReleaseNotes>", "").Replace("</d:ReleaseNotes>", "");
-                        break;
-                    }
-
-                    foreach (Match match in Regex.Matches(apiContents, @"<d:LicenseNames>[^<>]+<\/d:LicenseNames>"))
-                    {
-                        details.License = match.Value.Replace("<d:LicenseNames>", "").Replace("</d:LicenseNames>", "");
-                        break;
-                    }
-                }
-                return details;
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-                return details;
-            }
-        }
-
-
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public override async Task RefreshPackageIndexes()
         {
@@ -423,13 +349,6 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 await RefreshPackageIndexes();
 
             return status;
-        }
-
-        protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
-        {
-            await Task.Delay(0);
-            Logger.Log("Manager " + Name + " does not support version retrieving, this function should have never been called");
-            return new string[0];
         }
     }
 }

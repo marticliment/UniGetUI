@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
@@ -81,7 +82,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     }
                     catch (Exception e)
                     {
-                        Logger.Log(e);
+                        Logger.Warn(e);
                     }
                 }
                 _output += await process.StandardError.ReadToEndAsync();

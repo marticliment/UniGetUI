@@ -44,6 +44,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 SupportsCustomScopes = true,
                 SupportsCustomLocations = true,
                 SupportsCustomSources = true,
+                SupportsCustomPackageIcons = true,
                 Sources = new ManagerSource.Capabilities()
                 {
                     KnowsPackageCount = false,
@@ -69,6 +70,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             };
 
             SourceProvider = new WinGetSourceProvider(this);
+            PackageDetailsProvider = new WinGetPackageDetailsProvider(this);
+
             LocalPcSource = new(this, CoreTools.Translate("Local PC"), "localpc");
             AndroidSubsystemSource = new(this, CoreTools.Translate("Android Subsystem"), "android");
             SteamSource = new(this, "Steam", "steam");
@@ -263,7 +266,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Warn($"Could not parse local source for package {id}");
+                Logger.Warn(ex);
                 return LocalPcSource;
             }
         }
@@ -357,7 +361,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             if (output_string.Contains("winget settings --enable InstallerHashOverride"))
             {
-                Logger.Log("Enabling skip hash ckeck for winget...");
+                Logger.Info("Enabling skip hash ckeck for winget...");
                 Process p = new()
                 {
                     StartInfo = new ProcessStartInfo()
@@ -397,15 +401,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
-        protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
-        {
-            return await WinGetHelper.Instance.GetPackageVersions_Unsafe(this, package);
-        }
-
-        public override async Task<PackageDetails> GetPackageDetails_UnSafe(Package package)
-        {
-            return await WinGetHelper.Instance.GetPackageDetails_UnSafe(this, package);
-        }
 
         public override async Task RefreshPackageIndexes()
         {
@@ -448,7 +443,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
             catch (Exception ex)
             {
-                Logger.Log("Cannot create native WinGet instance due to error: " + ex.ToString());
+                Logger.Error("Cannot create native WinGet instance due to error: " + ex.ToString());
                 WinGetHelper.Instance = new BundledWinGetHelper();
                 status.Version += "\nUsing bundled WinGet helper (CLI parsing)";
             }
