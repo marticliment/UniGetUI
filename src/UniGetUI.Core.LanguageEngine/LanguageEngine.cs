@@ -10,14 +10,14 @@ namespace UniGetUI.Core.Language
     {
         public static Dictionary<string, string> MainLangDict = new();
 
-        public LanguageEngine()
+        public LanguageEngine(string ForceLanguage = "")
         {
             string LangName = Settings.GetValue("PreferredLanguage");
             if (LangName == "default" || LangName == "")
             {
                 LangName = System.Globalization.CultureInfo.CurrentCulture.ToString().Replace("-", "_");
             }
-            LoadLanguage(LangName);
+            LoadLanguage((ForceLanguage != "")? ForceLanguage: LangName);
         }
 
         /// <summary>

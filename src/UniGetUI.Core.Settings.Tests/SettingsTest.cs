@@ -9,9 +9,9 @@ namespace UniGetUI.Core.SettingsEgine.Tests
         [InlineData("TestSetting1", true, false, false, true)]
         [InlineData("TestSetting2", true, false, false, false)]
         [InlineData("Test.Settings_with", true, false, true, true)]
-        [InlineData("sdflgkjsdfgbavmdfghbdhgj", false, true, false, false)]
+        [InlineData("TestSettingEntry With A  Space", false, true, false, false)]
         [InlineData("ª", false, false, false, false)]
-        [InlineData("nzsash8372395124n5", true, false, true, true)]
+        [InlineData("VeryVeryLongTestSettingEntrySoTheClassCanReallyBeStressedOut", true, false, true, true)]
         public void TestBooleanSettings(string SettingName, bool st1, bool st2, bool st3, bool st4)
         {
             Settings.Set(SettingName, st1);
@@ -39,8 +39,8 @@ namespace UniGetUI.Core.SettingsEgine.Tests
         [InlineData("TestSetting1", "RandomFirstValue", "RandomSecondValue", "", "RandomThirdValue")]
         [InlineData("ktjgshdfsd", "", "", "", "RandomThirdValue")]
         [InlineData("ª", "RandomFirstValue", "    ", "\t", "RandomThirdValue")]
-        [InlineData("fghfgjhrj", "RandomFirstValue", "", "", "")]
-        [InlineData("VeryVeryLongTestSettingEntry", "\x00\x01\x02\u0003", "", "", "RandomThirdValue")]
+        [InlineData("TestSettingEntry With A  Space", "RandomFirstValue", "", "", "")]
+        [InlineData("VeryVeryLongTestSettingEntrySoTheClassCanReallyBeStressedOut", "\x00\x01\x02\u0003", "", "", "RandomThirdValue")]
         public void TestValueSettings(string SettingName, string st1, string st2, string st3, string st4)
         {
             Settings.SetValue(SettingName, st1);

@@ -7,47 +7,19 @@ using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Tools
 {
-    public class CoreTools
+    public static class CoreTools
     {
 
         private static LanguageEngine LanguageEngine;
-        private static CoreTools? instance = null;
-
-        private static CoreTools Instance
-        {
-            get
-            {
-                if (instance == null) instance = new CoreTools();
-                return instance;
-            }
-        }
-        private CoreTools()
-        {
-            LanguageEngine = new LanguageEngine();
-        }
-
-        /// <summary>
-        /// Generates a random string composed of characters in a-z and digits in 0-9 
-        /// </summary>
-        /// <param name="length">The desired length of the string</param>
-        /// <returns>A random string</returns>
-        public string GetRandomString(int length)
-        {
-            Random random = new();
-            const string pool = "abcdefghijklmnopqrstuvwxyz0123456789";
-            IEnumerable<char> chars = Enumerable.Range(0, length)
-                .Select(x => pool[random.Next(0, pool.Length)]);
-            return new string(chars.ToArray());
-        }
 
         /// <summary>
         /// Translate a string to the current language
         /// </summary>
         /// <param name="text">The string to translate</param>
         /// <returns>The translated string if available, the original string otherwise</returns>
-        public static string Translate(string text)
+        public static string Translate(string text, string ForceLanguage = "")
         {
-            if(LanguageEngine == null) LanguageEngine = new LanguageEngine();
+            if(LanguageEngine == null) LanguageEngine = new LanguageEngine(ForceLanguage);
             return LanguageEngine.Translate(text);
         }
 
@@ -224,7 +196,7 @@ Crash Traceback:
         /// </summary>
         /// <param name="url">a valid Uri object containing a URL to a file</param>
         /// <returns>a double representing the size in MBs, 0 if the process fails</returns>
-        public static async Task<double> GetFileSizeAsync(Uri url)
+        public static async Task<double> GetFileSizeAsync(Uri? url)
         {
             try
             {
