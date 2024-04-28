@@ -72,10 +72,6 @@ namespace UniGetUI.Interface
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
                 {
-                    Logger.Log(e);
-                    Logger.Log(e.OriginalSource);
-                    Logger.Log(e.OriginalSource as FrameworkElement);
-                    Logger.Log((e.OriginalSource as FrameworkElement).DataContext);
                     if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
                     {
                         TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
@@ -86,10 +82,6 @@ namespace UniGetUI.Interface
                         else
                             SourcesTreeView.SelectedNodes.Add(node);
                         FilterPackages(QueryBlock.Text.Trim());
-                    }
-                    else
-                    {
-                        Logger.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
                     }
                 }
             };
@@ -115,7 +107,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log(ex);
+                        Logger.Warn(ex);
                     }
                 }
             };
@@ -296,7 +288,7 @@ namespace UniGetUI.Interface
                                     continue;
 
                                 if (package.NewVersionIsInstalled())
-                                    Logger.Log("Package Id={0} with NewVersion={1} is already installed, skipping it...".Replace("{0}", package.Id).Replace("{1}", package.NewVersion));
+                                    Logger.Debug($"Package Id={package.Id} with NewVersion={package.NewVersion} is already installed, skipping it...");
 
                                 package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);
                                 package.GetInstalledPackage()?.SetTag(PackageTag.IsUpgradable);
@@ -397,7 +389,8 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log(ex);
+                        Logger.Warn("An error occurred when showing a toast notification regarding available updates");
+                        Logger.Warn(ex);
                     }
                 }
             }
@@ -408,11 +401,11 @@ namespace UniGetUI.Interface
                 try
                 {
                     waitTime = long.Parse(Settings.GetValue("UpdatesCheckInterval"));
-                    Logger.Log($"Starting check for updates wait interval with waitTime={waitTime}");
+                    Logger.Debug($"Starting check for updates wait interval with waitTime={waitTime}");
                 }
                 catch
                 {
-                    Logger.Log("Invalid value for UpdatesCheckInterval, using default value of 3600 seconds");
+                    Logger.Debug("Invalid value for UpdatesCheckInterval, using default value of 3600 seconds");
                 }
                 await Task.Delay(TimeSpan.FromSeconds(waitTime));
                 _ = LoadPackages(ManualCheck: false);
@@ -843,16 +836,16 @@ namespace UniGetUI.Interface
                 if (package.Id == id)
                 {
                     MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
-                    Logger.Log("Updating package with id " + id + ". Operation was launched from widgets");
+                    Logger.Info($"[WIDGETS] Updating package with id {id}");
                     break;
                 }
             }
-            Logger.Log("WARNING! No package with id " + id + " was found. Operation was launched from widgets");
+            Logger.Warn($"[WIDGETS] No package with id={id} was found");
         }
 
         public void UpdateAllPackages()
         {
-            Logger.Log("Updating all packages");
+            Logger.Info("[WIDGETS] Updating all packages");
             foreach (UpgradablePackage package in Packages)
                 if (package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
                     MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
@@ -860,7 +853,7 @@ namespace UniGetUI.Interface
 
         public void UpdateAllPackagesForManager(string manager)
         {
-            Logger.Log("Updating all packages");
+            Logger.Info($"[WIDGETS] Updating all packages for manager {manager}");
             foreach (UpgradablePackage package in Packages)
                 if (package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
                     if (package.Manager.Name == manager)

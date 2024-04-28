@@ -338,14 +338,14 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                         }
                         catch (Exception e)
                         {
-                            Logger.Log(e);
+                            Logger.Warn(e);
                         }
                     }
                 }
             }
             catch (Exception e)
             {
-                Logger.Log(e);
+                Logger.Error(e);
             }
 
             return details;

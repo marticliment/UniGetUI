@@ -75,37 +75,38 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                     else
                     {
                         ManagerReady = true;
-                        Logger.Log(Name + " sources took too long to load, using known sources as default");
+                        Logger.Warn(Name + " sources took too long to load, using known sources as default");
                     }
                 }
                 ManagerReady = true;
 
-                string LogData = "\n▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄" +
-                                 "\n█▀▀▀▀▀▀▀▀▀▀▀▀▀ MANAGER LOADED ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀" +
-                                 "\n█ Name: " + Name +
-                                 "\n█ Enabled: " + IsEnabled().ToString() +
-                                    (IsEnabled() ? 
-                                 "\n█ Found: " + Status.Found.ToString() +
-                                    (Status.Found ? 
-                                 "\n█ Fancye exe name: " + Properties.ExecutableFriendlyName +
-                                 "\n█ Executable path: " + Status.ExecutablePath +
-                                 "\n█ Call arguments: " + Properties.ExecutableCallArgs +
-                                 "\n█ Version: \n" + "█   " + Status.Version.Replace("\n", "\n█   ")
-                                    :
-                                 "\n█ THE MANAGER WAS NOT FOUND. PERHAPS IT IS NOT " +
-                                 "\n█ INSTALLED OR IT HAS BEEN MISCONFIGURED "
-                                    )
-                                    :
-                                 "\n█ THE MANAGER IS DISABLED"
-                                    ) +
-                                 "\n▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀\n";
+                string LogData = "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄" +
+                               "\n█▀▀▀▀▀▀▀▀▀▀▀▀▀ MANAGER LOADED ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀" +
+                               "\n█ Name: " + Name +
+                               "\n█ Enabled: " + IsEnabled().ToString() +
+                               (IsEnabled() ? 
+                               "\n█ Found: " + Status.Found.ToString() +
+                               (Status.Found ? 
+                               "\n█ Fancye exe name: " + Properties.ExecutableFriendlyName +
+                               "\n█ Executable path: " + Status.ExecutablePath +
+                               "\n█ Call arguments: " + Properties.ExecutableCallArgs +
+                               "\n█ Version: \n" + "█   " + Status.Version.Replace("\n", "\n█   ")
+                               :
+                               "\n█ THE MANAGER WAS NOT FOUND. PERHAPS IT IS NOT " +
+                               "\n█ INSTALLED OR IT HAS BEEN MISCONFIGURED "
+                               )
+                               :
+                               "\n█ THE MANAGER IS DISABLED"
+                               ) +
+                               "\n▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀";
 
-                Logger.Log(LogData);
+                Logger.Info(LogData);
             }
             catch (Exception e)
             {
                 ManagerReady = true; // We need this to unblock the main thread
-                Logger.Log("Could not initialize Package Manager " + Name + ": \n" + e.ToString());
+                Logger.Error("Could not initialize Package Manager " + Name);
+                Logger.Error(e);
             }
         }
 
@@ -140,12 +141,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 {
                     packages[i] = PackageFactory.GetAvailablePackageIfRepeated(packages[i]);
                 }
+                Logger.Info($"Found {packages.Length} available packages from {Name} with the query {query}");
                 return packages;
             }
             catch (Exception e)
             {
-                Logger.Log("Error finding packages on manager " + Name + " with query " + query + ": \n" + e.ToString());
-                return new Package[] { };
+                Logger.Error("Error finding packages on manager " + Name + " with query " + query);
+                Logger.Error(e);
+                return [];
             }
         }
 
@@ -162,12 +165,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 UpgradablePackage[] packages = await GetAvailableUpdates_UnSafe();
                 for (int i = 0; i < packages.Length; i++)
                     packages[i] = PackageFactory.GetUpgradablePackageIfRepeated(packages[i]);
+                Logger.Info($"Found {packages.Length} available updates from {Name}");
                 return packages;
             }
             catch (Exception e)
             {
-                Logger.Log("Error finding updates on manager " + Name + ": \n" + e.ToString());
-                return new UpgradablePackage[] { };
+                Logger.Error("Error finding updates on manager " + Name);
+                Logger.Error(e);
+                return [];
             }
         }
 
@@ -183,12 +188,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 Package[] packages = await GetInstalledPackages_UnSafe();
                 for (int i = 0; i < packages.Length; i++)
                     packages[i] = PackageFactory.GetInstalledPackageIfRepeated(packages[i]);
+                Logger.Info($"Found {packages.Length} installed packages from {Name}");
                 return packages;
             }
             catch (Exception e)
             {
-                Logger.Log("Error finding installed packages on manager " + Name + ": \n" + e.ToString());
-                return new Package[] { };
+                Logger.Error("Error finding installed packages on manager " + Name);
+                Logger.Error(e); 
+                return [];
             }
         }
 
@@ -203,11 +210,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         {
             try
             {
-                return await GetPackageDetails_UnSafe(package);
+                var details =  await GetPackageDetails_UnSafe(package);
+                Logger.Info($"Loaded details for package {package.Id} on manager {Name}");
+                return details;
             }
             catch (Exception e)
             {
-                Logger.Log("Error getting package details on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
+                Logger.Error("Error finding installed packages on manager " + Name);
+                Logger.Error(e);
                 return new PackageDetails(package);
             }
         }
@@ -226,12 +236,13 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 if (package.Manager.Capabilities.SupportsCustomVersions)
                     return await GetPackageVersions_Unsafe(package);
                 else
-                    return new string[0];
+                    return [];
             }
             catch (Exception e)
             {
-                Logger.Log("Error getting package versions on manager " + Name + " for package id=" + package.Id + ": \n" + e.ToString());
-                return new string[0];
+                Logger.Error($"Error finding available package versions for package {package.Id} on manager " + Name);
+                Logger.Error(e);
+                return [];
             }
         }
 
@@ -404,7 +415,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
             catch (Exception e)
             {
-                Logger.Log($"Error finding sources for Manager {Name}: \n" + e.ToString());
+                Logger.Error($"Error finding sources for manager " + Name);
+                Logger.Error(e);
                 return [];
             }
         }

@@ -27,7 +27,8 @@ namespace UniGetUI.Core.SettingsEngine
             }
             catch (Exception e)
             {
-                Logger.Log($"CRITICAL ERROR: CANNOT SET SETTING FOR setting={setting} enabled={value}: " + e.Message);
+                Logger.Error($"CANNOT SET SETTING FOR setting={setting} enabled={value}");
+                Logger.Error(e);
             }
         }
 
@@ -46,7 +47,8 @@ namespace UniGetUI.Core.SettingsEngine
             }
             catch (Exception e)
             {
-                Logger.Log($"CRITICAL ERROR: CANNOT SET SETTING VALUE FOR setting={setting} value={value}: " + e.Message);
+                Logger.Error($"CANNOT SET SETTING VALUE FOR setting={setting} enabled={value}");
+                Logger.Error(e);
             }
         }
     }

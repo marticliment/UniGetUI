@@ -350,7 +350,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    Logger.Warn(ex);
                 }
 
             }

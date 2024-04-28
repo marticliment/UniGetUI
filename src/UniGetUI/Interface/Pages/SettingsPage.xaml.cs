@@ -367,7 +367,8 @@ namespace UniGetUI.Interface
             catch (Exception ex)
             {
                 MainApp.Instance.MainWindow.HideLoadingDialog();
-                Logger.Log(ex);
+                Logger.Error("An error occurred when exporting settings");
+                Logger.Error(ex);
             }
 
         }
@@ -383,7 +384,8 @@ namespace UniGetUI.Interface
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error("An error occurred when resetting UniGetUI");
+                Logger.Error(ex);
             }
             GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
@@ -478,7 +480,8 @@ namespace UniGetUI.Interface
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error("An error occurred while deleting icon cache");
+                Logger.Error(ex);
             }
             ExperimentalSettingsExpander.ShowRestartRequiredBanner();
         }

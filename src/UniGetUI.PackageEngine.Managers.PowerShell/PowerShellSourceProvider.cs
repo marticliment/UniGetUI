@@ -78,7 +78,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(e);
+                    Logger.Warn(e);
                 }
             }
             output += await process.StandardError.ReadToEndAsync();

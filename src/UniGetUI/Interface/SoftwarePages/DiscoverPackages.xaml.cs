@@ -68,10 +68,6 @@ namespace UniGetUI.Interface
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
                 {
-                    Logger.Log(e);
-                    Logger.Log(e.OriginalSource);
-                    Logger.Log(e.OriginalSource as FrameworkElement);
-                    Logger.Log((e.OriginalSource as FrameworkElement).DataContext);
                     if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
                     {
                         TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
@@ -82,10 +78,6 @@ namespace UniGetUI.Interface
                         else
                             SourcesTreeView.SelectedNodes.Add(node);
                         FilterPackages_SortOnly(QueryBlock.Text.Trim());
-                    }
-                    else
-                    {
-                        Logger.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
                     }
                 }
             };
@@ -112,7 +104,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log(ex);
+                        Logger.Warn(ex);
                     }
                 }
             };
@@ -720,7 +712,7 @@ namespace UniGetUI.Interface
             if (!Initialized)
                 return;
 
-            Logger.Log("Showing shared package...");
+            Logger.Info($"Showing shared package with pId=${pId} and pSource=${pSource}...");
 
             MainApp.Instance.MainWindow.Activate();
 
@@ -732,7 +724,7 @@ namespace UniGetUI.Interface
             MainApp.Instance.MainWindow.HideLoadingDialog();
             if (FilteredPackages.Count == 1)
             {
-                Logger.Log("Only one package was found for pId=" + pId + ", showing it.");
+                Logger.Debug("Only one package was found for pId=" + pId + ", showing it.");
                 await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
             }
             else if (FilteredPackages.Count > 1)
@@ -741,16 +733,16 @@ namespace UniGetUI.Interface
                 foreach (Package match in FilteredPackages)
                     if (match.Source.Manager.Name == managerName)
                     {
-                        Logger.Log("Equivalent package for id=" + pId + " and source=" + pSource + " found: " + match.ToString());
+                        Logger.Debug("Equivalent package for pId=" + pId + " and pSource=" + pSource + " found: " + match.ToString());
                         await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(match, OperationType.Install);
                         return;
                     }
-                Logger.Log("No package found with the exact same manager, showing the first one.");
+                Logger.Debug("No package found with the exact same manager, showing the first one.");
                 await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
             }
             else
             {
-                Logger.Log("No packages were found matching the given pId=" + pId);
+                Logger.Error("No packages were found matching the given pId=" + pId);
                 ContentDialog c = new();
                 c.XamlRoot = XamlRoot;
                 c.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;

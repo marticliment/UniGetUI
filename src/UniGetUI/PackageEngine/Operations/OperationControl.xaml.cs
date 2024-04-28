@@ -435,7 +435,7 @@ namespace UniGetUI.PackageEngine.Operations
                         if (MainApp.Instance.OperationQueue.Count == 0)
                             if (Settings.Get("DoCacheAdminRightsForBatches"))
                             {
-                                Logger.Log("Erasing admin rights");
+                                Logger.Debug("Erasing admin rights");
                                 Process p = new();
                                 p.StartInfo.FileName = MainApp.Instance.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
@@ -451,7 +451,7 @@ namespace UniGetUI.PackageEngine.Operations
                         if (MainApp.Instance.OperationQueue.Count == 0)
                             if (Settings.Get("DoCacheAdminRightsForBatches"))
                             {
-                                Logger.Log("Erasing admin rights");
+                                Logger.Debug("Erasing admin rights");
                                 Process p = new();
                                 p.StartInfo.FileName = MainApp.Instance.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
@@ -486,7 +486,8 @@ namespace UniGetUI.PackageEngine.Operations
             }
             catch (Exception e)
             {
-                Logger.Log("Operation failed: " + e.ToString());
+                Logger.Error("Operation crashed: ");
+                Logger.Error(e);
                 LineInfoText = CoreTools.Translate("An unexpected error occurred:") + " " + e.Message;
                 RemoveFromQueue();
                 try { Status = OperationStatus.Failed; } catch { }

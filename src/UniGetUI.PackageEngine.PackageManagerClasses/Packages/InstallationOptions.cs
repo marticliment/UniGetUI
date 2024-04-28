@@ -147,7 +147,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error($"Could not save {Package.Id} options to disk");
+                Logger.Error(ex);
             }
         }
 
@@ -167,7 +168,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error($"[ASYNC] Could not save {Package.Id} options to disk");
+                Logger.Error(ex);
             }
         }
 
@@ -188,7 +190,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
             catch (Exception e)
             {
-                Logger.Log(e);
+                Logger.Error($"Could not load {Package.Id} options from disk");
+                Logger.Error(e);
             }
         }
 
@@ -207,16 +210,17 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 await using FileStream inputStream = optionsFile.OpenRead();
                 SerializableInstallationOptions_v1 options = await JsonSerializer.DeserializeAsync<SerializableInstallationOptions_v1>(inputStream);
                 FromSerialized(options);
+                Logger.Debug($"InstallationOptions loaded successfully from disk for package {Package.Id}");
             }
             catch (JsonException)
             {
-                Logger.Log("An error occurred while parsing package " + optionsFile + ". The file will be overwritten");
+                Logger.Warn("An error occurred while parsing package " + optionsFile + ". The file will be overwritten");
                 await File.WriteAllTextAsync(optionsFile.FullName, "{}");
             }
             catch (Exception e)
             {
-                Logger.Log("Loading installation options for file " + optionsFile + " have failed: ");
-                Logger.Log(e);
+                Logger.Error("Loading installation options for file " + optionsFile + " have failed: ");
+                Logger.Error(e);
             }
         }
 

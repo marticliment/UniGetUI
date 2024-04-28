@@ -191,7 +191,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
                     if (!InstalledPackages.ContainsKey(elements[0] + "." + elements[1]))
                     {
-                        Logger.Log("Upgradable scoop package not listed on installed packages - id=" + elements[0]);
+                        Logger.Warn("Upgradable scoop package not listed on installed packages - id=" + elements[0]);
                         continue;
                     }
 
@@ -268,7 +268,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    Logger.Error("Cannot load package manifest URL");
+                    Logger.Error(ex);
                 }
 
             Process p = new();
@@ -300,7 +301,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 else if (RawInfo.ContainsKey("description"))
                     details.Description = RawInfo["description"].ToString();
             }
-            catch (Exception ex) { Logger.Log("Can't load description: " + ex); }
+            catch (Exception ex) { Logger.Debug("[Scoop] Can't load description: " + ex); }
 
             try
             {
@@ -309,7 +310,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 else
                     details.InstallerType = CoreTools.Translate("Scoop package");
             }
-            catch (Exception ex) { Logger.Log("Can't load installer type: " + ex); }
+            catch (Exception ex) { Logger.Debug("[Scoop] Can't load installer type: " + ex); }
 
             try
             {
@@ -322,7 +323,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         details.Author = details.HomepageUrl.Host.Split(".")[^2];
                 }
             }
-            catch (Exception ex) { Logger.Log("Can't load homepage: " + ex); }
+            catch (Exception ex) { Logger.Debug("[Scoop] Can't load homepage: " + ex); }
 
             try
             {
@@ -336,7 +337,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 else if (RawInfo.ContainsKey("notes"))
                     details.ReleaseNotes = RawInfo["notes"].ToString();
             }
-            catch (Exception ex) { Logger.Log("Can't load notes: " + ex); }
+            catch (Exception ex) { Logger.Debug("[Scoop] Can't load notes: " + ex); }
 
             try
             {
@@ -351,7 +352,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         details.License = RawInfo["license"].ToString();
                 }
             }
-            catch (Exception ex) { Logger.Log("Can't load license: " + ex); }
+            catch (Exception ex) { Logger.Debug("[Scoop] Can't load license: " + ex); }
 
             try
             {
@@ -376,14 +377,14 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
                 details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
             }
-            catch (Exception ex) { Logger.Log("Can't load installer URL: " + ex); }
+            catch (Exception ex) { Logger.Debug("[Scoop] Can't load installer URL: " + ex); }
 
             try
             {
                 if (RawInfo.ContainsKey("checkver") && RawInfo["checkver"] is JsonObject && (RawInfo["checkver"] as JsonObject).ContainsKey("url"))
                     details.ReleaseNotesUrl = new Uri(RawInfo["checkver"]["url"].ToString());
             }
-            catch (Exception ex) { Logger.Log("Can't load notes URL: " + ex); }
+            catch (Exception ex) { Logger.Debug("[Scoop] Can't load notes URL: " + ex); }
 
             return details;
 
@@ -536,7 +537,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         private async void RunCleanup()
         {
-            Logger.Log("Starting scoop cleanup...");
+            Logger.Info("Starting scoop cleanup...");
             foreach (string command in new string[] { " cache rm *", " cleanup --all --cache", " cleanup --all --global --cache" })
             {
                 Process p = new()
@@ -555,12 +556,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 p.Start();
                 await p.WaitForExitAsync();
             }
+            Logger.Info("Scoop cleanup finished!");
         }
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
             await Task.Delay(0);
-            Logger.Log("Manager " + Name + " does not support version retrieving, this function should have never been called");
+            Logger.Warn("Manager " + Name + " does not support version retrieving, this function should have never been called");
             return new string[0];
         }
     }

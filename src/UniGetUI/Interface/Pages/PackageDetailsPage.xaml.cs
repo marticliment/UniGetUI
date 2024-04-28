@@ -126,7 +126,7 @@ namespace UniGetUI.Interface.Dialogs
             string NotFound = CoreTools.Translate("Not available");
             Uri InvalidUri = new("about:blank");
             Info = await Package.Manager.GetPackageDetails(Package);
-            Logger.Log("Received info " + Info);
+            Logger.Debug("Received info " + Info);
 
             string command = "";
 
@@ -242,12 +242,13 @@ namespace UniGetUI.Interface.Dialogs
                 {
                     DownloadInstallerButton.Content = CoreTools.Translate("Downloading");
                     DownloadInstallerButtonProgress.Visibility = Visibility.Visible;
-                    Logger.Log(file.Path.ToString());
+                    Logger.Debug($"Downloading installer ${file.Path.ToString()}");
                     using HttpClient httpClient = new();
                     await using Stream s = await httpClient.GetStreamAsync(Info.InstallerUrl);
                     await using FileStream fs = File.OpenWrite(file.Path.ToString());
                     await s.CopyToAsync(fs);
                     fs.Dispose();
+                    Logger.ImportantInfo($"Installer for {Package.Id} has been downloaded successfully");
                     DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
                     System.Diagnostics.Process.Start("explorer.exe", "/select," + file.Path.ToString());
                     DownloadInstallerButton.Content = CoreTools.Translate("Download succeeded");
@@ -255,7 +256,8 @@ namespace UniGetUI.Interface.Dialogs
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error($"An error occurred while downloading the installer for the package {Package.Id}");
+                Logger.Error(ex);
                 DownloadInstallerButton.Content = CoreTools.Translate("An error occurred");
                 DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
                 ErrorOutput.Text = ex.Message;

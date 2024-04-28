@@ -96,7 +96,7 @@ namespace UniGetUI.Interface
                     NavigationPage.InstalledPage.ReloadPackages();
                 Activate();
             }
-            Logger.Log("Notification activated: " + args.ToString() + " " + input.ToString());
+            Logger.Debug("Notification activated: " + args.ToString() + " " + input.ToString());
         }
 
 
@@ -118,7 +118,8 @@ namespace UniGetUI.Interface
                 catch (Exception ex)
                 {
                     // Somewhere, Sometimes, MS Window Efficiency mode just crashes
-                    Logger.Log(ex);
+                    Logger.Debug("Windows efficiency mode API crashed, but this was expected");
+                    Logger.Debug(ex);
                     this.Hide(enableEfficiencyMode: false);
                 }
             }
@@ -348,7 +349,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                Logger.Log("Taskbar foreground color customization is not available");
+                Logger.Info("Taskbar foreground color customization is not available");
             }
 
 
@@ -431,7 +432,8 @@ namespace UniGetUI.Interface
             }
             catch (Exception e)
             {
-                Logger.Log(e);
+                Logger.Error("An error occurred while showing a ContentDialog via ShowDialogAsync()");
+                Logger.Error(e);
                 if (DialogQueue.Contains(dialog))
                     DialogQueue.Remove(dialog);
                 return ContentDialogResult.None;

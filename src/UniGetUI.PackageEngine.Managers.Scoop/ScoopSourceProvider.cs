@@ -81,7 +81,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     }
                     catch (Exception e)
                     {
-                        Logger.Log(e);
+                        Logger.Warn(e);
                     }
                 }
                 _output += await process.StandardError.ReadToEndAsync();

@@ -77,7 +77,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(e);
+                    Logger.Error(e);
                 }
             }
 

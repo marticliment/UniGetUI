@@ -26,10 +26,15 @@ namespace UniGetUI.Core.IconEngine
                 if(__instance is  null)
                 {
                     Logger.Error("IconStore.Instance was not initialized, creating an empty instance.");
-                    __instance = new();
+                    InitializeInstance();
                 }
                 return __instance;
             }
+        }
+
+        public static void InitializeInstance()
+        { 
+            __instance = new();
         }
 
         /// <summary>
@@ -48,7 +53,7 @@ namespace UniGetUI.Core.IconEngine
         /// </summary>
         /// <returns></returns>
 
-        public async Task LoadIconAndScreenshotsDatabase()
+        public async void LoadIconAndScreenshotsDatabase()
         {
             string IconsAndScreenshotsFile = Path.Join(CoreData.UniGetUICacheDirectory_Data, "Icon Database.json");
             try
@@ -63,19 +68,19 @@ namespace UniGetUI.Core.IconEngine
                     await File.WriteAllTextAsync(IconsAndScreenshotsFile, fileContents);
                 }
 
-                Logger.Log("Downloaded icons and screenshots successfully!");
+                Logger.ImportantInfo("Downloaded new icons and screenshots successfully!");
 
             }
             catch (Exception e)
             {
-                Logger.Log("Failed to download icons and screenshots");
-                Logger.Log(e);
+                Logger.Warn("Failed to download icons and screenshots");
+                Logger.Warn(e);
             }
 
 
             if (!File.Exists(IconsAndScreenshotsFile))
             {
-                Logger.Log("WARNING: Icon Database file not found");
+                Logger.Error("Icon Database file not found");
                 return;
             }
 
@@ -93,8 +98,8 @@ namespace UniGetUI.Core.IconEngine
             }
             catch (Exception ex)
             {
-                Logger.Log("Failed to load icon database");
-                Logger.Log(ex);
+                Logger.Error("Failed to load icon and screenshot database");
+                Logger.Error(ex);
             }
         }
 

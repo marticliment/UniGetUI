@@ -112,19 +112,19 @@ namespace UniGetUI
             {
                 if (gsudo_result.Item1 != false)
                 {
-                    Logger.Log($"Using System GSudo at {gsudo_result.Item2}");
+                    Logger.Info($"Using System GSudo at {gsudo_result.Item2}");
                     GSudoPath = gsudo_result.Item2;
                 }
                 else
                 {
-                    Logger.Log("System GSudo enabled but not found!");
+                    Logger.Error("System GSudo enabled but not found!");
                     GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
                 }
             }
             else
             {
                 GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
-                Logger.Log($"Using bundled GSudo at {GSudoPath}");
+                Logger.Info($"Using bundled GSudo at {GSudoPath}");
             }
         }
 
@@ -134,14 +134,14 @@ namespace UniGetUI
             {
                 string message = $"Unhandled Exception raised: {e.Message}";
                 string stackTrace = $"Stack Trace: \n{e.Exception.StackTrace}";
-                Logger.Log(" -");
-                Logger.Log(" -");
-                Logger.Log("  ⚠️⚠️⚠️ START OF UNHANDLED ERROR TRACE ⚠️⚠️⚠️");
-                Logger.Log(message);
-                Logger.Log(stackTrace);
-                Logger.Log("  ⚠️⚠️⚠️  END OF UNHANDLED ERROR TRACE  ⚠️⚠️⚠️");
-                Logger.Log(" -");
-                Logger.Log(" -");
+                Logger.Error(" -");
+                Logger.Error(" -");
+                Logger.Error("  ⚠️⚠️⚠️ START OF UNHANDLED ERROR TRACE ⚠️⚠️⚠️");
+                Logger.Error(e.Message);
+                Logger.Error(e.Exception);
+                Logger.Error("  ⚠️⚠️⚠️  END OF UNHANDLED ERROR TRACE  ⚠️⚠️⚠️");
+                Logger.Error(" -");
+                Logger.Error(" -");
                 if (Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal || MainWindow == null)
                     CoreTools.ReportFatalException(e.Exception);
                 else
@@ -174,7 +174,8 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                Logger.Log(e);
+                Logger.Warn("Could not set up data folder for WebView2");
+                Logger.Warn(e);
             }
         }
 
@@ -209,7 +210,7 @@ namespace UniGetUI
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Warn(ex);
             }
         }
 
@@ -233,7 +234,8 @@ namespace UniGetUI
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error("Could not register notification event");
+                Logger.Error(ex);
             }
         }
 
@@ -254,7 +256,10 @@ namespace UniGetUI
 
                 // Run other initializations asynchronously
                 UpdateUniGetUIIfPossible();
-                _ = IconDatabase.Instance.LoadIconAndScreenshotsDatabase();
+                
+                IconDatabase.InitializeInstance();
+                IconDatabase.Instance.LoadIconAndScreenshotsDatabase();
+                
                 if (!Settings.Get("DisableApi"))
                     _ = BackgroundApi.Start();
 
@@ -262,7 +267,7 @@ namespace UniGetUI
 
                 await InitializeAllManagersAsync();
 
-                Logger.Log("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
+                Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();
                 RaiseExceptionAsFatal = false;
 
@@ -321,10 +326,10 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                Logger.Log(e);
+                Logger.Error(e);
             }
             if (ManagersMetaTask.IsCompletedSuccessfully == false)
-                Logger.Log("Timeout: Not all package managers have finished initializing.");
+                Logger.Warn("Timeout: Not all package managers have finished initializing.");
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
@@ -349,7 +354,7 @@ namespace UniGetUI
 
         public void DisposeAndQuit(int outputCode = 0)
         {
-            Logger.Log("Quitting...");
+            Logger.Warn("Quitting...");
             MainWindow?.Close();
             BackgroundApi?.Stop();
             Environment.Exit(outputCode);
@@ -360,7 +365,7 @@ namespace UniGetUI
             InfoBar? banner = null;
             try
             {
-                Logger.Log("Starting update check");
+                Logger.Debug("Starting update check");
 
                 string fileContents = "";
 
@@ -376,9 +381,9 @@ namespace UniGetUI
 
                 if (LatestVersion > CoreData.VersionNumber)
                 {
-                    Logger.Log("Updates found, downloading installer...");
-                    Logger.Log("Current version: " + CoreData.VersionNumber.ToString(CultureInfo.InvariantCulture));
-                    Logger.Log("Latest version : " + LatestVersion.ToString(CultureInfo.InvariantCulture));
+                    Logger.Info("Updates found, downloading installer...");
+                    Logger.Info("Current version: " + CoreData.VersionNumber.ToString(CultureInfo.InvariantCulture));
+                    Logger.Info("Latest version : " + LatestVersion.ToString(CultureInfo.InvariantCulture));
 
                     banner = MainWindow.UpdatesBanner;
                     banner.Title = CoreTools.Translate("WingetUI version {0} is being downloaded.").Replace("{0}", LatestVersion.ToString(CultureInfo.InvariantCulture));
@@ -417,12 +422,12 @@ namespace UniGetUI
                         banner.IsClosable = true;
 
                         if (MainWindow.Visible)
-                            Logger.Log("Waiting for mainWindow to be hidden");
+                            Logger.Debug("Waiting for mainWindow to be hidden");
 
                         while (MainWindow.Visible)
                             await Task.Delay(100);
 
-                        Logger.Log("Hash ok, starting update");
+                        Logger.ImportantInfo("The hash matches the expected value, starting update process...");
                         Process p = new();
                         p.StartInfo.FileName = "cmd.exe";
                         p.StartInfo.Arguments = $"/c start /B \"\" \"{InstallerPath}\" /silent";
@@ -433,9 +438,9 @@ namespace UniGetUI
                     }
                     else
                     {
-                        Logger.Log("Hash mismatch, not updating!");
-                        Logger.Log("Current hash : " + Hash);
-                        Logger.Log("Expected hash: " + InstallerHash);
+                        Logger.Error("Hash mismatch, not updating!");
+                        Logger.Error("Current hash : " + Hash);
+                        Logger.Error("Expected hash: " + InstallerHash);
                         File.Delete(InstallerPath);
 
                         banner.Title = CoreTools.Translate("The installer hash does not match the expected value.");
@@ -444,14 +449,14 @@ namespace UniGetUI
                         banner.IsOpen = true;
                         banner.IsClosable = true;
 
-                        await Task.Delay(7200000); // Check again in 2 hours
+                        await Task.Delay(3600000); // Check again in 1 hour
                         UpdateUniGetUIIfPossible();
                     }
                 }
                 else
                 {
-                    Logger.Log("UniGetUI is up to date");
-                    await Task.Delay(7200000); // Check again in 2 hours
+                    Logger.Info("UniGetUI is up to date");
+                    await Task.Delay(3600000); // Check again in 1 hour
                     UpdateUniGetUIIfPossible();
                 }
             }
@@ -466,7 +471,7 @@ namespace UniGetUI
                     banner.IsClosable = true;
                 }
 
-                Logger.Log(e);
+                Logger.Error(e);
 
                 if (round >= 3)
                     return;
@@ -478,9 +483,9 @@ namespace UniGetUI
 
         public void RestartApp()
         {
-            Logger.Log(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
-            System.Diagnostics.Process.Start(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
-            Environment.Exit(0);
+            Logger.Info(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
+            Process.Start(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
+            DisposeAndQuit(0);
         }
     }
 }

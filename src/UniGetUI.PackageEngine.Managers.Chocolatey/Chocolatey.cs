@@ -288,7 +288,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    Logger.Error(ex);
                 }
             }
 
@@ -313,7 +313,6 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 if (_line.Trim() != "")
                 {
                     output.Add(_line);
-                    Logger.Log(_line);
                 }
 
             // Parse the output
@@ -382,8 +381,8 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
                 catch (Exception e)
                 {
-                    Logger.Log("Error occurred while parsing line value=\"" + _line + "\"");
-                    Logger.Log(e.Message);
+                    Logger.Warn("Error occurred while parsing line value=\"" + _line + "\"");
+                    Logger.Warn(e.Message);
                 }
             }
 
@@ -406,7 +405,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             if (Directory.Exists(old_choco_path))
                 try
                 {
-                    Logger.Log("Moving Bundled Chocolatey from old path to new path...");
+                    Logger.Info("Moving Bundled Chocolatey from old path to new path...");
 
                     if (!Directory.Exists(new_choco_path))
                         Directory.CreateDirectory(new_choco_path);
@@ -457,7 +456,8 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(e);
+                    Logger.Error("An error occurred while migrating chocolatey");
+                    Logger.Error(e);
                 }
 
             if (Settings.Get("UseSystemChocolatey"))
@@ -494,7 +494,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 string path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
                 if (!path.Contains(status.ExecutablePath.Replace("\\choco.exe", "\\bin")))
                 {
-                    Logger.Log("Adding chocolatey to path since it was not on path.");
+                    Logger.Info("Adding chocolatey to path since it was not on path.");
                     Environment.SetEnvironmentVariable("PATH", $"{status.ExecutablePath.Replace("\\choco.exe", "\\bin")};{path}", EnvironmentVariableTarget.User);
                     Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.User);
                 }
@@ -525,9 +525,6 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             };
 
-            Logger.Log(p.StartInfo.FileName);
-            Logger.Log(p.StartInfo.Arguments.ToString());
-
             p.Start();
             string line;
             string output = "";
@@ -538,7 +535,6 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 if (!line.StartsWith("Chocolatey"))
                 {
                     string[] elements = line.Split(' ');
-                    Logger.Log(line);
                     if (elements.Length < 2 || elements[0].Trim() != package.Id)
                         continue;
 

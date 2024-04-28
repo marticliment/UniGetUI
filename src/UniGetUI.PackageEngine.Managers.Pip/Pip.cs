@@ -283,38 +283,38 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 if ((RawInfo["info"] as JsonObject).ContainsKey("author"))
                     details.Author = (RawInfo["info"] as JsonObject)["author"].ToString();
             }
-            catch (Exception ex) { Logger.Log("Can't load author: " + ex); }
+            catch (Exception ex) { Logger.Debug("[Pip] Can't load author: " + ex); }
 
             try
             {
                 if ((RawInfo["info"] as JsonObject).ContainsKey("home_page"))
                     details.HomepageUrl = new Uri((RawInfo["info"] as JsonObject)["home_page"].ToString());
             }
-            catch (Exception ex) { Logger.Log("Can't load home_page: " + ex); }
+            catch (Exception ex) { Logger.Debug("[Pip] Can't load home_page: " + ex); }
             try
             {
                 if ((RawInfo["info"] as JsonObject).ContainsKey("package_url"))
                     details.ManifestUrl = new Uri((RawInfo["info"] as JsonObject)["package_url"].ToString());
             }
-            catch (Exception ex) { Logger.Log("Can't load package_url: " + ex); }
+            catch (Exception ex) { Logger.Debug("[Pip] Can't load package_url: " + ex); }
             try
             {
                 if ((RawInfo["info"] as JsonObject).ContainsKey("summary"))
                     details.Description = (RawInfo["info"] as JsonObject)["summary"].ToString();
             }
-            catch (Exception ex) { Logger.Log("Can't load summary: " + ex); }
+            catch (Exception ex) { Logger.Debug("[Pip] Can't load summary: " + ex); }
             try
             {
                 if ((RawInfo["info"] as JsonObject).ContainsKey("license"))
                     details.License = (RawInfo["info"] as JsonObject)["license"].ToString();
             }
-            catch (Exception ex) { Logger.Log("Can't load license: " + ex); }
+            catch (Exception ex) { Logger.Debug("[Pip] Can't load license: " + ex); }
             try
             {
                 if ((RawInfo["info"] as JsonObject).ContainsKey("maintainer"))
                     details.Publisher = (RawInfo["info"] as JsonObject)["maintainer"].ToString();
             }
-            catch (Exception ex) { Logger.Log("Can't load maintainer: " + ex); }
+            catch (Exception ex) { Logger.Debug("[Pip] Can't load maintainer: " + ex); }
             try
             {
                 if ((RawInfo["info"] as JsonObject).ContainsKey("classifiers") && (RawInfo["info"] as JsonObject)["classifiers"] is JsonArray)
@@ -329,7 +329,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     details.Tags = Tags.ToArray();
                 }
             }
-            catch (Exception ex) { Logger.Log("Can't load classifiers: " + ex); }
+            catch (Exception ex) { Logger.Debug("[Pip] Can't load classifiers: " + ex); }
 
             try
             {
@@ -354,7 +354,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     }
                 }
             }
-            catch (Exception ex) { Logger.Log("Can't load installer data: " + ex); }
+            catch (Exception ex) { Logger.Debug("Can't load installer data: " + ex); }
 
             return details;
         }

@@ -75,10 +75,6 @@ namespace UniGetUI.Interface
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
                 {
-                    Logger.Log(e);
-                    Logger.Log(e.OriginalSource);
-                    Logger.Log(e.OriginalSource as FrameworkElement);
-                    Logger.Log((e.OriginalSource as FrameworkElement).DataContext);
                     if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
                     {
                         TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
@@ -89,10 +85,6 @@ namespace UniGetUI.Interface
                         else
                             SourcesTreeView.SelectedNodes.Add(node);
                         FilterPackages(QueryBlock.Text.Trim());
-                    }
-                    else
-                    {
-                        Logger.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
                     }
                 }
             };
@@ -119,7 +111,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log(ex);
+                        Logger.Warn(ex);
                     }
                 }
             };
@@ -335,7 +327,7 @@ namespace UniGetUI.Interface
 
             try
             {
-                Logger.Log("Start backup");
+                Logger.Debug("Starting package backup");
                 List<BundledPackage> packagestoExport = new();
                 foreach (Package package in Packages)
                     packagestoExport.Add(await BundledPackage.FromPackageAsync(package));
@@ -361,11 +353,12 @@ namespace UniGetUI.Interface
                 string filePath = Path.Combine(dirName, fileName);
                 await File.WriteAllTextAsync(filePath, BackupContents);
                 HasDoneBackup = true;
-                Logger.Log("Backup saved to " + filePath);
+                Logger.ImportantInfo("Backup saved to " + filePath);
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error("An error occurred while performing a backup");
+                Logger.Error(ex);
             }
         }
 

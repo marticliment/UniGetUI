@@ -40,7 +40,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
                     p.StartInfo.FileName = MainApp.Instance.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
@@ -89,7 +89,8 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    Logger.Warn("Failed to show toast notification");
+                    Logger.Warn(ex);
                 }
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -152,7 +153,8 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    Logger.Warn("Failed to show toast notification");
+                    Logger.Warn(ex);
                 }
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
@@ -176,7 +178,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    Logger.Log("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+                    Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
                     Process p = new();
                     p.StartInfo.FileName = MainApp.Instance.GSudoPath;
                     p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
@@ -281,7 +283,8 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    Logger.Warn("Failed to show toast notification");
+                    Logger.Warn(ex);
                 }
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;

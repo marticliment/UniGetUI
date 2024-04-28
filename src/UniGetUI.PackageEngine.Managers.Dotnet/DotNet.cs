@@ -380,7 +380,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             }
             catch (Exception e)
             {
-                Logger.Log(e);
+                Logger.Error(e);
                 return details;
             }
         }
@@ -428,7 +428,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
             await Task.Delay(0);
-            Logger.Log("Manager " + Name + " does not support version retrieving, this function should have never been called");
+            Logger.Warn("Manager " + Name + " does not support version retrieving, this function should have never been called");
             return new string[0];
         }
     }

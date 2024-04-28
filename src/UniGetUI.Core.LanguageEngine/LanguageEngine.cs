@@ -42,7 +42,7 @@ namespace UniGetUI.Core.Language
                 MainLangDict.TryAdd("locale", "en");
             }
             LoadStaticTranslation();
-            Logger.Log("Loaded language locale: " + MainLangDict["locale"]);
+            Logger.Info("Loaded language locale: " + MainLangDict["locale"]);
         }
 
         public Dictionary<string, string> LoadLanguageFile(string LangKey, bool ForceBundled = false)
@@ -51,7 +51,6 @@ namespace UniGetUI.Core.Language
             {
                 Dictionary<string, string> LangDict = new();
                 string LangFileToLoad = Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
-                Logger.Log(LangFileToLoad);
 
                 if (!File.Exists(LangFileToLoad) || Settings.Get("DisableLangAutoUpdater"))
                 {
@@ -61,7 +60,6 @@ namespace UniGetUI.Core.Language
                 if (ForceBundled)
                 {
                     LangFileToLoad = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
-                    Logger.Log(LangFileToLoad);
                 }
 
                 LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject).ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
@@ -73,8 +71,8 @@ namespace UniGetUI.Core.Language
             }
             catch (Exception e)
             {
-                Logger.Log($"LoadLanguageFile Failed for LangKey={LangKey}, ForceBundled={ForceBundled}");
-                Logger.Log(e);
+                Logger.Error($"LoadLanguageFile Failed for LangKey={LangKey}, ForceBundled={ForceBundled}");
+                Logger.Error(e);
                 return new Dictionary<string, string>();
             }
         }
@@ -99,14 +97,17 @@ namespace UniGetUI.Core.Language
 
                 File.WriteAllText(Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json"), fileContents);
 
-                Logger.Log("Lang files were updated successfully");
+                Logger.ImportantInfo("Lang files were updated successfully from GitHub");
             }
             catch (Exception e)
             {
                 if (e is HttpRequestException && !UseOldUrl)
                     await DownloadUpdatedLanguageFile(LangKey, true);
                 else
-                    Logger.Log(e);
+                {
+                    Logger.Warn("Could not download updated translations from GitHub");
+                    Logger.Warn(e);
+                }
             }
         }
 

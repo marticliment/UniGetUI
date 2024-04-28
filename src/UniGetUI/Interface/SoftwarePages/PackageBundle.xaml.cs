@@ -74,10 +74,6 @@ namespace UniGetUI.Interface
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
                 {
-                    Logger.Log(e);
-                    Logger.Log(e.OriginalSource);
-                    Logger.Log(e.OriginalSource as FrameworkElement);
-                    Logger.Log((e.OriginalSource as FrameworkElement).DataContext);
                     if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
                     {
                         TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
@@ -88,10 +84,6 @@ namespace UniGetUI.Interface
                         else
                             SourcesTreeView.SelectedNodes.Add(node);
                         FilterPackages(QueryBlock.Text.Trim());
-                    }
-                    else
-                    {
-                        Logger.Log((e.OriginalSource as FrameworkElement).DataContext.GetType());
                     }
                 }
             };
@@ -116,7 +108,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log(ex);
+                        Logger.Warn(ex);
                     }
                 }
             };
@@ -650,7 +642,8 @@ namespace UniGetUI.Interface
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error("Could not load packages from a file");
+                Logger.Error(ex);
                 MainApp.Instance.MainWindow.HideLoadingDialog();
             }
         }
@@ -750,7 +743,7 @@ namespace UniGetUI.Interface
                 else
                     exportable.packages.Add(package.AsSerializable());
 
-            Logger.Log("Finished loading serializable objects. Serializing with format " + formatType.ToString());
+            Logger.Debug("Finished loading serializable objects. Serializing with format " + formatType.ToString());
             string ExportableData;
 
             if (formatType == BundleFormatType.JSON)
@@ -773,7 +766,7 @@ namespace UniGetUI.Interface
 
             }
 
-            Logger.Log("Finished serializing");
+            Logger.Debug("Serialization finished successfully");
 
             return ExportableData;
         }
@@ -819,7 +812,8 @@ namespace UniGetUI.Interface
             catch (Exception ex)
             {
                 MainApp.Instance.MainWindow.HideLoadingDialog();
-                Logger.Log(ex);
+                Logger.Error("An error occurred when saving packages to a file");
+                Logger.Error(ex);
             }
         }
         private void SidepanelWidth_SizeChanged(object sender, SizeChangedEventArgs e)

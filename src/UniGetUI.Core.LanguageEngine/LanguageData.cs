@@ -78,7 +78,7 @@ namespace UniGetUI.Core.Language
             {
                 if (!LanguageReference.ContainsKey(langKey.Key))
                 {
-                    Logger.Log($"Language {langKey.Key} not in list, maybe has not been added yet?");
+                    Logger.Warn($"Language {langKey.Key} not in list, maybe has not been added yet?");
                     continue;
                 }
 

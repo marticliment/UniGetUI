@@ -263,7 +263,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Warn($"Could not parse local source for package {id}");
+                Logger.Warn(ex);
                 return LocalPcSource;
             }
         }
@@ -357,7 +358,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             if (output_string.Contains("winget settings --enable InstallerHashOverride"))
             {
-                Logger.Log("Enabling skip hash ckeck for winget...");
+                Logger.Info("Enabling skip hash ckeck for winget...");
                 Process p = new()
                 {
                     StartInfo = new ProcessStartInfo()
@@ -448,7 +449,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
             catch (Exception ex)
             {
-                Logger.Log("Cannot create native WinGet instance due to error: " + ex.ToString());
+                Logger.Error("Cannot create native WinGet instance due to error: " + ex.ToString());
                 WinGetHelper.Instance = new BundledWinGetHelper();
                 status.Version += "\nUsing bundled WinGet helper (CLI parsing)";
             }
