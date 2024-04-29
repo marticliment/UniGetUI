@@ -18,7 +18,11 @@ namespace UniGetUI.Core.Tools.Tests
             langEngine.LoadLanguageFile("fr");
 
             Assert.Equal(CoreTools.Translate(textEntry, "fr"), langEngine.Translate(textEntry));
-            Assert.True((CoreTools.Translate(textEntry, "fr") == textEntry) ^ TranslationExists);
+            
+            if(TranslationExists)
+                Assert.NotEqual(CoreTools.Translate(textEntry, "fr"), textEntry);
+            else
+                Assert.Equal(CoreTools.Translate(textEntry, "fr"), textEntry);
 
             Assert.Equal(CoreTools.AutoTranslated(textEntry), textEntry);
         }
