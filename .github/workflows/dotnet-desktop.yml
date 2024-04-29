@@ -1,4 +1,4 @@
-name: Build
+name: Tests and Build
 
 on:
   pull_request:
@@ -24,6 +24,12 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
+    - name: tests
+      run: |
+        cd src
+        dotnet test
+        cd ..
+
     - name: Install winget
       uses: Cyberboss/install-winget@v1
 
@@ -36,24 +42,3 @@ jobs:
         mkdir out
         msbuild src/UniGetUI.sln /noLogo /property:Configuration=Release /property:Platform=x64 /restore:True /interactive:False /property:OutputPath=.\out
         exit $LASTEXITCODE
-
-  tests:
-    runs-on: windows-latest  # For a list of available runner types, refer to
-                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
-    # Install the .NET Core workload
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-
-    - name: tests
-      run: |
-        cd src
-        dotnet test
