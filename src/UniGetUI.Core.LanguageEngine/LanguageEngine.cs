@@ -8,7 +8,7 @@ namespace UniGetUI.Core.Language
 {
     public class LanguageEngine
     {
-        public static Dictionary<string, string> MainLangDict = new();
+        private Dictionary<string, string> MainLangDict = new();
 
         public LanguageEngine(string ForceLanguage = "")
         {

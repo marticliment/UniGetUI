@@ -14,15 +14,15 @@ namespace UniGetUI.Core.Tools.Tests
         [InlineData("Add packages or open an existing bundle", true)]
         public void TranslateFunctionTester(string textEntry, bool TranslationExists)
         {
-            var langEngine = new LanguageEngine();
-            langEngine.LoadLanguageFile("fr");
+            var langEngine = new LanguageEngine("fr");
+            CoreTools.ReloadLanguageEngineInstance("fr");
 
-            Assert.Equal(CoreTools.Translate(textEntry, "fr"), langEngine.Translate(textEntry));
-            
-            if(TranslationExists)
-                Assert.NotEqual(CoreTools.Translate(textEntry, "fr"), textEntry);
+            Assert.Equal(CoreTools.Translate(textEntry), langEngine.Translate(textEntry));
+
+            if (TranslationExists)
+                Assert.NotEqual(CoreTools.Translate(textEntry), textEntry);
             else
-                Assert.Equal(CoreTools.Translate(textEntry, "fr"), textEntry);
+                Assert.Equal(CoreTools.Translate(textEntry), textEntry);
 
             Assert.Equal(CoreTools.AutoTranslated(textEntry), textEntry);
         }

@@ -10,17 +10,22 @@ namespace UniGetUI.Core.Tools
     public static class CoreTools
     {
 
-        private static LanguageEngine LanguageEngine;
+        private static LanguageEngine? LanguageEngine;
 
         /// <summary>
         /// Translate a string to the current language
         /// </summary>
         /// <param name="text">The string to translate</param>
         /// <returns>The translated string if available, the original string otherwise</returns>
-        public static string Translate(string text, string ForceLanguage = "")
+        public static string Translate(string text)
         {
-            if(LanguageEngine == null) LanguageEngine = new LanguageEngine(ForceLanguage);
+            if(LanguageEngine == null) LanguageEngine = new LanguageEngine();
             return LanguageEngine.Translate(text);
+        }
+
+        public static void ReloadLanguageEngineInstance(string ForceLanguage = "")
+        {
+            LanguageEngine = new LanguageEngine(ForceLanguage);
         }
 
         /// <summary>
@@ -115,7 +120,7 @@ namespace UniGetUI.Core.Tools
             string LangName = "Unknown";
             try
             {
-                LangName = LanguageEngine.MainLangDict["langName"];
+                LangName = LanguageEngine.Translate("langName");
             }
             catch { }
 
