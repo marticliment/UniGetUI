@@ -13,6 +13,7 @@ using UniGetUIManagers = UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.PackageClasses;
 using Microsoft.Management.Deployment;
+using UniGetUI.Core.IconEngine;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
@@ -30,7 +31,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return await WinGetHelper.Instance.GetPackageDetails_UnSafe((WinGet)Manager, package);
         }
 
-        protected override async Task<Uri?> GetPackageIcon_Unsafe(Package package)
+        protected override async Task<CacheableIcon?> GetPackageIcon_Unsafe(Package package)
         {
             Logger.Warn("WinGet Native Icons have been forcefully disabled on code");
             return null;
@@ -85,13 +86,15 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             // Extract data from NativeDetails
             CatalogPackageMetadata NativeDetails = await Task.Run(() => NativePackage.DefaultInstallVersion.GetCatalogPackageMetadata());
 
+            CacheableIcon? Icon = null;
+
             foreach(var icon in NativeDetails.Icons.ToArray())
             {
-                Logger.Info(icon.Url);
-                Logger.Info(Convert.ToHexString(icon.Sha256));
+                Icon = new CacheableIcon(new Uri(icon.Url), icon.Sha256);
+                Logger.Debug($"Found WinGet native icon for {package.Id} with URL={icon.Url}");
             }
 
-            return null;
+            return Icon;
         }
 
         protected override Task<Uri[]> GetPackageScreenshots_Unsafe(Package package)

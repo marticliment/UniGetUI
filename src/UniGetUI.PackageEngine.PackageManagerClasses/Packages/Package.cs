@@ -208,8 +208,28 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns>An always-valid URI object</returns>
         public async Task<Uri> GetIconUrl()
         {
-            string iconId = GetIconId();
-            return await Manager.GetPackageIconUrl(this);
+            try
+            {
+                string iconId = GetIconId();
+
+                CacheableIcon? icon = await Manager.GetPackageIconUrl(this);
+                string path = await IconCacheEngine.DownloadIconOrCache(icon, Manager.Name, Id);
+
+                Uri Icon;
+                if (path == "")
+                    Icon = new Uri("ms-appx:///Assets/Images/package_color.png");
+                else
+                    Icon = new Uri("file:///" + path);
+
+                Logger.Debug($"Icon for package {Id} was loaded from {Icon}");
+                return Icon;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"An error occurred while retrieving the icon for package {Id}");
+                Logger.Error(ex);
+                return new Uri("ms-appx:///Assets/Images/package_color.png");
+            }
         }
 
         /// <summary>

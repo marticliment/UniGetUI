@@ -41,9 +41,9 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
             }
         }
 
-        public async Task<Uri> GetPackageIconUrl(Package package)
+        public async Task<CacheableIcon?> GetPackageIconUrl(Package package)
         {
-            Uri? Icon = null;
+            CacheableIcon? Icon = null;
             if (Manager.Capabilities.SupportsCustomPackageIcons)
             {
                 Icon = await GetPackageIcon_Unsafe(package);
@@ -55,13 +55,13 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
             if (Icon == null)
             {
                 var url = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
-                if(url != "") Icon = new Uri(url);
+                if(url != "") Icon = new CacheableIcon(new Uri(url), package.Version);
             }
 
             if (Icon == null)
             {
                 Logger.Warn($"Icon for package {package.Id} was not found, returning default icon");
-                Icon = new Uri("ms-appx:///Assets/Images/package_color.png");
+                return null;
             }
             else
             { 
@@ -91,7 +91,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
 
         protected abstract Task<PackageDetails> GetPackageDetails_Unsafe(Package package);
         protected abstract Task<string[]> GetPackageVersions_Unsafe(Package package);
-        protected abstract Task<Uri?> GetPackageIcon_Unsafe(Package package);
+        protected abstract Task<CacheableIcon?> GetPackageIcon_Unsafe(Package package);
         protected abstract Task<Uri[]> GetPackageScreenshots_Unsafe(Package package);
     }
 }

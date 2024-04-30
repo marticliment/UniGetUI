@@ -205,6 +205,14 @@ Crash Traceback:
         /// <returns>a double representing the size in MBs, 0 if the process fails</returns>
         public static async Task<double> GetFileSizeAsync(Uri? url)
         {
+            return await GetFileSizeAsyncAsLong(url) / 1048576;
+        }
+
+        public static async Task<long> GetFileSizeAsyncAsLong(Uri? url)
+        {
+            if(url == null)
+                return 0;
+
             try
             {
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
@@ -215,7 +223,7 @@ Crash Traceback:
                 long ContentLength;
                 if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
                 {
-                    return ContentLength / 1048576;
+                    return ContentLength;
                 }
 
             }

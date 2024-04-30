@@ -294,7 +294,6 @@ namespace UniGetUI.Interface
                             {
                                 Packages.Add(package);
                                 AddPackageToSourcesList(package);
-                                System.Diagnostics.Debug.WriteLine(package.Name);
 
                                 if (await package.HasUpdatesIgnoredAsync(Version: "*"))
                                     package.Tag = PackageTag.Pinned;

@@ -287,7 +287,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             if (NativeDetails.Tags != null)
                 details.Tags = NativeDetails.Tags.ToArray();
 
-            Debug.WriteLine("Starting manual fetch");
 
             // There is no way yet to retrieve installer URLs right now so this part will be console-parsed.
             // TODO: Replace this code with native code when available on the COM api
@@ -404,7 +403,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                Debug.WriteLine(line);
                 output += line + "\n";
                 if (!line.StartsWith("#"))
                     continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output

@@ -294,11 +294,11 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                         string new_subdir = old_subdir.Replace(old_choco_path, new_choco_path);
                         if (!Directory.Exists(new_subdir))
                         {
-                            Debug.WriteLine("New directory: " + new_subdir);
+                            Logger.Debug("New directory: " + new_subdir);
                             await Task.Run(() => Directory.CreateDirectory(new_subdir));
                         }
                         else
-                            Debug.WriteLine("Directory " + new_subdir + " already exists");
+                            Logger.Debug("Directory " + new_subdir + " already exists");
                     }
 
                     foreach (string old_file in Directory.GetFiles(old_choco_path, "*", SearchOption.AllDirectories))
@@ -306,12 +306,12 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                         string new_file = old_file.Replace(old_choco_path, new_choco_path);
                         if (!File.Exists(new_file))
                         {
-                            Debug.WriteLine("Copying " + old_file);
+                            Logger.Info("Copying " + old_file);
                             await Task.Run(() => File.Move(old_file, new_file));
                         }
                         else
                         {
-                            Debug.WriteLine("File " + new_file + " already exists.");
+                            Logger.Debug("File " + new_file + " already exists.");
                             File.Delete(old_file);
                         }
                     }
@@ -320,14 +320,14 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                     {
                         if (!Directory.EnumerateFiles(old_subdir).Any() && !Directory.EnumerateDirectories(old_subdir).Any())
                         {
-                            Debug.WriteLine("Deleting old empty subdirectory " + old_subdir);
+                            Logger.Debug("Deleting old empty subdirectory " + old_subdir);
                             Directory.Delete(old_subdir);
                         }
                     }
 
                     if (!Directory.EnumerateFiles(old_choco_path).Any() && !Directory.EnumerateDirectories(old_choco_path).Any())
                     {
-                        Debug.WriteLine("Deleting old Chocolatey directory " + old_choco_path);
+                        Logger.Info("Deleting old Chocolatey directory " + old_choco_path);
                         Directory.Delete(old_choco_path);
                     }
 

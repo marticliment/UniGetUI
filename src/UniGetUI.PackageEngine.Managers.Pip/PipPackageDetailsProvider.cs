@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
@@ -109,7 +110,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return details;
         }
 
-        protected override Task<Uri?> GetPackageIcon_Unsafe(Package package)
+        protected override Task<CacheableIcon?> GetPackageIcon_Unsafe(Package package)
         {
             throw new NotImplementedException();
         }

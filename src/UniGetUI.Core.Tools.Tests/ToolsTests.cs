@@ -98,7 +98,6 @@ namespace UniGetUI.Core.Tools.Tests
         public async Task TestFileSizeLoader(string uri, long expectedSize)
         {
             var size = await CoreTools.GetFileSizeAsync(uri != ""? new Uri(uri): null);
-            Debug.WriteLine(size);
             Assert.Equal(expectedSize / 1048576, size);
         }
 

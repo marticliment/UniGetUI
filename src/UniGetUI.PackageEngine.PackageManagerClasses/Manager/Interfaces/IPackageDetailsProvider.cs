@@ -37,7 +37,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Interfaces
         /// </summary>
         /// <param name="package">The package from which to load the icon</param>
         /// <returns>A full path to a valid icon file</returns>
-        public abstract Task<Uri> GetPackageIconUrl(Package package);
+        public abstract Task<CacheableIcon?> GetPackageIconUrl(Package package);
 
 
         /// <summary>

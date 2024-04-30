@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
@@ -410,7 +411,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
         }
 
-        public async Task<Uri> GetPackageIconUrl(Package package)
+        public async Task<CacheableIcon?> GetPackageIconUrl(Package package)
         {
             try
             {
@@ -421,7 +422,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             {
                 Logger.Error($"Error when loading the package icon for the package {package.Id} on manager " + Name);
                 Logger.Error(e);
-                return new Uri("ms-appx:///Assets/Images/package_color.png");
+                return null;
             }
         }
 

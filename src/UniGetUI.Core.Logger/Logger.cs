@@ -5,20 +5,6 @@ namespace UniGetUI.Core.Logging
     public static class Logger
     {
         private static readonly List<LogEntry> LogContents = new();
-
-        /*public static void Log(string s)
-        {
-            Diagnostics.Debug.WriteLine(s);
-            LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Debug));
-        }
-
-        public static void Log(object e)
-        {
-            Diagnostics.Debug.WriteLine(e.ToString() ?? "[NullObject]");
-            LogContents.Add(new LogEntry(e.ToString() ?? "[NullObject]", LogEntry.SeverityLevel.Debug));
-        }*/
-
-
         
         // String parameter log functions
         public static void ImportantInfo(string s)

@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
@@ -99,7 +100,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
         }
 
-        protected override async Task<Uri?> GetPackageIcon_Unsafe(Package package)
+        protected override async Task<CacheableIcon?> GetPackageIcon_Unsafe(Package package)
         {
             var PackageManifestContent = await PackageManifestLoader.GetPackageManifestContent(package);
             if (PackageManifestContent == null)
@@ -117,7 +118,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
 
             Logger.Debug($"A native icon with Url={possibleIconUrl.Groups[1].Value} was found");
-            return new Uri(possibleIconUrl.Groups[1].Value);
+            return new CacheableIcon(new Uri(possibleIconUrl.Groups[1].Value), package.Version);
         }
 
         protected override Task<Uri[]> GetPackageScreenshots_Unsafe(Package package)
