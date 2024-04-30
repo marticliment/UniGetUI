@@ -101,5 +101,21 @@ namespace UniGetUI.Core.Tools.Tests
             Debug.WriteLine(size);
             Assert.Equal(expectedSize / 1048576, size);
         }
+
+        [Theory]
+        [InlineData("1000.0", 1000.0, 0.0)]
+        [InlineData("2.4", 2.4, 0.001)]
+        [InlineData("33a.12-beta", 33.12, 0.0)]
+        [InlineData("0", 0.0, 0.0)]
+        [InlineData("", -1, 0.0)]
+        [InlineData("dfgfdsgdfg", -1, 0.0)]
+        [InlineData("-12", 12.0, 0.0)]
+        [InlineData("4.0.0.1.0", 4.001, 0.01)]
+        [InlineData("2024.30.04.1223", 2024.30041223, 0.0)]
+        [InlineData("0.0", 0.0, 0.0)]
+        public void TestGetVersionStringAsFloat(string version, double expected, double tolerance)
+        {
+            Assert.Equal(expected, CoreTools.GetVersionStringAsFloat(version), tolerance);
+        }
     }
 }

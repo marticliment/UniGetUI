@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Net;
 using System.Security.Principal;
 using UniGetUI.Core.Data;
@@ -226,7 +227,7 @@ Crash Traceback:
             return 0;
         }
 
-        public static float GetVersionStringAsFloat(string Version)
+        public static double GetVersionStringAsFloat(string Version)
         {
             try
             {
@@ -245,11 +246,12 @@ Crash Traceback:
                         }
                     }
                 }
-                float res = 0.0F;
+                double res = -1;
                 if (_ver != "" && _ver != ".")
                     try
                     {
-                        return float.Parse(_ver);
+                        var val = double.Parse(_ver, CultureInfo.InvariantCulture);
+                        return val;
                     }
                     catch { }
                 return res;
@@ -257,7 +259,7 @@ Crash Traceback:
             catch
             {
                 Logger.Warn($"Failed to parse version {Version} to float");
-                return 0.0F;
+                return -1;
             }
         }
     }
