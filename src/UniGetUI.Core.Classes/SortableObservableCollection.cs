@@ -5,7 +5,7 @@ namespace UniGetUI.Core.Classes
 {
     public class SortableObservableCollection<T> : ObservableCollection<T>
     {
-        public Func<T, object> SortingSelector { get; set; }
+        public Func<T, object>? SortingSelector { get; set; }
         public bool Descending { get; set; }
         public bool BlockSorting { get; set; } = false;
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
@@ -24,6 +24,9 @@ namespace UniGetUI.Core.Classes
         public void Sort()
         {
             BlockSorting = true;
+
+            if (SortingSelector == null)
+                throw new Exception("SortableObservableCollection<T>.SortingSelector must not be null when sorting a function");
 
             List<T> sorted = Descending ? this.OrderByDescending(SortingSelector).ToList() : this.OrderBy(SortingSelector).ToList();
             foreach (T item in sorted)

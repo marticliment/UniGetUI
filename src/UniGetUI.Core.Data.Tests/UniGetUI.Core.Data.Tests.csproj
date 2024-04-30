@@ -1,13 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
 
+	<Import Project="$(SolutionDir)Solution.props" />
+	<PropertyGroup>
+		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
-		<Platforms>AnyCPU;ARM64;x64</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>

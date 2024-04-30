@@ -1,8 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
+
+
+	<Import Project="$(SolutionDir)Solution.props" />
+
+	<PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
-	  <SdkVersion></SdkVersion>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
 	<TargetMinVersion>10.0.19041.0</TargetMinVersion>
     <RootNamespace>UniGetUI</RootNamespace>
@@ -19,12 +21,7 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <AssemblyName>WingetUI</AssemblyName>
     <Nullable>annotations</Nullable>
-	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-	  <SelfContained>true</SelfContained>
-	<FileVersion>3.1.0.0</FileVersion>
-	<InformationalVersion>3.1.0-beta</InformationalVersion>
-	<Product>UniGetUI</Product>
-	<Copyright>2024, Martí Climent</Copyright>
+	
   </PropertyGroup>
   <ItemGroup>
     <Content Include="icon.ico" />

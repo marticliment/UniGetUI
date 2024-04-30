@@ -77,6 +77,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.Settings.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.Tools.Tests", "UniGetUI.Core.Tools.Tests\UniGetUI.Core.Tools.Tests.csproj", "{BDB7A8F3-87A6-4B77-9E0F-6BC785CBCF2B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F5F6CFEE-0E1E-42F6-A0F9-6D663F130A10}"
+	ProjectSection(SolutionItems) = preProject
+		Solution.props = Solution.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

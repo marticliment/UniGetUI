@@ -7,7 +7,6 @@ using System;
 using UniGetUI.Core;
 using Windows.UI.Text;
 using UniGetUI.Core.Logging;
-using Windows.Web.Http;
 using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,

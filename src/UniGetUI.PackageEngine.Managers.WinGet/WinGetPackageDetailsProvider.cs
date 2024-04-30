@@ -32,6 +32,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override async Task<Uri?> GetPackageIcon_Unsafe(Package package)
         {
+            Logger.Warn("WinGet Native Icons have been forcefully disabled on code");
             return null;
             // TODO: Need to work on retrieving WinGet icons
 
@@ -54,8 +55,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             // Connect to catalog
             Catalog.AcceptSourceAgreements = true;
-            //ConnectResult ConnectResult = await Task.Run(() => Catalog.Connect());
-            ConnectResult ConnectResult = await Catalog.ConnectAsync();
+            ConnectResult ConnectResult = await Task.Run(() => Catalog.Connect());
+            // ConnectResult ConnectResult = await Catalog.ConnectAsync();
             if (ConnectResult.Status != ConnectResultStatus.Ok)
             {
                 Logger.Error("[WINGET COM] Failed to connect to catalog " + package.Source.Name);
@@ -82,7 +83,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             CatalogPackage NativePackage = SearchResult.Result.Matches.First().CatalogPackage;
 
             // Extract data from NativeDetails
-            CatalogPackageMetadata NativeDetails = NativePackage.DefaultInstallVersion.GetCatalogPackageMetadata();
+            CatalogPackageMetadata NativeDetails = await Task.Run(() => NativePackage.DefaultInstallVersion.GetCatalogPackageMetadata());
 
             foreach(var icon in NativeDetails.Icons.ToArray())
             {

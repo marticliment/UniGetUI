@@ -1,12 +1,14 @@
 ﻿using System.Reflection.Metadata.Ecma335;
 using UniGetUI.Core.Logging;
+using Windows.Storage.Search;
+using Windows.System.Diagnostics;
 
 namespace UniGetUI.Core.Data
 {
     public static class CoreData
     {
-        public static string VersionName = "3.1.0-beta"; // Do not modify this line, use file scripts/apply_versions.py
-        public static double VersionNumber = 3.09; // Do not modify this line, use file scripts/apply_versions.py
+        public static string VersionName =  "3.1.0-alpha"; // Do not modify this line, use file scripts/apply_versions.py
+        public static double VersionNumber =  3.099; // Do not modify this line, use file scripts/apply_versions.py
 
         /// <summary>
         /// The directory where all the user data is stored. The directory is automatically created if it does not exist.
@@ -128,7 +130,14 @@ namespace UniGetUI.Core.Data
         /// </summary>
         public static string UniGetUIExecutableDirectory
         {
-            get => Directory.GetParent(Environment.ProcessPath)?.FullName;
+            get {
+                string? dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                if (dir != null)
+                    return dir;
+                else
+                    Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
+                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UiGetUI");
+            }
         }
 
         /// <summary>
@@ -136,7 +145,14 @@ namespace UniGetUI.Core.Data
         /// </summary>
         public static string UniGetUIExecutableFile
         {
-            get => Environment.ProcessPath;
+            get {
+                string? filename = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                if (filename != null)
+                    return filename;
+                else
+                    Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
+                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UiGetUI", "UniGetUI.exe");
+            }
         }
 
 

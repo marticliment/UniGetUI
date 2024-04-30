@@ -1,13 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
-	<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-	<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
-	<Platforms>x64;ARM64</Platforms>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+
+	<Import Project="$(SolutionDir)Solution.props" />
+	<PropertyGroup>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj" />

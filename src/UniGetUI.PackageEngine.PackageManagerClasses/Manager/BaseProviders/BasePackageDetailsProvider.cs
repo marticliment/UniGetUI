@@ -41,7 +41,10 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
         {
             Uri? Icon = null;
             if (Manager.Capabilities.SupportsCustomPackageIcons)
+            {
                 Icon = await GetPackageIcon_Unsafe(package);
+                if(Icon == null) Logger.Debug($"Manager {Manager.Name} did not find a native icon for {package.Id}");
+            }
             else
                 Logger.Debug($"Manager {Manager.Name} does not support native icons");
 
