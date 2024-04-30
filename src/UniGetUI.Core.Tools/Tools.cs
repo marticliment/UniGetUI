@@ -12,6 +12,11 @@ namespace UniGetUI.Core.Tools
     public static class CoreTools
     {
 
+        public static readonly HttpClientHandler HttpClientConfig = new HttpClientHandler()
+        {
+            AutomaticDecompression = DecompressionMethods.All
+        };
+
         private static LanguageEngine? LanguageEngine;
 
         /// <summary>

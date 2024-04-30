@@ -21,7 +21,8 @@ namespace UniGetUI.Core.IconEngine
         None,
         Sha256Checksum,
         FileSize,
-        PackageVersion
+        PackageVersion,
+        UriSource
     }
 
     public readonly struct CacheableIcon
@@ -56,7 +57,7 @@ namespace UniGetUI.Core.IconEngine
         public CacheableIcon(Uri icon)
         {
             Url = icon;
-            VerificationMethod = CachedIconVerificationMethod.None;
+            VerificationMethod = CachedIconVerificationMethod.UriSource;
         }
     }
 
@@ -84,6 +85,7 @@ namespace UniGetUI.Core.IconEngine
 
             var FilePath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, ManagerName, $"{PackageId}.{extension}");
             var VersionPath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, ManagerName, $"{PackageId}.{extension}.version");
+            var UriPath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, ManagerName, $"{PackageId}.{extension}.uri");
             var FileDirectory = Path.Join(CoreData.UniGetUICacheDirectory_Icons, ManagerName);
             if (!Directory.Exists(FileDirectory))
                 Directory.CreateDirectory(FileDirectory);
@@ -131,6 +133,21 @@ namespace UniGetUI.Core.IconEngine
                         }
                         break;
 
+                    case CachedIconVerificationMethod.UriSource:
+                        try
+                        {
+                            if (File.Exists(UriPath))
+                            {
+                                var localVersion = File.ReadAllText(UriPath);
+                                IsFileValid = (localVersion == icon.Url.ToString());
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Warn($"Failed to verify icon file size for {icon.Url} through UriSource with error {e.Message}");
+                        }
+                        break;
+
                     default:
                         Logger.ImportantInfo($"Icon {icon.Url} for package {PackageId} on manager {ManagerName} does not use a valid cache verification method");
                         IsFileValid = true;
@@ -149,6 +166,9 @@ namespace UniGetUI.Core.IconEngine
                             await stream.CopyToAsync(fileStream);
                     if (icon.VerificationMethod == CachedIconVerificationMethod.PackageVersion)
                         await File.WriteAllTextAsync(VersionPath, icon.Version);
+
+                    if (icon.VerificationMethod == CachedIconVerificationMethod.UriSource)
+                        await File.WriteAllTextAsync(UriPath, icon.Url.ToString());
                 }
 
             Logger.Info($"Icon for package {PackageId} stored on {FilePath}");

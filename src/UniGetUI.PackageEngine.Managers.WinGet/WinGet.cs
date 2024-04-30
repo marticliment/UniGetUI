@@ -45,6 +45,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 SupportsCustomLocations = true,
                 SupportsCustomSources = true,
                 SupportsCustomPackageIcons = true,
+                SupportsCustomPackageScreenshots = true,
                 Sources = new ManagerSource.Capabilities()
                 {
                     KnowsPackageCount = false,

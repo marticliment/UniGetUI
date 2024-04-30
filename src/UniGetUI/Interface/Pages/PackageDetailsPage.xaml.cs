@@ -102,19 +102,6 @@ namespace UniGetUI.Interface.Dialogs
             DownloadInstallerButton.IsEnabled = false;
             ReleaseNotesUrlButton.Content = LoadingString;
 
-
-            PackageHasScreenshots = IconDatabase.Instance.GetScreenshotsUrlForId(package.Id).Count() > 0;
-
-            if (PackageHasScreenshots)
-            {
-                PackageHasScreenshots = true;
-                IconsExtraBanner.Visibility = Visibility.Visible;
-                ScreenshotsCarroussel.Items.Clear();
-                foreach (string image in IconDatabase.Instance.GetScreenshotsUrlForId(package.Id))
-                    ScreenshotsCarroussel.Items.Add(new Image() { Source = new BitmapImage(new Uri(image)) });
-            }
-
-
             _ = LoadInformation();
 
         }
@@ -123,6 +110,17 @@ namespace UniGetUI.Interface.Dialogs
             LoadingIndicator.Visibility = Visibility.Visible;
 
             PackageIcon.Source = new BitmapImage() { UriSource = (await Package.GetIconUrl()) };
+
+            var screenshots = await Package.GetPackageScreenshots();
+            PackageHasScreenshots = screenshots.Count() > 0;
+            if (PackageHasScreenshots)
+            {
+                PackageHasScreenshots = true;
+                IconsExtraBanner.Visibility = Visibility.Visible;
+                ScreenshotsCarroussel.Items.Clear();
+                foreach (Uri image in screenshots)
+                    ScreenshotsCarroussel.Items.Add(new Image() { Source = new BitmapImage(image) });
+            }
 
             string NotFound = CoreTools.Translate("Not available");
             Uri InvalidUri = new("about:blank");

@@ -232,6 +232,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
         }
 
+        public async Task<Uri[]> GetPackageScreenshots()
+        {
+            return await Manager.GetPackageScreenshotsUrl(this);
+        }
+
         /// <summary>
         /// Returns a float representation of the package's version for comparison purposes.
         /// </summary>
