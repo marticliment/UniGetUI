@@ -43,7 +43,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.
         /// </summary>
         /// <returns></returns>
-        public async Task InitializeAsync()
+        public virtual async Task InitializeAsync()
         {
             // BEGIN integrity check
             if (!__base_constructor_called)
@@ -307,7 +307,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         private void AssertSourceCompatibility(string MethodName)
         {
             if (!Capabilities.SupportsCustomSources)
-                throw new Exception($"Manager {Name} does not support custom sources but yet a GetKnownSources method was called");
+                throw new Exception($"Manager {Name} does not support custom sources but yet {MethodName} method was called.\n {Environment.StackTrace}");
             else if (SourceProvider == null)
                 throw new Exception($"Manager {Name} does support custom sources but yet the source helper is null");
         }
@@ -347,7 +347,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             try
             {
                 AssertSourceCompatibility("GetSources");
-                return await SourceProvider.GetSources();
+                var result = await SourceProvider.GetSources();
+                Logger.Debug($"Loaded {result.Length} sources for manager {Name}");
+                return result;
             }
             catch (Exception e)
             {

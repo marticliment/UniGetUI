@@ -7,11 +7,12 @@ using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 {
-    public class Chocolatey : PackageManager
+    public class Chocolatey : BaseNuGet
     {
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "Directory", "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid" };
@@ -48,17 +49,16 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 UninstallVerb = "uninstall",
                 UpdateVerb = "upgrade",
                 ExecutableCallArgs = "",
-                KnownSources = [new ManagerSource(this, "chocolatey", new Uri("https://community.chocolatey.org/api/v2/"))],
-                DefaultSource = new ManagerSource(this, "chocolatey", new Uri("https://community.chocolatey.org/api/v2/")),
+                KnownSources = [new ManagerSource(this, "community", new Uri("https://community.chocolatey.org/api/v2/"))],
+                DefaultSource = new ManagerSource(this, "community", new Uri("https://community.chocolatey.org/api/v2/")),
 
             };
 
             SourceProvider = new ChocolateySourceProvider(this);
-            PackageDetailsProvider = new ChocolateyPackageDetailsProvider(this);
             
         }
         
-        protected override async Task<Package[]> FindPackages_UnSafe(string query)
+        /*protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             Process p = new();
             p.StartInfo = new ProcessStartInfo()
@@ -101,7 +101,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
-        }
+        }*/
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {

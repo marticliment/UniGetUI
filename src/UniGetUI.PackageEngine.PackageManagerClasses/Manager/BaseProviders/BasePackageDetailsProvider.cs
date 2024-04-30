@@ -29,7 +29,11 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
         public async Task<string[]> GetPackageVersions(Package package)
         {
             if (Manager.Capabilities.SupportsCustomVersions)
-                return await GetPackageVersions_Unsafe(package);
+            {
+                var result = await GetPackageVersions_Unsafe(package);
+                Logger.Debug($"Found {result.Length} versions for package Id={package.Id} on manager {Manager.Name}");
+                return result;
+            }
             else
             {
                 Logger.Warn($"Manager {Manager.Name} does not support version retrieving, this method should have not been called");

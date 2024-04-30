@@ -12,7 +12,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
 {
     internal static class PackageManifestLoader
     {
-        private static Dictionary<Uri, string> __manifest_cache = new();
+        private static Dictionary<string, string> __manifest_cache = new();
 
         /// <summary>
         /// Returns the URL to the manifest of a NuGet-based package
@@ -42,11 +42,11 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
         public static async Task<string?> GetPackageManifestContent(Package package)
         {
             string? PackageManifestContent = "";
-            Uri PackageManifestUrl = GetPackageManifestUrl(package);
-            if (__manifest_cache.TryGetValue(PackageManifestUrl, out PackageManifestContent) && PackageManifestContent != null)
+            string PackageManifestUrl = GetPackageManifestUrl(package).ToString();
+            if (__manifest_cache.ContainsKey(PackageManifestUrl))
             {
                 Logger.Debug($"Loading cached NuGet manifest for package {package.Id} on manager {package.Manager.Name}");
-                return PackageManifestContent;
+                return __manifest_cache[PackageManifestUrl];
             }
 
             try
@@ -70,6 +70,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
 
                     PackageManifestContent = await response.Content.ReadAsStringAsync();
                 }
+                __manifest_cache[PackageManifestUrl] = PackageManifestContent;
                 return PackageManifestContent;
             }
             catch (Exception e)

@@ -16,10 +16,11 @@ using UniGetUI.PackageEngine.Managers;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Managers.PowerShellManager;
 
 namespace UniGetUI.PackageEngine.Managers.DotNetManager
 {
-    public class DotNet : PackageManager
+    public class DotNet : BaseNuGet
     {
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
@@ -36,6 +37,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 SupportsPreRelease = true,
                 SupportsCustomLocations = true,
                 SupportsCustomPackageIcons = true,
+                SupportsCustomVersions = true,
             };
 
             Properties = new ManagerProperties()
@@ -52,13 +54,9 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 DefaultSource = new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/api/v2")),
                 KnownSources = [new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/api/v2"))],
             };
-
-            PackageDetailsProvider = new DotNetPackageDetailsProvider(this);
         }
 
-
-
-        protected override async Task<Package[]> FindPackages_UnSafe(string query)
+        /*protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
 
             Process p = new();
@@ -102,7 +100,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
-        }
+        }*/
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {

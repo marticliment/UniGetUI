@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Security.Principal;
 using UniGetUI.Core.Data;
@@ -223,6 +224,41 @@ Crash Traceback:
                 Logger.Warn(e);
             }
             return 0;
+        }
+
+        public static float GetVersionStringAsFloat(string Version)
+        {
+            try
+            {
+                string _ver = "";
+                bool _dotAdded = false;
+                foreach (char _char in Version)
+                {
+                    if (char.IsDigit(_char))
+                        _ver += _char;
+                    else if (_char == '.')
+                    {
+                        if (!_dotAdded)
+                        {
+                            _ver += _char;
+                            _dotAdded = true;
+                        }
+                    }
+                }
+                float res = 0.0F;
+                if (_ver != "" && _ver != ".")
+                    try
+                    {
+                        return float.Parse(_ver);
+                    }
+                    catch { }
+                return res;
+            }
+            catch
+            {
+                Logger.Warn($"Failed to parse version {Version} to float");
+                return 0.0F;
+            }
         }
     }
 }

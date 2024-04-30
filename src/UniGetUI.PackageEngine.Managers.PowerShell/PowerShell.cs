@@ -16,7 +16,7 @@ using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
-    public class PowerShell : PackageManager
+    public class PowerShell : BaseNuGet
     {
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
@@ -57,10 +57,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             };
 
             SourceProvider = new PowerShellSourceProvider(this);
-            PackageDetailsProvider = new PowerShellPackageDetailsProvider(this);
         }
 
-        protected override async Task<Package[]> FindPackages_UnSafe(string query)
+        /*protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             Process p = new();
             p.StartInfo = new ProcessStartInfo()
@@ -107,7 +106,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
-        }
+        }*/
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
