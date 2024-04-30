@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.Generic.NuGet
@@ -12,35 +13,10 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet
     {
         public static async Task<Uri?> GetIconFromManifest(Package package)
         {
-            Uri PackageManifest = new Uri($"{package.Source.Url}/Packages(Id='{package.Name}',Version='{package.Version}')");
-
-            string PackageManifestContent = "";
-            try
+            var PackageManifestContent = await PackageManifestLoader.GetPackageManifestContent(package);
+            if(PackageManifestContent == null)
             {
-                HttpClientHandler handler = new HttpClientHandler()
-                {
-                    AutomaticDecompression = DecompressionMethods.All
-                };
-
-                using (HttpClient client = new HttpClient(handler))
-                {
-                    var response = await client.GetAsync(PackageManifest);
-                    if (!response.IsSuccessStatusCode && package.Version.EndsWith(".0"))
-                        response = await client.GetAsync(new Uri(PackageManifest.ToString().Replace(".0')", "')")));
-
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        Logger.Warn($"Failed to download the {package.Manager.Name} manifest at Url={PackageManifest.ToString()} with status code {response.StatusCode}");
-                        return null;
-                    }
-
-                    PackageManifestContent = await response.Content.ReadAsStringAsync();
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Warn($"Failed to download the {package.Manager.Name} manifest at Url={PackageManifest.ToString()}");
-                Logger.Warn(e);
+                Logger.Warn($"No manifest content could be loaded for package {package.Id} on manager {package.Manager.Name}");
                 return null;
             }
 
@@ -51,7 +27,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet
 
             if (!possibleIconUrl.Success)
             {
-                Logger.Warn($"No Icon URL could be parsed on the manifest Url={PackageManifest.ToString()}");
+                Logger.Warn($"No Icon URL could be parsed on the manifest Url={PackageManifestLoader.GetPackageManifestUrl(package).ToString()}");
                 return null;
             }
 
