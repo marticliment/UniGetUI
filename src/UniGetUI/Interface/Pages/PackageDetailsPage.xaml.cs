@@ -44,7 +44,7 @@ namespace UniGetUI.Interface.Dialogs
             Unloaded
         }
 
-        private LayoutMode layoutMode = LayoutMode.Unloaded;
+        private LayoutMode __layout_mode = LayoutMode.Unloaded;
         public PackageDetailsPage(Package package, OperationType futureOperation)
         {
             FutureOperation = futureOperation;
@@ -109,18 +109,8 @@ namespace UniGetUI.Interface.Dialogs
         {
             LoadingIndicator.Visibility = Visibility.Visible;
 
-            PackageIcon.Source = new BitmapImage() { UriSource = (await Package.GetIconUrl()) };
-
-            var screenshots = await Package.GetPackageScreenshots();
-            PackageHasScreenshots = screenshots.Count() > 0;
-            if (PackageHasScreenshots)
-            {
-                PackageHasScreenshots = true;
-                IconsExtraBanner.Visibility = Visibility.Visible;
-                ScreenshotsCarroussel.Items.Clear();
-                foreach (Uri image in screenshots)
-                    ScreenshotsCarroussel.Items.Add(new Image() { Source = new BitmapImage(image) });
-            }
+            LoadIcon();
+            LoadScreenshots();
 
             string NotFound = CoreTools.Translate("Not available");
             Uri InvalidUri = new("about:blank");
@@ -196,6 +186,29 @@ namespace UniGetUI.Interface.Dialogs
                 ShowableTags.Add(new TextBlock() { Text = tag });
         }
 
+        public async void LoadIcon()
+        {
+            PackageIcon.Source = new BitmapImage() { UriSource = (await Package.GetIconUrl()) };
+        }
+
+        public async void LoadScreenshots()
+        {
+            var screenshots = await Package.GetPackageScreenshots();
+            PackageHasScreenshots = screenshots.Count() > 0;
+            if (PackageHasScreenshots)
+            {
+                PackageHasScreenshots = true;
+                IconsExtraBanner.Visibility = Visibility.Visible;
+                ScreenshotsCarroussel.Items.Clear();
+                foreach (Uri image in screenshots)
+                    ScreenshotsCarroussel.Items.Add(new Image() { Source = new BitmapImage(image) });
+            }
+
+            __layout_mode = LayoutMode.Unloaded;
+            PackageDetailsPage_SizeChanged();
+
+        }
+
         public void ActionButton_Click(object sender, RoutedEventArgs e)
         {
             Close?.Invoke(this, new EventArgs());
@@ -269,13 +282,13 @@ namespace UniGetUI.Interface.Dialogs
             Close?.Invoke(this, new EventArgs());
         }
 
-        public void PackageDetailsPage_SizeChanged(object sender, SizeChangedEventArgs e)
+        public void PackageDetailsPage_SizeChanged(object? sender = null, SizeChangedEventArgs? e = null)
         {
-            if (e.NewSize.Width < 950)
+            if (MainApp.Instance.MainWindow.AppWindow.Size.Width < 950)
             {
-                if (layoutMode != LayoutMode.Normal)
+                if (__layout_mode != LayoutMode.Normal)
                 {
-                    layoutMode = LayoutMode.Normal;
+                    __layout_mode = LayoutMode.Normal;
 
                     MainGrid.ColumnDefinitions.Clear();
                     MainGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
@@ -320,9 +333,9 @@ namespace UniGetUI.Interface.Dialogs
             }
             else
             {
-                if (layoutMode != LayoutMode.Wide)
+                if (__layout_mode != LayoutMode.Wide)
                 {
-                    layoutMode = LayoutMode.Wide;
+                    __layout_mode = LayoutMode.Wide;
 
                     MainGrid.ColumnDefinitions.Clear();
                     MainGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star), MinWidth = 550 });

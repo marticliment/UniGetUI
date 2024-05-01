@@ -18,6 +18,7 @@ using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using System.Net;
+using System.Globalization;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
@@ -97,7 +98,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             if(__msstore_package_manifests.ContainsKey(package.Id))
                 return __msstore_package_manifests[package.Id];
 
-            string url = "https://storeedgefd.dsx.mp.microsoft.com/v8.0/sdk/products?market=US&locale=en-US&deviceFamily=Windows.Desktop";
+            string CountryCode = CultureInfo.CurrentCulture.Name.Split("-")[^1];
+            string Locale = CultureInfo.CurrentCulture.Name;
+            string url = $"https://storeedgefd.dsx.mp.microsoft.com/v8.0/sdk/products?market={CountryCode}&locale={Locale}&deviceFamily=Windows.Desktop";
 
 #pragma warning disable SYSLIB0014
             var httpRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -122,7 +125,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             Logger.Debug("Microsoft Store API call status code: " + httpResponse.StatusCode);
 
-            if(result != "" && httpResponse.StatusCode == HttpStatusCode.OK) __msstore_package_manifests.Add(package.Id, result);
+            if(result != "" && httpResponse.StatusCode == HttpStatusCode.OK) __msstore_package_manifests[package.Id] = result;
             return result;
         }
 
