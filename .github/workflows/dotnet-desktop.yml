@@ -5,7 +5,6 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
- 
 jobs:
 
   build:
@@ -13,7 +12,7 @@ jobs:
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 
     steps:
-    - name: Checkout
+    - name: Checkout the repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
@@ -24,21 +23,17 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - name: tests
+    - name: Install winget
+      uses: Cyberboss/install-winget@v1
+
+    - name: Run Tests
       run: |
         cd src
         dotnet test -v q --nologo
         cd ..
 
-    - name: Install winget
-      uses: Cyberboss/install-winget@v1
-
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-    # - name: Setup MSBuild.exe
-    #   uses: microsoft/setup-msbuild@v2.0.0
-
-    - name: build
+    - name: Build solution
       run: |
-        mkdir out
-        dotnet publish -v q src/UniGetUI.sln /noLogo /property:Configuration=Release /property:Platform=x64 /restore:True /interactive:False /property:OutputPath=.\out
+        cd src
+        dotnet publish -v q UniGetUI.sln /noLogo /restore:True /interactive:False
         exit $LASTEXITCODE
