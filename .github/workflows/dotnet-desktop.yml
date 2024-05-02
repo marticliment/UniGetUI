@@ -1,4 +1,4 @@
-name: Tests and Build
+name: Test and Build
 
 on:
   pull_request:
@@ -23,7 +23,7 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - name: Install winget
+    - name: Install WinGet
       uses: Cyberboss/install-winget@v1
 
     - name: Run Tests

@@ -1,9 +1,12 @@
 ﻿using Nancy;
 using Nancy.Hosting.Self;
 using System;
+using System.Drawing;
+using System.Text;
 using System.Threading.Tasks;
 using UniGetUI.Core;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -12,15 +15,19 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.Interface
 {
+    internal static class ApiTokenHolder
+    {
+        public static string Token = "";
+    }
+
     public class BackgroundApiRunner
     {
 
         private bool __running = false;
-        private static string ApiAuthToken = "";
 
         public static bool AuthenticateToken(string token)
         {
-            return token == ApiAuthToken;
+            return token == ApiTokenHolder.Token;
         }
 
         /// <summary>
@@ -39,9 +46,9 @@ namespace UniGetUI.Interface
                 }
 
 
-                ApiAuthToken = CoreTools.RandomString(64);
-                Settings.SetValue("CurrentSessionToken", ApiAuthToken);
-                Logger.Info("Api auth token: " + ApiAuthToken);
+                ApiTokenHolder.Token = CoreTools.RandomString(64);
+                Settings.SetValue("CurrentSessionToken", ApiTokenHolder.Token);
+                Logger.Info("Api auth token: " + ApiTokenHolder.Token);
 
                 __running = true;
                 NancyHost host;
@@ -52,7 +59,6 @@ namespace UniGetUI.Interface
                 }
                 catch
                 {
-
                     host = new NancyHost(new Uri("http://localhost:7058/"));
                     host.Start();
                 }
@@ -87,9 +93,12 @@ namespace UniGetUI.Interface
     /// </summary>
     public class BackgroundApi : NancyModule
     {
+
+        static Dictionary<string, string> PackageIconsPathReference = new();
+        private string __token;
+
         public BackgroundApi()
         {
-
 
             // Enable CORS
             After.AddItemToEndOfPipeline((ctx) =>
@@ -102,7 +111,7 @@ namespace UniGetUI.Interface
             BuildV1WidgetsApi();
         }
 
-        
+
 
         /// <summary>
         /// Build the endpoints required for the Share Interface
@@ -167,9 +176,17 @@ namespace UniGetUI.Interface
                     if (package.Tag == PackageTag.OnQueue || package.Tag == PackageTag.BeingProcessed)
                         continue; // Do not show already processed packages on queue 
 
-                    string icon = (await package.GetIconUrl()).ToString();
-                    if (icon == "ms-appx:///Assets/Images/package_color.png")
+                    string icon;
+                    string icon_path = (await package.GetIconUrl()).ToString();
+                    if (icon_path == "ms-appx:///Assets/Images/package_color.png")
+                    {
                         icon = "https://marticliment.com/resources/widgets/package_color.png";
+                    }
+                    else
+                    {
+                        PackageIconsPathReference[package.Id] = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name, $"{package.Id}.{icon_path.Split('.')[^1]}");
+                        icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={package.Id}&token={ApiTokenHolder.Token}";
+                    }
                     packages += $"{package.Name.Replace('|', '-')}|{package.Id}|{package.Version}|{package.NewVersion}|{package.Source}|{package.Manager.Name}|{icon}&&";
                 }
 
@@ -247,6 +264,36 @@ namespace UniGetUI.Interface
                 });
                 return 200;
             });
+
+
+
+            // Update all packages for a specific manager
+            Get("/widgets/v2/get_icon_for_package", async (parameters) =>
+            {
+                if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
+                    return 401;
+
+                if (Request.Query.@packageId == "")
+                    return 400;
+
+                string path = "";
+                if (PackageIconsPathReference.ContainsKey(Request.Query.@packageId) && File.Exists(PackageIconsPathReference[Request.Query.@packageId]))
+                    path = PackageIconsPathReference[Request.Query.@packageId];
+                else
+                    path = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "package_color.png");
+
+                byte[] fileContents = await File.ReadAllBytesAsync(path);
+                return new Response()
+                {
+                    ContentType = $"image/{path.Split('.')[^1]}",
+                    Contents = (stream) =>
+                    {
+                        stream.Write(fileContents, 0, fileContents.Length);
+                    }
+                };
+
+            });
         }
     }
 }
+
