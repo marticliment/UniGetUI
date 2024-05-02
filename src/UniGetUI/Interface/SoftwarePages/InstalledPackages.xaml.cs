@@ -482,7 +482,7 @@ namespace UniGetUI.Interface
         {
             if (!Initialized)
                 return;
-            InstantSearchCheckbox.IsChecked = Settings.Get(InstantSearchSettingString);
+            InstantSearchCheckbox.IsChecked = !Settings.Get(InstantSearchSettingString);
 
             MainTitle.Text = CoreTools.AutoTranslated("Installed Packages");
             HeaderIcon.Glyph = "\uE977";
