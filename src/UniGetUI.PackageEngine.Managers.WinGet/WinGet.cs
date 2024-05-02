@@ -74,11 +74,17 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             PackageDetailsProvider = new WinGetPackageDetailsProvider(this);
 
             LocalPcSource = new(this, CoreTools.Translate("Local PC"), "localpc");
+            LocalPcSource.IsVirtualManager = true;
             AndroidSubsystemSource = new(this, CoreTools.Translate("Android Subsystem"), "android");
+            AndroidSubsystemSource.IsVirtualManager = true;
             SteamSource = new(this, "Steam", "steam");
+            SteamSource.IsVirtualManager = true;
             UbisoftConnectSource = new(this, "Ubisoft Connect", "uplay");
+            UbisoftConnectSource.IsVirtualManager = true;
             GOGSource = new(this, "GOG", "gog");
+            GOGSource.IsVirtualManager = true;
             MicrosoftStoreSource = new(this, "Microsoft Store", "msstore");
+            MicrosoftStoreSource.IsVirtualManager = true;
         }
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
@@ -323,7 +329,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
             List<string> parameters = new() { Properties.UninstallVerb };
-            parameters.AddRange(new string[] { "--id", package.Id, "--exact", "--source", package.Source.Name });
+            parameters.AddRange(new string[] { "--id", package.Id, "--exact" });
+            if(!package.Source.IsVirtualManager)
+                parameters.AddRange(new string[] { "--source", package.Source.Name });
 
             parameters.Add("--accept-source-agreements");
 
