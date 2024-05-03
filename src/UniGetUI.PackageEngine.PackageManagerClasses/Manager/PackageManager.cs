@@ -293,10 +293,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Each manager MUST implement this method.
         /// </summary>
         /// <returns></returns>
-        public abstract Task RefreshPackageIndexes();
-
-
-
+#pragma warning disable CS1998
+        public virtual async Task RefreshPackageIndexes()
+        {
+            Logger.Debug($"Manager {Name} has not implemented RefreshPackageIndexes");
+        }
+#pragma warning restore CS1998
 
         // BEGIN SOURCE-RELATED METHODS
 

@@ -58,56 +58,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             SourceProvider = new PowerShellSourceProvider(this);
         }
-
-        /*protected override async Task<Package[]> FindPackages_UnSafe(string query)
-        {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " Find-Module \"" + query + "\"",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-
-            p.Start();
-            await p.StandardInput.WriteLineAsync("");
-            string line;
-            List<Package> Packages = new();
-            bool DashesPassed = false;
-            string output = "";
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
-                if (!DashesPassed)
-                {
-                    if (line.Contains("-----"))
-                        DashesPassed = true;
-                }
-                else
-                {
-                    string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
-                    if (elements.Length < 3)
-                        continue;
-
-                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
-
-                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[1]), elements[1], elements[0], GetSourceOrDefault(elements[2]), this));
-                }
-            }
-
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
-
-            await p.WaitForExitAsync();
-
-            return Packages.ToArray();
-        }*/
-
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
             Process p = new();
@@ -284,16 +234,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 parameters.AddRange(options.CustomParameters);
 
             return parameters.ToArray();
-        }
-
-        
-
-        
-
-#pragma warning disable CS1998
-        public override async Task RefreshPackageIndexes()
-        {
-            // PowerShell does not allow manual refresh of sources;
         }
 
         protected override async Task<ManagerStatus> LoadManager()

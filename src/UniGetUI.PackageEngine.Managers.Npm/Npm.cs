@@ -262,14 +262,6 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
         }
 
-        
-
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public override async Task RefreshPackageIndexes()
-        {
-            // Npm does not support manual source refreshing
-        }
-
         protected override async Task<ManagerStatus> LoadManager()
         {
             ManagerStatus status = new();

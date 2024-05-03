@@ -56,52 +56,6 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             };
         }
 
-        /*protected override async Task<Package[]> FindPackages_UnSafe(string query)
-        {
-
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\"",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-
-            p.Start();
-            string line;
-            List<Package> Packages = new();
-            bool DashesPassed = false;
-            string output = "";
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
-                if (!DashesPassed)
-                {
-                    if (line.Contains("-----"))
-                        DashesPassed = true;
-                }
-                else
-                {
-                    string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
-                    if (elements.Length >= 2)
-                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, PackageScope.Global));
-                    // Dotnet tool packages are installed globally by default, hence the Global flag
-                }
-            }
-
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
-
-            await p.WaitForExitAsync();
-
-            return Packages.ToArray();
-        }*/
-
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
             var which_res = await CoreTools.Which("dotnet-tools-outdated.exe");
@@ -308,12 +262,6 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 parameters.Add("--global");
 
             return parameters.ToArray();
-        }
-
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public override async Task RefreshPackageIndexes()
-        {
-            // .NET Tool does not support manual source refreshing
         }
 
         protected override async Task<ManagerStatus> LoadManager()

@@ -269,12 +269,6 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return parameters.ToArray();
         }
 
-#pragma warning disable CS1998
-        public override async Task RefreshPackageIndexes()
-        {
-            // Pip does not support manual source refreshing
-        }
-
         protected override async Task<ManagerStatus> LoadManager()
         {
             ManagerStatus status = new();

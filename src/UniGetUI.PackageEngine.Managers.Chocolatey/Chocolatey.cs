@@ -58,51 +58,6 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             
         }
         
-        /*protected override async Task<Package[]> FindPackages_UnSafe(string query)
-        {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\"",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-
-            p.Start();
-            string line;
-            string output = "";
-            List<Package> Packages = new();
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
-                if (!line.StartsWith("Chocolatey"))
-                {
-                    string[] elements = line.Split(' ');
-                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
-
-                    if (elements.Length < 2)
-                        continue;
-
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
-                        continue;
-
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this));
-                }
-            }
-
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
-
-            await p.WaitForExitAsync();
-
-            return Packages.ToArray();
-        }*/
-
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
             Process p = new();
@@ -266,12 +221,6 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 parameters.Add("--notsilent");
 
             return parameters.ToArray();
-        }
-
-#pragma warning disable CS1998
-        public override async Task RefreshPackageIndexes()
-        {
-            // Chocolatey does not support source refreshing
         }
 
         protected override async Task<ManagerStatus> LoadManager()

@@ -404,13 +404,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
-
-        public override async Task RefreshPackageIndexes()
-        {
-            await Task.Delay(0);
-            // As of WinGet 1.6, WinGet does handle updating package indexes automatically
-        }
-
         protected override async Task<ManagerStatus> LoadManager()
         {
             ManagerStatus status = new();
@@ -438,7 +431,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             process.Start();
             status.Version = "Naive WinGet CLI Version: " + (await process.StandardOutput.ReadToEndAsync()).Trim();
 
-
             try
             {
                 await Task.Run(() => WinGetHelper.Instance = new NativeWinGetHelper());
@@ -462,11 +454,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
     internal class LocalWingetSource: ManagerSource
     {
         private string name;
-        private Uri url = new Uri("https://microsoft.com/local-pc-source");
         private string __icon_id;
         public override string IconId { get { return __icon_id; } }
 
-        public LocalWingetSource(WinGet manager, string name, string iconId) : base(manager, name, isVirtualManager: true)
+        public LocalWingetSource(WinGet manager, string name, string iconId) 
+            : base(manager, name, new Uri("https://microsoft.com/local-pc-source"), isVirtualManager: true)
         {
             this.name = name;
             __icon_id = iconId;

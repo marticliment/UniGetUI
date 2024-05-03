@@ -22,11 +22,11 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
 
         public PackageManager Manager { get; }
         public string Name { get; }
-        public Uri? Url { get; private set; }
+        public Uri Url { get; private set; }
         public int? PackageCount { get; }
         public string UpdateDate { get; }
 
-        public ManagerSource(PackageManager manager, string name, Uri? url = null, int? packageCount = 0, string updateDate = "", bool isVirtualManager = false)
+        public ManagerSource(PackageManager manager, string name, Uri url, int? packageCount = 0, string updateDate = "", bool isVirtualManager = false)
         {
             IsVirtualManager = isVirtualManager;
             Manager = manager;
