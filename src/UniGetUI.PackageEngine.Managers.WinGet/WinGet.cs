@@ -73,18 +73,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             SourceProvider = new WinGetSourceProvider(this);
             PackageDetailsProvider = new WinGetPackageDetailsProvider(this);
 
-            LocalPcSource = new(this, CoreTools.Translate("Local PC"), "localpc");
-            LocalPcSource.IsVirtualManager = true;
+            LocalPcSource = new LocalWingetSource(this, CoreTools.Translate("Local PC"), "localpc");
             AndroidSubsystemSource = new(this, CoreTools.Translate("Android Subsystem"), "android");
-            AndroidSubsystemSource.IsVirtualManager = true;
             SteamSource = new(this, "Steam", "steam");
-            SteamSource.IsVirtualManager = true;
             UbisoftConnectSource = new(this, "Ubisoft Connect", "uplay");
-            UbisoftConnectSource.IsVirtualManager = true;
             GOGSource = new(this, "GOG", "gog");
-            GOGSource.IsVirtualManager = true;
             MicrosoftStoreSource = new(this, "Microsoft Store", "msstore");
-            MicrosoftStoreSource.IsVirtualManager = true;
         }
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
@@ -472,7 +466,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         private string __icon_id;
         public override string IconId { get { return __icon_id; } }
 
-        public LocalWingetSource(WinGet manager, string name, string iconId) : base(manager, name)
+        public LocalWingetSource(WinGet manager, string name, string iconId) : base(manager, name, isVirtualManager: true)
         {
             this.name = name;
             __icon_id = iconId;

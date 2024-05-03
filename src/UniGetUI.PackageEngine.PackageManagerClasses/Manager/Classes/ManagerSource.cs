@@ -10,7 +10,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
     public class ManagerSource
     {
         public virtual string IconId { get { return Manager.Properties.IconId; } }
-        public bool IsVirtualManager = false;
+        public readonly bool IsVirtualManager = false;
         public struct Capabilities
         {
             public bool KnowsUpdateDate { get; set; } = false;
@@ -26,8 +26,9 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
         public int? PackageCount { get; }
         public string UpdateDate { get; }
 
-        public ManagerSource(PackageManager manager, string name, Uri? url = null, int? packageCount = 0, string updateDate = "")
+        public ManagerSource(PackageManager manager, string name, Uri? url = null, int? packageCount = 0, string updateDate = "", bool isVirtualManager = false)
         {
+            IsVirtualManager = isVirtualManager;
             Manager = manager;
             Name = name;
             Url = url;
