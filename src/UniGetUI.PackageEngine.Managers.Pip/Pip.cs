@@ -84,7 +84,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             p.Start();
 
-            string line;
+            string? line;
             bool DashesPassed = false;
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
@@ -131,7 +131,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             p.Start();
 
-            string line;
+            string? line;
             bool DashesPassed = false;
             List<UpgradablePackage> Packages = new();
             string output = "";
@@ -180,7 +180,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             p.Start();
 
-            string line;
+            string? line;
             bool DashesPassed = false;
             List<Package> Packages = new();
             string output = "";

@@ -399,7 +399,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
                 ");
 
-            string line;
+            string? line;
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
@@ -463,7 +463,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             process.StartInfo = startInfo;
             process.Start();
 
-            string _line;
+            string? _line;
             while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
                 if (_line.Trim() != "")
                 {
@@ -642,7 +642,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             p.Start();
 
-            string line;
+            string? line;
             List<string> versions = new();
             bool DashesPassed = false;
             string output = "";
@@ -684,7 +684,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             bool dashesPassed = false;
             string output = "";
-            string line;
+            string? line;
             while ((line = await process.StandardOutput.ReadLineAsync()) != null)
             {
                 output += line + "\n";

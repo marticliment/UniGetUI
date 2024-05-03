@@ -98,7 +98,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
                 exit
                 "); // do NOT remove the trailing endline
-            string line;
+            string? line;
             List<UpgradablePackage> Packages = new();
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
@@ -142,7 +142,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             };
 
             p.Start();
-            string line;
+            string? line;
             List<Package> Packages = new();
             bool DashesPassed = false;
             string output = "";

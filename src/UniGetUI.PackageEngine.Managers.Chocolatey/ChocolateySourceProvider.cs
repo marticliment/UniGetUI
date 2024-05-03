@@ -58,7 +58,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
 
             string output = "";
-            string line;
+            string? line;
             while ((line = await process.StandardOutput.ReadLineAsync()) != null)
             {
                 output += line + "\n";

@@ -111,7 +111,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             p.Start();
 
-            string line;
+            string? line;
             ManagerSource source = Properties.DefaultSource;
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
@@ -168,7 +168,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             p.Start();
 
-            string line;
+            string? line;
             bool DashesPassed = false;
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
@@ -224,7 +224,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             p.Start();
 
-            string line;
+            string? line;
             bool DashesPassed = false;
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)

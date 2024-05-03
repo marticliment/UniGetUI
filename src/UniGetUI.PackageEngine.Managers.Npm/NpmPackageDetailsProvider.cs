@@ -44,7 +44,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     p.Start();
 
                     List<string> output = new();
-                    string line;
+                    string? line;
                     while ((line = await p.StandardOutput.ReadLineAsync()) != null)
                     {
                         output.Add(line);
@@ -136,7 +136,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 }
             };
 
-            string line;
+            string? line;
             List<string> versions = new();
 
             p.Start();

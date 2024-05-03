@@ -95,7 +95,6 @@ namespace UniGetUI.Interface
     {
 
         static Dictionary<string, string> PackageIconsPathReference = new();
-        private string __token;
 
         public BackgroundApi()
         {

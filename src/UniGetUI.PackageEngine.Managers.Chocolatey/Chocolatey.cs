@@ -74,7 +74,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             };
 
             p.Start();
-            string line;
+            string? line;
             string output = "";
             List<UpgradablePackage> Packages = new();
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
@@ -119,7 +119,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             };
 
             p.Start();
-            string line;
+            string? line;
             string output = "";
             List<Package> Packages = new();
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)

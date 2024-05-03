@@ -27,11 +27,17 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             HttpClient client = new();
             JsonString = await client.GetStringAsync($"https://pypi.org/pypi/{package.Id}/json");
 
-            JsonObject RawInfo = JsonObject.Parse(JsonString) as JsonObject;
+            JsonObject? RawInfo = JsonObject.Parse(JsonString) as JsonObject;
+
+            if(RawInfo == null)
+            {
+                Logger.Error($"Can't load package info on manager {Manager.Name}, JsonObject? RawInfo was null");
+                return details;
+            }
 
             try
             {
-                if ((RawInfo["info"] as JsonObject).ContainsKey("author"))
+                if ((RawInfo["info"] as JsonObject)?.ContainsKey("author") ?? false)
                     details.Author = (RawInfo["info"] as JsonObject)["author"].ToString();
             }
             catch (Exception ex) { Logger.Debug("[Pip] Can't load author: " + ex); }
@@ -139,7 +145,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             p.Start();
 
-            string line;
+            string? line;
             string[] result = new string[0];
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)

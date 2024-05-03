@@ -93,7 +93,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
             p.Start();
 
-            string line;
+            string? line;
             bool DashesPassed = false;
             List<UpgradablePackage> Packages = new();
             string output = "";
@@ -142,7 +142,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
             p.Start();
 
-            string line;
+            string? line;
             bool DashesPassed = false;
             List<Package> Packages = new();
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)

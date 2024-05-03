@@ -135,7 +135,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
                 ");
 
-            string line;
+            string? line;
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
@@ -203,7 +203,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 exit
                 ");
 
-            string line;
+            string? line;
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {

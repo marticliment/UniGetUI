@@ -59,7 +59,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             };
 
             p.Start();
-            string line;
+            string? line;
             List<Package> Packages = new();
             bool HeaderPassed = false;
             string output = "";
@@ -99,7 +99,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             };
 
             p.Start();
-            string line;
+            string? line;
             List<UpgradablePackage> Packages = new();
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
@@ -169,7 +169,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             };
 
             p.Start();
-            string line;
+            string? line;
             List<Package> Packages = new();
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
