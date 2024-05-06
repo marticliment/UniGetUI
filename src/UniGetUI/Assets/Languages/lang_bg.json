@@ -461,7 +461,7 @@
   "This may take a minute or two" : null,
   "This package can be updated" : "Този пакет може да се актуализира",
   "This package can be updated to version {0}" : "Този пакет може да бъде актуализиран до версия {0}",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
   "This package is already installed" : "Този пакет е вече инсталиран",
   "This package is being processed" : "Този пакет се обработва",
   "This package is on the queue" : "Този пакет е в опашката",

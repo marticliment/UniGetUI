@@ -461,7 +461,7 @@
   "This may take a minute or two" : null,
   "This package can be updated" : "해당 패키지는 업데이트할 수 있습니다.",
   "This package can be updated to version {0}" : "이 패키지는 {0} 버전으로 업데이트할 수 있습니다.",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
   "This package is already installed" : "해당 패키지는 이미 설치되어 있습니다",
   "This package is being processed" : "해당 패키지는 처리 중입니다.",
   "This package is on the queue" : "해당 패키지는 대기열에 있습니다.",

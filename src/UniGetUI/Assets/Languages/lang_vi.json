@@ -461,7 +461,7 @@
   "This may take a minute or two" : "Việc này có thể mất một hoặc hai phút",
   "This package can be updated" : "Gói này có thể cập nhật",
   "This package can be updated to version {0}" : "Gói này có thể được cập nhật lên phiên bản {0}",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Gói này không có ảnh chụp màn hình hoặc thiếu biểu tượng? Đóng góp cho WingetUI bằng cách thêm các biểu tượng và ảnh chụp màn hình còn thiếu vào cơ sở dữ liệu công khai, mở của chúng tôi.",
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Gói này không có ảnh chụp màn hình hoặc thiếu biểu tượng? Đóng góp cho WingetUI bằng cách thêm các biểu tượng và ảnh chụp màn hình còn thiếu vào cơ sở dữ liệu công khai, mở của chúng tôi.",
   "This package is already installed" : "Gói này đã được cài đặt",
   "This package is being processed" : "Gói này đang được xử lý",
   "This package is on the queue" : "Gói này đang trong hàng đợi",

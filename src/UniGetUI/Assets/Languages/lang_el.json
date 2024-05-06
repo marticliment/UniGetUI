@@ -461,7 +461,7 @@
   "This may take a minute or two" : "Αυτό μπορεί να πάρει ένα ή δύο λεπτά",
   "This package can be updated" : "Αυτό το πακέτο μπορεί να ενημερωθεί",
   "This package can be updated to version {0}" : "Αυτό το πακέτο μπορεί να ενημερωθεί στην έκδοση {0}",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Αυτό το πακέτο δεν έχει στιγμιότυπα οθόνης ή λείπει το εικονίδιο; Συνεισφέρετε στο WingetUI προσθέτοντας τα εικονίδια και τα στιγμιότυπα οθόνης που λείπουν στην ανοιχτή, δημόσια βάση δεδομένων μας.",
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Αυτό το πακέτο δεν έχει στιγμιότυπα οθόνης ή λείπει το εικονίδιο; Συνεισφέρετε στο WingetUI προσθέτοντας τα εικονίδια και τα στιγμιότυπα οθόνης που λείπουν στην ανοιχτή, δημόσια βάση δεδομένων μας.",
   "This package is already installed" : "Αυτό το πακέτο είναι ήδη εγκατεστημένο",
   "This package is being processed" : "Αυτό το πακέτο είναι υπο επεξεργασία",
   "This package is on the queue" : "Αυτό το πακέτο είναι στην ουρά",

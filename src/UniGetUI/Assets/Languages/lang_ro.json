@@ -461,7 +461,7 @@
   "This may take a minute or two" : "Acest lucru poate dura 1-2 minute",
   "This package can be updated" : "Acest pachet poate fi actualizat",
   "This package can be updated to version {0}" : "Acest pachet poate fi actualizat la versiunea {0}",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Lipsesc capturile de ecran sau pictograma acestui pachet? Contribuie la WingetUI adăugând pictogramele sau capturile de ecran lipsă în baza noastră de date deschisă și publică.",
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Lipsesc capturile de ecran sau pictograma acestui pachet? Contribuie la WingetUI adăugând pictogramele sau capturile de ecran lipsă în baza noastră de date deschisă și publică.",
   "This package is already installed" : "Acest pachet este deja instalat",
   "This package is being processed" : "Acest pachet este în curs de procesare",
   "This package is on the queue" : "Acest pachet este pus în coadă",

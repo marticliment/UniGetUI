@@ -461,7 +461,7 @@
   "This may take a minute or two" : "Bu işlem bir veya iki dakika sürebilir",
   "This package can be updated" : "Bu paket güncellenebilir",
   "This package can be updated to version {0}" : "Bu paket {0} sürümüne güncellenebilir",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Bu paketin ekran görüntüsü yok mu veya simgesi eksik mi? Eksik simgeleri ve ekran görüntülerini açık, herkese açık veritabanımıza ekleyerek WingetUI ile çelişin.",
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Bu paketin ekran görüntüsü yok mu veya simgesi eksik mi? Eksik simgeleri ve ekran görüntülerini açık, herkese açık veritabanımıza ekleyerek WingetUI ile çelişin.",
   "This package is already installed" : "Paket zaten kurulmuş",
   "This package is being processed" : "Bu paket işleniyor",
   "This package is on the queue" : "Bu paket sırada",

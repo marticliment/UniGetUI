@@ -461,7 +461,7 @@
   "This may take a minute or two" : null,
   "This package can be updated" : "แพ็กเกจนี้สามารถอัปเดตได้",
   "This package can be updated to version {0}" : "แพ็กเกจนี้สามารถอัปเดตเป็นเวอร์ชัน {0} ได้",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
   "This package is already installed" : "แพ็กเกจนี้ถูกติดตั้งแล้ว",
   "This package is being processed" : "แพ็กนี้กำลังถูกประมวลผล",
   "This package is on the queue" : "แพ็กเกจนี้อยู่ในคิว",

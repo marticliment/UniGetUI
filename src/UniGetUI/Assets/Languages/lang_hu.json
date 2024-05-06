@@ -461,7 +461,7 @@
   "This may take a minute or two" : "Ez egy-két percet vehet igénybe",
   "This package can be updated" : "Ez a csomag frissíthető",
   "This package can be updated to version {0}" : "Ez a csomag frissíthető a következő verzióra: {0}",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Ez a csomag nem rendelkezik képernyőképekkel, esetleg hiányzik az ikon? Segítsen a WingetUI-nak a hiányzó ikonok és képernyőképek hozzáadásával a nyílt, nyilvános adatbázisunkhoz.\n",
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Ez a csomag nem rendelkezik képernyőképekkel, esetleg hiányzik az ikon? Segítsen a WingetUI-nak a hiányzó ikonok és képernyőképek hozzáadásával a nyílt, nyilvános adatbázisunkhoz.\n",
   "This package is already installed" : "Ez a csomag már telepítve van",
   "This package is being processed" : "Ez a csomag feldolgozás alatt áll",
   "This package is on the queue" : "Ez a csomag várólistán van",

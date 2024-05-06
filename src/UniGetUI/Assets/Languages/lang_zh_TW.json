@@ -461,7 +461,7 @@
   "This may take a minute or two" : null,
   "This package can be updated" : "這個套件有可用的更新",
   "This package can be updated to version {0}" : "此套件可以更新到版本 {0}",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
   "This package is already installed" : "此套件已安裝",
   "This package is being processed" : "正在處理此套件",
   "This package is on the queue" : "此套件已排入佇列",

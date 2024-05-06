@@ -461,7 +461,7 @@
   "This may take a minute or two" : null,
   "This package can be updated" : "এই প্যাকেজ আপডেট করা যেতে পারে",
   "This package can be updated to version {0}" : "এই প্যাকেজটি {0} সংস্করণে আপডেট করা যেতে পারে",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
   "This package is already installed" : "এই প্যাকেজ ইতিমধ্যে ইনস্টল করা আছে",
   "This package is being processed" : "এই প্যাকেজ প্রক্রিয়া করা হচ্ছে",
   "This package is on the queue" : "এই প্যাকেজ সারিতে আছে",

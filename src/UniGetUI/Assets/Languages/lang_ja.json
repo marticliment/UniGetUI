@@ -461,7 +461,7 @@
   "This may take a minute or two" : "これには1～2分かかることがあります",
   "This package can be updated" : "このパッケージはアップデート可能です",
   "This package can be updated to version {0}" : "このパッケージはバージョン {0} へとアップデート可能です",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
   "This package is already installed" : "このパッケージはすでにインストールされています",
   "This package is being processed" : "このパッケージはインストール作業中です",
   "This package is on the queue" : "このパッケージはキューで順番を待っています",

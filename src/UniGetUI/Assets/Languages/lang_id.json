@@ -461,7 +461,7 @@
   "This may take a minute or two" : "Ini mungkin memakan waktu satu atau dua menit",
   "This package can be updated" : "Paket ini dapat diperbarui",
   "This package can be updated to version {0}" : "Paket ini dapat diperbarui ke versi {0}",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Paket ini tidak memiliki tangkapan layar atau ikonnya hilang? Berkontribusi pada WingetUI dengan menambahkan ikon dan tangkapan layar yang hilang ke database publik kami yang terbuka.",
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Paket ini tidak memiliki tangkapan layar atau ikonnya hilang? Berkontribusi pada WingetUI dengan menambahkan ikon dan tangkapan layar yang hilang ke database publik kami yang terbuka.",
   "This package is already installed" : "Paket ini sudah terpasang",
   "This package is being processed" : "Paket ini sedang diproses",
   "This package is on the queue" : "Paket ini sedang dalam antrian",

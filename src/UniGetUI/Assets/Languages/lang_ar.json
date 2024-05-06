@@ -461,7 +461,7 @@
   "This may take a minute or two" : null,
   "This package can be updated" : "هذه الحزمة يمكن تحديثها.",
   "This package can be updated to version {0}" : "يمكن تحديث هذه الحزمة إلى الإصدار {0}",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
   "This package is already installed" : "هذه الحزمة مثبتة سابقا ",
   "This package is being processed" : "تتم معالجة هذه الحزمة",
   "This package is on the queue" : null,

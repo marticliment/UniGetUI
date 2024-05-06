@@ -461,7 +461,7 @@
   "This may take a minute or two" : "To lahko traja minuto ali dve",
   "This package can be updated" : "Ta paket je mogoče posodobiti",
   "This package can be updated to version {0}" : "Ta paket je mogoče posodobiti na različico {0}",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Ta paket nima posnetkov zaslona ali manjka ikona? Prispevajte k WingetUI tako, da dodate manjkajoče ikone in posnetke zaslona v našo odprto javno bazo podatkov.",
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Ta paket nima posnetkov zaslona ali manjka ikona? Prispevajte k WingetUI tako, da dodate manjkajoče ikone in posnetke zaslona v našo odprto javno bazo podatkov.",
   "This package is already installed" : "Ta paket je že nameščen",
   "This package is being processed" : "Ta paket je v obdelavi",
   "This package is on the queue" : "Ta paket je v čakalni vrsti",

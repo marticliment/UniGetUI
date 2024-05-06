@@ -461,7 +461,7 @@
   "This may take a minute or two" : "这可能需要一两分钟的时间",
   "This package can be updated" : "此软件包可以更新",
   "This package can be updated to version {0}" : "此软件包可以更新到版本 {0}",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : "这个软件包缺少截图或图标吗？通过向我们的开放公共数据库添加缺失的图标或截图，来为 WingetUI 做出贡献吧。",
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : "这个软件包缺少截图或图标吗？通过向我们的开放公共数据库添加缺失的图标或截图，来为 WingetUI 做出贡献吧。",
   "This package is already installed" : "此软件包已安装",
   "This package is being processed" : "此软件包正被处理",
   "This package is on the queue" : "此软件包在队列中",

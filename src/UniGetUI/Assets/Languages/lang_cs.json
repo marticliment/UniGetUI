@@ -461,7 +461,7 @@
   "This may take a minute or two" : "Může to trvat minutu nebo dvě.",
   "This package can be updated" : "Tento balíček může být aktualizován",
   "This package can be updated to version {0}" : "Tento balíček může být aktualizován na verzi {0}",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Chybí tomuto balíčku snímky obrazovky nebo mu chybí ikona? Přispějte WingetUI přidáním chybějících ikon a snímků obrazovky do naší otevřené, veřejné databáze.",
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Chybí tomuto balíčku snímky obrazovky nebo mu chybí ikona? Přispějte WingetUI přidáním chybějících ikon a snímků obrazovky do naší otevřené, veřejné databáze.",
   "This package is already installed" : "Tento balíček je již nainstalován",
   "This package is being processed" : "Tento balíček se zpracovává",
   "This package is on the queue" : "Tento balíček je ve frontě",

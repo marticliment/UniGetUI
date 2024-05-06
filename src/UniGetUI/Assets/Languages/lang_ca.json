@@ -461,7 +461,7 @@
   "This may take a minute or two" : "Això pot trigar un parell de minuts",
   "This package can be updated" : "Es pot actualitzar aquest paquet",
   "This package can be updated to version {0}" : "Aquest paquet es pot actualitzar a la versió {0}",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Aquest paquet no té icona o li falten imatges? Contribuïu al WingetUI afegint la icona i imatges que faltin a la base de dades pública i oberta del WingetUI.",
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : "Aquest paquet no té icona o li falten imatges? Contribuïu al WingetUI afegint la icona i imatges que faltin a la base de dades pública i oberta del WingetUI.",
   "This package is already installed" : "Aquest paquet ja està instal·lat",
   "This package is being processed" : "S'està processant aquest paquet",
   "This package is on the queue" : "Aquest paquet està a la cua",

@@ -461,7 +461,7 @@
   "This may take a minute or two" : "Esto puede tomar un minuto o dos",
   "This package can be updated" : "Este paquete puede actualizarse",
   "This package can be updated to version {0}" : "Este paquete puede actualizarse a la versión {0}.",
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : "¿Este paquete no tiene capturas de pantalla o le falta el ícono? Contribuye a WingetUI agregando los íconos y capturas de pantallas a nuestra base de datos abierta y pública.",
+  "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database." : "¿Este paquete no tiene capturas de pantalla o le falta el ícono? Contribuye a WingetUI agregando los íconos y capturas de pantallas a nuestra base de datos abierta y pública.",
   "This package is already installed" : "Este paquete ya está instalado",
   "This package is being processed" : "Este paquete está siendo procesado",
   "This package is on the queue" : "Este paquete está en la cola",
