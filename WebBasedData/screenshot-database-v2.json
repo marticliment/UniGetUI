@@ -4,7 +4,7 @@
         "done": 5044,
         "packages_with_icon": 5044,
         "packages_with_screenshot": 552,
-        "total_screenshots": 1727
+        "total_screenshots": 1729
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -21045,7 +21045,9 @@
         "kdevelop": {
             "icon": "https://community.chocolatey.org/content/packageimages/kdevelop.install.5.5.0.png",
             "images": [
-                "https://cdn.kde.org/screenshots/kdevelop/kdevelop.png"
+                "https://cdn.kde.org/screenshots/kdevelop/kdevelop.png",
+                "https://kdevelop.org/images/kdevelop-code.png",
+                "https://kdevelop.org/images/kdevelop-documentation.png"
             ]
         },
         "kdiff3": {
