@@ -461,7 +461,7 @@
   "This may take a minute or two" : null,
   "This package can be updated" : null,
   "This package can be updated to version {0}" : null,
-  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : null,
+  "This package has no screenshots or is missing the icon? Contrbute to WingetUI by adding the missing icons and screenshots to our open, public database." : "This package has no screenshots or is missing the icon? Contribute to WingetUI by adding the missing icons and screenshots to our open, public database.",
   "This package is already installed" : null,
   "This package is being processed" : null,
   "This package is on the queue" : null,
