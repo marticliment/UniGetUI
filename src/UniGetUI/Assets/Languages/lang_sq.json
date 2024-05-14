@@ -71,7 +71,7 @@
   "Cache administrator rights and elevate installers by default" : "Vendos në kesh të drejtat e administratorit edhe instalo me privilegje të ngritura si paracaktim",
   "Cache administrator rights, but elevate installers only when required" : "Vendos në kesh të drejtat e administratorit, por instalo me privilegje të ngritura vetëm kur nevojitet",
   "Cache was reset successfully!" : "Kesh-i u rivendos me sukses!",
-  "Can't {0} {1}" : null,
+  "Can't {0} {1}" : "Nuk {0} dot {1}",
   "Cancel" : "Anulo",
   "Change backup output directory" : "Ndrysho vendndodhjen e kopjës rezervë",
   "Change install location" : "Ndrysho vendndodhjen e instalimit",
