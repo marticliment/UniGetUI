@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<fileSnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <files>
-    <file path="C:\ProgramData\chocolatey\lib\KB2919355\KB2919355.nupkg" checksum="6384E224A2407A0FD2BD9F0D6F4380A6" />
-    <file path="C:\ProgramData\chocolatey\lib\KB2919355\KB2919355.nuspec" checksum="6C94F968DC2D374A5811DFF90D9E4F4A" />
-    <file path="C:\ProgramData\chocolatey\lib\KB2919355\tools\ChocolateyInstall.ps1" checksum="7C8F335CAA880A57142BC255CF70FA01" />
-  </files>
-</fileSnapshot>

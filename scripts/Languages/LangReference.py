@@ -1,4 +1,4 @@
-from wingetui.Core.Languages.LangData import languageReference
+from UniGetUI.Core.Languages.LangData import languageReference
 
 lang = {}
 englang = {}

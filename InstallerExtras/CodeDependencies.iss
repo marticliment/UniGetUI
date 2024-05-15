@@ -225,51 +225,30 @@ begin
   Result := ShellExec('', ExpandConstant('{tmp}{\}') + 'netcorecheck' + Dependency_ArchSuffix + '.exe', Version, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) and (ResultCode = 0);
 end;
 
-procedure Dependency_AddDotNet80Desktop;
-begin
-  // https://dotnet.microsoft.com/download/dotnet/8.0
-  if not Dependency_IsNetCoreInstalled('-n Microsoft.WindowsDesktop.App -v 8.0.0') then begin
-    Dependency_Add('dotnet80desktop' + Dependency_ArchSuffix + '.exe',
-      '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
-      '.NET Desktop Runtime 8.0.0' + Dependency_ArchTitle,
-      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/a4bc7333-6e30-4e2d-b300-0b4f23537e5b/4b81af6d46a02fba5d9ce030af438c67/dotnet-runtime-8.0.2-win-x64.exe', 'https://download.visualstudio.microsoft.com/download/pr/a4bc7333-6e30-4e2d-b300-0b4f23537e5b/4b81af6d46a02fba5d9ce030af438c67/dotnet-runtime-8.0.2-win-x64.exe'),
-      '', False, False);
-  end;
-end;
-
 procedure Dependency_AddVC2015To2022;
 begin
   // https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist
   if not IsMsiProductInstalled(Dependency_String('{36F68A90-239C-34DF-B58C-64B30153CE35}', '{36F68A90-239C-34DF-B58C-64B30153CE35}'), PackVersionComponents(14, 30, 30704, 0)) then begin
     Dependency_Add('vcredist2022' + Dependency_ArchSuffix + '.exe',
       '/passive /norestart',
-      'Visual C++ 2015-2022 Redistributable' + Dependency_ArchTitle,
+      'Visual C++ 2015-2022 Redistributable (x64)' + Dependency_ArchTitle,
       Dependency_String('https://aka.ms/vs/17/release/vc_redist.x64.exe', 'https://aka.ms/vs/17/release/vc_redist.x64.exe'),
       '', False, False);
   end;
 end;
 
-procedure Dependency_AddAppSdk151;
-begin
-  // https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads
-  Dependency_Add('appsdk151' + Dependency_ArchSuffix + '.exe',
-    '--force --quiet',
-    'Windows App Sdk 1.5.1' + Dependency_ArchTitle,
-    Dependency_String('https://aka.ms/windowsappsdk/1.5/1.5.240311000/windowsappruntimeinstall-x64.exe', 'https://aka.ms/windowsappsdk/1.5/1.5.240311000/windowsappruntimeinstall-x64.exe'),
-    '', False, False);
-end;
 
-// procedure Dependency_AddWebView2;
-// begin
-//   // https://developer.microsoft.com/en-us/microsoft-edge/webview2
-//   if not RegValueExists(HKLM, Dependency_String('SOFTWARE', 'SOFTWARE\WOW6432Node') + '\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}', 'pv') then begin
-//     Dependency_Add('MicrosoftEdgeWebview2Setup.exe',
-//       '/silent /install',
-//       'WebView2 Runtime',
-//       'https://go.microsoft.com/fwlink/p/?LinkId=2124703',
-//       '', False, False);
-//   end;
-// end;
+procedure Dependency_AddWebView2;
+begin
+  // https://developer.microsoft.com/en-us/microsoft-edge/webview2
+  if not RegValueExists(HKLM, Dependency_String('SOFTWARE', 'SOFTWARE\WOW6432Node') + '\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}', 'pv') then begin
+    Dependency_Add('MicrosoftEdgeWebview2Setup.exe',
+      '/silent /install',
+      'WebView2 Runtime (x64)',
+      'https://go.microsoft.com/fwlink/?linkid=2124701',
+      '', False, False);
+  end;
+end;
 
 
 

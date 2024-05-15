@@ -3,9 +3,8 @@
 - [ ] **I have read the [contributing guidelines](https://github.com/marticliment/WingetUI/blob/main/CONTRIBUTING.md#coding) and I agree with the [Code of Conduct](https://github.com/marticliment/WingetUI/blob/main/CODE_OF_CONDUCT.md)**
 - [ ] **Have you checked that there aren't other open [pull requests](https://github.com/marticliment/WingetUI/pulls) for the same changes?**
 - [ ] **Have you tested that the committed code can be executed without errors?**
-
-
-### DO NOT publish garbage PRs to farm Crypto AirDrops. Any user suspected of this action will get banned. Submitting broken code wastes the time of the contributors, who have to spend their free time reviewing, fixing and testing code that does not even compile, breaks other features or does not introduce any changes.
+- [ ] **This PR is not composed of garbage changes used to farm GitHub activity to enter potential Crypto AirDrops.**
+Any user suspected of farming GitHub activity with crypto purposes will get banned. Submitting broken code wastes the time of the contributors, who have to spend their free time reviewing, fixing, and testing code that does not even compile, breaks other features, or does not introduce any useful changes. Thank you for your understanding
 
 
 -----

@@ -24,6 +24,10 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
+    - name: Install winget
+      uses: Cyberboss/install-winget@v1
+
+
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2.0.0
@@ -43,5 +47,5 @@ jobs:
     - name: build and run
       run: |
         mkdir out
-        msbuild src/wingetui/wingetui.csproj /noLogo /property:Configuration=Release /property:Platform=x64 /restore:True /interactive:False /property:OutputPath=.\out
+        msbuild src/UniGetUI.sln /noLogo /property:Configuration=Release /property:Platform=x64 /restore:True /interactive:False /property:OutputPath=.\out
         exit $LASTEXITCODE

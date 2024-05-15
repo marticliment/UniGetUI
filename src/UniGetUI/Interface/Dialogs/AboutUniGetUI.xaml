@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="UniGetUI.Interface.AboutUniGetUI"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:UniGetUI.Interface"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    mc:Ignorable="d"
+    Height="500"
+    Width="650"
+    >
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <SelectorBar Grid.Row="0" x:Name="SelectorBar" SelectionChanged="SelectorBar_SelectionChanged" HorizontalAlignment="Left">
+            <SelectorBarItem x:Name="SelectorBarItemPage1" IsSelected="True" Text="{x:Bind Tools.Translate('About')}" >
+                <SelectorBarItem.Icon>
+                    <FontIcon Glyph="&#xE946;" FontSize="16" VerticalAlignment="Center"/>
+                </SelectorBarItem.Icon>
+            </SelectorBarItem>
+            <SelectorBarItem x:Name="SelectorBarItemPage2" Text="{x:Bind Tools.Translate('Third-party licenses')}" >
+                <SelectorBarItem.Icon>
+                    <FontIcon Glyph="&#xE8A5;" FontSize="16" VerticalAlignment="Center"/>
+                </SelectorBarItem.Icon>
+            </SelectorBarItem>
+            <SelectorBarItem x:Name="SelectorBarItemPage3" Text="{x:Bind Tools.Translate('Contributors')}" >
+                <SelectorBarItem.Icon>
+                    <FontIcon Glyph="&#xEBDA;" FontSize="16" VerticalAlignment="Center"/>
+                </SelectorBarItem.Icon>
+            </SelectorBarItem>
+            <SelectorBarItem x:Name="SelectorBarItemPage4" Text="{x:Bind Tools.Translate('Translators')}" >
+                <SelectorBarItem.Icon>
+                    <FontIcon Glyph="&#xF2B7;" FontSize="16" VerticalAlignment="Center"/>
+                </SelectorBarItem.Icon>
+            </SelectorBarItem>
+            <SelectorBarItem x:Name="SelectorBarItemPage5" Text="{x:Bind Tools.Translate('Support me')}" >
+                <SelectorBarItem.Icon>
+                    <FontIcon Glyph="&#xED56;" FontSize="16" VerticalAlignment="Center"/>
+                </SelectorBarItem.Icon>
+            </SelectorBarItem>
+        </SelectorBar>
+
+        <Frame Grid.Row="1" x:Name="ContentFrame" IsNavigationStackEnabled="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0"/>
+    </Grid>
+
+</Page>
