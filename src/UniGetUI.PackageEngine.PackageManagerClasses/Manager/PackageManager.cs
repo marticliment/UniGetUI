@@ -161,11 +161,11 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        public async Task<UpgradablePackage[]> GetAvailableUpdates()
+        public async Task<Package[]> GetAvailableUpdates()
         {
             try
             {
-                UpgradablePackage[] packages = await GetAvailableUpdates_UnSafe();
+                Package[] packages = await GetAvailableUpdates_UnSafe();
                 for (int i = 0; i < packages.Length; i++)
                     packages[i] = PackageFactory.GetUpgradablePackageIfRepeated(packages[i]);
                 Logger.Info($"Found {packages.Length} available updates from {Name}");

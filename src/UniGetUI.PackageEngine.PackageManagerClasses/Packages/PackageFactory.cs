@@ -11,7 +11,7 @@ namespace UniGetUI.PackageEngine.Classes.Packages
     internal static class PackageFactory
     {
         private static Dictionary<PackageManager, Dictionary<string, Package>> __available_packages = new();
-        private static Dictionary<PackageManager, Dictionary<string, UpgradablePackage>> __upgradable_packages = new();
+        private static Dictionary<PackageManager, Dictionary<string, Package>> __upgradable_packages = new();
         private static Dictionary<PackageManager, Dictionary<string, Package>> __installed_packages = new();
         
         public static Package GetAvailablePackageIfRepeated(Package p)
@@ -28,9 +28,9 @@ namespace UniGetUI.PackageEngine.Classes.Packages
             return p;
         }
 
-        public static UpgradablePackage GetUpgradablePackageIfRepeated(UpgradablePackage p)
+        public static Package GetUpgradablePackageIfRepeated(Package p)
         {
-            UpgradablePackage? old_package;
+            Package? old_package;
 
             if (!__upgradable_packages.ContainsKey(p.Manager))
                 __upgradable_packages.Add(p.Manager, new());
@@ -68,7 +68,7 @@ namespace UniGetUI.PackageEngine.Classes.Packages
             return null;
         }
 
-        public static UpgradablePackage? FindPackageOnUpdatesOrNull(Package p)
+        public static Package? FindPackageOnUpdatesOrNull(Package p)
         {
             if (!__upgradable_packages.ContainsKey(p.Manager))
                 return null;

@@ -44,6 +44,7 @@
     <None Remove="Interface\Pages\AboutPages\Translators.xaml" />
     <None Remove="Interface\Pages\LogPage.xaml" />
     <None Remove="Interface\Pages\PackageBundle.xaml" />
+    <None Remove="Interface\SoftwarePages\AbstractPackagesPage.xaml" />
     <None Remove="Interface\SoftwareUpdates.xaml" />
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
@@ -83,6 +84,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Interface\Pages\PackageBundle.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Interface\SoftwarePages\AbstractPackagesPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Interface\SoftwareUpdates.xaml">
@@ -831,7 +835,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Interface\SoftwarePages\" />
     <Folder Include="PackageEngine\Operations\" />
   </ItemGroup>
   <ItemGroup>

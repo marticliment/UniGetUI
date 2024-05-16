@@ -265,8 +265,8 @@ namespace UniGetUI.Interface
             {
                 if (manager.IsEnabled() && manager.Status.Found)
                 {
-                    Task<UpgradablePackage[]> task = manager.GetAvailableUpdates();
-                    tasks.Add(task);
+                    // Task<UpgradablePackage[]> task = manager.GetAvailableUpdates();
+                    // tasks.Add(task);
                 }
             }
 

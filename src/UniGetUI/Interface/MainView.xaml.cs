@@ -21,6 +21,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 using System.Reflection.Emit;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.SoftwarePages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,7 +32,7 @@ namespace UniGetUI.Interface
     {
         public SettingsInterface SettingsPage;
         public DiscoverPackagesPage DiscoverPage;
-        public SoftwareUpdatesPage UpdatesPage;
+        public NewSoftwareUpdatesPage UpdatesPage;
         public InstalledPackagesPage InstalledPage;
         public HelpDialog HelpPage;
         public PackageBundlePage BundlesPage;
@@ -53,7 +54,8 @@ namespace UniGetUI.Interface
             OperationStackPanel = __operations_list_stackpanel;
             SettingsPage = new SettingsInterface();
             DiscoverPage = new DiscoverPackagesPage();
-            UpdatesPage = new SoftwareUpdatesPage();
+            UpdatesPage = new NewSoftwareUpdatesPage();
+            UpdatesPage.ExternalCountBadge = UpdatesBadge;
             InstalledPage = new InstalledPackagesPage();
             AboutPage = new AboutUniGetUI();
             BundlesPage = new PackageBundlePage();
