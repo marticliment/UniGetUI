@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11702,
-        "done": 5044,
-        "packages_with_icon": 5044,
-        "packages_with_screenshot": 552,
-        "total_screenshots": 1729
+        "done": 5045,
+        "packages_with_icon": 5045,
+        "packages_with_screenshot": 553,
+        "total_screenshots": 1732
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -39909,8 +39909,12 @@
             "images": []
         },
         "taiga": {
-            "icon": "",
-            "images": []
+            "icon": "https://imgur.com/a/MTPLaUL",
+            "images": [
+                "https://imgur.com/a/Jp9TlKP",
+                "https://imgur.com/a/LMBhzM4",
+                "https://imgur.com/a/Zx98DaQ"
+            ]
         },
         "tailblazer": {
             "icon": "https://community.chocolatey.org/content/packageimages/tailblazer.0.9.0.536.png",
