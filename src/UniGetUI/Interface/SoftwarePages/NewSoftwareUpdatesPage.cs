@@ -253,7 +253,10 @@ namespace UniGetUI.Interface.SoftwarePages
             IgnoreSelected.Click += async (s, e) =>
             {
                 foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
+                    {
                         await package.AddToIgnoredUpdatesAsync();
+                        MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
+                    }
             };
 
             UpdateSelected.Click += (s, e) =>
@@ -478,21 +481,23 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as UpgradablePackage));
+            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as Package));
         }
 
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs e)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            _ = (PackageList.SelectedItem as UpgradablePackage).AddToIgnoredUpdatesAsync();
+            _ = (PackageList.SelectedItem as Package).AddToIgnoredUpdatesAsync();
+            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(PackageList.SelectedItem as Package);
         }
 
         private void MenuSkipVersion_Invoked(object sender, RoutedEventArgs e)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            _ = (PackageList.SelectedItem as UpgradablePackage).AddToIgnoredUpdatesAsync((PackageList.SelectedItem as UpgradablePackage).NewVersion);
+            _ = (PackageList.SelectedItem as Package).AddToIgnoredUpdatesAsync((PackageList.SelectedItem as Package).NewVersion);
+            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(PackageList.SelectedItem as Package);
         }
 
         public void UpdatePackageForId(string id)

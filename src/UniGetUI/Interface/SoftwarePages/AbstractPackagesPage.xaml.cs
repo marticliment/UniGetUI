@@ -581,8 +581,8 @@ namespace UniGetUI.Interface
 
         public void RemoveCorrespondingPackages(Package foreignPackage)
         {
-            foreach (UpgradablePackage package in Packages.ToArray())
-                if (package.Equals(foreignPackage))
+            foreach (Package package in Packages.ToArray())
+                if (package == foreignPackage || package.Equals(foreignPackage))
                 {
                     Packages.Remove(package);
                     package.Tag = PackageTag.Default;
