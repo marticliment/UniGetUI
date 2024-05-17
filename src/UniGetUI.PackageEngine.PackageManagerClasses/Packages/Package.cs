@@ -284,8 +284,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
                     IgnoredUpdatesJson.Remove(IgnoredId);
                 IgnoredUpdatesJson.Add(IgnoredId, version);
                 await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
-                // FIXME: Tools.App.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(this);
-
                 GetInstalledPackage()?.SetTag(PackageTag.Pinned);
             }
             catch (Exception ex)

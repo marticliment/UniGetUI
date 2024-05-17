@@ -605,7 +605,10 @@ namespace UniGetUI.Interface
             IgnoreSelected.Click += async (s, e) =>
             {
                 foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
+                    {
+                        MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
                         await package.AddToIgnoredUpdatesAsync();
+                    }
             };
 
             UninstallSelected.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray()); };
@@ -738,6 +741,7 @@ namespace UniGetUI.Interface
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
             _ = (PackageList.SelectedItem as Package).AddToIgnoredUpdatesAsync();
+            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(PackageList.SelectedItem as Package);
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs package)
