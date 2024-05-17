@@ -471,7 +471,7 @@
   "This wizard will help you configure and customize WingetUI!" : "Ky drejtues do të ndihmojë të formësosh dhe personalizosh WingetUI!",
   "Toggle search filters pane" : "Ndrysho gjendjen e panelit të filtrave të kërkimit",
   "Translators" : "Përkthyesit",
-  "Type here the name and the URL of the source you want to add, separed by a space." : "Shkruaj këtu emrin dhe URL-në e burimit që dëshiron të shtosh, të ndara me një hapësirë.",
+  "Type here the name and the URL of the source you want to add, separed by a space." : "Shkruaj këtu emrin dhe URL-në e burimit që dëshiron të shtosh, të ndarë me një hapësirë.",
   "Unable to find package" : "Paketa nuk mund të gjendet",
   "Unable to load informarion" : "Informacioni nuk mund të ngarkohet",
   "Uninstall" : "Çinstalo",
