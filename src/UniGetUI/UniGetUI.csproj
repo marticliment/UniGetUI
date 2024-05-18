@@ -3,7 +3,7 @@
 
 	<Import Project="$(SolutionDir)Solution.props" />
 
-	<PropertyGroup>
+  <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <RootNamespace>UniGetUI</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>

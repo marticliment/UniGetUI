@@ -497,7 +497,7 @@
             </Setter>
         </Style>
 
-        <DataTemplate x:Key="PackageTemplate" x:DataType="pkgClasses:UpgradablePackage">
+        <DataTemplate x:Key="PackageTemplate" x:DataType="pkgClasses:Package">
             <Grid ColumnSpacing="5" Opacity="{x:Bind ListedOpacity, Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
@@ -510,8 +510,8 @@
                     <ColumnDefinition Width="*" MinWidth="100"/>
                     <ColumnDefinition Width="24"/>
                     <ColumnDefinition Width="*" MaxWidth="125"/>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="*" MaxWidth="125"/>
+                    <ColumnDefinition Width="24" MaxWidth="{x:Bind NewVersionIconWidth}"/>
+                    <ColumnDefinition Width="*" MaxWidth="{x:Bind NewVersionLabelWidth}"/>
                     <ColumnDefinition Width="24"/>
                     <ColumnDefinition Width="*" MaxWidth="150"/>
                 </Grid.ColumnDefinitions>
@@ -752,7 +752,7 @@
                     </Expander>
                     <!-- Search mode expander -->
                     <Expander Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch" CornerRadius="8"
-    IsExpanded="False" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
+    IsExpanded="True" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
     Padding="16,8,16,8" HorizontalContentAlignment="Stretch"
                               AutomationProperties.Name="Search mode">
                         <Expander.Header>
@@ -763,30 +763,30 @@
                         </Expander.Header>
                         <Expander.Content>
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Spacing="0">
-                                <RadioButtons Name="QueryOptionsGroup" Margin="0,-4,0,6" SelectionChanged="FilterOptionsChanged" CharacterSpacing="0">
-                                    <RadioButton x:Name="QueryNameRadio" Margin="0,-2,0,-2" Height="30">
+                                <RadioButtons Name="QueryOptionsGroup" x:FieldModifier="protected"  Margin="0,-4,0,6" SelectionChanged="FilterOptionsChanged" CharacterSpacing="0">
+                                    <RadioButton x:Name="QueryNameRadio" x:FieldModifier="protected" Margin="0,-2,0,-2" Height="30">
                                         <RadioButton.Content>
                                             <widgets:TranslatedTextBlock Text="Package Name" WrappingMode="Wrap"/>
                                         </RadioButton.Content>
                                     </RadioButton>
-                                    <RadioButton x:Name="QueryIdRadio" Margin="0,-2,0,-2" Height="30">
+                                    <RadioButton x:Name="QueryIdRadio" x:FieldModifier="protected" Margin="0,-2,0,-2" Height="30">
                                         <RadioButton.Content>
                                             <widgets:TranslatedTextBlock Text="Package ID" WrappingMode="Wrap"/>
                                         </RadioButton.Content>
                                     </RadioButton>
-                                    <RadioButton x:Name="QueryBothRadio" Margin="0,-2,0,-2" Height="30" IsChecked="True">
+                                    <RadioButton x:Name="QueryBothRadio"  x:FieldModifier="protected" Margin="0,-2,0,-2" Height="30" IsChecked="True">
                                         <RadioButton.Content>
                                             <widgets:TranslatedTextBlock Text="Both" WrappingMode="Wrap"/>
                                         </RadioButton.Content>
                                     </RadioButton>
-                                    <RadioButton x:Name="QuerySimilarResultsRadio" Margin="0,-2,0,-2" Height="30">
-                                        <RadioButton.Content>
-                                            <widgets:TranslatedTextBlock Text="Show similar packages" WrappingMode="Wrap"/>
-                                        </RadioButton.Content>
-                                    </RadioButton>
-                                    <RadioButton x:Name="QueryExactMatch" Margin="0,-2,0,-2" Height="30">
+                                    <RadioButton x:Name="QueryExactMatch" x:FieldModifier="protected" Margin="0,-2,0,-2" Height="30">
                                         <RadioButton.Content>
                                             <widgets:TranslatedTextBlock Text="Exact match" WrappingMode="Wrap"/>
+                                        </RadioButton.Content>
+                                    </RadioButton>
+                                    <RadioButton x:Name="QuerySimilarResultsRadio" x:FieldModifier="protected" Margin="0,-2,0,-2" Height="30">
+                                        <RadioButton.Content>
+                                            <widgets:TranslatedTextBlock Text="Show similar packages" WrappingMode="Wrap"/>
                                         </RadioButton.Content>
                                     </RadioButton>
                                 </RadioButtons>
@@ -828,8 +828,8 @@
                         <ColumnDefinition Width="*" MinWidth="100"/>
                         <ColumnDefinition Width="24"/>
                         <ColumnDefinition Width="*" MaxWidth="125"/>
-                        <ColumnDefinition Width="24"/>
-                        <ColumnDefinition Width="*" MaxWidth="125"/>
+                        <ColumnDefinition Width="24" MaxWidth="{x:Bind NewVersionIconWidth}"/>
+                        <ColumnDefinition Width="*" MaxWidth="{x:Bind NewVersionLabelWidth}"/>
                         <ColumnDefinition Width="24"/>
                         <ColumnDefinition Width="*" MaxWidth="150"/>
                         <ColumnDefinition Width="11"/>
@@ -838,7 +838,7 @@
                     <Button Name="NameHeader" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
                     <Button Name="IdHeader" Grid.Column="4" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
                     <Button Name="VersionHeader" Grid.Column="6" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
-                    <Button Name="NewVersionHeader" Grid.Column="8" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
+                    <Button Name="NewVersionHeader" Grid.Column="8" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0" Visibility="{x:Bind RoleIsUpdateLike}"/>
                     <Button Name="SourceHeader" Grid.Column="10" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" CornerRadius="0,4,4,0" BorderThickness="0"/>
                 </Grid>
 

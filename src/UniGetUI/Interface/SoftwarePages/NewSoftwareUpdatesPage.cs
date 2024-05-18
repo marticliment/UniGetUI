@@ -37,6 +37,11 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MainTitleText = CoreTools.AutoTranslated("Software Updates");
             MainTitleGlyph = "\uE895";
+
+            QuerySimilarResultsRadio.IsEnabled = false;
+            QueryOptionsGroup.SelectedIndex = 1;
+            QueryOptionsGroup.SelectedIndex = 2;
+            QueryOptionsGroup.SelectedItem = QueryBothRadio;
         }
 
         public override BetterMenu GenerateContextMenu()
@@ -309,11 +314,13 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             return manager.GetAvailableUpdates();
         }
-        protected override void WhenAddingPackage(Package package)
+#pragma warning disable 
+        protected override async Task WhenAddingPackage(Package package)
         {
             package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);
             package.GetInstalledPackage()?.SetTag(PackageTag.IsUpgradable);
         }
+#pragma warning restore
 
         protected override void WhenPackageCountUpdated()
         {

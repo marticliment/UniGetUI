@@ -86,14 +86,14 @@ namespace UniGetUI.Interface
                 NavigationPage.UpdatesNavButton.ForceClick();
 
                 if (NavigationPage != null && NavigationPage.InstalledPage != null)
-                    NavigationPage.InstalledPage.ReloadPackages();
+                    _ = NavigationPage.InstalledPage.LoadPackages();
                 Activate();
             }
             else
             {
 
                 if (NavigationPage != null && NavigationPage.InstalledPage != null)
-                    NavigationPage.InstalledPage.ReloadPackages();
+                    _ = NavigationPage.InstalledPage.LoadPackages();
                 Activate();
             }
             Logger.Debug("Notification activated: " + args.ToString() + " " + input.ToString());
@@ -146,7 +146,7 @@ namespace UniGetUI.Interface
         public new void Activate()
         {
             if (NavigationPage != null && NavigationPage.InstalledPage != null)
-                NavigationPage.InstalledPage.ReloadPackages();
+                _ = NavigationPage.InstalledPage.LoadPackages();
 
             (this as Window).Activate();
         }

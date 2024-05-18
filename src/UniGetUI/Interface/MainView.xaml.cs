@@ -33,7 +33,7 @@ namespace UniGetUI.Interface
         public SettingsInterface SettingsPage;
         public DiscoverPackagesPage DiscoverPage;
         public NewSoftwareUpdatesPage UpdatesPage;
-        public InstalledPackagesPage InstalledPage;
+        public NewInstalledPackagesPage InstalledPage;
         public HelpDialog HelpPage;
         public PackageBundlePage BundlesPage;
         public Page OldPage;
@@ -56,7 +56,7 @@ namespace UniGetUI.Interface
             DiscoverPage = new DiscoverPackagesPage();
             UpdatesPage = new NewSoftwareUpdatesPage();
             UpdatesPage.ExternalCountBadge = UpdatesBadge;
-            InstalledPage = new InstalledPackagesPage();
+            InstalledPage = new NewInstalledPackagesPage();
             AboutPage = new AboutUniGetUI();
             BundlesPage = new PackageBundlePage();
             IgnoredUpdatesPage = new IgnoredUpdatesManager();

@@ -58,6 +58,11 @@ namespace UniGetUI.Interface
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
         protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
 
+        public int NewVersionLabelWidth { get { return RoleIsUpdateLike ? 125 : 0; } }
+        public int NewVersionIconWidth { get { return RoleIsUpdateLike ? 24 : 0; } }
+
+        private TreeViewNode LocalPackagesNode;
+
         public InfoBadge? ExternalCountBadge;
 
         protected bool Initialized = false;
@@ -76,7 +81,7 @@ namespace UniGetUI.Interface
 
         protected abstract Task<Package[]> LoadPackagesFromManager(PackageManager manager);
         protected abstract Task<bool> IsPackageValid(Package package);
-        protected abstract void WhenAddingPackage(Package package);
+        protected abstract Task WhenAddingPackage(Package package);
         protected abstract Task WhenPackagesLoaded(ReloadReason reason);
         protected abstract void WhenPackageCountUpdated();
         protected abstract void WhenShowingContextMenu(Package package);
@@ -124,6 +129,7 @@ namespace UniGetUI.Interface
             FindButton.Click += (s, e) => { FilterPackages(QueryBlock.Text); };
             QueryBlock.TextChanged += (s, e) => { if (InstantSearchCheckbox.IsChecked == true) FilterPackages(QueryBlock.Text); };
             QueryBlock.KeyUp += (s, e) => { if (e.Key == Windows.System.VirtualKey.Enter) FilterPackages(QueryBlock.Text); };
+            LocalPackagesNode = new TreeViewNode() { Content = CoreTools.Translate("Local"), IsExpanded = false };
 
             SourcesTreeView.Tapped += (s, e) =>
             {
@@ -229,7 +235,6 @@ namespace UniGetUI.Interface
         {
             if (!Initialized)
                 return;
-
             ManagerSource source = package.Source;
             if (!UsedManagers.Contains(source.Manager))
             {
@@ -249,8 +254,18 @@ namespace UniGetUI.Interface
                 UsedSourcesForManager[source.Manager].Add(source);
                 TreeViewNode item = new() { Content = source.Name + "                                                                                    ." };
                 NodesForSources.Add(source, item);
-                RootNodeForManager[source.Manager].Children.Add(item);
 
+                if (source.IsVirtualManager)
+                {
+                    LocalPackagesNode.Children.Add(item);
+                    if (!SourcesTreeView.RootNodes.Contains(LocalPackagesNode))
+                    {
+                        SourcesTreeView.RootNodes.Add(LocalPackagesNode);
+                        SourcesTreeView.SelectedNodes.Add(LocalPackagesNode);
+                    }
+                }
+                else
+                    RootNodeForManager[source.Manager].Children.Add(item);
             }
         }
 
@@ -350,7 +365,7 @@ namespace UniGetUI.Interface
                                     continue;
 
                                 Packages.Add(package);
-                                WhenAddingPackage(package);
+                                await WhenAddingPackage(package);
                                 AddPackageToSourcesList(package);
                             }
                             if (InitialCount < Packages.Count)

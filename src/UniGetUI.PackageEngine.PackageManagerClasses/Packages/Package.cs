@@ -16,6 +16,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using Windows.UI.Composition;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
@@ -30,6 +31,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         private float __opacity;
         private bool __show_icon_highlight;
         private string __hash;
+
+        public int NewVersionLabelWidth { get { return IsUpgradable? 125: 0; } }
+        public int NewVersionIconWidth { get { return IsUpgradable? 24: 0; } }
 
         public PackageTag Tag
         {
