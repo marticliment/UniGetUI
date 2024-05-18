@@ -147,11 +147,11 @@ namespace UniGetUI
                 else
                 {
                     MainWindow.ErrorBanner.Title = CoreTools.Translate("Something went wrong");
-                    MainWindow.ErrorBanner.Message = CoreTools.Translate("An interal error occurred. Please view the Logger.Log for further details.");
+                    MainWindow.ErrorBanner.Message = CoreTools.Translate("An interal error occurred. Please view the log for further details.");
                     MainWindow.ErrorBanner.IsOpen = true;
                     Button button = new()
                     {
-                        Content = CoreTools.Translate("WingetUI Logger.Log"),
+                        Content = CoreTools.Translate("WingetUI Log"),
                     };
                     button.Click += (sender, args) =>
                     {

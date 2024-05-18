@@ -275,6 +275,25 @@ Crash Traceback:
                 return -1;
             }
         }
+
+        /// <summary>
+        /// Returns the query that can be safely passed as a command-line parameter
+        /// </summary>
+        /// <param name="query">The query to make safe</param>
+        /// <returns>The safe version of the query</returns>
+        public static string EnsureSafeQueryString(string query)
+        {
+            return query.Replace(";", string.Empty)
+                        .Replace("&", string.Empty)
+                        .Replace("|", string.Empty)
+                        .Replace(">", string.Empty)
+                        .Replace("<", string.Empty)
+                        .Replace("%", string.Empty)
+                        .Replace("\"", string.Empty)
+                        .Replace("'", string.Empty)
+                        .Replace("\\", string.Empty)
+                        .Replace("`", string.Empty);
+        }
     }
 }
 

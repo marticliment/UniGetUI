@@ -28,6 +28,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public override void GenerateUIText()
         {
+            PAGE_NAME = "Updates";
+
             PageRole = OperationType.Update;
             NoPackages_BackgroundText = CoreTools.Translate("Hooray! No updates were found.");
             NoPackages_SourcesText = CoreTools.Translate("Everything is up to date");

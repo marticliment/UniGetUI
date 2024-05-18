@@ -14,6 +14,7 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using System.Net;
+using System.Web;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
@@ -61,7 +62,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             
             foreach(var source in sources)
             {
-                Uri SearchUrl = new Uri($"{source.Url}/Search()?searchTerm=%27{query}%27&targetFramework=%27%27&includePrerelease=false");
+                Uri SearchUrl = new Uri($"{source.Url}/Search()?searchTerm=%27{HttpUtility.UrlEncode(query)}%27&targetFramework=%27%27&includePrerelease=false");
                 Logger.Debug($"Begin package search with url={SearchUrl} on manager {Name}"); ;
                 HttpClientHandler handler = new HttpClientHandler()
                 {

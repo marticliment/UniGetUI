@@ -170,7 +170,7 @@ namespace UniGetUI.Interface
                     return 401;
 
                 string packages = "";
-                foreach (UpgradablePackage package in MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.Packages)
+                foreach (Package package in MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.Packages)
                 {
                     if (package.Tag == PackageTag.OnQueue || package.Tag == PackageTag.BeingProcessed)
                         continue; // Do not show already processed packages on queue 

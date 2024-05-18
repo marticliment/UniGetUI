@@ -173,7 +173,7 @@ namespace UniGetUI.Interface.Pages
             savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
             WinRT.Interop.InitializeWithWindow.Initialize(savePicker, WinRT.Interop.WindowNative.GetWindowHandle(MainApp.Instance.MainWindow));
             savePicker.FileTypeChoices.Add(CoreTools.Translate("Text"), new List<string>() { ".txt" });
-            savePicker.SuggestedFileName = CoreTools.Translate("WingetUI Logger.Log");
+            savePicker.SuggestedFileName = CoreTools.Translate("WingetUI Log");
 
             StorageFile file = await savePicker.PickSaveFileAsync();
             if (file != null)

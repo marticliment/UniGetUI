@@ -31,7 +31,7 @@ namespace UniGetUI.Interface
     public sealed partial class MainView : UserControl
     {
         public SettingsInterface SettingsPage;
-        public DiscoverPackagesPage DiscoverPage;
+        public NewDiscoverSoftwarePage DiscoverPage;
         public NewSoftwareUpdatesPage UpdatesPage;
         public NewInstalledPackagesPage InstalledPage;
         public HelpDialog HelpPage;
@@ -52,13 +52,13 @@ namespace UniGetUI.Interface
             UpdatesBadge = __updates_count_badge;
             BundleBadge = __bundle_count_badge;
             OperationStackPanel = __operations_list_stackpanel;
-            SettingsPage = new SettingsInterface();
-            DiscoverPage = new DiscoverPackagesPage();
+            DiscoverPage = new NewDiscoverSoftwarePage();
             UpdatesPage = new NewSoftwareUpdatesPage();
             UpdatesPage.ExternalCountBadge = UpdatesBadge;
             InstalledPage = new NewInstalledPackagesPage();
-            AboutPage = new AboutUniGetUI();
             BundlesPage = new PackageBundlePage();
+            SettingsPage = new SettingsInterface();
+            AboutPage = new AboutUniGetUI();
             IgnoredUpdatesPage = new IgnoredUpdatesManager();
 
             int i = 0;

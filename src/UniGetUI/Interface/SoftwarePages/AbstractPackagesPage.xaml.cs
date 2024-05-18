@@ -32,6 +32,8 @@ namespace UniGetUI.Interface
 
     public abstract partial class AbstractPackagesPage : Page
     {
+        protected bool DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = false;
+
         protected enum ReloadReason
         {
             FirstRun,
@@ -71,7 +73,7 @@ namespace UniGetUI.Interface
 
         int lastSavedWidth = 0;
 
-        protected const string PAGE_NAME = "UNDEFINED";
+        protected string PAGE_NAME = "UNDEFINED";
         public string InstantSearchSettingString { get { return $"DisableInstantSearch{PAGE_NAME}Tab"; } }
         public string SidepalWidthSettingString { get { return $"SidepanelWidth{PAGE_NAME}Page"; } }
 
@@ -148,9 +150,27 @@ namespace UniGetUI.Interface
                     }
                 }
             };
+
+            SourcesTreeView.RightTapped += (s, e) =>
+            {
+                if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
+                {
+                    if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
+                    {
+                        TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
+                        if (node == null)
+                            return;
+
+                        SourcesTreeView.SelectedNodes.Clear();
+                        SourcesTreeView.SelectedNodes.Add(node);
+                        FilterPackages(QueryBlock.Text.Trim());
+                    }
+                }
+            };
+
             PackageList.DoubleTapped += (s, e) =>
             {
-                _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update);
+                ShowDetailsForPackage(PackageList.SelectedItem as Package);
             };
 
             PackageList.RightTapped += (s, e) =>
@@ -173,19 +193,16 @@ namespace UniGetUI.Interface
                 }
             };
 
-            PackageList.KeyUp += async (s, e) =>
+            PackageList.KeyUp += (s, e) =>
             {
                 if (e.Key == Windows.System.VirtualKey.Enter && PackageList.SelectedItem != null)
                 {
                     if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down))
-                    {
-                        if (await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Update))
-                            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as Package));
-                    }
+                        ShowInstallationOptionsForPackage(PackageList.SelectedItem as Package);
                     else if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
-                        MainApp.Instance.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as Package));
+                        PerformMainPackageAction(PackageList.SelectedItem as Package);
                     else
-                        _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Update);
+                        ShowDetailsForPackage(PackageList.SelectedItem as Package);
                 }
                 else if (e.Key == Windows.System.VirtualKey.A && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                 {
@@ -226,7 +243,7 @@ namespace UniGetUI.Interface
 
             GenerateToolBar();
             LoadInterface();
-            _ = LoadPackages(ReloadReason.Automated);
+            _ = LoadPackages(ReloadReason.FirstRun);
 
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
         }
@@ -242,7 +259,16 @@ namespace UniGetUI.Interface
                 TreeViewNode Node;
                 Node = new TreeViewNode() { Content = source.Manager.Name + "                                                                                    .", IsExpanded = false };
                 SourcesTreeView.RootNodes.Add(Node);
-                SourcesTreeView.SelectedNodes.Add(Node);
+
+                // Smart way to decide wether to check a source or not.
+                // - Always check a source by default if no sources are present
+                // - Otherwise, Check a source only if half of the sources have already been checked
+                if(SourcesTreeView.RootNodes.Count == 0)
+                    SourcesTreeView.SelectedNodes.Add(Node);
+                else if (SourcesTreeView.SelectedNodes.Count >= SourcesTreeView.RootNodes.Count/2)
+                    SourcesTreeView.SelectedNodes.Add(Node);
+
+
                 RootNodeForManager.Add(source.Manager, Node);
                 UsedSourcesForManager.Add(source.Manager, new List<ManagerSource>());
                 SourcesPlaceholderText.Visibility = Visibility.Collapsed;
@@ -317,6 +343,9 @@ namespace UniGetUI.Interface
 
             if (LoadingProgressBar.Visibility == Visibility.Visible)
                 return; // If already loading, don't load again
+
+            if (DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START && reason == ReloadReason.FirstRun)
+                return;
 
             MainSubtitle.Text = CoreTools.Translate("Loading...");
             BackgroundText.Text = CoreTools.AutoTranslated("Loading...");
@@ -554,6 +583,7 @@ namespace UniGetUI.Interface
             if (package == null)
                 return;
 
+            Logger.Warn(PageRole.ToString());
             await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package, PageRole);
         }
 
@@ -570,14 +600,7 @@ namespace UniGetUI.Interface
                 return;
 
             if (await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(package, PageRole))
-            {
-                if(PageRole == OperationType.Install)
-                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
-                else if (PageRole == OperationType.Update)
-                    MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
-                else // if (PageRole == OperationType.Uninstall)
-                    MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
-            }
+                PerformMainPackageAction(package);
         }
 
         protected void SelectAllItems()
@@ -618,6 +641,18 @@ namespace UniGetUI.Interface
             {
                 control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;
             }
+        }
+
+        protected void PerformMainPackageAction(Package? package)
+        {
+            if(package == null) return;
+
+            if (PageRole == OperationType.Install)
+                MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
+            else if (PageRole == OperationType.Update)
+                MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
+            else // if (PageRole == OperationType.Uninstall)
+                MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
         }
 
     }

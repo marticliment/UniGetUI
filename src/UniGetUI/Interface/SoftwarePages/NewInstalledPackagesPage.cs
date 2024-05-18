@@ -32,7 +32,6 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenu menu = new BetterMenu();
             var menuUninstall = new BetterMenuItem
             {
-                Name = "MenuUninstall",
                 Text = "Uninstall",
                 IconName = "trash",
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
@@ -40,13 +39,10 @@ namespace UniGetUI.Interface.SoftwarePages
             menuUninstall.Click += MenuUninstall_Invoked;
             menu.Items.Add(menuUninstall);
 
-            // Add Separator
             menu.Items.Add(new MenuFlyoutSeparator { Height = 5 });
 
-            // Create MenuInstallSettings
             var menuInstallSettings = new BetterMenuItem
             {
-                Name = "MenuInstallSettings",
                 Text = "Installation options",
                 IconName = "options",
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
@@ -58,7 +54,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuAsAdmin = new BetterMenuItem
             {
-                Name = "MenuAsAdmin",
                 Text = "Uninstall as administrator",
                 IconName = "runasadmin"
             };
@@ -67,7 +62,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuInteractive = new BetterMenuItem
             {
-                Name = "MenuInteractive",
                 Text = "Interactive uninstall",
                 IconName = "interactive"
             };
@@ -76,7 +70,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuRemoveData = new BetterMenuItem
             {
-                Name = "MenuRemoveData",
                 Text = "Uninstall and remove data",
                 IconName = "menu_close"
             };
@@ -87,7 +80,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             var menuReinstall = new BetterMenuItem
             {
-                Name = "MenuReinstall",
                 Text = "Reinstall package",
                 IconName = "newversion"
             };
@@ -96,7 +88,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             var menuUninstallThenReinstall = new BetterMenuItem
             {
-                Name = "MenuUninstallThenReinstall",
                 Text = "Uninstall package, then reinstall it",
                 IconName = "undelete"
             };
@@ -107,7 +98,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             var menuIgnorePackage = new BetterMenuItem
             {
-                Name = "MenuIgnorePackage",
                 Text = "Ignore updates for this package",
                 IconName = "pin"
             };
@@ -118,7 +108,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             var menuShare = new BetterMenuItem
             {
-                Name = "MenuShare",
                 Text = "Share this package",
                 IconName = "share"
             };
@@ -127,7 +116,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             var menuDetails = new BetterMenuItem
             {
-                Name = "MenuDetails",
                 Text = "Package details",
                 IconName = "info",
                 KeyboardAcceleratorTextOverride = "Enter"
@@ -265,7 +253,10 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public override void GenerateUIText()
         {
+            PAGE_NAME = "Installed";
+
             PageRole = OperationType.Uninstall;
+            
             NoPackages_BackgroundText = CoreTools.Translate("No packages were found");
             NoPackages_SourcesText = CoreTools.Translate("No packages were found");
 
