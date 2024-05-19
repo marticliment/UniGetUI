@@ -558,13 +558,19 @@ namespace UniGetUI.Interface
                     }
                     BackgroundText.Visibility = Visibility.Visible;
                 }
+                else
+                {
+                    BackgroundText.Text = MainSubtitle_StillLoading;
+                    BackgroundText.Visibility = Packages.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+                    MainSubtitle.Text = MainSubtitle_StillLoading;
+                }
 
             }
             else
             {
-                BackgroundText.Text += MainSubtitle_StillLoading;
+                BackgroundText.Text = NoPackages_BackgroundText;
                 BackgroundText.Visibility = Packages.Count > 0? Visibility.Collapsed: Visibility.Visible;
-                MainSubtitle.Text = MainSubtitle_StillLoading;
+                MainSubtitle.Text = FoundPackages_SubtitleText;
             }
 
             if (ExternalCountBadge != null)
