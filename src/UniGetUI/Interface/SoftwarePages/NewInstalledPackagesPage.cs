@@ -255,10 +255,12 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             PAGE_NAME = "Installed";
 
+
             PageRole = OperationType.Uninstall;
             
             NoPackages_BackgroundText = CoreTools.Translate("No packages were found");
             NoPackages_SourcesText = CoreTools.Translate("No packages were found");
+            NoPackages_SubtitleMainText = NoPackages_SourcesText;
 
             NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria");
             NoMatches_SourcesText = CoreTools.Translate("No matches were found");

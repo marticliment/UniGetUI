@@ -863,7 +863,38 @@
                 </Grid>
 
             </Grid>
-    </Grid>
+
+
+            <!-- MEGA QUERY BLOCK -->
+            <Grid x:Name="MegaQueryBlockGrid" x:FieldModifier="protected" Visibility="Collapsed"
+                  Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8*" MaxWidth="800"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="MegaQueryBlock" x:FieldModifier="protected" Grid.Column="1" Grid.Row="1" 
+                         CornerRadius="12,0,0,12" FontSize="40" Padding="20,12,10,13" FontWeight="SemiBold"/>
+                <Button Grid.Column="2" Grid.Row="1" x:Name="MegaFindButton" CornerRadius="0,12,12,0" x:FieldModifier="protected"
+                        Height="80" Width="80" Padding="12" AutomationProperties.HelpText="Search">
+                    <AnimatedIcon>
+                        <AnimatedIcon.Source>
+                            <animatedvisuals:AnimatedFindVisualSource/>
+                        </AnimatedIcon.Source>
+                        <AnimatedIcon.FallbackIconSource>
+                            <SymbolIconSource Symbol="Find"/>
+                        </AnimatedIcon.FallbackIconSource>
+                    </AnimatedIcon>
+                </Button>
+
+            </Grid>
+        </Grid>
     </Grid>
 
 </Page>

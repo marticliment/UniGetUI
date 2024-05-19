@@ -229,16 +229,27 @@ namespace UniGetUI.Interface.SoftwarePages
         public override void GenerateUIText()
         {
             DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = true;
+            MEGA_QUERY_BOX_ENABLED = true;
             PAGE_NAME = "Discover";
 
             PageRole = OperationType.Install;
             InstantSearchCheckbox.IsEnabled = false;
+            InstantSearchCheckbox.Visibility = Visibility.Collapsed;
 
-            FindButton.Click += (s, e) => { _ = LoadPackages(ReloadReason.Manual); };
-            QueryBlock.KeyUp += (s, e) => { if (e.Key == Windows.System.VirtualKey.Enter) _ = LoadPackages(ReloadReason.Manual); };
+            FindButton.Click += (s, e) => { if(QueryBlock.Text.Trim() != "") _ = LoadPackages(ReloadReason.Manual); };
+            QueryBlock.KeyUp += (s, e) =>
+            {
+                if (QueryBlock.Text.Trim() != "" && e.Key == Windows.System.VirtualKey.Enter)
+                    _ = LoadPackages(ReloadReason.Manual);
+            };
 
-            NoPackages_BackgroundText = CoreTools.Translate("No results were found matching the input criteria.");
+            MegaFindButton.Click += (s, e) => { if (QueryBlock.Text.Trim() != "") _ = LoadPackages(ReloadReason.Manual); };
+            MegaQueryBlock.KeyUp += (s, e) => { if (QueryBlock.Text.Trim() != "" && e.Key == Windows.System.VirtualKey.Enter) _ = LoadPackages(ReloadReason.Manual); };
+
+
+            NoPackages_BackgroundText = CoreTools.Translate("No results were found matching the input criteria");
             NoPackages_SourcesText = CoreTools.Translate("No packages were found");
+            NoPackages_SubtitleMainText = NoPackages_SourcesText;
 
             NoMatches_BackgroundText = NoPackages_BackgroundText;
             NoMatches_SourcesText = NoPackages_SourcesText;

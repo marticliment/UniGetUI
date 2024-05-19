@@ -33,6 +33,8 @@ namespace UniGetUI.Interface
     public abstract partial class AbstractPackagesPage : Page
     {
         protected bool DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = false;
+        protected bool MEGA_QUERY_BOX_ENABLED = false;
+        protected bool SHOW_LAST_CHECKED_TIME = false;
 
         protected enum ReloadReason
         {
@@ -93,29 +95,35 @@ namespace UniGetUI.Interface
 
         protected string NoPackages_BackgroundText = CoreTools.Translate("Hooray! No updates were found.");
         protected string NoPackages_SourcesText = CoreTools.Translate("Everything is up to date");
+        protected string NoPackages_SubtitleMainText = CoreTools.Translate("Everything is up to date");
+
+
         protected string NoPackages_SubtitleText
         {
             get
             {
-                return CoreTools.Translate("Everything is up to date") + " " +
-                         CoreTools.Translate("(Last checked: {0})").Replace("{0}", LastPackageLoadTime.ToString());
+                return NoPackages_SubtitleMainText + " " +
+                    (SHOW_LAST_CHECKED_TIME ? CoreTools.Translate("(Last checked: {0})").Replace("{0}", LastPackageLoadTime.ToString()) : "");
             }
         }
 
-        protected string NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria.");
+        protected string NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria");
         protected string NoMatches_SourcesText = CoreTools.Translate("No packages were found");
         protected string NoMatches_SubtitleText
         {
             get
             {
                 return CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.")
-                                .Replace("{0}", Packages.Count.ToString()).Replace("{1}", (FilteredPackages.Count()).ToString()) + " " +
-                    CoreTools.Translate("(Last checked: {0})").Replace("{0}", LastPackageLoadTime.ToString());
+                        .Replace("{0}", Packages.Count.ToString())
+                        .Replace("{1}", (FilteredPackages.Count()).ToString()) + " " +
+                    (SHOW_LAST_CHECKED_TIME? CoreTools.Translate("(Last checked: {0})").Replace("{0}", LastPackageLoadTime.ToString()): "");
             }
         }
         protected string FoundPackages_SubtitleText { get { return NoMatches_SubtitleText; } }
         protected string MainTitleText = CoreTools.AutoTranslated("Software Updates");
         protected string MainTitleGlyph = "\uE895";
+
+        protected string MainSubtitle_StillLoading = CoreTools.Translate("Loading...");
 
 
 
@@ -128,9 +136,48 @@ namespace UniGetUI.Interface
             LoadingProgressBar.Visibility = Visibility.Collapsed;
             Initialized = true;
             ReloadButton.Click += async (s, e) => { await LoadPackages(); };
-            FindButton.Click += (s, e) => { FilterPackages(QueryBlock.Text); };
+            FindButton.Click += (s, e) => { 
+                MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
+                FilterPackages(QueryBlock.Text);
+            };
             QueryBlock.TextChanged += (s, e) => { if (InstantSearchCheckbox.IsChecked == true) FilterPackages(QueryBlock.Text); };
-            QueryBlock.KeyUp += (s, e) => { if (e.Key == Windows.System.VirtualKey.Enter) FilterPackages(QueryBlock.Text); };
+            QueryBlock.KeyUp += (s, e) => {
+                if (e.Key == Windows.System.VirtualKey.Enter)
+                {
+                    MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
+                    FilterPackages(QueryBlock.Text);
+                }
+            };
+            
+            QueryBlock.TextChanged += (s, e) => {
+                if (MEGA_QUERY_BOX_ENABLED &&  QueryBlock.Text.Trim() == "")
+                {
+                    MegaQueryBlockGrid.Visibility = Visibility.Visible;
+                    BackgroundText.Visibility = Visibility.Collapsed;
+                    ClearPackageList();
+                    UpdatePackageCount();
+                    MegaQueryBlock.Focus(FocusState.Programmatic);
+                    MegaQueryBlock.Text = "";
+                }
+            };
+
+            MegaQueryBlock.KeyUp += (s, e) => {
+                if (e.Key == Windows.System.VirtualKey.Enter)
+                {
+                    MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
+                    QueryBlock.Text = MegaQueryBlock.Text.Trim();
+                    FilterPackages(QueryBlock.Text);
+                }
+            };
+
+            MegaFindButton.Click += (s, e) =>
+            {
+                MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
+                QueryBlock.Text = MegaQueryBlock.Text.Trim();
+                FilterPackages(QueryBlock.Text);
+            };
+
+
             LocalPackagesNode = new TreeViewNode() { Content = CoreTools.Translate("Local"), IsExpanded = false };
 
             SourcesTreeView.Tapped += (s, e) =>
@@ -246,6 +293,7 @@ namespace UniGetUI.Interface
             _ = LoadPackages(ReloadReason.FirstRun);
 
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
+            MegaQueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
         }
 
         protected void AddPackageToSourcesList(Package package)
@@ -260,7 +308,7 @@ namespace UniGetUI.Interface
                 Node = new TreeViewNode() { Content = source.Manager.Name + "                                                                                    .", IsExpanded = false };
                 SourcesTreeView.RootNodes.Add(Node);
 
-                // Smart way to decide wether to check a source or not.
+                // Smart way to decide whether to check a source or not.
                 // - Always check a source by default if no sources are present
                 // - Otherwise, Check a source only if half of the sources have already been checked
                 if(SourcesTreeView.RootNodes.Count == 0)
@@ -334,7 +382,16 @@ namespace UniGetUI.Interface
             await LoadPackages(ReloadReason.External);
         }
 
-
+        protected void ClearPackageList()
+        {
+            Packages.Clear();
+            FilteredPackages.Clear();
+            UsedManagers.Clear();
+            SourcesTreeView.RootNodes.Clear();
+            UsedSourcesForManager.Clear();
+            RootNodeForManager.Clear();
+            NodesForSources.Clear();
+        }
 
         protected async Task LoadPackages(ReloadReason reason)
         {
@@ -355,13 +412,7 @@ namespace UniGetUI.Interface
             SourcesPlaceholderText.Text = CoreTools.AutoTranslated("Loading...");
             SourcesTreeViewGrid.Visibility = Visibility.Collapsed;
 
-            Packages.Clear();
-            FilteredPackages.Clear();
-            UsedManagers.Clear();
-            SourcesTreeView.RootNodes.Clear();
-            UsedSourcesForManager.Clear();
-            RootNodeForManager.Clear();
-            NodesForSources.Clear();
+            ClearPackageList();
 
             await Task.Delay(100);
 
@@ -405,9 +456,9 @@ namespace UniGetUI.Interface
                 }
             }
 
-            FilterPackages(QueryBlock.Text);
             LoadingProgressBar.Visibility = Visibility.Collapsed;
             LastPackageLoadTime = DateTime.Now;
+            FilterPackages(QueryBlock.Text, StillLoading: false);
             await WhenPackagesLoaded(reason);
         }
 
@@ -487,8 +538,6 @@ namespace UniGetUI.Interface
             UpdatePackageCount(StillLoading);
         }
 
-        
-
         public void UpdatePackageCount(bool StillLoading = false)
         {
             if (FilteredPackages.Count() == 0)
@@ -513,8 +562,9 @@ namespace UniGetUI.Interface
             }
             else
             {
-                BackgroundText.Visibility = Visibility.Collapsed;
-                MainSubtitle.Text = FoundPackages_SubtitleText;
+                BackgroundText.Text += MainSubtitle_StillLoading;
+                BackgroundText.Visibility = Packages.Count > 0? Visibility.Collapsed: Visibility.Visible;
+                MainSubtitle.Text = MainSubtitle_StillLoading;
             }
 
             if (ExternalCountBadge != null)
@@ -522,6 +572,10 @@ namespace UniGetUI.Interface
                 ExternalCountBadge.Visibility = Packages.Count() == 0 ? Visibility.Collapsed : Visibility.Visible;
                 ExternalCountBadge.Value = Packages.Count();
             }
+
+            if (MegaQueryBlockGrid.Visibility == Visibility.Visible)
+                BackgroundText.Visibility = Visibility.Collapsed;
+            
             WhenPackageCountUpdated();
         }
 
@@ -544,6 +598,14 @@ namespace UniGetUI.Interface
                 return;
 
             GenerateUIText();
+
+            if (MEGA_QUERY_BOX_ENABLED)
+            {
+                MegaQueryBlockGrid.Visibility = Visibility.Visible;
+                MegaQueryBlock.Focus(FocusState.Programmatic); 
+                BackgroundText.Visibility = Visibility.Collapsed;
+
+            }
 
             InstantSearchCheckbox.IsChecked = !Settings.Get(InstantSearchSettingString);
 

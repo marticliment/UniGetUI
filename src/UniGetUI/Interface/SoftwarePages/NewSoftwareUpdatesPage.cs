@@ -29,12 +29,14 @@ namespace UniGetUI.Interface.SoftwarePages
         public override void GenerateUIText()
         {
             PAGE_NAME = "Updates";
+            SHOW_LAST_CHECKED_TIME = true;
 
             PageRole = OperationType.Update;
             NoPackages_BackgroundText = CoreTools.Translate("Hooray! No updates were found.");
             NoPackages_SourcesText = CoreTools.Translate("Everything is up to date");
+            NoPackages_SubtitleMainText = NoPackages_SourcesText;
 
-            NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria.");
+            NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria");
             NoMatches_SourcesText = CoreTools.Translate("No packages were found");
 
             MainTitleText = CoreTools.AutoTranslated("Software Updates");
@@ -251,7 +253,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             HelpButton.Click += (s, e) => { MainApp.Instance.MainWindow.NavigationPage.ShowHelp(); };
 
-            InstallationSettings.Click += async (s, e) =>
+            InstallationSettings.Click += (s, e) =>
             {   if (PackageList.SelectedItem != null)
                     ShowInstallationOptionsForPackage(PackageList.SelectedItem as Package);
             };
