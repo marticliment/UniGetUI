@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/marticliment/WingetUI/main/media/icon_old.png" height="40">WingetUI (soon <img src="https://raw.githubusercontent.com/marticliment/WingetUI/3.1.0-alpha0/media/icon.png" height="40">UniGetUI)
+# <img src="https://raw.githubusercontent.com/marticliment/WingetUI/main/media/icon_old.png" height="40">WingetUI (soon <img src="https://raw.githubusercontent.com/marticliment/WingetUI/main/media/icon.png" height="40">UniGetUI)
 
 [![Downloads@latest](https://img.shields.io/github/downloads/marticliment/WingetUI/2.2.0/total?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe)
 [![Release Version Badge](https://img.shields.io/github/v/release/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases)
