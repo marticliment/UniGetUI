@@ -58,7 +58,7 @@ namespace UniGetUI.Interface.Widgets
                 HttpResponseMessage response = await NetClient.GetAsync(announcement_url);
                 if (response.IsSuccessStatusCode)
                 {
-                    string[] response_body = (response.Content.ToString() ?? "").Split("////");
+                    string[] response_body = (await response.Content.ReadAsStringAsync()).Split("////");
                     string title = response_body[0].Trim().Trim('\n').Trim();
                     string body = response_body[1].Trim().Trim('\n').Trim();
                     string linkId = response_body[2].Trim().Trim('\n').Trim();
