@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11702,
-        "done": 5044,
-        "packages_with_icon": 5044,
-        "packages_with_screenshot": 552,
-        "total_screenshots": 1727
+        "total": 11703,
+        "done": 5046,
+        "packages_with_icon": 5046,
+        "packages_with_screenshot": 554,
+        "total_screenshots": 1734
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -14554,6 +14554,13 @@
             "icon": "",
             "images": []
         },
+        "floorp": {
+            "icon": "https://styles.redditmedia.com/t5_6c1hrv/styles/communityIcon_c6dw6btea2y81.png",
+            "images": [
+                "https://floorp.app/_next/static/chunks/images/hero_1920_75.png",
+                "https://upload.wikimedia.org/wikipedia/commons/d/d0/Floorp_Browser_11.1.2_Screenshot.png"
+            ]
+        },
         "floss": {
             "icon": "",
             "images": []
@@ -21045,7 +21052,9 @@
         "kdevelop": {
             "icon": "https://community.chocolatey.org/content/packageimages/kdevelop.install.5.5.0.png",
             "images": [
-                "https://cdn.kde.org/screenshots/kdevelop/kdevelop.png"
+                "https://cdn.kde.org/screenshots/kdevelop/kdevelop.png",
+                "https://kdevelop.org/images/kdevelop-code.png",
+                "https://kdevelop.org/images/kdevelop-documentation.png"
             ]
         },
         "kdiff3": {
@@ -39907,8 +39916,12 @@
             "images": []
         },
         "taiga": {
-            "icon": "",
-            "images": []
+            "icon": "https://imgur.com/a/MTPLaUL",
+            "images": [
+                "https://imgur.com/a/Jp9TlKP",
+                "https://imgur.com/a/LMBhzM4",
+                "https://imgur.com/a/Zx98DaQ"
+            ]
         },
         "tailblazer": {
             "icon": "https://community.chocolatey.org/content/packageimages/tailblazer.0.9.0.536.png",

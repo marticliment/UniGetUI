@@ -185,7 +185,12 @@
       "link": "https://github.com/smsi2001"
     }
   ],
-  "fi": [],
+  "fi": [
+    {
+      "name": "simakuutio",
+      "link": "https://github.com/simakuutio"
+    }
+  ],
   "fr": [
     {
       "name": "BreatFR",
@@ -298,6 +303,10 @@
     {
       "name": "shblue21",
       "link": "https://github.com/shblue21"
+    },
+    {
+      "name": "VenusGirl",
+      "link": "https://github.com/VenusGirl"
     }
   ],
   "mk": [
@@ -420,6 +429,12 @@
     {
       "name": "rumplin",
       "link": "https://github.com/rumplin"
+    }
+  ],
+  "sq": [
+    {
+      "name": "RDN000",
+      "link": "https://github.com/RDN000"
     }
   ],
   "sr": [
