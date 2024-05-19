@@ -31,7 +31,7 @@ internal sealed class ClassModel
     /// <exception cref="InvalidOperationException">Throw an exception if the clsid context is not available for the current instance.</exception>
     public Guid GetClsid(ClsidContext context)
     {
-        if (!Clsids.TryGetValue(context, out var clsid))
+        if (!Clsids.TryGetValue(context, out Guid clsid))
         {
             throw new InvalidOperationException($"{ProjectedClassType.FullName} is not implemented in context {context}");
         }

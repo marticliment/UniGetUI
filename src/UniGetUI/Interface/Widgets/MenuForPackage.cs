@@ -1,14 +1,16 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.Core;
 using System;
+using UniGetUI.Core;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Widgets
 {
     public class BetterMenu : MenuFlyout
     {
-        public AppTools Tools = AppTools.Instance;
         public BetterMenu() : base()
         {
             MenuFlyoutPresenterStyle = (Style)Application.Current.Resources["BetterContextMenu"];
@@ -17,7 +19,6 @@ namespace UniGetUI.Interface.Widgets
 
     public class BetterMenuItem : MenuFlyoutItem
     {
-        public AppTools Tools = AppTools.Instance;
         DependencyProperty IconNameProperty;
 
         public string IconName
@@ -44,7 +45,7 @@ namespace UniGetUI.Interface.Widgets
                 typeof(CheckboxCard),
                 new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
                 {
-                    Icon = new LocalIcon(e.NewValue as string);
+                    Icon = new LocalIcon(e.NewValue as string ?? "");
                 })));
 
             TextProperty = DependencyProperty.Register(
@@ -53,7 +54,7 @@ namespace UniGetUI.Interface.Widgets
                 typeof(CheckboxCard),
                 new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
                 {
-                    (this as MenuFlyoutItem).Text = AppTools.Instance.Translate(e.NewValue as string);
+                    (this as MenuFlyoutItem).Text = CoreTools.Translate(e.NewValue as string ?? "");
                 })));
 
         }
@@ -63,7 +64,7 @@ namespace UniGetUI.Interface.Widgets
 
     public class MenuForPackage : MenuFlyout
     {
-        public event EventHandler<Package> AboutToShow;
+        public event EventHandler<Package>? AboutToShow;
         DependencyProperty PackageProperty;
 
         public MenuForPackage() : base()
@@ -86,7 +87,7 @@ namespace UniGetUI.Interface.Widgets
     }
     public class MenuItemForPackage : MenuFlyoutItem
     {
-        public event EventHandler<Package> Invoked;
+        public event EventHandler<Package>? Invoked;
 
         DependencyProperty PackageProperty;
 
@@ -119,7 +120,7 @@ namespace UniGetUI.Interface.Widgets
                 typeof(CheckboxCard),
                 new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
                 {
-                    Icon = new LocalIcon(e.NewValue as string);
+                    Icon = new LocalIcon(e.NewValue as string ?? "");
                 })));
 
             Click += (s, e) => { Invoked?.Invoke(this, Package); };

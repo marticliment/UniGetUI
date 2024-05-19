@@ -1,12 +1,9 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using UniGetUI.Core.Data;
-using UniGetUI.Interface.Pages.AboutPages;
 using UniGetUI.Core;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text.Json.Nodes;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Pages.AboutPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -20,12 +17,16 @@ namespace UniGetUI.Interface
     public sealed partial class AboutUniGetUI : Page
     {
 
-        AppTools Tools = AppTools.Instance;
 
         int previousSelectedIndex = 0;
         public AboutUniGetUI()
         {
             InitializeComponent();
+            SelectorBarItemPage1.Text = CoreTools.Translate("About");
+            SelectorBarItemPage2.Text = CoreTools.Translate("Third-party licenses");
+            SelectorBarItemPage3.Text = CoreTools.Translate("Contributors");
+            SelectorBarItemPage4.Text = CoreTools.Translate("Translators");
+            SelectorBarItemPage5.Text = CoreTools.Translate("Support me");
         }
 
         private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
@@ -53,7 +54,7 @@ namespace UniGetUI.Interface
                     break;
             }
 
-            var slideNavigationTransitionEffect = currentSelectedIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
+            SlideNavigationTransitionEffect slideNavigationTransitionEffect = currentSelectedIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
 
             ContentFrame.Navigate(pageType, null, new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect });
 

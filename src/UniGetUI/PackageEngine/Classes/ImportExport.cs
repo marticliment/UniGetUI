@@ -1,10 +1,16 @@
 ﻿using Microsoft.UI.Xaml;
-using UniGetUI.Core;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using static UniGetUI.PackageEngine.Classes.InstallationOptions;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core;
+using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Serializable;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI.PackageEngine.Classes
 {
@@ -17,14 +23,7 @@ namespace UniGetUI.PackageEngine.Classes
         public List<SerializableIncompatiblePackage_v1> incompatible_packages { get; set; } = new();
 
     }
-    public enum DeserializedPackageStatus
-    {
-        ManagerNotFound,
-        ManagerNotEnabled,
-        ManagerNotReady,
-        SourceNotFound,
-        IsAvailable
-    }
+    
     public class SerializableUpdatesOptions_v1
     {
         public bool UpdatesIgnored { get; set; } = false;
@@ -37,6 +36,7 @@ namespace UniGetUI.PackageEngine.Classes
             return Serializable;
         }
     }
+
     public class SerializableValidPackage_v1
     {
         public string Id { get; set; } = "";
@@ -44,22 +44,11 @@ namespace UniGetUI.PackageEngine.Classes
         public string Version { get; set; } = "";
         public string Source { get; set; } = "";
         public string ManagerName { get; set; } = "";
-        public SerializableInstallationOptions_v1 InstallationOptions { get; set; }
-        public SerializableUpdatesOptions_v1 Updates { get; set; }
+        public SerializableInstallationOptions_v1 InstallationOptions { get; set; } = new();
+        public SerializableUpdatesOptions_v1 Updates { get; set; } = new();
     }
 
-    public class SerializableInstallationOptions_v1
-    {
-        public bool SkipHashCheck { get; set; } = false;
-        public bool InteractiveInstallation { get; set; } = false;
-        public bool RunAsAdministrator { get; set; } = false;
-        public string Architecture { get; set; } = "";
-        public string InstallationScope { get; set; } = "";
-        public List<string> CustomParameters { get; set; }
-        public bool PreRelease { get; set; } = false;
-        public string CustomInstallLocation { get; set; } = "";
-        public string Version { get; set; } = "";
-    }
+    
 
     public class SerializableIncompatiblePackage_v1
     {
@@ -71,24 +60,18 @@ namespace UniGetUI.PackageEngine.Classes
 
 
 
-    public enum BundleFormatType
-    {
-        JSON,
-        YAML,
-        XML
-    }
+    
 
     public class BundledPackage : INotifyPropertyChanged
     {
-        public AppTools Tools = AppTools.Instance;
         public Package Package { get; }
         public bool IsValid { get; set; } = true;
         public InstallationOptions InstallOptions { get; set; }
-        public SerializableUpdatesOptions_v1 UpdateOptions = null;
+        public SerializableUpdatesOptions_v1 UpdateOptions;
 
         public double DrawOpacity = 1;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private bool __is_checked = true;
         public bool IsChecked { get { return __is_checked; } set { __is_checked = value; OnPropertyChanged(); } }
@@ -115,7 +98,7 @@ namespace UniGetUI.PackageEngine.Classes
             get
             {
                 if (UpdateOptions == null || !UpdateOptions.UpdatesIgnored)
-                    return Tools.Translate("Latest");
+                    return CoreTools.Translate("Latest");
                 else
                     return Package.Version;
             }
@@ -138,8 +121,8 @@ namespace UniGetUI.PackageEngine.Classes
         }
         public static async Task<BundledPackage> FromPackageAsync(Package package)
         {
-            var iOptions = await InstallationOptions.FromPackageAsync(package);
-            var uOptions = await SerializableUpdatesOptions_v1.FromPackageAsync(package);
+            InstallationOptions iOptions = await InstallationOptions.FromPackageAsync(package);
+            SerializableUpdatesOptions_v1 uOptions = await SerializableUpdatesOptions_v1.FromPackageAsync(package);
 
             return new BundledPackage(package, iOptions, uOptions);
         }
@@ -154,17 +137,17 @@ namespace UniGetUI.PackageEngine.Classes
 
         public async virtual void ShowOptions(object sender, RoutedEventArgs e)
         {
-            InstallOptions = await Tools.App.MainWindow.NavigationPage.UpdateInstallationSettings(Package, InstallOptions);
+            InstallOptions = await MainApp.Instance.MainWindow.NavigationPage.UpdateInstallationSettings(Package, InstallOptions);
         }
 
         public void RemoveFromList(object sender, RoutedEventArgs e)
         {
-            Tools.App.MainWindow.NavigationPage.BundlesPage.Packages.Remove(this);
-            Tools.App.MainWindow.NavigationPage.BundlesPage.FilteredPackages.Remove(this);
-            Tools.App.MainWindow.NavigationPage.BundlesPage.UpdateCount();
+            MainApp.Instance.MainWindow.NavigationPage.BundlesPage.Packages.Remove(this);
+            MainApp.Instance.MainWindow.NavigationPage.BundlesPage.FilteredPackages.Remove(this);
+            MainApp.Instance.MainWindow.NavigationPage.BundlesPage.UpdateCount();
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -179,8 +162,8 @@ namespace UniGetUI.PackageEngine.Classes
             Serializable.Version = Package.Version;
             Serializable.Source = Package.Source.Name;
             Serializable.ManagerName = Package.Manager.Name;
-            Serializable.InstallationOptions = this.InstallOptions.Serialized();
-            Serializable.Updates = this.UpdateOptions;
+            Serializable.InstallationOptions = InstallOptions.Serialized();
+            Serializable.Updates = UpdateOptions;
             return Serializable;
         }
 
@@ -253,7 +236,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
         }
 
-        public InvalidBundledPackage(string name, string id, string version, string source, string manager) : this(new Package(name, id, version, AppTools.Instance.App.Winget.MainSource, AppTools.Instance.App.Winget))
+        public InvalidBundledPackage(string name, string id, string version, string source, string manager) : this(new Package(name, id, version, MainApp.Winget.DefaultSource, MainApp.Winget))
         {
             IsValid = false;
             DrawOpacity = 0.5;
@@ -263,6 +246,7 @@ namespace UniGetUI.PackageEngine.Classes
             __source = source;
             __manager = manager;
         }
+
         public InvalidBundledPackage(Package package) : base(package, new InstallationOptions(package, reset: true), new SerializableUpdatesOptions_v1())
         {
             IsValid = false;

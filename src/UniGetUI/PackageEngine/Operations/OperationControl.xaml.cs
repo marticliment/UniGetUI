@@ -1,12 +1,8 @@
-using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,6 +10,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using UniGetUI.Core;
+using UniGetUI.Core.Data;
+using UniGetUI.Interface.Enums;
+using UniGetUI.Core.Logging;
+using ExternalLibraries.Clipboard;
+using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.Core.Tools;
+
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -35,9 +40,8 @@ namespace UniGetUI.PackageEngine.Operations
             Compact,
         }
 
-        public static AppTools Tools = AppTools.Instance;
 
-        private string __button_text;
+        private string __button_text = "";
         private string __line_info_text = "Please wait...";
         private Uri __icon_source = new("ms-appx:///Assets/Images/package_color.png");
         private string __operation_description = "$Package Install";
@@ -104,10 +108,10 @@ namespace UniGetUI.PackageEngine.Operations
         }
 
 #pragma warning disable CS0067
-        protected event EventHandler<OperationCancelledEventArgs> CancelRequested;
-        protected event EventHandler<OperationCancelledEventArgs> CloseRequested;
+        protected event EventHandler<OperationCancelledEventArgs>? CancelRequested;
+        protected event EventHandler<OperationCancelledEventArgs>? CloseRequested;
 #pragma warning restore CS0067
-        protected Process Process;
+        protected Process Process = new();
         protected ObservableCollection<string> ProcessOutput = new();
 
         private ContentDialog OutputDialog = new();
@@ -119,7 +123,7 @@ namespace UniGetUI.PackageEngine.Operations
             get { return __status; }
             set
             {
-                MainGrid.RequestedTheme = Tools.App.MainWindow.ContentRoot.RequestedTheme;
+                MainGrid.RequestedTheme = MainApp.Instance.MainWindow.ContentRoot.RequestedTheme;
                 __status = value;
                 switch (__status)
                 {
@@ -137,7 +141,7 @@ namespace UniGetUI.PackageEngine.Operations
                         ProgressIndicator.IsIndeterminate = false;
                         ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBrush"];
                         MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBackgroundBrush"];
-                        ButtonText = Tools.Translate("Cancel");
+                        ButtonText = CoreTools.Translate("Cancel");
                         break;
 
                     case OperationStatus.Running:
@@ -145,28 +149,28 @@ namespace UniGetUI.PackageEngine.Operations
                         ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorAttentionBrush"];
                         MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorAttentionBackgroundBrush"];
 
-                        ButtonText = Tools.Translate("Cancel");
+                        ButtonText = CoreTools.Translate("Cancel");
                         break;
 
                     case OperationStatus.Succeeded:
                         ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorSuccessBrush"];
                         MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBackgroundBrush"];
                         ProgressIndicator.IsIndeterminate = false;
-                        ButtonText = Tools.Translate("Close");
+                        ButtonText = CoreTools.Translate("Close");
                         break;
 
                     case OperationStatus.Failed:
                         ProgressIndicator.IsIndeterminate = false;
                         ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorCriticalBrush"];
                         MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorCriticalBackgroundBrush"];
-                        ButtonText = Tools.Translate("Close");
+                        ButtonText = CoreTools.Translate("Close");
                         break;
 
                     case OperationStatus.Cancelled:
                         ProgressIndicator.IsIndeterminate = false;
                         ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorCautionBrush"];
                         MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBackgroundBrush"];
-                        ButtonText = Tools.Translate("Close");
+                        ButtonText = CoreTools.Translate("Close");
                         break;
                 }
             }
@@ -192,8 +196,8 @@ namespace UniGetUI.PackageEngine.Operations
             LiveOutputScrollBar.Width = 600;
             LiveOutputScrollBar.Content = LiveOutputTextBlock;
 
-            OutputDialog.Title = Tools.Translate("Live output");
-            OutputDialog.CloseButtonText = Tools.Translate("Close");
+            OutputDialog.Title = CoreTools.Translate("Live output");
+            OutputDialog.CloseButtonText = CoreTools.Translate("Close");
 
 
             OutputDialog.SizeChanged += (s, e) =>
@@ -201,8 +205,8 @@ namespace UniGetUI.PackageEngine.Operations
                 if (!IsDialogOpen)
                     return;
 
-                LiveOutputScrollBar.MinWidth = Tools.App.MainWindow.NavigationPage.ActualWidth - 400;
-                LiveOutputScrollBar.MinHeight = Tools.App.MainWindow.NavigationPage.ActualHeight - 200;
+                LiveOutputScrollBar.MinWidth = MainApp.Instance.MainWindow.NavigationPage.ActualWidth - 400;
+                LiveOutputScrollBar.MinHeight = MainApp.Instance.MainWindow.NavigationPage.ActualHeight - 200;
             };
 
             OutputDialog.Content = LiveOutputScrollBar;
@@ -254,10 +258,10 @@ namespace UniGetUI.PackageEngine.Operations
             LiveOutputTextBlock.Blocks.Add(p);
             IsDialogOpen = true;
 
-            if (await Tools.App.MainWindow.ShowDialogAsync(OutputDialog) == ContentDialogResult.Secondary)
+            if (await MainApp.Instance.MainWindow.ShowDialogAsync(OutputDialog) == ContentDialogResult.Secondary)
             {
                 LiveOutputScrollBar.ScrollToVerticalOffset(LiveOutputScrollBar.ScrollableHeight);
-                UniGetUI.ExternalLibraries.Clipboard.WindowsClipboard.SetText(string.Join('\n', ProcessOutput.ToArray()));
+                WindowsClipboard.SetText(string.Join('\n', ProcessOutput.ToArray()));
             }
             IsDialogOpen = false;
         }
@@ -274,23 +278,23 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected void RemoveFromQueue()
         {
-            while(Tools.OperationQueue.IndexOf(this) != -1)
-                Tools.OperationQueue.Remove(this);
+            while (MainApp.Instance.OperationQueue.IndexOf(this) != -1)
+                MainApp.Instance.OperationQueue.Remove(this);
         }
         protected void AddToQueue()
         {
-            if (!Tools.OperationQueue.Contains(this))
-                Tools.OperationQueue.Add(this);
+            if (!MainApp.Instance.OperationQueue.Contains(this))
+                MainApp.Instance.OperationQueue.Add(this);
         }
 
         public void CancelButtonClicked(OperationStatus OldStatus)
         {
             RemoveFromQueue();
             Status = OperationStatus.Cancelled;
-            LineInfoText = Tools.Translate("Operation cancelled");
+            LineInfoText = CoreTools.Translate("Operation cancelled");
 
-            if (this is PackageOperation)
-                (this as PackageOperation).Package.Tag = PackageTag.Default;
+            if (this as PackageOperation != null)
+                ((PackageOperation)this).Package.Tag = PackageTag.Default;
 
             if (OldStatus == OperationStatus.Running)
             {
@@ -306,7 +310,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected void AddToQueue_Priority()
         {
-            Tools.OperationQueue.Insert(0, this);
+            MainApp.Instance.OperationQueue.Insert(0, this);
         }
 
         protected virtual async Task WaitForAvailability()
@@ -319,10 +323,10 @@ namespace UniGetUI.PackageEngine.Operations
                 if (Status == OperationStatus.Cancelled)
                     return; // If the operation has been cancelled
 
-                currentIndex = Tools.OperationQueue.IndexOf(this);
+                currentIndex = MainApp.Instance.OperationQueue.IndexOf(this);
                 if (currentIndex != oldIndex)
                 {
-                    LineInfoText = Tools.Translate("Operation on queue (position {0})...").Replace("{0}", currentIndex.ToString());
+                    LineInfoText = CoreTools.Translate("Operation on queue (position {0})...").Replace("{0}", currentIndex.ToString());
                     oldIndex = currentIndex;
                 }
                 await Task.Delay(100);
@@ -342,10 +346,10 @@ namespace UniGetUI.PackageEngine.Operations
                 if (Status == OperationStatus.Cancelled)
                     return; // If the operation was cancelled, do nothing.
 
-                Tools.TooltipStatus.OperationsInProgress = Tools.TooltipStatus.OperationsInProgress + 1;
+                MainApp.Instance.TooltipStatus.OperationsInProgress = MainApp.Instance.TooltipStatus.OperationsInProgress + 1;
 
                 Status = OperationStatus.Running;
-                LineInfoText = Tools.Translate("Launching subprocess...");
+                LineInfoText = CoreTools.Translate("Launching subprocess...");
                 ProcessStartInfo startInfo = new();
                 startInfo.RedirectStandardInput = true;
                 startInfo.RedirectStandardOutput = true;
@@ -369,7 +373,7 @@ namespace UniGetUI.PackageEngine.Operations
 
                 Process.Start();
 
-                string line;
+                string? line;
                 while ((line = await Process.StandardOutput.ReadLineAsync()) != null)
                 {
                     if (line.Trim() != "")
@@ -407,9 +411,9 @@ namespace UniGetUI.PackageEngine.Operations
                         case OperationVeredict.Failed:
                             Status = OperationStatus.Failed;
                             RemoveFromQueue();
-                            Tools.TooltipStatus.ErrorsOccurred = Tools.TooltipStatus.ErrorsOccurred + 1;
+                            MainApp.Instance.TooltipStatus.ErrorsOccurred = MainApp.Instance.TooltipStatus.ErrorsOccurred + 1;
                             postAction = await HandleFailure();
-                            Tools.TooltipStatus.ErrorsOccurred = Tools.TooltipStatus.ErrorsOccurred - 1;
+                            MainApp.Instance.TooltipStatus.ErrorsOccurred = MainApp.Instance.TooltipStatus.ErrorsOccurred - 1;
                             break;
 
                         case OperationVeredict.Succeeded:
@@ -428,28 +432,28 @@ namespace UniGetUI.PackageEngine.Operations
                 switch (postAction)
                 {
                     case AfterFinshAction.TimeoutClose:
-                        if (Tools.OperationQueue.Count == 0)
-                            if (Tools.GetSettings("DoCacheAdminRightsForBatches"))
+                        if (MainApp.Instance.OperationQueue.Count == 0)
+                            if (Settings.Get("DoCacheAdminRightsForBatches"))
                             {
-                                AppTools.Log("Erasing admin rights");
+                                Logger.Debug("Erasing admin rights");
                                 Process p = new();
-                                p.StartInfo.FileName = CoreData.GSudoPath;
+                                p.StartInfo.FileName = MainApp.Instance.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
                                 p.Start();
                                 p.WaitForExit();
                             }
                         await Task.Delay(5000);
-                        if (!Tools.GetSettings("MaintainSuccessfulInstalls"))
+                        if (!Settings.Get("MaintainSuccessfulInstalls"))
                             _ = Close();
                         break;
 
                     case AfterFinshAction.ManualClose:
-                        if (Tools.OperationQueue.Count == 0)
-                            if (Tools.GetSettings("DoCacheAdminRightsForBatches"))
+                        if (MainApp.Instance.OperationQueue.Count == 0)
+                            if (Settings.Get("DoCacheAdminRightsForBatches"))
                             {
-                                AppTools.Log("Erasing admin rights");
+                                Logger.Debug("Erasing admin rights");
                                 Process p = new();
-                                p.StartInfo.FileName = CoreData.GSudoPath;
+                                p.StartInfo.FileName = MainApp.Instance.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
                                 p.Start();
                                 p.WaitForExit();
@@ -467,27 +471,28 @@ namespace UniGetUI.PackageEngine.Operations
                 ProcessOutput.Add("");
                 ProcessOutput.Add("");
 
-                var oldHistory = Tools.GetSettingsValue("OperationHistory").Split("\n");
+                string[] oldHistory = Settings.GetValue("OperationHistory").Split("\n");
 
-                if(oldHistory.Length > 1000)
+                if (oldHistory.Length > 1000)
                 {
                     oldHistory = oldHistory.Take(1000).ToArray();
                 }
 
-                var newHistory = new List<string>();
+                List<string> newHistory = new();
                 newHistory.AddRange(ProcessOutput);
                 newHistory.AddRange(oldHistory);
 
-                Tools.SetSettingsValue("OperationHistory", String.Join('\n', newHistory).Replace(" | ", " ║ "));
+                Settings.SetValue("OperationHistory", String.Join('\n', newHistory).Replace(" | ", " ║ "));
             }
             catch (Exception e)
             {
-                AppTools.Log("Operation failed: " + e.ToString());
-                LineInfoText = Tools.Translate("An unexpected error occurred:") + " " + e.Message;
+                Logger.Error("Operation crashed: ");
+                Logger.Error(e);
+                LineInfoText = CoreTools.Translate("An unexpected error occurred:") + " " + e.Message;
                 RemoveFromQueue();
                 try { Status = OperationStatus.Failed; } catch { }
             }
-            Tools.TooltipStatus.OperationsInProgress = Tools.TooltipStatus.OperationsInProgress - 1;
+            MainApp.Instance.TooltipStatus.OperationsInProgress = MainApp.Instance.TooltipStatus.OperationsInProgress - 1;
 
 
         }
@@ -497,9 +502,9 @@ namespace UniGetUI.PackageEngine.Operations
                 await Task.Delay(1000);
 
             RemoveFromQueue();
-            if (Tools.App.MainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
+            if (MainApp.Instance.MainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
             {
-                Tools.App.MainWindow.NavigationPage.OperationStackPanel.Children.Remove(this);
+                MainApp.Instance.MainWindow.NavigationPage.OperationStackPanel.Children.Remove(this);
             }
         }
 
@@ -513,7 +518,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected void Retry()
         {
             AddToQueue_Priority();
-            LineInfoText = Tools.Translate("Retrying, please wait...");
+            LineInfoText = CoreTools.Translate("Retrying, please wait...");
             ProcessOutput.Clear();
             Status = OperationStatus.Pending;
             _ = MainThread();

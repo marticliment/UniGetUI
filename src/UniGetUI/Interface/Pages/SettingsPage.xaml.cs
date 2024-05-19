@@ -1,22 +1,23 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
-using UniGetUI.Core.Data;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.Core;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Windows.ApplicationModel.VoiceCommands;
-using Windows.Storage;
-using Windows.Storage.Pickers;
-using UniGetUI.ExternalLibraries.Clipboard;
+using UniGetUI.Core;
+using UniGetUI.Core.Data;
+using ExternalLibraries.Clipboard;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.Language;
+using UniGetUI.Core.Tools;
+using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,7 +29,6 @@ namespace UniGetUI.Interface
     /// </summary>
     public sealed partial class SettingsInterface : Page
     {
-        private AppTools Tools = AppTools.Instance;
         HyperlinkButton ResetBackupDirectory;
         HyperlinkButton OpenBackupDirectory;
         TextBlock BackupDirectoryLabel;
@@ -39,12 +39,12 @@ namespace UniGetUI.Interface
             InitializeComponent();
 
             // General Settings Section
-            Dictionary<string, string> lang_dict = LanguageData.LanguageList;
+            Dictionary<string, string> lang_dict = new(LanguageData.LanguageReference.AsEnumerable());
 
-            foreach(var key in lang_dict.Keys)
+            foreach (string key in lang_dict.Keys)
             {
-                if(LanguageData.TranslatedPercentages.ContainsKey(key) && key != "en")
-                    lang_dict[key] = lang_dict[key] + " (" + LanguageData.TranslatedPercentages[key] + ")";
+                if (LanguageData.TranslationPercentages.ContainsKey(key) && key != "en")
+                    lang_dict[key] = lang_dict[key] + " (" + LanguageData.TranslationPercentages[key] + ")";
             }
 
             bool isFirst = true;
@@ -59,17 +59,17 @@ namespace UniGetUI.Interface
 
             Dictionary<string, string> updates_dict = new()
             {
-                {Tools.Translate("{0} minutes").Replace("{0}", "10"), "600"},
-                {Tools.Translate("{0} minutes").Replace("{0}", "30"), "1800"},
-                {Tools.Translate("1 hour"), "3600"},
-                {Tools.Translate("{0} hours").Replace("{0}", "2"), "7200"},
-                {Tools.Translate("{0} hours").Replace("{0}", "4"), "14400"},
-                {Tools.Translate("{0} hours").Replace("{0}", "8"), "28800"},
-                {Tools.Translate("{0} hours").Replace("{0}", "12"), "43200"},
-                {Tools.Translate("1 day"), "86400"},
-                {Tools.Translate("{0} days").Replace("{0}", "2"), "172800"},
-                {Tools.Translate("{0} days").Replace("{0}", "3"), "259200"},
-                {Tools.Translate("1 week"), "604800"}
+                {CoreTools.Translate("{0} minutes").Replace("{0}", "10"), "600"},
+                {CoreTools.Translate("{0} minutes").Replace("{0}", "30"), "1800"},
+                {CoreTools.Translate("1 hour"), "3600"},
+                {CoreTools.Translate("{0} hours").Replace("{0}", "2"), "7200"},
+                {CoreTools.Translate("{0} hours").Replace("{0}", "4"), "14400"},
+                {CoreTools.Translate("{0} hours").Replace("{0}", "8"), "28800"},
+                {CoreTools.Translate("{0} hours").Replace("{0}", "12"), "43200"},
+                {CoreTools.Translate("1 day"), "86400"},
+                {CoreTools.Translate("{0} days").Replace("{0}", "2"), "172800"},
+                {CoreTools.Translate("{0} days").Replace("{0}", "3"), "259200"},
+                {CoreTools.Translate("1 week"), "604800"}
             };
 
             foreach (KeyValuePair<string, string> entry in updates_dict)
@@ -78,36 +78,36 @@ namespace UniGetUI.Interface
             }
             UpdatesCheckIntervalSelector.ShowAddedItems();
 
-            if (Tools.GetSettingsValue("PreferredTheme") == "")
-                Tools.SetSettingsValue("PreferredTheme", "auto");
+            if (Settings.GetValue("PreferredTheme") == "")
+                Settings.SetValue("PreferredTheme", "auto");
 
-            ThemeSelector.AddItem(Tools.AutoTranslated("Light"), "light");
-            ThemeSelector.AddItem(Tools.AutoTranslated("Dark"), "dark");
-            ThemeSelector.AddItem(Tools.AutoTranslated("Follow system color scheme"), "auto");
+            ThemeSelector.AddItem(CoreTools.AutoTranslated("Light"), "light");
+            ThemeSelector.AddItem(CoreTools.AutoTranslated("Dark"), "dark");
+            ThemeSelector.AddItem(CoreTools.AutoTranslated("Follow system color scheme"), "auto");
             ThemeSelector.ShowAddedItems();
 
             // Backup Section
             BackupDirectoryLabel = (TextBlock)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(0));
             ResetBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(1));
             OpenBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2));
-            if (!Tools.GetSettings("ChangeBackupOutputDirectory"))
+            if (!Settings.Get("ChangeBackupOutputDirectory"))
             {
                 BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
                 ResetBackupDirectory.IsEnabled = false;
             }
             else
             {
-                BackupDirectoryLabel.Text = Tools.GetSettingsValue("ChangeBackupOutputDirectory");
+                BackupDirectoryLabel.Text = Settings.GetValue("ChangeBackupOutputDirectory");
                 ResetBackupDirectory.IsEnabled = true;
             }
 
-            ResetBackupDirectory.Content = Tools.Translate("Reset");
+            ResetBackupDirectory.Content = CoreTools.Translate("Reset");
 
-            OpenBackupDirectory.Content = Tools.Translate("Open");
+            OpenBackupDirectory.Content = CoreTools.Translate("Open");
 
             // Admin Settings Section
             int index = 2;
-            foreach (PackageManager manager in Tools.App.PackageManagerList)
+            foreach (PackageManager manager in MainApp.Instance.PackageManagerList)
             {
             }
 
@@ -119,53 +119,53 @@ namespace UniGetUI.Interface
             Dictionary<PackageManager, SettingsEntry> PackageManagerExpanders = new();
             Dictionary<PackageManager, List<SettingsCard>> ExtraSettingsCards = new();
 
-            foreach (PackageManager Manager in Tools.App.PackageManagerList)
+            foreach (PackageManager Manager in MainApp.Instance.PackageManagerList)
             {
                 ExtraSettingsCards.Add(Manager, new List<SettingsCard>());
             }
 
 
-            ButtonCard Winget_ResetSources = new() { Text = Tools.AutoTranslated("Reset Winget sources (might help if no packages are listed)"), ButtonText = Tools.AutoTranslated("Reset") };
+            ButtonCard Winget_ResetSources = new() { Text = CoreTools.AutoTranslated("Reset Winget sources (might help if no packages are listed)"), ButtonText = CoreTools.AutoTranslated("Reset") };
             Winget_ResetSources.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), Tools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
+                CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), CoreTools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
             };
 
-            ExtraSettingsCards[Tools.App.Winget].Add(Winget_ResetSources);
+            ExtraSettingsCards[MainApp.Winget].Add(Winget_ResetSources);
 
-            ButtonCard Scoop_Install = new() { Text = Tools.AutoTranslated("Install Scoop"), ButtonText = Tools.AutoTranslated("Install") };
+            ButtonCard Scoop_Install = new() { Text = CoreTools.AutoTranslated("Install Scoop"), ButtonText = CoreTools.AutoTranslated("Install") };
             Scoop_Install.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"), Tools.Translate("Scoop Installer - WingetUI"));
-                PackageManagerExpanders[Tools.App.Scoop].ShowRestartRequiredBanner();
+                CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"), CoreTools.Translate("Scoop Installer - WingetUI"));
+                PackageManagerExpanders[MainApp.Scoop].ShowRestartRequiredBanner();
             };
-            ButtonCard Scoop_Uninstall = new() { Text = Tools.AutoTranslated("Uninstall Scoop (and its packages)"), ButtonText = Tools.AutoTranslated("Uninstall") };
+            ButtonCard Scoop_Uninstall = new() { Text = CoreTools.AutoTranslated("Uninstall Scoop (and its packages)"), ButtonText = CoreTools.AutoTranslated("Uninstall") };
             Scoop_Uninstall.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"), Tools.Translate("Scoop Uninstaller - WingetUI"));
-                PackageManagerExpanders[Tools.App.Scoop].ShowRestartRequiredBanner();
+                CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"), CoreTools.Translate("Scoop Uninstaller - WingetUI"));
+                PackageManagerExpanders[MainApp.Scoop].ShowRestartRequiredBanner();
             };
-            ButtonCard Scoop_ResetAppCache = new() { Text = Tools.AutoTranslated("Run cleanup and clear cache"), ButtonText = Tools.AutoTranslated("Run") };
+            ButtonCard Scoop_ResetAppCache = new() { Text = CoreTools.AutoTranslated("Run cleanup and clear cache"), ButtonText = CoreTools.AutoTranslated("Run") };
             Scoop_ResetAppCache.Click += (s, e) =>
             {
-                AppTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"), Tools.Translate("Clearing Scoop cache - WingetUI"), RunAsAdmin: true);
+                CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"), CoreTools.Translate("Clearing Scoop cache - WingetUI"), RunAsAdmin: true);
             };
 
-            ExtraSettingsCards[Tools.App.Scoop].Add(Scoop_Install);
-            ExtraSettingsCards[Tools.App.Scoop].Add(Scoop_Uninstall);
-            ExtraSettingsCards[Tools.App.Scoop].Add(Scoop_ResetAppCache);
+            ExtraSettingsCards[MainApp.Scoop].Add(Scoop_Install);
+            ExtraSettingsCards[MainApp.Scoop].Add(Scoop_Uninstall);
+            ExtraSettingsCards[MainApp.Scoop].Add(Scoop_ResetAppCache);
 
-            CheckboxCard Chocolatey_SystemChoco = new() { Text = Tools.AutoTranslated("Use system Chocolatey"), SettingName = "UseSystemChocolatey" };
+            CheckboxCard Chocolatey_SystemChoco = new() { Text = CoreTools.AutoTranslated("Use system Chocolatey"), SettingName = "UseSystemChocolatey" };
             Chocolatey_SystemChoco.StateChanged += (s, e) =>
             {
-                PackageManagerExpanders[Tools.App.Choco].ShowRestartRequiredBanner();
+                PackageManagerExpanders[MainApp.Choco].ShowRestartRequiredBanner();
             };
 
-            ExtraSettingsCards[Tools.App.Choco].Add(Chocolatey_SystemChoco);
+            ExtraSettingsCards[MainApp.Choco].Add(Chocolatey_SystemChoco);
 
 
 
-            foreach (PackageManager Manager in Tools.App.PackageManagerList)
+            foreach (PackageManager Manager in MainApp.Instance.PackageManagerList)
             {
 
                 SettingsEntry ManagerExpander = new()
@@ -179,7 +179,7 @@ namespace UniGetUI.Interface
 
                 TextBlock LongVersion = new();
                 HyperlinkButton ShowVersionButton = new();
-                ShowVersionButton.Content = Tools.Translate("Expand version");
+                ShowVersionButton.Content = CoreTools.Translate("Expand version");
                 ShowVersionButton.Visibility = Visibility.Collapsed;
                 ManagerStatus.ActionButton = ShowVersionButton;
                 ShowVersionButton.Click += (s, e) => { SetManagerStatus(Manager, true); };
@@ -197,12 +197,12 @@ namespace UniGetUI.Interface
                     if (Manager.IsEnabled() && Manager.Status.Found)
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Success;
-                        ManagerStatus.Title = Tools.Translate("{pm} is enabled and ready to go").Replace("{pm}", Manager.Name);
+                        ManagerStatus.Title = CoreTools.Translate("{pm} is enabled and ready to go").Replace("{pm}", Manager.Name);
                         if (!Manager.Status.Version.Contains("\n"))
-                            ManagerStatus.Message = Tools.Translate("{pm} version:").Replace("{pm}", Manager.Name) + " " + Manager.Status.Version;
+                            ManagerStatus.Message = CoreTools.Translate("{pm} version:").Replace("{pm}", Manager.Name) + " " + Manager.Status.Version;
                         else if (ShowVersion)
                         {
-                            ManagerStatus.Message = Tools.Translate("{pm} version:").Replace("{pm}", Manager.Name);
+                            ManagerStatus.Message = CoreTools.Translate("{pm} version:").Replace("{pm}", Manager.Name);
                             LongVersion.Visibility = Visibility.Visible;
                         }
                         else
@@ -215,14 +215,14 @@ namespace UniGetUI.Interface
                     else if (Manager.IsEnabled() && !Manager.Status.Found)
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Error;
-                        ManagerStatus.Title = Tools.Translate("{pm} was not found!").Replace("{pm}", Manager.Name);
-                        ManagerStatus.Message = Tools.Translate("You may need to install {pm} in order to use it with WingetUI.").Replace("{pm}", Manager.Name);
+                        ManagerStatus.Title = CoreTools.Translate("{pm} was not found!").Replace("{pm}", Manager.Name);
+                        ManagerStatus.Message = CoreTools.Translate("You may need to install {pm} in order to use it with WingetUI.").Replace("{pm}", Manager.Name);
                     }
                     else if (!Manager.IsEnabled())
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Informational;
-                        ManagerStatus.Title = Tools.Translate("{pm} is disabled").Replace("{pm}", Manager.Name);
-                        ManagerStatus.Message = Tools.Translate("Enable it to install packages from {pm}.").Replace("{pm}", Manager.Name);
+                        ManagerStatus.Title = CoreTools.Translate("{pm} is disabled").Replace("{pm}", Manager.Name);
+                        ManagerStatus.Message = CoreTools.Translate("Enable it to install packages from {pm}.").Replace("{pm}", Manager.Name);
                     }
                 }
 
@@ -240,7 +240,7 @@ namespace UniGetUI.Interface
                 };
                 ManagerSwitch.Toggled += (s, e) =>
                 {
-                    Tools.SetSettings("Disable" + Manager.Name, !ManagerSwitch.IsOn);
+                    Settings.Set("Disable" + Manager.Name, !ManagerSwitch.IsOn);
                     SetManagerStatus(Manager);
                     EnableOrDisableEntries();
                 };
@@ -259,39 +259,39 @@ namespace UniGetUI.Interface
                         }
                 }
 
-                
+
                 index = 0;
 
                 SettingsCard ManagerPath = new() { Description = Manager.Status.ExecutablePath + " " + Manager.Properties.ExecutableCallArgs, IsClickEnabled = true };
                 ManagerPath.ActionIcon = new SymbolIcon(Symbol.Copy);
                 ManagerPath.Click += (s, e) =>
                 {
-                    WindowsClipboard.SetText(ManagerPath.Description.ToString());
+                    WindowsClipboard.SetText(ManagerPath.Description.ToString() ?? "");
                 };
                 ExtraSettingsCards[Manager].Insert(index++, ManagerPath);
 
                 CheckboxCard AdminCard = new()
                 {
-                    Text = Tools.AutoTranslated("Always run {pm} operations with administrator rights"),
+                    Text = CoreTools.AutoTranslated("Always run {pm} operations with administrator rights"),
                     SettingName = "AlwaysElevate" + Manager.Name,
                 };
-                AdminCard._checkbox.Content = AdminCard._checkbox.Content.ToString().Replace("{pm}", Manager.Name);
+                AdminCard._checkbox.Content = (AdminCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.Name);
                 ExtraSettingsCards[Manager].Insert(index++, AdminCard);
 
                 CheckboxCard ParallelCard = new()
                 {
-                    Text = Tools.AutoTranslated("Allow {pm} operations to be performed in parallel"),
+                    Text = CoreTools.AutoTranslated("Allow {pm} operations to be performed in parallel"),
                     SettingName = "AllowParallelInstallsForManager" + Manager.Name,
                 };
-                ParallelCard._checkbox.Content = ParallelCard._checkbox.Content.ToString().Replace("{pm}", Manager.Name);
+                ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.Name);
                 ExtraSettingsCards[Manager].Insert(index++, ParallelCard);
 
 
-                if (Manager is PackageManagerWithSources)
+                if (Manager.Capabilities.SupportsCustomSources)
                 {
                     SettingsCard SourceManagerCard = new();
                     SourceManagerCard.Resources["SettingsCardLeftIndention"] = 10;
-                    SourceManager SourceManager = new(Manager as PackageManagerWithSources);
+                    SourceManager SourceManager = new(Manager);
                     SourceManagerCard.Description = SourceManager;
                     ExtraSettingsCards[Manager].Insert(index++, SourceManagerCard);
                 }
@@ -311,7 +311,7 @@ namespace UniGetUI.Interface
 
         public MainWindow GetWindow()
         {
-            return Tools.App.MainWindow;
+            return MainApp.Instance.MainWindow;
         }
         public int GetHwnd()
         {
@@ -324,15 +324,15 @@ namespace UniGetUI.Interface
 
         private void ImportSettings(object sender, Interface.Widgets.ButtonCardEventArgs e)
         {
-            var picker = new UniGetUI.ExternalLibraries.Pickers.FileOpenPicker(Tools.App.MainWindow.GetWindowHandle());
-            var file = picker.Show(new List<string> { "*.json" });
+            ExternalLibraries.Pickers.FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
+            string file = picker.Show(new List<string> { "*.json" });
 
             if (file != string.Empty)
             {
                 ResetWingetUI(sender, e);
-                var settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file));
-                foreach(var entry in settings)
-                    Tools.SetSettingsValue(entry.Key, entry.Value);
+                Dictionary<string, string> settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file)) ?? new();
+                foreach (KeyValuePair<string, string> entry in settings)
+                    Settings.SetValue(entry.Key, entry.Value);
 
                 GeneralSettingsExpander.ShowRestartRequiredBanner();
             }
@@ -342,17 +342,17 @@ namespace UniGetUI.Interface
         {
             try
             {
-                var picker = new UniGetUI.ExternalLibraries.Pickers.FileSavePicker(Tools.App.MainWindow.GetWindowHandle());
-                var file = picker.Show(new List<string> { "*.json" }, Tools.Translate("WingetUI Settings") + ".json");
+                ExternalLibraries.Pickers.FileSavePicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
+                string file = picker.Show(new List<string> { "*.json" }, CoreTools.Translate("WingetUI Settings") + ".json");
 
                 if (file != String.Empty)
                 {
-                    Tools.App.MainWindow.ShowLoadingDialog(Tools.Translate("Please wait..."));
+                    MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
 
-                    var IgnoredSettings = new string[] { "OperationHistory", "CurrentSessionToken", "OldWindowGeometry" };
+                    string[] IgnoredSettings = new string[] { "OperationHistory", "CurrentSessionToken", "OldWindowGeometry" };
 
                     Dictionary<string, string> settings = new();
-                    foreach (var path in Directory.EnumerateFiles(CoreData.UniGetUIDataDirectory))
+                    foreach (string path in Directory.EnumerateFiles(CoreData.UniGetUIDataDirectory))
                     {
                         if (Path.GetFileName(path).Contains('.') || IgnoredSettings.Contains(Path.GetFileName(path)))
                             continue;
@@ -361,13 +361,14 @@ namespace UniGetUI.Interface
 
                     await File.WriteAllTextAsync(file, JsonConvert.SerializeObject(settings));
 
-                    Tools.App.MainWindow.HideLoadingDialog();
+                    MainApp.Instance.MainWindow.HideLoadingDialog();
                 }
             }
             catch (Exception ex)
             {
-                Tools.App.MainWindow.HideLoadingDialog();
-                AppTools.Log(ex);
+                MainApp.Instance.MainWindow.HideLoadingDialog();
+                Logger.Error("An error occurred when exporting settings");
+                Logger.Error(ex);
             }
 
         }
@@ -376,14 +377,15 @@ namespace UniGetUI.Interface
         {
             try
             {
-                foreach (var path in Directory.EnumerateFiles(CoreData.UniGetUIDataDirectory))
+                foreach (string path in Directory.EnumerateFiles(CoreData.UniGetUIDataDirectory))
                 {
                     File.Delete(path);
                 }
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Error("An error occurred when resetting UniGetUI");
+                Logger.Error(ex);
             }
             GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
@@ -406,18 +408,18 @@ namespace UniGetUI.Interface
         private void ResetBackupPath_Click(object sender, dynamic e)
         {
             BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
-            Tools.SetSettings("ChangeBackupOutputDirectory", false);
+            Settings.Set("ChangeBackupOutputDirectory", false);
             ResetBackupDirectory.IsEnabled = false;
         }
 
         private void ChangeBackupDirectory_Click(object sender, dynamic e)
         {
 
-            var openPicker = new UniGetUI.ExternalLibraries.Pickers.FolderPicker(Tools.App.MainWindow.GetWindowHandle());
+            ExternalLibraries.Pickers.FolderPicker openPicker = new(MainApp.Instance.MainWindow.GetWindowHandle());
             string folder = openPicker.Show();
             if (folder != String.Empty)
             {
-                Tools.SetSettingsValue("ChangeBackupOutputDirectory", folder);
+                Settings.SetValue("ChangeBackupOutputDirectory", folder);
                 BackupDirectoryLabel.Text = folder;
                 ResetBackupDirectory.IsEnabled = true;
             }
@@ -430,7 +432,7 @@ namespace UniGetUI.Interface
 
         private void OpenBackupPath_Click(object sender, RoutedEventArgs e)
         {
-            string directory = Tools.GetSettingsValue("ChangeBackupOutputDirectory");
+            string directory = Settings.GetValue("ChangeBackupOutputDirectory");
             if (directory == "")
                 directory = CoreData.UniGetUI_DefaultBackupDirectory;
 
@@ -478,21 +480,22 @@ namespace UniGetUI.Interface
             }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Error("An error occurred while deleting icon cache");
+                Logger.Error(ex);
             }
             ExperimentalSettingsExpander.ShowRestartRequiredBanner();
         }
 
         private async void DoBackup_Click(object sender, ButtonCardEventArgs e)
         {
-            Tools.App.MainWindow.ShowLoadingDialog(Tools.Translate("Performing backup, please wait..."));
-            await Tools.App.MainWindow.NavigationPage.InstalledPage.BackupPackages();
-            Tools.App.MainWindow.HideLoadingDialog();
+            MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
+            await MainApp.Instance.MainWindow.NavigationPage.InstalledPage.BackupPackages();
+            MainApp.Instance.MainWindow.HideLoadingDialog();
         }
 
         private void EditAutostartSettings_Click(object sender, ButtonCardEventArgs e)
         {
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = "cmd.exe",

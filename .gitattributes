@@ -1,2 +1,1 @@
-src/wingetui/choco-cli/** linguist-vendored
-src/wingetui/ExternalLibraries/** linguist-vendored
+src/UniGetUI.PackageEngine.Managers.Chocolatey/choco-cli/** linguist-vendored

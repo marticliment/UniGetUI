@@ -32,9 +32,20 @@ src/packages/
 src/UniGetUI/bin
 src/UniGetUI/obj
 
-
 src/WindowsPackageManager.Interop/bin
 src/WindowsPackageManager.Interop/obj
+src/WindowsPackageManager.Interop/out
+src/WindowsPackageManager.Interop/outpublish
+
+src/UniGetU*/bin
+src/UniGetU*/obj
+src/UniGetU*/out
+src/UniGetU*/outpublish
+
+src/ExternalLibraries.*/bin
+src/ExternalLibraries.*/obj
+src/ExternalLibraries.*/out
+src/ExternalLibraries.*/outpublish
 
 src/.vs
 src/.vscode
@@ -65,3 +76,5 @@ src/UniGetUI/choco-cli/redirects/cup.exe.ignore
 src/UniGetUI/choco-cli/bin/ssh-copy-id.exe
 src/UniGetUI/choco-cli/extensions/chocolatey-visualstudio/
 src/UniGetUI/choco-cli/extensions/chocolatey-dotnetfx/
+
+*.user

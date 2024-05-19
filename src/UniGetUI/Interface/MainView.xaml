@@ -17,7 +17,7 @@
         <widgets:BetterMenu x:Name="MoreNavButtonMenu" Placement="Right">
             <widgets:BetterMenuItem Text="Help" IconName="help" Name="HelpMenu" Click="HelpMenu_Click" />
             <MenuFlyoutSeparator Height="5"/>
-            <widgets:BetterMenuItem Text="WingetUI log" IconName="buggy" Name="WingetUILogs" Click="UniGetUILogs_Click" />
+            <widgets:BetterMenuItem Text="WingetUI Log" IconName="buggy" Name="WingetUILogs" Click="UniGetUILogs_Click" />
             <widgets:BetterMenuItem Text="Package Manager logs" IconName="console" Name="ManagerLogsMenu" Click="ManagerLogsMenu_Click" />
             <widgets:BetterMenuItem Text="Operation history" IconName="history" Name="OperationHistoryMenu" Click="OperationHistoryMenu_Click" />
             <MenuFlyoutSeparator Height="5"/>

@@ -1,12 +1,11 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Media;
-using UniGetUI.Core;
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using Windows.Media.Devices;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core;
+using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -16,7 +15,6 @@ namespace UniGetUI.Interface.Widgets
     public sealed partial class NavButton : UserControl
     {
 
-        private AppTools Tools = AppTools.Instance;
         public class NavButtonEventArgs : EventArgs
         {
             public NavButtonEventArgs()
@@ -36,7 +34,7 @@ namespace UniGetUI.Interface.Widgets
         }
         DependencyProperty GlyphProperty;
 
-        public event EventHandler<NavButtonEventArgs> Click;
+        public event EventHandler<NavButtonEventArgs>? Click;
 
         public NavButton()
         {
@@ -51,7 +49,7 @@ namespace UniGetUI.Interface.Widgets
                 typeof(NavButton),
                 new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
                 {
-                    string val = Tools.Translate((string)e.NewValue);
+                    string val = CoreTools.Translate((string)e.NewValue);
                     int count = val.Count(x => x == ' ');
                     TextBlock.Text = val.Replace(" ", "\x0a");
                     ToggleButton.Content = val.Replace(" ", "\x0a");
@@ -65,7 +63,7 @@ namespace UniGetUI.Interface.Widgets
                 new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { IconBlock.Glyph = (string)e.NewValue; }))
             );
 
-            Tools.App.MainWindow.NavButtonList.Add(this);
+            MainApp.Instance.MainWindow.NavButtonList.Add(this);
         }
         private void ToggleButton_Click(object sender, RoutedEventArgs e)
         {

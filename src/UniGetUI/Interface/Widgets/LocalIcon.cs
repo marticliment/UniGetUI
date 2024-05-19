@@ -1,14 +1,14 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
-using UniGetUI.Core;
 using System;
+using UniGetUI.Core;
+using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Interface.Widgets
 {
     public class LocalIcon : ImageIcon
     {
-        public static AppTools Tools = AppTools.Instance;
         private bool __registered_theme_event = false;
         public DependencyProperty IconNameProperty;
 
@@ -24,8 +24,9 @@ namespace UniGetUI.Interface.Widgets
             nameof(IconName),
             typeof(string),
             typeof(ButtonCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { 
-                IconName = (string)e.NewValue; 
+            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
+            {
+                IconName = (string)e.NewValue;
                 __apply_icon();
                 if (!__registered_theme_event)
                 {
@@ -40,7 +41,7 @@ namespace UniGetUI.Interface.Widgets
             IconName = iconName;
             __apply_icon();
 
-            if(!__registered_theme_event)
+            if (!__registered_theme_event)
             {
                 ActualThemeChanged += (s, e) => { __apply_icon(); };
                 __registered_theme_event = true;
@@ -57,7 +58,7 @@ namespace UniGetUI.Interface.Widgets
 
             if (Source == null)
                 Source = new BitmapImage();
-            (Source as BitmapImage).UriSource = new Uri("ms-appx:///Assets/Images/" + IconName + "_" + theme + ".png");
+            if(Source is BitmapImage) ((BitmapImage)Source).UriSource = new Uri("ms-appx:///Assets/Images/" + IconName + "_" + theme + ".png");
         }
     }
 }

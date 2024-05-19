@@ -1,21 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using UniGetUI.Core.Data;
-using System.ComponentModel;
-using UniGetUI.Core;
+using System;
 using System.Collections.ObjectModel;
+using UniGetUI.Core;
+using UniGetUI.Core.Data;
+using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,21 +16,20 @@ namespace UniGetUI.Interface.Pages.AboutPages
     /// 
     public class LibraryLicense
     {
-        public string Name { get; set; }
-        public string License { get; set; }
-        public Uri LicenseURL { get; set; }
-        public string HomepageText { get; set; }
-        public Uri HomepageUrl { get; set; }
+        public string Name { get; set; } = "";
+        public string License { get; set; } = "";
+        public Uri? LicenseURL { get; set; }
+        public string HomepageText { get; set; } = "";
+        public Uri? HomepageUrl { get; set; }
     }
 
     public sealed partial class ThirdPartyLicenses : Page
     {
-        public AppTools Tools = AppTools.Instance;
         public ObservableCollection<LibraryLicense> Licenses = new();
 
         public ThirdPartyLicenses()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             foreach (string license in LicenseData.LicenseNames.Keys)
             {
                 Licenses.Add(new LibraryLicense()
@@ -51,7 +38,7 @@ namespace UniGetUI.Interface.Pages.AboutPages
                     License = LicenseData.LicenseNames[license],
                     LicenseURL = LicenseData.LicenseURLs[license],
                     HomepageUrl = LicenseData.HomepageUrls[license],
-                    HomepageText = Tools.Translate("{0} homepage").Replace("{0}", license)
+                    HomepageText = CoreTools.Translate("{0} homepage").Replace("{0}", license)
                 });
             }
 
