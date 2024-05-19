@@ -1,4 +1,5 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using System.Linq.Expressions;
+using System.Reflection.Metadata.Ecma335;
 using UniGetUI.Core.Logging;
 using Windows.Storage.Search;
 using Windows.System.Diagnostics;
@@ -186,10 +187,18 @@ namespace UniGetUI.Core.Data
             }
             else
             {
-                Logger.Debug("Creating non-existing data directory at: " + new_path);
-                Directory.CreateDirectory(new_path);
-                Task.Delay(100).Wait();
-                return new_path;
+                try
+                {
+                    Logger.Debug("Creating non-existing data directory at: " + new_path);
+                    Directory.CreateDirectory(new_path);
+                    Task.Delay(100).Wait();
+                    return new_path;
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e);
+                    return new_path;
+                }
             }
         }
 
