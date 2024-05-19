@@ -174,6 +174,7 @@ namespace UniGetUI.Core.Data
                 try
                 {
                     Directory.Move(old_path, new_path);
+                    Task.Delay(100).Wait();
                     return new_path;
                 }
                 catch (Exception e)
@@ -187,6 +188,7 @@ namespace UniGetUI.Core.Data
             {
                 Logger.Debug("Creating non-existing data directory at: " + new_path);
                 Directory.CreateDirectory(new_path);
+                Task.Delay(100).Wait();
                 return new_path;
             }
         }
