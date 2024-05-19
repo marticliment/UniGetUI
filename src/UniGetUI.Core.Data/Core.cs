@@ -7,7 +7,7 @@ namespace UniGetUI.Core.Data
 {
     public static class CoreData
     {
-        public static string VersionName =  "3.1.0-alpha"; // Do not modify this line, use file scripts/apply_versions.py
+        public static string VersionName =  "3.1.0-alpha0"; // Do not modify this line, use file scripts/apply_versions.py
         public static double VersionNumber =  3.099; // Do not modify this line, use file scripts/apply_versions.py
 
         /// <summary>
