@@ -812,9 +812,9 @@ namespace UniGetUI.Interface
 
                     // Select appropriate format
                     BundleFormatType formatType;
-                    if (file.Split(':')[^1].ToLower() == "yaml")
+                    if (file.Split('.')[^1].ToLower() == "yaml")
                         formatType = BundleFormatType.YAML;
-                    else if (file.Split(':')[^1].ToLower() == "xml")
+                    else if (file.Split('.')[^1].ToLower() == "xml")
                         formatType = BundleFormatType.XML;
                     else
                         formatType = BundleFormatType.JSON;
