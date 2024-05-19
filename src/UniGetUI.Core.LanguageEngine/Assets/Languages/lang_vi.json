@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "Tự động lưu một danh sách tất cả các gói bạn đã cài đặt để dễ dàng khôi phục chúng sau này.",
   "Automatically save a list of your installed packages on your computer." : "Tự động lưu danh sách những gói đã cài đặt trên máy tính của bạn.",
   "Autostart WingetUI in the notifications area" : "Tự động chạy WingetUI trong khu vực thông báo",
+  "Available Updates" : null,
   "Available updates: {0}" : "Cập nhật khả dụng: {0}",
   "Available updates: {0}, not finished yet..." : "Cập nhật khả dụng: {0}, chưa hoàn tất...",
   "Backup" : "Sao lưu",

@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "تلقائياً قم بحفظ قائمة لكل حُزمِك المثبتة لاستعادتها بسهولة.",
   "Automatically save a list of your installed packages on your computer." : "تلقائياً قم بحفظ قائمة لكل حُزمِك المثبتة على جهازك.",
   "Autostart WingetUI in the notifications area" : "تشغيل WingetUI تلقائياً في منطقة الإشعارات",
+  "Available Updates" : null,
   "Available updates: {0}" : "التحديثات المتاحة: {0}",
   "Available updates: {0}, not finished yet..." : "التحديثات المتاحة: {0}, لم يتم الانتهاء بعد...",
   "Backup" : "النسخ الإحتياطي",

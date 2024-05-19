@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "সহজেই পুনরুদ্ধার করতে আপনার সমস্ত ইনস্টল করা প্যাকেজগুলির একটি তালিকা স্বয়ংক্রিয়ভাবে সংরক্ষণ করুন।",
   "Automatically save a list of your installed packages on your computer." : "আপনার কম্পিউটারে আপনার ইনস্টল করা প্যাকেজগুলির একটি তালিকা স্বয়ংক্রিয়ভাবে সংরক্ষণ করুন।",
   "Autostart WingetUI in the notifications area" : "বিজ্ঞপ্তি এলাকায় WingetUI অটোস্টার্ট করুন",
+  "Available Updates" : null,
   "Available updates: {0}" : "উপলভ্য আপডেটগুলিঃ {0}",
   "Available updates: {0}, not finished yet..." : "উপলব্ধ আপডেটগুলি: {0}, এখনো শেষ হয়নি...",
   "Backup" : "ব্যাকআপ",

@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : null,
   "Automatically save a list of your installed packages on your computer." : null,
   "Autostart WingetUI in the notifications area" : "सूचना क्षेत्र में WingetUI  ऑटोस्टार्ट करें",
+  "Available Updates" : null,
   "Available updates: {0}" : "उपलब्ध अपडेट: {0}",
   "Available updates: {0}, not finished yet..." : "\nउपलब्ध अपडेट: {0}, अभी तक समाप्त नहीं हुआ...",
   "Backup" : null,

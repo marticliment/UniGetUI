@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "Kolayca geri yüklemek için yüklü tüm paketlerinizin bir listesini otomatik olarak kaydedin.",
   "Automatically save a list of your installed packages on your computer." : "Yüklü paketlerinizin bir listesini otomatik olarak bilgisayarınıza kaydedin.",
   "Autostart WingetUI in the notifications area" : "WingetUI'yi bildirim alanında otomatik başlat",
+  "Available Updates" : null,
   "Available updates: {0}" : "Mevcut güncellemeler : {0}",
   "Available updates: {0}, not finished yet..." : "Mevcut güncellemeler : {0}, henüz bitmedi...",
   "Backup" : "Yedekle",

@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "Αυτόματη αποθήκευση μιας λίστας με όλα τα εγκατεστημένα πακέτα σας για εύκολη επαναφορά.",
   "Automatically save a list of your installed packages on your computer." : "Αυτόματη αποθήκευση μιας λίστας με τα εγκατεστημένα πακέτα στον υπολογιστή σας.",
   "Autostart WingetUI in the notifications area" : "Αυτόματη εκκίνηση του WingetUI στην περιοχή ειδοποιήσεων",
+  "Available Updates" : null,
   "Available updates: {0}" : "Διαθέσιμες ενημερώσεις: {0}",
   "Available updates: {0}, not finished yet..." : "Διαθέσιμες ενημερώσεις: {0}, δεν έχει ολοκληρωθεί ακόμα...",
   "Backup" : "Δημιουργία αντιγράφου ασφαλείας",

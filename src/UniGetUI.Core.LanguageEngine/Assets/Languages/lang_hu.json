@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "Autom. elmenti az összes telepített csomag listáját, hogy könnyen visszaállíthassa azokat.",
   "Automatically save a list of your installed packages on your computer." : "Automatikusan elmenti a telepített csomagok listáját a számítógépen.",
   "Autostart WingetUI in the notifications area" : "A WingetUI auto. indítása az értesítési területen",
+  "Available Updates" : null,
   "Available updates: {0}" : "Elérhető frissítések: {0}",
   "Available updates: {0}, not finished yet..." : "Elérhető frissítések: {0}, még nincs kész...",
   "Backup" : "Biztonsági mentés",

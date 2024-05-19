@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "インストール済みパッケージの一覧を自動的に保存し、簡単に復元できるようにします。",
   "Automatically save a list of your installed packages on your computer." : "インストール済みパッケージの一覧を自動的にコンピューターに保存する",
   "Autostart WingetUI in the notifications area" : "WingetUIを通知領域で自動起動する",
+  "Available Updates" : null,
   "Available updates: {0}" : "利用可能なアップデート: {0}",
   "Available updates: {0}, not finished yet..." : "利用可能なアップデート: {0}、進行中...",
   "Backup" : "バックアップ",

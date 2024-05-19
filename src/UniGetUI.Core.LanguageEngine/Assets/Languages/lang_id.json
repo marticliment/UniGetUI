@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "Secara otomatis menyimpan daftar semua paket yang Anda instal untuk memulihkannya dengan mudah.",
   "Automatically save a list of your installed packages on your computer." : "Secara otomatis menyimpan daftar paket yang Anda instal di komputer Anda.",
   "Autostart WingetUI in the notifications area" : "Mulai otomatis WingetUI di bagian notifikasi",
+  "Available Updates" : null,
   "Available updates: {0}" : "Pembaruan tersedia: {0}",
   "Available updates: {0}, not finished yet..." : "Pembaruan tersedia: {0}, belum selesai...\n",
   "Backup" : "Cadangkan",

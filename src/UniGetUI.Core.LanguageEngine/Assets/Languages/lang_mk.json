@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "Автоматски зачувајте листа со сите ваши инсталирани пакети за лесно да ги вратите.",
   "Automatically save a list of your installed packages on your computer." : "Автоматски зачувајте листа со инсталираните пакети на вашиот компјутер.",
   "Autostart WingetUI in the notifications area" : "Автоматско стартување на WingetUI во областа за известувања",
+  "Available Updates" : null,
   "Available updates: {0}" : "Достапни ажурирања: {0}",
   "Available updates: {0}, not finished yet..." : "Достапни ажурирања: {0}, сè уште не е завршено...",
   "Backup" : null,

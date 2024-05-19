@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "Salvar automáticamente una lista de todos tus paquetes instalados para fácilmente restaurarlos.",
   "Automatically save a list of your installed packages on your computer." : "Salvar automáticamente una lista de tus paquetes instalados en tu computador.",
   "Autostart WingetUI in the notifications area" : "Iniciar WingetUI automáticamente en el área de notificaciones",
+  "Available Updates" : "Actualizaciones disponibles",
   "Available updates: {0}" : "Actualizaciones disponibles: {0}",
   "Available updates: {0}, not finished yet..." : "Actualizaciones disponibles: {0}, no ha acabado todavía...",
   "Backup" : "Respaldar",

@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "自動儲存已安裝的套件清單以便輕鬆還原它們。",
   "Automatically save a list of your installed packages on your computer." : "將已安裝的套件清單自動儲存到您的電腦。",
   "Autostart WingetUI in the notifications area" : "開機時啟動 WingetUI 並顯示系統匣圖示",
+  "Available Updates" : null,
   "Available updates: {0}" : "{0} 個可用的更新",
   "Available updates: {0}, not finished yet..." : "已發現 {0} 個可用的更新，仍在繼續進行中...",
   "Backup" : "備份",

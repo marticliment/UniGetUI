@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "Tallenna automaattisesti luettelo kaikista asennetuista paketeista, jotta voit palauttaa ne helposti.",
   "Automatically save a list of your installed packages on your computer." : "Tallenna automaattisesti luettelo asennetuista paketeista tietokoneellesi.",
   "Autostart WingetUI in the notifications area" : "Käynnistä WingetUI automaattisesti ilmoitusalueella",
+  "Available Updates" : null,
   "Available updates: {0}" : "Saatavilla olevat päivitykset: {0},",
   "Available updates: {0}, not finished yet..." : "Saatavilla olevat päivitykset: {0}, ei vielä valmis...",
   "Backup" : "Varmuuskopioi",

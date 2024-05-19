@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : null,
   "Automatically save a list of your installed packages on your computer." : null,
   "Autostart WingetUI in the notifications area" : "WingetUI را به صورت خودکار در قسمت اعلان ها راه اندازی کنید\n",
+  "Available Updates" : null,
   "Available updates: {0}" : "به روز رسانی های موجود: {0}",
   "Available updates: {0}, not finished yet..." : "به روز رسانی های موجود: {0}، هنوز تمام نشده است...\n",
   "Backup" : "پشتیبان گیری",

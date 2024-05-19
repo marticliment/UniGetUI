@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "Automatické uložení seznamu všech nainstalovaných balíčků pro jejich snadné obnovení.",
   "Automatically save a list of your installed packages on your computer." : "Automatické uložení seznamu nainstalovaných balíčků do počítače.",
   "Autostart WingetUI in the notifications area" : "Automatické spuštění WingetUI do notifikační oblasti",
+  "Available Updates" : null,
   "Available updates: {0}" : "Dostupných aktualizací: {0}",
   "Available updates: {0}, not finished yet..." : "Dostupných aktualizací: {0}, ještě nedokončeno...",
   "Backup" : "Zálohovat",

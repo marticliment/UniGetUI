@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "Samodejno shranite seznam vseh nameščenih paketov, da jih preprosto obnovite.",
   "Automatically save a list of your installed packages on your computer." : "Samodejno shranite seznam svojih nameščenih paketov v svoj računalnik.",
   "Autostart WingetUI in the notifications area" : "Samodejni zagon WingetUI v območje za obvestila",
+  "Available Updates" : null,
   "Available updates: {0}" : "Razpoložljive posodobitve: {0}",
   "Available updates: {0}, not finished yet..." : "Razpoložljive posodobitve: {0}, še nedokončane...",
   "Backup" : "Varnostna kopija",

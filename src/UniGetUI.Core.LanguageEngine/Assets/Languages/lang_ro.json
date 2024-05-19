@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "Salvează automat o listă a tuturor pachetelor instalate pentru a putea să le restaurezi cu ușurință",
   "Automatically save a list of your installed packages on your computer." : "Salvează automat o listă a pachetelor instalate pe calculatorul tău.",
   "Autostart WingetUI in the notifications area" : "Pornește automat WingetUI în zona de notificări",
+  "Available Updates" : null,
   "Available updates: {0}" : "Actualizări disponibile: {0}",
   "Available updates: {0}, not finished yet..." : "Actualizări disponibile: {0}, căutare în curs...",
   "Backup" : "Fă o copie de siguranță",

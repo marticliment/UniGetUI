@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "自动保存所有已安装软件的列表以便于恢复它们。",
   "Automatically save a list of your installed packages on your computer." : "在您的计算机上自动保存所有已安装软件包的列表。",
   "Autostart WingetUI in the notifications area" : "开机自动启动 WingetUI 并最小化到任务栏",
+  "Available Updates" : null,
   "Available updates: {0}" : "可用更新：{0}",
   "Available updates: {0}, not finished yet..." : "可用更新：{0}，仍在进行中...",
   "Backup" : "备份",

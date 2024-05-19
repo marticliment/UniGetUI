@@ -59,6 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "Ruaj automatikisht një listë të të gjitha paketave tuaja të instaluara për t'i rikthyer ato lehtësisht.",
   "Automatically save a list of your installed packages on your computer." : "Ruaj automatikisht një listë të paketave tuaja të instaluara në kompjuterin tënd.",
   "Autostart WingetUI in the notifications area" : "Nis automatikisht WingetUI në hapësirën e njoftimeve",
+  "Available Updates" : null,
   "Available updates: {0}" : "Përditësimet e ofruara: {0}",
   "Available updates: {0}, not finished yet..." : "Përditësimet e ofruara: {0}, nuk ka përfunduar ende...",
   "Backup" : "Bëj një kopje rezervë",
