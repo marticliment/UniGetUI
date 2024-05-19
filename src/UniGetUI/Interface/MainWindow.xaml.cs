@@ -378,7 +378,7 @@ namespace UniGetUI.Interface
                 LoadingDialogCount = 0;
         }
 
-        public void SharePackage(Package package)
+        public void SharePackage(Package? package)
         {
             if (package == null)
                 return;

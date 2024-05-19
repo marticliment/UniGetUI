@@ -185,7 +185,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
                     return;
 
                 using FileStream inputStream = optionsFile.OpenRead();
-                SerializableInstallationOptions_v1 options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(inputStream);
+                SerializableInstallationOptions_v1? options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(inputStream);
+
+                if (options == null)
+                    throw new Exception("Deserialized options cannot be null.");
+                
                 FromSerialized(options);
             }
             catch (Exception e)
@@ -208,7 +212,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
 
                 await using FileStream inputStream = optionsFile.OpenRead();
-                SerializableInstallationOptions_v1 options = await JsonSerializer.DeserializeAsync<SerializableInstallationOptions_v1>(inputStream);
+                SerializableInstallationOptions_v1? options = await JsonSerializer.DeserializeAsync<SerializableInstallationOptions_v1>(inputStream);
+
+                if (options == null)
+                    throw new Exception("Deserialized options cannot be null!");
+                
                 FromSerialized(options);
                 Logger.Debug($"InstallationOptions loaded successfully from disk for package {Package.Id}");
             }

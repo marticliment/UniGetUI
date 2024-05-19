@@ -21,7 +21,7 @@ namespace UniGetUI.Interface.Widgets
 
     public sealed class ButtonCard : SettingsCard
     {
-        private static Button _button;
+        private static Button _button = new();
 
         public string ButtonText
         {
@@ -43,7 +43,7 @@ namespace UniGetUI.Interface.Widgets
         typeof(ButtonCard),
         new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _button.Content = CoreTools.Translate((string)e.NewValue); })));
 
-        public new event EventHandler<ButtonCardEventArgs> Click;
+        public new event EventHandler<ButtonCardEventArgs>? Click;
 
         public ButtonCard()
         {

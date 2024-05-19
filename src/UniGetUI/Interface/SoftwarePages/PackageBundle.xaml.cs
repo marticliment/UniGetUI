@@ -45,7 +45,7 @@ namespace UniGetUI.Interface
         protected TranslatedTextBlock MainSubtitle;
         public ListView PackageList;
         protected ProgressBar LoadingProgressBar;
-        protected MenuFlyout ContextMenu;
+        protected MenuFlyout? ContextMenu;
 
         private bool Initialized = false;
         private bool AllSelected = false;
@@ -72,11 +72,11 @@ namespace UniGetUI.Interface
 
             SourcesTreeView.Tapped += (s, e) =>
             {
-                if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
+                if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement)?.DataContext != null)
                 {
-                    if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
+                    if ((e.OriginalSource as FrameworkElement)?.DataContext is TreeViewNode)
                     {
-                        TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
+                        TreeViewNode? node = (e.OriginalSource as FrameworkElement)?.DataContext as TreeViewNode;
                         if (node == null)
                             return;
                         if (SourcesTreeView.SelectedNodes.Contains(node))
@@ -90,7 +90,9 @@ namespace UniGetUI.Interface
 
             PackageList.DoubleTapped += (s, e) =>
             {
-                _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
+                var package = PackageList.SelectedItem as BundledPackage;
+                if (package == null) return;
+                _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package.Package, OperationType.None);
             };
 
             PackageList.RightTapped += (s, e) =>
@@ -118,9 +120,13 @@ namespace UniGetUI.Interface
                 if (e.Key == Windows.System.VirtualKey.Enter && PackageList.SelectedItem != null)
                 {
                     if (InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down))
-                        (PackageList.SelectedItem as BundledPackage).ShowOptions(s, e);
+                        (PackageList.SelectedItem as BundledPackage)?.ShowOptions(s, e);
                     else
-                        _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
+                    {
+                        var package = PackageList.SelectedItem as BundledPackage;
+                        if (package == null) return;
+                        _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package.Package, OperationType.None);
+                    }
                 }
                 else if (e.Key == Windows.System.VirtualKey.A && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                 {
@@ -131,7 +137,9 @@ namespace UniGetUI.Interface
                 }
                 else if (e.Key == Windows.System.VirtualKey.Space && PackageList.SelectedItem != null)
                 {
-                    ((PackageList.SelectedItem as BundledPackage).Package).IsChecked = !((PackageList.SelectedItem as BundledPackage).Package).IsChecked;
+                    var package = PackageList.SelectedItem as BundledPackage;
+                    if (package == null) return;
+                    package.Package.IsChecked = !package.Package.IsChecked;
                 }
                 else if (e.Key == Windows.System.VirtualKey.F1)
                 {
@@ -346,7 +354,12 @@ namespace UniGetUI.Interface
                 return;
 
             FilteredPackages.Descending = !FilteredPackages.Descending;
-            FilteredPackages.SortingSelector = (a) => (a.GetType().GetProperty(Sorter).GetValue(a));
+            FilteredPackages.SortingSelector = (a) =>
+            {
+                if (a.GetType()?.GetProperty(Sorter)?.GetValue(a) == null)
+                    Logger.Warn("Sorter element is null on PackageBundlePage");
+                return a.GetType()?.GetProperty(Sorter)?.GetValue(a) ?? 0;
+            };
             FilteredPackages.Sort();
 
             if (FilteredPackages.Count > 0)
@@ -459,9 +472,10 @@ namespace UniGetUI.Interface
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
             PackageDetails.Click += (s, e) =>
-            {
-                if (PackageList.SelectedItem != null)
-                    _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
+            { 
+                var package = PackageList.SelectedItem as BundledPackage;
+                if (package != null)
+                    _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package.Package, OperationType.None);
             };
 
             HelpButton.Click += (s, e) => { MainApp.Instance.MainWindow.NavigationPage.ShowHelp(); };
@@ -519,35 +533,39 @@ namespace UniGetUI.Interface
 
             SharePackage.Click += (s, e) =>
             {
-                if (PackageList.SelectedItem as BundledPackage != null)
-                    MainApp.Instance.MainWindow.SharePackage((PackageList.SelectedItem as BundledPackage).Package);
+                var package = PackageList.SelectedItem as BundledPackage;
+                if (package != null)
+                    MainApp.Instance.MainWindow.SharePackage(package.Package);
             };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
 
         }
-        private void MenuRemoveFromList_Invoked(object sender, RoutedEventArgs package)
-        {
-            if (!Initialized || PackageList.SelectedItem == null)
-                return;
 
-            (PackageList.SelectedItem as BundledPackage).RemoveFromList(sender, package);
+        private void MenuRemoveFromList_Invoked(object sender, RoutedEventArgs args)
+        {
+            var package = PackageList.SelectedItem as BundledPackage;
+            if (!Initialized || package == null)
+                return;
+            package.RemoveFromList(sender, args);
 
         }
 
-        private void MenuShare_Invoked(object sender, RoutedEventArgs package)
+        private void MenuShare_Invoked(object sender, RoutedEventArgs args)
         {
-            if (!Initialized || PackageList.SelectedItem == null || !(PackageList.SelectedItem as BundledPackage).IsValid)
+            var package = PackageList.SelectedItem as BundledPackage;
+            if (!Initialized || package == null || !package.IsValid)
                 return;
-            MainApp.Instance.MainWindow.SharePackage(((PackageList.SelectedItem as BundledPackage).Package));
+            MainApp.Instance.MainWindow.SharePackage(package.Package);
         }
 
-        private void MenuDetails_Invoked(object sender, RoutedEventArgs package)
+        private void MenuDetails_Invoked(object sender, RoutedEventArgs args)
         {
-            if (!Initialized || PackageList.SelectedItem == null || !(PackageList.SelectedItem as BundledPackage).IsValid)
+            var package = PackageList.SelectedItem as BundledPackage;
+            if (!Initialized || package == null || !package.IsValid)
                 return;
-            _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails((PackageList.SelectedItem as BundledPackage).Package, OperationType.None);
+            _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package.Package, OperationType.None);
         }
 
 
@@ -564,8 +582,9 @@ namespace UniGetUI.Interface
 
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            if ((PackageList.SelectedItem as BundledPackage).Package != null)
-                (PackageList.SelectedItem as BundledPackage).ShowOptions(sender, e);
+            var package = PackageList.SelectedItem as BundledPackage;
+            if (package?.Package != null)
+                package.ShowOptions(sender, e);
         }
 
         private void SelectAllItems()
@@ -650,9 +669,11 @@ namespace UniGetUI.Interface
         public async Task AddPackagesFromBundleString(string content, BundleFormatType format)
         {
             // Deserialize data
-            SerializableBundle_v1 DeserializedData;
+            SerializableBundle_v1? DeserializedData;
             if (format == BundleFormatType.JSON)
+            {
                 DeserializedData = JsonSerializer.Deserialize<SerializableBundle_v1>(content);
+            }
             else if (format == BundleFormatType.YAML)
             {
                 YamlDotNet.Serialization.IDeserializer deserializer = new YamlDotNet.Serialization.DeserializerBuilder()
@@ -669,6 +690,9 @@ namespace UniGetUI.Interface
                 reader.Close();
                 File.Delete(tempfile);
             }
+
+            if (DeserializedData == null)
+                throw new Exception($"Deserialized data was null for content {content} and format {format}");
 
             // Load individual packages
             Dictionary<DeserializedPackageStatus, List<string>> InvalidPackages = new()
@@ -709,7 +733,7 @@ namespace UniGetUI.Interface
                     continue;
                 }
 
-                ManagerSource Source = PackageManager.Properties.DefaultSource;
+                ManagerSource? Source = PackageManager.Properties.DefaultSource;
 
                 if (PackageManager.Capabilities.SupportsCustomSources)
                 {

@@ -18,5 +18,6 @@
 	<PublisherName>Martí Climent</PublisherName>
 	<ApplicationVersion>3.1.0-alpha</ApplicationVersion>
 	<Copyright>2024, Martí Climent</Copyright>
+	<Nullable>enable</Nullable>
  </PropertyGroup>
 </Project>

@@ -58,7 +58,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 string _output = "";
                 bool DashesPassed = false;
 
-                string line;
+                string? line;
                 while ((line = await process.StandardOutput.ReadLineAsync()) != null)
                 {
                     _output += line + "\n";

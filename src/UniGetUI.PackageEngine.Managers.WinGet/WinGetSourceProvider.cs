@@ -36,7 +36,10 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()
         {
-            return await WinGetHelper.Instance.GetSources_UnSafe(Manager as WinGet);
+            if (Manager is WinGet manager)
+                return await WinGetHelper.Instance.GetSources_UnSafe(manager);
+            else
+                throw new Exception("WinGetSourceProvider.GetSources_UnSafe: Manager is supposed to be WinGet");
         }
     }
 }

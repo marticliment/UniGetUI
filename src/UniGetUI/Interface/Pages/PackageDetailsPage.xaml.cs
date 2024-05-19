@@ -31,8 +31,8 @@ namespace UniGetUI.Interface.Dialogs
     {
         public Package Package;
         private InstallOptionsPage InstallOptionsPage;
-        public event EventHandler Close;
-        private PackageDetails Info;
+        public event EventHandler? Close;
+        private PackageDetails? Info;
         OperationType FutureOperation;
         bool PackageHasScreenshots = false;
         public ObservableCollection<TextBlock> ShowableTags = new();
@@ -75,8 +75,8 @@ namespace UniGetUI.Interface.Dialogs
 
             IdTextBlock.Text = package.Id;
             VersionTextBlock.Text = package.Version;
-            if (package is UpgradablePackage)
-                VersionTextBlock.Text += " - " + CoreTools.Translate("Update to {0} available").Replace("{0}", (package as UpgradablePackage).NewVersion);
+            if (package.IsUpgradable)
+                VersionTextBlock.Text += " - " + CoreTools.Translate("Update to {0} available").Replace("{0}", package.NewVersion);
             PackageName.Text = package.Name;
             SourceNameTextBlock.Text = package.SourceAsString;
 
@@ -236,7 +236,7 @@ namespace UniGetUI.Interface.Dialogs
         {
             try
             {
-                if (Info.InstallerUrl == null)
+                if (Info?.InstallerUrl == null)
                     return;
 
                 ErrorOutput.Text = "";

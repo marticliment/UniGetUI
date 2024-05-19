@@ -32,7 +32,7 @@ namespace UniGetUI.PackageEngine.Operations
     public class AddSourceOperation : SourceOperation
     {
 
-        public event EventHandler<EventArgs> OperationSucceeded;
+        public event EventHandler<EventArgs>? OperationSucceeded;
         public AddSourceOperation(ManagerSource source) : base(source) { }
         protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
         {
@@ -170,7 +170,7 @@ namespace UniGetUI.PackageEngine.Operations
     public class RemoveSourceOperation : SourceOperation
     {
 
-        public event EventHandler<EventArgs> OperationSucceeded;
+        public event EventHandler<EventArgs>? OperationSucceeded;
         public RemoveSourceOperation(ManagerSource source) : base(source) { }
         protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
         {

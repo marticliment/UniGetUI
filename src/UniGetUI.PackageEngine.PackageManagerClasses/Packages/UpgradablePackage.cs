@@ -81,10 +81,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// on the InstalledPackages list, to prevent already installed updates from being updated again.
         /// </summary>
         /// <returns></returns>
-        public bool NewVersionIsInstalled()
-        {
-            return PackageFactory.NewerVersionIsInstalled(this);
-        }
+        
     }
 
 }

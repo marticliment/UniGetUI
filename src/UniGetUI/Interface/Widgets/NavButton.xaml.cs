@@ -34,7 +34,7 @@ namespace UniGetUI.Interface.Widgets
         }
         DependencyProperty GlyphProperty;
 
-        public event EventHandler<NavButtonEventArgs> Click;
+        public event EventHandler<NavButtonEventArgs>? Click;
 
         public NavButton()
         {

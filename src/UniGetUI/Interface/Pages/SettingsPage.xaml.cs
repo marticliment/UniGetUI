@@ -266,7 +266,7 @@ namespace UniGetUI.Interface
                 ManagerPath.ActionIcon = new SymbolIcon(Symbol.Copy);
                 ManagerPath.Click += (s, e) =>
                 {
-                    WindowsClipboard.SetText(ManagerPath.Description.ToString());
+                    WindowsClipboard.SetText(ManagerPath.Description.ToString() ?? "");
                 };
                 ExtraSettingsCards[Manager].Insert(index++, ManagerPath);
 
@@ -275,7 +275,7 @@ namespace UniGetUI.Interface
                     Text = CoreTools.AutoTranslated("Always run {pm} operations with administrator rights"),
                     SettingName = "AlwaysElevate" + Manager.Name,
                 };
-                AdminCard._checkbox.Content = AdminCard._checkbox.Content.ToString().Replace("{pm}", Manager.Name);
+                AdminCard._checkbox.Content = (AdminCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.Name);
                 ExtraSettingsCards[Manager].Insert(index++, AdminCard);
 
                 CheckboxCard ParallelCard = new()
@@ -283,7 +283,7 @@ namespace UniGetUI.Interface
                     Text = CoreTools.AutoTranslated("Allow {pm} operations to be performed in parallel"),
                     SettingName = "AllowParallelInstallsForManager" + Manager.Name,
                 };
-                ParallelCard._checkbox.Content = ParallelCard._checkbox.Content.ToString().Replace("{pm}", Manager.Name);
+                ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.Name);
                 ExtraSettingsCards[Manager].Insert(index++, ParallelCard);
 
 
@@ -330,7 +330,7 @@ namespace UniGetUI.Interface
             if (file != string.Empty)
             {
                 ResetWingetUI(sender, e);
-                Dictionary<string, string> settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file));
+                Dictionary<string, string> settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file)) ?? new();
                 foreach (KeyValuePair<string, string> entry in settings)
                     Settings.SetValue(entry.Key, entry.Value);
 

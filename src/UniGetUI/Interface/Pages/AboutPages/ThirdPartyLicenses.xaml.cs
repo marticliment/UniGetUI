@@ -16,11 +16,11 @@ namespace UniGetUI.Interface.Pages.AboutPages
     /// 
     public class LibraryLicense
     {
-        public string Name { get; set; }
-        public string License { get; set; }
-        public Uri LicenseURL { get; set; }
-        public string HomepageText { get; set; }
-        public Uri HomepageUrl { get; set; }
+        public string Name { get; set; } = "";
+        public string License { get; set; } = "";
+        public Uri? LicenseURL { get; set; }
+        public string HomepageText { get; set; } = "";
+        public Uri? HomepageUrl { get; set; }
     }
 
     public sealed partial class ThirdPartyLicenses : Page

@@ -92,7 +92,7 @@ namespace UniGetUI.PackageEngine.Classes.Packages
             return null;
         }
 
-        public static bool NewerVersionIsInstalled(UpgradablePackage p)
+        public static bool NewerVersionIsInstalled(Package p)
         {
             if (!__installed_packages.ContainsKey(p.Manager))
                 return false;

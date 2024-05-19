@@ -62,7 +62,12 @@ namespace UniGetUI.Core.Language
                     LangFileToLoad = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
                 }
 
-                LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject).ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
+                var __LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject)?.ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
+
+                if (__LangDict != null)
+                    LangDict = __LangDict;
+                else
+                    Logger.Error($"Deserialization of language file {LangFileToLoad} resulted in a null object");
 
                 if (!Settings.Get("DisableLangAutoUpdater"))
                     _ = DownloadUpdatedLanguageFile(LangKey);

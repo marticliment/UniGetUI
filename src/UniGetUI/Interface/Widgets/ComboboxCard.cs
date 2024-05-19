@@ -56,7 +56,7 @@ namespace UniGetUI.Interface.Widgets
 
         DependencyProperty TextProperty;
 
-        public event EventHandler<ComboCardEventArgs> ValueChanged;
+        public event EventHandler<ComboCardEventArgs>? ValueChanged;
 
         public ComboboxCard()
         {
@@ -108,7 +108,7 @@ namespace UniGetUI.Interface.Widgets
             {
                 try
                 {
-                    Settings.SetValue(SettingName, _values_ref[_combobox.SelectedItem.ToString()]);
+                    Settings.SetValue(SettingName, _values_ref[_combobox.SelectedItem?.ToString() ?? ""]);
                     ValueChanged?.Invoke(this, new ComboCardEventArgs());
                 }
                 catch (Exception ex)

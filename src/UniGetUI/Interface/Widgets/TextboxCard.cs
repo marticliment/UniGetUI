@@ -22,8 +22,8 @@ namespace UniGetUI.Interface.Widgets
 
     public sealed class TextboxCard : SettingsCard
     {
-        private TextBox _textbox;
-        private HyperlinkButton _helpbutton;
+        private TextBox _textbox = new();
+        private HyperlinkButton _helpbutton = new();
 
         public string SettingName
         {
@@ -57,7 +57,7 @@ namespace UniGetUI.Interface.Widgets
 
         DependencyProperty HelpUrlProperty;
 
-        public event EventHandler<TextboxEventArgs> ValueChanged;
+        public event EventHandler<TextboxEventArgs>? ValueChanged;
 
         public TextboxCard()
         {

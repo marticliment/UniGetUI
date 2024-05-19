@@ -34,10 +34,10 @@ namespace UniGetUI.Interface.Widgets
 
         public bool Checked
         {
-            get => (bool)_checkbox.IsChecked;
+            get => _checkbox.IsChecked ?? false;
         }
 
-        public event EventHandler<CheckBoxEventArgs> StateChanged;
+        public event EventHandler<CheckBoxEventArgs>? StateChanged;
 
         DependencyProperty SettingProperty;
 
@@ -57,6 +57,8 @@ namespace UniGetUI.Interface.Widgets
 
         public CheckboxCard()
         {
+            _checkbox = new CheckBox();
+
             TextProperty = DependencyProperty.Register(
                 nameof(Text),
                 typeof(string),
@@ -73,7 +75,6 @@ namespace UniGetUI.Interface.Widgets
             ContentAlignment = ContentAlignment.Left;
             HorizontalAlignment = HorizontalAlignment.Stretch;
 
-            _checkbox = new CheckBox();
             DefaultStyleKey = typeof(CheckboxCard);
             Content = _checkbox;
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;

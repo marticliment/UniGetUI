@@ -76,7 +76,7 @@ namespace UniGetUI.Core.Tools
                 }
             };
             process.Start();
-            string line = await process.StandardOutput.ReadLineAsync();
+            string? line = await process.StandardOutput.ReadLineAsync();
             string output;
             if (line == null)
                 output = "";
@@ -127,7 +127,7 @@ namespace UniGetUI.Core.Tools
             string LangName = "Unknown";
             try
             {
-                LangName = LanguageEngine.Translate("langName");
+                LangName = Translate("langName");
             }
             catch { }
 

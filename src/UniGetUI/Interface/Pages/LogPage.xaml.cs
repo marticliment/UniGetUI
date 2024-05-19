@@ -145,7 +145,7 @@ namespace UniGetUI.Interface.Pages
                         {
                             p.Inlines.Add(new Run() { Text = new string(' ', date_length) + line + "\n", Foreground = color });
                         }
-                    (p.Inlines[^1] as Run).Text = (p.Inlines[^1] as Run).Text.TrimEnd();
+                    ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
                     LogTextBox.Blocks.Add(p);
                 }
                 //SetText(text);

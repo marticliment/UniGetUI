@@ -10,6 +10,8 @@ using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.Core.Tools;
+using System.Diagnostics.CodeAnalysis;
+using System.ComponentModel.Design;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -41,6 +43,7 @@ namespace UniGetUI.Interface.Widgets
         private ListView _datagrid { get; set; }
         public SourceManager(PackageManager Manager)
         {
+            this.Manager = Manager;
             InitializeComponent();
 
             if (!Manager.Capabilities.SupportsCustomSources)
@@ -96,9 +99,17 @@ namespace UniGetUI.Interface.Widgets
                         }
                         else
                         {
-                            SourceUrlTextBox.IsEnabled = SourceNameTextBox.IsEnabled = false;
-                            SourceUrlTextBox.Text = NameSourceRef[SourcesCombo.SelectedValue.ToString()].Url.ToString();
-                            SourceNameTextBox.Text = NameSourceRef[SourcesCombo.SelectedValue.ToString()].Name;
+                            var sourceName = SourcesCombo.SelectedValue.ToString();
+                            if (sourceName != null)
+                            {
+                                SourceUrlTextBox.IsEnabled = SourceNameTextBox.IsEnabled = false;
+                                SourceUrlTextBox.Text = NameSourceRef[sourceName].Url.ToString();
+                                SourceNameTextBox.Text = NameSourceRef[sourceName].Name;
+                            }
+                            else
+                            {
+                                Logger.Warn("SourcesCombo.SelectedValue.ToString() was null on SourceManager.SourceManager");
+                            }
                         }
                     };
                     SourcesCombo.SelectedIndex = 0;
@@ -113,7 +124,7 @@ namespace UniGetUI.Interface.Widgets
                     {
                         AddSourceOperation op;
                         if (CoreTools.Translate("Other") != SourcesCombo.SelectedValue.ToString())
-                            op = new AddSourceOperation(NameSourceRef[SourcesCombo.SelectedValue.ToString()]);
+                            op = new AddSourceOperation(NameSourceRef[SourcesCombo.SelectedValue.ToString() ?? ""]);
                         else
                             op = new AddSourceOperation(new ManagerSource(this.Manager, SourceNameTextBox.Text, new Uri(SourceUrlTextBox.Text)));
                         MainApp.Instance.AddOperationToList(op);

@@ -22,9 +22,9 @@ namespace UniGetUI.Interface.SoftwarePages
 {
     public class NewSoftwareUpdatesPage : AbstractPackagesPage
     {
-        private BetterMenuItem MenuAsAdmin;
-        private BetterMenuItem MenuInteractive;
-        private BetterMenuItem MenuskipHash;
+        private BetterMenuItem? MenuAsAdmin;
+        private BetterMenuItem? MenuInteractive;
+        private BetterMenuItem? MenuskipHash;
 
         public override void GenerateUIText()
         {
@@ -155,6 +155,12 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override void WhenShowingContextMenu(Package package)
         {
+            if(MenuAsAdmin == null || MenuInteractive == null || MenuskipHash == null)
+            {
+                Logger.Error("Menu items are null on SoftwareUpdatesTab");
+                return;
+            }
+
             MenuAsAdmin.IsEnabled = package.Manager.Capabilities.CanRunAsAdmin;
             MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
             MenuskipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
@@ -308,7 +314,7 @@ namespace UniGetUI.Interface.SoftwarePages
             if (await package.HasUpdatesIgnoredAsync(package.NewVersion))
                 return false;
 
-            if (package is UpgradablePackage && (package as UpgradablePackage).NewVersionIsInstalled())
+            if (package.IsUpgradable && package.NewerVersionIsInstalled())
                 return false;
             
             return true;
@@ -451,64 +457,72 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            MainApp.Instance.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage));
+            MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
         }
 
         private void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            MainApp.Instance.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage,
-                new InstallationOptions(PackageList.SelectedItem as UpgradablePackage) { SkipHashCheck = true }));
+            MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
+                new InstallationOptions(package) { SkipHashCheck = true }));
         }
 
         private void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            MainApp.Instance.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage,
-                new InstallationOptions(PackageList.SelectedItem as UpgradablePackage) { InteractiveInstallation = true }));
+            MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
+                new InstallationOptions(package) { InteractiveInstallation = true }));
         }
 
         private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            MainApp.Instance.AddOperationToList(new UpdatePackageOperation(PackageList.SelectedItem as UpgradablePackage,
-                new InstallationOptions(PackageList.SelectedItem as UpgradablePackage) { RunAsAdministrator = true }));
+            MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
+                new InstallationOptions(package) { RunAsAdministrator = true }));
         }
 
         private void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as UpgradablePackage));
-            MainApp.Instance.AddOperationToList(new InstallPackageOperation(PackageList.SelectedItem as UpgradablePackage));
+            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
+            MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
         }
 
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(PackageList.SelectedItem as Package));
+            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
         }
 
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            _ = (PackageList.SelectedItem as Package).AddToIgnoredUpdatesAsync();
-            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(PackageList.SelectedItem as Package);
+            _ = package.AddToIgnoredUpdatesAsync();
+            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
         }
 
         private void MenuSkipVersion_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            _ = (PackageList.SelectedItem as Package).AddToIgnoredUpdatesAsync((PackageList.SelectedItem as Package).NewVersion);
-            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(PackageList.SelectedItem as Package);
+            _ = package.AddToIgnoredUpdatesAsync((package).NewVersion);
+            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
         }
 
         public void UpdatePackageForId(string id)

@@ -18,9 +18,9 @@ namespace UniGetUI.Interface.SoftwarePages
 {
     public class NewDiscoverSoftwarePage : AbstractPackagesPage
     {
-        BetterMenuItem MenuAsAdmin;
-        BetterMenuItem MenuInteractive;
-        BetterMenuItem MenuSkipHash;
+        BetterMenuItem? MenuAsAdmin;
+        BetterMenuItem? MenuInteractive;
+        BetterMenuItem? MenuSkipHash;
 
         public override BetterMenu GenerateContextMenu()
         {
@@ -183,10 +183,9 @@ namespace UniGetUI.Interface.SoftwarePages
             ExportSelection.Click += ExportSelection_Click;
             HelpButton.Click += (s, e) => { MainApp.Instance.MainWindow.NavigationPage.ShowHelp(); };
 
-            InstallationSettings.Click += async (s, e) =>
+            InstallationSettings.Click += (s, e) =>
             {
-                if (PackageList.SelectedItem != null && await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Install))
-                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(PackageList.SelectedItem as Package));
+                ShowInstallationOptionsForPackage(PackageList.SelectedItem as Package);
             };
 
             InstallSelected.Click += (s, e) =>
@@ -218,8 +217,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             SharePackage.Click += (s, e) =>
             {
-                if (PackageList.SelectedItem != null)
-                    MainApp.Instance.MainWindow.SharePackage(PackageList.SelectedItem as Package);
+                MainApp.Instance.MainWindow.SharePackage(PackageList.SelectedItem as Package);
             };
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
@@ -303,6 +301,12 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override void WhenShowingContextMenu(Package package)
         {
+            if (MenuAsAdmin == null || MenuInteractive == null || MenuSkipHash == null)
+            {
+                Logger.Warn("MenuItems are null on DiscoverPackagesPage");
+                return;
+            }
+
             MenuAsAdmin.IsEnabled = package.Manager.Capabilities.CanRunAsAdmin;
             MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
             MenuSkipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
@@ -316,9 +320,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
-                return;
-            _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Install);
+            ShowDetailsForPackage(PackageList.SelectedItem as Package);
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs e)
@@ -330,41 +332,42 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            MainApp.Instance.AddOperationToList(new InstallPackageOperation(PackageList.SelectedItem as Package));
+            MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
         }
 
         private void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            MainApp.Instance.AddOperationToList(new InstallPackageOperation(PackageList.SelectedItem as Package,
-                new InstallationOptions(PackageList.SelectedItem as Package) { SkipHashCheck = true }));
+            MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
+                new InstallationOptions(package) { SkipHashCheck = true }));
         }
 
         private void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            MainApp.Instance.AddOperationToList(new InstallPackageOperation(PackageList.SelectedItem as Package,
-                new InstallationOptions(PackageList.SelectedItem as Package) { InteractiveInstallation = true }));
+            MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
+                new InstallationOptions(package) { InteractiveInstallation = true }));
         }
 
         private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            MainApp.Instance.AddOperationToList(new InstallPackageOperation(PackageList.SelectedItem as Package,
-                new InstallationOptions(PackageList.SelectedItem as Package) { RunAsAdministrator = true }));
+            MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
+                new InstallationOptions(package) { RunAsAdministrator = true }));
         }
 
-        private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
+        private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
-                return;
-            if (await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Install))
-                MainApp.Instance.AddOperationToList(new InstallPackageOperation(PackageList.SelectedItem as Package));
+            ShowInstallationOptionsForPackage(PackageList.SelectedItem as Package);
         }
 
         public void ShowSharedPackage_ThreadSafe(string pId, string pSource)

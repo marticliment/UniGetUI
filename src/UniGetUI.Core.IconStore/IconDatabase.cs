@@ -23,10 +23,11 @@ namespace UniGetUI.Core.IconEngine
         {
             get
             {
-                if(__instance is  null)
+                if(__instance == null)
                 {
                     Logger.Error("IconStore.Instance was not initialized, creating an empty instance.");
                     InitializeInstance();
+                    return Instance;
                 }
                 return __instance;
             }

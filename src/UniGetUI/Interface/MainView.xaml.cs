@@ -34,10 +34,10 @@ namespace UniGetUI.Interface
         public NewDiscoverSoftwarePage DiscoverPage;
         public NewSoftwareUpdatesPage UpdatesPage;
         public NewInstalledPackagesPage InstalledPage;
-        public HelpDialog HelpPage;
+        public HelpDialog? HelpPage;
         public PackageBundlePage BundlesPage;
-        public Page OldPage;
-        public Page CurrentPage;
+        public Page? OldPage;
+        public Page? CurrentPage;
         public InfoBadge UpdatesBadge;
         public InfoBadge BundleBadge;
         public StackPanel OperationStackPanel;
@@ -112,20 +112,21 @@ namespace UniGetUI.Interface
             {
                 if (e.Key == Windows.System.VirtualKey.Tab && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                 {
-                    if (!InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
-                    {
-                        if (NextPageReference.ContainsKey(CurrentPage))
-                            NextPageReference[CurrentPage].ForceClick();
+                    if(CurrentPage != null)
+                        if (!InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
+                        {
+                            if (NextPageReference.ContainsKey(CurrentPage))
+                                NextPageReference[CurrentPage].ForceClick();
+                            else
+                                DiscoverNavButton.ForceClick();
+                        }
                         else
-                            DiscoverNavButton.ForceClick();
-                    }
-                    else
-                    {
-                        if (NextPageReference.ContainsKey(CurrentPage))
-                            PreviousTabReference[CurrentPage].ForceClick();
-                        else
-                            DiscoverNavButton.ForceClick();
-                    }
+                        {
+                            if (NextPageReference.ContainsKey(CurrentPage))
+                                PreviousTabReference[CurrentPage].ForceClick();
+                            else
+                                DiscoverNavButton.ForceClick();
+                        }
                 }
             };
         }
@@ -163,7 +164,7 @@ namespace UniGetUI.Interface
             MoreNavButtonMenu.Closed += (s, e) =>
             {
                 foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
-                    button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage]);
+                    button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage ?? DiscoverPage]);
             };
         }
 
@@ -174,7 +175,7 @@ namespace UniGetUI.Interface
 
         private async void AboutNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
-            ContentDialog AboutDialog = new();
+            ContentDialog? AboutDialog = new();
             AboutDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             AboutDialog.XamlRoot = XamlRoot;
             AboutDialog.Resources["ContentDialogMaxWidth"] = 1200;
@@ -188,13 +189,13 @@ namespace UniGetUI.Interface
 
             AboutDialog.Content = null;
             foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
-                button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage]);
+                button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage ?? DiscoverPage]);
             AboutDialog = null;
         }
 
         public async Task ManageIgnoredUpdatesDialog()
         {
-            ContentDialog UpdatesDialog = new();
+            ContentDialog? UpdatesDialog = new();
             UpdatesDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             UpdatesDialog.XamlRoot = XamlRoot;
             UpdatesDialog.Resources["ContentDialogMaxWidth"] = 1200;
@@ -277,7 +278,7 @@ namespace UniGetUI.Interface
         {
             InstallOptionsPage OptionsPage = new(package, Operation);
 
-            ContentDialog OptionsDialog = new();
+            ContentDialog? OptionsDialog = new();
             OptionsDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             OptionsDialog.XamlRoot = XamlRoot;
             OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
@@ -309,7 +310,7 @@ namespace UniGetUI.Interface
         {
             InstallOptionsPage OptionsPage = new(package, options);
 
-            ContentDialog OptionsDialog = new();
+            ContentDialog? OptionsDialog = new();
             OptionsDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             OptionsDialog.XamlRoot = XamlRoot;
             OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
@@ -364,14 +365,14 @@ namespace UniGetUI.Interface
         private async void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
         {
 
-            ContentDialog NotesDialog = new();
+            ContentDialog? NotesDialog = new();
             NotesDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             NotesDialog.XamlRoot = XamlRoot;
             NotesDialog.Resources["ContentDialogMaxWidth"] = 12000;
             NotesDialog.Resources["ContentDialogMaxHeight"] = 10000;
             NotesDialog.CloseButtonText = CoreTools.Translate("Close");
             NotesDialog.Title = CoreTools.Translate("Release notes");
-            ReleaseNotes notes = new();
+            ReleaseNotes? notes = new();
             NotesDialog.Content = notes;
             NotesDialog.SizeChanged += (s, e) =>
             {
@@ -388,9 +389,9 @@ namespace UniGetUI.Interface
 
         public async Task ShowPackageDetails(Package package, OperationType ActionOperation)
         {
-            PackageDetailsPage DetailsPage = new(package, ActionOperation);
+            PackageDetailsPage? DetailsPage = new(package, ActionOperation);
 
-            ContentDialog DetailsDialog = new();
+            ContentDialog? DetailsDialog = new();
             DetailsDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             DetailsDialog.XamlRoot = XamlRoot;
             DetailsDialog.Resources["ContentDialogMaxWidth"] = 8000;

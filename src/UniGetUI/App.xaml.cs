@@ -48,7 +48,7 @@ namespace UniGetUI
             private int _available_updates = 0;
             public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; MainApp.Instance.MainWindow.UpdateSystemTrayStatus(); } }
         }
-
+#pragma warning disable CS8618
         public static Scoop Scoop;
         public static WinGet Winget;
         public static Chocolatey Choco;
@@ -74,9 +74,28 @@ namespace UniGetUI
 
         public MainApp() : base()
         {
-            Instance = this;
             try
             {
+                Instance = this;
+                Scoop = new();
+                Winget = new();
+                Choco = new();
+                Pip = new();
+                Npm = new();
+                Dotnet = new();
+                PowerShell = new();
+
+                PackageManagerList.AddRange(new PackageManager[]
+                {
+                    Winget,
+                    Scoop,
+                    Choco,
+                    Pip,
+                    Npm,
+                    Dotnet,
+                    PowerShell
+                });
+
                 InitializeComponent();
 
                 string preferredTheme = Settings.GetValue("PreferredTheme");
@@ -285,24 +304,7 @@ namespace UniGetUI
         /// </summary>
         private void InitializePackageManagers()
         {
-            Winget = new WinGet();
-            Scoop = new Scoop();
-            Choco = new Chocolatey();
-            Pip = new Pip();
-            Npm = new Npm();
-            Dotnet = new DotNet();
-            PowerShell = new PowerShell();
-
-            PackageManagerList.AddRange(new PackageManager[]
-            {
-                Winget,
-                Scoop,
-                Choco,
-                Pip,
-                Npm,
-                Dotnet,
-                PowerShell
-            });
+            
         }
 
         /// <summary>

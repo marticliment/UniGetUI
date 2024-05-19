@@ -58,7 +58,7 @@ namespace UniGetUI.Interface.Widgets
 
             if (Source == null)
                 Source = new BitmapImage();
-            (Source as BitmapImage).UriSource = new Uri("ms-appx:///Assets/Images/" + IconName + "_" + theme + ".png");
+            if(Source is BitmapImage) ((BitmapImage)Source).UriSource = new Uri("ms-appx:///Assets/Images/" + IconName + "_" + theme + ".png");
         }
     }
 }

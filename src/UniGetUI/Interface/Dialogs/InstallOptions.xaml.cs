@@ -121,17 +121,17 @@ namespace UniGetUI.Interface.Dialogs
 
         public async Task<InstallationOptions> GetUpdatedOptions()
         {
-            Options.RunAsAdministrator = AdminCheckBox.IsChecked.Value;
-            Options.InteractiveInstallation = InteractiveCheckBox.IsChecked.Value;
-            Options.SkipHashCheck = HashCheckbox.IsChecked.Value;
+            Options.RunAsAdministrator = AdminCheckBox?.IsChecked ?? false;
+            Options.InteractiveInstallation = InteractiveCheckBox?.IsChecked ?? false;
+            Options.SkipHashCheck = HashCheckbox?.IsChecked ?? false;
 
-            if (CommonTranslations.InvertedArchNames.ContainsKey(ArchitectureComboBox.SelectedValue.ToString()))
-                Options.Architecture = CommonTranslations.InvertedArchNames[ArchitectureComboBox.SelectedValue.ToString()];
+            if (CommonTranslations.InvertedArchNames.ContainsKey(ArchitectureComboBox.SelectedValue.ToString() ?? ""))
+                Options.Architecture = CommonTranslations.InvertedArchNames[ArchitectureComboBox.SelectedValue.ToString() ?? ""];
             else
                 Options.Architecture = null;
 
-            if (CommonTranslations.InvertedScopeNames.ContainsKey(ScopeCombo.SelectedValue.ToString()))
-                Options.InstallationScope = CommonTranslations.InvertedScopeNames[ScopeCombo.SelectedValue.ToString()];
+            if (CommonTranslations.InvertedScopeNames.ContainsKey(ScopeCombo.SelectedValue.ToString() ?? ""))
+                Options.InstallationScope = CommonTranslations.InvertedScopeNames[ScopeCombo.SelectedValue.ToString() ?? ""];
             else
                 Options.InstallationScope = null;
 
@@ -140,11 +140,11 @@ namespace UniGetUI.Interface.Dialogs
             Options.PreRelease = VersionComboBox.SelectedValue.ToString() == CoreTools.Translate("PreRelease");
 
             if (VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("PreRelease") && VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("Latest"))
-                Options.Version = VersionComboBox.SelectedValue.ToString();
+                Options.Version = VersionComboBox.SelectedValue.ToString() ?? "";
             else
                 Options.Version = "";
 
-            if (IgnoreUpdatesCheckbox.IsChecked.Value)
+            if (IgnoreUpdatesCheckbox?.IsChecked ?? false)
                 await Package.AddToIgnoredUpdatesAsync(version: "*");
             else
             {

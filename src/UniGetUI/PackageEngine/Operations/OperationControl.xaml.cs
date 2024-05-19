@@ -41,7 +41,7 @@ namespace UniGetUI.PackageEngine.Operations
         }
 
 
-        private string __button_text;
+        private string __button_text = "";
         private string __line_info_text = "Please wait...";
         private Uri __icon_source = new("ms-appx:///Assets/Images/package_color.png");
         private string __operation_description = "$Package Install";
@@ -108,10 +108,10 @@ namespace UniGetUI.PackageEngine.Operations
         }
 
 #pragma warning disable CS0067
-        protected event EventHandler<OperationCancelledEventArgs> CancelRequested;
-        protected event EventHandler<OperationCancelledEventArgs> CloseRequested;
+        protected event EventHandler<OperationCancelledEventArgs>? CancelRequested;
+        protected event EventHandler<OperationCancelledEventArgs>? CloseRequested;
 #pragma warning restore CS0067
-        protected Process Process;
+        protected Process Process = new();
         protected ObservableCollection<string> ProcessOutput = new();
 
         private ContentDialog OutputDialog = new();
@@ -293,8 +293,8 @@ namespace UniGetUI.PackageEngine.Operations
             Status = OperationStatus.Cancelled;
             LineInfoText = CoreTools.Translate("Operation cancelled");
 
-            if (this is PackageOperation)
-                (this as PackageOperation).Package.Tag = PackageTag.Default;
+            if (this as PackageOperation != null)
+                ((PackageOperation)this).Package.Tag = PackageTag.Default;
 
             if (OldStatus == OperationStatus.Running)
             {
@@ -373,7 +373,7 @@ namespace UniGetUI.PackageEngine.Operations
 
                 Process.Start();
 
-                string line;
+                string? line;
                 while ((line = await Process.StandardOutput.ReadLineAsync()) != null)
                 {
                     if (line.Trim() != "")

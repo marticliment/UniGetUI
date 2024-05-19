@@ -21,17 +21,17 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public string Description { get; set; } = "";
         public string Publisher { get; set; } = "";
         public string Author { get; set; } = "";
-        public Uri HomepageUrl { get; set; } = null;
+        public Uri? HomepageUrl { get; set; } = null;
         public string License { get; set; } = "";
-        public Uri LicenseUrl { get; set; } = null;
-        public Uri InstallerUrl { get; set; } = null;
+        public Uri? LicenseUrl { get; set; } = null;
+        public Uri? InstallerUrl { get; set; } = null;
         public string InstallerHash { get; set; } = "";
         public string InstallerType { get; set; } = "";
         public double InstallerSize { get; set; } = 0; // In Megabytes
-        public Uri ManifestUrl { get; set; } = null;
+        public Uri? ManifestUrl { get; set; } = null;
         public string UpdateDate { get; set; } = "";
         public string ReleaseNotes { get; set; } = "";
-        public Uri ReleaseNotesUrl { get; set; } = null;
+        public Uri? ReleaseNotesUrl { get; set; } = null;
         public string[] Tags { get; set; } = new string[0];
 
         public PackageDetails(Package package)

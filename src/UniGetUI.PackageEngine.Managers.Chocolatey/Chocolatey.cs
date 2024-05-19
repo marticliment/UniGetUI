@@ -88,7 +88,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                     if (elements.Length <= 2)
                         continue;
 
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]) || elements[1] == elements[2])
                         continue;
 
                     Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this));
@@ -293,7 +293,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             else if (File.Exists(Path.Join(new_choco_path, "choco.exe")))
                 status.ExecutablePath = Path.Join(new_choco_path, "choco.exe");
             else
-                status.ExecutablePath = Path.Join(Directory.GetParent(Environment.ProcessPath).FullName, "choco-cli\\choco.exe");
+                status.ExecutablePath = Path.Join(CoreData.UniGetUIExecutableDirectory, "choco-cli\\choco.exe");
 
             status.Found = File.Exists(status.ExecutablePath);
 
@@ -319,8 +319,8 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             // If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
             if (/*Settings.Get("ShownWelcomeWizard") && */!Settings.Get("UseSystemChocolatey") && !File.Exists(@"C:\ProgramData\Chocolatey\bin\choco.exe"))
             {
-                string path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
-                if (!path.Contains(status.ExecutablePath.Replace("\\choco.exe", "\\bin")))
+                string? path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
+                if (!path?.Contains(status.ExecutablePath.Replace("\\choco.exe", "\\bin")) ?? false)
                 {
                     Logger.Info("Adding chocolatey to path since it was not on path.");
                     Environment.SetEnvironmentVariable("PATH", $"{status.ExecutablePath.Replace("\\choco.exe", "\\bin")};{path}", EnvironmentVariableTarget.User);

@@ -182,11 +182,11 @@ namespace UniGetUI.Interface
 
             SourcesTreeView.Tapped += (s, e) =>
             {
-                if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
+                if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement)?.DataContext != null)
                 {
-                    if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
+                    if ((e.OriginalSource as FrameworkElement)?.DataContext is TreeViewNode)
                     {
-                        TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
+                        TreeViewNode? node = (e.OriginalSource as FrameworkElement)?.DataContext as TreeViewNode;
                         if (node == null)
                             return;
                         if (SourcesTreeView.SelectedNodes.Contains(node))
@@ -200,11 +200,11 @@ namespace UniGetUI.Interface
 
             SourcesTreeView.RightTapped += (s, e) =>
             {
-                if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement).DataContext != null)
+                if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement)?.DataContext != null)
                 {
-                    if ((e.OriginalSource as FrameworkElement).DataContext is TreeViewNode)
+                    if ((e.OriginalSource as FrameworkElement)?.DataContext is TreeViewNode)
                     {
-                        TreeViewNode node = (e.OriginalSource as FrameworkElement).DataContext as TreeViewNode;
+                        TreeViewNode? node = (e.OriginalSource as FrameworkElement)?.DataContext as TreeViewNode;
                         if (node == null)
                             return;
 
@@ -230,7 +230,7 @@ namespace UniGetUI.Interface
                         {
                             PackageList.SelectedItem = package;
                             WhenShowingContextMenu(package);
-                            (PackageList.ContextFlyout as BetterMenu).ShowAt(PackageList, e.GetPosition(PackageList));
+                            (PackageList.ContextFlyout as BetterMenu)?.ShowAt(PackageList, e.GetPosition(PackageList));
                         }
                     }
                     catch (Exception ex)
@@ -260,7 +260,9 @@ namespace UniGetUI.Interface
                 }
                 else if (e.Key == Windows.System.VirtualKey.Space && PackageList.SelectedItem != null)
                 {
-                    (PackageList.SelectedItem as Package).IsChecked = !(PackageList.SelectedItem as Package).IsChecked;
+                    var package = PackageList.SelectedItem as Package;
+                    if(package != null)
+                        package.IsChecked = !package.IsChecked;
                 }
                 else if (e.Key == Windows.System.VirtualKey.F5)
                 {
@@ -343,9 +345,8 @@ namespace UniGetUI.Interface
             }
         }
 
-        private void PackageContextMenu_AboutToShow(object sender, Package _package)
+        private void PackageContextMenu_AboutToShow(object sender, Package package)
         {
-            UpgradablePackage package = _package as UpgradablePackage;
             if (!Initialized)
                 return;
             PackageList.SelectedItem = package;
@@ -591,8 +592,12 @@ namespace UniGetUI.Interface
                 return;
 
             FilteredPackages.Descending = !FilteredPackages.Descending;
-            FilteredPackages.SortingSelector = (a) => (a.GetType().GetProperty(Sorter).GetValue(a));
-            FilteredPackages.Sort();
+            FilteredPackages.SortingSelector = (a) =>
+            {
+                if (a.GetType()?.GetProperty(Sorter)?.GetValue(a) == null)
+                    Logger.Warn("Sorter element is null on AbstractPackagePage");
+                return a.GetType()?.GetProperty(Sorter)?.GetValue(a) ?? 0;
+            }; FilteredPackages.Sort();
 
             if (FilteredPackages.Count > 0)
                 PackageList.ScrollIntoView(FilteredPackages[0]);

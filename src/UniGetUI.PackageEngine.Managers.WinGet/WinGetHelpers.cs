@@ -307,7 +307,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             process.Start();
 
             // Retrieve the output
-            string _line;
+            string? _line;
             while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
                 if (_line.Trim() != "")
                     output.Add(_line);

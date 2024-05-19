@@ -25,12 +25,12 @@ namespace UniGetUI.PackageEngine.PackageClasses
         // Internal properties
         private bool __is_checked = false;
         public event PropertyChangedEventHandler? PropertyChanged;
-        private string __listed_icon_id;
-        private string __name_tooltip;
+        private string __listed_icon_id = "";
+        private string __name_tooltip = "";
         private PackageTag __tag;
-        private float __opacity;
-        private bool __show_icon_highlight;
-        private string __hash;
+        private float __opacity = 1;
+        private bool __show_icon_highlight = false;
+        private string __hash = "";
 
         public int NewVersionLabelWidth { get { return IsUpgradable? 125: 0; } }
         public int NewVersionIconWidth { get { return IsUpgradable? 24: 0; } }
@@ -283,7 +283,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+
+                if (IgnoredUpdatesJson == null)
+                    throw new Exception("The IgnoredUpdates database seems to be invalid!");
+
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
                     IgnoredUpdatesJson.Remove(IgnoredId);
                 IgnoredUpdatesJson.Add(IgnoredId, version);
@@ -307,7 +311,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
 
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+
+                if (IgnoredUpdatesJson == null)
+                    throw new Exception("The IgnoredUpdates database seems to be invalid!");
+
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
                 {
                     IgnoredUpdatesJson.Remove(IgnoredId);
@@ -336,8 +344,12 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
-                if (IgnoredUpdatesJson.ContainsKey(IgnoredId) && (IgnoredUpdatesJson[IgnoredId].ToString() == "*" || IgnoredUpdatesJson[IgnoredId].ToString() == Version))
+                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+
+                if (IgnoredUpdatesJson == null)
+                    throw new Exception("The IgnoredUpdates database seems to be invalid!");
+
+                if (IgnoredUpdatesJson.ContainsKey(IgnoredId) && (IgnoredUpdatesJson[IgnoredId]?.ToString() == "*" || IgnoredUpdatesJson[IgnoredId]?.ToString() == Version))
                     return true;
                 else
                     return false;
@@ -362,9 +374,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+
+                if (IgnoredUpdatesJson == null)
+                    throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
-                    return IgnoredUpdatesJson[IgnoredId].ToString();
+                    return IgnoredUpdatesJson[IgnoredId]?.ToString() ?? "";
                 else
                     return "";
             }
@@ -380,7 +396,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// Internal method to raise the PropertyChanged event.
         /// </summary>
         /// <param name="name"></param>
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -421,6 +437,12 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public void SetTag(PackageTag tag)
         {
             Tag = tag;
+        }
+
+        public bool NewerVersionIsInstalled()
+        {
+            if(!IsUpgradable) return false;
+            return PackageFactory.NewerVersionIsInstalled(this);
         }
 
     }

@@ -16,7 +16,7 @@
     <SignAssembly>False</SignAssembly>
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <AssemblyName>WingetUI</AssemblyName>
-    <Nullable>annotations</Nullable>
+	<Nullable>enable</Nullable>
 	
   </PropertyGroup>
   <ItemGroup>

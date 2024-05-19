@@ -44,8 +44,8 @@ namespace UniGetUI.PackageEngine.Classes
         public string Version { get; set; } = "";
         public string Source { get; set; } = "";
         public string ManagerName { get; set; } = "";
-        public SerializableInstallationOptions_v1 InstallationOptions { get; set; }
-        public SerializableUpdatesOptions_v1 Updates { get; set; }
+        public SerializableInstallationOptions_v1 InstallationOptions { get; set; } = new();
+        public SerializableUpdatesOptions_v1 Updates { get; set; } = new();
     }
 
     
@@ -67,11 +67,11 @@ namespace UniGetUI.PackageEngine.Classes
         public Package Package { get; }
         public bool IsValid { get; set; } = true;
         public InstallationOptions InstallOptions { get; set; }
-        public SerializableUpdatesOptions_v1 UpdateOptions = null;
+        public SerializableUpdatesOptions_v1 UpdateOptions;
 
         public double DrawOpacity = 1;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private bool __is_checked = true;
         public bool IsChecked { get { return __is_checked; } set { __is_checked = value; OnPropertyChanged(); } }
@@ -147,7 +147,7 @@ namespace UniGetUI.PackageEngine.Classes
             MainApp.Instance.MainWindow.NavigationPage.BundlesPage.UpdateCount();
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }

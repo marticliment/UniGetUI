@@ -55,7 +55,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             process.Start();
 
             bool dashesPassed = false;
-            string line;
+            string? line;
             string output = "";
             while ((line = await process.StandardOutput.ReadLineAsync()) != null)
             {

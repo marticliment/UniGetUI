@@ -23,9 +23,9 @@ namespace UniGetUI.Interface.SoftwarePages
     {
         bool HasDoneBackup = false;
 
-        BetterMenuItem MenuAsAdmin;
-        BetterMenuItem MenuInteractive;
-        BetterMenuItem MenuRemoveData;
+        BetterMenuItem? MenuAsAdmin;
+        BetterMenuItem? MenuInteractive;
+        BetterMenuItem? MenuRemoveData;
 
         public override BetterMenu GenerateContextMenu()
         {
@@ -220,10 +220,9 @@ namespace UniGetUI.Interface.SoftwarePages
             HelpButton.Click += (s, e) => { MainApp.Instance.MainWindow.NavigationPage.ShowHelp(); };
 
 
-            InstallationSettings.Click += async (s, e) =>
+            InstallationSettings.Click += (s, e) =>
             {
-                if (PackageList.SelectedItem != null && await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
-                    ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
+                ShowInstallationOptionsForPackage(PackageList.SelectedItem as Package);
             };
 
 
@@ -314,6 +313,12 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override void WhenShowingContextMenu(Package package)
         {
+            if(MenuAsAdmin == null || MenuInteractive == null || MenuRemoveData == null)
+            {
+                Logger.Error("Menu items are null on InstalledPackagesTab");
+                return;
+            }
+
             MenuAsAdmin.IsEnabled = package.Manager.Capabilities.CanRunAsAdmin;
             MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
             MenuRemoveData.IsEnabled = package.Manager.Capabilities.CanRemoveDataOnUninstall;
@@ -422,81 +427,85 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        private void MenuUninstall_Invoked(object sender, RoutedEventArgs package)
+        private void MenuUninstall_Invoked(object sender, RoutedEventArgs args)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            ConfirmAndUninstall((PackageList.SelectedItem as Package),
-                new InstallationOptions((PackageList.SelectedItem as Package)));
+            ConfirmAndUninstall(package, new InstallationOptions(package));
         }
 
-        private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs package)
+        private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package  == null)
                 return;
-            ConfirmAndUninstall((PackageList.SelectedItem as Package),
-                new InstallationOptions((PackageList.SelectedItem as Package)) { RunAsAdministrator = true });
+            ConfirmAndUninstall(package, new InstallationOptions(package) { RunAsAdministrator = true });
         }
 
-        private void MenuInteractive_Invoked(object sender, RoutedEventArgs package)
+        private void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            ConfirmAndUninstall((PackageList.SelectedItem as Package),
-                new InstallationOptions((PackageList.SelectedItem as Package)) { InteractiveInstallation = true });
+            ConfirmAndUninstall(package,
+                new InstallationOptions(package) { InteractiveInstallation = true });
         }
 
-        private void MenuRemoveData_Invoked(object sender, RoutedEventArgs package)
+        private void MenuRemoveData_Invoked(object sender, RoutedEventArgs args)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            ConfirmAndUninstall((PackageList.SelectedItem as Package),
-                new InstallationOptions((PackageList.SelectedItem as Package)) { RemoveDataOnUninstall = true });
+            ConfirmAndUninstall(package,
+                new InstallationOptions(package) { RemoveDataOnUninstall = true });
         }
 
-        private void MenuReinstall_Invoked(object sender, RoutedEventArgs package)
+        private void MenuReinstall_Invoked(object sender, RoutedEventArgs args)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            MainApp.Instance.AddOperationToList(new InstallPackageOperation((PackageList.SelectedItem as Package)));
+            MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
         }
 
-        private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs package)
+        private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            MainApp.Instance.AddOperationToList(new UninstallPackageOperation((PackageList.SelectedItem as Package)));
-            MainApp.Instance.AddOperationToList(new InstallPackageOperation((PackageList.SelectedItem as Package)));
+            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
+            MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
 
         }
-        private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs package)
+        private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            var package = PackageList.SelectedItem as Package;
+            if (!Initialized || package == null)
                 return;
-            _ = (PackageList.SelectedItem as Package).AddToIgnoredUpdatesAsync();
-            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(PackageList.SelectedItem as Package);
+            _ = package.AddToIgnoredUpdatesAsync();
+            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
         }
 
-        private void MenuShare_Invoked(object sender, RoutedEventArgs package)
+        private void MenuShare_Invoked(object sender, RoutedEventArgs args)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
             MainApp.Instance.MainWindow.SharePackage((PackageList.SelectedItem as Package));
         }
 
-        private void MenuDetails_Invoked(object sender, RoutedEventArgs package)
+        private void MenuDetails_Invoked(object sender, RoutedEventArgs args)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
-                return;
-            _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(PackageList.SelectedItem as Package, OperationType.Uninstall);
+            ShowDetailsForPackage(PackageList.SelectedItem as Package);
         }
 
         private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            if (PackageList.SelectedItem as Package != null
-                && await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(PackageList.SelectedItem as Package, OperationType.Uninstall))
+            var package = PackageList.SelectedItem as Package;
+            if (package != null && 
+                await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(package, OperationType.Uninstall))
             {
-                ConfirmAndUninstall(PackageList.SelectedItem as Package, new InstallationOptions(PackageList.SelectedItem as Package));
+                ConfirmAndUninstall(package, new InstallationOptions(package));
             }
         }
 

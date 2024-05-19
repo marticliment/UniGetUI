@@ -58,11 +58,12 @@ namespace UniGetUI.Interface.Widgets
                 HttpResponseMessage response = await NetClient.GetAsync(announcement_url);
                 if (response.IsSuccessStatusCode)
                 {
-                    string title = response.Content.ToString().Split("////")[0].Trim().Trim('\n').Trim();
-                    string body = response.Content.ToString().Split("////")[1].Trim().Trim('\n').Trim();
-                    string linkId = response.Content.ToString().Split("////")[2].Trim().Trim('\n').Trim();
-                    string linkName = response.Content.ToString().Split("////")[3].Trim().Trim('\n').Trim();
-                    Uri imageUrl = new(response.Content.ToString().Split("////")[4].Trim().Trim('\n').Trim());
+                    string[] response_body = (response.Content.ToString() ?? "").Split("////");
+                    string title = response_body[0].Trim().Trim('\n').Trim();
+                    string body = response_body[1].Trim().Trim('\n').Trim();
+                    string linkId = response_body[2].Trim().Trim('\n').Trim();
+                    string linkName = response_body[3].Trim().Trim('\n').Trim();
+                    Uri imageUrl = new(response_body[4].Trim().Trim('\n').Trim());
                     SetText(title, body, linkId, linkName);
                     SetImage(imageUrl);
                 }
