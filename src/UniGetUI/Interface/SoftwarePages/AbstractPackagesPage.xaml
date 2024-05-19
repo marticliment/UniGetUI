@@ -635,7 +635,7 @@
                          VerticalContentAlignment="Center"
                          />
                 <Button Grid.Column="1" x:Name="FindButton" CornerRadius="0,4,4,0" x:FieldModifier="protected"
-                        Height="32" Width="30" Padding="4" AutomationProperties.HelpText="Search">
+                        Height="32" Width="32" Padding="4" AutomationProperties.HelpText="Search">
                     <AnimatedIcon>
                         <AnimatedIcon.Source>
                             <animatedvisuals:AnimatedFindVisualSource/>
@@ -880,7 +880,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBox x:Name="MegaQueryBlock" x:FieldModifier="protected" Grid.Column="1" Grid.Row="1" 
-                         CornerRadius="12,0,0,12" FontSize="40" Padding="20,12,10,13" FontWeight="SemiBold"/>
+                         CornerRadius="12,0,0,12" FontSize="40" Padding="20,11,10,11" FontWeight="SemiBold"/>
                 <Button Grid.Column="2" Grid.Row="1" x:Name="MegaFindButton" CornerRadius="0,12,12,0" x:FieldModifier="protected"
                         Height="80" Width="80" Padding="12" AutomationProperties.HelpText="Search">
                     <AnimatedIcon>

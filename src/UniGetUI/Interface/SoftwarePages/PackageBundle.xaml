@@ -625,7 +625,7 @@
                          VerticalContentAlignment="Center"
                          />
                 <Button Grid.Column="1" x:Name="FindButton" CornerRadius="0,4,4,0"
-                        Height="32" Width="30" Padding="4" AutomationProperties.HelpText="Search">
+                        Height="32" Width="32" Padding="4" AutomationProperties.HelpText="Search">
                     <AnimatedIcon>
                         <AnimatedIcon.Source>
                             <animatedvisuals:AnimatedFindVisualSource/>

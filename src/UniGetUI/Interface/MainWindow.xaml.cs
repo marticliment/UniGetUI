@@ -39,7 +39,7 @@ namespace UniGetUI.Interface
             void ShowShareUIForWindow(IntPtr appWindow);
         }
 
-        TaskbarIcon TrayIcon;
+        TaskbarIcon? TrayIcon;
         private bool RecentlyActivated = false;
 
         static readonly Guid _dtm_iid =
@@ -55,6 +55,7 @@ namespace UniGetUI.Interface
         public List<ContentDialog> DialogQueue = new();
 
         public List<NavButton> NavButtonList = new();
+#pragma warning disable CS8618
         public MainWindow()
         {
             InitializeComponent();
@@ -76,7 +77,7 @@ namespace UniGetUI.Interface
             LoadingSthDalog.Title = CoreTools.Translate("Please wait");
             LoadingSthDalog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
         }
-
+#pragma warning restore CS8618
         public void HandleNotificationActivation(ToastArguments args, ValueSet input)
         {
             if (args.Contains("action") && args["action"] == "updateAll")
@@ -275,14 +276,19 @@ namespace UniGetUI.Interface
                 else
                     tooltip = CoreTools.Translate("{0} updates are available").Replace("{0}", MainApp.Instance.TooltipStatus.AvailableUpdates.ToString()) + " - " + Title;
             }
+            if(TrayIcon == null)
+            {
+                Logger.Warn("Attempting to update a null taskbar icon tray, aborting!");
+                return;
+            }
 
             TrayIcon.ToolTipText = tooltip;
 
             ApplicationTheme theme = ApplicationTheme.Light;
             string RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
             string RegistryValueName = "SystemUsesLightTheme";
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath);
-            object registryValueObject = key?.GetValue(RegistryValueName);
+            RegistryKey? key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath);
+            object? registryValueObject = key?.GetValue(RegistryValueName) ?? null;
             if (registryValueObject != null)
             {
                 int registryValue = (int)registryValueObject;
@@ -294,7 +300,7 @@ namespace UniGetUI.Interface
                 modifier += "_white";
 
 
-            string FullIconPath = Path.Join(Directory.GetParent(Assembly.GetEntryAssembly().Location).ToString(), "\\Assets\\Images\\tray" + modifier + ".ico");
+            string FullIconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "\\Assets\\Images\\tray" + modifier + ".ico");
 
             TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage() { UriSource = new Uri(FullIconPath) });
         }
