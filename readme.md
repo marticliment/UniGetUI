@@ -1,5 +1,6 @@
 # <img src="https://raw.githubusercontent.com/marticliment/WingetUI/main/media/icon_old.png" height="40">WingetUI (soon <img src="https://raw.githubusercontent.com/marticliment/WingetUI/main/media/icon.png" height="40">UniGetUI)
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/295b1e2ea747484da3bbb91ccd72f015)](https://app.codacy.com/gh/marticliment/WingetUI?utm_source=github.com&utm_medium=referral&utm_content=marticliment/WingetUI&utm_campaign=Badge_Grade)
 [![Downloads@latest](https://img.shields.io/github/downloads/marticliment/WingetUI/2.2.0/total?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe)
 [![Release Version Badge](https://img.shields.io/github/v/release/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases)
 [![Issues Badge](https://img.shields.io/github/issues/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/issues)
