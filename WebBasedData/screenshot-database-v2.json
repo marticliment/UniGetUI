@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11703,
-        "done": 5046,
-        "packages_with_icon": 5046,
+        "done": 5047,
+        "packages_with_icon": 5047,
         "packages_with_screenshot": 554,
         "total_screenshots": 1734
     },
@@ -13916,7 +13916,7 @@
             ]
         },
         "ferdium": {
-            "icon": "",
+            "icon": "https://ferdium.org/_next/static/media/logo.9fc5c374.png",
             "images": [
                 "https://i.postimg.cc/05wGYTPN/workspaces.png"
             ]
