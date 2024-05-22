@@ -59,7 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "Automatisch een lijst opslaan van al je geïnstalleerde pakketten om ze gemakkelijk te herstellen.",
   "Automatically save a list of your installed packages on your computer." : "Automatisch een lijst opslaan met de op je computer geïnstalleerde pakketten.",
   "Autostart WingetUI in the notifications area" : "WingetUI automatisch starten in het systeemvak",
-  "Available Updates" : null,
+  "Available Updates" : "Beschikbare updates",
   "Available updates: {0}" : "Beschikbare updates: {0}",
   "Available updates: {0}, not finished yet..." : "Beschikbare updates: {0}, bijna klaar…",
   "Backup" : "Back-up",
