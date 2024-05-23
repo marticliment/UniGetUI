@@ -38,7 +38,7 @@ namespace UniGetUI.Core.Tools
         public static string Translate(string text, params object[] values)
         {
             var dict = new Dictionary<string, object?>();
-            foreach (var (item, index) in values?.Select((item, index) => (item, index)))
+            foreach (var (item, index) in values.Select((item, index) => (item, index)))
             {
                 dict.Add(index.ToString(), item);
             }
