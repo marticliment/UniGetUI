@@ -30,14 +30,14 @@ namespace UniGetUI.Core.Tools
             return LanguageEngine.Translate(text);
         }
 
-        public static string Translate(string text, Dictionary<string, object> dict)
+        public static string Translate(string text, Dictionary<string, object?> dict)
         {
             return MessageFormatter.Format(Translate(text), dict);
         }
 
         public static string Translate(string text, params object[] values)
         {
-            var dict = new Dictionary<string, object>();
+            var dict = new Dictionary<string, object?>();
             foreach (var (item, index) in values?.Select((item, index) => (item, index)))
             {
                 dict.Add(index.ToString(), item);

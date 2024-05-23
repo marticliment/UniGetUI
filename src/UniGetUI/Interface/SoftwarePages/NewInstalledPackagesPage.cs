@@ -408,7 +408,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 string fileName = Settings.GetValue("ChangeBackupFileName");
                 if (fileName == "")
-                    fileName = CoreTools.Translate("{pcName} installed packages", new Dictionary<string, object>{ { "pcName", Environment.MachineName } });
+                    fileName = CoreTools.Translate("{pcName} installed packages", new Dictionary<string, object?>{ { "pcName", Environment.MachineName } });
 
                 if (Settings.Get("EnableBackupTimestamping"))
                     fileName += " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");

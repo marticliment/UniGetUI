@@ -256,10 +256,10 @@ namespace UniGetUI.Interface
             p.Children.Add(new Image() { Source = new BitmapImage() { UriSource = new Uri("ms-appx:///Assets/Images/icon.png") }, Height = 96 });
 
             Paragraph par = new();
-            par.Inlines.Add(new Run() { Text = CoreTools.Translate("WingetUI will become {newname} soon!", new Dictionary<string, object>{ { "newname", NEW_NAME } }), FontSize = 24, FontWeight = new Windows.UI.Text.FontWeight(700), FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI Variable Display Bold") });
+            par.Inlines.Add(new Run() { Text = CoreTools.Translate("WingetUI will become {newname} soon!", new Dictionary<string, object?>{ { "newname", NEW_NAME } }), FontSize = 24, FontWeight = new Windows.UI.Text.FontWeight(700), FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI Variable Display Bold") });
             par.Inlines.Add(new LineBreak());
             par.Inlines.Add(new LineBreak());
-            par.Inlines.Add(new Run() { Text = CoreTools.Translate("WingetUI will soon be named {newname}. This will not represent any change in the application. I (the developer) will continue the development of this project as I am doing right now, but under a different name.", new Dictionary<string, object>{ { "newname", NEW_NAME } }) });
+            par.Inlines.Add(new Run() { Text = CoreTools.Translate("WingetUI will soon be named {newname}. This will not represent any change in the application. I (the developer) will continue the development of this project as I am doing right now, but under a different name.", new Dictionary<string, object?>{ { "newname", NEW_NAME } }) });
             par.Inlines.Add(new LineBreak());
             par.Inlines.Add(new LineBreak());
             par.Inlines.Add(new Run() { Text = CoreTools.Translate("WingetUI is being renamed in order to emphasize the difference between WingetUI (the interface you are using right now) and Winget (a package manager developed by Microsoft with which I am not related)"), FontSize = 12, FontStyle = Windows.UI.Text.FontStyle.Italic });

@@ -197,12 +197,12 @@ namespace UniGetUI.Interface
                     if (Manager.IsEnabled() && Manager.Status.Found)
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Success;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} is enabled and ready to go", new Dictionary<string, object>{ { "pm", Manager.Name } });
+                        ManagerStatus.Title = CoreTools.Translate("{pm} is enabled and ready to go", new Dictionary<string, object?>{ { "pm", Manager.Name } });
                         if (!Manager.Status.Version.Contains("\n"))
-                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object>{ { "pm", Manager.Name } }) + " " + Manager.Status.Version;
+                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?>{ { "pm", Manager.Name } }) + " " + Manager.Status.Version;
                         else if (ShowVersion)
                         {
-                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object>{ { "pm", Manager.Name } });
+                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?>{ { "pm", Manager.Name } });
                             LongVersion.Visibility = Visibility.Visible;
                         }
                         else
@@ -215,14 +215,14 @@ namespace UniGetUI.Interface
                     else if (Manager.IsEnabled() && !Manager.Status.Found)
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Error;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} was not found!", new Dictionary<string, object>{ { "pm", Manager.Name } });
-                        ManagerStatus.Message = CoreTools.Translate("You may need to install {pm} in order to use it with WingetUI.", new Dictionary<string, object>{ { "pm", Manager.Name } });
+                        ManagerStatus.Title = CoreTools.Translate("{pm} was not found!", new Dictionary<string, object?>{ { "pm", Manager.Name } });
+                        ManagerStatus.Message = CoreTools.Translate("You may need to install {pm} in order to use it with WingetUI.", new Dictionary<string, object?>{ { "pm", Manager.Name } });
                     }
                     else if (!Manager.IsEnabled())
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Informational;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} is disabled", new Dictionary<string, object>{ { "pm", Manager.Name } });
-                        ManagerStatus.Message = CoreTools.Translate("Enable it to install packages from {pm}.", new Dictionary<string, object>{ { "pm", Manager.Name } });
+                        ManagerStatus.Title = CoreTools.Translate("{pm} is disabled", new Dictionary<string, object?>{ { "pm", Manager.Name } });
+                        ManagerStatus.Message = CoreTools.Translate("Enable it to install packages from {pm}.", new Dictionary<string, object?>{ { "pm", Manager.Name } });
                     }
                 }
 

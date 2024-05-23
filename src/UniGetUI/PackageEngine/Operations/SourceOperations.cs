@@ -77,7 +77,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            LineInfoText = CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
             if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
                 try
                 {
@@ -85,7 +85,7 @@ namespace UniGetUI.PackageEngine.Operations
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(CoreTools.Translate("Installation failed"))
-                    .AddText(CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object>{ { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
+                    .AddText(CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -101,7 +101,7 @@ namespace UniGetUI.PackageEngine.Operations
             dialog.Title = CoreTools.Translate("Source addition failed");
 
             StackPanel panel = new() { Spacing = 16 };
-            panel.Children.Add(new TextBlock() { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object>{ { "source", Source.Name }, { "manager", Source.Manager.Name } }) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
+            panel.Children.Add(new TextBlock() { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } }) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
 
             Expander expander = new() { CornerRadius = new CornerRadius(8) };
 
@@ -140,7 +140,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             OperationSucceeded?.Invoke(this, new EventArgs());
-            LineInfoText = CoreTools.Translate("The source {source} was added to {manager} successfully", new Dictionary<string, object>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            LineInfoText = CoreTools.Translate("The source {source} was added to {manager} successfully", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
             if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
                 
                 try{
@@ -148,7 +148,7 @@ namespace UniGetUI.PackageEngine.Operations
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(CoreTools.Translate("Addition succeeded"))
-                    .AddText(CoreTools.Translate("The source {source} was added to {manager} successfully", new Dictionary<string, object>{ { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
+                    .AddText(CoreTools.Translate("The source {source} was added to {manager} successfully", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -162,7 +162,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void Initialize()
         {
-            OperationTitle = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            OperationTitle = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
             IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
         }
     }
@@ -215,13 +215,13 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            LineInfoText = CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
             if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
                 new ToastContentBuilder()
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(CoreTools.Translate("Removal failed"))
-                    .AddText(CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object>{ { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
+                    .AddText(CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
 
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -231,7 +231,7 @@ namespace UniGetUI.PackageEngine.Operations
             dialog.Title = CoreTools.Translate("Source removal failed");
 
             StackPanel panel = new() { Spacing = 16 };
-            panel.Children.Add(new TextBlock() { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object>{ { "source", Source.Name }, { "manager", Source.Manager.Name } }) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
+            panel.Children.Add(new TextBlock() { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } }) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
 
             Expander expander = new() { CornerRadius = new CornerRadius(8) };
 
@@ -270,14 +270,14 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             OperationSucceeded?.Invoke(this, new EventArgs());
-            LineInfoText = CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            LineInfoText = CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
             if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
                 try { 
                 new ToastContentBuilder()
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(CoreTools.Translate("Removal succeeded"))
-                    .AddText(CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object>{ { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
+                    .AddText(CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -291,7 +291,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void Initialize()
         {
-            OperationTitle = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            OperationTitle = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
             IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
         }
     }
