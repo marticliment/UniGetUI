@@ -70,19 +70,19 @@ namespace UniGetUI.Interface.Widgets
                     d.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
                     StackPanel p = new();
                     p.Spacing = 8;
-                    p.Children.Add(new TextBlock() { Text = CoreTools.Translate("Select the source you want to add:") });
+                    p.Children.Add(new TextBlock { Text = CoreTools.Translate("Select the source you want to add:") });
                     p.Children.Add(SourcesCombo);
 
                     TextBox SourceNameTextBox = new() { HorizontalAlignment = HorizontalAlignment.Stretch, Width = 400 };
                     TextBox SourceUrlTextBox = new() { HorizontalAlignment = HorizontalAlignment.Stretch };
 
                     StackPanel p1 = new() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
-                    p1.Children.Add(new TextBlock() { Text = CoreTools.Translate("Source name:"), VerticalAlignment = VerticalAlignment.Center });
+                    p1.Children.Add(new TextBlock { Text = CoreTools.Translate("Source name:"), VerticalAlignment = VerticalAlignment.Center });
                     p1.Children.Add(SourceNameTextBox);
 
 
                     StackPanel p2 = new() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
-                    p2.Children.Add(new TextBlock() { Text = CoreTools.Translate("Source URL:"), VerticalAlignment = VerticalAlignment.Center });
+                    p2.Children.Add(new TextBlock { Text = CoreTools.Translate("Source URL:"), VerticalAlignment = VerticalAlignment.Center });
                     p2.Children.Add(SourceUrlTextBox);
 
                     p.Children.Add(p1);

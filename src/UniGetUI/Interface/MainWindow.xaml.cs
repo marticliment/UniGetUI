@@ -75,7 +75,7 @@ namespace UniGetUI.Interface
             LoadingSthDalog = new ContentDialog();
             LoadingSthDalog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             LoadingSthDalog.Title = CoreTools.Translate("Please wait");
-            LoadingSthDalog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
+            LoadingSthDalog.Content = new ProgressBar { IsIndeterminate = true, Width = 300 };
         }
 #pragma warning restore CS8618
         public void HandleNotificationActivation(ToastArguments args, ValueSet input)
@@ -205,16 +205,16 @@ namespace UniGetUI.Interface
             ShowUniGetUI.ExecuteRequested += (s, e) => { Activate(); };
             QuitUniGetUI.ExecuteRequested += (s, e) => { MainApp.Instance.DisposeAndQuit(); };
 
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = DiscoverPackages });
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = AvailableUpdates });
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = InstalledPackages });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = DiscoverPackages });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = AvailableUpdates });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = InstalledPackages });
             TrayMenu.Items.Add(new MenuFlyoutSeparator());
             MenuFlyoutItem _about = new() { Command = AboutUniGetUI };
             _about.IsEnabled = false;
             TrayMenu.Items.Add(_about);
             TrayMenu.Items.Add(new MenuFlyoutSeparator());
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = ShowUniGetUI });
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = QuitUniGetUI });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = ShowUniGetUI });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = QuitUniGetUI });
 
 
             TrayMenu.AreOpenCloseAnimationsEnabled = false;
@@ -302,7 +302,7 @@ namespace UniGetUI.Interface
 
             string FullIconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "\\Assets\\Images\\tray" + modifier + ".ico");
 
-            TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage() { UriSource = new Uri(FullIconPath) });
+            TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage { UriSource = new Uri(FullIconPath) });
         }
 
 

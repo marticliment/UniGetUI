@@ -95,18 +95,18 @@ namespace UniGetUI.Interface.Widgets
         public void SetText(string title, string body, string linkId, string linkName)
         {
             Paragraph paragraph = new();
-            paragraph.Inlines.Add(new Run() { Text = title, FontSize = 24, FontWeight = new FontWeight(700), FontFamily = new FontFamily("Segoe UI Variable Display") });
+            paragraph.Inlines.Add(new Run { Text = title, FontSize = 24, FontWeight = new FontWeight(700), FontFamily = new FontFamily("Segoe UI Variable Display") });
             _textblock.Blocks.Clear();
             _textblock.Blocks.Add(paragraph);
 
             paragraph = new();
             foreach (string line in body.Split("\n"))
             {
-                paragraph.Inlines.Add(new Run() { Text = line + " " });
+                paragraph.Inlines.Add(new Run { Text = line + " " });
                 paragraph.Inlines.Add(new LineBreak());
             }
             Hyperlink link = new();
-            link.Inlines.Add(new Run() { Text = linkName });
+            link.Inlines.Add(new Run { Text = linkName });
             link.NavigateUri = new Uri("https://marticliment.com/redirect?" + linkId);
             paragraph.Inlines[^1] = link;
             paragraph.Inlines.Add(new LineBreak());
@@ -119,7 +119,7 @@ namespace UniGetUI.Interface.Widgets
             Paragraph paragraph = new();
             foreach (string line in body.Split("\n"))
             {
-                paragraph.Inlines.Add(new Run() { Text = line });
+                paragraph.Inlines.Add(new Run { Text = line });
                 paragraph.Inlines.Add(new LineBreak());
             }
             _textblock.Blocks.Clear();

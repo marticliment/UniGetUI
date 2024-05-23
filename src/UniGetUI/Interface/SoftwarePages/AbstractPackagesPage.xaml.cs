@@ -178,7 +178,7 @@ namespace UniGetUI.Interface
             };
 
 
-            LocalPackagesNode = new TreeViewNode() { Content = CoreTools.Translate("Local"), IsExpanded = false };
+            LocalPackagesNode = new TreeViewNode { Content = CoreTools.Translate("Local"), IsExpanded = false };
 
             SourcesTreeView.Tapped += (s, e) =>
             {
@@ -307,7 +307,7 @@ namespace UniGetUI.Interface
             {
                 UsedManagers.Add(source.Manager);
                 TreeViewNode Node;
-                Node = new TreeViewNode() { Content = source.Manager.Name + "                                                                                    .", IsExpanded = false };
+                Node = new TreeViewNode { Content = source.Manager.Name + "                                                                                    .", IsExpanded = false };
                 SourcesTreeView.RootNodes.Add(Node);
 
                 // Smart way to decide whether to check a source or not.

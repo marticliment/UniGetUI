@@ -366,14 +366,14 @@ namespace UniGetUI.Interface.SoftwarePages
             dialog.DefaultButton = ContentDialogButton.Primary;
 
             StackPanel p = new();
-            p.Children.Add(new TextBlock() { Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?", packages.Length), Margin = new Thickness(0, 0, 0, 5) });
+            p.Children.Add(new TextBlock { Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?", packages.Length), Margin = new Thickness(0, 0, 0, 5) });
 
             string pkgList = "";
             foreach (Package package in packages)
                 pkgList += " ● " + package.Name + "\x0a";
 
             TextBlock PackageListTextBlock = new() { FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Consolas"), Text = pkgList };
-            p.Children.Add(new ScrollView() { Content = PackageListTextBlock, MaxHeight = 200 });
+            p.Children.Add(new ScrollView { Content = PackageListTextBlock, MaxHeight = 200 });
 
             dialog.Content = p;
 

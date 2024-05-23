@@ -63,7 +63,7 @@ namespace UniGetUI.Interface
             PackageList = __package_list;
             LoadingProgressBar = __loading_progressbar;
             LoadingProgressBar.Visibility = Visibility.Collapsed;
-            LocalPackagesNode = new TreeViewNode() { Content = CoreTools.Translate("Local"), IsExpanded = false };
+            LocalPackagesNode = new TreeViewNode { Content = CoreTools.Translate("Local"), IsExpanded = false };
             Initialized = true;
             ReloadButton.Visibility = Visibility.Collapsed;
             FindButton.Click += (s, e) => { FilterPackages(QueryBlock.Text); };
@@ -178,7 +178,7 @@ namespace UniGetUI.Interface
             {
                 UsedManagers.Add(source.Manager);
                 TreeViewNode Node;
-                Node = new TreeViewNode() { Content = source.Manager.Name + "                                                                                    .", IsExpanded = false };
+                Node = new TreeViewNode { Content = source.Manager.Name + "                                                                                    .", IsExpanded = false };
                 SourcesTreeView.RootNodes.Add(Node);
                 SourcesTreeView.SelectedNodes.Add(Node);
                 RootNodeForManager.Add(source.Manager, Node);
@@ -420,7 +420,7 @@ namespace UniGetUI.Interface
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(InstallPackages);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
-            ToolBar.PrimaryCommands.Add(new AppBarElementContainer() { Content = new TextBlock() { HorizontalAlignment = HorizontalAlignment.Stretch } });
+            ToolBar.PrimaryCommands.Add(new AppBarElementContainer { Content = new TextBlock { HorizontalAlignment = HorizontalAlignment.Stretch } });
             ToolBar.PrimaryCommands.Add(SelectAll);
             ToolBar.PrimaryCommands.Add(SelectNone);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
@@ -771,7 +771,7 @@ namespace UniGetUI.Interface
             string ExportableData;
 
             if (formatType == BundleFormatType.JSON)
-                ExportableData = JsonSerializer.Serialize<SerializableBundle_v1>(exportable, new JsonSerializerOptions() { WriteIndented = true });
+                ExportableData = JsonSerializer.Serialize<SerializableBundle_v1>(exportable, new JsonSerializerOptions { WriteIndented = true });
             else if (formatType == BundleFormatType.YAML)
             {
                 YamlDotNet.Serialization.ISerializer serializer = new YamlDotNet.Serialization.SerializerBuilder()

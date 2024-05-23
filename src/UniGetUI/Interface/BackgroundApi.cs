@@ -54,7 +54,7 @@ namespace UniGetUI.Interface
                 NancyHost host;
                 try
                 {
-                    host = new NancyHost(new HostConfiguration() { RewriteLocalhost = false, }, new Uri("http://localhost:7058/"));
+                    host = new NancyHost(new HostConfiguration { RewriteLocalhost = false, }, new Uri("http://localhost:7058/"));
                     host.Start();
                 }
                 catch

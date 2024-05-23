@@ -101,13 +101,13 @@ namespace UniGetUI.PackageEngine.Operations
             dialog.Title = CoreTools.Translate("Source addition failed");
 
             StackPanel panel = new() { Spacing = 16 };
-            panel.Children.Add(new TextBlock() { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } }) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
+            panel.Children.Add(new TextBlock { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } }) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
 
             Expander expander = new() { CornerRadius = new CornerRadius(8) };
 
             StackPanel HeaderPanel = new() { Orientation = Orientation.Horizontal, Spacing = 8 };
             HeaderPanel.Children.Add(new LocalIcon("console") { VerticalAlignment = VerticalAlignment.Center, Height = 24, Width = 24, HorizontalAlignment = HorizontalAlignment.Left });
-            HeaderPanel.Children.Add(new TextBlock() { Text = CoreTools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
+            HeaderPanel.Children.Add(new TextBlock { Text = CoreTools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
 
             expander.Header = HeaderPanel;
             expander.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -118,7 +118,7 @@ namespace UniGetUI.PackageEngine.Operations
             sv.MaxHeight = 500;
             Paragraph par = new();
             foreach (string line in ProcessOutput)
-                par.Inlines.Add(new Run() { Text = line + "\x0a" });
+                par.Inlines.Add(new Run { Text = line + "\x0a" });
             output.Blocks.Add(par);
 
             sv.Content = output;
@@ -231,13 +231,13 @@ namespace UniGetUI.PackageEngine.Operations
             dialog.Title = CoreTools.Translate("Source removal failed");
 
             StackPanel panel = new() { Spacing = 16 };
-            panel.Children.Add(new TextBlock() { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } }) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
+            panel.Children.Add(new TextBlock { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } }) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
 
             Expander expander = new() { CornerRadius = new CornerRadius(8) };
 
             StackPanel HeaderPanel = new() { Orientation = Orientation.Horizontal, Spacing = 8 };
             HeaderPanel.Children.Add(new LocalIcon("console") { VerticalAlignment = VerticalAlignment.Center, Height = 24, Width = 24, HorizontalAlignment = HorizontalAlignment.Left });
-            HeaderPanel.Children.Add(new TextBlock() { Text = CoreTools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
+            HeaderPanel.Children.Add(new TextBlock { Text = CoreTools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
 
             expander.Header = HeaderPanel;
             expander.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -248,7 +248,7 @@ namespace UniGetUI.PackageEngine.Operations
             sv.MaxHeight = 500;
             Paragraph par = new();
             foreach (string line in ProcessOutput)
-                par.Inlines.Add(new Run() { Text = line + "\x0a" });
+                par.Inlines.Add(new Run { Text = line + "\x0a" });
             output.Blocks.Add(par);
 
             sv.Content = output;
