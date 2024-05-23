@@ -1,13 +1,15 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
-using UniGetUI.Core.Data;
-using UniGetUI.Core;
 using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using UniGetUI.Core;
+using UniGetUI.Core.Data;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI
 {
@@ -32,10 +34,10 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                AppTools.ReportFatalException(e);
+                CoreTools.ReportFatalException(e);
             }
         }
-        
+
         /// <summary>
         /// UniGetUI app main entry point
         /// </summary>
@@ -45,10 +47,17 @@ namespace UniGetUI
         {
             try
             {
+                var textart = @"
+   __  __      _ ______     __  __  ______
+  / / / /___  (_) ____/__  / /_/ / / /  _/
+ / / / / __ \/ / / __/ _ \/ __/ / / // /  
+/ /_/ / / / / / /_/ /  __/ /_/ /_/ // /   
+\____/_/ /_/_/\____/\___/\__/\____/___/   
+    Welcome to UniGetUI Version " + CoreData.VersionName;
 
-                AppTools.Log("Welcome to UniGetUI Version " + CoreData.VersionName);
-                AppTools.Log("               Version Code " + CoreData.VersionNumber.ToString());
-                AppTools.Log("              ");
+                Logger.ImportantInfo(textart);
+                Logger.ImportantInfo("  ");
+                Logger.ImportantInfo("Version Code:  " + CoreData.VersionNumber.ToString());
 
                 // WinRT single-instance fancy stuff
                 WinRT.ComWrappersSupport.InitializeComWrappers();
@@ -68,7 +77,7 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                AppTools.ReportFatalException(e);
+                CoreTools.ReportFatalException(e);
             }
         }
 
@@ -92,8 +101,9 @@ namespace UniGetUI
                 {
                     keyInstance.Activated += async (s, e) =>
                     {
-                        MainApp AppInstance = MainApp.Current as MainApp;
-                        await AppInstance.ShowMainWindowFromRedirectAsync();
+                        MainApp? AppInstance = MainApp.Current as MainApp;
+                        if(AppInstance != null)
+                            await AppInstance.ShowMainWindowFromRedirectAsync();
                     };
                 }
                 else
@@ -105,11 +115,11 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                Logger.Warn(e);
                 return false;
             }
         }
-        
+
         /// <summary>
         /// This method should be called when the app is being uninstalled
         /// It removes system links and other stuff that should be removed on uninstall
@@ -121,7 +131,7 @@ namespace UniGetUI
                 ToastNotificationManagerCompat.Uninstall();
             }
             catch
-            { 
+            {
             }
         }
 
@@ -145,34 +155,34 @@ namespace UniGetUI
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu),
                 };
 
-                foreach (var path in BasePaths)
-                    foreach (var old_wingetui_icon in new string[] { "WingetUI.lnk", "WingetUI .lnk", "UniGetUI (formerly WingetUI) .lnk" })
+                foreach (string path in BasePaths)
+                    foreach (string old_wingetui_icon in new string[] { "WingetUI.lnk", "WingetUI .lnk", "UniGetUI (formerly WingetUI) .lnk" })
                         try
                         {
-                            var old_file = Path.Join(path, old_wingetui_icon);
-                            var new_file = Path.Join(path, "UniGetUI (formerly WingetUI).lnk");
-                            AppTools.Log(old_file);
+                            string old_file = Path.Join(path, old_wingetui_icon);
+                            string new_file = Path.Join(path, "UniGetUI (formerly WingetUI).lnk");
                             if (!File.Exists(old_file))
                                 continue;
                             else if (File.Exists(old_file) && File.Exists(new_file))
                             {
-                                AppTools.Log("Deleting shortcut " + old_file + " since new shortcut already exists");
+                                Logger.Info("Deleting shortcut " + old_file + " since new shortcut already exists");
                                 File.Delete(old_file);
                             }
                             else if (File.Exists(old_file) && !File.Exists(new_file))
                             {
-                                AppTools.Log("Moving shortcut to " + new_file);
+                                Logger.Info("Moving shortcut to " + new_file);
                                 File.Move(old_file, new_file);
                             }
                         }
                         catch (Exception ex)
                         {
-                            AppTools.Log(ex);
+                            Logger.Warn($"An error occurred while migrating the shortcut {Path.Join(path, old_wingetui_icon)}");
+                            Logger.Warn(ex);
                         }
-            } 
+            }
             catch (Exception ex)
             {
-                AppTools.Log(ex);
+                Logger.Error(ex);
             }
         }
     }

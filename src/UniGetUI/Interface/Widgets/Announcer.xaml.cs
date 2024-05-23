@@ -3,12 +3,11 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Shapes;
-using UniGetUI.Core;
 using System;
-using Windows.ApplicationModel.Email;
+using UniGetUI.Core;
 using Windows.UI.Text;
-using Windows.Web.Http;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -17,7 +16,6 @@ namespace UniGetUI.Interface.Widgets
 {
     public sealed partial class Announcer : UserControl
     {
-        AppTools binder = AppTools.Instance;
         public Uri Url
         {
             get => (Uri)GetValue(UrlProperty);
@@ -43,9 +41,9 @@ namespace UniGetUI.Interface.Widgets
             BringIntoViewRequested += (s, e) => { LoadAnnouncements(); };
 
             int i = 0;
-            PointerPressed += (s, e) => { if(i++ %3 != 0) LoadAnnouncements(); };
+            PointerPressed += (s, e) => { if (i++ % 3 != 0) LoadAnnouncements(); };
 
-            SetText(binder.Translate("Fetching latest announcements, please wait..."));
+            SetText(CoreTools.Translate("Fetching latest announcements, please wait..."));
             _textblock.TextWrapping = TextWrapping.Wrap;
         }
 
@@ -60,17 +58,18 @@ namespace UniGetUI.Interface.Widgets
                 HttpResponseMessage response = await NetClient.GetAsync(announcement_url);
                 if (response.IsSuccessStatusCode)
                 {
-                    string title = response.Content.ToString().Split("////")[0].Trim().Trim('\n').Trim();
-                    string body = response.Content.ToString().Split("////")[1].Trim().Trim('\n').Trim();
-                    string linkId = response.Content.ToString().Split("////")[2].Trim().Trim('\n').Trim();
-                    string linkName = response.Content.ToString().Split("////")[3].Trim().Trim('\n').Trim();
-                    Uri imageUrl = new(response.Content.ToString().Split("////")[4].Trim().Trim('\n').Trim());
+                    string[] response_body = (await response.Content.ReadAsStringAsync()).Split("////");
+                    string title = response_body[0].Trim().Trim('\n').Trim();
+                    string body = response_body[1].Trim().Trim('\n').Trim();
+                    string linkId = response_body[2].Trim().Trim('\n').Trim();
+                    string linkName = response_body[3].Trim().Trim('\n').Trim();
+                    Uri imageUrl = new(response_body[4].Trim().Trim('\n').Trim());
                     SetText(title, body, linkId, linkName);
                     SetImage(imageUrl);
                 }
                 else
                 {
-                    SetText(binder.Translate("Could not load announcements - HTTP status code is $CODE").Replace("$CODE", response.StatusCode.ToString()));
+                    SetText(CoreTools.Translate("Could not load announcements - HTTP status code is $CODE").Replace("$CODE", response.StatusCode.ToString()));
                     SetImage(new Uri("ms-appx:///Assets/Images/warn.png"));
                     if (!retry)
                         LoadAnnouncements(true);
@@ -78,8 +77,9 @@ namespace UniGetUI.Interface.Widgets
             }
             catch (Exception ex)
             {
-                AppTools.Log("Could not load announcements: " + ex.ToString());
-                SetText(binder.Translate("Could not load announcements - ") + ex.ToString());
+                Logger.Warn("Could not load announcements");
+                Logger.Warn(ex);
+                SetText(CoreTools.Translate("Could not load announcements - ") + ex.ToString());
                 SetImage(new Uri("ms-appx:///Assets/Images/warn.png"));
             }
         }

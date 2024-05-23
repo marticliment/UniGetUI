@@ -36,7 +36,7 @@ public class WindowsPackageManagerElevatedFactory : WindowsPackageManagerFactory
 
         try
         {
-            var hr = WinGetServerManualActivation_CreateInstance(in clsid, in iid, 0, out pUnknown);
+            int hr = WinGetServerManualActivation_CreateInstance(in clsid, in iid, 0, out pUnknown);
             Marshal.ThrowExceptionForHR(hr);
             return MarshalInterface<T>.FromAbi((IntPtr)pUnknown);
         }

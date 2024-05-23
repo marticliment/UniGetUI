@@ -9,29 +9,29 @@ This file contains a list of the available languages and other related informati
 import os
 import json
 
-if os.path.exists("../src/UniGetUI/Assets/Data/Contributors.list"):
-    f = open("../src/UniGetUI/Assets/Data/Contributors.list", "r", encoding="utf-8")
+if os.path.exists("../src/UniGetUI.Core.Data/Assets/Data/Contributors.list"):
+    f = open("../src/UniGetUI.Core.Data/Assets/Data/Contributors.list", "r", encoding="utf-8")
     contributors = f.readlines()
 else:
     print("No contributors file!")
     contributors = []
 
-if os.path.exists("../src/UniGetUI/Assets/Data/Translators.json"):
-    f = open("../src/UniGetUI/Assets/Data/Translators.json", "r", encoding="utf-8")
+if os.path.exists("../src/UniGetUI.Core.LanguageEngine/Assets/Data/Translators.json"):
+    f = open("../src/UniGetUI.Core.LanguageEngine/Assets/Data/Translators.json", "r", encoding="utf-8")
     languageCredits = json.load(f)
 else:
     print("No translators file!")
     languageCredits = {}
 
-if os.path.exists("../src/UniGetUI/Assets/Data/TranslatedPercentages.json"):
-    f = open("../src/UniGetUI/Assets/Data/TranslatedPercentages.json", "r", encoding="utf-8")
+if os.path.exists("../src/UniGetUI.Core.LanguageEngine/Assets/Data/TranslatedPercentages.json"):
+    f = open("../src/UniGetUI.Core.LanguageEngine/Assets/Data/TranslatedPercentages.json", "r", encoding="utf-8")
     untranslatedPercentage = json.load(f)
 else:
     print("No translated percent file!")
     untranslatedPercentage = {}
 
-if os.path.exists("../src/UniGetUI/Assets/Data/LanguagesReference.json"):
-    f = open("../src/UniGetUI/Assets/Data/LanguagesReference.json", "r", encoding="utf-8")
+if os.path.exists("../src/UniGetUI.Core.LanguageEngine/Assets/Data/LanguagesReference.json"):
+    f = open("../src/UniGetUI.Core.LanguageEngine/Assets/Data/LanguagesReference.json", "r", encoding="utf-8")
     languageReference = json.load(f)
 else:
     print("No translated percent file!")
@@ -75,7 +75,8 @@ languageFlagsRemap = {
     "zh_TW": "tw",
     "zh": "cn",
     "bn": "bd",
-    "tg": "ph"
+    "tg": "ph",
+    "sq": "al"
 }
 
 
@@ -88,7 +89,7 @@ def getMarkdownSupportLangs():
 
     dir = os.path.dirname(__file__)
     for lang, langName in languageReference.items():
-        if (not os.path.exists(f"{dir}/../../src/UniGetUI/Assets/Languages/lang_{lang}.json")):
+        if (not os.path.exists(f"{dir}/../../src/UniGetUI.Core.LanguageEngine/Assets/Languages/lang_{lang}.json")):
             continue
 
         perc = untranslatedPercentage[lang] if (lang in untranslatedPercentage) else "100%"

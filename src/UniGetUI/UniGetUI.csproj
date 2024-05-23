@@ -1,15 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+		<RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
+		<Platforms>ARM64;x64</Platforms>
+		<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+		<SdkVersion>8.0.204</SdkVersion>
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+		<PublishSelfContained>true</PublishSelfContained>
+		<FileVersion>3.1.0.0</FileVersion>
+		<InformationalVersion>3.1.0-alpha0</InformationalVersion>
+		<Product>UniGetUI</Product>
+		<Authors>Martí Climent and the contributors</Authors>
+		<PublisherName>Martí Climent</PublisherName>
+		<ApplicationVersion>3.1.0-alpha0</ApplicationVersion>
+		<Copyright>2024, Martí Climent</Copyright>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
-	  <SdkVersion></SdkVersion>
-    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-	<TargetMinVersion>10.0.19041.0</TargetMinVersion>
     <RootNamespace>UniGetUI</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x64</Platforms>
-	  <!--RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-      <PublishProfile>win-$(Platform).pubxml</PublishProfile-->
+    <Platforms>x64;ARM64</Platforms>
     <UseWinUI>true</UseWinUI>
     <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
@@ -18,29 +34,19 @@
     <SignAssembly>False</SignAssembly>
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <AssemblyName>WingetUI</AssemblyName>
-    <Nullable>annotations</Nullable>
-	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-	  <SelfContained>true</SelfContained>
-	<FileVersion>3.1.0.0</FileVersion>
-	<InformationalVersion>3.1.0-beta</InformationalVersion>
-	<Product>UniGetUI</Product>
-	<Copyright>2024, Martí Climent</Copyright>
+	<Nullable>enable</Nullable>
+	
   </PropertyGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Intereface\**" />
-    <Compile Remove="PackageEngine\Managers\WinGetClasses\**" />
     <EmbeddedResource Remove="Intereface\**" />
-    <EmbeddedResource Remove="PackageEngine\Managers\WinGetClasses\**" />
     <None Remove="Intereface\**" />
-    <None Remove="PackageEngine\Managers\WinGetClasses\**" />
     <Page Remove="Intereface\**" />
-    <Page Remove="PackageEngine\Managers\WinGetClasses\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Assets\Languages\Contributors.list" />
     <None Remove="Interface\Dialogs\HelpInterface.xaml" />
     <None Remove="Interface\Dialogs\InstallOptions.xaml" />
     <None Remove="Interface\Dialogs\PackageDetailsPage.xaml" />
@@ -56,6 +62,7 @@
     <None Remove="Interface\Pages\AboutPages\Translators.xaml" />
     <None Remove="Interface\Pages\LogPage.xaml" />
     <None Remove="Interface\Pages\PackageBundle.xaml" />
+    <None Remove="Interface\SoftwarePages\AbstractPackagesPage.xaml" />
     <None Remove="Interface\SoftwareUpdates.xaml" />
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
@@ -96,6 +103,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Interface\Pages\PackageBundle.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Interface\SoftwarePages\AbstractPackagesPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Interface\SoftwareUpdates.xaml">
@@ -143,6 +153,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
   </PropertyGroup>
@@ -152,13 +165,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <PRIResource Remove="Intereface\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Assets\Data\LanguagesReference.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Assets\Images\admin_color.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -392,120 +405,6 @@
     </None>
     <None Update="Assets\Images\kofi.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_ar.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_bg.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_bn.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_ca.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_cs.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_da.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_de.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_el.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_en.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_es.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_fa.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_fr.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_he.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_hi.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_hr.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_hu.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_id.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_it.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_ja.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_ko.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_mk.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_nb.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_nl.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_pl.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_pt_BR.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_pt_PT.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_ro.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_ru.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_si.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_sl.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_sr.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_tg.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_th.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_tr.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_ua.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_vi.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_zh_CN.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Languages\lang_zh_TW.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Assets\Images\launch_black.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -888,546 +787,6 @@
     <None Update="Assets\Images\youtube.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="choco-cli\bin\choco.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\bin\choco.exe.old">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\bin\chocolatey.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\bin\cinst.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\bin\clist.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\bin\cpush.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\bin\cuninst.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\bin\cup.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\bin\RefreshEnv.cmd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\bin\ssh-copy-id.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\bin\_processed.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\choco.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\choco.exe.ignore">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\choco.exe.manifest">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\config\chocolatey.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\config\chocolatey.config.backup">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\CREDITS.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-compatibility\chocolatey-compatibility.psm1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-compatibility\helpers\Get-PackageParameters.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-compatibility\helpers\Get-UninstallRegistryKey.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-compatibility\helpers\Install-ChocolateyDesktopLink.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-compatibility\helpers\Write-ChocolateyFailure.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-compatibility\helpers\Write-ChocolateySuccess.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-compatibility\helpers\Write-FileUpdateLog.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-core\chocolatey-core.psm1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-core\Get-AppInstallLocation.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-core\Get-AvailableDriveLetter.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-core\Get-EffectiveProxy.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-core\Get-PackageCacheLocation.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-core\Get-WebContent.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-core\Register-Application.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-core\Remove-Process.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-dotnetfx\chocolatey-dotnetfx.psm1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-dotnetfx\DotNetFrameworkHelpers.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-dotnetfx\Get-DefaultChocolateyLocalFilePath.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-dotnetfx\Get-NativeInstallerExitCode.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-dotnetfx\Install-ChocolateyInstallPackageAndHandleExitCode.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-dotnetfx\Set-PowerShellExitCode.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Add-VisualStudioComponent.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Add-VisualStudioWorkload.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Assert-VSInstallerUpdated.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\chocolatey-visualstudio.extension.psm1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Clear-VSChannelCache.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Close-VSInstallSource.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Convert-VSProductReferenceToChannelReference.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\ConvertTo-ArgumentString.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Generate-AdminFile.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Generate-InstallArgumentsString.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Generate-UninstallArgumentsString.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VisualStudioInstaller.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VisualStudioInstallerHealth.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VisualStudioInstance.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VisualStudioVsixInstaller.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSBootstrapperUrlFromChannelManifest.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSChannelManifest.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSChannelManifestItem.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSChannelManifestItemUrl.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSChannelManifestItemVersion.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSChannelReference.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSChannelUri.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSComponentManifest.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSLegacyInstance.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSManifest.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSProductReference.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSProductVersionFromChannelManifest.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSRequiredInstallerVersion.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSUninstallerExePath.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSUninstallRegistryKey.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-VSWebFile.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Get-WillowInstalledProducts.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Install-VisualStudio.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Install-VisualStudioInstaller.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Install-VisualStudioVsixExtension.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Install-VSChocolateyInstallPackage.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Install-VSChocolateyPackage.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Install-VSInstaller.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Merge-AdditionalArguments.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\New-VSChannelReference.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\New-VSProductReference.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Open-VSInstallSource.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Parse-Parameters.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Remove-NegatedArguments.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Remove-VisualStudioComponent.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Remove-VisualStudioProduct.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Remove-VisualStudioWorkload.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Remove-VSPackageParametersNotPassedToNativeInstaller.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Resolve-VSLayoutPath.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Resolve-VSProductInstance.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Set-PowerShellExitCode.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Show-VSInstallerErrorLog.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Start-VSChocolateyProcessAsAdmin.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Start-VSModifyOperation.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Start-VSServicingOperation.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Uninstall-VisualStudio.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Uninstall-VisualStudioVsixExtension.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Uninstall-VSChocolateyPackage.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Update-AdminFile.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-visualstudio\Wait-VSInstallerProcesses.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-windowsupdate\chocolatey-windowsupdate.psm1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-windowsupdate\Get-NativeInstallerExitCode.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-windowsupdate\Get-WindowsUpdateErrorDescription.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-windowsupdate\Install-ChocolateyPackageAndHandleExitCode.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-windowsupdate\Install-WindowsUpdate.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-windowsupdate\Set-PowerShellExitCode.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\extensions\chocolatey-windowsupdate\Test-WindowsUpdate.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\chocolateyInstaller.psm1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\chocolateyProfile.psm1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\chocolateyScriptRunner.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\ChocolateyTabExpansion.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Format-FileSize.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-CheckSumValid.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-ChocolateyConfigValue.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-ChocolateyPath.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-ChocolateyUnzip.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-ChocolateyWebFile.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-EnvironmentVariable.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-EnvironmentVariableNames.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-FtpFile.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-OSArchitectureWidth.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-PackageParameters.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-ToolsLocation.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-UACEnabled.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-UninstallRegistryKey.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-VirusCheckValid.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-WebFile.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-WebFileName.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Get-WebHeaders.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Install-BinFile.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Install-ChocolateyEnvironmentVariable.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Install-ChocolateyExplorerMenuItem.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Install-ChocolateyFileAssociation.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Install-ChocolateyInstallPackage.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Install-ChocolateyPackage.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Install-ChocolateyPath.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Install-ChocolateyPinnedTaskBarItem.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Install-ChocolateyPowershellCommand.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Install-ChocolateyShortcut.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Install-ChocolateyVsixPackage.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Install-ChocolateyZipPackage.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Install-Vsix.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Set-EnvironmentVariable.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Set-PowerShellExitCode.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Start-ChocolateyProcessAsAdmin.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Test-ProcessAdminRights.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Uninstall-BinFile.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Uninstall-ChocolateyEnvironmentVariable.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Uninstall-ChocolateyPackage.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\UnInstall-ChocolateyZipPackage.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Update-SessionEnvironment.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\helpers\functions\Write-FunctionCallLogMessage.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\lib\dummyfile.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\LICENSE.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\choco.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\choco.exe.ignore">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\chocolatey.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\chocolatey.exe.ignore">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\cinst.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\cinst.exe.ignore">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\clist.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\clist.exe.ignore">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\cpush.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\cpush.exe.ignore">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\cuninst.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\cuninst.exe.ignore">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\cup.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\cup.exe.ignore">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\redirects\RefreshEnv.cmd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\tools\7z.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\tools\7z.dll.manifest">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\tools\7z.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\tools\7z.exe.ignore">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\tools\7z.exe.manifest">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\tools\7zip.license.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\tools\checksum.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\tools\checksum.exe.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\tools\checksum.exe.ignore">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\tools\checksum.license.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\tools\shimgen.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\tools\shimgen.exe.ignore">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="choco-cli\tools\shimgen.license.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <Page Update="Interface\Pages\AboutPages\SupportMe.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1443,51 +802,6 @@
     <Page Update="Interface\Pages\AboutPages\AboutUniGetUI.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <None Update="PackageEngine\Managers\winget-cli_x64\AppInstallerBackgroundTasks.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\concrt140_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\Microsoft.Management.Configuration.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\msvcp140_1_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\msvcp140_2_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\msvcp140_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\resources.pri">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\vcamp140_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\vccorlib140_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\vcomp140_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\vcruntime140_1_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\vcruntime140_app.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\WindowsPackageManager.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\WindowsPackageManagerServer.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PackageEngine\Managers\winget-cli_x64\winget.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Interface\Dialogs\PackageDetailsPage.xaml">
@@ -1540,13 +854,28 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Interface\SoftwarePages\" />
     <Folder Include="PackageEngine\Operations\" />
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Remove="PackageEngine\Managers\WinGetClasses\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\WindowsPackageManager.Interop\WindowsPackageManager Interop.csproj" />
+    <ProjectReference Include="..\ExternalLibraries.Clipboard\ExternalLibraries.Clipboard.csproj" />
+    <ProjectReference Include="..\ExternalLibraries.FilePickers\ExternalLibraries.FilePickers.csproj" />
+    <ProjectReference Include="..\UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj" />
+    <ProjectReference Include="..\UniGetUI.Core.Data\UniGetUI.Core.Data.csproj" />
+    <ProjectReference Include="..\UniGetUI.Core.IconStore\UniGetUI.Core.IconEngine.csproj" />
+    <ProjectReference Include="..\UniGetUI.Core.LanguageEngine\UniGetUI.Core.LanguageEngine.csproj" />
+    <ProjectReference Include="..\UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj" />
+    <ProjectReference Include="..\UniGetUI.Core.Settings\UniGetUI.Core.Settings.csproj" />
+    <ProjectReference Include="..\UniGetUI.Core.Tools\UniGetUI.Core.Tools.csproj" />
+    <ProjectReference Include="..\UniGetUI.Interface.Enums\UniGetUI.Interface.Enums.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Enums\UniGetUI.PackageEngine.Enums.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Chocolatey\UniGetUI.PackageEngine.Managers.Chocolatey.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Dotnet\UniGetUI.PackageEngine.Managers.Dotnet.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Npm\UniGetUI.PackageEngine.Managers.Npm.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Pip\UniGetUI.PackageEngine.Managers.Pip.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.PowerShell\UniGetUI.PackageEngine.Managers.PowerShell.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Scoop\UniGetUI.PackageEngine.Managers.Scoop.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.WinGet\UniGetUI.PackageEngine.Managers.WinGet.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.PackageManagerClasses\UniGetUI.PackageEngine.Classes.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.Serializable\UniGetUI.PackageEngine.Serializable.csproj" />
   </ItemGroup>
 </Project>

@@ -22,7 +22,7 @@ with open("screenshot_database.xlsx", "wb") as f:
 try:
     workbook = xlrd.open_workbook('screenshot_database.xlsx')
 except:
-    os.system("python -m pip install xlrd==1.2.0")
+    os.system("python -m pip install xlrd==1.0.0")
     import xlrd
     workbook = xlrd.open_workbook('screenshot_database.xlsx')
 

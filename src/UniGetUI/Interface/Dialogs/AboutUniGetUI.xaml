@@ -17,27 +17,27 @@
         </Grid.RowDefinitions>
 
         <SelectorBar Grid.Row="0" x:Name="SelectorBar" SelectionChanged="SelectorBar_SelectionChanged" HorizontalAlignment="Left">
-            <SelectorBarItem x:Name="SelectorBarItemPage1" IsSelected="True" Text="{x:Bind Tools.Translate('About')}" >
+            <SelectorBarItem x:Name="SelectorBarItemPage1" IsSelected="True"  >
                 <SelectorBarItem.Icon>
                     <FontIcon Glyph="&#xE946;" FontSize="16" VerticalAlignment="Center"/>
                 </SelectorBarItem.Icon>
             </SelectorBarItem>
-            <SelectorBarItem x:Name="SelectorBarItemPage2" Text="{x:Bind Tools.Translate('Third-party licenses')}" >
+            <SelectorBarItem x:Name="SelectorBarItemPage2"  >
                 <SelectorBarItem.Icon>
                     <FontIcon Glyph="&#xE8A5;" FontSize="16" VerticalAlignment="Center"/>
                 </SelectorBarItem.Icon>
             </SelectorBarItem>
-            <SelectorBarItem x:Name="SelectorBarItemPage3" Text="{x:Bind Tools.Translate('Contributors')}" >
+            <SelectorBarItem x:Name="SelectorBarItemPage3"  >
                 <SelectorBarItem.Icon>
                     <FontIcon Glyph="&#xEBDA;" FontSize="16" VerticalAlignment="Center"/>
                 </SelectorBarItem.Icon>
             </SelectorBarItem>
-            <SelectorBarItem x:Name="SelectorBarItemPage4" Text="{x:Bind Tools.Translate('Translators')}" >
+            <SelectorBarItem x:Name="SelectorBarItemPage4"  >
                 <SelectorBarItem.Icon>
                     <FontIcon Glyph="&#xF2B7;" FontSize="16" VerticalAlignment="Center"/>
                 </SelectorBarItem.Icon>
             </SelectorBarItem>
-            <SelectorBarItem x:Name="SelectorBarItemPage5" Text="{x:Bind Tools.Translate('Support me')}" >
+            <SelectorBarItem x:Name="SelectorBarItemPage5" >
                 <SelectorBarItem.Icon>
                     <FontIcon Glyph="&#xED56;" FontSize="16" VerticalAlignment="Center"/>
                 </SelectorBarItem.Icon>

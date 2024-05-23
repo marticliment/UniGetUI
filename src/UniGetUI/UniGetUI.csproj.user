@@ -3,6 +3,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
+  </PropertyGroup>
   <PropertyGroup>
     <ActiveDebugProfile>ModernWindow (Unpackaged)</ActiveDebugProfile>
   </PropertyGroup>
@@ -32,6 +35,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Interface\Dialogs\InstallOptions.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Interface\SoftwarePages\AbstractPackagesPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Interface\Widgets\NavButton.xaml">

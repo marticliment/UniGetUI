@@ -7,20 +7,21 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
-using UniGetUI.Core.Data;
-using UniGetUI.Interface;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.Core;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using UniGetUI.Core;
+using UniGetUI.Core.Data;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Classes;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.ApplicationModel.VoiceCommands;
+using UniGetUI.Core.Logging;
 using Windows.Foundation.Collections;
+using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.Core.Tools;
 
 
 namespace UniGetUI.Interface
@@ -38,13 +39,12 @@ namespace UniGetUI.Interface
             void ShowShareUIForWindow(IntPtr appWindow);
         }
 
-        TaskbarIcon TrayIcon;
+        TaskbarIcon? TrayIcon;
         private bool RecentlyActivated = false;
 
         static readonly Guid _dtm_iid =
             new(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
 
-        AppTools Tools = AppTools.Instance;
         public MainView NavigationPage;
         public Grid ContentRoot;
         public bool BlockLoading = false;
@@ -55,6 +55,7 @@ namespace UniGetUI.Interface
         public List<ContentDialog> DialogQueue = new();
 
         public List<NavButton> NavButtonList = new();
+#pragma warning disable CS8618
         public MainWindow()
         {
             InitializeComponent();
@@ -65,18 +66,18 @@ namespace UniGetUI.Interface
             ApplyTheme();
 
             AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
-            if (Tools.IsAdministrator())
+            if (CoreTools.IsAdministrator())
             {
-                Title = "UniGetUI " + Tools.Translate("[RAN AS ADMINISTRATOR]");
+                Title = "UniGetUI " + CoreTools.Translate("[RAN AS ADMINISTRATOR]");
                 AppTitle.Text = Title;
             }
 
             LoadingSthDalog = new ContentDialog();
             LoadingSthDalog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            LoadingSthDalog.Title = Tools.Translate("Please wait");
+            LoadingSthDalog.Title = CoreTools.Translate("Please wait");
             LoadingSthDalog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
         }
-
+#pragma warning restore CS8618
         public void HandleNotificationActivation(ToastArguments args, ValueSet input)
         {
             if (args.Contains("action") && args["action"] == "updateAll")
@@ -86,17 +87,17 @@ namespace UniGetUI.Interface
                 NavigationPage.UpdatesNavButton.ForceClick();
 
                 if (NavigationPage != null && NavigationPage.InstalledPage != null)
-                    NavigationPage.InstalledPage.ReloadPackages();
+                    _ = NavigationPage.InstalledPage.LoadPackages();
                 Activate();
             }
             else
             {
 
                 if (NavigationPage != null && NavigationPage.InstalledPage != null)
-                    NavigationPage.InstalledPage.ReloadPackages();
+                    _ = NavigationPage.InstalledPage.LoadPackages();
                 Activate();
             }
-            AppTools.Log("Notification activated: " + args.ToString() + " " + input.ToString());
+            Logger.Debug("Notification activated: " + args.ToString() + " " + input.ToString());
         }
 
 
@@ -107,7 +108,7 @@ namespace UniGetUI.Interface
         /// <param name="args"></param>
         public async void HandleClosingEvent(AppWindow sender, AppWindowClosingEventArgs args)
         {
-            if (!Tools.GetSettings("DisableSystemTray"))
+            if (!Settings.Get("DisableSystemTray"))
             {
                 args.Cancel = true;
                 RecentlyActivated = false;
@@ -118,26 +119,27 @@ namespace UniGetUI.Interface
                 catch (Exception ex)
                 {
                     // Somewhere, Sometimes, MS Window Efficiency mode just crashes
-                    AppTools.Log(ex);
+                    Logger.Debug("Windows efficiency mode API crashed, but this was expected");
+                    Logger.Debug(ex);
                     this.Hide(enableEfficiencyMode: false);
                 }
             }
             else
             {
-                if (Tools.OperationQueue.Count > 0)
+                if (MainApp.Instance.OperationQueue.Count > 0)
                 {
                     args.Cancel = true;
-                    ContentDialog d = new ContentDialog();
+                    ContentDialog d = new();
                     d.XamlRoot = NavigationPage.XamlRoot;
-                    d.Title = Tools.Translate("Operation in progress");
-                    d.Content = Tools.Translate("There are ongoing operations. Quitting WingetUI may cause them to fail. Do you want to continue?");
-                    d.PrimaryButtonText = Tools.Translate("Quit");
-                    d.SecondaryButtonText = Tools.Translate("Cancel");
+                    d.Title = CoreTools.Translate("Operation in progress");
+                    d.Content = CoreTools.Translate("There are ongoing operations. Quitting WingetUI may cause them to fail. Do you want to continue?");
+                    d.PrimaryButtonText = CoreTools.Translate("Quit");
+                    d.SecondaryButtonText = CoreTools.Translate("Cancel");
                     d.DefaultButton = ContentDialogButton.Secondary;
 
-                    var result = await ShowDialogAsync(d);
+                    ContentDialogResult result = await ShowDialogAsync(d);
                     if (result == ContentDialogResult.Primary)
-                        Tools.App.DisposeAndQuit();
+                        MainApp.Instance.DisposeAndQuit();
                 }
             }
         }
@@ -145,7 +147,7 @@ namespace UniGetUI.Interface
         public new void Activate()
         {
             if (NavigationPage != null && NavigationPage.InstalledPage != null)
-                NavigationPage.InstalledPage.ReloadPackages();
+                _ = NavigationPage.InstalledPage.LoadPackages();
 
             (this as Window).Activate();
         }
@@ -178,7 +180,7 @@ namespace UniGetUI.Interface
 
             foreach (KeyValuePair<XamlUICommand, string> item in Labels)
             {
-                item.Key.Label = Tools.Translate(item.Value);
+                item.Key.Label = CoreTools.Translate(item.Value);
             }
 
             Dictionary<XamlUICommand, string> Icons = new()
@@ -199,9 +201,9 @@ namespace UniGetUI.Interface
             DiscoverPackages.ExecuteRequested += (s, e) => { NavigationPage.DiscoverNavButton.ForceClick(); Activate(); };
             AvailableUpdates.ExecuteRequested += (s, e) => { NavigationPage.UpdatesNavButton.ForceClick(); Activate(); };
             InstalledPackages.ExecuteRequested += (s, e) => { NavigationPage.InstalledNavButton.ForceClick(); Activate(); };
-            AboutUniGetUI.Label = Tools.Translate("WingetUI Version {0}", CoreData.VersionName);
+            AboutUniGetUI.Label = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
             ShowUniGetUI.ExecuteRequested += (s, e) => { Activate(); };
-            QuitUniGetUI.ExecuteRequested += (s, e) => { Tools.App.DisposeAndQuit(); };
+            QuitUniGetUI.ExecuteRequested += (s, e) => { MainApp.Instance.DisposeAndQuit(); };
 
             TrayMenu.Items.Add(new MenuFlyoutItem() { Command = DiscoverPackages });
             TrayMenu.Items.Add(new MenuFlyoutItem() { Command = AvailableUpdates });
@@ -249,30 +251,35 @@ namespace UniGetUI.Interface
         public void UpdateSystemTrayStatus()
         {
             string modifier = "_empty";
-            string tooltip = Tools.Translate("Everything is up to date") + " - " + Title;
+            string tooltip = CoreTools.Translate("Everything is up to date") + " - " + Title;
 
-            if (Tools.TooltipStatus.OperationsInProgress > 0)
+            if (MainApp.Instance.TooltipStatus.OperationsInProgress > 0)
             {
                 modifier = "_blue";
-                tooltip = Tools.Translate("Operation in progress") + " - " + Title;
+                tooltip = CoreTools.Translate("Operation in progress") + " - " + Title;
             }
-            else if (Tools.TooltipStatus.ErrorsOccurred > 0)
+            else if (MainApp.Instance.TooltipStatus.ErrorsOccurred > 0)
             {
                 modifier = "_orange";
-                tooltip = Tools.Translate("Attention required") + " - " + Title ;
+                tooltip = CoreTools.Translate("Attention required") + " - " + Title;
             }
-            else if (Tools.TooltipStatus.RestartRequired)
+            else if (MainApp.Instance.TooltipStatus.RestartRequired)
             {
                 modifier = "_turquoise";
-                tooltip = Tools.Translate("Restart required") + " - " + Title;
+                tooltip = CoreTools.Translate("Restart required") + " - " + Title;
             }
-            else if (Tools.TooltipStatus.AvailableUpdates > 0)
+            else if (MainApp.Instance.TooltipStatus.AvailableUpdates > 0)
             {
                 modifier = "_green";
-                if (Tools.TooltipStatus.AvailableUpdates == 1)
-                    tooltip = Tools.Translate("1 update is available") + " - " + Title;
+                if (MainApp.Instance.TooltipStatus.AvailableUpdates == 1)
+                    tooltip = CoreTools.Translate("1 update is available") + " - " + Title;
                 else
-                    tooltip = Tools.Translate("{0} updates are available", Tools.TooltipStatus.AvailableUpdates) + " - " + Title;
+                    tooltip = CoreTools.Translate("{0} updates are available", MainApp.Instance.TooltipStatus.AvailableUpdates) + " - " + Title;
+            }
+            if(TrayIcon == null)
+            {
+                Logger.Warn("Attempting to update a null taskbar icon tray, aborting!");
+                return;
             }
 
             TrayIcon.ToolTipText = tooltip;
@@ -280,8 +287,8 @@ namespace UniGetUI.Interface
             ApplicationTheme theme = ApplicationTheme.Light;
             string RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
             string RegistryValueName = "SystemUsesLightTheme";
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath);
-            object registryValueObject = key?.GetValue(RegistryValueName);
+            RegistryKey? key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath);
+            object? registryValueObject = key?.GetValue(RegistryValueName) ?? null;
             if (registryValueObject != null)
             {
                 int registryValue = (int)registryValueObject;
@@ -293,7 +300,7 @@ namespace UniGetUI.Interface
                 modifier += "_white";
 
 
-            string FullIconPath = Path.Join(Directory.GetParent(Assembly.GetEntryAssembly().Location).ToString(), "\\Assets\\Images\\tray" + modifier + ".ico");
+            string FullIconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "\\Assets\\Images\\tray" + modifier + ".ico");
 
             TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage() { UriSource = new Uri(FullIconPath) });
         }
@@ -319,36 +326,36 @@ namespace UniGetUI.Interface
 
         public void ApplyTheme()
         {
-            string preferredTheme = Tools.GetSettingsValue("PreferredTheme");
+            string preferredTheme = Settings.GetValue("PreferredTheme");
             if (preferredTheme == "dark")
             {
-                Tools.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
+                MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
                 ContentRoot.RequestedTheme = ElementTheme.Dark;
             }
             else if (preferredTheme == "light")
             {
-                Tools.ThemeListener.CurrentTheme = ApplicationTheme.Light;
+                MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Light;
                 ContentRoot.RequestedTheme = ElementTheme.Light;
             }
             else
             {
                 if (ContentRoot.ActualTheme == ElementTheme.Dark)
-                    Tools.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
+                    MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
                 else
-                    Tools.ThemeListener.CurrentTheme = ApplicationTheme.Light;
+                    MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Light;
                 ContentRoot.RequestedTheme = ElementTheme.Default;
             }
 
             if (AppWindowTitleBar.IsCustomizationSupported())
             {
-                if (Tools.ThemeListener.CurrentTheme == ApplicationTheme.Light)
+                if (MainApp.Instance.ThemeListener.CurrentTheme == ApplicationTheme.Light)
                     AppWindow.TitleBar.ButtonForegroundColor = Colors.Black;
                 else
                     AppWindow.TitleBar.ButtonForegroundColor = Colors.White;
             }
             else
             {
-                AppTools.Log("Taskbar foreground color customization is not available");
+                Logger.Info("Taskbar foreground color customization is not available");
             }
 
 
@@ -357,7 +364,7 @@ namespace UniGetUI.Interface
 
         public void ShowLoadingDialog(string text)
         {
-            if(LoadingDialogCount == 0 && DialogQueue.Count == 0)
+            if (LoadingDialogCount == 0 && DialogQueue.Count == 0)
             {
                 LoadingSthDalog.Title = text;
                 LoadingSthDalog.XamlRoot = NavigationPage.XamlRoot;
@@ -369,7 +376,7 @@ namespace UniGetUI.Interface
         public void HideLoadingDialog()
         {
             LoadingDialogCount--;
-            if(LoadingDialogCount <= 0)
+            if (LoadingDialogCount <= 0)
             {
                 LoadingSthDalog.Hide();
             }
@@ -377,7 +384,7 @@ namespace UniGetUI.Interface
                 LoadingDialogCount = 0;
         }
 
-        public void SharePackage(Package package)
+        public void SharePackage(Package? package)
         {
             if (package == null)
                 return;
@@ -431,7 +438,8 @@ namespace UniGetUI.Interface
             }
             catch (Exception e)
             {
-                AppTools.Log(e);
+                Logger.Error("An error occurred while showing a ContentDialog via ShowDialogAsync()");
+                Logger.Error(e);
                 if (DialogQueue.Contains(dialog))
                     DialogQueue.Remove(dialog);
                 return ContentDialogResult.None;
