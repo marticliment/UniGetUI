@@ -403,7 +403,7 @@
   "Size" : "Dimensioni",
   "Skip" : "Salta",
   "Skip hash check" : "Salta controllo hash",
-  "Skip integrity checks" : "No controlli integrità",
+  "Skip integrity checks" : "Salta controlli di integrità",
   "Skip the hash check when installing the selected packages" : "Salta la verifica hash durante l'installazione dei pacchetti selezionati",
   "Skip the hash check when updating the selected packages" : "Salta la verifica hash durante l'aggiornamento dei pacchetti selezionati",
   "Skip this version" : "Salta questa versione",
