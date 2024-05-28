@@ -21,6 +21,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 CanRunAsAdmin = true,
                 SupportsCustomVersions = true,
                 SupportsCustomScopes = true,
+                SupportsPreRelease = true,
             };
 
             Properties = new ManagerProperties()
@@ -233,7 +234,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         }
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
-            string[] parameters = GetUninstallParameters(package, options);
+            var parameters = GetUninstallParameters(package, options).ToList();
             parameters[0] = Properties.InstallVerb;
 
             if (options.Version != "")
@@ -241,11 +242,17 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             else
                 parameters[1] = package.Id + "@latest";
 
-            return parameters;
+            if (options.PreRelease)
+                parameters.AddRange(["--include", "dev"]);
+            
+            if (options.InstallationScope == PackageScope.Global)
+                parameters.Add("--global");
+
+            return parameters.ToArray();
         }
         public override string[] GetUpdateParameters(Package package, InstallationOptions options)
         {
-            string[] parameters = GetUninstallParameters(package, options);
+            string[] parameters = GetInstallParameters(package, options);
             parameters[0] = Properties.UpdateVerb;
             parameters[1] = package.Id + "@" + package.NewVersion;
             return parameters;
