@@ -32,6 +32,7 @@ using System.ComponentModel;
 using UniGetUI.PackageEngine.Operations;
 using System.ComponentModel.Design;
 using CommunityToolkit.WinUI.Helpers;
+using Windows.ApplicationModel.Email.DataProvider;
 
 namespace UniGetUI
 {
@@ -274,7 +275,8 @@ namespace UniGetUI
                 InitializePackageManagers();
 
                 // Run other initializations asynchronously
-                UpdateUniGetUIIfPossible();
+                if(!Settings.Get("DisableAutoUpdateWingetUI"))
+                    UpdateUniGetUIIfPossible();
                 
                 IconDatabase.InitializeInstance();
                 IconDatabase.Instance.LoadIconAndScreenshotsDatabase();
@@ -428,6 +430,12 @@ namespace UniGetUI
 
                         while (MainWindow.Visible)
                             await Task.Delay(100);
+
+                        if (Settings.Get("DisableAutoUpdateWingetUI"))
+                        {
+                            Logger.Warn("User disabled updates!");
+                            return;
+                        }
 
                         Logger.ImportantInfo("The hash matches the expected value, starting update process...");
                         Process p = new();
