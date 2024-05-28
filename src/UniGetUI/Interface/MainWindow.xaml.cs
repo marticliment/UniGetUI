@@ -110,7 +110,6 @@ namespace UniGetUI.Interface
             if (!Settings.Get("DisableSystemTray"))
             {
                 args.Cancel = true;
-                RecentlyActivated = false;
                 try
                 {
                     this.Hide(enableEfficiencyMode: true);
