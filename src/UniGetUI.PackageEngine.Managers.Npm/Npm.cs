@@ -178,7 +178,8 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
                 {
                     string[] elements = line[4..].Split('@');
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this));
+                    if(elements.Length >= 2) 
+                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this));
                 }
             }
 
@@ -204,7 +205,8 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 {
                     line = line.Replace("- @", "- %");
                     string[] elements = line[4..].Split('@');
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0].Replace('%', '@')), elements[0].Replace('%', '@'), elements[1], DefaultSource, this, PackageScope.Global));
+                    if (elements.Length >= 2)
+                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0].Replace('%', '@')), elements[0].Replace('%', '@'), elements[1], DefaultSource, this, PackageScope.Global));
                 }
             }
 
