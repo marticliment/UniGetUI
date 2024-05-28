@@ -72,7 +72,8 @@ namespace UniGetUI.Core.Tools
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
             process.Start();
@@ -158,6 +159,7 @@ Crash Traceback:
             cmd.StartInfo.RedirectStandardOutput = false;
             cmd.StartInfo.CreateNoWindow = true;
             cmd.StartInfo.UseShellExecute = false;
+            cmd.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
             cmd.Start();
             cmd.StandardInput.WriteLine("start " + ErrorBody);
             cmd.StandardInput.WriteLine("exit");
@@ -179,6 +181,7 @@ Crash Traceback:
             p.StartInfo.Arguments = "/C start \"" + WindowTitle + "\" \"" + path + "\"";
             p.StartInfo.UseShellExecute = true;
             p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
             p.StartInfo.Verb = RunAsAdmin ? "runas" : "";
             p.Start();
             await p.WaitForExitAsync();
