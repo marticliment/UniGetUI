@@ -27,6 +27,8 @@ namespace UniGetUI.Interface
 
     public sealed partial class IgnoredUpdatesManager : Page
     {
+        public event EventHandler? Close;
+
         public IgnoredUpdatesManager()
         {
             InitializeComponent();
@@ -75,6 +77,11 @@ namespace UniGetUI.Interface
             args.Cancel = true;
             foreach (IgnoredPackage package in IgnoredUpdatesList.Items.ToArray())
                 await package.RemoveFromIgnoredUpdates();
+        }
+
+        private void CloseButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            Close?.Invoke(this, new EventArgs());
         }
     }
 

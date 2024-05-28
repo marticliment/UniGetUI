@@ -16,7 +16,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <SelectorBar Grid.Row="0" x:Name="SelectorBar" SelectionChanged="SelectorBar_SelectionChanged" HorizontalAlignment="Left">
+        <SelectorBar Grid.Row="0" x:Name="SelectorBar" SelectionChanged="SelectorBar_SelectionChanged" HorizontalAlignment="Center">
             <SelectorBarItem x:Name="SelectorBarItemPage1" IsSelected="True"  >
                 <SelectorBarItem.Icon>
                     <FontIcon Glyph="&#xE946;" FontSize="16" VerticalAlignment="Center"/>
@@ -45,6 +45,19 @@
         </SelectorBar>
 
         <Frame Grid.Row="1" x:Name="ContentFrame" IsNavigationStackEnabled="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0"/>
+
+
+        <!-- Close Button -->
+        <Button HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="0,0,0,0" 
+             BorderThickness="0" Margin="0,-24,-24,0" Width="46" Height="31" Name="CloseButton"
+             Click="CloseButton_Click"
+             Padding="0" Background="Transparent">
+            <Button.Resources>
+                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="Red"/>
+                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="DarkRed"/>
+            </Button.Resources>
+            <widgets:LocalIcon IconName="close" Height="16" Opacity="1"/>
+        </Button>
     </Grid>
 
 </Page>

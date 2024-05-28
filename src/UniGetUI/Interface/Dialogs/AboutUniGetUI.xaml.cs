@@ -17,7 +17,7 @@ namespace UniGetUI.Interface
     public sealed partial class AboutUniGetUI : Page
     {
 
-
+        public event EventHandler? Close;
         int previousSelectedIndex = 0;
         public AboutUniGetUI()
         {
@@ -60,6 +60,11 @@ namespace UniGetUI.Interface
 
             previousSelectedIndex = currentSelectedIndex;
 
+        }
+
+        private void CloseButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            Close?.Invoke(this, new EventArgs());
         }
     }
 }
