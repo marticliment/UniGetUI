@@ -23,7 +23,7 @@ namespace UniGetUI
             {
                 CoreData.IsDaemon = args.Contains("--daemon");
 
-                if (args.Contains("--uninstall-unigetui"))
+                if (args.Contains("--uninstall-unigetui") || args.Contains("--uninstall-wingetui"))
                     // If the app is being uninstalled, run the cleaner and exit
                     UninstallPreps();
                 else if (args.Contains("--migrate-wingetui-to-unigetui"))
