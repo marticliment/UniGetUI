@@ -259,7 +259,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             return new string[]
             {
-                "Starting package update operation for package id=" + Package.Id + "with Manager name=" + Package.Manager.Name,
+                "Starting package update operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name,
                 "Given installation options are " + Options.ToString()
             };
         }
