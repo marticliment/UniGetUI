@@ -243,7 +243,8 @@ namespace UniGetUI.Interface
 
                 MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
-                    MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.UpdateAllPackages();
+                    Logger.Info("[WIDGETS] Updating all packages");
+                    MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.UpdateAll();
                 });
                 return 200;
             });
@@ -258,7 +259,8 @@ namespace UniGetUI.Interface
                     return 400;
 
                 MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() =>
-                {
+                { 
+                    Logger.Info($"[WIDGETS] Updating all packages for manager {Request.Query.@source}");
                     MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.UpdateAllPackagesForManager(Request.Query.@source);
                 });
                 return 200;
