@@ -695,6 +695,7 @@ namespace UniGetUI.Interface
             foreach (Package package in Packages.ToArray())
                 if (package == foreignPackage || package.Equals(foreignPackage))
                 {
+                    package.Tag = PackageTag.Default;
                     Packages.Remove(package);
                     package.Tag = PackageTag.Default;
                     if (FilteredPackages.Contains(package))
