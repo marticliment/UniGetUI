@@ -84,11 +84,6 @@ namespace UniGetUI.Interface
                 WarnAboutAdminRights();
             }
 
-            if (!Settings.Get("AlreadyWarnedAboutNameChange"))
-            {
-                Settings.Set("AlreadyWarnedAboutNameChange", true);
-                WarnAboutNewName();
-            }
 
             Dictionary<Page, NavButton> NextPageReference = new()
             {
@@ -233,46 +228,6 @@ namespace UniGetUI.Interface
 
             await MainApp.Instance.MainWindow.ShowDialogAsync(AdminDialog);
         }
-
-        public async void WarnAboutNewName()
-        {
-            ContentDialog AdminDialog = new();
-            AdminDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-
-            while (XamlRoot == null)
-            {
-                await Task.Delay(100);
-            }
-
-            string NEW_NAME = "UnigetUI";
-
-            AdminDialog.XamlRoot = XamlRoot;
-            AdminDialog.PrimaryButtonText = CoreTools.Translate("I understand");
-            AdminDialog.DefaultButton = ContentDialogButton.Primary;
-            AdminDialog.SecondaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
-            StackPanel p = new() { Spacing = 16 };
-            AdminDialog.Content = p;
-
-            p.Children.Add(new Image() { Source = new BitmapImage() { UriSource = new Uri("ms-appx:///Assets/Images/icon.png") }, Height = 96 });
-
-            Paragraph par = new();
-            par.Inlines.Add(new Run() { Text = CoreTools.Translate("WingetUI will become {newname} soon!").Replace("{newname}", NEW_NAME), FontSize = 24, FontWeight = new Windows.UI.Text.FontWeight(700), FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI Variable Display Bold") });
-            par.Inlines.Add(new LineBreak());
-            par.Inlines.Add(new LineBreak());
-            par.Inlines.Add(new Run() { Text = CoreTools.Translate("WingetUI will soon be named {newname}. This will not represent any change in the application. I (the developer) will continue the development of this project as I am doing right now, but under a different name.").Replace("{newname}", NEW_NAME) });
-            par.Inlines.Add(new LineBreak());
-            par.Inlines.Add(new LineBreak());
-            par.Inlines.Add(new Run() { Text = CoreTools.Translate("WingetUI is being renamed in order to emphasize the difference between WingetUI (the interface you are using right now) and Winget (a package manager developed by Microsoft with which I am not related)"), FontSize = 12, FontStyle = Windows.UI.Text.FontStyle.Italic });
-            par.Inlines.Add(new LineBreak());
-            par.Inlines.Add(new Run() { Text = CoreTools.Translate("While Winget can be used within WingetUI, WingetUI can be used with other package managers, which can be confusing. In the past, WingetUI was designed to work only with Winget, but this is not true anymore, and therefore WingetUI does not represent what this project aims to become."), FontSize = 12, FontStyle = Windows.UI.Text.FontStyle.Italic });
-
-            RichTextBlock text = new();
-            text.Blocks.Add(par);
-            p.Children.Add(text);
-
-            await MainApp.Instance.MainWindow.ShowDialogAsync(AdminDialog);
-        }
-
 
         public async Task<bool> ShowInstallationSettingsForPackageAndContinue(Package package, OperationType Operation)
         {
