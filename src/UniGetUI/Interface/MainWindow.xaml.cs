@@ -40,7 +40,6 @@ namespace UniGetUI.Interface
         }
 
         TaskbarIcon? TrayIcon;
-        private bool RecentlyActivated = false;
 
         static readonly Guid _dtm_iid =
             new(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
@@ -225,20 +224,9 @@ namespace UniGetUI.Interface
             TrayIcon.ContextMenuMode = H.NotifyIcon.ContextMenuMode.PopupMenu;
 
             XamlUICommand ShowHideCommand = new();
-            ShowHideCommand.ExecuteRequested += async (s, e) =>
+            ShowHideCommand.ExecuteRequested += (s, e) =>
             {
-                if (!RecentlyActivated)
-                {
-                    Activate();
-                    RecentlyActivated = true;
-                    await Task.Delay(5000);
-                    RecentlyActivated = false;
-                }
-                else
-                {
-                    RecentlyActivated = false;
-                    this.Hide();
-                }
+                Activate();
             };
 
             TrayIcon.LeftClickCommand = ShowHideCommand;
