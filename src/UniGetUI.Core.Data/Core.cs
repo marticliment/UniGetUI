@@ -248,6 +248,7 @@ namespace UniGetUI.Core.Data
                 }
                 catch (Exception e)
                 {
+                    Logger.Error("Could not create new directory. You may perhaps need to disable Controlled Folder Access from Windows Settings or make an exception for UniGetUI.");
                     Logger.Error(e);
                     return new_path;
                 }
