@@ -183,7 +183,11 @@ namespace UniGetUI.Interface.Dialogs
 
             ShowableTags.Clear();
             foreach (string tag in Info.Tags)
-                ShowableTags.Add(new TextBlock() { Text = tag });
+                ShowableTags.Add(new TextBlock() { 
+                    Text = tag, 
+                    VerticalAlignment = VerticalAlignment.Center,
+                    TextLineBounds = TextLineBounds.Tight
+                });
         }
 
         public async void LoadIcon()
