@@ -263,9 +263,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             process.Start();
             status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
 
-            if (status.Found && IsEnabled())
-                await RefreshPackageIndexes();
-
             return status;
         }
         

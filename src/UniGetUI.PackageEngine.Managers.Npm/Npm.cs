@@ -293,9 +293,6 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
             await process.WaitForExitAsync();
 
-            if (status.Found && IsEnabled())
-                await RefreshPackageIndexes();
-
             return status;
         }
 
