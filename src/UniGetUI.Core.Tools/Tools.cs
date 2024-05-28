@@ -181,7 +181,6 @@ Crash Traceback:
             p.StartInfo.Arguments = "/C start \"" + WindowTitle + "\" \"" + path + "\"";
             p.StartInfo.UseShellExecute = true;
             p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
             p.StartInfo.Verb = RunAsAdmin ? "runas" : "";
             p.Start();
             await p.WaitForExitAsync();
