@@ -292,6 +292,9 @@ Crash Traceback:
                         .Replace("<", string.Empty)
                         .Replace("%", string.Empty)
                         .Replace("\"", string.Empty)
+                        .Replace("~", string.Empty)
+                        .Replace("?", string.Empty)
+                        .Replace("/", string.Empty)
                         .Replace("'", string.Empty)
                         .Replace("\\", string.Empty)
                         .Replace("`", string.Empty);

@@ -116,5 +116,18 @@ namespace UniGetUI.Core.Tools.Tests
         {
             Assert.Equal(expected, CoreTools.GetVersionStringAsFloat(version), tolerance);
         }
+
+        [Theory]
+        [InlineData("Hello World", "Hello World")]
+        [InlineData("Hello; World", "Hello World")]
+        [InlineData("\"Hello; World\"", "Hello World")]
+        [InlineData("'Hello; World'", "Hello World")]
+        [InlineData("query\";start cmd.exe", "querystart cmd.exe")]
+        [InlineData("query;start /B program.exe", "querystart B program.exe")]
+        [InlineData(";&|<>%\"e'~?/\\`", "e")]
+        public void TestSafeQueryString(string query, string expected)
+        {
+            Assert.Equal(CoreTools.EnsureSafeQueryString(query), expected);
+        }
     }
 }
