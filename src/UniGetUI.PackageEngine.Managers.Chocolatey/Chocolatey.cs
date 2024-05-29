@@ -329,10 +329,6 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             }
             Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.Process);
 
-
-            if (status.Found && IsEnabled())
-                await RefreshPackageIndexes();
-
             return status;
         }
     }

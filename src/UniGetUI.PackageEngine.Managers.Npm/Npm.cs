@@ -21,6 +21,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 CanRunAsAdmin = true,
                 SupportsCustomVersions = true,
                 SupportsCustomScopes = true,
+                SupportsPreRelease = true,
             };
 
             Properties = new ManagerProperties()
@@ -178,7 +179,8 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
                 {
                     string[] elements = line[4..].Split('@');
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this));
+                    if(elements.Length >= 2) 
+                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this));
                 }
             }
 
@@ -204,7 +206,8 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 {
                     line = line.Replace("- @", "- %");
                     string[] elements = line[4..].Split('@');
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0].Replace('%', '@')), elements[0].Replace('%', '@'), elements[1], DefaultSource, this, PackageScope.Global));
+                    if (elements.Length >= 2)
+                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0].Replace('%', '@')), elements[0].Replace('%', '@'), elements[1], DefaultSource, this, PackageScope.Global));
                 }
             }
 
@@ -231,7 +234,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         }
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
-            string[] parameters = GetUninstallParameters(package, options);
+            var parameters = GetUninstallParameters(package, options).ToList();
             parameters[0] = Properties.InstallVerb;
 
             if (options.Version != "")
@@ -239,11 +242,17 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             else
                 parameters[1] = package.Id + "@latest";
 
-            return parameters;
+            if (options.PreRelease)
+                parameters.AddRange(["--include", "dev"]);
+            
+            if (options.InstallationScope == PackageScope.Global)
+                parameters.Add("--global");
+
+            return parameters.ToArray();
         }
         public override string[] GetUpdateParameters(Package package, InstallationOptions options)
         {
-            string[] parameters = GetUninstallParameters(package, options);
+            string[] parameters = GetInstallParameters(package, options);
             parameters[0] = Properties.UpdateVerb;
             parameters[1] = package.Id + "@" + package.NewVersion;
             return parameters;
@@ -290,9 +299,6 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             process.Start();
             status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
             await process.WaitForExitAsync();
-
-            if (status.Found && IsEnabled())
-                await RefreshPackageIndexes();
 
             return status;
         }

@@ -393,10 +393,6 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             status.Found = process.ExitCode == 0;
 
 
-            if (status.Found && IsEnabled())
-                _ = RefreshPackageIndexes();
-
-
             Status = status; // Wee need this for the RunCleanup method to get the executable path
             if (status.Found && IsEnabled() && Settings.Get("EnableScoopCleanup"))
                 RunCleanup();

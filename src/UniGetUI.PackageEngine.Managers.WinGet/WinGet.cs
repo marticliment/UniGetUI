@@ -443,11 +443,26 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 status.Version += "\nUsing bundled WinGet helper (CLI parsing)";
             }
 
-            Status = status; // Need to set status before calling RefreshSources, otherwise will crash
-            if (status.Found && IsEnabled())
-                await RefreshPackageIndexes();
-
             return status;
+        }
+
+        public override async Task RefreshPackageIndexes()
+        {
+            Process p = new();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " source update",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
+            };
+
+            p.Start();
+            await p.WaitForExitAsync();
         }
     }
 

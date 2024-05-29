@@ -115,7 +115,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             return new string[]
             {
-                "Starting package install operation for package id=" + Package.Id + "with Manager name=" + Package.Manager.Name,
+                "Starting package install operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name,
                 "Given installation options are " + Options.ToString()
             };
         }
@@ -260,7 +260,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             return new string[]
             {
-                "Starting package update operation for package id=" + Package.Id + "with Manager name=" + Package.Manager.Name,
+                "Starting package update operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name,
                 "Given installation options are " + Options.ToString()
             };
         }
@@ -341,6 +341,10 @@ namespace UniGetUI.PackageEngine.Operations
 
             Package.GetInstalledPackage()?.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
+
+            if(await Package.HasUpdatesIgnoredAsync() && await Package.GetIgnoredUpdatesVersionAsync() != "*")
+                await Package.RemoveFromIgnoredUpdatesAsync();
+
             MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
 
             if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
@@ -409,7 +413,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             return new string[]
             {
-                "Starting package uninstall operation for package id=" + Package.Id + "with Manager name=" + Package.Manager.Name,
+                "Starting package uninstall operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name,
                 "Given installation options are " + Options.ToString()
             };
         }

@@ -344,9 +344,10 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public void UpdateAll()
         {
-            foreach (UpgradablePackage package in Packages)
+            foreach (Package package in Packages)
             {
-                MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
+                if (package.Tag != PackageTag.BeingProcessed && package.Tag != PackageTag.OnQueue)
+                    MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
             }
         }
 
@@ -539,18 +540,9 @@ namespace UniGetUI.Interface.SoftwarePages
             Logger.Warn($"[WIDGETS] No package with id={id} was found");
         }
 
-        public void UpdateAllPackages()
-        {
-            Logger.Info("[WIDGETS] Updating all packages");
-            foreach (UpgradablePackage package in Packages)
-                if (package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
-                    MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
-        }
-
         public void UpdateAllPackagesForManager(string manager)
         {
-            Logger.Info($"[WIDGETS] Updating all packages for manager {manager}");
-            foreach (UpgradablePackage package in Packages)
+            foreach (Package package in Packages)
                 if (package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
                     if (package.Manager.Name == manager)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));

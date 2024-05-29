@@ -16,7 +16,10 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public override string[] GetAddSourceParameters(ManagerSource source)
         {
-            return new string[] { "source", "add", "--name", source.Name, "--arg", source.Url.ToString(), "--accept-source-agreements", "--disable-interactivity" };
+            var args = new List<string>() { "source", "add", "--name", source.Name, "--arg", source.Url.ToString(), "--accept-source-agreements", "--disable-interactivity" };
+            if (source.Name != "winget")
+                args.AddRange(new string[] { "--type", "Microsoft.Rest" });
+            return args.ToArray();
         }
 
         public override string[] GetRemoveSourceParameters(ManagerSource source)

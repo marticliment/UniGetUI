@@ -168,9 +168,62 @@ namespace UniGetUI.Core.Data
         /// <returns>The path to an existing, valid directory</returns>
         private static string GetNewDataDirectoryOrMoveOld(string old_path, string new_path)
         {
-            if (Directory.Exists(new_path))
+            if (Directory.Exists(new_path) && !Directory.Exists(old_path))
                 return new_path;
-            else if (Directory.Exists(old_path))
+            else if (Directory.Exists(new_path) && Directory.Exists(old_path))
+            {
+                try
+                {
+                    foreach (string old_subdir in Directory.GetDirectories(old_path, "*", SearchOption.AllDirectories))
+                    {
+                        string new_subdir = old_subdir.Replace(old_path, new_path);
+                        if (!Directory.Exists(new_subdir))
+                        {
+                            Logger.Debug("New directory: " + new_subdir);
+                            Directory.CreateDirectory(new_subdir);
+                        }
+                        else
+                            Logger.Debug("Directory " + new_subdir + " already exists");
+                    }
+
+                    foreach (string old_file in Directory.GetFiles(old_path, "*", SearchOption.AllDirectories))
+                    {
+                        string new_file = old_file.Replace(old_path, new_path);
+                        if (!File.Exists(new_file))
+                        {
+                            Logger.Info("Copying " + old_file);
+                            File.Move(old_file, new_file);
+                        }
+                        else
+                        {
+                            Logger.Debug("File " + new_file + " already exists.");
+                            File.Delete(old_file);
+                        }
+                    }
+
+                    foreach (string old_subdir in Directory.GetDirectories(old_path, "*", SearchOption.AllDirectories).Reverse())
+                    {
+                        if (!Directory.EnumerateFiles(old_subdir).Any() && !Directory.EnumerateDirectories(old_subdir).Any())
+                        {
+                            Logger.Debug("Deleting old empty subdirectory " + old_subdir);
+                            Directory.Delete(old_subdir);
+                        }
+                    }
+
+                    if (!Directory.EnumerateFiles(old_path).Any() && !Directory.EnumerateDirectories(old_path).Any())
+                    {
+                        Logger.Info("Deleting old Chocolatey directory " + old_path);
+                        Directory.Delete(old_path);
+                    }
+                    return new_path;
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e);
+                    return new_path;
+                }
+            }
+            else if (/*Directory.Exists(new_path)*/Directory.Exists(old_path))
             {
                 try
                 {
@@ -191,11 +244,11 @@ namespace UniGetUI.Core.Data
                 {
                     Logger.Debug("Creating non-existing data directory at: " + new_path);
                     Directory.CreateDirectory(new_path);
-                    Task.Delay(100).Wait();
                     return new_path;
                 }
                 catch (Exception e)
                 {
+                    Logger.Error("Could not create new directory. You may perhaps need to disable Controlled Folder Access from Windows Settings or make an exception for UniGetUI.");
                     Logger.Error(e);
                     return new_path;
                 }

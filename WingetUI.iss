@@ -251,5 +251,5 @@ Filename: "{app}\{#MyAppExeName}"; Parameters: "--migrate-wingetui-to-unigetui";
 
 [UninstallRun]    
 ; Remove WingetUI Notification registries
-Filename: "{app}\{#MyAppExeName}"; Parameters: "--uninstall-wingetui"; Flags: skipifdoesntexist runhidden;
+Filename: "{app}\{#MyAppExeName}"; Parameters: "--uninstall-unigetui"; Flags: skipifdoesntexist runhidden;
 Filename: {sys}\taskkill.exe; Parameters: "/f /im WingetUI.exe"; Flags: skipifdoesntexist runhidden;

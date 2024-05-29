@@ -165,6 +165,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         {
             try
             {
+                await RefreshPackageIndexes();
                 Package[] packages = await GetAvailableUpdates_UnSafe();
                 for (int i = 0; i < packages.Length; i++)
                     packages[i] = PackageFactory.GetUpgradablePackageIfRepeated(packages[i]);

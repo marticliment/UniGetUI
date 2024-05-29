@@ -193,11 +193,15 @@
         </ScrollViewer>
         
         <!-- Close Button -->
-        <Button HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="6" 
-                BorderThickness="0" Margin="0,-20,-20,0" Width="40" Height="40"
+        <Button HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="0,0,0,0" 
+                BorderThickness="0" Margin="0,-25,-25,0" Width="46" Height="31"
                 Click="CloseButton_Click"
-                Padding="0" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-            <widgets:LocalIcon IconName="close" Height="24"/>
+                Padding="0" Background="Transparent">
+            <Button.Resources>
+                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="Red"/>
+                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="DarkRed"/>
+            </Button.Resources>
+            <widgets:LocalIcon IconName="close" Height="16" Opacity="1"/>
         </Button>
         <ProgressBar Name="LoadingIndicator" Margin="-30,-24,-30,0" IsIndeterminate="True" VerticalAlignment="Top"/>
 
