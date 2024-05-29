@@ -290,6 +290,11 @@ namespace UniGetUI.Interface
             string FullIconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "\\Assets\\Images\\tray" + modifier + ".ico");
 
             TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage { UriSource = new Uri(FullIconPath) });
+
+            if(Settings.Get("DisableSystemTray"))
+                TrayIcon.Visibility = Visibility.Collapsed;
+            else
+                TrayIcon.Visibility = Visibility.Visible;
         }
 
 

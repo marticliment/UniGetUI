@@ -505,5 +505,10 @@ namespace UniGetUI.Interface
             };
             p.Start();
         }
+
+        private void DisableSystemTray_StateChanged(object sender, CheckBoxEventArgs e)
+        {
+            MainApp.Instance.MainWindow.UpdateSystemTrayStatus();
+        }
     }
 }

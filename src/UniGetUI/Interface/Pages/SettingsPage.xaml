@@ -154,6 +154,7 @@
                             <widgets:CheckboxCard
                                 Text="Close WingetUI to the notification area"
                                 SettingName="DisableSystemTray"
+                                StateChanged="DisableSystemTray_StateChanged"
                                 />
                             <widgets:CheckboxCard
                                 Text="Enable WingetUI notifications"
