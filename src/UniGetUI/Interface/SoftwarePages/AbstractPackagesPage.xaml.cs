@@ -113,10 +113,9 @@ namespace UniGetUI.Interface
         {
             get
             {
-                return CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.")
-                        .Replace("{0}", Packages.Count.ToString())
-                        .Replace("{1}", (FilteredPackages.Count()).ToString()) + " " +
-                    (SHOW_LAST_CHECKED_TIME? CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()): "");
+                return CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.",
+                        Packages.Count.ToString(), FilteredPackages.Count())
+                        + " " + (SHOW_LAST_CHECKED_TIME? CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()): "");
             }
         }
         protected string FoundPackages_SubtitleText { get { return NoMatches_SubtitleText; } }
