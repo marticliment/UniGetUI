@@ -110,7 +110,7 @@ namespace UniGetUI.Core.IconEngine
                         try
                         {
                             byte[] hash = await CalculateFileHashAsync(FilePath);
-                            IsFileValid = (hash == icon.Sha256);
+                            IsFileValid = hash.SequenceEqual(icon.Sha256);
                         }
                         catch (Exception e)
                         {
@@ -159,6 +159,7 @@ namespace UniGetUI.Core.IconEngine
             if(!IsFileValid)
                 using (var client = new HttpClient())
                 {
+                    if(File.Exists(FilePath)) File.Delete(FilePath);
                     HttpResponseMessage response = await client.GetAsync(icon.Url);
                     response.EnsureSuccessStatusCode();
                     using (var stream = await response.Content.ReadAsStreamAsync())

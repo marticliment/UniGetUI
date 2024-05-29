@@ -1,6 +1,6 @@
 namespace UniGetUI.Core.IconEngine.Tests
 {
-    public class IconStoreTests
+    public class IconDatabaseTests
     {
         IconDatabase iconStore = new();
 
