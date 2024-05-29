@@ -49,7 +49,7 @@ namespace UniGetUI.PackageEngine.Operations
                     p.WaitForExit();
                 }
                 startInfo.FileName = MainApp.Instance.GSudoPath;
-                startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetAddSourceParameters(Source));
+                startInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetAddSourceParameters(Source));
             }
             else
             {
@@ -186,7 +186,7 @@ namespace UniGetUI.PackageEngine.Operations
                     p.WaitForExit();
                 }
                 startInfo.FileName = MainApp.Instance.GSudoPath;
-                startInfo.Arguments = "\"" + Source.Manager.Status.ExecutablePath + "\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetRemoveSourceParameters(Source));
+                startInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetRemoveSourceParameters(Source));
 
             }
             else
