@@ -16,6 +16,8 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.VisualBasic;
 
 namespace UniGetUI.PackageEngine.Managers.ScoopManager
 {
@@ -25,6 +27,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "No" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "Matches" };
+
+        long LastScoopSourceUpdateTime = 0;
 
         public Scoop(): base()
         {
@@ -357,11 +361,23 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         public override async Task RefreshPackageIndexes()
         {
+            if (new TimeSpan(DateTime.Now.Ticks - LastScoopSourceUpdateTime).TotalMinutes < 10)
+            {
+                Logger.Info("Scoop buckets have been already refreshed in the last ten minutes, skipping.");
+                return;
+            }
+            LastScoopSourceUpdateTime = DateTime.Now.Ticks;
             Process process = new();
             ProcessStartInfo StartInfo = new()
             {
-                FileName = Properties.ExecutableFriendlyName,
-                Arguments = Properties.ExecutableCallArgs + " update"
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " update",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
             process.StartInfo = StartInfo;
             process.Start();
