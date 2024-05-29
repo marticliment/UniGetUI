@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using UniGetUI.Core;
@@ -65,7 +66,7 @@ namespace UniGetUI.PackageEngine.Operations
                 currentIndex = MainApp.Instance.OperationQueue.IndexOf(this);
                 if (currentIndex != oldIndex)
                 {
-                    LineInfoText = CoreTools.Translate("Operation on queue (position {0})...").Replace("{0}", currentIndex.ToString());
+                    LineInfoText = CoreTools.Translate("Operation on queue (position {0})...", currentIndex);
                     oldIndex = currentIndex;
                 }
                 await Task.Delay(100);
@@ -126,7 +127,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = CoreTools.Translate("{package} installation failed").Replace("{package}", Package.Name);
+            LineInfoText = CoreTools.Translate("{package} installation failed", new Dictionary<string, object?>{ { "package", Package.Name } });
 
             Package.SetTag(PackageTag.Failed);
 
@@ -137,7 +138,7 @@ namespace UniGetUI.PackageEngine.Operations
                         .AddArgument("action", "OpenUniGetUI")
                         .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                         .AddText(CoreTools.Translate("Installation failed"))
-                        .AddText(CoreTools.Translate("{package} could not be installed").Replace("{package}", Package.Name)).Show();
+                        .AddText(CoreTools.Translate("{package} could not be installed", new Dictionary<string, object?>{ { "package", Package.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -150,16 +151,16 @@ namespace UniGetUI.PackageEngine.Operations
             dialog.XamlRoot = XamlRoot;
             dialog.Resources["ContentDialogMaxWidth"] = 750;
             dialog.Resources["ContentDialogMaxHeight"] = 1000;
-            dialog.Title = CoreTools.Translate("{package} installation failed").Replace("{package}", Package.Name);
+            dialog.Title = CoreTools.Translate("{package} installation failed", new Dictionary<string, object?>{ { "package", Package.Name } });
 
             StackPanel panel = new() { Spacing = 16 };
-            panel.Children.Add(new TextBlock() { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("{package} could not be installed").Replace("{package}", Package.Name) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
+            panel.Children.Add(new TextBlock { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("{package} could not be installed", new Dictionary<string, object?>{ { "package", Package.Name } }) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
 
             Expander expander = new() { CornerRadius = new CornerRadius(8) };
 
             StackPanel HeaderPanel = new() { Orientation = Orientation.Horizontal, Spacing = 8 };
             HeaderPanel.Children.Add(new LocalIcon("console") { VerticalAlignment = VerticalAlignment.Center, Height = 24, Width = 24, HorizontalAlignment = HorizontalAlignment.Left });
-            HeaderPanel.Children.Add(new TextBlock() { Text = CoreTools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
+            HeaderPanel.Children.Add(new TextBlock { Text = CoreTools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
 
             expander.Header = HeaderPanel;
             expander.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -170,7 +171,7 @@ namespace UniGetUI.PackageEngine.Operations
             sv.MaxHeight = 500;
             Paragraph par = new();
             foreach (string line in ProcessOutput)
-                par.Inlines.Add(new Run() { Text = line + "\x0a" });
+                par.Inlines.Add(new Run { Text = line + "\x0a" });
             output.Blocks.Add(par);
 
             sv.Content = output;
@@ -191,7 +192,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
-            LineInfoText = CoreTools.Translate("{package} was installed successfully").Replace("{package}", Package.Name);
+            LineInfoText = CoreTools.Translate("{package} was installed successfully", new Dictionary<string, object?>{ { "package", Package.Name } });
 
             Package.SetTag(PackageTag.AlreadyInstalled);
             MainApp.Instance.MainWindow.NavigationPage.InstalledPage.AddInstalledPackage(Package);
@@ -204,7 +205,7 @@ namespace UniGetUI.PackageEngine.Operations
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(CoreTools.Translate("Installation succeeded"))
-                    .AddText(CoreTools.Translate("{package} was installed successfully").Replace("{package}", Package.Name)).Show();
+                    .AddText(CoreTools.Translate("{package} was installed successfully", new Dictionary<string, object?>{ { "package", Package.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -218,7 +219,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async void Initialize()
         {
-            OperationTitle = CoreTools.Translate("{package} Installation").Replace("{package}", Package.Name);
+            OperationTitle = CoreTools.Translate("{package} Installation", new Dictionary<string, object?>{ { "package", Package.Name } });
             IconSource = await Package.GetIconUrl();
         }
     }
@@ -271,7 +272,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = CoreTools.Translate("{package} update failed. Click here for more details.").Replace("{package}", Package.Name);
+            LineInfoText = CoreTools.Translate("{package} update failed. Click here for more details.", new Dictionary<string, object?>{ { "package", Package.Name } });
 
             Package.SetTag(PackageTag.Failed);
 
@@ -282,7 +283,7 @@ namespace UniGetUI.PackageEngine.Operations
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(CoreTools.Translate("Update failed"))
-                    .AddText(CoreTools.Translate("{package} could not be updated").Replace("{package}", Package.Name)).Show();
+                    .AddText(CoreTools.Translate("{package} could not be updated", new Dictionary<string, object?>{ { "package", Package.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -295,16 +296,16 @@ namespace UniGetUI.PackageEngine.Operations
             dialog.XamlRoot = XamlRoot;
             dialog.Resources["ContentDialogMaxWidth"] = 750;
             dialog.Resources["ContentDialogMaxHeight"] = 1000;
-            dialog.Title = CoreTools.Translate("{package} update failed").Replace("{package}", Package.Name);
+            dialog.Title = CoreTools.Translate("{package} update failed", new Dictionary<string, object?>{ { "package", Package.Name } });
 
             StackPanel panel = new() { Spacing = 16 };
-            panel.Children.Add(new TextBlock() { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("{package} could not be updated").Replace("{package}", Package.Name) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
+            panel.Children.Add(new TextBlock { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("{package} could not be updated", new Dictionary<string, object?>{ { "package", Package.Name } }) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
 
             Expander expander = new() { CornerRadius = new CornerRadius(8) };
 
             StackPanel HeaderPanel = new() { Orientation = Orientation.Horizontal, Spacing = 8 };
             HeaderPanel.Children.Add(new LocalIcon("console") { VerticalAlignment = VerticalAlignment.Center, Height = 24, Width = 24, HorizontalAlignment = HorizontalAlignment.Left });
-            HeaderPanel.Children.Add(new TextBlock() { Text = CoreTools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
+            HeaderPanel.Children.Add(new TextBlock { Text = CoreTools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
 
             expander.Header = HeaderPanel;
             expander.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -315,7 +316,7 @@ namespace UniGetUI.PackageEngine.Operations
             sv.MaxHeight = 500;
             Paragraph par = new();
             foreach (string line in ProcessOutput)
-                par.Inlines.Add(new Run() { Text = line + "\x0a" });
+                par.Inlines.Add(new Run { Text = line + "\x0a" });
             output.Blocks.Add(par);
 
             sv.Content = output;
@@ -336,7 +337,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
-            LineInfoText = CoreTools.Translate("{package} was updated successfully").Replace("{package}", Package.Name);
+            LineInfoText = CoreTools.Translate("{package} was updated successfully", new Dictionary<string, object?>{ { "package", Package.Name } });
 
             Package.GetInstalledPackage()?.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
@@ -353,7 +354,7 @@ namespace UniGetUI.PackageEngine.Operations
                 .AddArgument("action", "OpenUniGetUI")
                 .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                 .AddText(CoreTools.Translate("Update succeeded"))
-                .AddText(CoreTools.Translate("{package} was updated successfully").Replace("{package}", Package.Name)).Show();
+                .AddText(CoreTools.Translate("{package} was updated successfully", new Dictionary<string, object?>{ { "package", Package.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -370,7 +371,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async void Initialize()
         {
-            OperationTitle = CoreTools.Translate("{package} Update").Replace("{package}", Package.Name);
+            OperationTitle = CoreTools.Translate("{package} Update", new Dictionary<string, object?>{ { "package", Package.Name } });
             IconSource = await Package.GetIconUrl();
         }
     }
@@ -424,7 +425,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = CoreTools.Translate("{package} uninstall failed").Replace("{package}", Package.Name);
+            LineInfoText = CoreTools.Translate("{package} uninstall failed", new Dictionary<string, object?>{ { "package", Package.Name } });
 
             Package.SetTag(PackageTag.Failed);
 
@@ -435,7 +436,7 @@ namespace UniGetUI.PackageEngine.Operations
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(CoreTools.Translate("Uninstall failed"))
-                    .AddText(CoreTools.Translate("{package} could not be uninstalled").Replace("{package}", Package.Name)).Show();
+                    .AddText(CoreTools.Translate("{package} could not be uninstalled", new Dictionary<string, object?>{ { "package", Package.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -449,16 +450,16 @@ namespace UniGetUI.PackageEngine.Operations
             dialog.XamlRoot = XamlRoot;
             dialog.Resources["ContentDialogMaxWidth"] = 750;
             dialog.Resources["ContentDialogMaxHeight"] = 1000;
-            dialog.Title = CoreTools.Translate("{package} uninstall failed").Replace("{package}", Package.Name);
+            dialog.Title = CoreTools.Translate("{package} uninstall failed", new Dictionary<string, object?>{ { "package", Package.Name } });
 
             StackPanel panel = new() { Spacing = 16 };
-            panel.Children.Add(new TextBlock() { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("{package} could not be uninstalled").Replace("{package}", Package.Name) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
+            panel.Children.Add(new TextBlock { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("{package} could not be uninstalled", new Dictionary<string, object?>{ { "package", Package.Name } }) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
 
             Expander expander = new() { CornerRadius = new CornerRadius(8) };
 
             StackPanel HeaderPanel = new() { Orientation = Orientation.Horizontal, Spacing = 8 };
             HeaderPanel.Children.Add(new LocalIcon("console") { VerticalAlignment = VerticalAlignment.Center, Height = 24, Width = 24, HorizontalAlignment = HorizontalAlignment.Left });
-            HeaderPanel.Children.Add(new TextBlock() { Text = CoreTools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
+            HeaderPanel.Children.Add(new TextBlock { Text = CoreTools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
 
             expander.Header = HeaderPanel;
             expander.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -469,7 +470,7 @@ namespace UniGetUI.PackageEngine.Operations
             sv.MaxHeight = 500;
             Paragraph par = new();
             foreach (string line in ProcessOutput)
-                par.Inlines.Add(new Run() { Text = line + "\x0a" });
+                par.Inlines.Add(new Run { Text = line + "\x0a" });
             output.Blocks.Add(par);
 
             sv.Content = output;
@@ -490,7 +491,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
-            LineInfoText = CoreTools.Translate("{package} was uninstalled successfully").Replace("{package}", Package.Name);
+            LineInfoText = CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?>{ { "package", Package.Name } });
 
             Package.GetAvailablePackage()?.SetTag(PackageTag.Default);
             MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
@@ -503,7 +504,7 @@ namespace UniGetUI.PackageEngine.Operations
                 .AddArgument("action", "OpenUniGetUI")
                 .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                 .AddText(CoreTools.Translate("Uninstall succeeded"))
-                .AddText(CoreTools.Translate("{package} was uninstalled successfully").Replace("{package}", Package.Name)).Show();
+                .AddText(CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?>{ { "package", Package.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -517,7 +518,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async void Initialize()
         {
-            OperationTitle = CoreTools.Translate("{package} Uninstall").Replace("{package}", Package.Name);
+            OperationTitle = CoreTools.Translate("{package} Uninstall", new Dictionary<string, object?>{ { "package", Package.Name } });
             IconSource = await Package.GetIconUrl();
         }
     }

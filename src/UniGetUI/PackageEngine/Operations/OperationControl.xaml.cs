@@ -63,7 +63,7 @@ namespace UniGetUI.PackageEngine.Operations
                     Grid.SetColumnSpan(ProgressIndicator, 4);
                     Grid.SetRow(ProgressIndicator, 1);
                     if (MainGrid.RowDefinitions.Count < 2)
-                        MainGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+                        MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
                 }
                 else
                 {
@@ -221,7 +221,7 @@ namespace UniGetUI.PackageEngine.Operations
                 foreach (string line in ProcessOutput)
                 {
                     if (line.Contains("  | "))
-                        p.Inlines.Add(new Run() { Text = line.Replace(" | ", "").Trim() + "\x0a" });
+                        p.Inlines.Add(new Run { Text = line.Replace(" | ", "").Trim() + "\x0a" });
                 }
                 LiveOutputTextBlock.Blocks.Add(p);
                 await Task.Delay(100);
@@ -248,11 +248,11 @@ namespace UniGetUI.PackageEngine.Operations
                 if (Status != OperationStatus.Failed)
                 {
                     if (line.Contains("  | "))
-                        p.Inlines.Add(new Run() { Text = line.Replace(" | ", "").Trim() + "\x0a" });
+                        p.Inlines.Add(new Run { Text = line.Replace(" | ", "").Trim() + "\x0a" });
                 }
                 else
                 {
-                    p.Inlines.Add(new Run() { Text = line + "\x0a" });
+                    p.Inlines.Add(new Run { Text = line + "\x0a" });
                 }
             }
             LiveOutputTextBlock.Blocks.Add(p);
@@ -326,7 +326,7 @@ namespace UniGetUI.PackageEngine.Operations
                 currentIndex = MainApp.Instance.OperationQueue.IndexOf(this);
                 if (currentIndex != oldIndex)
                 {
-                    LineInfoText = CoreTools.Translate("Operation on queue (position {0})...").Replace("{0}", currentIndex.ToString());
+                    LineInfoText = CoreTools.Translate("Operation on queue (position {0})...", currentIndex);
                     oldIndex = currentIndex;
                 }
                 await Task.Delay(100);

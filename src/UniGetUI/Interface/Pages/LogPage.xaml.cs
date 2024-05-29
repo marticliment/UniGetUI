@@ -62,7 +62,7 @@ namespace UniGetUI.Interface.Pages
             {
                 if (line.Replace("\r", "").Replace("\n", "").Trim() == "")
                     continue;
-                paragraph.Inlines.Add(new Run() { Text = line.Replace("\r", "").Replace("\n", "") });
+                paragraph.Inlines.Add(new Run { Text = line.Replace("\r", "").Replace("\n", "") });
                 paragraph.Inlines.Add(new LineBreak());
             }
             LogTextBox.Blocks.Clear();
@@ -114,22 +114,22 @@ namespace UniGetUI.Interface.Pages
                     switch (log_entry.Severity)
                     {
                         case LogEntry.SeverityLevel.Debug:
-                            color = new SolidColorBrush() { Color = IS_DARK? DARK_GREY: LIGHT_GREY };
+                            color = new SolidColorBrush { Color = IS_DARK? DARK_GREY: LIGHT_GREY };
                             break;
                         case LogEntry.SeverityLevel.Info:
-                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_BLUE : LIGHT_BLUE };
+                            color = new SolidColorBrush { Color = IS_DARK ? DARK_BLUE : LIGHT_BLUE };
                             break;
                         case LogEntry.SeverityLevel.Success:
-                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE};
+                            color = new SolidColorBrush { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE};
                             break;
                         case LogEntry.SeverityLevel.Warning:
-                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW };
+                            color = new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW };
                             break;
                         case LogEntry.SeverityLevel.Error:
-                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_RED : LIGHT_RED };
+                            color = new SolidColorBrush { Color = IS_DARK ? DARK_RED : LIGHT_RED };
                             break;
                         default:
-                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_GREY : LIGHT_GREY };
+                            color = new SolidColorBrush { Color = IS_DARK ? DARK_GREY : LIGHT_GREY };
                             break;
                     }
 
@@ -138,12 +138,12 @@ namespace UniGetUI.Interface.Pages
                     foreach(var line in lines)
                         if (date_length == -1)
                         {
-                            p.Inlines.Add(new Run() { Text = $"[{log_entry.Time}] {line}\n", Foreground = color });
+                            p.Inlines.Add(new Run { Text = $"[{log_entry.Time}] {line}\n", Foreground = color });
                             date_length = $"[{log_entry.Time}] ".Length;
                         }
                         else
                         {
-                            p.Inlines.Add(new Run() { Text = new string(' ', date_length) + line + "\n", Foreground = color });
+                            p.Inlines.Add(new Run { Text = new string(' ', date_length) + line + "\n", Foreground = color });
                         }
                     ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
                     LogTextBox.Blocks.Add(p);

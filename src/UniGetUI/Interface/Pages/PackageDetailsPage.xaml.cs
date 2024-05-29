@@ -76,7 +76,7 @@ namespace UniGetUI.Interface.Dialogs
             IdTextBlock.Text = package.Id;
             VersionTextBlock.Text = package.Version;
             if (package.IsUpgradable)
-                VersionTextBlock.Text += " - " + CoreTools.Translate("Update to {0} available").Replace("{0}", package.NewVersion);
+                VersionTextBlock.Text += " - " + CoreTools.Translate("Update to {0} available", package.NewVersion);
             PackageName.Text = package.Name;
             SourceNameTextBlock.Text = package.SourceAsString;
 
@@ -192,7 +192,7 @@ namespace UniGetUI.Interface.Dialogs
 
         public async void LoadIcon()
         {
-            PackageIcon.Source = new BitmapImage() { UriSource = (await Package.GetIconUrl()) };
+            PackageIcon.Source = new BitmapImage { UriSource = (await Package.GetIconUrl()) };
         }
 
         public async void LoadScreenshots()
@@ -205,7 +205,7 @@ namespace UniGetUI.Interface.Dialogs
                 IconsExtraBanner.Visibility = Visibility.Visible;
                 ScreenshotsCarroussel.Items.Clear();
                 foreach (Uri image in screenshots)
-                    ScreenshotsCarroussel.Items.Add(new Image() { Source = new BitmapImage(image) });
+                    ScreenshotsCarroussel.Items.Add(new Image { Source = new BitmapImage(image) });
             }
 
             __layout_mode = LayoutMode.Unloaded;
@@ -295,7 +295,7 @@ namespace UniGetUI.Interface.Dialogs
                     __layout_mode = LayoutMode.Normal;
 
                     MainGrid.ColumnDefinitions.Clear();
-                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
                     Grid.SetColumn(TitlePanel, 0);
                     Grid.SetColumn(BasicInfoPanel, 0);
                     Grid.SetColumn(ScreenshotsPanel, 0);
@@ -304,13 +304,13 @@ namespace UniGetUI.Interface.Dialogs
                     Grid.SetColumn(MoreDataStackPanel, 0);
 
                     MainGrid.RowDefinitions.Clear();
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
                     Grid.SetRow(TitlePanel, 0);
                     Grid.SetRow(DescriptionPanel, 1);
                     Grid.SetRow(BasicInfoPanel, 2);
@@ -342,16 +342,16 @@ namespace UniGetUI.Interface.Dialogs
                     __layout_mode = LayoutMode.Wide;
 
                     MainGrid.ColumnDefinitions.Clear();
-                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star), MinWidth = 550 });
-                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star), MinWidth = 550 });
+                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
                     Grid.SetColumn(LeftPanel, 0);
                     Grid.SetColumn(RightPanel, 1);
                     Grid.SetColumn(TitlePanel, 0);
                     Grid.SetColumnSpan(TitlePanel, 1);
 
                     MainGrid.RowDefinitions.Clear();
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
                     Grid.SetRow(LeftPanel, 1);
                     Grid.SetRow(RightPanel, 0);
                     Grid.SetRow(TitlePanel, 0);

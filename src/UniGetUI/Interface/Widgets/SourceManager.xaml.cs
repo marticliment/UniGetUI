@@ -49,7 +49,7 @@ namespace UniGetUI.Interface.Widgets
             if (!Manager.Capabilities.SupportsCustomSources)
                 throw new Exception($"Attempted to create a SourceManager class from Manager {Manager.Name}, which does not support custom sources");
 
-            Header.Text = CoreTools.Translate("Manage {0} sources").Replace("{0}", Manager.Properties.Name);
+            Header.Text = CoreTools.Translate("Manage {0} sources", Manager.Properties.Name);
             AddSourceButton.Content = CoreTools.Translate("Add source");
             AddSourceButton.Click += async (sender, e) =>
             {
@@ -70,19 +70,19 @@ namespace UniGetUI.Interface.Widgets
                     d.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
                     StackPanel p = new();
                     p.Spacing = 8;
-                    p.Children.Add(new TextBlock() { Text = CoreTools.Translate("Select the source you want to add:") });
+                    p.Children.Add(new TextBlock { Text = CoreTools.Translate("Select the source you want to add:") });
                     p.Children.Add(SourcesCombo);
 
                     TextBox SourceNameTextBox = new() { HorizontalAlignment = HorizontalAlignment.Stretch, Width = 400 };
                     TextBox SourceUrlTextBox = new() { HorizontalAlignment = HorizontalAlignment.Stretch };
 
                     StackPanel p1 = new() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
-                    p1.Children.Add(new TextBlock() { Text = CoreTools.Translate("Source name:"), VerticalAlignment = VerticalAlignment.Center });
+                    p1.Children.Add(new TextBlock { Text = CoreTools.Translate("Source name:"), VerticalAlignment = VerticalAlignment.Center });
                     p1.Children.Add(SourceNameTextBox);
 
 
                     StackPanel p2 = new() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
-                    p2.Children.Add(new TextBlock() { Text = CoreTools.Translate("Source URL:"), VerticalAlignment = VerticalAlignment.Center });
+                    p2.Children.Add(new TextBlock { Text = CoreTools.Translate("Source URL:"), VerticalAlignment = VerticalAlignment.Center });
                     p2.Children.Add(SourceUrlTextBox);
 
                     p.Children.Add(p1);

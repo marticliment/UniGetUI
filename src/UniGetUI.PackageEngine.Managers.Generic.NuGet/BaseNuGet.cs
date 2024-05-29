@@ -96,7 +96,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                         if (AlreadyProcessedPackages.ContainsKey(id) && AlreadyProcessedPackages[id].version_float >= float_version)
                             continue;
 
-                        AlreadyProcessedPackages[id] = new SearchResult() { id = id, version = version, version_float = float_version };
+                        AlreadyProcessedPackages[id] = new SearchResult { id = id, version = version, version_float = float_version };
                     }
                     foreach(var package in AlreadyProcessedPackages.Values)
                         Packages.Add(new Package(CoreTools.FormatAsName(package.id), package.id, package.version, source, this));

@@ -74,7 +74,7 @@ namespace UniGetUI.Interface
             LoadingSthDalog = new ContentDialog();
             LoadingSthDalog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             LoadingSthDalog.Title = CoreTools.Translate("Please wait");
-            LoadingSthDalog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
+            LoadingSthDalog.Content = new ProgressBar { IsIndeterminate = true, Width = 300 };
         }
 #pragma warning restore CS8618
         public void HandleNotificationActivation(ToastArguments args, ValueSet input)
@@ -199,20 +199,20 @@ namespace UniGetUI.Interface
             DiscoverPackages.ExecuteRequested += (s, e) => { NavigationPage.DiscoverNavButton.ForceClick(); Activate(); };
             AvailableUpdates.ExecuteRequested += (s, e) => { NavigationPage.UpdatesNavButton.ForceClick(); Activate(); };
             InstalledPackages.ExecuteRequested += (s, e) => { NavigationPage.InstalledNavButton.ForceClick(); Activate(); };
-            AboutUniGetUI.Label = CoreTools.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
+            AboutUniGetUI.Label = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
             ShowUniGetUI.ExecuteRequested += (s, e) => { Activate(); };
             QuitUniGetUI.ExecuteRequested += (s, e) => { MainApp.Instance.DisposeAndQuit(); };
 
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = DiscoverPackages });
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = AvailableUpdates });
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = InstalledPackages });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = DiscoverPackages });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = AvailableUpdates });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = InstalledPackages });
             TrayMenu.Items.Add(new MenuFlyoutSeparator());
             MenuFlyoutItem _about = new() { Command = AboutUniGetUI };
             _about.IsEnabled = false;
             TrayMenu.Items.Add(_about);
             TrayMenu.Items.Add(new MenuFlyoutSeparator());
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = ShowUniGetUI });
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = QuitUniGetUI });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = ShowUniGetUI });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = QuitUniGetUI });
 
 
             TrayMenu.AreOpenCloseAnimationsEnabled = false;
@@ -261,7 +261,7 @@ namespace UniGetUI.Interface
                 if (MainApp.Instance.TooltipStatus.AvailableUpdates == 1)
                     tooltip = CoreTools.Translate("1 update is available") + " - " + Title;
                 else
-                    tooltip = CoreTools.Translate("{0} updates are available").Replace("{0}", MainApp.Instance.TooltipStatus.AvailableUpdates.ToString()) + " - " + Title;
+                    tooltip = CoreTools.Translate("{0} updates are available", MainApp.Instance.TooltipStatus.AvailableUpdates) + " - " + Title;
             }
             if(TrayIcon == null)
             {
@@ -289,7 +289,7 @@ namespace UniGetUI.Interface
 
             string FullIconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "\\Assets\\Images\\tray" + modifier + ".ico");
 
-            TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage() { UriSource = new Uri(FullIconPath) });
+            TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage { UriSource = new Uri(FullIconPath) });
         }
 
 

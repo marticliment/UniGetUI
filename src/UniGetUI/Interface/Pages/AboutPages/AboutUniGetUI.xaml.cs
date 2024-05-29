@@ -18,7 +18,7 @@ namespace UniGetUI.Interface.Pages.AboutPages
         public AboutUniGetUI()
         {
             InitializeComponent();
-            VersionText.Text = CoreTools.Translate("You have installed WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
+            VersionText.Text = CoreTools.Translate("You have installed WingetUI Version {0}", CoreData.VersionName);
 
         }
     }
