@@ -85,135 +85,95 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
         protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " outdated --parseable",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-
-            p.Start();
-            string? line;
             List<UpgradablePackage> Packages = new();
-            string output = "";
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            foreach (var scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
             {
-                output += line + "\n";
-                string[] elements = line.Split(':');
-                if (elements.Length >= 4)
+                Process p = new();
+                p.StartInfo = new ProcessStartInfo()
                 {
-                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[2].Split('@')[0]), elements[2].Split('@')[0], elements[3].Split('@')[^1], elements[2].Split('@')[^1], DefaultSource, this));
-                }
-            }
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " outdated --parseable" + (scope == PackageScope.Global ? " --global" : ""),
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                };
 
-            p = new Process();
-            p.StartInfo = new ProcessStartInfo()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " outdated --global --parseable",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-
-            p.Start();
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
-                string[] elements = line.Split(':');
-                if (elements.Length >= 4)
+                p.Start();
+                string? line;
+                string output = "";
+                while ((line = await p.StandardOutput.ReadLineAsync()) != null)
                 {
-                    if (elements[2][0] == '@')
-                        elements[2] = "%" + elements[2][1..];
+                    output += line + "\n";
+                    string[] elements = line.Split(':');
+                    if (elements.Length >= 4)
+                    {
+                        if (elements[2][0] == '@')
+                            elements[2] = "%" + elements[2][1..];
 
+                        if (elements[3][0] == '@')
+                            elements[3] = "%" + elements[3][1..];
 
-                    if (elements[3][0] == '@')
-                        elements[3] = "%" + elements[3][1..];
-
-                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[2].Split('@')[0]).Replace('%', '@'), elements[2].Split('@')[0].Replace('%', '@'), elements[3].Split('@')[^1].Replace('%', '@'), elements[2].Split('@')[^1].Replace('%', '@'), DefaultSource, this, PackageScope.Global));
+                        Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[2].Split('@')[0]).Replace('%', '@'), elements[2].Split('@')[0].Replace('%', '@'), elements[3].Split('@')[^1].Replace('%', '@'), elements[2].Split('@')[^1].Replace('%', '@'), DefaultSource, this, scope));
+                    }
                 }
+
+                output += await p.StandardError.ReadToEndAsync();
+                LogOperation(p, output);
+
+                await p.WaitForExitAsync();
             }
-
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
-
-            await p.WaitForExitAsync();
-
             return Packages.ToArray();
         }
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " list",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-
-            p.Start();
-            string? line;
             List<Package> Packages = new();
-            string output = "";
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            foreach (var scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
             {
-                output += line + "\n";
-                if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
+                Process p = new();
+                p.StartInfo = new ProcessStartInfo()
                 {
-                    string[] elements = line[4..].Split('@');
-                    if(elements.Length >= 2) 
-                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this));
-                }
-            }
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " list" + (scope == PackageScope.Global? " --global": ""),
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                };
 
-            p = new Process();
-            p.StartInfo = new ProcessStartInfo()
-            {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " list --global",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-
-            p.Start();
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
-                if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
+                p.Start();
+                string? line;
+                string output = "";
+                while ((line = await p.StandardOutput.ReadLineAsync()) != null)
                 {
-                    line = line.Replace("- @", "- %");
-                    string[] elements = line[4..].Split('@');
-                    if (elements.Length >= 2)
-                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0].Replace('%', '@')), elements[0].Replace('%', '@'), elements[1], DefaultSource, this, PackageScope.Global));
-                }
-            }
+                    output += line + "\n";
+                    if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
+                    { 
+                        string[] elements = line[4..].Split('@');
+                        if (elements.Length >= 2)
+                        {
+                            if (line.Contains(" @"))
+                            {
+                                elements[0] = "@" + elements[1];
+                                if (elements.Length >= 3) elements[1] = elements[2];
+                            }
 
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
-            await p.WaitForExitAsync();
+                            Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, scope));
+                        }
+                    }
+                }
+
+                output += await p.StandardError.ReadToEndAsync();
+                LogOperation(p, output);
+                await p.WaitForExitAsync();
+            }
 
             return Packages.ToArray();
         }
