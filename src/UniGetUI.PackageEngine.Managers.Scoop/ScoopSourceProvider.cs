@@ -71,7 +71,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         }
                         else if (line.Trim() != "")
                         {
-                            string[] elements = Regex.Replace(line.Replace("AM", "").Replace("PM", "").Trim(), " {2,}", " ").Split(' ');
+                            string[] elements = Regex.Replace(line.Replace("AM", "").Replace("am", "").Replace("PM", "").Replace("pm", "").Trim(), " {2,}", " ").Split(' ');
                             if (elements.Length >= 5)
                             {
                                 if (!elements[1].Contains("https://"))
