@@ -474,8 +474,8 @@ namespace UniGetUI.Interface.SoftwarePages
             var package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
-            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
-            MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
+            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, IgnoreParallelInstalls: true));
+            MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, IgnoreParallelInstalls: true));
 
         }
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)

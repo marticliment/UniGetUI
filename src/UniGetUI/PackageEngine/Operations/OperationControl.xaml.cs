@@ -175,8 +175,11 @@ namespace UniGetUI.PackageEngine.Operations
                 }
             }
         }
-        public AbstractOperation()
+        protected bool IGNORE_PARALLEL_OPERATION_SETTINGS = false;
+        public AbstractOperation(bool IgnoreParallelInstalls = false)
         {
+            IGNORE_PARALLEL_OPERATION_SETTINGS = IgnoreParallelInstalls;
+
             InitializeComponent();
 
             OutputDialog = new ContentDialog();
