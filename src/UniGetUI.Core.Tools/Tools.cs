@@ -6,6 +6,7 @@ using System.Security.Principal;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
+using Jeffijoe.MessageFormat;
 
 namespace UniGetUI.Core.Tools
 {
@@ -24,10 +25,24 @@ namespace UniGetUI.Core.Tools
         /// </summary>
         /// <param name="text">The string to translate</param>
         /// <returns>The translated string if available, the original string otherwise</returns>
-        public static string Translate(string text)
-        {
+        public static string Translate(string text) {
             if(LanguageEngine == null) LanguageEngine = new LanguageEngine();
             return LanguageEngine.Translate(text);
+        }
+
+        public static string Translate(string text, Dictionary<string, object?> dict)
+        {
+            return MessageFormatter.Format(Translate(text), dict);
+        }
+
+        public static string Translate(string text, params object[] values)
+        {
+            var dict = new Dictionary<string, object?>();
+            foreach (var (item, index) in values.Select((item, index) => (item, index)))
+            {
+                dict.Add(index.ToString(), item);
+            }
+            return MessageFormatter.Format(Translate(text), dict);
         }
 
         public static void ReloadLanguageEngineInstance(string ForceLanguage = "")

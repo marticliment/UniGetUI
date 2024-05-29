@@ -72,7 +72,7 @@ namespace UniGetUI.Interface.Widgets
 
             _combobox = new ComboBox();
             _combobox.MinWidth = 200;
-            _combobox.SetBinding(ItemsControl.ItemsSourceProperty, new Binding() { Source = _elements });
+            _combobox.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Source = _elements });
 
             DefaultStyleKey = typeof(CheckboxCard);
             Content = _combobox;

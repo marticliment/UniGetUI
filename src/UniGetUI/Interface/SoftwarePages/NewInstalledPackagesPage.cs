@@ -340,7 +340,7 @@ namespace UniGetUI.Interface.SoftwarePages
             dialog.PrimaryButtonText = CoreTools.Translate("No");
             dialog.SecondaryButtonText = CoreTools.Translate("Yes");
             dialog.DefaultButton = ContentDialogButton.Primary;
-            dialog.Content = CoreTools.Translate("Do you really want to uninstall {0}?").Replace("{0}", package.Name);
+            dialog.Content = CoreTools.Translate("Do you really want to uninstall {0}?", package.Name);
 
             if (await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary)
                 MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, options));
@@ -366,14 +366,14 @@ namespace UniGetUI.Interface.SoftwarePages
             dialog.DefaultButton = ContentDialogButton.Primary;
 
             StackPanel p = new();
-            p.Children.Add(new TextBlock() { Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?").Replace("{0}", packages.Length.ToString()), Margin = new Thickness(0, 0, 0, 5) });
+            p.Children.Add(new TextBlock { Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?", packages.Length), Margin = new Thickness(0, 0, 0, 5) });
 
             string pkgList = "";
             foreach (Package package in packages)
                 pkgList += " ● " + package.Name + "\x0a";
 
             TextBlock PackageListTextBlock = new() { FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Consolas"), Text = pkgList };
-            p.Children.Add(new ScrollView() { Content = PackageListTextBlock, MaxHeight = 200 });
+            p.Children.Add(new ScrollView { Content = PackageListTextBlock, MaxHeight = 200 });
 
             dialog.Content = p;
 
@@ -408,7 +408,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 string fileName = Settings.GetValue("ChangeBackupFileName");
                 if (fileName == "")
-                    fileName = CoreTools.Translate("{pcName} installed packages").Replace("{pcName}", Environment.MachineName);
+                    fileName = CoreTools.Translate("{pcName} installed packages", new Dictionary<string, object?>{ { "pcName", Environment.MachineName } });
 
                 if (Settings.Get("EnableBackupTimestamping"))
                     fileName += " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");

@@ -148,8 +148,8 @@ namespace UniGetUI.Interface
                 button.ToggleButton.IsChecked = false;
             MoreNavButton.ToggleButton.IsChecked = true;
 
-            (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
-            MoreNavButtonMenu.ShowAt(MoreNavButton, new FlyoutShowOptions() { ShowMode = FlyoutShowMode.Standard });
+            (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
+            MoreNavButtonMenu.ShowAt(MoreNavButton, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Standard });
 
             MoreNavButtonMenu.Closed += (s, e) =>
             {
@@ -246,7 +246,7 @@ namespace UniGetUI.Interface
                 OptionsDialog.SecondaryButtonText = "";
             OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
-            OptionsDialog.Title = CoreTools.Translate("{0} installation options").Replace("{0}", package.Name);
+            OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
             OptionsDialog.Content = OptionsPage;
             OptionsPage.Close += (s, e) => { OptionsDialog.Hide(); };
 
@@ -272,7 +272,7 @@ namespace UniGetUI.Interface
             OptionsDialog.SecondaryButtonText = "";
             OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
-            OptionsDialog.Title = CoreTools.Translate("{0} installation options").Replace("{0}", package.Name);
+            OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
             OptionsDialog.Content = OptionsPage;
             OptionsPage.Close += (s, e) => { OptionsDialog.Hide(); };
 

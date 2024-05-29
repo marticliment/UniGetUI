@@ -371,13 +371,13 @@ namespace UniGetUI.Interface.SoftwarePages
                     if (upgradablePackages.Count == 1)
                     {
                         title = CoreTools.Translate("An update was found!");
-                        body = CoreTools.Translate("{0} is being updated to version {1}").Replace("{0}", upgradablePackages[0].Name).Replace("{1}", upgradablePackages[0].NewVersion);
-                        attribution = CoreTools.Translate("You have currently version {0} installed").Replace("{0}", upgradablePackages[0].Version);
+                        body = CoreTools.Translate("{0} is being updated to version {1}", upgradablePackages[0].Name, upgradablePackages[0].NewVersion);
+                        attribution = CoreTools.Translate("You have currently version {0} installed", upgradablePackages[0].Version);
                     }
                     else
                     {
                         title = CoreTools.Translate("Updates found!");
-                        body = CoreTools.Translate("{0} packages are being updated").Replace("{0}", upgradablePackages.Count.ToString()); ;
+                        body = CoreTools.Translate("{0} packages are being updated", upgradablePackages.Count); ;
                         foreach (UpgradablePackage package in upgradablePackages)
                         {
                             attribution += package.Name + ", ";
@@ -391,13 +391,13 @@ namespace UniGetUI.Interface.SoftwarePages
                     if (upgradablePackages.Count == 1)
                     {
                         title = CoreTools.Translate("An update was found!");
-                        body = CoreTools.Translate("{0} can be updated to version {1}").Replace("{0}", upgradablePackages[0].Name).Replace("{1}", upgradablePackages[0].NewVersion);
-                        attribution = CoreTools.Translate("You have currently version {0} installed").Replace("{0}", upgradablePackages[0].Version);
+                        body = CoreTools.Translate("{0} can be updated to version {1}", upgradablePackages[0].Name, upgradablePackages[0].NewVersion);
+                        attribution = CoreTools.Translate("You have currently version {0} installed", upgradablePackages[0].Version);
                     }
                     else
                     {
                         title = CoreTools.Translate("Updates found!");
-                        body = CoreTools.Translate("{0} packages can be updated").Replace("{0}", upgradablePackages.Count.ToString()); ;
+                        body = CoreTools.Translate("{0} packages can be updated", upgradablePackages.Count); ;
                         foreach (UpgradablePackage package in upgradablePackages)
                         {
                             attribution += package.Name + ", ";

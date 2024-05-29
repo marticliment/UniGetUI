@@ -38,7 +38,7 @@ namespace UniGetUI.Interface.Pages.AboutPages
                     License = LicenseData.LicenseNames[license],
                     LicenseURL = LicenseData.LicenseURLs[license],
                     HomepageUrl = LicenseData.HomepageUrls[license],
-                    HomepageText = CoreTools.Translate("{0} homepage").Replace("{0}", license)
+                    HomepageText = CoreTools.Translate("{0} homepage", license)
                 });
             }
 

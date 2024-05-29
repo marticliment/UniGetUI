@@ -103,7 +103,7 @@ namespace UniGetUI.Interface
             get
             {
                 return NoPackages_SubtitleMainText + " " +
-                    (SHOW_LAST_CHECKED_TIME ? CoreTools.Translate("(Last checked: {0})").Replace("{0}", LastPackageLoadTime.ToString()) : "");
+                    (SHOW_LAST_CHECKED_TIME ? CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()) : "");
             }
         }
 
@@ -113,10 +113,9 @@ namespace UniGetUI.Interface
         {
             get
             {
-                return CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.")
-                        .Replace("{0}", Packages.Count.ToString())
-                        .Replace("{1}", (FilteredPackages.Count()).ToString()) + " " +
-                    (SHOW_LAST_CHECKED_TIME? CoreTools.Translate("(Last checked: {0})").Replace("{0}", LastPackageLoadTime.ToString()): "");
+                return CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.",
+                        Packages.Count.ToString(), FilteredPackages.Count())
+                        + " " + (SHOW_LAST_CHECKED_TIME? CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()): "");
             }
         }
         protected string FoundPackages_SubtitleText { get { return NoMatches_SubtitleText; } }
@@ -178,7 +177,7 @@ namespace UniGetUI.Interface
             };
 
 
-            LocalPackagesNode = new TreeViewNode() { Content = CoreTools.Translate("Local"), IsExpanded = false };
+            LocalPackagesNode = new TreeViewNode { Content = CoreTools.Translate("Local"), IsExpanded = false };
 
             SourcesTreeView.Tapped += (s, e) =>
             {
@@ -307,7 +306,7 @@ namespace UniGetUI.Interface
             {
                 UsedManagers.Add(source.Manager);
                 TreeViewNode Node;
-                Node = new TreeViewNode() { Content = source.Manager.Name + "                                                                                    .", IsExpanded = false };
+                Node = new TreeViewNode { Content = source.Manager.Name + "                                                                                    .", IsExpanded = false };
                 SourcesTreeView.RootNodes.Add(Node);
 
                 // Smart way to decide whether to check a source or not.

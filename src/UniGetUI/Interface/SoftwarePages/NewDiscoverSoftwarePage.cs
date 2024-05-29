@@ -384,7 +384,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MainApp.Instance.MainWindow.Activate();
 
-            MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait...").Replace("{0}", pId));
+            MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait...", pId));
             QueryIdRadio.IsChecked = true;
             QueryBlock.Text = pId;
             await LoadPackages();
@@ -415,7 +415,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 c.XamlRoot = XamlRoot;
                 c.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
                 c.Title = CoreTools.Translate("Package not found");
-                c.Content = CoreTools.Translate("The package {0} from {1} was not found.").Replace("{0}", pId).Replace("{1}", pSource);
+                c.Content = CoreTools.Translate("The package {0} from {1} was not found.", pId, pSource);
                 c.PrimaryButtonText = CoreTools.Translate("OK");
                 c.DefaultButton = ContentDialogButton.Primary;
                 await MainApp.Instance.MainWindow.ShowDialogAsync(c);

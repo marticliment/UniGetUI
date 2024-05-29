@@ -390,7 +390,7 @@ namespace UniGetUI
                     Logger.Info("Latest version : " + LatestVersion.ToString(CultureInfo.InvariantCulture));
 
                     banner = MainWindow.UpdatesBanner;
-                    banner.Title = CoreTools.Translate("WingetUI version {0} is being downloaded.").Replace("{0}", LatestVersion.ToString(CultureInfo.InvariantCulture));
+                    banner.Title = CoreTools.Translate("WingetUI version {0} is being downloaded.", LatestVersion.ToString(CultureInfo.InvariantCulture));
                     banner.Message = CoreTools.Translate("This may take a minute or two");
                     banner.Severity = InfoBarSeverity.Informational;
                     banner.IsOpen = true;
@@ -416,7 +416,7 @@ namespace UniGetUI
                     if (Hash == InstallerHash)
                     {
 
-                        banner.Title = CoreTools.Translate("WingetUI {0} is ready to be installed.").Replace("{0}", LatestVersion.ToString(CultureInfo.InvariantCulture));
+                        banner.Title = CoreTools.Translate("WingetUI {0} is ready to be installed.", LatestVersion.ToString(CultureInfo.InvariantCulture));
                         banner.Message = CoreTools.Translate("The update will be installed upon closing WingetUI");
                         banner.ActionButton = new Button();
                         banner.ActionButton.Content = CoreTools.Translate("Update now");

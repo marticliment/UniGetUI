@@ -56,7 +56,7 @@ namespace UniGetUI.Interface
 
             SlideNavigationTransitionEffect slideNavigationTransitionEffect = currentSelectedIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
 
-            ContentFrame.Navigate(pageType, null, new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect });
+            ContentFrame.Navigate(pageType, null, new SlideNavigationTransitionInfo { Effect = slideNavigationTransitionEffect });
 
             previousSelectedIndex = currentSelectedIndex;
 
