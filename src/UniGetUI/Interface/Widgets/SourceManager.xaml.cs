@@ -153,7 +153,7 @@ namespace UniGetUI.Interface.Widgets
 
         public async void LoadSources()
         {
-            if (!Manager.Status.Found)
+            if (!Manager.IsReady())
                 return;
 
             LoadingBar.Visibility = Visibility.Visible;
