@@ -142,8 +142,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 if (optionsFile.Directory?.Exists == false)
                     optionsFile.Directory.Create();
 
-                using FileStream outputStream = optionsFile.OpenWrite();
-                JsonSerializer.Serialize(outputStream, Serialized());
+                var fileContents = JsonSerializer.Serialize(Serialized());
+                File.WriteAllText(optionsFile.FullName, fileContents);
             }
             catch (Exception ex)
             {
@@ -163,8 +163,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 if (optionsFile.Directory?.Exists == false)
                     optionsFile.Directory.Create();
 
-                await using FileStream outputStream = optionsFile.OpenWrite();
-                await JsonSerializer.SerializeAsync(outputStream, Serialized());
+                var fileContents = JsonSerializer.Serialize(Serialized());
+                await File.WriteAllTextAsync(optionsFile.FullName, fileContents);
             }
             catch (Exception ex)
             {
