@@ -22,12 +22,17 @@ using Windows.Foundation.Collections;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Core.Tools;
+using System.Runtime.InteropServices;
+using System.Reflection.Metadata;
 
 
 namespace UniGetUI.Interface
 {
     public sealed partial class MainWindow : Window
     {
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)] static extern bool SetForegroundWindow(IntPtr hWnd);
+
         [System.Runtime.InteropServices.ComImport]
         [System.Runtime.InteropServices.Guid("3A3DCD6C-3EAB-43DC-BCDE-45671CE800C8")]
         [System.Runtime.InteropServices.InterfaceType(
@@ -226,6 +231,7 @@ namespace UniGetUI.Interface
             ShowHideCommand.ExecuteRequested += (s, e) =>
             {
                 Activate();
+                SetForegroundWindow(GetWindowHandle());
             };
 
             TrayIcon.LeftClickCommand = ShowHideCommand;
@@ -234,6 +240,7 @@ namespace UniGetUI.Interface
             TrayIcon.ContextFlyout = TrayMenu;
             UpdateSystemTrayStatus();
         }
+
 
         public void UpdateSystemTrayStatus()
         {
