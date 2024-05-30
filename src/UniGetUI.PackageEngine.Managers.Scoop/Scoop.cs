@@ -406,7 +406,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             };
             process.Start();
             status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
-            status.Found = CoreTools.Which("scoop") != null;
+            status.Found = (await CoreTools.Which("scoop")).Item1;
 
 
             Status = status; // Wee need this for the RunCleanup method to get the executable path
