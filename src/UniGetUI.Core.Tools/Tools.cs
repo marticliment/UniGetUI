@@ -78,6 +78,7 @@ namespace UniGetUI.Core.Tools
         /// <returns>A tuple containing: a boolean hat represents wether the path was found or not; the path to the file if found.</returns>
         public static async Task<Tuple<bool, string>> Which(string command)
         {
+            Logger.Debug($"Begin \"which\" search for command {command}");
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo()
@@ -100,9 +101,15 @@ namespace UniGetUI.Core.Tools
                 output = line.Trim();
             await process.WaitForExitAsync();
             if (process.ExitCode != 0 || output == "")
+            {
+                Logger.ImportantInfo($"Command {command} was not found on the system");
                 return new Tuple<bool, string>(false, "");
+            }
             else
+            {
+                Logger.Debug($"Command {command} was found on {output}");
                 return new Tuple<bool, string>(File.Exists(output), output);
+            }
         }
 
         /// <summary>
