@@ -78,6 +78,7 @@ namespace UniGetUI.Core.Tools
         /// <returns>A tuple containing: a boolean hat represents wether the path was found or not; the path to the file if found.</returns>
         public static async Task<Tuple<bool, string>> Which(string command)
         {
+            command = command.Replace(";", "").Replace("&", "").Trim();
             Logger.Debug($"Begin \"which\" search for command {command}");
             Process process = new()
             {
