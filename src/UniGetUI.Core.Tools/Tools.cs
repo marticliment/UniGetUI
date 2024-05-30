@@ -7,6 +7,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
 using Jeffijoe.MessageFormat;
+using System.ComponentModel.DataAnnotations;
 
 namespace UniGetUI.Core.Tools
 {
@@ -321,6 +322,28 @@ Crash Traceback:
                         .Replace("'", string.Empty)
                         .Replace("\\", string.Empty)
                         .Replace("`", string.Empty);
+        }
+
+        /// <summary>
+        /// Returns null if the string is empty
+        /// </summary>
+        /// <param name="value">The string to check</param>
+        /// <returns>a string? instance</returns>
+        public static string? GetStringOrNull(string? value)
+        {
+            if (value == "") return null;
+            return value;
+        }
+
+        /// <summary>
+        /// Returns a new Uri if the string is not empty. Returns null otherwhise
+        /// </summary>
+        /// <param name="url">The null, empty or valid string</param>
+        /// <returns>an Uri? instance</returns>
+        public static Uri? GetUriOrNull(string? url)
+        {
+            if (url == "" || url == null) return null;
+            return new Uri(url);
         }
     }
 }

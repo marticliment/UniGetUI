@@ -484,7 +484,6 @@ namespace UniGetUI.Interface
             NavigateToPage(new Logger_LogPage(Logger_LogType.UniGetUILog));
         }
 
-
         private void HelpMenu_Click(object sender, RoutedEventArgs e)
         {
             ShowHelp();

@@ -35,59 +35,62 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 return details;
             }
 
-            try
+            JsonObject? infoNode = RawInfo["info"] as JsonObject;
+            if (infoNode != null)
             {
-                if ((RawInfo["info"] as JsonObject)?.ContainsKey("author") ?? false)
-                    details.Author = (RawInfo["info"] as JsonObject)?["author"]?.ToString() ?? "";
-            }
-            catch (Exception ex) { Logger.Debug("[Pip] Can't load author: " + ex); }
-
-            try
-            {
-                if ((RawInfo["info"] as JsonObject)?.ContainsKey("home_page") ?? false)
-                    details.HomepageUrl = new Uri((RawInfo["info"] as JsonObject)?["home_page"]?.ToString() ?? "");
-            }
-            catch (Exception ex) { Logger.Debug("[Pip] Can't load home_page: " + ex); }
-            try
-            {
-                if ((RawInfo["info"] as JsonObject)?.ContainsKey("package_url") ?? false)
-                    details.ManifestUrl = new Uri((RawInfo["info"] as JsonObject)?["package_url"]?.ToString() ?? "");
-            }
-            catch (Exception ex) { Logger.Debug("[Pip] Can't load package_url: " + ex); }
-            try
-            {
-                if ((RawInfo["info"] as JsonObject)?.ContainsKey("summary") ?? false)
-                    details.Description = (RawInfo["info"] as JsonObject)?["summary"]?.ToString() ?? "";
-            }
-            catch (Exception ex) { Logger.Debug("[Pip] Can't load summary: " + ex); }
-            try
-            {
-                if ((RawInfo["info"] as JsonObject)?.ContainsKey("license") ?? false)
-                    details.License = (RawInfo["info"] as JsonObject)?["license"]?.ToString() ?? "";
-            }
-            catch (Exception ex) { Logger.Debug("[Pip] Can't load license: " + ex); }
-            try
-            {
-                if ((RawInfo["info"] as JsonObject)?.ContainsKey("maintainer") ?? false)
-                    details.Publisher = (RawInfo["info"] as JsonObject)?["maintainer"]?.ToString() ?? "";
-            }
-            catch (Exception ex) { Logger.Debug("[Pip] Can't load maintainer: " + ex); }
-            try
-            {
-                if (((RawInfo["info"] as JsonObject)?.ContainsKey("classifiers") ?? false) 
-                    && ((RawInfo["info"] as JsonObject)?["classifiers"] is JsonArray))
+                try
                 {
-                    List<string> Tags = new();
-                    foreach (string? line in (RawInfo["info"] as JsonObject)?["classifiers"] as JsonArray ?? new())
-                        if (line?.Contains("License ::") ?? false)
-                            details.License = line.Split("::")[^1].Trim();
-                        else if (line?.Contains("Topic ::") ?? false)
-                            if (!Tags.Contains(line.Split("::")[^1].Trim()))
-                                Tags.Add(line.Split("::")[^1].Trim());
-                    details.Tags = Tags.ToArray();
+                    if (infoNode.ContainsKey("author"))
+                        details.Author = CoreTools.GetStringOrNull(infoNode["author"]?.ToString());
                 }
+                catch (Exception ex) { Logger.Debug("[Pip] Can't load author: " + ex); }
+                try
+                {
+                    if (infoNode.ContainsKey("home_page"))
+                        details.HomepageUrl = CoreTools.GetUriOrNull(infoNode["home_page"]?.ToString());
+                }
+                catch (Exception ex) { Logger.Debug("[Pip] Can't load home_page: " + ex); }
+                try
+                {
+                    if (infoNode.ContainsKey("package_url"))
+                        details.ManifestUrl = CoreTools.GetUriOrNull(infoNode["package_url"]?.ToString());
+                }
+                catch (Exception ex) { Logger.Debug("[Pip] Can't load package_url: " + ex); }
+                try
+                {
+                    if (infoNode.ContainsKey("summary"))
+                        details.Description = CoreTools.GetStringOrNull(infoNode["summary"]?.ToString());
+                }
+                catch (Exception ex) { Logger.Debug("[Pip] Can't load summary: " + ex); }
+                try
+                {
+                    if (infoNode.ContainsKey("license"))
+                        details.License = CoreTools.GetStringOrNull(infoNode["license"]?.ToString());
+                }
+                catch (Exception ex) { Logger.Debug("[Pip] Can't load license: " + ex); }
+                try
+                {
+                    if (infoNode.ContainsKey("maintainer"))
+                        details.Publisher = CoreTools.GetStringOrNull(infoNode["maintainer"]?.ToString());
+                }
+                catch (Exception ex) { Logger.Debug("[Pip] Can't load maintainer: " + ex); }
+                try
+                {
+                    if ((infoNode.ContainsKey("classifiers"))
+                        && (infoNode["classifiers"] is JsonArray))
+                    {
+                        List<string> Tags = new();
+                        foreach (string? line in infoNode["classifiers"] as JsonArray ?? new())
+                            if (line?.Contains("License ::") ?? false)
+                                details.License = line.Split("::")[^1].Trim();
+                            else if (line?.Contains("Topic ::") ?? false)
+                                if (!Tags.Contains(line.Split("::")[^1].Trim()))
+                                    Tags.Add(line.Split("::")[^1].Trim());
+                        details.Tags = Tags.ToArray();
+                    }
+                }
+                catch (Exception ex) { Logger.Debug("[Pip] Can't load classifiers: " + ex); }
             }
-            catch (Exception ex) { Logger.Debug("[Pip] Can't load classifiers: " + ex); }
 
             try
             {
@@ -102,12 +105,12 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 {
                     if (url.ContainsKey("digests") && ((url["digests"] as JsonObject)?.ContainsKey("sha256") ?? false))
                     {
-                        details.InstallerHash = url["digests"]?["sha256"]?.ToString() ?? "";
+                        details.InstallerHash = url["digests"]?["sha256"]?.ToString();
                     }
                     if (url.ContainsKey("url"))
                     {
-                        details.InstallerType = url["url"]?.ToString().Split('.')[^1].Replace("whl", "Wheel") ?? "";
-                        details.InstallerUrl = url["url"] != null? new Uri(url["url"]?.ToString() ?? ""): null;
+                        details.InstallerType = url["url"]?.ToString().Split('.')[^1].Replace("whl", "Wheel");
+                        details.InstallerUrl = CoreTools.GetUriOrNull(url["url"]?.ToString());
                         details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
                     }
                 }
