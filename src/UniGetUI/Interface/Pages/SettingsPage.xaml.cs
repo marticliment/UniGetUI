@@ -90,16 +90,8 @@ namespace UniGetUI.Interface
             BackupDirectoryLabel = (TextBlock)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(0));
             ResetBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(1));
             OpenBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2));
-            if (!Settings.Get("ChangeBackupOutputDirectory"))
-            {
-                BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
-                ResetBackupDirectory.IsEnabled = false;
-            }
-            else
-            {
-                BackupDirectoryLabel.Text = Settings.GetValue("ChangeBackupOutputDirectory");
-                ResetBackupDirectory.IsEnabled = true;
-            }
+            
+            EnablePackageBackupUI(Settings.Get("EnablePackageBackup"));
 
             ResetBackupDirectory.Content = CoreTools.Translate("Reset");
 
@@ -509,6 +501,36 @@ namespace UniGetUI.Interface
         private void DisableSystemTray_StateChanged(object sender, CheckBoxEventArgs e)
         {
             MainApp.Instance.MainWindow.UpdateSystemTrayStatus();
+        }
+
+        private void EnablePackageBackupCheckBox_StateChanged(object sender, CheckBoxEventArgs e)
+        {
+            EnablePackageBackupUI(EnablePackageBackupCheckBox.Checked);
+        }
+
+        public void EnablePackageBackupUI(bool enabled)
+        {
+            if (BackupNowButton == null)
+                return; // This could happen when this event is triggered but the SettingsPage
+                        // hasn't finished initializing yet.
+            EnableBackupTimestampingCheckBox.IsEnabled = enabled;
+            ChangeBackupFileNameTextBox.IsEnabled = enabled;
+            ChangeBackupDirectory.IsEnabled = enabled;
+            BackupNowButton.IsEnabled = enabled;
+
+            if (enabled)
+            {
+                if (!Settings.Get("ChangeBackupOutputDirectory"))
+                {
+                    BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
+                    ResetBackupDirectory.IsEnabled = false;
+                }
+                else
+                {
+                    BackupDirectoryLabel.Text = Settings.GetValue("ChangeBackupOutputDirectory");
+                    ResetBackupDirectory.IsEnabled = true;
+                }
+            }
         }
     }
 }

@@ -31,7 +31,6 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(SettingProperty, value);
         }
 
-
         public bool Checked
         {
             get => _checkbox.IsChecked ?? false;
