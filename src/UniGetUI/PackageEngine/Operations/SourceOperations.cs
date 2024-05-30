@@ -79,13 +79,14 @@ namespace UniGetUI.PackageEngine.Operations
         {
             LineInfoText = CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
             if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
+            {
                 try
                 {
                     new ToastContentBuilder()
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(CoreTools.Translate("Installation failed"))
-                    .AddText(CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
+                    .AddText(CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -93,44 +94,14 @@ namespace UniGetUI.PackageEngine.Operations
                     Logger.Warn("Failed to show toast notification");
                     Logger.Warn(ex);
                 }
-            ContentDialog dialog = new();
-            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.XamlRoot = XamlRoot;
-            dialog.Resources["ContentDialogMaxWidth"] = 750;
-            dialog.Resources["ContentDialogMaxHeight"] = 1000;
-            dialog.Title = CoreTools.Translate("Source addition failed");
+            }
 
-            StackPanel panel = new() { Spacing = 16 };
-            panel.Children.Add(new TextBlock { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } }) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
-
-            Expander expander = new() { CornerRadius = new CornerRadius(8) };
-
-            StackPanel HeaderPanel = new() { Orientation = Orientation.Horizontal, Spacing = 8 };
-            HeaderPanel.Children.Add(new LocalIcon("console") { VerticalAlignment = VerticalAlignment.Center, Height = 24, Width = 24, HorizontalAlignment = HorizontalAlignment.Left });
-            HeaderPanel.Children.Add(new TextBlock { Text = CoreTools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
-
-            expander.Header = HeaderPanel;
-            expander.HorizontalAlignment = HorizontalAlignment.Stretch;
-            panel.Children.Add(expander);
-
-            RichTextBlock output = new() { FontFamily = new FontFamily("Consolas"), TextWrapping = TextWrapping.Wrap };
-            ScrollViewer sv = new();
-            sv.MaxHeight = 500;
-            Paragraph par = new();
-            foreach (string line in ProcessOutput)
-                par.Inlines.Add(new Run { Text = line + "\x0a" });
-            output.Blocks.Add(par);
-
-            sv.Content = output;
-            expander.Content = sv;
-
-            dialog.Content = panel;
-            dialog.PrimaryButtonText = CoreTools.Translate("Retry");
-            dialog.CloseButtonText = CoreTools.Translate("Close");
-            dialog.DefaultButton = ContentDialogButton.Primary;
-
-            ContentDialogResult result = await MainApp.Instance.MainWindow.ShowDialogAsync(dialog);
-
+            ContentDialogResult result = await MainApp.Instance.MainWindow.NavigationPage.ShowOperationFailedDialog(
+                ProcessOutput,
+                CoreTools.Translate("Source addition failed"),
+                CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
+            );
+            
             if (result == ContentDialogResult.Primary)
                 return AfterFinshAction.Retry;
             else
@@ -217,49 +188,19 @@ namespace UniGetUI.PackageEngine.Operations
         {
             LineInfoText = CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
             if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
+            {
                 new ToastContentBuilder()
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(CoreTools.Translate("Removal failed"))
-                    .AddText(CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
+                    .AddText(CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
+            }
 
-            ContentDialog dialog = new();
-            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.XamlRoot = XamlRoot;
-            dialog.Resources["ContentDialogMaxWidth"] = 750;
-            dialog.Resources["ContentDialogMaxHeight"] = 1000;
-            dialog.Title = CoreTools.Translate("Source removal failed");
-
-            StackPanel panel = new() { Spacing = 16 };
-            panel.Children.Add(new TextBlock { TextWrapping = TextWrapping.WrapWholeWords, Text = CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } }) + ". " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
-
-            Expander expander = new() { CornerRadius = new CornerRadius(8) };
-
-            StackPanel HeaderPanel = new() { Orientation = Orientation.Horizontal, Spacing = 8 };
-            HeaderPanel.Children.Add(new LocalIcon("console") { VerticalAlignment = VerticalAlignment.Center, Height = 24, Width = 24, HorizontalAlignment = HorizontalAlignment.Left });
-            HeaderPanel.Children.Add(new TextBlock { Text = CoreTools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
-
-            expander.Header = HeaderPanel;
-            expander.HorizontalAlignment = HorizontalAlignment.Stretch;
-            panel.Children.Add(expander);
-
-            RichTextBlock output = new() { FontFamily = new FontFamily("Consolas"), TextWrapping = TextWrapping.Wrap };
-            ScrollViewer sv = new();
-            sv.MaxHeight = 500;
-            Paragraph par = new();
-            foreach (string line in ProcessOutput)
-                par.Inlines.Add(new Run { Text = line + "\x0a" });
-            output.Blocks.Add(par);
-
-            sv.Content = output;
-            expander.Content = sv;
-
-            dialog.Content = panel;
-            dialog.PrimaryButtonText = CoreTools.Translate("Retry");
-            dialog.CloseButtonText = CoreTools.Translate("Close");
-            dialog.DefaultButton = ContentDialogButton.Primary;
-
-            ContentDialogResult result = await MainApp.Instance.MainWindow.ShowDialogAsync(dialog);
+            ContentDialogResult result = await MainApp.Instance.MainWindow.NavigationPage.ShowOperationFailedDialog(
+                ProcessOutput,
+                CoreTools.Translate("Source removal failed"),
+                CoreTools.Translate("Could remove source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
+            );
 
             if (result == ContentDialogResult.Primary)
                 return AfterFinshAction.Retry;
