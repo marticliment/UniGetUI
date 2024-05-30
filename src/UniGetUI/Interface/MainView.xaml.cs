@@ -24,6 +24,7 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.SoftwarePages;
 using UniGetUI;
 using Microsoft.UI.Xaml.Media;
+using Windows.ApplicationModel.VoiceCommands;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -104,7 +105,7 @@ namespace UniGetUI.Interface
             {
                 if (e.Key == Windows.System.VirtualKey.Tab && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                 {
-                    if(CurrentPage != null)
+                    if (CurrentPage != null)
                         if (!InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
                         {
                             if (NextPageReference.ContainsKey(CurrentPage))
@@ -210,42 +211,94 @@ namespace UniGetUI.Interface
             UpdatesDialog = null;
         }
 
-        public async Task<ContentDialogResult> ShowOperationFailedDialog(IEnumerable<string> processOutput, string dialogTitle, string shortDescription)
+        public async Task<ContentDialogResult> ShowOperationFailedDialog(
+            IEnumerable<string> processOutput, 
+            string dialogTitle, 
+            string shortDescription)
         {
             ContentDialog dialog = new();
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             dialog.XamlRoot = XamlRoot;
-            dialog.Resources["ContentDialogMaxWidth"] = 750;
-            dialog.Resources["ContentDialogMaxHeight"] = 1000;
+            dialog.Resources["ContentDialogMaxWidth"] = 850;
+            dialog.Resources["ContentDialogMaxHeight"] = 800;
             dialog.Title = dialogTitle;
 
-            StackPanel panel = new() { Spacing = 16 };
-            panel.Children.Add(new TextBlock { TextWrapping = TextWrapping.WrapWholeWords, Text = $"{shortDescription}. " + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.") });
+            Grid grid = new() { 
+                RowSpacing = 16,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+            };
 
-            Expander expander = new() { CornerRadius = new CornerRadius(8) };
+            grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
 
-            StackPanel HeaderPanel = new() { Orientation = Orientation.Horizontal, Spacing = 8 };
-            HeaderPanel.Children.Add(new LocalIcon("console") { VerticalAlignment = VerticalAlignment.Center, Height = 24, Width = 24, HorizontalAlignment = HorizontalAlignment.Left });
-            HeaderPanel.Children.Add(new TextBlock { Text = CoreTools.Translate("Command-line Output"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
+            var headerContent = new TextBlock()
+            {
+                TextWrapping = TextWrapping.WrapWholeWords,
+                Text = $"{shortDescription}. "
+                        + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.")
+            };
 
-            expander.Header = HeaderPanel;
-            expander.HorizontalAlignment = HorizontalAlignment.Stretch;
-            expander.VerticalAlignment = VerticalAlignment.Stretch;
-            expander.MaxHeight = 200;
-            panel.Children.Add(expander);
+            StackPanel HeaderPanel = new() { 
+                Orientation = Orientation.Horizontal, 
+                Spacing = 8 
+            };
+            
+            HeaderPanel.Children.Add(new LocalIcon("console") { 
+                VerticalAlignment = VerticalAlignment.Center, 
+                Height = 24, 
+                Width = 24, 
+                HorizontalAlignment = HorizontalAlignment.Left 
+            });
+            
+            HeaderPanel.Children.Add(new TextBlock { 
+                Text = CoreTools.Translate("Command-line Output"), 
+                HorizontalAlignment = HorizontalAlignment.Center, 
+                VerticalAlignment = VerticalAlignment.Center 
+            });
 
-            RichTextBlock output = new() { FontFamily = new FontFamily("Consolas"), TextWrapping = TextWrapping.Wrap };
-            ScrollViewer sv = new();
-            sv.VerticalAlignment = VerticalAlignment.Stretch;
+
+            RichTextBlock CommandLineOutput = new() { 
+                FontFamily = new FontFamily("Consolas"), 
+                TextWrapping = TextWrapping.Wrap,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+            };
+
+            ScrollViewer ScrollView = new() {
+                BorderBrush = new SolidColorBrush(),
+                Content = CommandLineOutput,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+            };
+
+            Grid OutputGrid = new Grid();
+            OutputGrid.Children.Add(ScrollView);
+            OutputGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            OutputGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+            Grid.SetColumn(ScrollView, 0);
+            Grid.SetRow(ScrollView, 0);
+
+            Expander expander = new()
+            {
+                Header = HeaderPanel,
+                Content = OutputGrid,
+                CornerRadius = new CornerRadius(8),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+            };
+
             Paragraph par = new();
             foreach (string line in processOutput)
                 par.Inlines.Add(new Run { Text = line + "\x0a" });
-            output.Blocks.Add(par);
+            CommandLineOutput.Blocks.Add(par);
+            
+            grid.Children.Add(headerContent);
+            grid.Children.Add(expander);
+            Grid.SetRow(headerContent, 0);
+            Grid.SetRow(expander, 1);
 
-            sv.Content = output;
-            expander.Content = sv;
-
-            dialog.Content = panel;
+            dialog.Content = grid;
             dialog.PrimaryButtonText = CoreTools.Translate("Retry");
             dialog.CloseButtonText = CoreTools.Translate("Close");
             dialog.DefaultButton = ContentDialogButton.Primary;
