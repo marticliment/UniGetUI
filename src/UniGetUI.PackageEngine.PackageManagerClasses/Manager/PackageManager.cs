@@ -147,7 +147,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet FindPackages was called"); return []; };
             try
             {
-                Package[] packages = await FindPackages_UnSafe(query);
+                Package[] packages = await FindPackages_UnSafe(query).WaitAsync(TimeSpan.FromSeconds(60));
                 for (int i = 0; i < packages.Length; i++)
                 {
                     packages[i] = PackageFactory.GetAvailablePackageIfRepeated(packages[i]);
@@ -174,8 +174,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetAvailableUpdates was called"); return []; };
             try
             {
-                await RefreshPackageIndexes();
-                Package[] packages = await GetAvailableUpdates_UnSafe();
+                await RefreshPackageIndexes().WaitAsync(TimeSpan.FromSeconds(60));
+                Package[] packages = await GetAvailableUpdates_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
                 for (int i = 0; i < packages.Length; i++)
                     packages[i] = PackageFactory.GetUpgradablePackageIfRepeated(packages[i]);
                 Logger.Info($"Found {packages.Length} available updates from {Name}");
@@ -199,7 +199,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetInstalledPackages was called"); return []; };
             try
             {
-                Package[] packages = await GetInstalledPackages_UnSafe();
+                Package[] packages = await GetInstalledPackages_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
                 for (int i = 0; i < packages.Length; i++)
                     packages[i] = PackageFactory.GetInstalledPackageIfRepeated(packages[i]);
                 Logger.Info($"Found {packages.Length} installed packages from {Name}");
@@ -362,7 +362,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             try
             {
                 AssertSourceCompatibility("GetSources");
-                var result = await SourceProvider.GetSources();
+                var result = await SourceProvider.GetSources().WaitAsync(TimeSpan.FromSeconds(60));
                 Logger.Debug($"Loaded {result.Length} sources for manager {Name}");
                 return result;
             }
