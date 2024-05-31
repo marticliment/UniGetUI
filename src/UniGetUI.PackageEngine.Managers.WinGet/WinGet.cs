@@ -347,6 +347,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             else
                 parameters.AddRange(new string[] { "--silent", "--disable-interactivity" });
 
+            parameters.AddRange(options.CustomParameters);
+
             return parameters.ToArray();
         }
 
