@@ -92,6 +92,7 @@ namespace UniGetUI.Interface.Dialogs
         private LayoutMode __layout_mode = LayoutMode.Unloaded;
         public PackageDetailsPage(Package package, OperationType operationRole)
         {
+            downloadButton = new Hyperlink();
             TextStrings = new TextStringsStruct();
             OperationRole = operationRole;
             Package = package;
