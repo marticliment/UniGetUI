@@ -156,6 +156,8 @@ namespace UniGetUI.Core.Data
             }
         }
 
+        public static string GSudoPath = "";
+
 
         /// <summary>
         /// This method will return the most appropriate data directory.

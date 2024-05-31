@@ -364,7 +364,7 @@ namespace UniGetUI.PackageEngine.Operations
                 startInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
                 startInfo.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-                Process = BuildProcessInstance(startInfo);
+                Process = await BuildProcessInstance(startInfo);
 
                 foreach (string infoLine in GenerateProcessLogHeader())
                     ProcessOutput.Add(infoLine);
@@ -440,7 +440,7 @@ namespace UniGetUI.PackageEngine.Operations
                             {
                                 Logger.Debug("Erasing admin rights");
                                 Process p = new();
-                                p.StartInfo.FileName = MainApp.Instance.GSudoPath;
+                                p.StartInfo.FileName = CoreData.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
                                 p.Start();
                                 p.WaitForExit();
@@ -456,7 +456,7 @@ namespace UniGetUI.PackageEngine.Operations
                             {
                                 Logger.Debug("Erasing admin rights");
                                 Process p = new();
-                                p.StartInfo.FileName = MainApp.Instance.GSudoPath;
+                                p.StartInfo.FileName = CoreData.GSudoPath;
                                 p.StartInfo.Arguments = "cache off";
                                 p.Start();
                                 p.WaitForExit();
@@ -512,7 +512,7 @@ namespace UniGetUI.PackageEngine.Operations
         }
 
         protected abstract void Initialize();
-        protected abstract Process BuildProcessInstance(ProcessStartInfo startInfo);
+        protected abstract Task<Process> BuildProcessInstance(ProcessStartInfo startInfo);
         protected abstract OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output);
         protected abstract Task<AfterFinshAction> HandleFailure();
         protected abstract Task<AfterFinshAction> HandleSuccess();

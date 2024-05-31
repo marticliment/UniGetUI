@@ -83,20 +83,15 @@ namespace UniGetUI.PackageEngine.Operations
 
         public InstallPackageOperation(Package package, InstallationOptions options, bool IgnoreParallelInstalls = false) : base(package, options, IgnoreParallelInstalls) { }
         public InstallPackageOperation(Package package, bool IgnoreParallelInstalls = false) : base(package, IgnoreParallelInstalls) { }
-        protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
+        protected override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
-                    Process p = new();
-                    p.StartInfo.FileName = MainApp.Instance.GSudoPath;
-                    p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
-                    p.Start();
-                    p.WaitForExit();
+                    await CoreTools.CacheUACForCurrentProcess();
                 }
-                startInfo.FileName = MainApp.Instance.GSudoPath;
+                startInfo.FileName = CoreData.GSudoPath;
                 startInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
 
             }
@@ -200,20 +195,15 @@ namespace UniGetUI.PackageEngine.Operations
 
         public UpdatePackageOperation(Package package, InstallationOptions options, bool IgnoreParallelInstalls = false) : base(package, options, IgnoreParallelInstalls) { }
         public UpdatePackageOperation(Package package, bool IgnoreParallelInstalls = false) : base(package, IgnoreParallelInstalls) { }
-        protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
+        protected override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
-                    Process p = new();
-                    p.StartInfo.FileName = MainApp.Instance.GSudoPath;
-                    p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
-                    p.Start();
-                    p.WaitForExit();
+                    await CoreTools.CacheUACForCurrentProcess();
                 }
-                startInfo.FileName = MainApp.Instance.GSudoPath;
+                startInfo.FileName = CoreData.GSudoPath;
                 startInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
             }
             else
@@ -323,20 +313,15 @@ namespace UniGetUI.PackageEngine.Operations
 
         public UninstallPackageOperation(Package package, InstallationOptions options, bool IgnoreParallelInstalls = false) : base(package, options, IgnoreParallelInstalls) { }
         public UninstallPackageOperation(Package package, bool IgnoreParallelInstalls = false) : base(package, IgnoreParallelInstalls) { }
-        protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
+        protected override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
-                    Process p = new();
-                    p.StartInfo.FileName = MainApp.Instance.GSudoPath;
-                    p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
-                    p.Start();
-                    p.WaitForExit();
+                    await CoreTools.CacheUACForCurrentProcess();
                 }
-                startInfo.FileName = MainApp.Instance.GSudoPath;
+                startInfo.FileName = CoreData.GSudoPath;
                 startInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUninstallParameters(Package, Options));
             }
             else

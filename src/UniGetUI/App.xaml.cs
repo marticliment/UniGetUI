@@ -64,7 +64,6 @@ namespace UniGetUI
 
         public Interface.SettingsInterface settings;
         public MainWindow MainWindow;
-        public string GSudoPath;
         public ThemeListener ThemeListener;
 
 
@@ -127,24 +126,24 @@ namespace UniGetUI
 
         private async void LoadGSudo()
         {
-            var gsudo_result = await CoreTools.Which("gsudo.exe");
             if (Settings.Get("UseUserGSudo"))
             {
+                var gsudo_result = await CoreTools.Which("gsudo.exe");
                 if (gsudo_result.Item1 != false)
                 {
                     Logger.Info($"Using System GSudo at {gsudo_result.Item2}");
-                    GSudoPath = gsudo_result.Item2;
+                    CoreData.GSudoPath = gsudo_result.Item2;
                 }
                 else
                 {
                     Logger.Error("System GSudo enabled but not found!");
-                    GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
+                    CoreData.GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
                 }
             }
             else
             {
-                GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
-                Logger.Info($"Using bundled GSudo at {GSudoPath}");
+                CoreData.GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
+                Logger.Info($"Using bundled GSudo at {CoreData.GSudoPath}");
             }
         }
 

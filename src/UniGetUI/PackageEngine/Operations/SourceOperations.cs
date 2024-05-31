@@ -35,20 +35,15 @@ namespace UniGetUI.PackageEngine.Operations
 
         public event EventHandler<EventArgs>? OperationSucceeded;
         public AddSourceOperation(ManagerSource source) : base(source) { }
-        protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
+        protected override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
-                    Process p = new();
-                    p.StartInfo.FileName = MainApp.Instance.GSudoPath;
-                    p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
-                    p.Start();
-                    p.WaitForExit();
+                    await CoreTools.CacheUACForCurrentProcess();
                 }
-                startInfo.FileName = MainApp.Instance.GSudoPath;
+                startInfo.FileName = CoreData.GSudoPath;
                 startInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetAddSourceParameters(Source));
             }
             else
@@ -143,20 +138,15 @@ namespace UniGetUI.PackageEngine.Operations
 
         public event EventHandler<EventArgs>? OperationSucceeded;
         public RemoveSourceOperation(ManagerSource source) : base(source) { }
-        protected override Process BuildProcessInstance(ProcessStartInfo startInfo)
+        protected override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
-                    Process p = new();
-                    p.StartInfo.FileName = MainApp.Instance.GSudoPath;
-                    p.StartInfo.Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1";
-                    p.Start();
-                    p.WaitForExit();
+                    await CoreTools.CacheUACForCurrentProcess();
                 }
-                startInfo.FileName = MainApp.Instance.GSudoPath;
+                startInfo.FileName = CoreData.GSudoPath;
                 startInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetRemoveSourceParameters(Source));
 
             }

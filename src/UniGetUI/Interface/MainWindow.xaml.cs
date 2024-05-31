@@ -149,6 +149,7 @@ namespace UniGetUI.Interface
 
         public new void Activate()
         {
+            SetForegroundWindow(GetWindowHandle());
             if (NavigationPage != null && NavigationPage.InstalledPage != null)
                 _ = NavigationPage.InstalledPage.LoadPackages();
 
@@ -231,7 +232,6 @@ namespace UniGetUI.Interface
             ShowHideCommand.ExecuteRequested += (s, e) =>
             {
                 Activate();
-                SetForegroundWindow(GetWindowHandle());
             };
 
             TrayIcon.LeftClickCommand = ShowHideCommand;

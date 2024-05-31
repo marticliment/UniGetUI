@@ -436,16 +436,15 @@ namespace UniGetUI.Interface
 
         }
 
-        private void DoCacheAdminRights_StateChanged(object sender, Interface.Widgets.CheckBoxEventArgs e)
+        private void DoCacheAdminRights_StateChanged(object sender, CheckBoxEventArgs e)
         {
-            if (!e.IsChecked)
-            {
-                AdminSettingsExpander.ShowRestartRequiredBanner();
-            }
+            _ = CoreTools.ResetUACForCurrentProcess();
         }
 
-        private void UseSystemGSudo_StateChanged(object sender, Interface.Widgets.CheckBoxEventArgs e)
-        { AdminSettingsExpander.ShowRestartRequiredBanner(); }
+        private void UseSystemGSudo_StateChanged(object sender, CheckBoxEventArgs e)
+        {
+            AdminSettingsExpander.ShowRestartRequiredBanner();
+        }
 
         private void DisableWidgetsApi_StateChanged(object sender, CheckBoxEventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }

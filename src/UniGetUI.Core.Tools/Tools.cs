@@ -8,6 +8,7 @@ using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
 using Jeffijoe.MessageFormat;
 using System.ComponentModel.DataAnnotations;
+using Windows.Media.Capture;
 
 namespace UniGetUI.Core.Tools
 {
@@ -266,6 +267,11 @@ Crash Traceback:
             return 0;
         }
 
+        /// <summary>
+        /// Converts a string into a double floating-point number.
+        /// </summary>
+        /// <param name="Version">Any string</param>
+        /// <returns>The best approximation of the string as a Version</returns>
         public static double GetVersionStringAsFloat(string Version)
         {
             try
@@ -344,6 +350,47 @@ Crash Traceback:
         {
             if (url == "" || url == null) return null;
             return new Uri(url);
+        }
+
+        /// <summary>
+        /// Enables GSudo cache for the current process
+        /// </summary>
+        public static async Task CacheUACForCurrentProcess()
+        {
+            Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+            Process p = new();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = CoreData.GSudoPath,
+                Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8,
+            };  
+            p.Start();
+            await p.WaitForExitAsync();
+        }
+
+        public static async Task ResetUACForCurrentProcess()
+        {
+            Logger.Info("Resetting administrator rights cache...");
+            Process p = new();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = CoreData.GSudoPath,
+                Arguments = "-k",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8,
+            };
+            p.Start();
+            await p.WaitForExitAsync();
         }
     }
 }
