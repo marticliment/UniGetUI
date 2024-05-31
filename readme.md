@@ -19,7 +19,7 @@ Check out the [Supported Package Managers Table](#supported-package-managers) fo
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/marticliment/WingetUI/dotnet-test.yml?branch=main&style=for-the-badge&label=Tests)<br>
  
 ## Table of contents
- - **[WingetUI Homepage](https://www.marticliment.com/wingetui/)**
+ - **[WingetUI Homepage](https://www.marticliment.com/unigetui/)**
  - [Table of contents](#table-of-contents)
  - [Installation](#installation)
  - [Update WingetUI](#update-wingetui)
