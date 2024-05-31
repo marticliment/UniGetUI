@@ -56,7 +56,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             };
         }
 
-        protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             var which_res = await CoreTools.Which("dotnet-tools-outdated.exe");
             string path = which_res.Item2;
@@ -95,7 +95,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
             string? line;
             bool DashesPassed = false;
-            List<UpgradablePackage> Packages = new();
+            List<Package> Packages = new();
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
@@ -115,7 +115,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, PackageScope.Global));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();

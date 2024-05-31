@@ -267,7 +267,7 @@ namespace UniGetUI.Interface.SoftwarePages
             ManageIgnored.Click += async (s, e) => { await MainApp.Instance.MainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
             IgnoreSelected.Click += async (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                     {
                         await package.AddToIgnoredUpdatesAsync();
                         MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
@@ -276,24 +276,24 @@ namespace UniGetUI.Interface.SoftwarePages
 
             UpdateSelected.Click += (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
             };
             UpdateAsAdmin.Click += (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { RunAsAdministrator = true }));
             };
             UpdateSkipHash.Click += (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { SkipHashCheck = true }));
             };
             UpdateInteractive.Click += (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { InteractiveInstallation = true }));
             };
@@ -353,8 +353,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override async Task WhenPackagesLoaded(ReloadReason reason)
         {
-            List<UpgradablePackage> upgradablePackages = new();
-            foreach (UpgradablePackage package in Packages)
+            List<Package> upgradablePackages = new();
+            foreach (Package package in Packages)
             {
                 if (package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
                     upgradablePackages.Add(package);
@@ -378,7 +378,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     {
                         title = CoreTools.Translate("Updates found!");
                         body = CoreTools.Translate("{0} packages are being updated", upgradablePackages.Count); ;
-                        foreach (UpgradablePackage package in upgradablePackages)
+                        foreach (Package package in upgradablePackages)
                         {
                             attribution += package.Name + ", ";
                         }
@@ -398,7 +398,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     {
                         title = CoreTools.Translate("Updates found!");
                         body = CoreTools.Translate("{0} packages can be updated", upgradablePackages.Count); ;
-                        foreach (UpgradablePackage package in upgradablePackages)
+                        foreach (Package package in upgradablePackages)
                         {
                             attribution += package.Name + ", ";
                         }
@@ -528,7 +528,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public void UpdatePackageForId(string id)
         {
-            foreach (UpgradablePackage package in Packages)
+            foreach (Package package in Packages)
             {
                 if (package.Id == id)
                 {

@@ -227,7 +227,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Each manager MUST implement this method.
         /// </summary>
         /// <returns>An array of UpgradablePackage objects</returns>
-        protected abstract Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe();
+        protected abstract Task<Package[]> GetAvailableUpdates_UnSafe();
 
         /// <summary>
         /// Returns an array of Package objects containing the installed packages reported by the manager.

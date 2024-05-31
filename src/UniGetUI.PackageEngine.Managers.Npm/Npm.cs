@@ -83,9 +83,9 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return Packages.ToArray();
         }
 
-        protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            List<UpgradablePackage> Packages = new();
+            List<Package> Packages = new();
             foreach (var scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
             {
                 Process p = new();
@@ -117,7 +117,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                         if (elements[3][0] == '@')
                             elements[3] = "%" + elements[3][1..];
 
-                        Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[2].Split('@')[0]).Replace('%', '@'), elements[2].Split('@')[0].Replace('%', '@'), elements[3].Split('@')[^1].Replace('%', '@'), elements[2].Split('@')[^1].Replace('%', '@'), DefaultSource, this, scope));
+                        Packages.Add(new Package(CoreTools.FormatAsName(elements[2].Split('@')[0]).Replace('%', '@'), elements[2].Split('@')[0].Replace('%', '@'), elements[3].Split('@')[^1].Replace('%', '@'), elements[2].Split('@')[^1].Replace('%', '@'), DefaultSource, this, scope));
                     }
                 }
 

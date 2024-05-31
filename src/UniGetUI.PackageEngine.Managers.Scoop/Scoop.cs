@@ -145,7 +145,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return Packages.ToArray();
         }
 
-        protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             Dictionary<string, Package> InstalledPackages = new();
             foreach (Package InstalledPackage in await GetInstalledPackages())
@@ -154,7 +154,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     InstalledPackages.Add(InstalledPackage.Id + "." + InstalledPackage.Version, InstalledPackage);
             }
 
-            List<UpgradablePackage> Packages = new();
+            List<Package> Packages = new();
 
             Process p = new()
             {
@@ -200,7 +200,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         continue;
                     }
 
-                    Packages.Add(new UpgradablePackage(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackages[elements[0] + "." + elements[1]].Source, this, InstalledPackages[elements[0] + "." + elements[1]].Scope));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackages[elements[0] + "." + elements[1]].Source, this, InstalledPackages[elements[0] + "." + elements[1]].Scope));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();

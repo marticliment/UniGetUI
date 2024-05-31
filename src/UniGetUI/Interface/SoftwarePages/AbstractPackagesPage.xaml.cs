@@ -677,14 +677,14 @@ namespace UniGetUI.Interface
 
         protected void SelectAllItems()
         {
-            foreach (UpgradablePackage package in FilteredPackages)
+            foreach (Package package in FilteredPackages)
                 package.IsChecked = true;
             AllSelected = true;
         }
 
         protected void ClearItemSelection()
         {
-            foreach (UpgradablePackage package in FilteredPackages)
+            foreach (Package package in FilteredPackages)
                 package.IsChecked = false;
             AllSelected = false;
         }

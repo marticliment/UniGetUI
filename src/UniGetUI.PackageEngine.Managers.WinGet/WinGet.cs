@@ -86,9 +86,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return await WinGetHelper.Instance.FindPackages_UnSafe(this, query);
         }
 
-        protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            List<UpgradablePackage> Packages = new();
+            List<Package> Packages = new();
 
             Process p = new();
             p.StartInfo = new ProcessStartInfo()
@@ -149,7 +149,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
                 ManagerSource source = GetSourceOrDefault(elements[4]);
 
-                Packages.Add(new UpgradablePackage(elements[0][1..], elements[1], elements[2], elements[3], source, this));
+                Packages.Add(new Package(elements[0][1..], elements[1], elements[2], elements[3], source, this));
             }
 
             output += await p.StandardError.ReadToEndAsync();

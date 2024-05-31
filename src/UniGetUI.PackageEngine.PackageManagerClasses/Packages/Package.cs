@@ -17,6 +17,7 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using Windows.UI.Composition;
+using UniGetUI.Core.Classes;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
@@ -131,12 +132,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public string Name { get; }
         public string Id { get; set; }
         public string Version { get; }
-        public float VersionAsFloat { get; }
+        public double VersionAsFloat { get; }
+        public double NewVersionAsFloat { get; }
         public ManagerSource Source { get; set; }
         public PackageManager Manager { get; }
         public string UniqueId { get; }
         public string NewVersion { get; set; }
-        public virtual bool IsUpgradable { get; } = false;
+        public virtual bool IsUpgradable { get; private set; }
         public PackageScope Scope { get; set; }
         public string SourceAsString
         {
@@ -169,7 +171,36 @@ namespace UniGetUI.PackageEngine.PackageClasses
             VersionAsFloat = GetFloatVersion();
             Tag = PackageTag.Default;
             __hash = Manager.Name + "\\" + Source.Name + "\\" + Id;
+            IsUpgradable = false;
         }
+
+        /// <summary>
+        /// Creates an UpgradablePackage object representing a package that can be upgraded; given its name, id, installed version, new version, source and manager, and an optional scope.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="id"></param>
+        /// <param name="installed_version"></param>
+        /// <param name="new_version"></param>
+        /// <param name="source"></param>
+        /// <param name="manager"></param>
+        /// <param name="scope"></param>
+
+        public Package(string name, string id, string installed_version, string new_version, ManagerSource source, PackageManager manager, PackageScope scope = PackageScope.Local)
+        {
+            Name = name;
+            Id = id;
+            Version = installed_version;
+            NewVersion = new_version;
+            Source = source;
+            Manager = manager;
+            Scope = scope;
+            UniqueId = $"{Manager.Properties.Name}\\{Id}\\{Version}->{NewVersion}";
+            IsChecked = true;
+            IsUpgradable = true;
+            NewVersionAsFloat = GetFloatNewVersion();
+            __hash = Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version + "->" + NewVersion;
+        }
+
 
         public string GetHash()
         {
@@ -245,31 +276,18 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// Returns a float representation of the package's version for comparison purposes.
         /// </summary>
         /// <returns>A float value. Returns 0.0F if the version could not be parsed</returns>
-        public float GetFloatVersion()
+        public double GetFloatVersion()
         {
-            string _ver = "";
-            bool _dotAdded = false;
-            foreach (char _char in Version)
-            {
-                if (char.IsDigit(_char))
-                    _ver += _char;
-                else if (_char == '.')
-                {
-                    if (!_dotAdded)
-                    {
-                        _ver += _char;
-                        _dotAdded = true;
-                    }
-                }
-            }
-            float res = 0.0F;
-            if (_ver != "" && _ver != ".")
-                try
-                {
-                    return float.Parse(_ver);
-                }
-                catch { }
-            return res;
+            return CoreTools.GetVersionStringAsFloat(Version);
+        }
+
+        /// <summary>
+        /// Returns a float representation of the package's New Version (if any) for comparison purposes.
+        /// </summary>
+        /// <returns>A float value. Returns 0.0F if the version could not be parsed</returns>
+        public double GetFloatNewVersion()
+        {
+            return CoreTools.GetVersionStringAsFloat(Version);
         }
 
         /// <summary>

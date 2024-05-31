@@ -65,14 +65,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Overload of the constructor that accepts an UpgradablePackage object.
-        /// </summary>
-        /// <param name="package"></param>
-        /// <param name="reset"></param>
-        public InstallationOptions(UpgradablePackage package, bool reset = false) : this((Package)package, reset)
-        { }
-
-        /// <summary>
         /// Returns a new InstallationOptions object from a given SerializableInstallationOptions_v1 and a package.
         /// </summary>
         /// <param name="options"></param>
