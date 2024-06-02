@@ -376,12 +376,12 @@ Crash Traceback:
 
         public static async Task ResetUACForCurrentProcess()
         {
-            Logger.Info("Resetting administrator rights cache...");
+            Logger.Info("Resetting administrator rights cache for process id " + Process.GetCurrentProcess().Id);
             Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = CoreData.GSudoPath,
-                Arguments = "-k",
+                Arguments = "cache off --pid " + Process.GetCurrentProcess().Id,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,

@@ -438,12 +438,7 @@ namespace UniGetUI.PackageEngine.Operations
                         if (MainApp.Instance.OperationQueue.Count == 0)
                             if (Settings.Get("DoCacheAdminRightsForBatches"))
                             {
-                                Logger.Debug("Erasing admin rights");
-                                Process p = new();
-                                p.StartInfo.FileName = CoreData.GSudoPath;
-                                p.StartInfo.Arguments = "cache off";
-                                p.Start();
-                                p.WaitForExit();
+                                await CoreTools.ResetUACForCurrentProcess();
                             }
                         await Task.Delay(5000);
                         if (!Settings.Get("MaintainSuccessfulInstalls"))
@@ -454,12 +449,7 @@ namespace UniGetUI.PackageEngine.Operations
                         if (MainApp.Instance.OperationQueue.Count == 0)
                             if (Settings.Get("DoCacheAdminRightsForBatches"))
                             {
-                                Logger.Debug("Erasing admin rights");
-                                Process p = new();
-                                p.StartInfo.FileName = CoreData.GSudoPath;
-                                p.StartInfo.Arguments = "cache off";
-                                p.Start();
-                                p.WaitForExit();
+                                await CoreTools.ResetUACForCurrentProcess();
                             }
                         break;
 
