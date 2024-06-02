@@ -53,11 +53,31 @@
                             <toolkit:WrapLayout x:Name="Wrap"/>
                         </xaml:ItemsRepeater.Layout>
                     </xaml:ItemsRepeater>
-                    <TextBlock Name="DescriptionBox" TextWrapping="WrapWholeWords" Padding="0,10,0,0"/>
                 </StackPanel>
 
                 <!-- Basic Info Panel -->
-                <RichTextBlock Name="BasicInfoPanelText" VerticalAlignment="Top" LineHeight="25" TextWrapping="Wrap" />
+                <RichTextBlock Name="BasicInfoPanelText" VerticalAlignment="Top" LineHeight="25" TextWrapping="Wrap" >
+                    <Paragraph>
+                        <Run x:Name="DescriptionContent"/>
+                        <LineBreak/>
+                        <LineBreak/>
+                        <Run x:Name="HomepageUrl_Label" FontWeight="Bold">HOMEPAGE_LABEL: </Run>
+                        <Hyperlink x:Name="HomepageUrl_Content" NavigateUri="about:blank">Helo</Hyperlink>
+                        <LineBreak/>
+                        <Run x:Name="Publisher_Label" FontWeight="Bold">PUBLISHER_LABEL: </Run>
+                        <Run x:Name="Publisher_Content">Helo</Run>
+                        <LineBreak/>
+                        <Run x:Name="Author_Label" FontWeight="Bold">AUTHOR_LABEL: </Run>
+                        <Run x:Name="Author_Content">Helo</Run>
+                        <LineBreak/>
+                        <Run x:Name="License_Label" FontWeight="Bold">LICENSE_LABEL: </Run>
+                        <Run x:Name="License_Content_Text">Helo</Run>
+                        <Hyperlink x:Name="License_Content_Uri" NavigateUri="about:blank">(Helo)</Hyperlink>
+                        <LineBreak/>
+                        <Run x:Name="Source_Label" FontWeight="Bold">SOURCE_LABEL:</Run>
+                        <Run x:Name="Source_Content">Helo</Run>
+                    </Paragraph>
+                </RichTextBlock>
 
                 <!-- Install and Share button -->
                 <Grid Name="ActionsPanel"  VerticalAlignment="Top" RowSpacing="8" ColumnSpacing="8">
@@ -123,8 +143,42 @@
                 </Border>
 
                 <!-- Package Details -->
-                <RichTextBlock Name="DetailsPanelText" VerticalAlignment="Top" LineHeight="25" TextWrapping="Wrap" />
-                
+                <RichTextBlock Name="DetailsPanelText" VerticalAlignment="Top" LineHeight="25" TextWrapping="Wrap">
+                    <Paragraph>
+                        <Run x:Name="PackageId_Label" FontWeight="Bold">Package Id:</Run>
+                        <Run x:Name="PackageId_Content">Helo</Run>
+                        <LineBreak/>
+                        <Run x:Name="ManifestUrl_Label" FontWeight="Bold">Manifest: :</Run>
+                        <Hyperlink x:Name="ManifestUrl_Content" NavigateUri="about:blank">Helo</Hyperlink>
+                        <LineBreak/>
+                        <Run x:Name="Version_Label" FontWeight="Bold">(Installed) Version:</Run>
+                        <Run x:Name="Version_Content">Helo</Run>
+                        <LineBreak/>
+                        <LineBreak/>
+                        <Run x:Name="InstallerType_Label" FontWeight="Bold">Installer type:</Run>
+                        <Run x:Name="InstallerType_Content">Helo</Run>
+                        <LineBreak/>
+                        <Run x:Name="InstallerUrl_Label" FontWeight="Bold">Installer Url:</Run>
+                        <Hyperlink x:Name="InstallerUrl_Content" NavigateUri="about:blank">(Helo)</Hyperlink>
+                        <LineBreak/>
+                        <Run x:Name="InstallerHash_Label" FontWeight="Bold">Installer hash:</Run>
+                        <Run x:Name="InstallerHash_Content">Helo</Run>
+                        <LineBreak/>
+                        <Hyperlink x:Name="DownloadInstaller_Button" FontWeight="Bold" TextDecorations="None" NavigateUri="about:blank">Download installer</Hyperlink>
+                        <Run x:Name="InstallerSize_Content"></Run>
+                        <LineBreak/>
+                        <LineBreak/>
+                        <Run x:Name="UpdateDate_Label" FontWeight="Bold">Update date:</Run>
+                        <Run x:Name="UpdateDate_Content">Helo</Run>
+                        <LineBreak/>
+                        <Run x:Name="ReleaseNotes_Label" FontWeight="Bold">Release Notes:</Run>
+                        <Run x:Name="ReleaseNotes_Content">Helo</Run>
+                        <LineBreak/>
+                        <Run x:Name="ReleaseNotesUrl_Label" FontWeight="Bold">Release notes Url:</Run>
+                        <Hyperlink x:Name="ReleaseNotesUrl_Content" NavigateUri="about:blank">(Helo)</Hyperlink>
+                    </Paragraph>
+                </RichTextBlock>
+
             </Grid>
         </ScrollViewer>
         

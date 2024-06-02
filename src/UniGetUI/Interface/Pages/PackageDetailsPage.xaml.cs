@@ -23,6 +23,8 @@ using Microsoft.UI.Text;
 using Windows.UI.Text;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using Microsoft.UI.Xaml.Media;
+using Windows.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -41,7 +43,6 @@ namespace UniGetUI.Interface.Dialogs
         OperationType OperationRole;
         bool PackageHasScreenshots = false;
         public ObservableCollection<TextBlock> ShowableTags = new();
-        Hyperlink downloadButton;
 
         private enum LayoutMode
         {
@@ -50,50 +51,10 @@ namespace UniGetUI.Interface.Dialogs
             Unloaded
         }
 
-        private TextStringsStruct TextStrings;
-        private struct TextStringsStruct
-        {
-            public Run Content_Loading { get { return new Run() { Text = CoreTools.Translate("Loading...") }; } }
-            public Run Content_NotAvailable { get { return new Run() { Text = CoreTools.Translate("Not available") }; } }
-
-            public Run Label_HomePage { get { return new Run() { Text = CoreTools.Translate("Homepage") + ": ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_Publisher { get { return new Run() { Text = CoreTools.Translate("Publisher") + ": ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_Author { get { return new Run() { Text = CoreTools.Translate("Author") + ": ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_License { get { return new Run() { Text = CoreTools.Translate("License") + ": ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_SourceName { get { return new Run() { Text = CoreTools.Translate("Package Manager") + ": ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_Id { get { return new Run() { Text = CoreTools.Translate("Package ID") + ": ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_Manifest{ get { return new Run() { Text = CoreTools.Translate("Manifest") + ": ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_InstalledVersion { get { return new Run() { Text = CoreTools.Translate("Installed Version") + ": ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_Version { get { return new Run() { Text = CoreTools.Translate("Version") + ": ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_InstallerSha256 { get { return new Run() { Text = CoreTools.Translate("Installer SHA256") + ": ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_InstallerSha512 { get { return new Run() { Text = CoreTools.Translate("Installer SHA512") + ": ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_InstallerUrl { get { return new Run() { Text = CoreTools.Translate("Installer URL") + ": ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_InstallerType { get { return new Run() { Text = CoreTools.Translate("Installer Type") + ": ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_LastUpdated { get { return new Run() { Text = CoreTools.Translate("Last updated:") + " ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_ReleaseNotes { get { return new Run() { Text = CoreTools.Translate("Release notes") + ": ", FontWeight = new FontWeight(700) }; } }
-            public Run Label_ReleaseNotesUrl { get { return new Run() { Text = CoreTools.Translate("Release notes URL") + ": ", FontWeight = new FontWeight(700) }; } }
-
-            public Inline Content_GetUri(Uri? uri)
-            {
-                if (uri == null) return Content_NotAvailable;
-                var h = new Hyperlink() { NavigateUri = uri };
-                h.Inlines.Add(Content_GetText(uri.ToString()));
-                return h;
-            }
-            public Inline Content_GetText(string? text)
-            {
-                if (text == null || text == String.Empty) return Content_NotAvailable;
-                return new Run() { Text = text };
-            }
-
-            public TextStringsStruct() { }
-        }
 
         private LayoutMode __layout_mode = LayoutMode.Unloaded;
         public PackageDetailsPage(Package package, OperationType operationRole)
         {
-            downloadButton = new Hyperlink();
-            TextStrings = new TextStringsStruct();
             OperationRole = operationRole;
             Package = package;
 
@@ -123,41 +84,51 @@ namespace UniGetUI.Interface.Dialogs
             PackageName.Text = package.Name;
             LoadingIndicator.Visibility = Visibility.Visible;
             string LoadingString = CoreTools.Translate("Loading...");
-            DescriptionBox.Text = LoadingString;
 
-            BasicInfoPanelText.Blocks.Clear();
-            Paragraph paragraph = new Paragraph();
-            BasicInfoPanelText.Blocks.Add(paragraph);
+            // Basic details section
+            SetTextToItem(DescriptionContent, LoadingString);
+            SetTextToItem(HomepageUrl_Label, CoreTools.Translate("Homepage") + ": ");
+            SetTextToItem(HomepageUrl_Content, LoadingString);
+            SetTextToItem(Author_Label, CoreTools.Translate("Author") + ": ");
+            SetTextToItem(Author_Content, LoadingString);
+            SetTextToItem(Publisher_Label, CoreTools.Translate("Publisher") + ": ");
+            SetTextToItem(Publisher_Content, LoadingString);
+            SetTextToItem(License_Label, CoreTools.Translate("License") + ": ");
+            SetTextToItem(License_Content_Text, LoadingString);
+            SetTextToItem(License_Content_Uri, "");
+            SetTextToItem(Source_Label, CoreTools.Translate("Package Manager") + ": ");
+            SetTextToItem(Source_Content, Package.SourceAsString);
 
-            AddToParagraph(paragraph, TextStrings.Label_HomePage, TextStrings.Content_Loading);
-            AddToParagraph(paragraph, TextStrings.Label_Publisher, TextStrings.Content_Loading);
-            AddToParagraph(paragraph, TextStrings.Label_Author, TextStrings.Content_Loading);
-            AddToParagraph(paragraph, TextStrings.Label_License, TextStrings.Content_Loading);
-            AddToParagraph(paragraph, TextStrings.Label_SourceName, package.SourceAsString, AddLineBreak: false);
-
-            DetailsPanelText.Blocks.Clear();
-            paragraph = new Paragraph();
-            DetailsPanelText.Blocks.Add(paragraph);
-
-            AddToParagraph(paragraph, TextStrings.Label_Id, package.Id);
-            AddToParagraph(paragraph, TextStrings.Label_Manifest, TextStrings.Content_Loading);
-            if (package.IsUpgradable)
-                AddToParagraph(
-                    paragraph, 
-                    operationRole == OperationType.Uninstall? TextStrings.Label_InstalledVersion: TextStrings.Label_Version, 
-                    package.Version);
+            // Extended details section
+            SetTextToItem(PackageId_Label, CoreTools.Translate("Package ID") + ": ");
+            SetTextToItem(PackageId_Content, package.Id);
+            SetTextToItem(ManifestUrl_Label, CoreTools.Translate("Manifest") + ": ");
+            SetTextToItem(ManifestUrl_Content, LoadingString);
+            if (!package.IsUpgradable)
+            {
+                SetTextToItem(Version_Label,
+                    (operationRole == OperationType.Uninstall ? CoreTools.Translate("Installed Version") : CoreTools.Translate("Version")) + ": ");
+                SetTextToItem(Version_Content, package.Version);
+            }
             else
-                AddToParagraph(
-                    paragraph, 
-                    TextStrings.Label_InstalledVersion, 
-                    $"{package.Version} - {CoreTools.Translate("Update to {0} available", package.NewVersion)}");
-
-            AddToParagraph(paragraph, TextStrings.Label_InstallerSha256, TextStrings.Content_Loading);
-            AddToParagraph(paragraph, TextStrings.Label_InstallerUrl, TextStrings.Content_Loading);
-            AddToParagraph(paragraph, TextStrings.Label_InstallerType, TextStrings.Content_Loading);
-            AddToParagraph(paragraph, TextStrings.Label_LastUpdated, TextStrings.Content_Loading);
-            AddToParagraph(paragraph, TextStrings.Label_ReleaseNotes, TextStrings.Content_Loading);
-            AddToParagraph(paragraph, TextStrings.Label_ReleaseNotesUrl, TextStrings.Content_Loading);
+            {
+                SetTextToItem(Version_Label, CoreTools.Translate("Installed Version") + ": ");
+                SetTextToItem(Version_Content, $"{package.Version} - {CoreTools.Translate("Update to {0} available", package.NewVersion)}");
+            }
+            SetTextToItem(InstallerType_Label, CoreTools.Translate("Installer Type") + ": ");
+            SetTextToItem(InstallerType_Content, LoadingString);
+            SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA256") + ": ");
+            SetTextToItem(InstallerHash_Content, LoadingString);
+            SetTextToItem(InstallerUrl_Label, CoreTools.Translate("Installer URL") + ": ");
+            SetTextToItem(InstallerUrl_Content, LoadingString);
+            DownloadInstaller_Button.Click += (s, e) => { DownloadInstallerButton_Click(s, e); };
+            SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Download installer"));
+            SetTextToItem(UpdateDate_Label, CoreTools.Translate("Last updated:") + " ");
+            SetTextToItem(UpdateDate_Content, LoadingString);
+            SetTextToItem(ReleaseNotes_Label, CoreTools.Translate("Release notes") + ": ");
+            SetTextToItem(ReleaseNotes_Content, LoadingString);
+            SetTextToItem(ReleaseNotesUrl_Label, CoreTools.Translate("Release notes URL") + ": ");
+            SetTextToItem(ReleaseNotesUrl_Content, LoadingString);
 
             _ = LoadInformation();
 
@@ -194,74 +165,55 @@ namespace UniGetUI.Interface.Dialogs
 
             LoadingIndicator.Visibility = Visibility.Collapsed;
 
-            BasicInfoPanelText.Blocks.Clear();
-            Paragraph paragraph = new Paragraph();
-            BasicInfoPanelText.Blocks.Add(paragraph);
-            AddToParagraph(paragraph, TextStrings.Label_HomePage, Info.HomepageUrl);
-            AddToParagraph(paragraph, TextStrings.Label_Publisher, Info.Publisher);
-            AddToParagraph(paragraph, TextStrings.Label_Author, Info.Author);
-
-            paragraph.Inlines.Add(TextStrings.Label_License);
+            // Basic details section
+            SetTextToItem(DescriptionContent, Info.Description);
+            SetTextToItem(HomepageUrl_Content, Info.HomepageUrl);
+            SetTextToItem(Author_Content, Info.Author);
+            SetTextToItem(Publisher_Content, Info.Publisher);
 
             if (Info.License != null && Info.LicenseUrl != null)
             {
-                paragraph.Inlines.Add(TextStrings.Content_GetText(Info.License));
-                paragraph.Inlines.Add(TextStrings.Content_GetText(" ("));
-                paragraph.Inlines.Add(TextStrings.Content_GetUri(Info.LicenseUrl));
-                paragraph.Inlines.Add(TextStrings.Content_GetText(")"));
+                SetTextToItem(License_Content_Text, Info.License);
+                SetTextToItem(License_Content_Uri, Info.LicenseUrl, "(", ")");
             }
             else if (Info.License != null && Info.LicenseUrl == null)
             {
-                paragraph.Inlines.Add(TextStrings.Content_GetText(Info.License));
+                SetTextToItem(License_Content_Text, Info.License);
+                SetTextToItem(License_Content_Uri, "");
             }
             else if (Info.License == null && Info.LicenseUrl != null)
             {
-                paragraph.Inlines.Add(TextStrings.Content_GetUri(Info.LicenseUrl));
+                SetTextToItem(License_Content_Text, "");
+                SetTextToItem(License_Content_Uri, Info.LicenseUrl);
             }
             else
             {
-                paragraph.Inlines.Add(TextStrings.Content_NotAvailable);
+                SetTextToItem(License_Content_Text, null);
+                SetTextToItem(License_Content_Uri, Info.LicenseUrl);
             }
-            paragraph.Inlines.Add(new LineBreak());
-            AddToParagraph(paragraph, TextStrings.Label_SourceName, Package.SourceAsString, AddLineBreak: false);
 
-            DescriptionBox.Text = Info.Description;
-            DetailsPanelText.Blocks.Clear();
-            paragraph = new Paragraph();
-            DetailsPanelText.Blocks.Add(paragraph);
-
-            AddToParagraph(paragraph, TextStrings.Label_Id, Package.Id);
-            AddToParagraph(paragraph, TextStrings.Label_Manifest, Info.ManifestUrl);
-            if (Package.IsUpgradable)
-                AddToParagraph(
-                    paragraph,
-                    OperationRole == OperationType.Uninstall ? TextStrings.Label_InstalledVersion : TextStrings.Label_Version,
-                    Package.Version);
+            // Extended details section
+            SetTextToItem(ManifestUrl_Content, Info.ManifestUrl);
+            if (Package.Manager == MainApp.Choco)
+                SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA512") + ": ");
             else
-                AddToParagraph(
-                    paragraph,
-                    TextStrings.Label_InstalledVersion,
-                $"{Package.Version} - {CoreTools.Translate("Update to {0} available", Package.NewVersion)}");
-
-            if(Package.Manager == MainApp.Choco)
-                AddToParagraph(paragraph, TextStrings.Label_InstallerSha512, Info.InstallerHash);
-            else
-                AddToParagraph(paragraph, TextStrings.Label_InstallerSha256, Info.InstallerHash);
-            AddToParagraph(paragraph, TextStrings.Label_InstallerUrl, Info.InstallerUrl);
-
+                SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA256") + ": ");
+            SetTextToItem(InstallerHash_Content, Info.InstallerHash);
             if (Info.InstallerUrl != null)
             {
-                downloadButton = new Hyperlink();
-                downloadButton.Click += (s, e) => { DownloadInstallerButton_Click(s, e); };
-                downloadButton.Inlines.Add(new Run() { Text = CoreTools.Translate("Download installer") });
-                paragraph.Inlines.Add(downloadButton);
-                if (Info.InstallerSize > 0) paragraph.Inlines.Add(new Run() { Text = $" ({Info.InstallerSize} MB)" });
-                paragraph.Inlines.Add(new LineBreak());
+                SetTextToItem(InstallerSize_Content, Info.InstallerSize > 0? $" ({Info.InstallerSize} MB)": $" ({CoreTools.Translate("Unknown size")})");
+                SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Download installer"));
             }
-            AddToParagraph(paragraph, TextStrings.Label_InstallerType, Info.InstallerType);
-            AddToParagraph(paragraph, TextStrings.Label_LastUpdated, Info.UpdateDate);
-            AddToParagraph(paragraph, TextStrings.Label_ReleaseNotes, Info.ReleaseNotes);
-            AddToParagraph(paragraph, TextStrings.Label_ReleaseNotesUrl, Info.ReleaseNotesUrl);
+            else
+            {
+                SetTextToItem(InstallerSize_Content, "");
+                SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Installer not available"));
+            }
+            SetTextToItem(InstallerUrl_Content, Info.InstallerUrl);
+            SetTextToItem(InstallerType_Content, Info.InstallerType);
+            SetTextToItem(UpdateDate_Content, Info.UpdateDate);
+            SetTextToItem(ReleaseNotes_Content, Info.ReleaseNotes);
+            SetTextToItem(ReleaseNotesUrl_Content, Info.ReleaseNotesUrl);
 
             ShowableTags.Clear();
             foreach (string tag in Info.Tags)
@@ -272,21 +224,45 @@ namespace UniGetUI.Interface.Dialogs
                 });
         }
 
-        public void AddToParagraph(Paragraph p, Inline i1, Inline i2, bool AddLineBreak = true)
+        public void SetTextToItem(Run r, string? s)
         {
-            p.Inlines.Add(i1);
-            p.Inlines.Add(i2);
-            if(AddLineBreak) p.Inlines.Add(new LineBreak());
+            if (s == null)
+            {
+                r.Text = CoreTools.Translate("Not available");
+                r.Foreground = new SolidColorBrush(color: Color.FromArgb(255, 127, 127, 127));
+            }
+            else
+            {
+                r.Text = s;
+                r.ClearValue(Run.ForegroundProperty);
+            }
         }
 
-        public void AddToParagraph(Paragraph p, Inline i1, string? s2, bool AddLineBreak = true)
+        public void SetTextToItem(Hyperlink h, Uri? u, string prefix = "", string suffix = "")
         {
-            AddToParagraph(p, i1, TextStrings.Content_GetText(s2), AddLineBreak);
+            if (u == null)
+            {
+                h.Inlines.Clear();
+                h.Inlines.Add(new Run()
+                {
+                    Text = CoreTools.Translate("Not available"),
+                    TextDecorations = TextDecorations.None,
+                    Foreground = new SolidColorBrush(color: Color.FromArgb(255, 127, 127, 127))
+                });
+                h.NavigateUri = u;
+            }
+            else
+            {
+                h.Inlines.Clear();
+                h.Inlines.Add(new Run() { Text = prefix + u.ToString() + suffix });
+                h.NavigateUri = u;
+            }
         }
-
-        public void AddToParagraph(Paragraph p, Inline i1, Uri? u2, bool AddLineBreak = true)
+        public void SetTextToItem(Hyperlink h, string s)
         {
-            AddToParagraph(p, i1, TextStrings.Content_GetUri(u2), AddLineBreak);
+                h.Inlines.Clear();
+                h.Inlines.Add(new Run() { Text = s });
+                h.NavigateUri = new Uri("about:blank");
         }
 
         public async void LoadIcon()
@@ -371,8 +347,8 @@ namespace UniGetUI.Interface.Dialogs
                         var baseString = CoreTools.Translate("Downloading installer for {package}", new Dictionary<string, object?> { { "package", Package.Name } });
                         while (running)
                         {
-                            downloadButton.Inlines.Clear();
-                            downloadButton.Inlines.Add(new Run() { Text = baseString + " " + texts[(i++) % 6] });
+                            DownloadInstaller_Button.Inlines.Clear();
+                            DownloadInstaller_Button.Inlines.Add(new Run() { Text = baseString + " " + texts[(i++) % 6] });
                             await Task.Delay(500);
                         }
                     };
@@ -385,8 +361,8 @@ namespace UniGetUI.Interface.Dialogs
                     await using FileStream fs = File.OpenWrite(file.Path.ToString());
                     await s.CopyToAsync(fs);
                     fs.Dispose();
-                    downloadButton.Inlines.Clear();
-                    downloadButton.Inlines.Add(new Run() { Text = CoreTools.Translate("Download installer") });
+                    DownloadInstaller_Button.Inlines.Clear();
+                    DownloadInstaller_Button.Inlines.Add(new Run() { Text = CoreTools.Translate("Download installer") });
                     running = false;
                     Logger.ImportantInfo($"Installer for {Package.Id} has been downloaded successfully");
                     MainApp.Instance.MainWindow.HideLoadingDialog();
@@ -399,8 +375,8 @@ namespace UniGetUI.Interface.Dialogs
                 Logger.Error($"An error occurred while downloading the installer for the package {Package.Id}");
                 Logger.Error(ex);
 
-                downloadButton.Inlines.Clear();
-                downloadButton.Inlines.Add(new Run() { Text = CoreTools.Translate("An error occurred") + ": " + ex.Message });
+                DownloadInstaller_Button.Inlines.Clear();
+                DownloadInstaller_Button.Inlines.Add(new Run() { Text = CoreTools.Translate("An error occurred") + ": " + ex.Message });
             }
 
 
@@ -412,7 +388,7 @@ namespace UniGetUI.Interface.Dialogs
 
         public void PackageDetailsPage_SizeChanged(object? sender = null, SizeChangedEventArgs? e = null)
         {
-            if (MainApp.Instance.MainWindow.AppWindow.Size.Width < 950)
+            if (MainApp.Instance.MainWindow.AppWindow.Size.Width < 1050)
             {
                 if (__layout_mode != LayoutMode.Normal)
                 {
