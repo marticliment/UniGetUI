@@ -4,8 +4,8 @@ namespace UniGetUI.Core.Data
 {
     public static class CoreData
     {
-        public static string VersionName =  "3.1.0-alpha0"; // Do not modify this line, use file scripts/apply_versions.py
-        public static double VersionNumber =  3.099; // Do not modify this line, use file scripts/apply_versions.py
+        public static string VersionName =  "3.1.0-alpha1"; // Do not modify this line, use file scripts/apply_versions.py
+        public static double VersionNumber =  3.0991; // Do not modify this line, use file scripts/apply_versions.py
 
         /// <summary>
         /// The directory where all the user data is stored. The directory is automatically created if it does not exist.
