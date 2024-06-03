@@ -7,22 +7,15 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.Core.Data;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using Windows.ApplicationModel.DataTransfer;
-using UniGetUI.Core.Logging;
-using Windows.Foundation.Collections;
-using UniGetUI.Core.SettingsEngine;
-using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.Core.Tools;
 using System.Runtime.InteropServices;
+using UniGetUI.Core.Data;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.PackageClasses;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation.Collections;
 
 namespace UniGetUI.Interface
 {
@@ -500,7 +493,7 @@ namespace UniGetUI.Interface
             }
             else Logger.Warn("MainWindow.AppWindow.Presenter is not OverlappedPresenter presenter!");
 
-            var geometry = $"{AppWindow.Position.X},{AppWindow.Position.Y},{AppWindow.Size.Width},{AppWindow.Size.Height},{windowState}";
+            string geometry = $"{AppWindow.Position.X},{AppWindow.Position.Y},{AppWindow.Size.Width},{AppWindow.Size.Height},{windowState}";
             
             Logger.Debug($"Saving window geometry {geometry}");
             Settings.SetValue("WindowGeometry", geometry);
@@ -509,7 +502,7 @@ namespace UniGetUI.Interface
         private void RestoreSize()
         {
 
-            var geometry = Settings.GetValue("WindowGeometry");
+            string geometry = Settings.GetValue("WindowGeometry");
             string[] items = geometry.Split(",");
             if (items.Length != 5)
             {
@@ -550,11 +543,11 @@ namespace UniGetUI.Interface
         }
         private bool IsRectangleFullyVisible(int x, int y, int width, int height)
         {
-            List<MONITORINFO> monitorInfos = new List<MONITORINFO>();
+            List<MONITORINFO> monitorInfos = new();
 
             MonitorEnumDelegate callback = (IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData) =>
             {
-                MONITORINFO monitorInfo = new MONITORINFO();
+                MONITORINFO monitorInfo = new();
                 monitorInfo.cbSize = Marshal.SizeOf(typeof(MONITORINFO));
                 if (GetMonitorInfo(hMonitor, ref monitorInfo)) monitorInfos.Add(monitorInfo);
                 return true;
@@ -567,7 +560,7 @@ namespace UniGetUI.Interface
             int maxX = int.MinValue;
             int maxY = int.MinValue;
 
-            foreach (var monitorInfo in monitorInfos)
+            foreach (MONITORINFO monitorInfo in monitorInfos)
             {
                 if (monitorInfo.rcMonitor.Left < minX) minX = monitorInfo.rcMonitor.Left;
                 if (monitorInfo.rcMonitor.Top < minY) minY = monitorInfo.rcMonitor.Top;
