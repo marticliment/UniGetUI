@@ -181,10 +181,9 @@ Crash Traceback:
             using System.Diagnostics.Process cmd = new();
             cmd.StartInfo.FileName = "cmd.exe";
             cmd.StartInfo.RedirectStandardInput = true;
-            cmd.StartInfo.RedirectStandardOutput = false;
+            cmd.StartInfo.RedirectStandardOutput = true;
             cmd.StartInfo.CreateNoWindow = true;
             cmd.StartInfo.UseShellExecute = false;
-            cmd.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
             cmd.Start();
             cmd.StandardInput.WriteLine("start " + ErrorBody);
             cmd.StandardInput.WriteLine("exit");
