@@ -3,28 +3,17 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Media.Imaging;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using UniGetUI.Core;
+using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Pages;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core.Logging;
-using Windows.UI.Core;
-using UniGetUI.Core.SettingsEngine;
-using UniGetUI.PackageEngine.PackageClasses;
-using System.Reflection.Emit;
-using UniGetUI.PackageEngine.Enums;
-using UniGetUI.Core.Tools;
 using UniGetUI.Interface.SoftwarePages;
-using UniGetUI;
-using Microsoft.UI.Xaml.Media;
-using Windows.ApplicationModel.VoiceCommands;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.PackageClasses;
+using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -169,7 +158,7 @@ namespace UniGetUI.Interface
         private async void AboutNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
             ContentDialog? AboutDialog = new();
-            var AboutPage = new AboutUniGetUI();
+            AboutUniGetUI AboutPage = new();
             AboutDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             AboutDialog.XamlRoot = XamlRoot;
             AboutDialog.Resources["ContentDialogMaxWidth"] = 1200;
@@ -199,7 +188,7 @@ namespace UniGetUI.Interface
             UpdatesDialog.PrimaryButtonText = CoreTools.Translate("Reset");
             UpdatesDialog.DefaultButton = ContentDialogButton.Secondary;
             UpdatesDialog.Title = CoreTools.Translate("Manage ignored updates");
-            var IgnoredUpdatesPage = new IgnoredUpdatesManager();
+            IgnoredUpdatesManager IgnoredUpdatesPage = new();
             UpdatesDialog.PrimaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
             UpdatesDialog.Content = IgnoredUpdatesPage;
             IgnoredUpdatesPage.Close += (s, e) => { UpdatesDialog.Hide(); };
@@ -232,7 +221,7 @@ namespace UniGetUI.Interface
             grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
 
-            var headerContent = new TextBlock()
+            TextBlock headerContent = new()
             {
                 TextWrapping = TextWrapping.WrapWholeWords,
                 Text = $"{shortDescription}. "
@@ -272,7 +261,7 @@ namespace UniGetUI.Interface
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
-            Grid OutputGrid = new Grid();
+            Grid OutputGrid = new();
             OutputGrid.Children.Add(ScrollView);
             OutputGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             OutputGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });

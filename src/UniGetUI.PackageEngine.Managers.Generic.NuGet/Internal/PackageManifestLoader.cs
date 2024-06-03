@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -51,14 +45,14 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
 
             try
             {
-                HttpClientHandler handler = new HttpClientHandler()
+                HttpClientHandler handler = new()
                 {
                     AutomaticDecompression = DecompressionMethods.All
                 };
 
-                using (HttpClient client = new HttpClient(handler))
+                using (HttpClient client = new(handler))
                 {
-                    var response = await client.GetAsync(PackageManifestUrl);
+                    HttpResponseMessage response = await client.GetAsync(PackageManifestUrl);
                     if (!response.IsSuccessStatusCode && package.Version.EndsWith(".0"))
                         response = await client.GetAsync(new Uri(PackageManifestUrl.ToString().Replace(".0')", "')")));
 

@@ -1,22 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Text;
+﻿using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal;
 using UniGetUI.PackageEngine.PackageClasses;
-using static UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers.ManagerSource;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
@@ -102,14 +92,14 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         protected override async Task<CacheableIcon?> GetPackageIcon_Unsafe(Package package)
         {
-            var PackageManifestContent = await PackageManifestLoader.GetPackageManifestContent(package);
+            string? PackageManifestContent = await PackageManifestLoader.GetPackageManifestContent(package);
             if (PackageManifestContent == null)
             {
                 Logger.Warn($"No manifest content could be loaded for package {package.Id} on manager {package.Manager.Name}");
                 return null;
             }
 
-            var possibleIconUrl = Regex.Match(PackageManifestContent, "<(?:d\\:)?IconUrl>(.*)<(?:\\/d:)?IconUrl>");
+            Match possibleIconUrl = Regex.Match(PackageManifestContent, "<(?:d\\:)?IconUrl>(.*)<(?:\\/d:)?IconUrl>");
 
             if (!possibleIconUrl.Success)
             {
@@ -128,16 +118,16 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
-            Uri SearchUrl = new Uri($"{package.Source.Url}/FindPackagesById()?id='{package.Id}'");
+            Uri SearchUrl = new($"{package.Source.Url}/FindPackagesById()?id='{package.Id}'");
             Logger.Debug($"Begin package version search with url={SearchUrl} on manager {Manager.Name}"); ;
-            HttpClientHandler handler = new HttpClientHandler()
+            HttpClientHandler handler = new()
             {
                 AutomaticDecompression = DecompressionMethods.All
             };
 
-            using (HttpClient client = new HttpClient(handler))
+            using (HttpClient client = new(handler))
             {
-                var response = await client.GetAsync(SearchUrl);
+                HttpResponseMessage response = await client.GetAsync(SearchUrl);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -148,8 +138,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 string SearchResults = await response.Content.ReadAsStringAsync();
                 MatchCollection matches = Regex.Matches(SearchResults, "Version='([^<>']+)'");
 
-                List<string> results = new List<string>();
-                HashSet<string> alreadyProcessed = new HashSet<string>();
+                List<string> results = new();
+                HashSet<string> alreadyProcessed = new();
 
                 foreach (Match match in matches)
                     if(!alreadyProcessed.Contains(match.Groups[1].Value) && match.Success)

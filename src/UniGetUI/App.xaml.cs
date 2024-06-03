@@ -1,38 +1,26 @@
-﻿using CommunityToolkit.WinUI.Notifications;
+﻿using CommunityToolkit.WinUI.Helpers;
+using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.Core.Data;
-using UniGetUI.Core.IconEngine;
-using UniGetUI.Interface;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Managers;
-using Windows.Foundation.Collections;
-using UniGetUI.Core.Logging;
-using UniGetUI.Core.Tools;
-using UniGetUI.Core.SettingsEngine;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.Managers.ScoopManager;
-using UniGetUI.PackageEngine.Managers.WingetManager;
-using UniGetUI.PackageEngine.Managers.ChocolateyManager;
-using UniGetUI.PackageEngine.Managers.PowerShellManager;
-using UniGetUI.PackageEngine.Managers.DotNetManager;
-using UniGetUI.PackageEngine.Managers.PipManager;
-using UniGetUI.PackageEngine.Managers.NpmManager;
 using System.Diagnostics;
 using System.Globalization;
 using System.Security.Cryptography;
-using System.Net.Http;
-using System.ComponentModel;
+using UniGetUI.Core.Data;
+using UniGetUI.Core.IconEngine;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
+using UniGetUI.Interface;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Managers.ChocolateyManager;
+using UniGetUI.PackageEngine.Managers.DotNetManager;
+using UniGetUI.PackageEngine.Managers.NpmManager;
+using UniGetUI.PackageEngine.Managers.PipManager;
+using UniGetUI.PackageEngine.Managers.PowerShellManager;
+using UniGetUI.PackageEngine.Managers.ScoopManager;
+using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.Operations;
-using System.ComponentModel.Design;
-using CommunityToolkit.WinUI.Helpers;
-using Windows.ApplicationModel.Email.DataProvider;
+using Windows.Foundation.Collections;
 
 namespace UniGetUI
 {
@@ -128,7 +116,7 @@ namespace UniGetUI
         {
             if (Settings.Get("UseUserGSudo"))
             {
-                var gsudo_result = await CoreTools.Which("gsudo.exe");
+                Tuple<bool, string> gsudo_result = await CoreTools.Which("gsudo.exe");
                 if (gsudo_result.Item1 != false)
                 {
                     Logger.Info($"Using System GSudo at {gsudo_result.Item2}");

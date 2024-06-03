@@ -1,8 +1,6 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using UniGetUI.Core;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,

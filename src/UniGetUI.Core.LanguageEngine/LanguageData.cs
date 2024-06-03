@@ -1,11 +1,10 @@
-﻿using System;
+﻿using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
-using UniGetUI.Core.Classes;
-using System.Collections.ObjectModel;
 
 namespace UniGetUI.Core.Language
 {
@@ -68,13 +67,13 @@ namespace UniGetUI.Core.Language
 
         private static Person[] LoadLanguageTranslatorList()
         {
-            var JsonContents = File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "Translators.json"));
+            string JsonContents = File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "Translators.json"));
             JsonObject? TranslatorsInfo = JsonNode.Parse(JsonContents) as JsonObject;
 
             if (TranslatorsInfo == null) return [];
 
             List<Person> result = new();
-            foreach (var langKey in TranslatorsInfo)
+            foreach (KeyValuePair<string, JsonNode?> langKey in TranslatorsInfo)
             {
                 if (!LanguageReference.ContainsKey(langKey.Key))
                 {

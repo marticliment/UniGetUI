@@ -1,18 +1,11 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
-using UniGetUI.Core;
 using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine.Classes;
 using UniGetUI.Core.Logging;
-using UniGetUI.Interface.Enums;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -67,7 +60,7 @@ namespace UniGetUI.Interface
 
         private async void IgnoredUpdatesList_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            var package = IgnoredUpdatesList.SelectedItem as IgnoredPackage;
+            IgnoredPackage? package = IgnoredUpdatesList.SelectedItem as IgnoredPackage;
             if (package != null)
                 await package.RemoveFromIgnoredUpdates();
         }

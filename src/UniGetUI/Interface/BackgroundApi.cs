@@ -1,12 +1,6 @@
 ﻿using Nancy;
 using Nancy.Hosting.Self;
-using System;
-using System.Drawing;
-using System.Text;
-using System.Threading.Tasks;
-using UniGetUI.Core;
 using UniGetUI.Core.Data;
-using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;

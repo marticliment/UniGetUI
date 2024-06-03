@@ -1,30 +1,18 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using System;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.PackageEngine.PackageClasses;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.Enums;
-using UniGetUI.Core.Tools;
-using UniGetUI.Core.IconEngine;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Text;
-using Windows.UI.Text;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using Microsoft.UI.Xaml.Media;
 using Windows.UI;
+using Windows.UI.Text;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -272,7 +260,7 @@ namespace UniGetUI.Interface.Dialogs
 
         public async void LoadScreenshots()
         {
-            var screenshots = await Package.GetPackageScreenshots();
+            Uri[] screenshots = await Package.GetPackageScreenshots();
             PackageHasScreenshots = screenshots.Count() > 0;
             if (PackageHasScreenshots)
             {
@@ -334,7 +322,7 @@ namespace UniGetUI.Interface.Dialogs
                 StorageFile file = await savePicker.PickSaveFileAsync();
                 if (file != null)
                 {
-                    var loader = async () =>
+                    Func<Task> loader = async () =>
                     {
                         List<string> texts = [
                             "[≡≡≡≡        ]",
@@ -344,7 +332,7 @@ namespace UniGetUI.Interface.Dialogs
                             "[        ≡≡≡≡]",
                             "[≡≡        ≡≡]"];
                         int i = 0;
-                        var baseString = CoreTools.Translate("Downloading installer for {package}", new Dictionary<string, object?> { { "package", Package.Name } });
+                        string baseString = CoreTools.Translate("Downloading installer for {package}", new Dictionary<string, object?> { { "package", Package.Name } });
                         while (running)
                         {
                             DownloadInstaller_Button.Inlines.Clear();

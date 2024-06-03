@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
@@ -86,7 +85,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             List<Package> Packages = new();
-            foreach (var scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
+            foreach (PackageScope scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
             {
                 Process p = new();
                 p.StartInfo = new ProcessStartInfo()
@@ -132,7 +131,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = new();
-            foreach (var scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
+            foreach (PackageScope scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
             {
                 Process p = new();
                 p.StartInfo = new ProcessStartInfo()
@@ -194,7 +193,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         }
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
-            var parameters = GetUninstallParameters(package, options).ToList();
+            List<string> parameters = GetUninstallParameters(package, options).ToList();
             parameters[0] = Properties.InstallVerb;
 
             if (options.Version != "")

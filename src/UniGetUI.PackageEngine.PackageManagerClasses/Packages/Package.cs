@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.IconEngine;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
-using UniGetUI.Core.Logging;
-using UniGetUI.Core.IconEngine;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.Classes.Packages;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
-using Windows.UI.Composition;
-using UniGetUI.Core.Classes;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {

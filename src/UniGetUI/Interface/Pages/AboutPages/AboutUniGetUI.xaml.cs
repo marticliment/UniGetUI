@@ -1,6 +1,4 @@
 using Microsoft.UI.Xaml.Controls;
-using UniGetUI.Core;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
 

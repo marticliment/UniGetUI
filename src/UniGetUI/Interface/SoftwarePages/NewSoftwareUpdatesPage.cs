@@ -1,12 +1,6 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Imaging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -50,9 +44,9 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public override BetterMenu GenerateContextMenu()
         {
-            BetterMenu ContextMenu = new BetterMenu();
+            BetterMenu ContextMenu = new();
 
-            var menuInstall = new BetterMenuItem()
+            BetterMenuItem menuInstall = new()
             {
                 Text = "Update",
                 IconName="menu_updates",
@@ -60,7 +54,7 @@ namespace UniGetUI.Interface.SoftwarePages
             };
             menuInstall.Click += MenuInstall_Invoked;
 
-            var menuInstallSettings = new BetterMenuItem()
+            BetterMenuItem menuInstallSettings = new()
             {
                 Text = "Installation options",
                 IconName="options",
@@ -89,14 +83,14 @@ namespace UniGetUI.Interface.SoftwarePages
             };
             MenuskipHash.Click += MenuSkipHash_Invoked;
 
-            var menuUpdateAfterUninstall = new BetterMenuItem()
+            BetterMenuItem menuUpdateAfterUninstall = new()
             {
                 Text = "Uninstall package, then update it",
                 IconName="undelete",
             };
             menuUpdateAfterUninstall.Click += MenuUpdateAfterUninstall_Invoked;
 
-            var menuUninstall = new BetterMenuItem()
+            BetterMenuItem menuUninstall = new()
             {
                 Text = "Uninstall package",
                 IconName="trash",
@@ -104,28 +98,28 @@ namespace UniGetUI.Interface.SoftwarePages
             menuUninstall.Click += MenuUninstall_Invoked;
 
 
-            var menuIgnorePackage = new BetterMenuItem()
+            BetterMenuItem menuIgnorePackage = new()
             {
                 Text = "Ignore updates for this package",
                 IconName="pin",
             };
             menuIgnorePackage.Click += MenuIgnorePackage_Invoked;
 
-            var menuSkipVersion = new BetterMenuItem()
+            BetterMenuItem menuSkipVersion = new()
             {
                 Text = "Skip this version",
                 IconName="skip",
             };
             menuSkipVersion.Click += MenuSkipVersion_Invoked;
 
-            var menuShare = new BetterMenuItem()
+            BetterMenuItem menuShare = new()
             {
                 Text = "Share this package",
                 IconName="share",
             };
             menuShare.Click += (o, e) => { SharePackage(PackageList.SelectedItem as Package); };
 
-            var menuDetails = new BetterMenuItem()
+            BetterMenuItem menuDetails = new()
             {
                 Text = "Package details",
                 IconName="info",
@@ -458,7 +452,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
@@ -466,7 +460,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
@@ -475,7 +469,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
@@ -484,7 +478,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
@@ -493,7 +487,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, IgnoreParallelInstalls: true));
@@ -502,7 +496,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
@@ -510,7 +504,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             _ = package.AddToIgnoredUpdatesAsync();
@@ -519,7 +513,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuSkipVersion_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             _ = package.AddToIgnoredUpdatesAsync((package).NewVersion);

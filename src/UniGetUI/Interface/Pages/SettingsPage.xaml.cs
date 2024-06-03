@@ -1,22 +1,16 @@
 using CommunityToolkit.WinUI.Controls;
+using ExternalLibraries.Clipboard;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using UniGetUI.Core;
 using UniGetUI.Core.Data;
-using ExternalLibraries.Clipboard;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Language;
-using UniGetUI.Core.Tools;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 // To learn more about WinUI, the WinUI project structure,

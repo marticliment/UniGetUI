@@ -1,12 +1,6 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using UniGetUI.Core;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -47,7 +41,7 @@ namespace UniGetUI
         {
             try
             {
-                var textart = @"
+                string textart = @"
    __  __      _ ______     __  __  ______
   / / / /___  (_) ____/__  / /_/ / / /  _/
  / / / / __ \/ / / __/ _ \/ __/ / / // /  

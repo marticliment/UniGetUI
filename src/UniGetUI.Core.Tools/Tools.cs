@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Jeffijoe.MessageFormat;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net;
@@ -6,16 +6,13 @@ using System.Security.Principal;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
-using Jeffijoe.MessageFormat;
-using System.ComponentModel.DataAnnotations;
-using Windows.Media.Capture;
 
 namespace UniGetUI.Core.Tools
 {
     public static class CoreTools
     {
 
-        public static readonly HttpClientHandler HttpClientConfig = new HttpClientHandler()
+        public static readonly HttpClientHandler HttpClientConfig = new()
         {
             AutomaticDecompression = DecompressionMethods.All
         };
@@ -39,8 +36,8 @@ namespace UniGetUI.Core.Tools
 
         public static string Translate(string text, params object[] values)
         {
-            var dict = new Dictionary<string, object?>();
-            foreach (var (item, index) in values.Select((item, index) => (item, index)))
+            Dictionary<string, object?> dict = new();
+            foreach ((object item, int index) in values.Select((item, index) => (item, index)))
             {
                 dict.Add(index.ToString(), item);
             }
@@ -294,7 +291,7 @@ Crash Traceback:
                 if (_ver != "" && _ver != ".")
                     try
                     {
-                        var val = double.Parse(_ver, CultureInfo.InvariantCulture);
+                        double val = double.Parse(_ver, CultureInfo.InvariantCulture);
                         return val;
                     }
                     catch { }

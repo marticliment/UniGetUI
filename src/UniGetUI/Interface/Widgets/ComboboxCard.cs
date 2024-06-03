@@ -2,11 +2,8 @@ using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 

@@ -1,7 +1,5 @@
 using Microsoft.UI.Xaml.Controls;
-using System;
 using System.Collections.ObjectModel;
-using UniGetUI.Core;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
 

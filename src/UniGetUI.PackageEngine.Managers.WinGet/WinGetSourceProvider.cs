@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+﻿using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -16,7 +11,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public override string[] GetAddSourceParameters(ManagerSource source)
         {
-            var args = new List<string>() { "source", "add", "--name", source.Name, "--arg", source.Url.ToString(), "--accept-source-agreements", "--disable-interactivity" };
+            List<string> args = new() { "source", "add", "--name", source.Name, "--arg", source.Url.ToString(), "--accept-source-agreements", "--disable-interactivity" };
             if (source.Name != "winget")
                 args.AddRange(new string[] { "--type", "Microsoft.Rest" });
             return args.ToArray();

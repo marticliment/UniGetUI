@@ -1,20 +1,11 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Enums;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
-using Windows.Graphics.Display;
 
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
@@ -410,7 +401,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             ManagerStatus status = new();
 
-            var which_res = await CoreTools.Which("winget.exe");
+            Tuple<bool, string> which_res = await CoreTools.Which("winget.exe");
             status.ExecutablePath = which_res.Item2;
             status.Found = which_res.Item1;
 

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using UniGetUI.Core.Data;
-using UniGetUI.Core.Tools;
+﻿using UniGetUI.Core.Data;
 
 namespace UniGetUI.Core.IconEngine.Tests
 {
@@ -18,19 +11,19 @@ namespace UniGetUI.Core.IconEngine.Tests
         public static async Task TestCacheEngineForSha256(string url, byte[] data, string managerName, string packageId)
         {
             string extension = url.Split(".")[^1];
-            var expectedFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, managerName, packageId + "." + extension);
+            string expectedFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, managerName, packageId + "." + extension);
             if(File.Exists(expectedFile)) File.Delete(expectedFile);
 
-            CacheableIcon icon = new CacheableIcon(new Uri(url), data);
-            var path = await IconCacheEngine.DownloadIconOrCache(icon, managerName, packageId);
+            CacheableIcon icon = new(new Uri(url), data);
+            string path = await IconCacheEngine.DownloadIconOrCache(icon, managerName, packageId);
             Assert.Equal(expectedFile, path);
             Assert.True(File.Exists(path));
 
-            var oldModificationDate = File.GetLastWriteTime(path);
+            DateTime oldModificationDate = File.GetLastWriteTime(path);
 
             icon = new CacheableIcon(new Uri(url.Replace("icon", "nonexistingicon")), data);
             path = await IconCacheEngine.DownloadIconOrCache(icon, managerName, packageId);
-            var newModificationDate = File.GetLastWriteTime(path);
+            DateTime newModificationDate = File.GetLastWriteTime(path);
 
             Assert.Equal(oldModificationDate, newModificationDate);
             Assert.Equal(expectedFile, path);
@@ -42,19 +35,19 @@ namespace UniGetUI.Core.IconEngine.Tests
         public static async Task TestCacheEngineForPackageVersion(string url, string version, string managerName, string packageId)
         {
             string extension = url.Split(".")[^1];
-            var expectedFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, managerName, packageId + "." + extension);
+            string expectedFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, managerName, packageId + "." + extension);
             if (File.Exists(expectedFile)) File.Delete(expectedFile);
 
-            CacheableIcon icon = new CacheableIcon(new Uri(url), version);
-            var path = await IconCacheEngine.DownloadIconOrCache(icon, managerName, packageId);
+            CacheableIcon icon = new(new Uri(url), version);
+            string path = await IconCacheEngine.DownloadIconOrCache(icon, managerName, packageId);
             Assert.Equal(expectedFile, path);
             Assert.True(File.Exists(path));
 
-            var oldModificationDate = File.GetLastWriteTime(path);
+            DateTime oldModificationDate = File.GetLastWriteTime(path);
 
             icon = new CacheableIcon(new Uri(url), version);
             path = await IconCacheEngine.DownloadIconOrCache(icon, managerName, packageId);
-            var newModificationDate = File.GetLastWriteTime(path);
+            DateTime newModificationDate = File.GetLastWriteTime(path);
 
             Assert.Equal(oldModificationDate, newModificationDate);
             Assert.Equal(expectedFile, path);
@@ -62,7 +55,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             icon = new CacheableIcon(new Uri(url), version+"-beta0");
             path = await IconCacheEngine.DownloadIconOrCache(icon, managerName, packageId);
-            var newNewModificationDate = File.GetLastWriteTime(path);
+            DateTime newNewModificationDate = File.GetLastWriteTime(path);
 
             Assert.NotEqual(oldModificationDate, newNewModificationDate);
             Assert.Equal(expectedFile, path);
@@ -75,19 +68,19 @@ namespace UniGetUI.Core.IconEngine.Tests
         public static async Task TestCacheEngineForPackageSize(string url, long size, string managerName, string packageId)
         {
             string extension = url.Split(".")[^1];
-            var expectedFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, managerName, packageId + "." + extension);
+            string expectedFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, managerName, packageId + "." + extension);
             if (File.Exists(expectedFile)) File.Delete(expectedFile);
 
-            CacheableIcon icon = new CacheableIcon(new Uri(url), size);
-            var path = await IconCacheEngine.DownloadIconOrCache(icon, managerName, packageId);
+            CacheableIcon icon = new(new Uri(url), size);
+            string path = await IconCacheEngine.DownloadIconOrCache(icon, managerName, packageId);
             Assert.Equal(expectedFile, path);
             Assert.True(File.Exists(path));
 
-            var oldModificationDate = File.GetLastWriteTime(path);
+            DateTime oldModificationDate = File.GetLastWriteTime(path);
 
             icon = new CacheableIcon(new Uri(url), size);
             path = await IconCacheEngine.DownloadIconOrCache(icon, managerName, packageId);
-            var newModificationDate = File.GetLastWriteTime(path);
+            DateTime newModificationDate = File.GetLastWriteTime(path);
 
             Assert.Equal(oldModificationDate, newModificationDate);
             Assert.Equal(expectedFile, path);
@@ -95,7 +88,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             icon = new CacheableIcon(new Uri(url), size+1);
             path = await IconCacheEngine.DownloadIconOrCache(icon, managerName, packageId);
-            var newNewModificationDate = File.GetLastWriteTime(path);
+            DateTime newNewModificationDate = File.GetLastWriteTime(path);
 
             Assert.NotEqual(oldModificationDate, newNewModificationDate);
             Assert.Equal(expectedFile, path);

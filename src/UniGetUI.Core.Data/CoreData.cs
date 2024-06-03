@@ -1,8 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Reflection.Metadata.Ecma335;
-using UniGetUI.Core.Logging;
-using Windows.Storage.Search;
-using Windows.System.Diagnostics;
+﻿using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Data
 {
@@ -31,7 +27,7 @@ namespace UniGetUI.Core.Data
         {
             get
             {
-                var path = Path.Join(UniGetUIDataDirectory, "InstallationOptions");
+                string path = Path.Join(UniGetUIDataDirectory, "InstallationOptions");
                 if(!Directory.Exists(path)) Directory.CreateDirectory(path);
                 return path;
             }

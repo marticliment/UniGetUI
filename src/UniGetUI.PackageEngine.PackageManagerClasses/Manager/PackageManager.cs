@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
@@ -362,7 +361,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             try
             {
                 AssertSourceCompatibility("GetSources");
-                var result = await SourceProvider.GetSources().WaitAsync(TimeSpan.FromSeconds(60));
+                ManagerSource[] result = await SourceProvider.GetSources().WaitAsync(TimeSpan.FromSeconds(60));
                 Logger.Debug($"Loaded {result.Length} sources for manager {Name}");
                 return result;
             }
@@ -396,7 +395,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageDetails");
-                var details = await PackageDetailsProvider.GetPackageDetails(package);
+                PackageDetails details = await PackageDetailsProvider.GetPackageDetails(package);
                 Logger.Info($"Loaded details for package {package.Id} on manager {Name}");
                 return details;
             }

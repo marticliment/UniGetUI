@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace UniGetUI.Core.Classes.Tests
 {
     public class SortableObservableCollectionTests
@@ -8,8 +6,8 @@ namespace UniGetUI.Core.Classes.Tests
         public void TestSortableCollection()
         {
             int EventTriggeredCount = 0;
-            
-            var SortableCollection = new SortableObservableCollection<int>();
+
+            SortableObservableCollection<int> SortableCollection = new();
             SortableCollection.CollectionChanged += (s, e) => { EventTriggeredCount++; };
             SortableCollection.SortingSelector = (s) => { return s; };
             SortableCollection.Add(1);

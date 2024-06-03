@@ -1,24 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UniGetUI.Core.Data;
-using UniGetUI.Core.Logging;
-using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUIManagers = UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.Managers.WingetManager;
-using UniGetUI.PackageEngine.PackageClasses;
-using Microsoft.Management.Deployment;
-using UniGetUI.Core.IconEngine;
-using System.Net.Http.Json;
-using System.Text.RegularExpressions;
-using System.Runtime.InteropServices;
-using System.Net;
+﻿using Microsoft.Management.Deployment;
 using System.Globalization;
+using System.Net;
+using System.Text.RegularExpressions;
+using UniGetUI.Core.IconEngine;
+using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
+using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUIManagers = UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
@@ -59,11 +47,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             if (package.Source.Name != "msstore")
                 return [];
 
-            var ResponseContent = await GetMicrosoftStorePackageManifest(package);
+            string? ResponseContent = await GetMicrosoftStorePackageManifest(package);
             if (ResponseContent == null)
                 return [];
 
-            var IconArray = Regex.Match(ResponseContent, "(?:\"|')Images(?:\"|'): ?\\[([^\\]]+)\\]");
+            Match IconArray = Regex.Match(ResponseContent, "(?:\"|')Images(?:\"|'): ?\\[([^\\]]+)\\]");
             if (!IconArray.Success)
             {
                 Logger.Warn($"Could not parse Images array from Microsoft Store response");
@@ -78,11 +66,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 if (!ImageEntry.Success)
                     continue;
 
-                var ImagePurpose = Regex.Match(ImageEntry.Groups[1].Value, "(?:\"|')ImagePurpose(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
+                Match ImagePurpose = Regex.Match(ImageEntry.Groups[1].Value, "(?:\"|')ImagePurpose(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
                 if (!ImagePurpose.Success || ImagePurpose.Groups[1].Value != "Screenshot")
                     continue;
 
-                var ImageUrl = Regex.Match(ImageEntry.Groups[1].Value, "(?:\"|')Uri(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
+                Match ImageUrl = Regex.Match(ImageEntry.Groups[1].Value, "(?:\"|')Uri(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
                 if (!ImageUrl.Success) 
                     continue;
 
@@ -103,22 +91,22 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             string url = $"https://storeedgefd.dsx.mp.microsoft.com/v8.0/sdk/products?market={CountryCode}&locale={Locale}&deviceFamily=Windows.Desktop";
 
 #pragma warning disable SYSLIB0014
-            var httpRequest = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebRequest httpRequest = (HttpWebRequest)WebRequest.Create(url);
 #pragma warning restore SYSLIB0014
 
             httpRequest.Method = "POST";
             httpRequest.ContentType = "application/json";
 
-            var data = "{\"productIds\": \"" + package.Id.ToLower() + "\"}";
+            string data = "{\"productIds\": \"" + package.Id.ToLower() + "\"}";
 
-            using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
+            using (StreamWriter streamWriter = new(httpRequest.GetRequestStream()))
             {
                 streamWriter.Write(data);
             }
 
-            var httpResponse = (HttpWebResponse)await httpRequest.GetResponseAsync();
+            HttpWebResponse httpResponse = (HttpWebResponse)await httpRequest.GetResponseAsync();
             string result;
-            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            using (StreamReader streamReader = new(httpResponse.GetResponseStream()))
             {
                 result = streamReader.ReadToEnd();
             }
@@ -131,11 +119,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         private async Task<CacheableIcon?> GetMicrosoftStorePackageIcon(Package package)
         {
-            var ResponseContent = await GetMicrosoftStorePackageManifest(package);
+            string? ResponseContent = await GetMicrosoftStorePackageManifest(package);
             if (ResponseContent == null)
                 return null;
 
-            var IconArray = Regex.Match(ResponseContent, "(?:\"|')Images(?:\"|'): ?\\[([^\\]]+)\\]");
+            Match IconArray = Regex.Match(ResponseContent, "(?:\"|')Images(?:\"|'): ?\\[([^\\]]+)\\]");
             if (!IconArray.Success)
             {
                 Logger.Warn($"Could not parse Images array from Microsoft Store response");
@@ -146,17 +134,17 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             foreach (Match ImageEntry in Regex.Matches(IconArray.Groups[1].Value, "{([^}]+)}"))
             {
-                var CurrentImage = ImageEntry.Groups[1].Value;
+                string CurrentImage = ImageEntry.Groups[1].Value;
 
                 if (!ImageEntry.Success)
                     continue;
 
-                var ImagePurpose = Regex.Match(CurrentImage, "(?:\"|')ImagePurpose(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
+                Match ImagePurpose = Regex.Match(CurrentImage, "(?:\"|')ImagePurpose(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
                 if (!ImagePurpose.Success || ImagePurpose.Groups[1].Value != "Tile")
                     continue;
 
-                var ImageUrl = Regex.Match(CurrentImage, "(?:\"|')Uri(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
-                var ImageSize = Regex.Match(CurrentImage, "(?:\"|')Height(?:\"|'): ?([^,]+)");
+                Match ImageUrl = Regex.Match(CurrentImage, "(?:\"|')Uri(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
+                Match ImageSize = Regex.Match(CurrentImage, "(?:\"|')Height(?:\"|'): ?([^,]+)");
 
                 if (!ImageUrl.Success || !ImageSize.Success)
                     continue;
@@ -187,8 +175,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return null;
             }
 
-            var WinGetManager = ((NativeWinGetHelper)WinGetHelper.Instance).WinGetManager;
-            var Factory = ((NativeWinGetHelper)WinGetHelper.Instance).Factory;
+            Microsoft.Management.Deployment.PackageManager WinGetManager = ((NativeWinGetHelper)WinGetHelper.Instance).WinGetManager;
+            WindowsPackageManager.Interop.WindowsPackageManagerStandardFactory Factory = ((NativeWinGetHelper)WinGetHelper.Instance).Factory;
 
             // Find the native package for the given Package object
             PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
@@ -232,7 +220,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             CacheableIcon? Icon = null;
 
-            foreach (var icon in NativeDetails.Icons.ToArray())
+            foreach (Icon? icon in NativeDetails.Icons.ToArray())
             {
                 Icon = new CacheableIcon(new Uri(icon.Url), icon.Sha256);
                 Logger.Debug($"Found WinGet native icon for {package.Id} with URL={icon.Url}");

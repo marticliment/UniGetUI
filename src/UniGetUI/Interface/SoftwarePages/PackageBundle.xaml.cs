@@ -1,31 +1,25 @@
+using ExternalLibraries.Pickers;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using UniGetUI.Core;
 using UniGetUI.Core.Classes;
-using ExternalLibraries.Pickers;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using Windows.UI.Core;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
-using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.PackageEngine.PackageClasses;
+using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -90,7 +84,7 @@ namespace UniGetUI.Interface
 
             PackageList.DoubleTapped += (s, e) =>
             {
-                var package = PackageList.SelectedItem as BundledPackage;
+                BundledPackage? package = PackageList.SelectedItem as BundledPackage;
                 if (package == null) return;
                 _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package.Package, OperationType.None);
             };
@@ -123,7 +117,7 @@ namespace UniGetUI.Interface
                         (PackageList.SelectedItem as BundledPackage)?.ShowOptions(s, e);
                     else
                     {
-                        var package = PackageList.SelectedItem as BundledPackage;
+                        BundledPackage? package = PackageList.SelectedItem as BundledPackage;
                         if (package == null) return;
                         _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package.Package, OperationType.None);
                     }
@@ -137,7 +131,7 @@ namespace UniGetUI.Interface
                 }
                 else if (e.Key == Windows.System.VirtualKey.Space && PackageList.SelectedItem != null)
                 {
-                    var package = PackageList.SelectedItem as BundledPackage;
+                    BundledPackage? package = PackageList.SelectedItem as BundledPackage;
                     if (package == null) return;
                     package.Package.IsChecked = !package.Package.IsChecked;
                 }
@@ -472,8 +466,8 @@ namespace UniGetUI.Interface
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
             PackageDetails.Click += (s, e) =>
-            { 
-                var package = PackageList.SelectedItem as BundledPackage;
+            {
+                BundledPackage? package = PackageList.SelectedItem as BundledPackage;
                 if (package != null)
                     _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package.Package, OperationType.None);
             };
@@ -533,7 +527,7 @@ namespace UniGetUI.Interface
 
             SharePackage.Click += (s, e) =>
             {
-                var package = PackageList.SelectedItem as BundledPackage;
+                BundledPackage? package = PackageList.SelectedItem as BundledPackage;
                 if (package != null)
                     MainApp.Instance.MainWindow.SharePackage(package.Package);
             };
@@ -545,7 +539,7 @@ namespace UniGetUI.Interface
 
         private void MenuRemoveFromList_Invoked(object sender, RoutedEventArgs args)
         {
-            var package = PackageList.SelectedItem as BundledPackage;
+            BundledPackage? package = PackageList.SelectedItem as BundledPackage;
             if (!Initialized || package == null)
                 return;
             package.RemoveFromList(sender, args);
@@ -554,7 +548,7 @@ namespace UniGetUI.Interface
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)
         {
-            var package = PackageList.SelectedItem as BundledPackage;
+            BundledPackage? package = PackageList.SelectedItem as BundledPackage;
             if (!Initialized || package == null || !package.IsValid)
                 return;
             MainApp.Instance.MainWindow.SharePackage(package.Package);
@@ -562,7 +556,7 @@ namespace UniGetUI.Interface
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs args)
         {
-            var package = PackageList.SelectedItem as BundledPackage;
+            BundledPackage? package = PackageList.SelectedItem as BundledPackage;
             if (!Initialized || package == null || !package.IsValid)
                 return;
             _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package.Package, OperationType.None);
@@ -582,7 +576,7 @@ namespace UniGetUI.Interface
 
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as BundledPackage;
+            BundledPackage? package = PackageList.SelectedItem as BundledPackage;
             if (package?.Package != null)
                 package.ShowOptions(sender, e);
         }

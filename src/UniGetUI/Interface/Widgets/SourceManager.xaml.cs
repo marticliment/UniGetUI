@@ -1,17 +1,11 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using UniGetUI.Core;
-using UniGetUI.PackageEngine.Classes;
 using UniGetUI.Core.Logging;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.Core.Tools;
-using System.Diagnostics.CodeAnalysis;
-using System.ComponentModel.Design;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Operations;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -99,7 +93,7 @@ namespace UniGetUI.Interface.Widgets
                         }
                         else
                         {
-                            var sourceName = SourcesCombo.SelectedValue.ToString();
+                            string? sourceName = SourcesCombo.SelectedValue.ToString();
                             if (sourceName != null)
                             {
                                 SourceUrlTextBox.IsEnabled = SourceNameTextBox.IsEnabled = false;

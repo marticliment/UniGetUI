@@ -1,20 +1,13 @@
 ﻿using Microsoft.Management.Deployment;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using UniGetUI.Core;
 using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine.Classes;
-using WindowsPackageManager.Interop;
 using UniGetUI.Core.Logging;
-using Deployment = Microsoft.Management.Deployment;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.PackageClasses;
+using WindowsPackageManager.Interop;
+using Deployment = Microsoft.Management.Deployment;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {

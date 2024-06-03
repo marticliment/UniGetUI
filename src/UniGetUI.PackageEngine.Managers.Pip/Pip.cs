@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
-using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
@@ -49,7 +47,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         {
             List<Package> Packages = new();
 
-            var which_res = await CoreTools.Which("parse_pip_search");
+            Tuple<bool, string> which_res = await CoreTools.Which("parse_pip_search");
             string path = which_res.Item2;
             if (!which_res.Item1)
             {
@@ -273,7 +271,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         {
             ManagerStatus status = new();
 
-            var which_res = await CoreTools.Which("python.exe");
+            Tuple<bool, string> which_res = await CoreTools.Which("python.exe");
             status.ExecutablePath = which_res.Item2;
             status.Found = which_res.Item1;
 

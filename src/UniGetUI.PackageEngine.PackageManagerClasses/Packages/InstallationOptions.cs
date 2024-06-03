@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
+﻿using System.Runtime.InteropServices;
 using System.Text.Json;
-using System.Threading.Tasks;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
@@ -134,7 +129,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 if (optionsFile.Directory?.Exists == false)
                     optionsFile.Directory.Create();
 
-                var fileContents = JsonSerializer.Serialize(Serialized());
+                string fileContents = JsonSerializer.Serialize(Serialized());
                 File.WriteAllText(optionsFile.FullName, fileContents);
             }
             catch (Exception ex)
@@ -155,7 +150,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 if (optionsFile.Directory?.Exists == false)
                     optionsFile.Directory.Create();
 
-                var fileContents = JsonSerializer.Serialize(Serialized());
+                string fileContents = JsonSerializer.Serialize(Serialized());
                 await File.WriteAllTextAsync(optionsFile.FullName, fileContents);
             }
             catch (Exception ex)

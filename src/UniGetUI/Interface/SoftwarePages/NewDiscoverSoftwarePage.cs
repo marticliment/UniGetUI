@@ -1,10 +1,5 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -24,9 +19,9 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public override BetterMenu GenerateContextMenu()
         {
-            BetterMenu menu = new BetterMenu();
+            BetterMenu menu = new();
 
-            var menuInstall = new BetterMenuItem
+            BetterMenuItem menuInstall = new()
             {
                 Text = "Install",
                 IconName = "newversion",
@@ -37,7 +32,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             menu.Items.Add(new MenuFlyoutSeparator { Height = 5 });
 
-            var menuInstallSettings = new BetterMenuItem
+            BetterMenuItem menuInstallSettings = new()
             {
                 Text = "Installation options",
                 IconName = "options",
@@ -74,7 +69,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             menu.Items.Add(new MenuFlyoutSeparator { Height = 5 });
 
-            var menuShare = new BetterMenuItem
+            BetterMenuItem menuShare = new()
             {
                 Text = "Share this package",
                 IconName = "share"
@@ -82,7 +77,7 @@ namespace UniGetUI.Interface.SoftwarePages
             menuShare.Click += MenuShare_Invoked;
             menu.Items.Add(menuShare);
 
-            var menuDetails = new BetterMenuItem
+            BetterMenuItem menuDetails = new()
             {
                 Text = "Package details",
                 IconName = "info",
@@ -269,7 +264,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override Task<Package[]> LoadPackagesFromManager(PackageManager manager)
         {
-            var text = QueryBlock.Text;
+            string text = QueryBlock.Text;
             text = CoreTools.EnsureSafeQueryString(text);
             if (text == string.Empty)
                 return new Task<Package[]>(() => { return []; });
@@ -332,7 +327,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
@@ -340,7 +335,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
@@ -349,7 +344,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
@@ -358,7 +353,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
