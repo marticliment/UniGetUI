@@ -188,9 +188,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Scope = scope;
             UniqueId = $"{Manager.Properties.Name}\\{Id}\\{Version}->{NewVersion}";
             IsChecked = true;
-            IsUpgradable = true;
             NewVersionAsFloat = GetFloatNewVersion();
+            Tag = PackageTag.Default;
             __hash = Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version + "->" + NewVersion;
+            IsUpgradable = true;
         }
 
 
