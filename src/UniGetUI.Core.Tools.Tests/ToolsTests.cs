@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using UniGetUI.Core.Language;
 
 namespace UniGetUI.Core.Tools.Tests
@@ -14,7 +13,7 @@ namespace UniGetUI.Core.Tools.Tests
         [InlineData("Add packages or open an existing bundle", true)]
         public void TranslateFunctionTester(string textEntry, bool TranslationExists)
         {
-            var langEngine = new LanguageEngine("fr");
+            LanguageEngine langEngine = new("fr");
             CoreTools.ReloadLanguageEngineInstance("fr");
 
             Assert.Equal(CoreTools.Translate(textEntry), langEngine.Translate(textEntry));
@@ -30,7 +29,7 @@ namespace UniGetUI.Core.Tools.Tests
         [Fact]
         public async Task TestWhichFunctionForExistingFile()
         {
-            var result = await CoreTools.Which("cmd.exe");
+            Tuple<bool, string> result = await CoreTools.Which("cmd.exe");
             Assert.True(result.Item1);
             Assert.True(File.Exists(result.Item2));
         }
@@ -38,7 +37,7 @@ namespace UniGetUI.Core.Tools.Tests
         [Fact]
         public async Task TestWhichFunctionForNonExistingFile()
         {
-            var result = await CoreTools.Which("nonexistentfile.exe");
+            Tuple<bool, string> result = await CoreTools.Which("nonexistentfile.exe");
             Assert.False(result.Item1);
             Assert.Equal("", result.Item2);
         }
@@ -70,9 +69,9 @@ namespace UniGetUI.Core.Tools.Tests
         [InlineData(64)]
         public void TestRandomStringGenerator(int length)
         {
-            var string1 = CoreTools.RandomString(length);
-            var string2 = CoreTools.RandomString(length);
-            var string3 = CoreTools.RandomString(length);
+            string string1 = CoreTools.RandomString(length);
+            string string2 = CoreTools.RandomString(length);
+            string string3 = CoreTools.RandomString(length);
             Assert.Equal(string1.Length, length);
             Assert.Equal(string2.Length, length);
             Assert.Equal(string3.Length, length);
@@ -97,7 +96,7 @@ namespace UniGetUI.Core.Tools.Tests
         [InlineData("https://www.marticliment.com/wingetui/wingetui_size_test.txt", 460)]
         public async Task TestFileSizeLoader(string uri, long expectedSize)
         {
-            var size = await CoreTools.GetFileSizeAsync(uri != ""? new Uri(uri): null);
+            double size = await CoreTools.GetFileSizeAsync(uri != ""? new Uri(uri): null);
             Assert.Equal(expectedSize / 1048576, size);
         }
 
@@ -115,6 +114,19 @@ namespace UniGetUI.Core.Tools.Tests
         public void TestGetVersionStringAsFloat(string version, double expected, double tolerance)
         {
             Assert.Equal(expected, CoreTools.GetVersionStringAsFloat(version), tolerance);
+        }
+
+        [Theory]
+        [InlineData("Hello World", "Hello World")]
+        [InlineData("Hello; World", "Hello World")]
+        [InlineData("\"Hello; World\"", "Hello World")]
+        [InlineData("'Hello; World'", "Hello World")]
+        [InlineData("query\";start cmd.exe", "querystart cmd.exe")]
+        [InlineData("query;start /B program.exe", "querystart B program.exe")]
+        [InlineData(";&|<>%\"e'~?/\\`", "e")]
+        public void TestSafeQueryString(string query, string expected)
+        {
+            Assert.Equal(CoreTools.EnsureSafeQueryString(query), expected);
         }
     }
 }

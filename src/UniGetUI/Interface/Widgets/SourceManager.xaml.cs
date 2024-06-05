@@ -1,17 +1,11 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using UniGetUI.Core;
-using UniGetUI.PackageEngine.Classes;
 using UniGetUI.Core.Logging;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.Core.Tools;
-using System.Diagnostics.CodeAnalysis;
-using System.ComponentModel.Design;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Operations;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -49,7 +43,7 @@ namespace UniGetUI.Interface.Widgets
             if (!Manager.Capabilities.SupportsCustomSources)
                 throw new Exception($"Attempted to create a SourceManager class from Manager {Manager.Name}, which does not support custom sources");
 
-            Header.Text = CoreTools.Translate("Manage {0} sources").Replace("{0}", Manager.Properties.Name);
+            Header.Text = CoreTools.Translate("Manage {0} sources", Manager.Properties.Name);
             AddSourceButton.Content = CoreTools.Translate("Add source");
             AddSourceButton.Click += async (sender, e) =>
             {
@@ -70,19 +64,19 @@ namespace UniGetUI.Interface.Widgets
                     d.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
                     StackPanel p = new();
                     p.Spacing = 8;
-                    p.Children.Add(new TextBlock() { Text = CoreTools.Translate("Select the source you want to add:") });
+                    p.Children.Add(new TextBlock { Text = CoreTools.Translate("Select the source you want to add:") });
                     p.Children.Add(SourcesCombo);
 
                     TextBox SourceNameTextBox = new() { HorizontalAlignment = HorizontalAlignment.Stretch, Width = 400 };
                     TextBox SourceUrlTextBox = new() { HorizontalAlignment = HorizontalAlignment.Stretch };
 
                     StackPanel p1 = new() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
-                    p1.Children.Add(new TextBlock() { Text = CoreTools.Translate("Source name:"), VerticalAlignment = VerticalAlignment.Center });
+                    p1.Children.Add(new TextBlock { Text = CoreTools.Translate("Source name:"), VerticalAlignment = VerticalAlignment.Center });
                     p1.Children.Add(SourceNameTextBox);
 
 
                     StackPanel p2 = new() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
-                    p2.Children.Add(new TextBlock() { Text = CoreTools.Translate("Source URL:"), VerticalAlignment = VerticalAlignment.Center });
+                    p2.Children.Add(new TextBlock { Text = CoreTools.Translate("Source URL:"), VerticalAlignment = VerticalAlignment.Center });
                     p2.Children.Add(SourceUrlTextBox);
 
                     p.Children.Add(p1);
@@ -99,7 +93,7 @@ namespace UniGetUI.Interface.Widgets
                         }
                         else
                         {
-                            var sourceName = SourcesCombo.SelectedValue.ToString();
+                            string? sourceName = SourcesCombo.SelectedValue.ToString();
                             if (sourceName != null)
                             {
                                 SourceUrlTextBox.IsEnabled = SourceNameTextBox.IsEnabled = false;
@@ -153,7 +147,7 @@ namespace UniGetUI.Interface.Widgets
 
         public async void LoadSources()
         {
-            if (!Manager.Status.Found)
+            if (!Manager.IsReady())
                 return;
 
             LoadingBar.Visibility = Visibility.Visible;

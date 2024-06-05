@@ -1,20 +1,11 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Enums;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
-using Windows.Graphics.Display;
 
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
@@ -86,9 +77,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return await WinGetHelper.Instance.FindPackages_UnSafe(this, query);
         }
 
-        protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            List<UpgradablePackage> Packages = new();
+            List<Package> Packages = new();
 
             Process p = new();
             p.StartInfo = new ProcessStartInfo()
@@ -149,7 +140,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
                 ManagerSource source = GetSourceOrDefault(elements[4]);
 
-                Packages.Add(new UpgradablePackage(elements[0][1..], elements[1], elements[2], elements[3], source, this));
+                Packages.Add(new Package(elements[0][1..], elements[1], elements[2], elements[3], source, this));
             }
 
             output += await p.StandardError.ReadToEndAsync();
@@ -347,6 +338,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             else
                 parameters.AddRange(new string[] { "--silent", "--disable-interactivity" });
 
+            parameters.AddRange(options.CustomParameters);
+
             return parameters.ToArray();
         }
 
@@ -408,7 +401,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             ManagerStatus status = new();
 
-            var which_res = await CoreTools.Which("winget.exe");
+            Tuple<bool, string> which_res = await CoreTools.Which("winget.exe");
             status.ExecutablePath = which_res.Item2;
             status.Found = which_res.Item1;
 

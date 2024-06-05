@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Enums;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
@@ -58,7 +50,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             SourceProvider = new PowerShellSourceProvider(this);
         }
-        protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             Process p = new();
             p.StartInfo = new ProcessStartInfo()
@@ -99,7 +91,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 exit
                 "); // do NOT remove the trailing endline
             string? line;
-            List<UpgradablePackage> Packages = new();
+            List<Package> Packages = new();
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
@@ -116,7 +108,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 if (elements[1] + ".0" == elements[2] || elements[1] + ".0.0" == elements[2])
                     continue;
 
-                Packages.Add(new UpgradablePackage(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], GetSourceOrDefault(elements[3]), this));
+                Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], GetSourceOrDefault(elements[3]), this));
             }
 
             output += await p.StandardError.ReadToEndAsync();

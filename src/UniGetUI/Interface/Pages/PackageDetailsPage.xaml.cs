@@ -1,23 +1,18 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using System;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Operations;
+using UniGetUI.PackageEngine.PackageClasses;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.Enums;
-using UniGetUI.Core.Tools;
-using UniGetUI.Core.IconEngine;
+using Windows.UI;
+using Windows.UI.Text;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,7 +28,7 @@ namespace UniGetUI.Interface.Dialogs
         private InstallOptionsPage InstallOptionsPage;
         public event EventHandler? Close;
         private PackageDetails? Info;
-        OperationType FutureOperation;
+        OperationType OperationRole;
         bool PackageHasScreenshots = false;
         public ObservableCollection<TextBlock> ShowableTags = new();
 
@@ -44,23 +39,24 @@ namespace UniGetUI.Interface.Dialogs
             Unloaded
         }
 
+
         private LayoutMode __layout_mode = LayoutMode.Unloaded;
-        public PackageDetailsPage(Package package, OperationType futureOperation)
+        public PackageDetailsPage(Package package, OperationType operationRole)
         {
-            FutureOperation = futureOperation;
+            OperationRole = operationRole;
             Package = package;
 
             InitializeComponent();
 
-            InstallOptionsPage = new InstallOptionsPage(package, futureOperation);
+            InstallOptionsPage = new InstallOptionsPage(package, operationRole);
             InstallOptionsExpander.Content = InstallOptionsPage;
 
             SizeChanged += PackageDetailsPage_SizeChanged;
 
-            if (futureOperation == OperationType.None)
-                futureOperation = OperationType.Install;
+            if (operationRole == OperationType.None)
+                operationRole = OperationType.Install;
 
-            switch (futureOperation)
+            switch (operationRole)
             {
                 case OperationType.Install:
                     ActionButton.Content = CoreTools.Translate("Install");
@@ -73,34 +69,54 @@ namespace UniGetUI.Interface.Dialogs
                     break;
             }
 
-            IdTextBlock.Text = package.Id;
-            VersionTextBlock.Text = package.Version;
-            if (package.IsUpgradable)
-                VersionTextBlock.Text += " - " + CoreTools.Translate("Update to {0} available").Replace("{0}", package.NewVersion);
             PackageName.Text = package.Name;
-            SourceNameTextBlock.Text = package.SourceAsString;
-
-
-            string LoadingString = CoreTools.Translate("Loading...");
             LoadingIndicator.Visibility = Visibility.Visible;
+            string LoadingString = CoreTools.Translate("Loading...");
 
+            // Basic details section
+            SetTextToItem(DescriptionContent, LoadingString);
+            SetTextToItem(HomepageUrl_Label, CoreTools.Translate("Homepage") + ": ");
+            SetTextToItem(HomepageUrl_Content, LoadingString);
+            SetTextToItem(Author_Label, CoreTools.Translate("Author") + ": ");
+            SetTextToItem(Author_Content, LoadingString);
+            SetTextToItem(Publisher_Label, CoreTools.Translate("Publisher") + ": ");
+            SetTextToItem(Publisher_Content, LoadingString);
+            SetTextToItem(License_Label, CoreTools.Translate("License") + ": ");
+            SetTextToItem(License_Content_Text, LoadingString);
+            SetTextToItem(License_Content_Uri, "");
+            SetTextToItem(Source_Label, CoreTools.Translate("Package Manager") + ": ");
+            SetTextToItem(Source_Content, Package.SourceAsString);
 
-            HomepageUrlButton.Content = LoadingString;
-            PublisherTextBlock.Text = LoadingString;
-            AuthorTextBlock.Text = LoadingString;
-            LicenseTextBlock.Text = LoadingString;
-            LicenseUrlButton.Content = LoadingString;
-
-            DescriptionBox.Text = LoadingString;
-            ManifestUrlButton.Content = LoadingString;
-            HashTextBlock.Text = LoadingString;
-            InstallerUrlButton.Content = LoadingString;
-            InstallerTypeTextBlock.Text = LoadingString;
-            UpdateDateTextBlock.Text = LoadingString;
-            ReleaseNotesBlock.Text = LoadingString;
-            InstallerSizeTextBlock.Text = LoadingString;
-            DownloadInstallerButton.IsEnabled = false;
-            ReleaseNotesUrlButton.Content = LoadingString;
+            // Extended details section
+            SetTextToItem(PackageId_Label, CoreTools.Translate("Package ID") + ": ");
+            SetTextToItem(PackageId_Content, package.Id);
+            SetTextToItem(ManifestUrl_Label, CoreTools.Translate("Manifest") + ": ");
+            SetTextToItem(ManifestUrl_Content, LoadingString);
+            if (!package.IsUpgradable)
+            {
+                SetTextToItem(Version_Label,
+                    (operationRole == OperationType.Uninstall ? CoreTools.Translate("Installed Version") : CoreTools.Translate("Version")) + ": ");
+                SetTextToItem(Version_Content, package.Version);
+            }
+            else
+            {
+                SetTextToItem(Version_Label, CoreTools.Translate("Installed Version") + ": ");
+                SetTextToItem(Version_Content, $"{package.Version} - {CoreTools.Translate("Update to {0} available", package.NewVersion)}");
+            }
+            SetTextToItem(InstallerType_Label, CoreTools.Translate("Installer Type") + ": ");
+            SetTextToItem(InstallerType_Content, LoadingString);
+            SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA256") + ": ");
+            SetTextToItem(InstallerHash_Content, LoadingString);
+            SetTextToItem(InstallerUrl_Label, CoreTools.Translate("Installer URL") + ": ");
+            SetTextToItem(InstallerUrl_Content, LoadingString);
+            DownloadInstaller_Button.Click += (s, e) => { DownloadInstallerButton_Click(s, e); };
+            SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Download installer"));
+            SetTextToItem(UpdateDate_Label, CoreTools.Translate("Last updated:") + " ");
+            SetTextToItem(UpdateDate_Content, LoadingString);
+            SetTextToItem(ReleaseNotes_Label, CoreTools.Translate("Release notes") + ": ");
+            SetTextToItem(ReleaseNotes_Content, LoadingString);
+            SetTextToItem(ReleaseNotesUrl_Label, CoreTools.Translate("Release notes URL") + ": ");
+            SetTextToItem(ReleaseNotesUrl_Content, LoadingString);
 
             _ = LoadInformation();
 
@@ -119,7 +135,7 @@ namespace UniGetUI.Interface.Dialogs
 
             string command = "";
 
-            switch (FutureOperation)
+            switch (OperationRole)
             {
                 case OperationType.Install:
                     command = Package.Manager.Properties.ExecutableFriendlyName + " " + String.Join(' ', Package.Manager.GetInstallParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
@@ -137,49 +153,55 @@ namespace UniGetUI.Interface.Dialogs
 
             LoadingIndicator.Visibility = Visibility.Collapsed;
 
-            HomepageUrlButton.Content = Info.HomepageUrl != null ? Info.HomepageUrl : NotFound;
-            HomepageUrlButton.NavigateUri = Info.HomepageUrl != null ? Info.HomepageUrl : InvalidUri;
-            PublisherTextBlock.Text = Info.Publisher != "" ? Info.Publisher : NotFound;
-            AuthorTextBlock.Text = Info.Author != "" ? Info.Author : NotFound;
-            LicenseTextBlock.Text = Info.License != "" ? Info.License : NotFound;
-            if (Info.License != "" && Info.LicenseUrl != null)
+            // Basic details section
+            SetTextToItem(DescriptionContent, Info.Description);
+            SetTextToItem(HomepageUrl_Content, Info.HomepageUrl);
+            SetTextToItem(Author_Content, Info.Author);
+            SetTextToItem(Publisher_Content, Info.Publisher);
+
+            if (Info.License != null && Info.LicenseUrl != null)
             {
-                LicenseTextBlock.Text = Info.License;
-                LicenseUrlButton.Content = "(" + Info.LicenseUrl + ")";
-                LicenseUrlButton.NavigateUri = Info.LicenseUrl;
+                SetTextToItem(License_Content_Text, Info.License);
+                SetTextToItem(License_Content_Uri, Info.LicenseUrl, "(", ")");
             }
-            else if (Info.License != "" && Info.LicenseUrl == null)
+            else if (Info.License != null && Info.LicenseUrl == null)
             {
-                LicenseTextBlock.Text = Info.License;
-                LicenseUrlButton.Content = "";
-                LicenseUrlButton.NavigateUri = InvalidUri;
+                SetTextToItem(License_Content_Text, Info.License);
+                SetTextToItem(License_Content_Uri, "");
             }
-            else if (Info.License == "" && Info.LicenseUrl != null)
+            else if (Info.License == null && Info.LicenseUrl != null)
             {
-                LicenseTextBlock.Text = "";
-                LicenseUrlButton.Content = Info.LicenseUrl;
-                LicenseUrlButton.NavigateUri = Info.LicenseUrl;
+                SetTextToItem(License_Content_Text, "");
+                SetTextToItem(License_Content_Uri, Info.LicenseUrl);
             }
             else
             {
-                LicenseTextBlock.Text = NotFound;
-                LicenseUrlButton.Content = "";
-                LicenseUrlButton.NavigateUri = InvalidUri;
+                SetTextToItem(License_Content_Text, null);
+                SetTextToItem(License_Content_Uri, Info.LicenseUrl);
             }
 
-            DescriptionBox.Text = Info.Description != "" ? Info.Description : NotFound;
-            ManifestUrlButton.Content = Info.ManifestUrl != null ? Info.ManifestUrl : NotFound;
-            ManifestUrlButton.NavigateUri = Info.ManifestUrl != null ? Info.ManifestUrl : InvalidUri;
-            HashTextBlock.Text = Info.InstallerHash != "" ? Info.InstallerHash : NotFound;
-            InstallerUrlButton.Content = Info.InstallerUrl != null ? Info.InstallerUrl : NotFound;
-            InstallerUrlButton.NavigateUri = Info.InstallerUrl != null ? Info.InstallerUrl : InvalidUri;
-            InstallerTypeTextBlock.Text = Info.InstallerType != "" ? Info.InstallerType : NotFound;
-            UpdateDateTextBlock.Text = Info.UpdateDate != "" ? Info.UpdateDate : NotFound;
-            ReleaseNotesBlock.Text = Info.ReleaseNotes != "" ? Info.ReleaseNotes : NotFound;
-            InstallerSizeTextBlock.Text = Info.InstallerSize != 0.0 ? Info.InstallerSize.ToString() + " MB" : NotFound;
-            DownloadInstallerButton.IsEnabled = Info.InstallerUrl != null;
-            ReleaseNotesUrlButton.Content = Info.ReleaseNotesUrl != null ? Info.ReleaseNotesUrl : NotFound;
-            ReleaseNotesUrlButton.NavigateUri = Info.ReleaseNotesUrl != null ? Info.ReleaseNotesUrl : InvalidUri;
+            // Extended details section
+            SetTextToItem(ManifestUrl_Content, Info.ManifestUrl);
+            if (Package.Manager == MainApp.Choco)
+                SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA512") + ": ");
+            else
+                SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA256") + ": ");
+            SetTextToItem(InstallerHash_Content, Info.InstallerHash);
+            if (Info.InstallerUrl != null)
+            {
+                SetTextToItem(InstallerSize_Content, Info.InstallerSize > 0? $" ({Info.InstallerSize} MB)": $" ({CoreTools.Translate("Unknown size")})");
+                SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Download installer"));
+            }
+            else
+            {
+                SetTextToItem(InstallerSize_Content, "");
+                SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Installer not available"));
+            }
+            SetTextToItem(InstallerUrl_Content, Info.InstallerUrl);
+            SetTextToItem(InstallerType_Content, Info.InstallerType);
+            SetTextToItem(UpdateDate_Content, Info.UpdateDate);
+            SetTextToItem(ReleaseNotes_Content, Info.ReleaseNotes);
+            SetTextToItem(ReleaseNotesUrl_Content, Info.ReleaseNotesUrl);
 
             ShowableTags.Clear();
             foreach (string tag in Info.Tags)
@@ -190,14 +212,55 @@ namespace UniGetUI.Interface.Dialogs
                 });
         }
 
+        public void SetTextToItem(Run r, string? s)
+        {
+            if (s == null)
+            {
+                r.Text = CoreTools.Translate("Not available");
+                r.Foreground = new SolidColorBrush(color: Color.FromArgb(255, 127, 127, 127));
+            }
+            else
+            {
+                r.Text = s;
+                r.ClearValue(Run.ForegroundProperty);
+            }
+        }
+
+        public void SetTextToItem(Hyperlink h, Uri? u, string prefix = "", string suffix = "")
+        {
+            if (u == null)
+            {
+                h.Inlines.Clear();
+                h.Inlines.Add(new Run()
+                {
+                    Text = CoreTools.Translate("Not available"),
+                    TextDecorations = TextDecorations.None,
+                    Foreground = new SolidColorBrush(color: Color.FromArgb(255, 127, 127, 127))
+                });
+                h.NavigateUri = u;
+            }
+            else
+            {
+                h.Inlines.Clear();
+                h.Inlines.Add(new Run() { Text = prefix + u.ToString() + suffix });
+                h.NavigateUri = u;
+            }
+        }
+        public void SetTextToItem(Hyperlink h, string s)
+        {
+                h.Inlines.Clear();
+                h.Inlines.Add(new Run() { Text = s });
+                h.NavigateUri = new Uri("about:blank");
+        }
+
         public async void LoadIcon()
         {
-            PackageIcon.Source = new BitmapImage() { UriSource = (await Package.GetIconUrl()) };
+            PackageIcon.Source = new BitmapImage { UriSource = (await Package.GetIconUrl()) };
         }
 
         public async void LoadScreenshots()
         {
-            var screenshots = await Package.GetPackageScreenshots();
+            Uri[] screenshots = await Package.GetPackageScreenshots();
             PackageHasScreenshots = screenshots.Count() > 0;
             if (PackageHasScreenshots)
             {
@@ -205,7 +268,7 @@ namespace UniGetUI.Interface.Dialogs
                 IconsExtraBanner.Visibility = Visibility.Visible;
                 ScreenshotsCarroussel.Items.Clear();
                 foreach (Uri image in screenshots)
-                    ScreenshotsCarroussel.Items.Add(new Image() { Source = new BitmapImage(image) });
+                    ScreenshotsCarroussel.Items.Add(new Image { Source = new BitmapImage(image) });
             }
 
             __layout_mode = LayoutMode.Unloaded;
@@ -217,7 +280,7 @@ namespace UniGetUI.Interface.Dialogs
         {
             Close?.Invoke(this, new EventArgs());
             InstallOptionsPage.SaveToDisk();
-            switch (FutureOperation)
+            switch (OperationRole)
             {
                 case OperationType.Install:
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(Package, InstallOptionsPage.Options));
@@ -238,45 +301,70 @@ namespace UniGetUI.Interface.Dialogs
 
         public async void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)
         {
+            bool running = true;
             try
             {
                 if (Info?.InstallerUrl == null)
                     return;
 
-                ErrorOutput.Text = "";
+                
                 FileSavePicker savePicker = new();
                 MainWindow window = MainApp.Instance.MainWindow;
                 IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
                 savePicker.SuggestedFileName = Package.Id + " installer." + Info.InstallerUrl.ToString().Split('.')[^1];
+                
                 if (Info.InstallerUrl.ToString().Split('.')[^1] == "nupkg")
                     savePicker.FileTypeChoices.Add("Compressed Manifest File", new System.Collections.Generic.List<string>() { ".zip" });
                 savePicker.FileTypeChoices.Add("Default", new System.Collections.Generic.List<string>() { "." + Info.InstallerUrl.ToString().Split('.')[^1] });
+                
                 StorageFile file = await savePicker.PickSaveFileAsync();
                 if (file != null)
                 {
-                    DownloadInstallerButton.Content = CoreTools.Translate("Downloading");
-                    DownloadInstallerButtonProgress.Visibility = Visibility.Visible;
+                    Func<Task> loader = async () =>
+                    {
+                        List<string> texts = [
+                            "[≡≡≡≡        ]",
+                            "[  ≡≡≡≡      ]",
+                            "[    ≡≡≡≡    ]",
+                            "[      ≡≡≡≡  ]",
+                            "[        ≡≡≡≡]",
+                            "[≡≡        ≡≡]"];
+                        int i = 0;
+                        string baseString = CoreTools.Translate("Downloading installer for {package}", new Dictionary<string, object?> { { "package", Package.Name } });
+                        while (running)
+                        {
+                            DownloadInstaller_Button.Inlines.Clear();
+                            DownloadInstaller_Button.Inlines.Add(new Run() { Text = baseString + " " + texts[(i++) % 6] });
+                            await Task.Delay(500);
+                        }
+                    };
+                    _ = loader();
+                    
                     Logger.Debug($"Downloading installer ${file.Path.ToString()}");
+                    
                     using HttpClient httpClient = new();
                     await using Stream s = await httpClient.GetStreamAsync(Info.InstallerUrl);
                     await using FileStream fs = File.OpenWrite(file.Path.ToString());
                     await s.CopyToAsync(fs);
                     fs.Dispose();
+                    DownloadInstaller_Button.Inlines.Clear();
+                    DownloadInstaller_Button.Inlines.Add(new Run() { Text = CoreTools.Translate("Download installer") });
+                    running = false;
                     Logger.ImportantInfo($"Installer for {Package.Id} has been downloaded successfully");
-                    DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
-                    System.Diagnostics.Process.Start("explorer.exe", "/select," + file.Path.ToString());
-                    DownloadInstallerButton.Content = CoreTools.Translate("Download succeeded");
+                    MainApp.Instance.MainWindow.HideLoadingDialog();
+                    System.Diagnostics.Process.Start("explorer.exe", "/select," + $"\"{file.Path.ToString()}\"");
                 }
             }
             catch (Exception ex)
             {
+                running = false;
                 Logger.Error($"An error occurred while downloading the installer for the package {Package.Id}");
                 Logger.Error(ex);
-                DownloadInstallerButton.Content = CoreTools.Translate("An error occurred");
-                DownloadInstallerButtonProgress.Visibility = Visibility.Collapsed;
-                ErrorOutput.Text = ex.Message;
+
+                DownloadInstaller_Button.Inlines.Clear();
+                DownloadInstaller_Button.Inlines.Add(new Run() { Text = CoreTools.Translate("An error occurred") + ": " + ex.Message });
             }
 
 
@@ -288,47 +376,47 @@ namespace UniGetUI.Interface.Dialogs
 
         public void PackageDetailsPage_SizeChanged(object? sender = null, SizeChangedEventArgs? e = null)
         {
-            if (MainApp.Instance.MainWindow.AppWindow.Size.Width < 950)
+            if (MainApp.Instance.MainWindow.AppWindow.Size.Width < 1050)
             {
                 if (__layout_mode != LayoutMode.Normal)
                 {
                     __layout_mode = LayoutMode.Normal;
 
                     MainGrid.ColumnDefinitions.Clear();
-                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
                     Grid.SetColumn(TitlePanel, 0);
-                    Grid.SetColumn(BasicInfoPanel, 0);
+                    Grid.SetColumn(BasicInfoPanelText, 0);
                     Grid.SetColumn(ScreenshotsPanel, 0);
                     Grid.SetColumn(ActionsPanel, 0);
                     Grid.SetColumn(InstallOptionsBorder, 0);
-                    Grid.SetColumn(MoreDataStackPanel, 0);
+                    Grid.SetColumn(DetailsPanelText, 0);
 
                     MainGrid.RowDefinitions.Clear();
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
                     Grid.SetRow(TitlePanel, 0);
                     Grid.SetRow(DescriptionPanel, 1);
-                    Grid.SetRow(BasicInfoPanel, 2);
+                    Grid.SetRow(BasicInfoPanelText, 2);
                     Grid.SetRow(ActionsPanel, 3);
                     Grid.SetRow(InstallOptionsBorder, 4);
                     Grid.SetRow(ScreenshotsPanel, 5);
-                    Grid.SetRow(MoreDataStackPanel, 6);
+                    Grid.SetRow(DetailsPanelText, 6);
 
                     LeftPanel.Children.Clear();
                     RightPanel.Children.Clear();
                     MainGrid.Children.Clear();
                     MainGrid.Children.Add(TitlePanel);
                     MainGrid.Children.Add(DescriptionPanel);
-                    MainGrid.Children.Add(BasicInfoPanel);
+                    MainGrid.Children.Add(BasicInfoPanelText);
                     MainGrid.Children.Add(ScreenshotsPanel);
                     MainGrid.Children.Add(ActionsPanel);
                     MainGrid.Children.Add(InstallOptionsBorder);
-                    MainGrid.Children.Add(MoreDataStackPanel);
+                    MainGrid.Children.Add(DetailsPanelText);
                     ScreenshotsCarroussel.Height = PackageHasScreenshots ? 225 : 150;
 
                     InstallOptionsExpander.IsExpanded = false;
@@ -342,16 +430,16 @@ namespace UniGetUI.Interface.Dialogs
                     __layout_mode = LayoutMode.Wide;
 
                     MainGrid.ColumnDefinitions.Clear();
-                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star), MinWidth = 550 });
-                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star), MinWidth = 550 });
+                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
                     Grid.SetColumn(LeftPanel, 0);
                     Grid.SetColumn(RightPanel, 1);
                     Grid.SetColumn(TitlePanel, 0);
                     Grid.SetColumnSpan(TitlePanel, 1);
 
                     MainGrid.RowDefinitions.Clear();
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
                     Grid.SetRow(LeftPanel, 1);
                     Grid.SetRow(RightPanel, 0);
                     Grid.SetRow(TitlePanel, 0);
@@ -361,11 +449,11 @@ namespace UniGetUI.Interface.Dialogs
                     RightPanel.Children.Clear();
                     MainGrid.Children.Clear();
                     LeftPanel.Children.Add(DescriptionPanel);
-                    LeftPanel.Children.Add(BasicInfoPanel);
+                    LeftPanel.Children.Add(BasicInfoPanelText);
                     RightPanel.Children.Add(ScreenshotsPanel);
                     LeftPanel.Children.Add(ActionsPanel);
                     LeftPanel.Children.Add(InstallOptionsBorder);
-                    RightPanel.Children.Add(MoreDataStackPanel);
+                    RightPanel.Children.Add(DetailsPanelText);
                     ScreenshotsCarroussel.Height = PackageHasScreenshots ? 400 : 150;
 
                     InstallOptionsExpander.IsExpanded = true;

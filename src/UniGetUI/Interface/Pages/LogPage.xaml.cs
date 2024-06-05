@@ -1,25 +1,16 @@
+using ExternalLibraries.Clipboard;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
-using System;
-using System.Collections.Generic;
+using Microsoft.UI.Xaml.Media;
 using System.Diagnostics;
-using System.IO;
-using UniGetUI.Core;
 using UniGetUI.Core.Data;
-using ExternalLibraries.Clipboard;
 using UniGetUI.Core.Logging;
-using Windows.Storage;
-using Windows.Storage.Pickers;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using System.Linq;
-using Windows.UI.WebUI;
-using Microsoft.UI.Xaml.Media;
-using Windows.Media.Playback;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI;
-using CommunityToolkit.WinUI.Controls;
-using CommunityToolkit.WinUI.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -62,7 +53,7 @@ namespace UniGetUI.Interface.Pages
             {
                 if (line.Replace("\r", "").Replace("\n", "").Trim() == "")
                     continue;
-                paragraph.Inlines.Add(new Run() { Text = line.Replace("\r", "").Replace("\n", "") });
+                paragraph.Inlines.Add(new Run { Text = line.Replace("\r", "").Replace("\n", "") });
                 paragraph.Inlines.Add(new LineBreak());
             }
             LogTextBox.Blocks.Clear();
@@ -91,11 +82,11 @@ namespace UniGetUI.Interface.Pages
 
                 bool IS_DARK = MainApp.Instance.ThemeListener.CurrentTheme == ApplicationTheme.Dark;
 
-                var logs = Logger.GetLogs();
+                LogEntry[] logs = Logger.GetLogs();
                 LogTextBox.Blocks.Clear();
-                foreach (var log_entry in logs)
+                foreach (LogEntry log_entry in logs)
                 {
-                    var p = new Paragraph();
+                    Paragraph p = new();
                     if (log_entry.Content == "")
                         continue;
 
@@ -114,36 +105,36 @@ namespace UniGetUI.Interface.Pages
                     switch (log_entry.Severity)
                     {
                         case LogEntry.SeverityLevel.Debug:
-                            color = new SolidColorBrush() { Color = IS_DARK? DARK_GREY: LIGHT_GREY };
+                            color = new SolidColorBrush { Color = IS_DARK? DARK_GREY: LIGHT_GREY };
                             break;
                         case LogEntry.SeverityLevel.Info:
-                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_BLUE : LIGHT_BLUE };
+                            color = new SolidColorBrush { Color = IS_DARK ? DARK_BLUE : LIGHT_BLUE };
                             break;
                         case LogEntry.SeverityLevel.Success:
-                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE};
+                            color = new SolidColorBrush { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE};
                             break;
                         case LogEntry.SeverityLevel.Warning:
-                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW };
+                            color = new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW };
                             break;
                         case LogEntry.SeverityLevel.Error:
-                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_RED : LIGHT_RED };
+                            color = new SolidColorBrush { Color = IS_DARK ? DARK_RED : LIGHT_RED };
                             break;
                         default:
-                            color = new SolidColorBrush() { Color = IS_DARK ? DARK_GREY : LIGHT_GREY };
+                            color = new SolidColorBrush { Color = IS_DARK ? DARK_GREY : LIGHT_GREY };
                             break;
                     }
 
-                    var lines = log_entry.Content.Split('\n');
-                    var date_length = -1;
-                    foreach(var line in lines)
+                    string[] lines = log_entry.Content.Split('\n');
+                    int date_length = -1;
+                    foreach(string line in lines)
                         if (date_length == -1)
                         {
-                            p.Inlines.Add(new Run() { Text = $"[{log_entry.Time}] {line}\n", Foreground = color });
+                            p.Inlines.Add(new Run { Text = $"[{log_entry.Time}] {line}\n", Foreground = color });
                             date_length = $"[{log_entry.Time}] ".Length;
                         }
                         else
                         {
-                            p.Inlines.Add(new Run() { Text = new string(' ', date_length) + line + "\n", Foreground = color });
+                            p.Inlines.Add(new Run { Text = new string(' ', date_length) + line + "\n", Foreground = color });
                         }
                     ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
                     LogTextBox.Blocks.Add(p);

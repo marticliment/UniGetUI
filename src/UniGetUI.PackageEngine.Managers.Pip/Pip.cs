@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
-using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
@@ -49,7 +47,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         {
             List<Package> Packages = new();
 
-            var which_res = await CoreTools.Which("parse_pip_search");
+            Tuple<bool, string> which_res = await CoreTools.Which("parse_pip_search");
             string path = which_res.Item2;
             if (!which_res.Item1)
             {
@@ -113,7 +111,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return Packages.ToArray();
         }
 
-        protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             Process p = new()
             {
@@ -133,7 +131,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             string? line;
             bool DashesPassed = false;
-            List<UpgradablePackage> Packages = new();
+            List<Package> Packages = new();
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
@@ -153,7 +151,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new UpgradablePackage(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, scope: PackageScope.Global));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, scope: PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
@@ -273,7 +271,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         {
             ManagerStatus status = new();
 
-            var which_res = await CoreTools.Which("python.exe");
+            Tuple<bool, string> which_res = await CoreTools.Which("python.exe");
             status.ExecutablePath = which_res.Item2;
             status.Found = which_res.Item1;
 

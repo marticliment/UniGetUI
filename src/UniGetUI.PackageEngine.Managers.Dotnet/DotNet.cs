@@ -1,22 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Enums;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Managers;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
-using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.DotNetManager
 {
@@ -56,9 +46,9 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             };
         }
 
-        protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            var which_res = await CoreTools.Which("dotnet-tools-outdated.exe");
+            Tuple<bool, string> which_res = await CoreTools.Which("dotnet-tools-outdated.exe");
             string path = which_res.Item2;
             if (!which_res.Item1)
             {
@@ -95,7 +85,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
             string? line;
             bool DashesPassed = false;
-            List<UpgradablePackage> Packages = new();
+            List<Package> Packages = new();
             string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
@@ -115,7 +105,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                         continue;
 
-                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, PackageScope.Global));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, PackageScope.Global));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
@@ -268,7 +258,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
         {
             ManagerStatus status = new();
 
-            var which_res = await CoreTools.Which("dotnet.exe");
+            Tuple<bool, string> which_res = await CoreTools.Which("dotnet.exe");
             status.ExecutablePath = which_res.Item2;
             status.Found = which_res.Item1;
 

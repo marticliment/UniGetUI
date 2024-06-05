@@ -5,15 +5,15 @@
         [Fact]
         public void TestLogger()
         {
-            var startTime = DateTime.Now;
+            DateTime startTime = DateTime.Now;
             Logger.Info("Hello World");
             Logger.Debug("Hello World 2");
             Logger.Error("Hello World 3");
             Logger.Warn(new Exception("Test exception"));
 
-            var endTime = DateTime.Now;
+            DateTime endTime = DateTime.Now;
 
-            var logs = Logger.GetLogs();
+            LogEntry[] logs = Logger.GetLogs();
 
             Assert.Equal("Hello World", logs[0].Content);
             Assert.Equal("Hello World 2", logs[1].Content);

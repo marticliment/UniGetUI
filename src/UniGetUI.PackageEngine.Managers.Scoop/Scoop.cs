@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Enums;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core.Tools;
 using UniGetUI.Core.SettingsEngine;
-using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.ScoopManager
 {
@@ -25,6 +17,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "No" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "Matches" };
+
+        long LastScoopSourceUpdateTime = 0;
 
         public Scoop(): base()
         {
@@ -76,7 +70,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         {
             List<Package> Packages = new();
 
-            var which_res = await CoreTools.Which("scoop-search.exe");
+            Tuple<bool, string> which_res = await CoreTools.Which("scoop-search.exe");
             string path = which_res.Item2;
             if (!which_res.Item1)
             {
@@ -141,7 +135,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return Packages.ToArray();
         }
 
-        protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             Dictionary<string, Package> InstalledPackages = new();
             foreach (Package InstalledPackage in await GetInstalledPackages())
@@ -150,7 +144,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     InstalledPackages.Add(InstalledPackage.Id + "." + InstalledPackage.Version, InstalledPackage);
             }
 
-            List<UpgradablePackage> Packages = new();
+            List<Package> Packages = new();
 
             Process p = new()
             {
@@ -196,7 +190,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         continue;
                     }
 
-                    Packages.Add(new UpgradablePackage(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackages[elements[0] + "." + elements[1]].Source, this, InstalledPackages[elements[0] + "." + elements[1]].Scope));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackages[elements[0] + "." + elements[1]].Source, this, InstalledPackages[elements[0] + "." + elements[1]].Scope));
                 }
             }
             output += await p.StandardError.ReadToEndAsync();
@@ -357,11 +351,23 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         public override async Task RefreshPackageIndexes()
         {
+            if (new TimeSpan(DateTime.Now.Ticks - LastScoopSourceUpdateTime).TotalMinutes < 10)
+            {
+                Logger.Info("Scoop buckets have been already refreshed in the last ten minutes, skipping.");
+                return;
+            }
+            LastScoopSourceUpdateTime = DateTime.Now.Ticks;
             Process process = new();
             ProcessStartInfo StartInfo = new()
             {
-                FileName = Properties.ExecutableFriendlyName,
-                Arguments = Properties.ExecutableCallArgs + " update"
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " update",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
             process.StartInfo = StartInfo;
             process.Start();
@@ -390,7 +396,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             };
             process.Start();
             status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
-            status.Found = process.ExitCode == 0;
+            status.Found = (await CoreTools.Which("scoop")).Item1;
 
 
             Status = status; // Wee need this for the RunCleanup method to get the executable path

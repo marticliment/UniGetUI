@@ -154,6 +154,7 @@
                             <widgets:CheckboxCard
                                 Text="Close WingetUI to the notification area"
                                 SettingName="DisableSystemTray"
+                                StateChanged="DisableSystemTray_StateChanged"
                                 />
                             <widgets:CheckboxCard
                                 Text="Enable WingetUI notifications"
@@ -180,6 +181,8 @@
                         <Toolkit:SettingsExpander.Items>
                             <widgets:CheckboxCard
                                 Text="Periodically perform a backup of the installed packages"
+                                x:Name="EnablePackageBackupCheckBox"
+                                StateChanged="EnablePackageBackupCheckBox_StateChanged"
                                 SettingName="EnablePackageBackup"
                                 />
                             <Toolkit:SettingsCard>
@@ -194,12 +197,14 @@
                             </Toolkit:SettingsCard>
                             <widgets:CheckboxCard
                                 Text="Add a timestamp to the backup file names"
+                                x:Name="EnableBackupTimestampingCheckBox"
                                 SettingName="EnableBackupTimestamping"
                                 />
                             <widgets:TextboxCard
                                 Text="Set a custom backup file name"
                                 Placeholder="Leave empty for default"
                                 SettingName="ChangeBackupFileName"
+                                x:Name="ChangeBackupFileNameTextBox"
                                 />
                             <widgets:ButtonCard
                                 Text="Change backup output directory"
@@ -220,6 +225,7 @@
                             <widgets:ButtonCard
                                 Text="Perform a backup now"
                                 ButtonText="Backup"
+                                x:Name="BackupNowButton"
                                 Click="DoBackup_Click"
                                 />
                         </Toolkit:SettingsExpander.Items>

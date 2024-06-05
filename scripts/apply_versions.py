@@ -24,7 +24,7 @@ try:
             f.write(data)
             f.truncate()
 
-    fileReplaceLinesWith("src/UniGetUI.Core.Data/Core.cs", {
+    fileReplaceLinesWith("src/UniGetUI.Core.Data/CoreData.cs", {
         "        public static string VersionName = ": f" \"{versionName}\"; // Do not modify this line, use file scripts/apply_versions.py\n",
         "        public static double VersionNumber = ": f" {versionCode}; // Do not modify this line, use file scripts/apply_versions.py\n",
     }, encoding="utf-8-sig")

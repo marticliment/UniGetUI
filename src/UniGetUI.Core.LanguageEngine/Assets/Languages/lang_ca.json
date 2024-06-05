@@ -303,7 +303,7 @@
   "Please enter at least 3 characters" : "Escriviu com a mínim 3 caràcters",
   "Please note that certain packages might not be installable, due to the package managers that are enabled on this machine." : "Tingueu en compte que alguns paquets poden no ser instal·lables, a causa dels gestors de paquets habilitats en aquest ordinador.",
   "Please note that packages from certain sources may be not exportable. They have been greyed out and won't be exported." : "Tingueu en compte que és possible que els paquets de determinades fonts no es puguin exportar. S'han marcat en gris i no s'exportaran.",
-  "Please see the Command-line Output or refer to the Operation History for further information about the issue." : "Veieu la Sorrtida de la línia de comandes o l'Historial d'operacions per a més detalls sobre l'error.",
+  "Please see the Command-line Output or refer to the Operation History for further information about the issue." : "Veieu la Sortida de la línia de comandes o l'historial d'operacions per a més detalls sobre l'error.",
   "Please select how you want to configure WingetUI" : "Selecioneu com voleu configurar el WingetUI",
   "Please type at least two characters" : "Escriviu com a mínim dos caràcters",
   "Please wait" : "Si us plau, espereu",

@@ -1,4 +1,3 @@
-using System.Text.Json.Nodes;
 using UniGetUI.Core.Classes;
 
 namespace UniGetUI.Core.Language.Tests
@@ -36,9 +35,9 @@ namespace UniGetUI.Core.Language.Tests
 
         [Fact]
         public void TranslatedPercentageNotEmptyTests()
-        { 
-            var TranslatedPercent = LanguageData.TranslationPercentages;
-            foreach (var key in TranslatedPercent.Keys)
+        {
+            System.Collections.ObjectModel.ReadOnlyDictionary<string, string> TranslatedPercent = LanguageData.TranslationPercentages;
+            foreach (string key in TranslatedPercent.Keys)
             {
                 Assert.True(LanguageData.LanguageReference.ContainsKey(key), $"The language key {key} was not found on LanguageReference");
                 Assert.False(LanguageData.TranslationPercentages[key].Contains("404%"), $"Somehow the key {key} has no value");

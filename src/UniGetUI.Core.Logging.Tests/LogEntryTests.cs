@@ -5,19 +5,19 @@ namespace UniGetUI.Core.Logging.Tests
         [Fact]
         public async Task TestLogEntry()
         {
-            var startTime = DateTime.Now;
+            DateTime startTime = DateTime.Now;
 
             await Task.Delay(100);
 
-            var logEntry1 = new LogEntry("Hello World", LogEntry.SeverityLevel.Info);
+            LogEntry logEntry1 = new("Hello World", LogEntry.SeverityLevel.Info);
             await Task.Delay(50);
-            var logEntry2 = new LogEntry("Hello World 2", LogEntry.SeverityLevel.Debug);
+            LogEntry logEntry2 = new("Hello World 2", LogEntry.SeverityLevel.Debug);
             await Task.Delay(50);
-            var logEntry3 = new LogEntry("Hello World 3", LogEntry.SeverityLevel.Error);
+            LogEntry logEntry3 = new("Hello World 3", LogEntry.SeverityLevel.Error);
 
             await Task.Delay(100);
 
-            var endTime = DateTime.Now;
+            DateTime endTime = DateTime.Now;
 
             Assert.Equal("Hello World", logEntry1.Content);
             Assert.Equal("Hello World 2", logEntry2.Content);

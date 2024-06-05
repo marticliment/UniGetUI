@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
+﻿using System.Runtime.InteropServices;
 using System.Text.Json;
-using System.Threading.Tasks;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
@@ -63,14 +58,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
             await options.LoadOptionsFromDiskAsync();
             return options;
         }
-
-        /// <summary>
-        /// Overload of the constructor that accepts an UpgradablePackage object.
-        /// </summary>
-        /// <param name="package"></param>
-        /// <param name="reset"></param>
-        public InstallationOptions(UpgradablePackage package, bool reset = false) : this((Package)package, reset)
-        { }
 
         /// <summary>
         /// Returns a new InstallationOptions object from a given SerializableInstallationOptions_v1 and a package.
@@ -142,8 +129,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 if (optionsFile.Directory?.Exists == false)
                     optionsFile.Directory.Create();
 
-                using FileStream outputStream = optionsFile.OpenWrite();
-                JsonSerializer.Serialize(outputStream, Serialized());
+                string fileContents = JsonSerializer.Serialize(Serialized());
+                File.WriteAllText(optionsFile.FullName, fileContents);
             }
             catch (Exception ex)
             {
@@ -163,8 +150,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 if (optionsFile.Directory?.Exists == false)
                     optionsFile.Directory.Create();
 
-                await using FileStream outputStream = optionsFile.OpenWrite();
-                await JsonSerializer.SerializeAsync(outputStream, Serialized());
+                string fileContents = JsonSerializer.Serialize(Serialized());
+                await File.WriteAllTextAsync(optionsFile.FullName, fileContents);
             }
             catch (Exception ex)
             {

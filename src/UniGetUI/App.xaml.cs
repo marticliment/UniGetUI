@@ -1,38 +1,26 @@
-﻿using CommunityToolkit.WinUI.Notifications;
+﻿using CommunityToolkit.WinUI.Helpers;
+using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.Core.Data;
-using UniGetUI.Core.IconEngine;
-using UniGetUI.Interface;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Managers;
-using Windows.Foundation.Collections;
-using UniGetUI.Core.Logging;
-using UniGetUI.Core.Tools;
-using UniGetUI.Core.SettingsEngine;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.Managers.ScoopManager;
-using UniGetUI.PackageEngine.Managers.WingetManager;
-using UniGetUI.PackageEngine.Managers.ChocolateyManager;
-using UniGetUI.PackageEngine.Managers.PowerShellManager;
-using UniGetUI.PackageEngine.Managers.DotNetManager;
-using UniGetUI.PackageEngine.Managers.PipManager;
-using UniGetUI.PackageEngine.Managers.NpmManager;
 using System.Diagnostics;
 using System.Globalization;
 using System.Security.Cryptography;
-using System.Net.Http;
-using System.ComponentModel;
+using UniGetUI.Core.Data;
+using UniGetUI.Core.IconEngine;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
+using UniGetUI.Interface;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Managers.ChocolateyManager;
+using UniGetUI.PackageEngine.Managers.DotNetManager;
+using UniGetUI.PackageEngine.Managers.NpmManager;
+using UniGetUI.PackageEngine.Managers.PipManager;
+using UniGetUI.PackageEngine.Managers.PowerShellManager;
+using UniGetUI.PackageEngine.Managers.ScoopManager;
+using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.Operations;
-using System.ComponentModel.Design;
-using CommunityToolkit.WinUI.Helpers;
-using Windows.ApplicationModel.Email.DataProvider;
+using Windows.Foundation.Collections;
 
 namespace UniGetUI
 {
@@ -64,7 +52,6 @@ namespace UniGetUI
 
         public Interface.SettingsInterface settings;
         public MainWindow MainWindow;
-        public string GSudoPath;
         public ThemeListener ThemeListener;
 
 
@@ -127,24 +114,24 @@ namespace UniGetUI
 
         private async void LoadGSudo()
         {
-            var gsudo_result = await CoreTools.Which("gsudo.exe");
             if (Settings.Get("UseUserGSudo"))
             {
+                Tuple<bool, string> gsudo_result = await CoreTools.Which("gsudo.exe");
                 if (gsudo_result.Item1 != false)
                 {
                     Logger.Info($"Using System GSudo at {gsudo_result.Item2}");
-                    GSudoPath = gsudo_result.Item2;
+                    CoreData.GSudoPath = gsudo_result.Item2;
                 }
                 else
                 {
                     Logger.Error("System GSudo enabled but not found!");
-                    GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
+                    CoreData.GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
                 }
             }
             else
             {
-                GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
-                Logger.Info($"Using bundled GSudo at {GSudoPath}");
+                CoreData.GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
+                Logger.Info($"Using bundled GSudo at {CoreData.GSudoPath}");
             }
         }
 
@@ -390,7 +377,7 @@ namespace UniGetUI
                     Logger.Info("Latest version : " + LatestVersion.ToString(CultureInfo.InvariantCulture));
 
                     banner = MainWindow.UpdatesBanner;
-                    banner.Title = CoreTools.Translate("WingetUI version {0} is being downloaded.").Replace("{0}", LatestVersion.ToString(CultureInfo.InvariantCulture));
+                    banner.Title = CoreTools.Translate("WingetUI version {0} is being downloaded.", LatestVersion.ToString(CultureInfo.InvariantCulture));
                     banner.Message = CoreTools.Translate("This may take a minute or two");
                     banner.Severity = InfoBarSeverity.Informational;
                     banner.IsOpen = true;
@@ -416,7 +403,7 @@ namespace UniGetUI
                     if (Hash == InstallerHash)
                     {
 
-                        banner.Title = CoreTools.Translate("WingetUI {0} is ready to be installed.").Replace("{0}", LatestVersion.ToString(CultureInfo.InvariantCulture));
+                        banner.Title = CoreTools.Translate("WingetUI {0} is ready to be installed.", LatestVersion.ToString(CultureInfo.InvariantCulture));
                         banner.Message = CoreTools.Translate("The update will be installed upon closing WingetUI");
                         banner.ActionButton = new Button();
                         banner.ActionButton.Content = CoreTools.Translate("Update now");

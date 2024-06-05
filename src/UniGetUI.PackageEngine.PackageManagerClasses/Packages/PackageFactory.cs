@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
+﻿using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Classes.Packages
@@ -61,7 +56,7 @@ namespace UniGetUI.PackageEngine.Classes.Packages
             if (!__available_packages.ContainsKey(p.Manager))
                 return null;
 
-            foreach (var package in __available_packages[p.Manager].Values)
+            foreach (Package package in __available_packages[p.Manager].Values)
                 if (p.Equals(package))
                     return package;
 
@@ -73,7 +68,7 @@ namespace UniGetUI.PackageEngine.Classes.Packages
             if (!__upgradable_packages.ContainsKey(p.Manager))
                 return null;
 
-            foreach (var package in __upgradable_packages[p.Manager].Values)
+            foreach (Package package in __upgradable_packages[p.Manager].Values)
                 if (p.Equals(package))
                     return package;
 
@@ -85,7 +80,7 @@ namespace UniGetUI.PackageEngine.Classes.Packages
             if(!__installed_packages.ContainsKey(p.Manager))
                 return null;
 
-            foreach (var package in __installed_packages[p.Manager].Values)
+            foreach (Package package in __installed_packages[p.Manager].Values)
                 if (p.Equals(package))
                     return package;
 

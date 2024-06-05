@@ -62,7 +62,7 @@ namespace UniGetUI.Core.Language
                     LangFileToLoad = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
                 }
 
-                var __LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject)?.ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
+                Dictionary<string, string>? __LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject)?.ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
 
                 if (__LangDict != null)
                     LangDict = __LangDict;
@@ -88,11 +88,11 @@ namespace UniGetUI.Core.Language
         /// <param name="LangKey">The Id of the language to download</param>
         /// <param name="UseOldUrl">Use the new or the old Url (should not be used manually)</param>
         /// <returns></returns>
-        public async Task DownloadUpdatedLanguageFile(string LangKey, bool UseOldUrl = false)
+        public async Task DownloadUpdatedLanguageFile(string LangKey)
         {
             try
             {
-                Uri NewFile = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/src/" + (UseOldUrl ? "wingetui" : "UniGetUI") + "/Assets/Languages/lang_" + LangKey + ".json");
+                Uri NewFile = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/src/UniGetUI.Core.LanguageEngine/Assets/Languages/lang_" + LangKey + ".json");
 
                 HttpClient client = new();
                 string fileContents = await client.GetStringAsync(NewFile);
@@ -106,13 +106,8 @@ namespace UniGetUI.Core.Language
             }
             catch (Exception e)
             {
-                if (e is HttpRequestException && !UseOldUrl)
-                    await DownloadUpdatedLanguageFile(LangKey, true);
-                else
-                {
-                    Logger.Warn("Could not download updated translations from GitHub");
-                    Logger.Warn(e);
-                }
+                Logger.Warn("Could not download updated translations from GitHub");
+                Logger.Warn(e);
             }
         }
 

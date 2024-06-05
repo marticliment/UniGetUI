@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Jeffijoe.MessageFormat;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net;
@@ -12,7 +12,7 @@ namespace UniGetUI.Core.Tools
     public static class CoreTools
     {
 
-        public static readonly HttpClientHandler HttpClientConfig = new HttpClientHandler()
+        public static readonly HttpClientHandler HttpClientConfig = new()
         {
             AutomaticDecompression = DecompressionMethods.All
         };
@@ -24,10 +24,24 @@ namespace UniGetUI.Core.Tools
         /// </summary>
         /// <param name="text">The string to translate</param>
         /// <returns>The translated string if available, the original string otherwise</returns>
-        public static string Translate(string text)
-        {
+        public static string Translate(string text) {
             if(LanguageEngine == null) LanguageEngine = new LanguageEngine();
             return LanguageEngine.Translate(text);
+        }
+
+        public static string Translate(string text, Dictionary<string, object?> dict)
+        {
+            return MessageFormatter.Format(Translate(text), dict);
+        }
+
+        public static string Translate(string text, params object[] values)
+        {
+            Dictionary<string, object?> dict = new();
+            foreach ((object item, int index) in values.Select((item, index) => (item, index)))
+            {
+                dict.Add(index.ToString(), item);
+            }
+            return MessageFormatter.Format(Translate(text), dict);
         }
 
         public static void ReloadLanguageEngineInstance(string ForceLanguage = "")
@@ -63,6 +77,8 @@ namespace UniGetUI.Core.Tools
         /// <returns>A tuple containing: a boolean hat represents wether the path was found or not; the path to the file if found.</returns>
         public static async Task<Tuple<bool, string>> Which(string command)
         {
+            command = command.Replace(";", "").Replace("&", "").Trim();
+            Logger.Debug($"Begin \"which\" search for command {command}");
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo()
@@ -85,9 +101,15 @@ namespace UniGetUI.Core.Tools
                 output = line.Trim();
             await process.WaitForExitAsync();
             if (process.ExitCode != 0 || output == "")
+            {
+                Logger.ImportantInfo($"Command {command} was not found on the system");
                 return new Tuple<bool, string>(false, "");
+            }
             else
+            {
+                Logger.Debug($"Command {command} was found on {output}");
                 return new Tuple<bool, string>(File.Exists(output), output);
+            }
         }
 
         /// <summary>
@@ -156,10 +178,9 @@ Crash Traceback:
             using System.Diagnostics.Process cmd = new();
             cmd.StartInfo.FileName = "cmd.exe";
             cmd.StartInfo.RedirectStandardInput = true;
-            cmd.StartInfo.RedirectStandardOutput = false;
+            cmd.StartInfo.RedirectStandardOutput = true;
             cmd.StartInfo.CreateNoWindow = true;
             cmd.StartInfo.UseShellExecute = false;
-            cmd.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
             cmd.Start();
             cmd.StandardInput.WriteLine("start " + ErrorBody);
             cmd.StandardInput.WriteLine("exit");
@@ -242,6 +263,11 @@ Crash Traceback:
             return 0;
         }
 
+        /// <summary>
+        /// Converts a string into a double floating-point number.
+        /// </summary>
+        /// <param name="Version">Any string</param>
+        /// <returns>The best approximation of the string as a Version</returns>
         public static double GetVersionStringAsFloat(string Version)
         {
             try
@@ -265,7 +291,7 @@ Crash Traceback:
                 if (_ver != "" && _ver != ".")
                     try
                     {
-                        var val = double.Parse(_ver, CultureInfo.InvariantCulture);
+                        double val = double.Parse(_ver, CultureInfo.InvariantCulture);
                         return val;
                     }
                     catch { }
@@ -292,9 +318,75 @@ Crash Traceback:
                         .Replace("<", string.Empty)
                         .Replace("%", string.Empty)
                         .Replace("\"", string.Empty)
+                        .Replace("~", string.Empty)
+                        .Replace("?", string.Empty)
+                        .Replace("/", string.Empty)
                         .Replace("'", string.Empty)
                         .Replace("\\", string.Empty)
                         .Replace("`", string.Empty);
+        }
+
+        /// <summary>
+        /// Returns null if the string is empty
+        /// </summary>
+        /// <param name="value">The string to check</param>
+        /// <returns>a string? instance</returns>
+        public static string? GetStringOrNull(string? value)
+        {
+            if (value == "") return null;
+            return value;
+        }
+
+        /// <summary>
+        /// Returns a new Uri if the string is not empty. Returns null otherwhise
+        /// </summary>
+        /// <param name="url">The null, empty or valid string</param>
+        /// <returns>an Uri? instance</returns>
+        public static Uri? GetUriOrNull(string? url)
+        {
+            if (url == "" || url == null) return null;
+            return new Uri(url);
+        }
+
+        /// <summary>
+        /// Enables GSudo cache for the current process
+        /// </summary>
+        public static async Task CacheUACForCurrentProcess()
+        {
+            Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+            Process p = new();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = CoreData.GSudoPath,
+                Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8,
+            };  
+            p.Start();
+            await p.WaitForExitAsync();
+        }
+
+        public static async Task ResetUACForCurrentProcess()
+        {
+            Logger.Info("Resetting administrator rights cache for process id " + Process.GetCurrentProcess().Id);
+            Process p = new();
+            p.StartInfo = new ProcessStartInfo()
+            {
+                FileName = CoreData.GSudoPath,
+                Arguments = "cache off --pid " + Process.GetCurrentProcess().Id,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8,
+            };
+            p.Start();
+            await p.WaitForExitAsync();
         }
     }
 }

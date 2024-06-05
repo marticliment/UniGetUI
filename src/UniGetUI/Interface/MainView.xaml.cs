@@ -3,25 +3,17 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Media.Imaging;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using UniGetUI.Core;
+using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Pages;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.Core.Logging;
-using Windows.UI.Core;
-using UniGetUI.Core.SettingsEngine;
-using UniGetUI.PackageEngine.PackageClasses;
-using System.Reflection.Emit;
-using UniGetUI.PackageEngine.Enums;
-using UniGetUI.Core.Tools;
 using UniGetUI.Interface.SoftwarePages;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.PackageClasses;
+using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -102,7 +94,7 @@ namespace UniGetUI.Interface
             {
                 if (e.Key == Windows.System.VirtualKey.Tab && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                 {
-                    if(CurrentPage != null)
+                    if (CurrentPage != null)
                         if (!InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
                         {
                             if (NextPageReference.ContainsKey(CurrentPage))
@@ -148,8 +140,8 @@ namespace UniGetUI.Interface
                 button.ToggleButton.IsChecked = false;
             MoreNavButton.ToggleButton.IsChecked = true;
 
-            (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
-            MoreNavButtonMenu.ShowAt(MoreNavButton, new FlyoutShowOptions() { ShowMode = FlyoutShowMode.Standard });
+            (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
+            MoreNavButtonMenu.ShowAt(MoreNavButton, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Standard });
 
             MoreNavButtonMenu.Closed += (s, e) =>
             {
@@ -166,7 +158,7 @@ namespace UniGetUI.Interface
         private async void AboutNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
         {
             ContentDialog? AboutDialog = new();
-            var AboutPage = new AboutUniGetUI();
+            AboutUniGetUI AboutPage = new();
             AboutDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             AboutDialog.XamlRoot = XamlRoot;
             AboutDialog.Resources["ContentDialogMaxWidth"] = 1200;
@@ -196,7 +188,7 @@ namespace UniGetUI.Interface
             UpdatesDialog.PrimaryButtonText = CoreTools.Translate("Reset");
             UpdatesDialog.DefaultButton = ContentDialogButton.Secondary;
             UpdatesDialog.Title = CoreTools.Translate("Manage ignored updates");
-            var IgnoredUpdatesPage = new IgnoredUpdatesManager();
+            IgnoredUpdatesManager IgnoredUpdatesPage = new();
             UpdatesDialog.PrimaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
             UpdatesDialog.Content = IgnoredUpdatesPage;
             IgnoredUpdatesPage.Close += (s, e) => { UpdatesDialog.Hide(); };
@@ -208,6 +200,101 @@ namespace UniGetUI.Interface
             UpdatesDialog = null;
         }
 
+        public async Task<ContentDialogResult> ShowOperationFailedDialog(
+            IEnumerable<string> processOutput, 
+            string dialogTitle, 
+            string shortDescription)
+        {
+            ContentDialog dialog = new();
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.XamlRoot = XamlRoot;
+            dialog.Resources["ContentDialogMaxWidth"] = 850;
+            dialog.Resources["ContentDialogMaxHeight"] = 800;
+            dialog.Title = dialogTitle;
+
+            Grid grid = new() { 
+                RowSpacing = 16,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+            };
+
+            grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+
+            TextBlock headerContent = new()
+            {
+                TextWrapping = TextWrapping.WrapWholeWords,
+                Text = $"{shortDescription}. "
+                        + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.")
+            };
+
+            StackPanel HeaderPanel = new() { 
+                Orientation = Orientation.Horizontal, 
+                Spacing = 8 
+            };
+            
+            HeaderPanel.Children.Add(new LocalIcon("console") { 
+                VerticalAlignment = VerticalAlignment.Center, 
+                Height = 24, 
+                Width = 24, 
+                HorizontalAlignment = HorizontalAlignment.Left 
+            });
+            
+            HeaderPanel.Children.Add(new TextBlock { 
+                Text = CoreTools.Translate("Command-line Output"), 
+                HorizontalAlignment = HorizontalAlignment.Center, 
+                VerticalAlignment = VerticalAlignment.Center 
+            });
+
+
+            RichTextBlock CommandLineOutput = new() { 
+                FontFamily = new FontFamily("Consolas"), 
+                TextWrapping = TextWrapping.Wrap,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+            };
+
+            ScrollViewer ScrollView = new() {
+                BorderBrush = new SolidColorBrush(),
+                Content = CommandLineOutput,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+            };
+
+            Grid OutputGrid = new();
+            OutputGrid.Children.Add(ScrollView);
+            OutputGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            OutputGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+            Grid.SetColumn(ScrollView, 0);
+            Grid.SetRow(ScrollView, 0);
+
+            Expander expander = new()
+            {
+                Header = HeaderPanel,
+                Content = OutputGrid,
+                CornerRadius = new CornerRadius(8),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+            };
+
+            Paragraph par = new();
+            foreach (string line in processOutput)
+                par.Inlines.Add(new Run { Text = line + "\x0a" });
+            CommandLineOutput.Blocks.Add(par);
+            
+            grid.Children.Add(headerContent);
+            grid.Children.Add(expander);
+            Grid.SetRow(headerContent, 0);
+            Grid.SetRow(expander, 1);
+
+            dialog.Content = grid;
+            dialog.PrimaryButtonText = CoreTools.Translate("Retry");
+            dialog.CloseButtonText = CoreTools.Translate("Close");
+            dialog.DefaultButton = ContentDialogButton.Primary;
+
+            return await MainApp.Instance.MainWindow.ShowDialogAsync(dialog);
+        }
+        
         public async void WarnAboutAdminRights()
         {
             ContentDialog AdminDialog = new();
@@ -246,7 +333,7 @@ namespace UniGetUI.Interface
                 OptionsDialog.SecondaryButtonText = "";
             OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
-            OptionsDialog.Title = CoreTools.Translate("{0} installation options").Replace("{0}", package.Name);
+            OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
             OptionsDialog.Content = OptionsPage;
             OptionsPage.Close += (s, e) => { OptionsDialog.Hide(); };
 
@@ -272,7 +359,7 @@ namespace UniGetUI.Interface
             OptionsDialog.SecondaryButtonText = "";
             OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
-            OptionsDialog.Title = CoreTools.Translate("{0} installation options").Replace("{0}", package.Name);
+            OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
             OptionsDialog.Content = OptionsPage;
             OptionsPage.Close += (s, e) => { OptionsDialog.Hide(); };
 
@@ -385,7 +472,6 @@ namespace UniGetUI.Interface
         {
             NavigateToPage(new Logger_LogPage(Logger_LogType.UniGetUILog));
         }
-
 
         private void HelpMenu_Click(object sender, RoutedEventArgs e)
         {

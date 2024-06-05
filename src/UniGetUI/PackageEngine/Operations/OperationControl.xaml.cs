@@ -1,23 +1,17 @@
+using ExternalLibraries.Clipboard;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.Core.Data;
-using UniGetUI.Interface.Enums;
 using UniGetUI.Core.Logging;
-using ExternalLibraries.Clipboard;
 using UniGetUI.Core.SettingsEngine;
-using UniGetUI.PackageEngine.Enums;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.Enums;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -63,7 +57,7 @@ namespace UniGetUI.PackageEngine.Operations
                     Grid.SetColumnSpan(ProgressIndicator, 4);
                     Grid.SetRow(ProgressIndicator, 1);
                     if (MainGrid.RowDefinitions.Count < 2)
-                        MainGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+                        MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
                 }
                 else
                 {
@@ -175,8 +169,11 @@ namespace UniGetUI.PackageEngine.Operations
                 }
             }
         }
-        public AbstractOperation()
+        protected bool IGNORE_PARALLEL_OPERATION_SETTINGS = false;
+        public AbstractOperation(bool IgnoreParallelInstalls = false)
         {
+            IGNORE_PARALLEL_OPERATION_SETTINGS = IgnoreParallelInstalls;
+
             InitializeComponent();
 
             OutputDialog = new ContentDialog();
@@ -221,7 +218,7 @@ namespace UniGetUI.PackageEngine.Operations
                 foreach (string line in ProcessOutput)
                 {
                     if (line.Contains("  | "))
-                        p.Inlines.Add(new Run() { Text = line.Replace(" | ", "").Trim() + "\x0a" });
+                        p.Inlines.Add(new Run { Text = line.Replace(" | ", "").Trim() + "\x0a" });
                 }
                 LiveOutputTextBlock.Blocks.Add(p);
                 await Task.Delay(100);
@@ -248,11 +245,11 @@ namespace UniGetUI.PackageEngine.Operations
                 if (Status != OperationStatus.Failed)
                 {
                     if (line.Contains("  | "))
-                        p.Inlines.Add(new Run() { Text = line.Replace(" | ", "").Trim() + "\x0a" });
+                        p.Inlines.Add(new Run { Text = line.Replace(" | ", "").Trim() + "\x0a" });
                 }
                 else
                 {
-                    p.Inlines.Add(new Run() { Text = line + "\x0a" });
+                    p.Inlines.Add(new Run { Text = line + "\x0a" });
                 }
             }
             LiveOutputTextBlock.Blocks.Add(p);
@@ -326,7 +323,7 @@ namespace UniGetUI.PackageEngine.Operations
                 currentIndex = MainApp.Instance.OperationQueue.IndexOf(this);
                 if (currentIndex != oldIndex)
                 {
-                    LineInfoText = CoreTools.Translate("Operation on queue (position {0})...").Replace("{0}", currentIndex.ToString());
+                    LineInfoText = CoreTools.Translate("Operation on queue (position {0})...", currentIndex);
                     oldIndex = currentIndex;
                 }
                 await Task.Delay(100);
@@ -361,7 +358,7 @@ namespace UniGetUI.PackageEngine.Operations
                 startInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
                 startInfo.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-                Process = BuildProcessInstance(startInfo);
+                Process = await BuildProcessInstance(startInfo);
 
                 foreach (string infoLine in GenerateProcessLogHeader())
                     ProcessOutput.Add(infoLine);
@@ -435,12 +432,7 @@ namespace UniGetUI.PackageEngine.Operations
                         if (MainApp.Instance.OperationQueue.Count == 0)
                             if (Settings.Get("DoCacheAdminRightsForBatches"))
                             {
-                                Logger.Debug("Erasing admin rights");
-                                Process p = new();
-                                p.StartInfo.FileName = MainApp.Instance.GSudoPath;
-                                p.StartInfo.Arguments = "cache off";
-                                p.Start();
-                                p.WaitForExit();
+                                await CoreTools.ResetUACForCurrentProcess();
                             }
                         await Task.Delay(5000);
                         if (!Settings.Get("MaintainSuccessfulInstalls"))
@@ -451,12 +443,7 @@ namespace UniGetUI.PackageEngine.Operations
                         if (MainApp.Instance.OperationQueue.Count == 0)
                             if (Settings.Get("DoCacheAdminRightsForBatches"))
                             {
-                                Logger.Debug("Erasing admin rights");
-                                Process p = new();
-                                p.StartInfo.FileName = MainApp.Instance.GSudoPath;
-                                p.StartInfo.Arguments = "cache off";
-                                p.Start();
-                                p.WaitForExit();
+                                await CoreTools.ResetUACForCurrentProcess();
                             }
                         break;
 
@@ -509,7 +496,7 @@ namespace UniGetUI.PackageEngine.Operations
         }
 
         protected abstract void Initialize();
-        protected abstract Process BuildProcessInstance(ProcessStartInfo startInfo);
+        protected abstract Task<Process> BuildProcessInstance(ProcessStartInfo startInfo);
         protected abstract OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output);
         protected abstract Task<AfterFinshAction> HandleFailure();
         protected abstract Task<AfterFinshAction> HandleSuccess();

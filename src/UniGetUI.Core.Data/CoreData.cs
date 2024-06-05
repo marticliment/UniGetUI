@@ -1,15 +1,11 @@
-﻿using System.Linq.Expressions;
-using System.Reflection.Metadata.Ecma335;
-using UniGetUI.Core.Logging;
-using Windows.Storage.Search;
-using Windows.System.Diagnostics;
+﻿using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Data
 {
     public static class CoreData
     {
-        public static string VersionName =  "3.1.0-alpha0"; // Do not modify this line, use file scripts/apply_versions.py
-        public static double VersionNumber =  3.099; // Do not modify this line, use file scripts/apply_versions.py
+        public static string VersionName =  "3.1.0-alpha1"; // Do not modify this line, use file scripts/apply_versions.py
+        public static double VersionNumber =  3.0991; // Do not modify this line, use file scripts/apply_versions.py
 
         /// <summary>
         /// The directory where all the user data is stored. The directory is automatically created if it does not exist.
@@ -31,7 +27,7 @@ namespace UniGetUI.Core.Data
         {
             get
             {
-                var path = Path.Join(UniGetUIDataDirectory, "InstallationOptions");
+                string path = Path.Join(UniGetUIDataDirectory, "InstallationOptions");
                 if(!Directory.Exists(path)) Directory.CreateDirectory(path);
                 return path;
             }
@@ -155,6 +151,8 @@ namespace UniGetUI.Core.Data
                 return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UiGetUI", "UniGetUI.exe");
             }
         }
+
+        public static string GSudoPath = "";
 
 
         /// <summary>

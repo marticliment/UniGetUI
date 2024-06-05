@@ -1,12 +1,6 @@
 ﻿using Nancy;
 using Nancy.Hosting.Self;
-using System;
-using System.Drawing;
-using System.Text;
-using System.Threading.Tasks;
-using UniGetUI.Core;
 using UniGetUI.Core.Data;
-using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -54,7 +48,7 @@ namespace UniGetUI.Interface
                 NancyHost host;
                 try
                 {
-                    host = new NancyHost(new HostConfiguration() { RewriteLocalhost = false, }, new Uri("http://localhost:7058/"));
+                    host = new NancyHost(new HostConfiguration { RewriteLocalhost = false, }, new Uri("http://localhost:7058/"));
                     host.Start();
                 }
                 catch

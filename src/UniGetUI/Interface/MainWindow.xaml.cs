@@ -7,42 +7,61 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Threading.Tasks;
-using UniGetUI.Core;
+using System.Runtime.InteropServices;
 using UniGetUI.Core.Data;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using Windows.ApplicationModel.DataTransfer;
 using UniGetUI.Core.Logging;
-using Windows.Foundation.Collections;
 using UniGetUI.Core.SettingsEngine;
-using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Core.Tools;
-
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.PackageClasses;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation.Collections;
 
 namespace UniGetUI.Interface
 {
     public sealed partial class MainWindow : Window
     {
-        [System.Runtime.InteropServices.ComImport]
-        [System.Runtime.InteropServices.Guid("3A3DCD6C-3EAB-43DC-BCDE-45671CE800C8")]
-        [System.Runtime.InteropServices.InterfaceType(
-            System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)]
+        /* BEGIN INTEROP STUFF */
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)] static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [ComImport]
+        [Guid("3A3DCD6C-3EAB-43DC-BCDE-45671CE800C8")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         interface IDataTransferManagerInterop
         {
-            IntPtr GetForWindow([System.Runtime.InteropServices.In] IntPtr appWindow,
-                [System.Runtime.InteropServices.In] ref Guid riid);
+            IntPtr GetForWindow([In] IntPtr appWindow, [In] ref Guid riid);
             void ShowShareUIForWindow(IntPtr appWindow);
         }
+        static readonly Guid _dtm_iid = new(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
+        public const int MONITORINFOF_PRIMARY = 0x00000001;
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MONITORINFO
+        {
+            public int cbSize;
+            public RECT rcMonitor;
+            public RECT rcWork;
+            public uint dwFlags;
+        }
+        public delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
+        [DllImport("user32.dll")]
+        public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
+        [DllImport("user32.dll")]
+        public static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+        /* END INTEROP STUFF */
 
         TaskbarIcon? TrayIcon;
 
-        static readonly Guid _dtm_iid =
-            new(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
 
         public MainView NavigationPage;
         public Grid ContentRoot;
@@ -63,7 +82,10 @@ namespace UniGetUI.Interface
             SetTitleBar(__content_root);
             ContentRoot = __content_root;
             ApplyTheme();
+            RestoreSize();
 
+            SizeChanged += (s, e) => { SaveGeometry(); };
+    
             AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
             if (CoreTools.IsAdministrator())
             {
@@ -74,7 +96,7 @@ namespace UniGetUI.Interface
             LoadingSthDalog = new ContentDialog();
             LoadingSthDalog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             LoadingSthDalog.Title = CoreTools.Translate("Please wait");
-            LoadingSthDalog.Content = new ProgressBar() { IsIndeterminate = true, Width = 300 };
+            LoadingSthDalog.Content = new ProgressBar { IsIndeterminate = true, Width = 300 };
         }
 #pragma warning restore CS8618
         public void HandleNotificationActivation(ToastArguments args, ValueSet input)
@@ -107,6 +129,7 @@ namespace UniGetUI.Interface
         /// <param name="args"></param>
         public async void HandleClosingEvent(AppWindow sender, AppWindowClosingEventArgs args)
         {
+            SaveGeometry();
             if (!Settings.Get("DisableSystemTray"))
             {
                 args.Cancel = true;
@@ -144,6 +167,7 @@ namespace UniGetUI.Interface
 
         public new void Activate()
         {
+            SetForegroundWindow(GetWindowHandle());
             if (NavigationPage != null && NavigationPage.InstalledPage != null)
                 _ = NavigationPage.InstalledPage.LoadPackages();
 
@@ -199,20 +223,20 @@ namespace UniGetUI.Interface
             DiscoverPackages.ExecuteRequested += (s, e) => { NavigationPage.DiscoverNavButton.ForceClick(); Activate(); };
             AvailableUpdates.ExecuteRequested += (s, e) => { NavigationPage.UpdatesNavButton.ForceClick(); Activate(); };
             InstalledPackages.ExecuteRequested += (s, e) => { NavigationPage.InstalledNavButton.ForceClick(); Activate(); };
-            AboutUniGetUI.Label = CoreTools.Translate("WingetUI Version {0}").Replace("{0}", CoreData.VersionName);
+            AboutUniGetUI.Label = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
             ShowUniGetUI.ExecuteRequested += (s, e) => { Activate(); };
             QuitUniGetUI.ExecuteRequested += (s, e) => { MainApp.Instance.DisposeAndQuit(); };
 
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = DiscoverPackages });
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = AvailableUpdates });
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = InstalledPackages });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = DiscoverPackages });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = AvailableUpdates });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = InstalledPackages });
             TrayMenu.Items.Add(new MenuFlyoutSeparator());
             MenuFlyoutItem _about = new() { Command = AboutUniGetUI };
             _about.IsEnabled = false;
             TrayMenu.Items.Add(_about);
             TrayMenu.Items.Add(new MenuFlyoutSeparator());
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = ShowUniGetUI });
-            TrayMenu.Items.Add(new MenuFlyoutItem() { Command = QuitUniGetUI });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = ShowUniGetUI });
+            TrayMenu.Items.Add(new MenuFlyoutItem { Command = QuitUniGetUI });
 
 
             TrayMenu.AreOpenCloseAnimationsEnabled = false;
@@ -234,6 +258,7 @@ namespace UniGetUI.Interface
             TrayIcon.ContextFlyout = TrayMenu;
             UpdateSystemTrayStatus();
         }
+
 
         public void UpdateSystemTrayStatus()
         {
@@ -261,7 +286,7 @@ namespace UniGetUI.Interface
                 if (MainApp.Instance.TooltipStatus.AvailableUpdates == 1)
                     tooltip = CoreTools.Translate("1 update is available") + " - " + Title;
                 else
-                    tooltip = CoreTools.Translate("{0} updates are available").Replace("{0}", MainApp.Instance.TooltipStatus.AvailableUpdates.ToString()) + " - " + Title;
+                    tooltip = CoreTools.Translate("{0} updates are available", MainApp.Instance.TooltipStatus.AvailableUpdates) + " - " + Title;
             }
             if(TrayIcon == null)
             {
@@ -289,7 +314,12 @@ namespace UniGetUI.Interface
 
             string FullIconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "\\Assets\\Images\\tray" + modifier + ".ico");
 
-            TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage() { UriSource = new Uri(FullIconPath) });
+            TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage { UriSource = new Uri(FullIconPath) });
+
+            if(Settings.Get("DisableSystemTray"))
+                TrayIcon.Visibility = Visibility.Collapsed;
+            else
+                TrayIcon.Visibility = Visibility.Visible;
         }
 
 
@@ -344,9 +374,6 @@ namespace UniGetUI.Interface
             {
                 Logger.Info("Taskbar foreground color customization is not available");
             }
-
-
-
         }
 
         public void ShowLoadingDialog(string text)
@@ -448,6 +475,104 @@ namespace UniGetUI.Interface
             OutAnimation_Text.Start();
             OutAnimation_Border.Start();
             await Task.Delay(400);
+        }
+
+        private async void SaveGeometry()
+        {
+            int old_width = AppWindow.Size.Width;
+            int old_height = AppWindow.Size.Height;
+            await Task.Delay(100);
+
+            if (old_height != AppWindow.Size.Height || old_width != AppWindow.Size.Width) 
+                return;
+
+            int windowState = 0;
+            if (AppWindow.Presenter is OverlappedPresenter presenter)
+            {
+                if (presenter.State == OverlappedPresenterState.Maximized) windowState = 1;
+            }
+            else Logger.Warn("MainWindow.AppWindow.Presenter is not OverlappedPresenter presenter!");
+
+            string geometry = $"{AppWindow.Position.X},{AppWindow.Position.Y},{AppWindow.Size.Width},{AppWindow.Size.Height},{windowState}";
+            
+            Logger.Debug($"Saving window geometry {geometry}");
+            Settings.SetValue("WindowGeometry", geometry);
+        }
+
+        private void RestoreSize()
+        {
+
+            string geometry = Settings.GetValue("WindowGeometry");
+            string[] items = geometry.Split(",");
+            if (items.Length != 5)
+            {
+                Logger.Warn($"The restored geometry did not have exactly 5 items (found length was {items.Length})");
+                return;
+            }
+            int X, Y, Width, Height, State;
+            try
+            {
+                X = int.Parse(items[0]);
+                Y = int.Parse(items[1]);
+                Width = int.Parse(items[2]);
+                Height = int.Parse(items[3]);
+                State = int.Parse(items[4]);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Could not parse window geometry integers");
+                Logger.Error(ex);
+                return;
+            }
+
+            if (IsRectangleFullyVisible(X, Y, Width, Height))
+            {
+                AppWindow.Resize(new Windows.Graphics.SizeInt32(Width, Height));
+                AppWindow.Move(new Windows.Graphics.PointInt32(X, Y));
+            } 
+            else
+            {
+                Logger.Warn("Restored geometry was outside of desktop bounds");
+            }
+            
+            if(State == 1)
+            {
+                if (AppWindow.Presenter is OverlappedPresenter presenter) presenter.Maximize();
+                else Logger.Warn("MainWindow.AppWindow.Presenter is not OverlappedPresenter presenter!");
+            }
+        }
+        private bool IsRectangleFullyVisible(int x, int y, int width, int height)
+        {
+            List<MONITORINFO> monitorInfos = new();
+
+            MonitorEnumDelegate callback = (IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData) =>
+            {
+                MONITORINFO monitorInfo = new();
+                monitorInfo.cbSize = Marshal.SizeOf(typeof(MONITORINFO));
+                if (GetMonitorInfo(hMonitor, ref monitorInfo)) monitorInfos.Add(monitorInfo);
+                return true;
+            };
+
+            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, callback, IntPtr.Zero);
+
+            int minX = int.MaxValue;
+            int minY = int.MaxValue;
+            int maxX = int.MinValue;
+            int maxY = int.MinValue;
+
+            foreach (MONITORINFO monitorInfo in monitorInfos)
+            {
+                if (monitorInfo.rcMonitor.Left < minX) minX = monitorInfo.rcMonitor.Left;
+                if (monitorInfo.rcMonitor.Top < minY) minY = monitorInfo.rcMonitor.Top;
+                if (monitorInfo.rcMonitor.Right > maxX) maxX = monitorInfo.rcMonitor.Right;
+                if (monitorInfo.rcMonitor.Bottom > maxY) maxY = monitorInfo.rcMonitor.Bottom;
+            }
+
+            if (x + 10 < minX || x + width - 10 > maxX 
+             || y + 10 < minY || y + height - 10 > maxY)
+                return false;
+            else
+                return true;
         }
     }
 }

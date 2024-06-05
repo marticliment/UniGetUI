@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11703,
-        "done": 5047,
-        "packages_with_icon": 5047,
-        "packages_with_screenshot": 554,
-        "total_screenshots": 1734
+        "total": 11706,
+        "done": 5051,
+        "packages_with_icon": 5051,
+        "packages_with_screenshot": 556,
+        "total_screenshots": 1739
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -10794,7 +10794,7 @@
         "docker": {
             "icon": "https://www.docker.com/wp-content/uploads/2022/03/Docker-Logo-White-RGB_Vertical.png",
             "images": [
-                "https://www.docker.com/company/newsroom/media-resources/"
+                "https://i.postimg.cc/6qqkjsDF/Docker-Desktop.png"
             ]
         },
         "docker-cli": {
@@ -10806,15 +10806,21 @@
             "images": []
         },
         "docker-desktop": {
-            "icon": "https://community.chocolatey.org/content/packageimages/docker-desktop.4.17.0.png",
+            "icon": "https://www.docker.com/wp-content/uploads/2022/03/Docker-Logo-White-RGB_Vertical.png",
             "images": []
+        },
+        "docker-dockerdesktop": {
+            "icon": "https://www.docker.com/wp-content/uploads/2022/03/Docker-Logo-White-RGB_Vertical.png",
+            "images": [
+                "https://i.postimg.cc/6qqkjsDF/Docker-Desktop.png"
+            ]
         },
         "docker-engine": {
             "icon": "https://community.chocolatey.org/content/packageimages/docker-engine.23.0.1.png",
             "images": []
         },
         "docker-for-windows": {
-            "icon": "https://community.chocolatey.org/content/packageimages/docker-for-windows.99.0.0.0.png",
+            "icon": "https://www.docker.com/wp-content/uploads/2022/03/Docker-Logo-White-RGB_Vertical.png",
             "images": []
         },
         "docker-kitematic": {
@@ -16864,9 +16870,9 @@
         "googledrive": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Drive_icon_%282020%29.svg/1200px-Google_Drive_icon_%282020%29.svg.png",
             "images": [
-                "https://fileinfo.com/img/sw/ss/lg/google_drive_357.png",
-                "https://ankurm.com/wp-content/uploads/2012/04/Google-Drive-Screenshot.png",
-                "https://media.gcflearnfree.org/ctassets/topics/194/2015_download_rightclick.png"
+                "https://lh3.googleusercontent.com/0-LdzZVF15tdJN0nBgDsQ8XmvRbx7p-qvKpA8qNhhjcNI1vFDPJOwqFq_zJFACDoV0qXUta1zCnNb9PSlKiJ627-gdtCm66-PcV-yBv6po1ozXvcLtls=s0",
+                "https://i.postimg.cc/Kvy003sY/Rs5-Sqif-Imgur.png",
+                "https://i.postimg.cc/4NZ16km7/image.png"
             ]
         },
         "googleearth": {
@@ -18590,11 +18596,15 @@
             "images": []
         },
         "hugo": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/zf0bKK5p/image.png",
             "images": []
         },
         "hugo-extended": {
-            "icon": "https://community.chocolatey.org/content/packageimages/hugo-extended.0.110.0.png",
+            "icon": "https://i.postimg.cc/zf0bKK5p/image.png",
+            "images": []
+        },
+        "hugo-hugo-extended": {
+            "icon": "https://i.postimg.cc/zf0bKK5p/image.png",
             "images": []
         },
         "hulu-desktop": {
@@ -24659,6 +24669,15 @@
         "microsoft-build-tools-2013": {
             "icon": "https://community.chocolatey.org/content/packageimages/microsoft-build-tools-2013.2013.1.png",
             "images": []
+        },
+        "microsoft-devhome": {
+            "icon": "https://i.postimg.cc/g0941961/dev-home.png",
+            "images": [
+                "https://raw.githubusercontent.com/microsoft/devhome/main/src/Assets/Preview/StoreDisplay-150.png",
+                "https://i.postimg.cc/6qBmSkFB/devhome-machine-config.png",
+                "https://i.postimg.cc/tJDMHrHW/devhome-widgets.png",
+                "https://i.postimg.cc/PfMcZq8J/devhome-environment-manage.png"
+            ]
         },
         "microsoft-edge": {
             "icon": "https://community.chocolatey.org/content/packageimages/microsoft-edge.110.0.1587.57.png",

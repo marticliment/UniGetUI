@@ -1,7 +1,5 @@
 using Microsoft.UI.Xaml.Controls;
-using System;
 using System.Collections.ObjectModel;
-using UniGetUI.Core;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
 
@@ -38,7 +36,7 @@ namespace UniGetUI.Interface.Pages.AboutPages
                     License = LicenseData.LicenseNames[license],
                     LicenseURL = LicenseData.LicenseURLs[license],
                     HomepageUrl = LicenseData.HomepageUrls[license],
-                    HomepageText = CoreTools.Translate("{0} homepage").Replace("{0}", license)
+                    HomepageText = CoreTools.Translate("{0} homepage", license)
                 });
             }
 

@@ -1,22 +1,16 @@
 using CommunityToolkit.WinUI.Controls;
+using ExternalLibraries.Clipboard;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using UniGetUI.Core;
 using UniGetUI.Core.Data;
-using ExternalLibraries.Clipboard;
-using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Language;
-using UniGetUI.Core.Tools;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -59,16 +53,16 @@ namespace UniGetUI.Interface
 
             Dictionary<string, string> updates_dict = new()
             {
-                {CoreTools.Translate("{0} minutes").Replace("{0}", "10"), "600"},
-                {CoreTools.Translate("{0} minutes").Replace("{0}", "30"), "1800"},
+                {CoreTools.Translate("{0} minutes", 10), "600"},
+                {CoreTools.Translate("{0} minutes", 30), "1800"},
                 {CoreTools.Translate("1 hour"), "3600"},
-                {CoreTools.Translate("{0} hours").Replace("{0}", "2"), "7200"},
-                {CoreTools.Translate("{0} hours").Replace("{0}", "4"), "14400"},
-                {CoreTools.Translate("{0} hours").Replace("{0}", "8"), "28800"},
-                {CoreTools.Translate("{0} hours").Replace("{0}", "12"), "43200"},
+                {CoreTools.Translate("{0} hours", 2), "7200"},
+                {CoreTools.Translate("{0} hours", 4), "14400"},
+                {CoreTools.Translate("{0} hours", 8), "28800"},
+                {CoreTools.Translate("{0} hours", 12), "43200"},
                 {CoreTools.Translate("1 day"), "86400"},
-                {CoreTools.Translate("{0} days").Replace("{0}", "2"), "172800"},
-                {CoreTools.Translate("{0} days").Replace("{0}", "3"), "259200"},
+                {CoreTools.Translate("{0} days", 2), "172800"},
+                {CoreTools.Translate("{0} days", 3), "259200"},
                 {CoreTools.Translate("1 week"), "604800"}
             };
 
@@ -90,16 +84,8 @@ namespace UniGetUI.Interface
             BackupDirectoryLabel = (TextBlock)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(0));
             ResetBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(1));
             OpenBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2));
-            if (!Settings.Get("ChangeBackupOutputDirectory"))
-            {
-                BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
-                ResetBackupDirectory.IsEnabled = false;
-            }
-            else
-            {
-                BackupDirectoryLabel.Text = Settings.GetValue("ChangeBackupOutputDirectory");
-                ResetBackupDirectory.IsEnabled = true;
-            }
+            
+            EnablePackageBackupUI(Settings.Get("EnablePackageBackup"));
 
             ResetBackupDirectory.Content = CoreTools.Translate("Reset");
 
@@ -197,12 +183,12 @@ namespace UniGetUI.Interface
                     if (Manager.IsEnabled() && Manager.Status.Found)
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Success;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} is enabled and ready to go").Replace("{pm}", Manager.Name);
+                        ManagerStatus.Title = CoreTools.Translate("{pm} is enabled and ready to go", new Dictionary<string, object?>{ { "pm", Manager.Name } });
                         if (!Manager.Status.Version.Contains("\n"))
-                            ManagerStatus.Message = CoreTools.Translate("{pm} version:").Replace("{pm}", Manager.Name) + " " + Manager.Status.Version;
+                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?>{ { "pm", Manager.Name } }) + " " + Manager.Status.Version;
                         else if (ShowVersion)
                         {
-                            ManagerStatus.Message = CoreTools.Translate("{pm} version:").Replace("{pm}", Manager.Name);
+                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?>{ { "pm", Manager.Name } });
                             LongVersion.Visibility = Visibility.Visible;
                         }
                         else
@@ -215,14 +201,14 @@ namespace UniGetUI.Interface
                     else if (Manager.IsEnabled() && !Manager.Status.Found)
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Error;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} was not found!").Replace("{pm}", Manager.Name);
-                        ManagerStatus.Message = CoreTools.Translate("You may need to install {pm} in order to use it with WingetUI.").Replace("{pm}", Manager.Name);
+                        ManagerStatus.Title = CoreTools.Translate("{pm} was not found!", new Dictionary<string, object?>{ { "pm", Manager.Name } });
+                        ManagerStatus.Message = CoreTools.Translate("You may need to install {pm} in order to use it with WingetUI.", new Dictionary<string, object?>{ { "pm", Manager.Name } });
                     }
                     else if (!Manager.IsEnabled())
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Informational;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} is disabled").Replace("{pm}", Manager.Name);
-                        ManagerStatus.Message = CoreTools.Translate("Enable it to install packages from {pm}.").Replace("{pm}", Manager.Name);
+                        ManagerStatus.Title = CoreTools.Translate("{pm} is disabled", new Dictionary<string, object?>{ { "pm", Manager.Name } });
+                        ManagerStatus.Message = CoreTools.Translate("Enable it to install packages from {pm}.", new Dictionary<string, object?>{ { "pm", Manager.Name } });
                     }
                 }
 
@@ -444,16 +430,15 @@ namespace UniGetUI.Interface
 
         }
 
-        private void DoCacheAdminRights_StateChanged(object sender, Interface.Widgets.CheckBoxEventArgs e)
+        private void DoCacheAdminRights_StateChanged(object sender, CheckBoxEventArgs e)
         {
-            if (!e.IsChecked)
-            {
-                AdminSettingsExpander.ShowRestartRequiredBanner();
-            }
+            _ = CoreTools.ResetUACForCurrentProcess();
         }
 
-        private void UseSystemGSudo_StateChanged(object sender, Interface.Widgets.CheckBoxEventArgs e)
-        { AdminSettingsExpander.ShowRestartRequiredBanner(); }
+        private void UseSystemGSudo_StateChanged(object sender, CheckBoxEventArgs e)
+        {
+            AdminSettingsExpander.ShowRestartRequiredBanner();
+        }
 
         private void DisableWidgetsApi_StateChanged(object sender, CheckBoxEventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
@@ -504,6 +489,41 @@ namespace UniGetUI.Interface
                 CreateNoWindow = true
             };
             p.Start();
+        }
+
+        private void DisableSystemTray_StateChanged(object sender, CheckBoxEventArgs e)
+        {
+            MainApp.Instance.MainWindow.UpdateSystemTrayStatus();
+        }
+
+        private void EnablePackageBackupCheckBox_StateChanged(object sender, CheckBoxEventArgs e)
+        {
+            EnablePackageBackupUI(EnablePackageBackupCheckBox.Checked);
+        }
+
+        public void EnablePackageBackupUI(bool enabled)
+        {
+            if (BackupNowButton == null)
+                return; // This could happen when this event is triggered but the SettingsPage
+                        // hasn't finished initializing yet.
+            EnableBackupTimestampingCheckBox.IsEnabled = enabled;
+            ChangeBackupFileNameTextBox.IsEnabled = enabled;
+            ChangeBackupDirectory.IsEnabled = enabled;
+            BackupNowButton.IsEnabled = enabled;
+
+            if (enabled)
+            {
+                if (!Settings.Get("ChangeBackupOutputDirectory"))
+                {
+                    BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
+                    ResetBackupDirectory.IsEnabled = false;
+                }
+                else
+                {
+                    BackupDirectoryLabel.Text = Settings.GetValue("ChangeBackupOutputDirectory");
+                    ResetBackupDirectory.IsEnabled = true;
+                }
+            }
         }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
-using System;
-using UniGetUI.Core;
-using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Interface.Widgets
 {

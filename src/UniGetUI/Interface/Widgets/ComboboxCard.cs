@@ -2,11 +2,8 @@ using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 
@@ -72,7 +69,7 @@ namespace UniGetUI.Interface.Widgets
 
             _combobox = new ComboBox();
             _combobox.MinWidth = 200;
-            _combobox.SetBinding(ItemsControl.ItemsSourceProperty, new Binding() { Source = _elements });
+            _combobox.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Source = _elements });
 
             DefaultStyleKey = typeof(CheckboxCard);
             Content = _combobox;

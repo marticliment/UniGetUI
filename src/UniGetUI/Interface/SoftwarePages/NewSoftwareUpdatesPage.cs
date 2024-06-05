@@ -1,12 +1,6 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Imaging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -50,9 +44,9 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public override BetterMenu GenerateContextMenu()
         {
-            BetterMenu ContextMenu = new BetterMenu();
+            BetterMenu ContextMenu = new();
 
-            var menuInstall = new BetterMenuItem()
+            BetterMenuItem menuInstall = new()
             {
                 Text = "Update",
                 IconName="menu_updates",
@@ -60,7 +54,7 @@ namespace UniGetUI.Interface.SoftwarePages
             };
             menuInstall.Click += MenuInstall_Invoked;
 
-            var menuInstallSettings = new BetterMenuItem()
+            BetterMenuItem menuInstallSettings = new()
             {
                 Text = "Installation options",
                 IconName="options",
@@ -89,14 +83,14 @@ namespace UniGetUI.Interface.SoftwarePages
             };
             MenuskipHash.Click += MenuSkipHash_Invoked;
 
-            var menuUpdateAfterUninstall = new BetterMenuItem()
+            BetterMenuItem menuUpdateAfterUninstall = new()
             {
                 Text = "Uninstall package, then update it",
                 IconName="undelete",
             };
             menuUpdateAfterUninstall.Click += MenuUpdateAfterUninstall_Invoked;
 
-            var menuUninstall = new BetterMenuItem()
+            BetterMenuItem menuUninstall = new()
             {
                 Text = "Uninstall package",
                 IconName="trash",
@@ -104,28 +98,28 @@ namespace UniGetUI.Interface.SoftwarePages
             menuUninstall.Click += MenuUninstall_Invoked;
 
 
-            var menuIgnorePackage = new BetterMenuItem()
+            BetterMenuItem menuIgnorePackage = new()
             {
                 Text = "Ignore updates for this package",
                 IconName="pin",
             };
             menuIgnorePackage.Click += MenuIgnorePackage_Invoked;
 
-            var menuSkipVersion = new BetterMenuItem()
+            BetterMenuItem menuSkipVersion = new()
             {
                 Text = "Skip this version",
                 IconName="skip",
             };
             menuSkipVersion.Click += MenuSkipVersion_Invoked;
 
-            var menuShare = new BetterMenuItem()
+            BetterMenuItem menuShare = new()
             {
                 Text = "Share this package",
                 IconName="share",
             };
             menuShare.Click += (o, e) => { SharePackage(PackageList.SelectedItem as Package); };
 
-            var menuDetails = new BetterMenuItem()
+            BetterMenuItem menuDetails = new()
             {
                 Text = "Package details",
                 IconName="info",
@@ -267,7 +261,7 @@ namespace UniGetUI.Interface.SoftwarePages
             ManageIgnored.Click += async (s, e) => { await MainApp.Instance.MainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
             IgnoreSelected.Click += async (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                     {
                         await package.AddToIgnoredUpdatesAsync();
                         MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
@@ -276,24 +270,24 @@ namespace UniGetUI.Interface.SoftwarePages
 
             UpdateSelected.Click += (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
             };
             UpdateAsAdmin.Click += (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { RunAsAdministrator = true }));
             };
             UpdateSkipHash.Click += (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { SkipHashCheck = true }));
             };
             UpdateInteractive.Click += (s, e) =>
             {
-                foreach (UpgradablePackage package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
                             new InstallationOptions(package) { InteractiveInstallation = true }));
             };
@@ -353,8 +347,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override async Task WhenPackagesLoaded(ReloadReason reason)
         {
-            List<UpgradablePackage> upgradablePackages = new();
-            foreach (UpgradablePackage package in Packages)
+            List<Package> upgradablePackages = new();
+            foreach (Package package in Packages)
             {
                 if (package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
                     upgradablePackages.Add(package);
@@ -371,14 +365,14 @@ namespace UniGetUI.Interface.SoftwarePages
                     if (upgradablePackages.Count == 1)
                     {
                         title = CoreTools.Translate("An update was found!");
-                        body = CoreTools.Translate("{0} is being updated to version {1}").Replace("{0}", upgradablePackages[0].Name).Replace("{1}", upgradablePackages[0].NewVersion);
-                        attribution = CoreTools.Translate("You have currently version {0} installed").Replace("{0}", upgradablePackages[0].Version);
+                        body = CoreTools.Translate("{0} is being updated to version {1}", upgradablePackages[0].Name, upgradablePackages[0].NewVersion);
+                        attribution = CoreTools.Translate("You have currently version {0} installed", upgradablePackages[0].Version);
                     }
                     else
                     {
                         title = CoreTools.Translate("Updates found!");
-                        body = CoreTools.Translate("{0} packages are being updated").Replace("{0}", upgradablePackages.Count.ToString()); ;
-                        foreach (UpgradablePackage package in upgradablePackages)
+                        body = CoreTools.Translate("{0} packages are being updated", upgradablePackages.Count); ;
+                        foreach (Package package in upgradablePackages)
                         {
                             attribution += package.Name + ", ";
                         }
@@ -391,14 +385,14 @@ namespace UniGetUI.Interface.SoftwarePages
                     if (upgradablePackages.Count == 1)
                     {
                         title = CoreTools.Translate("An update was found!");
-                        body = CoreTools.Translate("{0} can be updated to version {1}").Replace("{0}", upgradablePackages[0].Name).Replace("{1}", upgradablePackages[0].NewVersion);
-                        attribution = CoreTools.Translate("You have currently version {0} installed").Replace("{0}", upgradablePackages[0].Version);
+                        body = CoreTools.Translate("{0} can be updated to version {1}", upgradablePackages[0].Name, upgradablePackages[0].NewVersion);
+                        attribution = CoreTools.Translate("You have currently version {0} installed", upgradablePackages[0].Version);
                     }
                     else
                     {
                         title = CoreTools.Translate("Updates found!");
-                        body = CoreTools.Translate("{0} packages can be updated").Replace("{0}", upgradablePackages.Count.ToString()); ;
-                        foreach (UpgradablePackage package in upgradablePackages)
+                        body = CoreTools.Translate("{0} packages can be updated", upgradablePackages.Count); ;
+                        foreach (Package package in upgradablePackages)
                         {
                             attribution += package.Name + ", ";
                         }
@@ -458,7 +452,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
@@ -466,7 +460,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
@@ -475,7 +469,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
@@ -484,7 +478,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
@@ -493,16 +487,16 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
-            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
-            MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
+            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, IgnoreParallelInstalls: true));
+            MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, IgnoreParallelInstalls: true));
         }
 
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
@@ -510,7 +504,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             _ = package.AddToIgnoredUpdatesAsync();
@@ -519,7 +513,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuSkipVersion_Invoked(object sender, RoutedEventArgs e)
         {
-            var package = PackageList.SelectedItem as Package;
+            Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             _ = package.AddToIgnoredUpdatesAsync((package).NewVersion);
@@ -528,7 +522,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public void UpdatePackageForId(string id)
         {
-            foreach (UpgradablePackage package in Packages)
+            foreach (Package package in Packages)
             {
                 if (package.Id == id)
                 {

@@ -58,7 +58,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             
         }
         
-        protected override async Task<UpgradablePackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             Process p = new();
             p.StartInfo = new ProcessStartInfo()
@@ -76,7 +76,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             p.Start();
             string? line;
             string output = "";
-            List<UpgradablePackage> Packages = new();
+            List<Package> Packages = new();
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 output += line + "\n";
@@ -91,7 +91,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]) || elements[1] == elements[2])
                         continue;
 
-                    Packages.Add(new UpgradablePackage(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this));
                 }
             }
 

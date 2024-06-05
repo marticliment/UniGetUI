@@ -1,9 +1,6 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using UniGetUI.Core;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 
@@ -30,7 +27,6 @@ namespace UniGetUI.Interface.Widgets
             get => (string)GetValue(SettingProperty);
             set => SetValue(SettingProperty, value);
         }
-
 
         public bool Checked
         {

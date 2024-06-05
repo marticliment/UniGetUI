@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using UniGetUI.Core;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Enums;
+using System.Web;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
-using System.Net;
-using System.Web;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
@@ -60,18 +51,18 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             else
                 sources = new ManagerSource[] { Properties.DefaultSource };
             
-            foreach(var source in sources)
+            foreach(ManagerSource source in sources)
             {
-                Uri SearchUrl = new Uri($"{source.Url}/Search()?searchTerm=%27{HttpUtility.UrlEncode(query)}%27&targetFramework=%27%27&includePrerelease=false");
+                Uri SearchUrl = new($"{source.Url}/Search()?searchTerm=%27{HttpUtility.UrlEncode(query)}%27&targetFramework=%27%27&includePrerelease=false");
                 Logger.Debug($"Begin package search with url={SearchUrl} on manager {Name}"); ;
-                HttpClientHandler handler = new HttpClientHandler()
+                HttpClientHandler handler = new()
                 {
                     AutomaticDecompression = DecompressionMethods.All
                 };
 
-                using (HttpClient client = new HttpClient(handler))
+                using (HttpClient client = new(handler))
                 {
-                    var response = await client.GetAsync(SearchUrl);
+                    HttpResponseMessage response = await client.GetAsync(SearchUrl);
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -96,9 +87,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                         if (AlreadyProcessedPackages.ContainsKey(id) && AlreadyProcessedPackages[id].version_float >= float_version)
                             continue;
 
-                        AlreadyProcessedPackages[id] = new SearchResult() { id = id, version = version, version_float = float_version };
+                        AlreadyProcessedPackages[id] = new SearchResult { id = id, version = version, version_float = float_version };
                     }
-                    foreach(var package in AlreadyProcessedPackages.Values)
+                    foreach(SearchResult package in AlreadyProcessedPackages.Values)
                         Packages.Add(new Package(CoreTools.FormatAsName(package.id), package.id, package.version, source, this));
 
                 }
