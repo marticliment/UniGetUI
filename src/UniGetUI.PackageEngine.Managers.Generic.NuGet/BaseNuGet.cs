@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
@@ -42,7 +43,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         protected sealed override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            Logger.Error($"Using new NuGet search engine for manager {Name}");
             List<Package> Packages = new();
 
             ManagerSource[] sources;
@@ -55,13 +55,10 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             {
                 Uri SearchUrl = new($"{source.Url}/Search()?searchTerm=%27{HttpUtility.UrlEncode(query)}%27&targetFramework=%27%27&includePrerelease=false");
                 Logger.Debug($"Begin package search with url={SearchUrl} on manager {Name}"); ;
-                HttpClientHandler handler = new()
-                {
-                    AutomaticDecompression = DecompressionMethods.All
-                };
 
-                using (HttpClient client = new(handler))
+                using (HttpClient client = new(CoreData.GenericHttpClientParameters))
                 {
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     HttpResponseMessage response = await client.GetAsync(SearchUrl);
 
                     if (!response.IsSuccessStatusCode)

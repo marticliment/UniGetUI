@@ -25,8 +25,8 @@ try:
             f.truncate()
 
     fileReplaceLinesWith("src/UniGetUI.Core.Data/CoreData.cs", {
-        "        public static string VersionName = ": f" \"{versionName}\"; // Do not modify this line, use file scripts/apply_versions.py\n",
-        "        public static double VersionNumber = ": f" {versionCode}; // Do not modify this line, use file scripts/apply_versions.py\n",
+        "        public const string VersionName = ": f" \"{versionName}\"; // Do not modify this line, use file scripts/apply_versions.py\n",
+        "        public const double VersionNumber = ": f" {versionCode}; // Do not modify this line, use file scripts/apply_versions.py\n",
     }, encoding="utf-8-sig")
 
     fileReplaceLinesWith("src/Solution.props", {

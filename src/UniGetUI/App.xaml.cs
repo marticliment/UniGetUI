@@ -360,8 +360,11 @@ namespace UniGetUI
 
                 string fileContents = "";
 
-                using (HttpClient client = new())
+                using (HttpClient client = new(CoreData.GenericHttpClientParameters))
+                {
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     fileContents = await client.GetStringAsync("https://www.marticliment.com/versions/unigetui.ver");
+                }
 
 
                 if (!fileContents.Contains("///"))
@@ -386,8 +389,9 @@ namespace UniGetUI
                     Uri DownloadUrl = new("https://github.com/marticliment/WingetUI/releases/latest/download/UniGetUI.Installer.exe");
                     string InstallerPath = Path.Join(Directory.CreateTempSubdirectory().FullName, "unigetui-updater.exe");
 
-                    using (HttpClient client = new())
+                    using (HttpClient client = new(CoreData.GenericHttpClientParameters))
                     {
+                        client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                         HttpResponseMessage result = await client.GetAsync(DownloadUrl);
                         using (FileStream fs = new(InstallerPath, FileMode.CreateNew))
                             await result.Content.CopyToAsync(fs);

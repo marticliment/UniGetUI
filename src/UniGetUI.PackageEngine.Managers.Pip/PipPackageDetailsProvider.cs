@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json.Nodes;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -19,7 +20,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
 
             string JsonString;
-            HttpClient client = new();
+            HttpClient client = new(CoreData.GenericHttpClientParameters);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             JsonString = await client.GetStringAsync($"https://pypi.org/pypi/{package.Id}/json");
 
             JsonObject? RawInfo = JsonObject.Parse(JsonString) as JsonObject;

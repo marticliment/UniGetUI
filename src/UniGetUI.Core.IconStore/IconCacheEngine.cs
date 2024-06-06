@@ -146,9 +146,10 @@ namespace UniGetUI.Core.IconEngine
             Logger.Debug($"Icon for package {PackageId} on manager {ManagerName} with Uri={icon.Url} has been determined to be {(IsFileValid? "VALID": "INVALID")} through verification method {icon.VerificationMethod}");
 
             if(!IsFileValid)
-                using (HttpClient client = new())
+                using (HttpClient client = new(CoreData.GenericHttpClientParameters))
                 {
-                    if(File.Exists(FilePath)) File.Delete(FilePath);
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
+                    if (File.Exists(FilePath)) File.Delete(FilePath);
                     HttpResponseMessage response = await client.GetAsync(icon.Url);
                     response.EnsureSuccessStatusCode();
                     using (Stream stream = await response.Content.ReadAsStreamAsync())

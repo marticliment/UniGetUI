@@ -4,11 +4,13 @@ using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Collections.ObjectModel;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
+using Windows.Media.Protection.PlayReady;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
@@ -344,7 +346,8 @@ namespace UniGetUI.Interface.Dialogs
                     
                     Logger.Debug($"Downloading installer ${file.Path.ToString()}");
                     
-                    using HttpClient httpClient = new();
+                    using HttpClient httpClient = new(CoreData.GenericHttpClientParameters);
+                    httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     await using Stream s = await httpClient.GetStreamAsync(Info.InstallerUrl);
                     await using FileStream fs = File.OpenWrite(file.Path.ToString());
                     await s.CopyToAsync(fs);

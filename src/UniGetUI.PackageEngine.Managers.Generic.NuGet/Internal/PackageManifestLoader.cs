@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -45,13 +46,9 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
 
             try
             {
-                HttpClientHandler handler = new()
+                using (HttpClient client = new(CoreData.GenericHttpClientParameters))
                 {
-                    AutomaticDecompression = DecompressionMethods.All
-                };
-
-                using (HttpClient client = new(handler))
-                {
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     HttpResponseMessage response = await client.GetAsync(PackageManifestUrl);
                     if (!response.IsSuccessStatusCode && package.Version.EndsWith(".0"))
                         response = await client.GetAsync(new Uri(PackageManifestUrl.ToString().Replace(".0')", "')")));

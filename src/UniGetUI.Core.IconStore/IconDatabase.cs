@@ -65,8 +65,9 @@ namespace UniGetUI.Core.IconEngine
                 if (Settings.Get("IconDataBaseURL"))
                     DownloadUrl = new Uri(Settings.GetValue("IconDataBaseURL"));
 
-                using (HttpClient client = new())
+                using (HttpClient client = new(CoreData.GenericHttpClientParameters))
                 {
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     string fileContents = await client.GetStringAsync(DownloadUrl);
                     await File.WriteAllTextAsync(IconsAndScreenshotsFile, fileContents);
                 }

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -119,14 +120,11 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
             Uri SearchUrl = new($"{package.Source.Url}/FindPackagesById()?id='{package.Id}'");
-            Logger.Debug($"Begin package version search with url={SearchUrl} on manager {Manager.Name}"); ;
-            HttpClientHandler handler = new()
-            {
-                AutomaticDecompression = DecompressionMethods.All
-            };
+            Logger.Debug($"Begin package version search with url={SearchUrl} on manager {Manager.Name}"); 
 
-            using (HttpClient client = new(handler))
+            using (HttpClient client = new(CoreData.GenericHttpClientParameters))
             {
+                client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                 HttpResponseMessage response = await client.GetAsync(SearchUrl);
 
                 if (!response.IsSuccessStatusCode)

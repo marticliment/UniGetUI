@@ -62,7 +62,6 @@ namespace UniGetUI.Interface
 
         TaskbarIcon? TrayIcon;
 
-
         public MainView NavigationPage;
         public Grid ContentRoot;
         public bool BlockLoading = false;

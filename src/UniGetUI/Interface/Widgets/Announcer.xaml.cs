@@ -3,8 +3,10 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
+using Windows.Media.Protection.PlayReady;
 using Windows.UI.Text;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -23,11 +25,10 @@ namespace UniGetUI.Interface.Widgets
         DependencyProperty UrlProperty;
 
 
-        private static HttpClient NetClient = new();
-
-
+        private static HttpClient NetClient = new(CoreData.GenericHttpClientParameters);
         public Announcer()
         {
+            NetClient.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             UrlProperty = DependencyProperty.Register(
             nameof(UrlProperty),
             typeof(Uri),

@@ -1,11 +1,23 @@
-﻿using UniGetUI.Core.Logging;
+﻿using System.Net;
+using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Data
 {
     public static class CoreData
     {
-        public static string VersionName =  "3.1.0-alpha1"; // Do not modify this line, use file scripts/apply_versions.py
-        public static double VersionNumber =  3.0991; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName =  "3.1.0-alpha1"; // Do not modify this line, use file scripts/apply_versions.py
+        public const double VersionNumber =  3.0991; // Do not modify this line, use file scripts/apply_versions.py
+
+        public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
+        public static HttpClientHandler GenericHttpClientParameters { 
+            get {
+                return new()
+                {
+                    AutomaticDecompression = DecompressionMethods.All,
+                    AllowAutoRedirect = true,
+                };
+            } 
+        }
 
         /// <summary>
         /// The directory where all the user data is stored. The directory is automatically created if it does not exist.
