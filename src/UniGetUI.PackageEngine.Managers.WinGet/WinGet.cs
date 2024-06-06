@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
@@ -114,20 +115,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     }
                 }
 
-                if(!(Get-Command -Verb Get -Noun WinGetPackage))
-                {
-                    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Confirm:$false
-                    Install-Module -Name Microsoft.WinGet.Client -Scope CurrentUser -AllowClobber -Confirm:$false -Force
-                }
                 Get-WinGetPackage | Print-WinGetPackage
                 
-
                 exit
 
                 ");
-
-            string? line;
+            
             string output = "";
+            string? line;
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 output += line + "\n";
@@ -184,18 +179,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     }
                 }
 
-                if(!(Get-Command -Verb Get -Noun WinGetPackage))
-                {
-                    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Confirm:$false
-                    Install-Module -Name Microsoft.WinGet.Client -Scope CurrentUser -AllowClobber -Confirm:$false -Force
-                }
                 Get-WinGetPackage | Print-WinGetPackage
                 
                 exit
                 ");
+            
 
-            string? line;
             string output = "";
+            string? line;
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 output += line + "\n";
@@ -362,7 +353,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 {
                     StartInfo = new ProcessStartInfo()
                     {
-                        // FileName = AppTools.GSudoPath,
+                        FileName = CoreData.GSudoPath,
                         Arguments = Status.ExecutablePath + " " + Properties.ExecutableCallArgs + " settings --enable InstallerHashOverride",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
@@ -418,11 +409,35 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardErrorEncoding = System.Text.Encoding.UTF8
                 }
             };
             process.Start();
             status.Version = "Naive WinGet CLI Version: " + (await process.StandardOutput.ReadToEndAsync()).Trim();
+            string error = await process.StandardError.ReadToEndAsync();
+            if (error != "") Logger.Error("WinGet STDERR not empty: " + error);
+
+            process = new()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = "powershell.exe",
+                    Arguments = "-NoProfile -Command Write-Output (Get-InstalledModule -Name Microsoft.WinGet.Client).Version",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardErrorEncoding = System.Text.Encoding.UTF8
+                }
+            };
+            process.Start();
+            status.Version += "\nMicrosoft.WinGet.Client PSModule version: " + (await process.StandardOutput.ReadToEndAsync()).Trim();
+            error = await process.StandardError.ReadToEndAsync();
+            if (error != "") Logger.Error("WinGet STDERR not empty: " + error);
+
+
 
             try
             {
@@ -445,7 +460,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " source update",
+                Arguments = Properties.ExecutableCallArgs + " source update --disable-interactivity",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
