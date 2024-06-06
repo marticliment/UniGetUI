@@ -29,7 +29,7 @@
 
   <ItemGroup>
 	  <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.7" />
-	  <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.49-beta">
+	  <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.106">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
