@@ -128,7 +128,7 @@ namespace UniGetUI.Interface
         /// <param name="args"></param>
         public async void HandleClosingEvent(AppWindow sender, AppWindowClosingEventArgs args)
         {
-            SaveGeometry();
+            SaveGeometry(Force: true);
             if (!Settings.Get("DisableSystemTray"))
             {
                 args.Cancel = true;
@@ -476,14 +476,17 @@ namespace UniGetUI.Interface
             await Task.Delay(400);
         }
 
-        private async void SaveGeometry()
+        private async void SaveGeometry(bool Force = false)
         {
-            int old_width = AppWindow.Size.Width;
-            int old_height = AppWindow.Size.Height;
-            await Task.Delay(100);
+            if (!Force)
+            {
+                int old_width = AppWindow.Size.Width;
+                int old_height = AppWindow.Size.Height;
+                await Task.Delay(100);
 
-            if (old_height != AppWindow.Size.Height || old_width != AppWindow.Size.Width) 
-                return;
+                if (old_height != AppWindow.Size.Height || old_width != AppWindow.Size.Width)
+                    return;
+            }
 
             int windowState = 0;
             if (AppWindow.Presenter is OverlappedPresenter presenter)
