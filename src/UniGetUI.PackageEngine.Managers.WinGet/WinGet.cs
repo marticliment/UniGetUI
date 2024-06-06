@@ -437,8 +437,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             error = await process.StandardError.ReadToEndAsync();
             if (error != "") Logger.Error("WinGet STDERR not empty: " + error);
 
-
-
             try
             {
                 await Task.Run(() => WinGetHelper.Instance = new NativeWinGetHelper());
@@ -446,7 +444,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
             catch (Exception ex)
             {
-                Logger.Error("Cannot create native WinGet instance due to error: " + ex.ToString());
+                Logger.Warn("Cannot create native WinGet instance due to error: " + ex.ToString());
+                Logger.Warn("WinGet will resort to using BundledWinGetHelper()");
                 WinGetHelper.Instance = new BundledWinGetHelper();
                 status.Version += "\nUsing bundled WinGet helper (CLI parsing)";
             }
