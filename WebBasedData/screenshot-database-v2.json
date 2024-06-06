@@ -16219,17 +16219,17 @@
         "githubdesktop": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Github-desktop-logo-symbol.svg/128px-Github-desktop-logo-symbol.svg.png",
             "images": [
-                "https://desktop.github.com/images/github-desktop-screenshot-windows.png",
+                "https://desktop.github.com/images/screenshot-windows-light.png",
                 "https://docs.github.com/assets/cb-23214/images/help/desktop/windows-choose-options.png",
-                "https://docs.github.com/assets/cb-62319/images/help/desktop/commit-revert-win.png"
+                "https://user-images.githubusercontent.com/634063/202742985-bb3b3b94-8aca-404a-8d8a-fd6a6f030672.png"
             ]
         },
         "githubdesktop-beta": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Github-desktop-logo-symbol.svg/128px-Github-desktop-logo-symbol.svg.png",
             "images": [
-                "https://desktop.github.com/images/github-desktop-screenshot-windows.png",
+                "https://desktop.github.com/images/screenshot-windows-light.png",
                 "https://docs.github.com/assets/cb-23214/images/help/desktop/windows-choose-options.png",
-                "https://docs.github.com/assets/cb-62319/images/help/desktop/commit-revert-win.png"
+                "https://user-images.githubusercontent.com/634063/202742985-bb3b3b94-8aca-404a-8d8a-fd6a6f030672.png"
             ]
         },
         "githubforwindows": {
