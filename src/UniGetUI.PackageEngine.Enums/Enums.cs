@@ -50,4 +50,15 @@
         Uninstall,
         None
     }
+
+    public enum LoggableTaskType
+    {
+        SearchPackages,
+        CheckForUpdates,
+        ListInstalledPackages,
+        RefreshIndexes,
+        ListSources,
+        GetPackageDetails,
+        GetPackageVersions,
+    }
 }

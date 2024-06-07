@@ -7,6 +7,7 @@ using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using Windows.Media.AppBroadcasting;
 
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
@@ -94,38 +95,43 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
+            var logger = TaskLogger.CreateLogger(LoggableTaskType.CheckForUpdates, p);
+
             p.Start();
 
-            await p.StandardInput.WriteAsync(@"
-                Set-ExecutionPolicy Bypass -Scope Process -Force
-                function Print-WinGetPackage {
-                    param (
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
-                        [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
-                        [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
-                    )
-                    process {
-                        if($IsUpdateAvailable)
-                        {
-                            Write-Output(""#"" + $Name + ""`t"" + $Id + ""`t"" + $InstalledVersion + ""`t"" + $AvailableVersions[0] + ""`t"" + $Source)
-                        }
-                    }
-                }
+            string command = """
+                 Set-ExecutionPolicy Bypass -Scope Process -Force
+                 function Print-WinGetPackage {
+                     param (
+                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
+                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
+                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
+                         [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
+                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
+                         [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
+                     )
+                     process {
+                         if($IsUpdateAvailable)
+                         {
+                             Write-Output("#" + $Name + "`t" + $Id + "`t" + $InstalledVersion + "`t" + $AvailableVersions[0] + "`t" + $Source)
+                         }
+                     }
+                 }
 
-                Get-WinGetPackage | Print-WinGetPackage
-                
-                exit
+                 Get-WinGetPackage | Print-WinGetPackage
 
-                ");
+                 exit
+
+                 """;
+
+            await p.StandardInput.WriteAsync(command);
+            p.StandardInput.Close();
+            logger.AddToStdIn(command);
             
-            string output = "";
             string? line;
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (!line.StartsWith("#"))
                     continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
 
@@ -138,8 +144,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 Packages.Add(new Package(elements[0][1..], elements[1], elements[2], elements[3], source, this));
             }
 
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            logger.Close();
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
@@ -161,9 +167,10 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
+            var logger = TaskLogger.CreateLogger(LoggableTaskType.ListInstalledPackages, p);
             p.Start();
 
-            await p.StandardInput.WriteAsync(@"
+            var command = """
                 Set-ExecutionPolicy Bypass -Scope Process -Force
                 function Print-WinGetPackage {
                     param (
@@ -175,21 +182,26 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                         [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
                     )
                     process {
-                        Write-Output(""#"" + $Name + ""`t"" + $Id + ""`t"" + $InstalledVersion + ""`t"" + $Source)
+                        Write-Output("#" + $Name + "`t" + $Id + "`t" + $InstalledVersion + "`t" + $Source)
                     }
                 }
 
                 Get-WinGetPackage | Print-WinGetPackage
                 
+
                 exit
-                ");
+
+                """;
+
+            await p.StandardInput.WriteAsync(command);
+            p.StandardInput.Close();
+            logger.AddToStdIn(command);
             
 
-            string output = "";
             string? line;
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (!line.StartsWith("#"))
                     continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
 
@@ -206,8 +218,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 Packages.Add(new Package(elements[0][1..], elements[1], elements[2], source, this));
             }
 
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
 
             return Packages.ToArray();
@@ -354,7 +365,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     StartInfo = new ProcessStartInfo()
                     {
                         FileName = CoreData.GSudoPath,
-                        Arguments = Status.ExecutablePath + " " + Properties.ExecutableCallArgs + " settings --enable InstallerHashOverride",
+                        Arguments = $"\"{Status.ExecutablePath}\"" + Properties.ExecutableCallArgs + " settings --enable InstallerHashOverride",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
@@ -468,8 +479,13 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
+            var logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+
             p.Start();
+            logger.AddToStdOut(await p.StandardOutput.ReadToEndAsync());
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
+            p.Close();
         }
     }
 
