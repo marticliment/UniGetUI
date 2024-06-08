@@ -95,7 +95,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            var logger = TaskLogger.CreateLogger(LoggableTaskType.CheckForUpdates, p);
+            var logger = TaskLogger.CreateNew(LoggableTaskType.CheckForUpdates, p);
 
             p.Start();
 
@@ -145,8 +145,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            logger.Close();
             await p.WaitForExitAsync();
+            logger.Close();
 
             return Packages.ToArray();
         }
@@ -167,7 +167,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            var logger = TaskLogger.CreateLogger(LoggableTaskType.ListInstalledPackages, p);
+            var logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
             p.Start();
 
             var command = """
@@ -220,6 +220,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
+            logger.Close();
 
             return Packages.ToArray();
         }
@@ -484,6 +485,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             p.Start();
             logger.AddToStdOut(await p.StandardOutput.ReadToEndAsync());
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            logger.Close();
             await p.WaitForExitAsync();
             p.Close();
         }

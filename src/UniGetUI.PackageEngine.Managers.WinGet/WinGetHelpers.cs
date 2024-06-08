@@ -64,7 +64,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             List<Package> Packages = new();
             FindPackagesOptions PackageFilters = Factory.CreateFindPackagesOptions();
 
-            logger.AddToStdOut("Generating filters...");
+            logger.Log("Generating filters...");
             // Name filter
             PackageMatchFilter FilterName = Factory.CreatePackageMatchFilter();
             FilterName.Field = Deployment.PackageMatchField.Name;
@@ -80,12 +80,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             PackageFilters.Filters.Add(FilterId);
 
             // Load catalogs
-            logger.AddToStdOut("Loading available catalogs...");
+            logger.Log("Loading available catalogs...");
             IReadOnlyList<PackageCatalogReference> AvailableCatalogs = WinGetManager.GetPackageCatalogs();
             Dictionary<Deployment.PackageCatalogReference, Task<Deployment.FindPackagesResult>> FindPackageTasks = new();
 
             // Spawn Tasks to find packages on catalogs
-            logger.AddToStdOut("Spawning catalog fetching tasks...");
+            logger.Log("Spawning catalog fetching tasks...");
             foreach (PackageCatalogReference CatalogReference in AvailableCatalogs.ToArray())
             {
                 // Connect to catalog
@@ -107,19 +107,19 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     }
                     catch (Exception e)
                     {
-                        logger.AddToStdOut("WinGet: Catalog " + CatalogReference.Info.Name + " failed to spawn FindPackages task.");
-                        logger.AddToStdOut(e.ToString());
+                        logger.Error("WinGet: Catalog " + CatalogReference.Info.Name + " failed to spawn FindPackages task.");
+                        logger.Error(e);
                     }
                 }
                 else
                 {
-                    logger.AddToStdOut("WinGet: Catalog " + CatalogReference.Info.Name + " failed to connect.");
+                    logger.Error("WinGet: Catalog " + CatalogReference.Info.Name + " failed to connect.");
                 }
             }
 
             // Wait for tasks completion
             await Task.WhenAll(FindPackageTasks.Values.ToArray());
-            logger.AddToStdOut($"All catalogs fetched. Fetching results for query {query}");
+            logger.Log($"All catalogs fetched. Fetching results for query {query}");
 
             foreach (KeyValuePair<PackageCatalogReference, Task<FindPackagesResult>> CatalogTaskPair in FindPackageTasks)
             {
@@ -133,7 +133,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     {
                         var catPkg = package.CatalogPackage;
                         // Create the Package item and add it to the list
-                        logger.AddToStdOut($"Found package: {catPkg.Name}|{catPkg.Name}|{catPkg.DefaultInstallVersion.Version} on catalog {source.Name}");
+                        logger.Log($"Found package: {catPkg.Name}|{catPkg.Name}|{catPkg.DefaultInstallVersion.Version} on catalog {source.Name}");
                         Packages.Add(new Package(
                             catPkg.Name,
                             catPkg.Id,
@@ -145,8 +145,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
                 catch (Exception e)
                 {
-                    logger.AddToStdErr("WinGet: Catalog " + CatalogTaskPair.Key.Info.Name + " failed to get available packages.");
-                    logger.AddToStdErr(e.ToString());
+                    logger.Error("WinGet: Catalog " + CatalogTaskPair.Key.Info.Name + " failed to get available packages.");
+                    logger.Error(e);
                 }
             }
             logger.Close();
@@ -161,12 +161,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             foreach (PackageCatalogReference catalog in await Task.Run(() => WinGetManager.GetPackageCatalogs().ToArray()))
                 try
                 {
-                    logger.AddToStdOut($"Found source {catalog.Info.Name} with argument {catalog.Info.Argument}");
+                    logger.Log($"Found source {catalog.Info.Name} with argument {catalog.Info.Argument}");
                     sources.Add(new ManagerSource(ManagerInstance, catalog.Info.Name, new Uri(catalog.Info.Argument), updateDate: catalog.Info.LastUpdateTime.ToString()));
                 }
                 catch (Exception e)
                 {
-                    logger.AddToStdErr(e.ToString());
+                    logger.Error(e);
                 }
             logger.Close();
             return sources.ToArray();
@@ -180,7 +180,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
             if (Catalog == null)
             {
-                logger.AddToStdErr("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+                logger.Error("Failed to get catalog " + package.Source.Name + ". Is the package local?");
                 logger.Close();
                 return [];
             }
@@ -190,7 +190,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             ConnectResult ConnectResult = await Task.Run(() => Catalog.Connect());
             if (ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
             {
-                logger.AddToStdErr("Failed to connect to catalog " + package.Source.Name);
+                logger.Error("Failed to connect to catalog " + package.Source.Name);
                 logger.Close();
                 return [];
             }
@@ -207,7 +207,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
             {
-                logger.AddToStdErr("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                logger.Error("Failed to find package " + package.Id + " in catalog " + package.Source.Name);
                 logger.Close();
                 return [];
             }
@@ -215,7 +215,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             // Get the Native Package
             CatalogPackage NativePackage = SearchResult.Result.Matches.First().CatalogPackage;
             var versions = NativePackage.AvailableVersions.Select(x => x.Version).ToArray();
-            foreach (var version in versions) logger.AddToStdOut(version);
+            foreach (var version in versions) logger.Log(version);
             logger.Close();
             return versions;
         }
@@ -239,7 +239,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
             if (Catalog == null)
             {
-                logger.AddToStdErr("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+                logger.Error("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+                logger.Close();
                 return details;
             }
 
@@ -248,7 +249,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             ConnectResult ConnectResult = await Task.Run(() => Catalog.Connect());
             if (ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
             {
-                logger.AddToStdErr("Failed to connect to catalog " + package.Source.Name);
+                logger.Error("Failed to connect to catalog " + package.Source.Name);
+                logger.Close();
                 return details;
             }
 
@@ -264,7 +266,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
             {
-                logger.AddToStdErr("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                logger.Error("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                logger.Close();
                 return details;
             }
 
@@ -325,7 +328,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
                 if (_line.Trim() != "")
                 {
-                    logger.AddToStdOut(_line);
+                    logger.Log(_line);
                     output.Add(_line);
                 }
             // Parse the output
