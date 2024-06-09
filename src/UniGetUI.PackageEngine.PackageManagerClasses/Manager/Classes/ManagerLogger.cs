@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Enums;
-using UniGetUI.Core.Logging;
-using System.Text;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 {
@@ -19,7 +17,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         public ProcessTaskLogger CreateNew(LoggableTaskType type, Process process)
         {
             if (process.StartInfo == null)
-                throw new Exception("Process instance did not have a valid StartInfo value");
+                throw new Exception("Given process instance did not have a valid StartInfo value");
 
             var operation =  new ProcessTaskLogger(Manager, type, process.StartInfo.FileName, process.StartInfo.Arguments);
             Operations.Add(operation);
@@ -102,7 +100,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         public void AddToStdIn(IEnumerable<string> lines)
         {
-            if (!isOpen) throw new Exception("Attempted to write log into an already-closed OperationLog");
+            if (!isOpen) throw new Exception("Attempted to write log into an already-closed ProcessTaskLogger");
             foreach (string line in lines)
                 if(line != "") StdIn.Add(line);
         }
@@ -114,7 +112,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         public void AddToStdOut(IEnumerable<string> lines)
         {
-            if (!isOpen) throw new Exception("Attempted to write log into an already-closed OperationLog");
+            if (!isOpen) throw new Exception("Attempted to write log into an already-closed ProcessTaskLogger");
             foreach (string line in lines)
                 if (line != "") StdOut.Add(line);
         }
@@ -126,7 +124,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         public void AddToStdErr(IEnumerable<string> lines)
         {
-            if (!isOpen) throw new Exception("Attempted to write log into an already-closed OperationLog");
+            if (!isOpen) throw new Exception("Attempted to write log into an already-closed ProcessTaskLogger");
             foreach (string line in lines)
                 if (line != "") StdErr.Add(line);
         }
@@ -202,7 +200,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         public void Log(IEnumerable<string> lines)
         {
-            if (!isOpen) throw new Exception("Attempted to write log into an already-closed OperationLog");
+            if (!isOpen) throw new Exception("Attempted to write log into an already-closed NativeTaskLogger");
             foreach (string line in lines)
                 if (line != "") Info.Add(line);
         }
@@ -214,7 +212,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         public void Error(IEnumerable<string> lines)
         {
-            if (!isOpen) throw new Exception("Attempted to write log into an already-closed OperationLog");
+            if (!isOpen) throw new Exception("Attempted to write log into an already-closed NativeTaskLogger");
             foreach (string line in lines)
                 if (line != "") Errors.Add(line);
         }
