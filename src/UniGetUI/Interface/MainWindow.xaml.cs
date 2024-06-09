@@ -61,6 +61,7 @@ namespace UniGetUI.Interface
         /* END INTEROP STUFF */
 
         TaskbarIcon? TrayIcon;
+        bool HasLoadedLastGeometry = false;
 
         public MainView NavigationPage;
         public Grid ContentRoot;
@@ -81,8 +82,7 @@ namespace UniGetUI.Interface
             SetTitleBar(__content_root);
             ContentRoot = __content_root;
             ApplyTheme();
-            RestoreSize();
-
+            
             SizeChanged += (s, e) => { SaveGeometry(); };
     
             AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
@@ -166,6 +166,12 @@ namespace UniGetUI.Interface
 
         public new void Activate()
         {
+            if (!HasLoadedLastGeometry)
+            {
+                RestoreGeometry();
+                HasLoadedLastGeometry = true;
+            }
+
             SetForegroundWindow(GetWindowHandle());
             if (NavigationPage != null && NavigationPage.InstalledPage != null)
                 _ = NavigationPage.InstalledPage.LoadPackages();
@@ -501,7 +507,7 @@ namespace UniGetUI.Interface
             Settings.SetValue("WindowGeometry", geometry);
         }
 
-        private void RestoreSize()
+        private void RestoreGeometry()
         {
 
             string geometry = Settings.GetValue("WindowGeometry");
