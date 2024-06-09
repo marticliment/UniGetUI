@@ -60,7 +60,7 @@
         /// <summary>
         /// Searches for packages with a specific query
         /// </summary>
-        SearchPackages,
+        FindPackages,
         /// <summary>
         /// Lists all the available updates
         /// </summary>

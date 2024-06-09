@@ -59,7 +59,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public async Task<Package[]> FindPackages_UnSafe(WinGet ManagerInstance, string query)
         {
-            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.SearchPackages);
+            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
 
             List<Package> Packages = new();
             FindPackagesOptions PackageFilters = Factory.CreateFindPackagesOptions();
@@ -398,7 +398,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             p.Start();
 
-            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.SearchPackages, p);
+            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
             var command = """
                 Set-ExecutionPolicy Bypass -Scope Process -Force
@@ -708,7 +708,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             p.Start();
 
-            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.SearchPackages, p);
+            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
             bool dashesPassed = false;
             string? line;

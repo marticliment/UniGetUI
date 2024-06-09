@@ -35,8 +35,8 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         {
             List<ManagerSource> sources = new();
 
-            Process process = new();
-            ProcessStartInfo startInfo = new()
+            Process p = new();
+            p.StartInfo = new()
             {
                 FileName = Manager.Status.ExecutablePath,
                 Arguments = Manager.Properties.ExecutableCallArgs + " source list",
@@ -48,15 +48,13 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            process.StartInfo = startInfo;
-            process.Start();
+            var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
+            p.Start();
 
-
-            string output = "";
             string? line;
-            while ((line = await process.StandardOutput.ReadLineAsync()) != null)
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 try
                 {
                     if (string.IsNullOrEmpty(line))
@@ -73,14 +71,14 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
                 catch (Exception e)
                 {
-                    Logger.Error(e);
+                    logger.AddToStdErr(e.ToString());
                 }
             }
 
-            output += await process.StandardError.ReadToEndAsync();
-            Manager.LogOperation(process, output);
-
-            await process.WaitForExitAsync();
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
+            
             return sources.ToArray();
         }
     }

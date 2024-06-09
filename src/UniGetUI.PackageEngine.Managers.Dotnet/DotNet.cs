@@ -52,44 +52,49 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             string path = which_res.Item2;
             if (!which_res.Item1)
             {
-                Process proc = new()
+                Process proc = new Process();
+                proc.StartInfo = new ProcessStartInfo()
                 {
-                    StartInfo = new ProcessStartInfo()
-                    {
-                        FileName = path,
-                        Arguments = Properties.ExecutableCallArgs + " install --global dotnet-tools-outdated",
-                        UseShellExecute = true,
-                        CreateNoWindow = true,
-                    }
+                    FileName = path,
+                    Arguments = Properties.ExecutableCallArgs + " install --global dotnet-tools-outdated",
+                    UseShellExecute = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
                 };
+
+                var aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
                 proc.Start();
+
+                aux_logger.AddToStdOut(await proc.StandardOutput.ReadToEndAsync());
+                aux_logger.AddToStdErr(await proc.StandardError.ReadToEndAsync());
                 await proc.WaitForExitAsync();
+                aux_logger.Close(proc.ExitCode);
+                
                 path = "dotnet-tools-outdated.exe";
             }
 
-            Process p = new()
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
             {
-                StartInfo = new ProcessStartInfo()
-                {
-                    FileName = path,
-                    Arguments = "",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                FileName = path,
+                Arguments = "",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
+            var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
             p.Start();
 
             string? line;
             bool DashesPassed = false;
             List<Package> Packages = new();
-            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (!DashesPassed)
                 {
                     if (line.Contains("----"))
@@ -108,96 +113,60 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, PackageScope.Global));
                 }
             }
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
 
             return Packages.ToArray();
         }
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            Process p = new()
-            {
-                StartInfo = new ProcessStartInfo()
-                {
-                    FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
-            };
-
-            p.Start();
-
-            string? line;
-            bool DashesPassed = false;
             List<Package> Packages = new();
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            foreach (var scope in new PackageScope[] { PackageScope.User, PackageScope.Local })
             {
-                if (!DashesPassed)
-                {
-                    if (line.Contains("----"))
-                        DashesPassed = true;
-                }
-                else
-                {
-                    string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
-                    if (elements.Length < 2)
-                        continue;
-
-                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
-                        continue;
-
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, PackageScope.User));
-                }
-            }
-
-            p = new Process()
-            {
-                StartInfo = new ProcessStartInfo()
+                Process p = new Process();
+                p.StartInfo = new ProcessStartInfo()
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list --global",
+                    Arguments = Properties.ExecutableCallArgs + $" list" + (scope == PackageScope.Global? "--global": ""),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
                     StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
-            };
+                };
 
-            p.Start();
+                var logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+                p.Start();
 
-            DashesPassed = false;
-            string output = "";
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
-                if (!DashesPassed)
+                string? line;
+                bool DashesPassed = false;
+                while ((line = await p.StandardOutput.ReadLineAsync()) != null)
                 {
-                    if (line.Contains("----"))
-                        DashesPassed = true;
-                }
-                else
-                {
-                    string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
-                    if (elements.Length < 2)
-                        continue;
+                    logger.AddToStdOut(line);
+                    if (!DashesPassed)
+                    {
+                        if (line.Contains("----"))
+                            DashesPassed = true;
+                    }
+                    else
+                    {
+                        string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
+                        if (elements.Length < 2)
+                            continue;
 
-                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
-                        continue;
+                        for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+                        if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                            continue;
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, PackageScope.Global));
+                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, scope));
+                    }
                 }
+                logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+                await p.WaitForExitAsync();
+                logger.Close(p.ExitCode);
             }
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
-
             return Packages.ToArray();
         }
 
