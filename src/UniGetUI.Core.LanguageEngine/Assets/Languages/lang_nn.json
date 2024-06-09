@@ -59,7 +59,7 @@
   "Automatically save a list of all your installed packages to easily restore them." : "Lagre ei liste over alle dine installerte pakkar automatisk for å forenkle gjenoppretting av dei.",
   "Automatically save a list of your installed packages on your computer." : "Lagre ei liste over dine installerte pakkar på datamaskina di automatisk",
   "Autostart WingetUI in the notifications area" : "Start WingetUI automatisk i varslingsfeltet",
-  "Available Updates" : null,
+  "Available Updates" : "Tilgjengelege oppdateringar",
   "Available updates: {0}" : "Tilgjengelege oppdateringar: {0}",
   "Available updates: {0}, not finished yet..." : "Tilgjengelege oppdateringar: {0}, jobbar framleis...",
   "Backup" : "Ta backup",
