@@ -163,13 +163,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 {
                     logger.Log($"Found source {catalog.Info.Name} with argument {catalog.Info.Argument}");
                     sources.Add(new ManagerSource(ManagerInstance, catalog.Info.Name, new Uri(catalog.Info.Argument), updateDate: catalog.Info.LastUpdateTime.ToString()));
-                    logger.Close(0);
                 }
                 catch (Exception e)
                 {
                     logger.Error(e);
-                    logger.Close(1);
                 }
+            logger.Close(0);
             return sources.ToArray();
         }
 
