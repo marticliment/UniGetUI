@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
@@ -58,15 +59,17 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
+            var logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
             p.Start();
+            
             string? line;
             List<Package> Packages = new();
             bool HeaderPassed = false;
-            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (!HeaderPassed)
+                {
                     if (line.Contains("NAME"))
                         HeaderPassed = true;
                     else
@@ -75,9 +78,12 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                         if (elements.Length >= 5)
                             Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[4], DefaultSource, this));
                     }
+                }
             }
 
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
 
             return Packages.ToArray();
         }
@@ -101,12 +107,13 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 };
 
+                var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
                 p.Start();
+
                 string? line;
-                string output = "";
                 while ((line = await p.StandardOutput.ReadLineAsync()) != null)
                 {
-                    output += line + "\n";
+                    logger.AddToStdOut(line);
                     string[] elements = line.Split(':');
                     if (elements.Length >= 4)
                     {
@@ -120,10 +127,9 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     }
                 }
 
-                output += await p.StandardError.ReadToEndAsync();
-                LogOperation(p, output);
-
+                logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
                 await p.WaitForExitAsync();
+                logger.Close(p.ExitCode);
             }
             return Packages.ToArray();
         }
@@ -147,14 +153,15 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 };
 
+                var logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
                 p.Start();
+                
                 string? line;
-                string output = "";
                 while ((line = await p.StandardOutput.ReadLineAsync()) != null)
                 {
-                    output += line + "\n";
+                    logger.AddToStdOut(line);
                     if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
-                    { 
+                    {
                         string[] elements = line[4..].Split('@');
                         if (elements.Length >= 2)
                         {
@@ -163,15 +170,13 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                                 elements[0] = "@" + elements[1];
                                 if (elements.Length >= 3) elements[1] = elements[2];
                             }
-
                             Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, scope));
                         }
                     }
                 }
-
-                output += await p.StandardError.ReadToEndAsync();
-                LogOperation(p, output);
+                logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
                 await p.WaitForExitAsync();
+                logger.Close(p.ExitCode);
             }
 
             return Packages.ToArray();

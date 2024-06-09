@@ -34,29 +34,30 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()
         {
-            using (Process process = new())
+            using (Process p = new())
             {
-                process.StartInfo.FileName = Manager.Status.ExecutablePath;
-                process.StartInfo.Arguments = Manager.Properties.ExecutableCallArgs + " bucket list";
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.RedirectStandardInput = true;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-                process.StartInfo.StandardInputEncoding = System.Text.Encoding.UTF8;
-                process.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                p.StartInfo.FileName = Manager.Status.ExecutablePath;
+                p.StartInfo.Arguments = Manager.Properties.ExecutableCallArgs + " bucket list";
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.RedirectStandardError = true;
+                p.StartInfo.RedirectStandardInput = true;
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.StandardInputEncoding = System.Text.Encoding.UTF8;
+                p.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+
+                var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
 
                 List<ManagerSource> sources = new();
 
-                process.Start();
+                p.Start();
 
-                string _output = "";
                 bool DashesPassed = false;
 
                 string? line;
-                while ((line = await process.StandardOutput.ReadLineAsync()) != null)
+                while ((line = await p.StandardOutput.ReadLineAsync()) != null)
                 {
-                    _output += line + "\n";
+                    logger.AddToStdOut(line);
                     try
                     {
                         if (!DashesPassed)
@@ -80,12 +81,10 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         Logger.Warn(e);
                     }
                 }
-                _output += await process.StandardError.ReadToEndAsync();
-                Manager.LogOperation(process, _output);
-
-                await process.WaitForExitAsync();
-
-
+                logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+                await p.WaitForExitAsync();
+                logger.Close(p.ExitCode);
+                
                 return sources.ToArray();
             }
         }

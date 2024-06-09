@@ -50,4 +50,40 @@
         Uninstall,
         None
     }
+
+    public enum LoggableTaskType
+    {
+        /// <summary>
+        /// Installs a required dependency for a Package Manager
+        /// </summary>
+        InstallManagerDependency,
+        /// <summary>
+        /// Searches for packages with a specific query
+        /// </summary>
+        FindPackages,
+        /// <summary>
+        /// Lists all the available updates
+        /// </summary>
+        ListUpdates,
+        /// <summary>
+        /// Lists the installed packages
+        /// </summary>
+        ListPackages,
+        /// <summary>
+        /// Refreshes the package indexes
+        /// </summary>
+        RefreshIndexes,
+        /// <summary>
+        /// Lists the available sources for the manager
+        /// </summary>
+        ListSources,
+        /// <summary>
+        /// Loads the package details for a specific package
+        /// </summary>
+        LoadPackageDetails,
+        /// <summary>
+        /// Loads the available versions for a specific package
+        /// </summary>
+        LoadPackageVersions,
+    }
 }

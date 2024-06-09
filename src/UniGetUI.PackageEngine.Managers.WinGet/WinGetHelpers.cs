@@ -5,6 +5,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 using WindowsPackageManager.Interop;
 using Deployment = Microsoft.Management.Deployment;
@@ -58,9 +59,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public async Task<Package[]> FindPackages_UnSafe(WinGet ManagerInstance, string query)
         {
+            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
+
             List<Package> Packages = new();
             FindPackagesOptions PackageFilters = Factory.CreateFindPackagesOptions();
 
+            logger.Log("Generating filters...");
             // Name filter
             PackageMatchFilter FilterName = Factory.CreatePackageMatchFilter();
             FilterName.Field = Deployment.PackageMatchField.Name;
@@ -76,10 +80,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             PackageFilters.Filters.Add(FilterId);
 
             // Load catalogs
+            logger.Log("Loading available catalogs...");
             IReadOnlyList<PackageCatalogReference> AvailableCatalogs = WinGetManager.GetPackageCatalogs();
             Dictionary<Deployment.PackageCatalogReference, Task<Deployment.FindPackagesResult>> FindPackageTasks = new();
 
             // Spawn Tasks to find packages on catalogs
+            logger.Log("Spawning catalog fetching tasks...");
             foreach (PackageCatalogReference CatalogReference in AvailableCatalogs.ToArray())
             {
                 // Connect to catalog
@@ -101,18 +107,19 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     }
                     catch (Exception e)
                     {
-                        Logger.Error("WinGet: Catalog " + CatalogReference.Info.Name + " failed to spawn FindPackages task.");
-                        Logger.Error(e);
+                        logger.Error("WinGet: Catalog " + CatalogReference.Info.Name + " failed to spawn FindPackages task.");
+                        logger.Error(e);
                     }
                 }
                 else
                 {
-                    Logger.Error("WinGet: Catalog " + CatalogReference.Info.Name + " failed to connect.");
+                    logger.Error("WinGet: Catalog " + CatalogReference.Info.Name + " failed to connect.");
                 }
             }
 
             // Wait for tasks completion
             await Task.WhenAll(FindPackageTasks.Values.ToArray());
+            logger.Log($"All catalogs fetched. Fetching results for query {query}");
 
             foreach (KeyValuePair<PackageCatalogReference, Task<FindPackagesResult>> CatalogTaskPair in FindPackageTasks)
             {
@@ -124,11 +131,13 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     FindPackagesResult FoundPackages = CatalogTaskPair.Value.Result;
                     foreach (MatchResult package in FoundPackages.Matches.ToArray())
                     {
+                        var catPkg = package.CatalogPackage;
                         // Create the Package item and add it to the list
+                        logger.Log($"Found package: {catPkg.Name}|{catPkg.Name}|{catPkg.DefaultInstallVersion.Version} on catalog {source.Name}");
                         Packages.Add(new Package(
-                            package.CatalogPackage.Name,
-                            package.CatalogPackage.Id,
-                            package.CatalogPackage.DefaultInstallVersion.Version,
+                            catPkg.Name,
+                            catPkg.Id,
+                            catPkg.DefaultInstallVersion.Version,
                             source,
                             ManagerInstance
                         ));
@@ -136,38 +145,43 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
                 catch (Exception e)
                 {
-                    Logger.Error("WinGet: Catalog " + CatalogTaskPair.Key.Info.Name + " failed to get available packages.");
-                    Logger.Error(e);
+                    logger.Error("WinGet: Catalog " + CatalogTaskPair.Key.Info.Name + " failed to get available packages.");
+                    logger.Error(e);
                 }
             }
-
+            logger.Close(0);
             return Packages.ToArray();
         }
 
         public async Task<ManagerSource[]> GetSources_UnSafe(WinGet ManagerInstance)
         {
             List<ManagerSource> sources = new();
+            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.ListSources);
 
             foreach (PackageCatalogReference catalog in await Task.Run(() => WinGetManager.GetPackageCatalogs().ToArray()))
                 try
                 {
+                    logger.Log($"Found source {catalog.Info.Name} with argument {catalog.Info.Argument}");
                     sources.Add(new ManagerSource(ManagerInstance, catalog.Info.Name, new Uri(catalog.Info.Argument), updateDate: catalog.Info.LastUpdateTime.ToString()));
                 }
                 catch (Exception e)
                 {
-                    Logger.Error(e);
+                    logger.Error(e);
                 }
-
+            logger.Close(0);
             return sources.ToArray();
         }
 
         public async Task<string[]> GetPackageVersions_Unsafe(WinGet ManagerInstance, Package package)
         {
+            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions);
+
             // Find the native package for the given Package object
             PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
             if (Catalog == null)
             {
-                Logger.Error("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+                logger.Error("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+                logger.Close(1);
                 return [];
             }
 
@@ -176,7 +190,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             ConnectResult ConnectResult = await Task.Run(() => Catalog.Connect());
             if (ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
             {
-                Logger.Error("Failed to connect to catalog " + package.Source.Name);
+                logger.Error("Failed to connect to catalog " + package.Source.Name);
+                logger.Close(1);
                 return [];
             }
 
@@ -192,18 +207,24 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
             {
-                Logger.Error("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                logger.Error("Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                logger.Close(1);
                 return [];
             }
 
             // Get the Native Package
             CatalogPackage NativePackage = SearchResult.Result.Matches.First().CatalogPackage;
-            return NativePackage.AvailableVersions.Select(x => x.Version).ToArray();
+            var versions = NativePackage.AvailableVersions.Select(x => x.Version).ToArray();
+            foreach (var version in versions) logger.Log(version);
+            logger.Close(0);
+            return versions;
         }
 
         public async Task<PackageDetails> GetPackageDetails_UnSafe(WinGet ManagerInstance, Package package)
         {
             PackageDetails details = new(package);
+
+            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
 
             if (package.Source.Name == "winget")
                 details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
@@ -218,7 +239,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
             if (Catalog == null)
             {
-                Logger.Error("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+                logger.Error("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+                logger.Close(1);
                 return details;
             }
 
@@ -227,7 +249,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             ConnectResult ConnectResult = await Task.Run(() => Catalog.Connect());
             if (ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
             {
-                Logger.Error("Failed to connect to catalog " + package.Source.Name);
+                logger.Error("Failed to connect to catalog " + package.Source.Name);
+                logger.Close(1);
                 return details;
             }
 
@@ -243,7 +266,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
             {
-                Logger.Error("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                logger.Error("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                logger.Close(1);
                 return details;
             }
 
@@ -299,11 +323,20 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             process.StartInfo = startInfo;
             process.Start();
 
+            logger.Log("Begin loading installers:");
+            logger.Log(" Executable: " + startInfo.FileName);
+            logger.Log(" Arguments: " + startInfo.Arguments);
+
             // Retrieve the output
             string? _line;
             while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
                 if (_line.Trim() != "")
+                {
+                    logger.Log(_line);
                     output.Add(_line);
+                }
+
+            logger.Error(await process.StandardError.ReadToEndAsync());
 
             // Parse the output
             foreach (string __line in output)
@@ -331,7 +364,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     Logger.Warn(e.Message);
                 }
             }
-
+            logger.Close(0);
             return details;
         }
     }
@@ -364,10 +397,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             p.Start();
 
+            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
-            p.Start();
-
-            await p.StandardInput.WriteAsync(@"
+            var command = """
                 Set-ExecutionPolicy Bypass -Scope Process -Force
                 function Print-WinGetPackage {
                     param (
@@ -381,22 +413,21 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     }
                 }
 
-                if(!(Get-Command -Verb Find -Noun WinGetPackage))
-                {
-                    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Confirm:$false
-                    Install-Module -Name Microsoft.WinGet.Client -Scope CurrentUser -AllowClobber -Confirm:$false -Force
-                }
-                Find-WinGetPackage -Query """ + query + @""" | Print-WinGetPackage
+                Find-WinGetPackage -Query {query} | Print-WinGetPackage
+                
                 exit
-                exit
+                
 
-                ");
+                """;
+
+            await p.StandardInput.WriteAsync(command);
+            p.StandardInput.Close();
+            logger.AddToStdIn(command);
 
             string? line;
-            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (!line.StartsWith("#"))
                     continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
 
@@ -409,9 +440,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 Packages.Add(new Package(elements[0][1..], elements[1], elements[2], source, ManagerInstance));
             }
 
-            output += await p.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(ManagerInstance, p, output);
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
 
             return Packages.ToArray();
 
@@ -633,15 +664,16 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             };
 
+            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
+
             p.Start();
 
             string? line;
             List<string> versions = new();
             bool DashesPassed = false;
-            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (!DashesPassed)
                 {
                     if (line.Contains("---"))
@@ -650,8 +682,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 else
                     versions.Add(line.Trim());
             }
-            output += await p.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(ManagerInstance, p, output);
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
             return versions.ToArray();
         }
 
@@ -659,8 +692,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             List<ManagerSource> sources = new();
 
-            Process process = new();
-            ProcessStartInfo startInfo = new()
+            Process p = new();
+            p.StartInfo = new()
             {
                 FileName = ManagerInstance.Status.ExecutablePath,
                 Arguments = ManagerInstance.Properties.ExecutableCallArgs + " source list",
@@ -672,15 +705,15 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            process.StartInfo = startInfo;
-            process.Start();
+            p.Start();
+
+            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
             bool dashesPassed = false;
-            string output = "";
             string? line;
-            while ((line = await process.StandardOutput.ReadLineAsync()) != null)
+            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 try
                 {
                     if (string.IsNullOrEmpty(line))
@@ -704,10 +737,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             }
 
-            output += await process.StandardError.ReadToEndAsync();
-            // AppTools.LogManagerOperation(ManagerInstance, process, output);
-
-            await process.WaitForExitAsync();
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
             return sources.ToArray();
 
         }

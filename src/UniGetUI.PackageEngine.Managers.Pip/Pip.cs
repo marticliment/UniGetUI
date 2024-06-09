@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -47,10 +49,10 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         {
             List<Package> Packages = new();
 
-            Tuple<bool, string> which_res = await CoreTools.Which("parse_pip_search");
+            Tuple<bool, string> which_res = await CoreTools.Which("parse_pip_search.exe");
             string path = which_res.Item2;
             if (!which_res.Item1)
-            {
+            { 
                 Process proc = new()
                 {
                     StartInfo = new ProcessStartInfo()
@@ -58,11 +60,19 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         FileName = path,
                         Arguments = Properties.ExecutableCallArgs + " install parse_pip_search",
                         UseShellExecute = true,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
                         CreateNoWindow = true,
                     }
                 };
+                var aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
                 proc.Start();
+
+                aux_logger.AddToStdOut(await proc.StandardOutput.ReadToEndAsync());
+                aux_logger.AddToStdErr(await proc.StandardError.ReadToEndAsync());
+                
                 await proc.WaitForExitAsync();
+                aux_logger.Close(proc.ExitCode);
                 path = "parse_pip_search.exe";
             }
 
@@ -80,14 +90,15 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             };
 
+            var logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+
             p.Start();
 
             string? line;
             bool DashesPassed = false;
-            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (!DashesPassed)
                 {
                     if (line.Contains("----"))
@@ -106,36 +117,37 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, scope: PackageScope.Global));
                 }
             }
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
+            
             return Packages.ToArray();
         }
 
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            Process p = new()
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
             {
-                StartInfo = new ProcessStartInfo()
-                {
-                    FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list --outdated",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " list --outdated",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
+
+            var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
             p.Start();
 
             string? line;
             bool DashesPassed = false;
             List<Package> Packages = new();
-            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (!DashesPassed)
                 {
                     if (line.Contains("----"))
@@ -154,37 +166,38 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, scope: PackageScope.Global));
                 }
             }
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);    
+
             return Packages.ToArray();
         }
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
 
-            Process p = new()
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo()
             {
-                StartInfo = new ProcessStartInfo()
-                {
-                    FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
+                FileName = Status.ExecutablePath,
+                Arguments = Properties.ExecutableCallArgs + " list",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
+        
+            var logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
 
             p.Start();
 
             string? line;
             bool DashesPassed = false;
             List<Package> Packages = new();
-            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (!DashesPassed)
                 {
                     if (line.Contains("----"))
@@ -203,8 +216,10 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, scope: PackageScope.Global));
                 }
             }
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
+
             return Packages.ToArray();
         }
 

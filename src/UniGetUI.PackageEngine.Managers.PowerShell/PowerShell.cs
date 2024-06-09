@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -65,9 +66,11 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
+            var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+
             p.Start();
 
-            await p.StandardInput.WriteLineAsync(@"
+            string command = """
                 function Test-GalleryModuleUpdate {
                     param (
                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
@@ -78,24 +81,26 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     process {
                         $URLs = @{}
                         @(Get-PSRepository).ForEach({$URLs[$_.Name] = $_.SourceLocation})
-                        $page = Invoke-WebRequest -Uri ($URLs[$Repository] + ""/package/$Name"") -UseBasicParsing -Maximum 0 -ea Ignore
-                        [version]$latest = Split-Path -Path ($page.Headers.Location -replace ""$Name."" -replace "".nupkg"") -Leaf
+                        $page = Invoke-WebRequest -Uri ($URLs[$Repository] + "/package/$Name") -UseBasicParsing -Maximum 0 -ea Ignore
+                        [version]$latest = Split-Path -Path ($page.Headers.Location -replace "$Name." -replace ".nupkg") -Leaf
                         $needsupdate = $Latest -gt $Version
                         if ($needsupdate) {
-                                Write-Output($Name + ""|"" + $Version.ToString() + ""|"" + $Latest.ToString() + ""|"" + $Repository)
+                                Write-Output($Name + "|" + $Version.ToString() + "|" + $Latest.ToString() + "|" + $Repository)
                         }
                     }
                 }
                 Get-InstalledModule | Test-GalleryModuleUpdate
 
                 exit
-                "); // do NOT remove the trailing endline
+                """;
+            await p.StandardInput.WriteLineAsync(command);
+            logger.AddToStdIn(command);
+
             string? line;
             List<Package> Packages = new();
-            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (line.StartsWith(">>"))
                     continue;
 
@@ -111,9 +116,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], GetSourceOrDefault(elements[3]), this));
             }
 
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
 
             return Packages.ToArray();
         }
@@ -133,14 +138,15 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
+            var logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+
             p.Start();
             string? line;
             List<Package> Packages = new();
             bool DashesPassed = false;
-            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (!DashesPassed)
                 {
                     if (line.Contains("-----"))
@@ -158,9 +164,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 }
             }
 
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
 
             return Packages.ToArray();
         }

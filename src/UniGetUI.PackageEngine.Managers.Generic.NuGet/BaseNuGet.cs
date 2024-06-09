@@ -45,16 +45,18 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         {
             List<Package> Packages = new();
 
+            var logger = TaskLogger.CreateNew(Enums.LoggableTaskType.FindPackages);
+
             ManagerSource[] sources;
             if (Capabilities.SupportsCustomSources)
                 sources = await GetSources();
             else
-                sources = new ManagerSource[] { Properties.DefaultSource };
+                sources = [ Properties.DefaultSource ];
             
             foreach(ManagerSource source in sources)
             {
                 Uri SearchUrl = new($"{source.Url}/Search()?searchTerm=%27{HttpUtility.UrlEncode(query)}%27&targetFramework=%27%27&includePrerelease=false");
-                Logger.Debug($"Begin package search with url={SearchUrl} on manager {Name}"); ;
+                logger.Log($"Begin package search with url={SearchUrl} on manager {Name}"); ;
 
                 using (HttpClient client = new(CoreData.GenericHttpClientParameters))
                 {
@@ -63,7 +65,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        Logger.Warn($"Failed to fetch api at Url={SearchUrl} with status code {response.StatusCode}");
+                        logger.Error($"Failed to fetch api at Url={SearchUrl} with status code {response.StatusCode}");
                         continue;
                     }
 
@@ -86,11 +88,16 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
                         AlreadyProcessedPackages[id] = new SearchResult { id = id, version = version, version_float = float_version };
                     }
-                    foreach(SearchResult package in AlreadyProcessedPackages.Values)
+                    foreach (SearchResult package in AlreadyProcessedPackages.Values)
+                    {
+                        logger.Log($"Found package {package.id} version {package.version} on source {source.Name}");
                         Packages.Add(new Package(CoreTools.FormatAsName(package.id), package.id, package.version, source, this));
+                    }
 
                 }
             }
+
+            logger.Close(0);
 
             return Packages.ToArray();
         }

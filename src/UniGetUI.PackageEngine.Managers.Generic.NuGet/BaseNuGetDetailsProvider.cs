@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks.Dataflow;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
@@ -8,6 +9,7 @@ using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
@@ -18,13 +20,18 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         protected override async Task<PackageDetails> GetPackageDetails_Unsafe(Package package)
         {
             PackageDetails details = new(package);
+            var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
             try
             {
+
                 details.ManifestUrl = PackageManifestLoader.GetPackageManifestUrl(package);
                 string? PackageManifestContents = await PackageManifestLoader.GetPackageManifestContent(package);
+                logger.Log(PackageManifestContents);
+
                 if (PackageManifestContents == null)
                 {
-                    Logger.Warn($"No manifest content could be loaded for package {package.Id} on manager {package.Manager.Name}, returning empty PackageDetails");
+                    logger.Error($"No manifest content could be loaded for package {package.Id} on manager {package.Manager.Name}, returning empty PackageDetails");
+                    logger.Close(1);
                     return details;
                 }
 
@@ -82,11 +89,13 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     break;
                 }
 
+                logger.Close(0);
                 return details;
             }
             catch (Exception e)
             {
-                Logger.Error(e);
+                logger.Error(e);
+                logger.Close(1);
                 return details;
             }
         }

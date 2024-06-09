@@ -41,7 +41,7 @@
                 <widgets:TranslatedTextBlock Text="Reload log"/>
             </Button>
         </Grid>
-        <ScrollViewer Grid.Row="1" HorizontalScrollMode="Disabled" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" CornerRadius="8">
+        <ScrollViewer Name="MainScroller" Grid.Row="1" HorizontalScrollMode="Disabled" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" CornerRadius="8">
             <RichTextBlock LineHeight="18"  Name="LogTextBox" FontFamily="Consolas" TextWrapping="WrapWholeWords" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="8"/>
         </ScrollViewer>
     </Grid>
