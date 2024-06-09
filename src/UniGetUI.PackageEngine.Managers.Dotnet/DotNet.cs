@@ -123,7 +123,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = new();
-            foreach (var scope in new PackageScope[] { PackageScope.User, PackageScope.Local })
+            foreach (var scope in new PackageScope[] { PackageScope.Local, PackageScope.Global})
             {
                 Process p = new Process();
                 p.StartInfo = new ProcessStartInfo()

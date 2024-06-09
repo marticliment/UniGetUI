@@ -171,7 +171,7 @@ namespace UniGetUI.Interface.Pages
             {
                 bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains("(") ?? false;
                 foreach (var manager in MainApp.Instance.PackageManagerList)
-                    if (manager.Name == LogLevelCombo.SelectedValue?.ToString()?.Split(' ')[0])
+                    if (manager.Name.Contains(LogLevelCombo.SelectedValue?.ToString()?.Split(' ')[0] ?? "uncontained_word"))
                     {
                         var TaskLogger = manager.TaskLogger;
                         LogTextBox.Blocks.Clear();
