@@ -41,6 +41,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         protected IEnumerable<string>? CachedMessage = null;
         protected IEnumerable<string>? CachedVerboseMessage = null;
 
+        const int RETURNCODE_UNSET = -200;
+        const int RETURNCODE_SUCCESS = 0;
+        protected int ReturnCode = -200;
+
         public TaskLogger()
         {
             StartTime = DateTime.Now;
@@ -50,11 +54,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         ~TaskLogger()
         {
-            if(isOpen) Close();
+            if(isOpen) Close(RETURNCODE_UNSET);
         }
 
-        public void Close()
+        public void Close(int returnCode)
         {
+            ReturnCode = returnCode;
             EndTime = DateTime.Now;
             isOpen = false;
             isComplete = true;
@@ -68,6 +73,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         ///   1. Grey
         ///   2. Red
         ///   3. Blue
+        ///   4. Green
+        ///   5. Yellow
         /// </summary>
         /// <returns></returns>
         public abstract IEnumerable<string> AsColoredString(bool verbose = false);
@@ -80,7 +87,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         string Executable;
         string Arguments;
-        int ReturnCode;
         List<string> StdIn = new();
         List<string> StdOut = new();
         List<string> StdErr = new();
@@ -151,7 +157,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 result.Add("0-- Process STDIN");
                 if(verbose)
                     foreach (var line in StdIn)
-                        result.Add("3" + line);
+                        result.Add("3  " + line);
                 else
                     result.Add("1 ...");
             }
@@ -161,7 +167,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 result.Add("0-- Process STDOUT");
                 if(verbose)
                     foreach (var line in StdOut)
-                        result.Add("1" + line);
+                        result.Add("1  " + line);
                 else
                     result.Add("1 ...");
             }
@@ -170,8 +176,13 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 result.Add("0");
                 result.Add("0-- Process STDERR");
                 foreach (var line in StdErr)
-                    result.Add("2" + line);
+                    result.Add("2  " + line);
             }
+            result.Add("0");
+            if(!isComplete) result.Add("5Return code: Process has not finished yet");
+            else if (ReturnCode == -200) result.Add("5Return code: UNSPECIFIED");
+            else if(ReturnCode == 0) result.Add("4Return code: SUCCESS (0)");
+            else result.Add($"2Return code: FAILED ({ReturnCode})");
             result.Add("0");
             result.Add("0——————————————————————————————————————————");
             result.Add("0");
@@ -188,7 +199,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         PackageManager Manager;
         LoggableTaskType Type;
 
-        int ReturnCode;
         List<string> Info = new();
         List<string> Errors = new();
 
@@ -247,7 +257,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 result.Add("0-- Task information");
                 if (verbose)
                     foreach (var line in Info)
-                        result.Add("1" + line);
+                        result.Add("1  " + line);
                 else
                     result.Add("1 ...");
             }
@@ -256,8 +266,13 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 result.Add("0");
                 result.Add("0-- Task errors");
                 foreach (var line in Errors)
-                    result.Add("2" + line);
+                    result.Add("2  " + line);
             }
+            result.Add("0");
+            if (!isComplete) result.Add("5The task has not finished yet");
+            else if (ReturnCode == -200) result.Add("5The task did not report a finish status");
+            else if (ReturnCode == 0) result.Add("4The task reported success");
+            else result.Add($"2The task reported a failure ({ReturnCode})");
             result.Add("0");
             result.Add("0——————————————————————————————————————————");
             result.Add("0");

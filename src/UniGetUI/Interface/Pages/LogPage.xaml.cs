@@ -80,22 +80,27 @@ namespace UniGetUI.Interface.Pages
             LogTextBox.Blocks.Add(paragraph);
         }
 
+        // Dark theme colors
+        Color DARK_GREY = Color.FromArgb(255, 130, 130, 130);
+        Color DARK_LIGHT_GREY = Color.FromArgb(255, 190, 190, 190);
+        Color DARK_WHITE = Color.FromArgb(255, 250, 250, 250);
+        Color DARK_YELLOW = Color.FromArgb(255, 255, 255, 90);
+        Color DARK_RED = Color.FromArgb(255, 255, 80, 80);
+        Color DARK_GREEN = Color.FromArgb(255, 80, 255, 80);
+        Color DARK_BLUE = Color.FromArgb(255, 120, 120, 255);
+
+        // Light theme colors
+        Color LIGHT_GREY = Color.FromArgb(255, 125, 125, 225);
+        Color LIGHT_LIGHT_GREY = Color.FromArgb(255, 50, 50, 150);
+        Color LIGHT_WHITE = Color.FromArgb(255, 0, 0, 0);
+        Color LIGHT_YELLOW = Color.FromArgb(255, 150, 150, 0);
+        Color LIGHT_RED = Color.FromArgb(255, 205, 0, 0);
+        Color LIGHT_GREEN = Color.FromArgb(255, 0, 205, 0);
+        Color LIGHT_BLUE = Color.FromArgb(255, 0, 0, 205);
+
         public void LoadLog()
         {
 
-            // Dark theme colors
-            Color DARK_GREY = Color.FromArgb(255, 130, 130, 130);
-            Color DARK_BLUE = Color.FromArgb(255, 190, 190, 190);
-            Color DARK_WHITE = Color.FromArgb(255, 250, 250, 250);
-            Color DARK_YELLOW = Color.FromArgb(255, 255, 255, 90);
-            Color DARK_RED = Color.FromArgb(255, 255, 80, 80);
-
-            // Light theme colors
-            Color LIGHT_GREY = Color.FromArgb(255, 125, 125, 225);
-            Color LIGHT_BLUE = Color.FromArgb(255, 50, 50, 150);
-            Color LIGHT_WHITE = Color.FromArgb(255, 0, 0, 0);
-            Color LIGHT_YELLOW = Color.FromArgb(255, 150, 150, 0);
-            Color LIGHT_RED = Color.FromArgb(255, 205, 0, 0);
 
             bool IS_DARK = MainApp.Instance.ThemeListener.CurrentTheme == ApplicationTheme.Dark;
             
@@ -125,10 +130,10 @@ namespace UniGetUI.Interface.Pages
                     switch (log_entry.Severity)
                     {
                         case LogEntry.SeverityLevel.Debug:
-                            color = new SolidColorBrush { Color = IS_DARK? DARK_GREY: LIGHT_GREY };
+                            color = new SolidColorBrush { Color = IS_DARK ? DARK_GREY: LIGHT_GREY };
                             break;
                         case LogEntry.SeverityLevel.Info:
-                            color = new SolidColorBrush { Color = IS_DARK ? DARK_BLUE : LIGHT_BLUE };
+                            color = new SolidColorBrush { Color = IS_DARK ? DARK_LIGHT_GREY : LIGHT_LIGHT_GREY };
                             break;
                         case LogEntry.SeverityLevel.Success:
                             color = new SolidColorBrush { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE};
@@ -170,6 +175,12 @@ namespace UniGetUI.Interface.Pages
                     {
                         var TaskLogger = manager.TaskLogger;
                         LogTextBox.Blocks.Clear();
+                        Paragraph versionParagraph = new Paragraph();
+                        versionParagraph.Inlines.Add(new Run() { Text = $"Manager {manager.Name} with version:\n" });
+                        versionParagraph.Inlines.Add(new Run() { Text = manager.Status.Version });
+                        versionParagraph.Inlines.Add(new Run() { Text = $"\n\n——————————————————————————————————————————\n\n" });
+                        LogTextBox.Blocks.Add(versionParagraph);
+
                         foreach (var operation in TaskLogger.Operations)
                         {
                             Paragraph p = new();
@@ -182,13 +193,19 @@ namespace UniGetUI.Interface.Pages
                                         color = new SolidColorBrush { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE};
                                         break;
                                     case '1':
-                                        color = new SolidColorBrush { Color = IS_DARK ? DARK_GREY : LIGHT_GREY };
+                                        color = new SolidColorBrush { Color = IS_DARK ? DARK_LIGHT_GREY : LIGHT_LIGHT_GREY };
                                         break;
                                     case '2':
                                         color = new SolidColorBrush { Color = IS_DARK ? DARK_RED : LIGHT_RED };
                                         break;
                                     case '3':
                                         color = new SolidColorBrush { Color = IS_DARK ? DARK_BLUE : LIGHT_BLUE };
+                                        break;
+                                    case '4':
+                                        color = new SolidColorBrush { Color = IS_DARK ? DARK_GREEN : LIGHT_GREEN };
+                                        break;
+                                    case '5':
+                                        color = new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW };
                                         break;
                                     default:
                                         color = new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW };

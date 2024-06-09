@@ -81,11 +81,17 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         FileName = Status.ExecutablePath,
                         Arguments = Properties.ExecutableCallArgs + " install main/scoop-search",
                         UseShellExecute = true,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
                         CreateNoWindow = true
                     }
                 };
+                var aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
                 proc.Start();
+                aux_logger.AddToStdOut(await proc.StandardOutput.ReadToEndAsync());
+                aux_logger.AddToStdErr(await proc.StandardError.ReadToEndAsync());
                 await proc.WaitForExitAsync();
+                aux_logger.Close(proc.ExitCode);
                 path = "scoop-search.exe";
             }
 
@@ -102,15 +108,15 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
+            var logger = TaskLogger.CreateNew(LoggableTaskType.SearchPackages, p);
 
             p.Start();
 
             string? line;
             ManagerSource source = Properties.DefaultSource;
-            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (line.StartsWith("'"))
                 {
                     string sourceName = line.Split(" ")[0].Replace("'", "");
@@ -130,8 +136,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1].Replace("(", "").Replace(")", ""), source, this));
                 }
             }
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
             return Packages.ToArray();
         }
 
@@ -146,6 +153,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             List<Package> Packages = new();
 
+
             Process p = new()
             {
                 StartInfo = new ProcessStartInfo()
@@ -159,15 +167,15 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
+            var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
             p.Start();
 
             string? line;
             bool DashesPassed = false;
-            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (!DashesPassed)
                 {
                     if (line.Contains("---"))
@@ -193,8 +201,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackages[elements[0] + "." + elements[1]].Source, this, InstalledPackages[elements[0] + "." + elements[1]].Scope));
                 }
             }
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
             return Packages.ToArray();
         }
 
@@ -215,15 +224,14 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
-
+            var logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
             p.Start();
 
             string? line;
             bool DashesPassed = false;
-            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (!DashesPassed)
                 {
                     if (line.Contains("---"))
@@ -247,8 +255,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], GetSourceOrDefault(elements[2]), this, scope));
                 }
             }
-            output += await p.StandardError.ReadToEndAsync();
-            LogOperation(p, output);
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
             return Packages.ToArray();
         }
 
@@ -357,7 +366,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 return;
             }
             LastScoopSourceUpdateTime = DateTime.Now.Ticks;
-            Process process = new();
+            Process p = new();
             ProcessStartInfo StartInfo = new()
             {
                 FileName = Status.ExecutablePath,
@@ -369,9 +378,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 CreateNoWindow = true,
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
-            process.StartInfo = StartInfo;
-            process.Start();
-            await process.WaitForExitAsync();
+            p.StartInfo = StartInfo;
+            var logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+            p.Start();
+            logger.AddToStdOut(await p.StandardOutput.ReadToEndAsync());
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
         }
 
         protected override async Task<ManagerStatus> LoadManager()
