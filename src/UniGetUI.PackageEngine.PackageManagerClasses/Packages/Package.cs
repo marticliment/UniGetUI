@@ -232,8 +232,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         /// <summary>
         /// Get the package's icon url. If the package has no icon, a fallback image is returned.
+        /// After calling this method, the returned URL points to a location on the local machine
         /// </summary>
-        /// <returns>An always-valid URI object</returns>
+        /// <returns>An always-valid URI object, pointing to a file:// or to a ms-appx:// URL</returns>
         public async Task<Uri> GetIconUrl()
         {
             try

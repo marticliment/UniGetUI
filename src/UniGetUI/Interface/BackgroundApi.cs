@@ -158,7 +158,7 @@ namespace UniGetUI.Interface
             });
 
             // Return found updates
-            Get("/widgets/v1/get_updates", async (parameters) =>
+            Get("/widgets/v1/get_updates", (parameters) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                     return 401;
@@ -169,17 +169,7 @@ namespace UniGetUI.Interface
                     if (package.Tag == PackageTag.OnQueue || package.Tag == PackageTag.BeingProcessed)
                         continue; // Do not show already processed packages on queue 
 
-                    string icon;
-                    string icon_path = (await package.GetIconUrl()).ToString();
-                    if (icon_path == "ms-appx:///Assets/Images/package_color.png")
-                    {
-                        icon = "https://marticliment.com/resources/widgets/package_color.png";
-                    }
-                    else
-                    {
-                        PackageIconsPathReference[package.Id] = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name, $"{package.Id}.{icon_path.Split('.')[^1]}");
-                        icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={package.Id}&token={ApiTokenHolder.Token}";
-                    }
+                    string icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={package.Id}&packageSource={package.Source.Name}&token={ApiTokenHolder.Token}";
                     packages += $"{package.Name.Replace('|', '-')}|{package.Id}|{package.Version}|{package.NewVersion}|{package.Source}|{package.Manager.Name}|{icon}&&";
                 }
 
@@ -260,27 +250,33 @@ namespace UniGetUI.Interface
                 return 200;
             });
 
-
-
             // Update all packages for a specific manager
             Get("/widgets/v2/get_icon_for_package", async (parameters) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                     return 401;
 
-                if (Request.Query.@packageId == "")
+                if (Request.Query.@packageId == "" || Request.Query.@packageSource == "")
                     return 400;
 
-                string path = "";
-                if (PackageIconsPathReference.ContainsKey(Request.Query.@packageId) && File.Exists(PackageIconsPathReference[Request.Query.@packageId]))
-                    path = PackageIconsPathReference[Request.Query.@packageId];
-                else
-                    path = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "package_color.png");
+                string iconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "package_color.png");
+                Package? package = MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.GetPackageForId(Request.Query.@packageId, Request.Query.@packageSource);
+                if (package != null)
+                {
+                    Uri iconUrl = await package.GetIconUrl();
+                    if (iconUrl.ToString() != "ms-appx:///Assets/Images/package_color.png")
+                    {
+                        iconPath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name, $"{package.Id}.{iconUrl.ToString().Split('.')[^1]}");
+                    }
+                    // else, the iconPath will be the preloaded one (package_color.png)
+                }
+                else 
+                    Logger.Warn($"[API] Package id={Request.Query.@packageId} with sourceName={Request.Query.@packageSource} was not found!");
 
-                byte[] fileContents = await File.ReadAllBytesAsync(path);
+                byte[] fileContents = await File.ReadAllBytesAsync(iconPath);
                 return new Response()
                 {
-                    ContentType = $"image/{path.Split('.')[^1]}",
+                    ContentType = $"image/{iconPath.Split('.')[^1]}",
                     Contents = (stream) =>
                     {
                         stream.Write(fileContents, 0, fileContents.Length);
