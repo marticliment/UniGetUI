@@ -43,7 +43,7 @@ Check out the [Supported Package Managers Table](#supported-package-managers) fo
 
 **Install WingetUI through Winget:**    
 ```cmd
-winget install SomePythonThings.WingetUIStore
+winget install --exact wingetui --source winget
 ```
 
 **Install WingetUI through Scoop:**
