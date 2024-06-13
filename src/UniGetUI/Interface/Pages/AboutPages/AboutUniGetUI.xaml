@@ -16,7 +16,7 @@
             <widgets:TranslatedTextBlock x:Name="AboutHeader" Text="About WingetUI" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
             <widgets:TranslatedTextBlock Text="WingetUI is an application that makes managing your software easier, by providing an all-in-one graphical interface for your command-line package managers."/>
             <TextBlock Margin="0,10,0,10" x:Name="VersionText" Text="" FontWeight="SemiBold" FontSize="15"/>
-            <InfoBar Margin="0,10,0,10" Severity="Warning" Name="DisclaimerBanner" IsOpen="True" IsClosable="False" Title="Disclaimer" Message="WingetUI is not affiliated or related with Winget, Microsoft, nor any other package manager."/>
+            <InfoBar Margin="0,10,0,10" Severity="Warning" Name="DisclaimerBanner" IsOpen="True" IsClosable="False"/>
 
             <widgets:TranslatedTextBlock Text="Useful links" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
             <HyperlinkButton NavigateUri="https://www.marticliment.com/unigetui" HorizontalAlignment="Stretch">

@@ -17,13 +17,13 @@
             // Package managers and related
             {"Winget",                  "MIT"},
             {"Scoop",                   "MIT"},
-            {"Scoop Search",            "MIT"},
+            {"scoop-search",            "MIT"},
             {"Chocolatey",              "Apache v2"},
             {"Npm",                     "Artistic License 2.0"},
             {"Pip",                     "MIT"},
-            {"Parse Pip Search",        "MIT"},
+            {"parse_pip_search",        "MIT"},
             {"PowerShell Gallery",      "Unknown"},
-            {"Dotnet Tool",             "Free (Proprietary license)"},
+            {".NET Sdk",                "MIT"},
             {"dotnet-tools-outdated",   "MIT"},
 
             // Other
@@ -46,12 +46,12 @@
             // Package managers and related
             {"Winget",                  new Uri("https://github.com/microsoft/winget-cli/blob/master/LICENSE")},
             {"Scoop",                   new Uri("https://github.com/ScoopInstaller/Scoop/blob/master/LICENSE")},
-            {"Scoop Search",            new Uri("https://github.com/shilangyu/scoop-search/blob/master/LICENSE")},
+            {"scoop-search",            new Uri("https://github.com/shilangyu/scoop-search/blob/master/LICENSE")},
             {"Chocolatey",              new Uri("https://github.com/chocolatey/choco/blob/develop/LICENSE")},
             {"Npm",                     new Uri("https://github.com/npm/cli/blob/latest/LICENSE")},
             {"Pip",                     new Uri("https://github.com/pypa/pip/blob/main/LICENSE.txt")},
-            {"Parse Pip Search",        new Uri("https://github.com/marticliment/parseable_pip_search/blob/master/LICENSE.md")},
-            {"Dotnet Tool",             new Uri("https://dotnet.microsoft.com/en-us/platform/free")},
+            {"parse_pip_search",        new Uri("https://github.com/marticliment/parseable_pip_search/blob/master/LICENSE.md")},
+            {".NET Sdk",                new Uri("https://github.com/dotnet/sdk/blob/main/LICENSE.TXT")},
             {"dotnet-tools-outdated",   new Uri("https://github.com/rychlym/dotnet-tools-outdated/blob/master/LICENSE")},
             {"PowerShell Gallery",      new Uri("https://www.powershellgallery.com/")},
                                        
@@ -75,12 +75,12 @@
             // Package managers and related
             {"Winget",                  new Uri("https://github.com/microsoft/winget-cli/")},
             {"Scoop",                   new Uri("https://github.com/ScoopInstaller/Scoop/")},
-            {"Scoop Search",            new Uri("https://github.com/shilangyu/scoop-search/")},
+            {"scoop-search",            new Uri("https://github.com/shilangyu/scoop-search/")},
             {"Chocolatey",              new Uri("https://github.com/chocolatey/choco/")},
             {"Npm",                     new Uri("https://github.com/npm/cli/")},
             {"Pip",                     new Uri("https://github.com/pypa/pip/")},
-            {"Parse Pip Search",        new Uri("https://github.com/marticliment/parseable_pip_search/")},
-            {"Dotnet Tool",             new Uri("https://github.com/dotnet/sdk/")},
+            {"parse_pip_search",        new Uri("https://github.com/marticliment/parseable_pip_search/")},
+            {".NET Sdk",                new Uri("https://dotnet.microsoft.com/")},
             {"dotnet-tools-outdated",   new Uri("https://github.com/rychlym/dotnet-tools-outdated/")},
             {"PowerShell Gallery",      new Uri("https://www.powershellgallery.com/")},
                                        
