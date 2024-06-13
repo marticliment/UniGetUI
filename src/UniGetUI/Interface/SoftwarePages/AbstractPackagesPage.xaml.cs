@@ -369,7 +369,7 @@ namespace UniGetUI.Interface
          * 
          */
 
-        public async Task LoadPackages()
+        public virtual async Task LoadPackages()
         {
             await LoadPackages(ReloadReason.External);
         }

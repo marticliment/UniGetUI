@@ -219,6 +219,11 @@ namespace UniGetUI.Interface.SoftwarePages
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
         }
 
+        public override async Task LoadPackages()
+        {
+            if(QueryBlock.Text.Trim() != "") await LoadPackages(ReloadReason.External);
+        }
+
         public override void GenerateUIText()
         {
             DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = true;
