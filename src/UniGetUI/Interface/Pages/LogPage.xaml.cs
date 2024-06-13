@@ -28,7 +28,7 @@ namespace UniGetUI.Interface.Pages
         OperationHistory
     }
 
-    public sealed partial class Logger_LogPage : Page
+    public sealed partial class Logger_LogPage : Page, IPageWithKeyboardShortcuts
     {
         private int LOG_LEVEL = 4;
         public Logger_LogType Logger_LogType;
@@ -65,6 +65,19 @@ namespace UniGetUI.Interface.Pages
                 LogLevelCombo.SelectedIndex = 0;
             }
         }
+
+        public void ReloadTriggered()
+        {
+            LoadLog();
+        }
+
+        public void SelectAllTriggered()
+        {
+            LogTextBox.SelectAll();
+        }
+
+        public void SearchTriggered()
+        { }
 
         public void SetText(string body)
         {

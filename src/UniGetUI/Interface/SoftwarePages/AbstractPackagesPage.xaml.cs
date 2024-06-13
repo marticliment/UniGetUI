@@ -253,10 +253,6 @@ namespace UniGetUI.Interface
                     if(package != null)
                         package.IsChecked = !package.IsChecked;
                 }
-                else if (e.Key == Windows.System.VirtualKey.F1)
-                {
-                    MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
-                } 
             };
 
             int width = 250;
@@ -281,7 +277,6 @@ namespace UniGetUI.Interface
 
         public void SearchTriggered()
         {
-            Logger.Error(PAGE_NAME);
             QueryBlock.Focus(FocusState.Pointer);
         }
 

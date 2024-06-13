@@ -112,6 +112,14 @@ namespace UniGetUI.Interface
                         }
                     }
                 }
+                else if (e.Key == Windows.System.VirtualKey.F1)
+                {
+                    HelpMenu_Click(s, e);
+                }
+                else if (IS_CONTROL_PRESSED && (e.Key == Windows.System.VirtualKey.Q || e.Key == Windows.System.VirtualKey.W))
+                {
+                    MainApp.Instance.MainWindow.Close();
+                }
                 else if(CurrentPage is IPageWithKeyboardShortcuts)
                 {
                     if (e.Key == Windows.System.VirtualKey.F5 || (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.R))

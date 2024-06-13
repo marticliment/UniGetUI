@@ -12,6 +12,7 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
@@ -26,7 +27,7 @@ using Windows.UI.Core;
 
 namespace UniGetUI.Interface
 {
-    public partial class PackageBundlePage : Page
+    public partial class PackageBundlePage : Page, IPageWithKeyboardShortcuts
     {
         public ObservableCollection<BundledPackage> Packages = new();
         public SortableObservableCollection<BundledPackage> FilteredPackages = new() { SortingSelector = (a) => (a.Package.Name) };
@@ -139,10 +140,6 @@ namespace UniGetUI.Interface
                 {
                     MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
                 }
-                else if (e.Key == Windows.System.VirtualKey.F && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
-                {
-                    QueryBlock.Focus(FocusState.Programmatic);
-                }
             };
 
             int width = 250;
@@ -160,6 +157,24 @@ namespace UniGetUI.Interface
             GenerateToolBar();
             LoadInterface();
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
+        }
+
+
+        public void SearchTriggered()
+        {
+            QueryBlock.Focus(FocusState.Pointer);
+        }
+
+        public void ReloadTriggered()
+        {
+        }
+
+        public void SelectAllTriggered()
+        {
+            if (AllSelected)
+                ClearItemSelection();
+            else
+                SelectAllItems();
         }
 
 
