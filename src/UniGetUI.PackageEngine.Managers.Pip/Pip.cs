@@ -57,9 +57,9 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 {
                     StartInfo = new ProcessStartInfo()
                     {
-                        FileName = path,
+                        FileName = Status.ExecutablePath,
                         Arguments = Properties.ExecutableCallArgs + " install parse_pip_search",
-                        UseShellExecute = true,
+                        UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         CreateNoWindow = true,

@@ -80,7 +80,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     {
                         FileName = Status.ExecutablePath,
                         Arguments = Properties.ExecutableCallArgs + " install main/scoop-search",
-                        UseShellExecute = true,
+                        UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         CreateNoWindow = true

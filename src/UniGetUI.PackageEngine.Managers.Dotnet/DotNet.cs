@@ -55,9 +55,9 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 Process proc = new Process();
                 proc.StartInfo = new ProcessStartInfo()
                 {
-                    FileName = path,
+                    FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " install --global dotnet-tools-outdated",
-                    UseShellExecute = true,
+                    UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
