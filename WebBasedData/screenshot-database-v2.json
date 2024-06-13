@@ -3,8 +3,8 @@
         "total": 11706,
         "done": 5051,
         "packages_with_icon": 5051,
-        "packages_with_screenshot": 556,
-        "total_screenshots": 1739
+        "packages_with_screenshot": 557,
+        "total_screenshots": 1740
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -10802,8 +10802,10 @@
             "images": []
         },
         "docker-compose": {
-            "icon": "https://community.chocolatey.org/content/packageimages/docker-compose.1.29.2.png",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/docker/compose/main/logo.png",
+            "images": [
+                "https://i.postimg.cc/R0pF1kxh/Simple-example-of-Docker-compose-file.png"
+            ]
         },
         "docker-desktop": {
             "icon": "https://www.docker.com/wp-content/uploads/2022/03/Docker-Logo-White-RGB_Vertical.png",
