@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Dialogs;
@@ -92,23 +93,47 @@ namespace UniGetUI.Interface
 
             KeyUp += (s, e) =>
             {
-                if (e.Key == Windows.System.VirtualKey.Tab && InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
+                bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+                bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+
+                if (e.Key == Windows.System.VirtualKey.Tab && IS_CONTROL_PRESSED)
                 {
                     if (CurrentPage != null)
-                        if (!InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
+                    {
+                        if (!IS_SHIFT_PRESSED)
                         {
-                            if (NextPageReference.ContainsKey(CurrentPage))
-                                NextPageReference[CurrentPage].ForceClick();
-                            else
-                                DiscoverNavButton.ForceClick();
+                            if (NextPageReference.ContainsKey(CurrentPage)) NextPageReference[CurrentPage].ForceClick();
+                            else DiscoverNavButton.ForceClick();
                         }
                         else
                         {
-                            if (NextPageReference.ContainsKey(CurrentPage))
-                                PreviousTabReference[CurrentPage].ForceClick();
-                            else
-                                DiscoverNavButton.ForceClick();
+                            if (PreviousTabReference.ContainsKey(CurrentPage)) PreviousTabReference[CurrentPage].ForceClick();
+                            else DiscoverNavButton.ForceClick();
                         }
+                    }
+                }
+                else if (e.Key == Windows.System.VirtualKey.F1)
+                {
+                    HelpMenu_Click(s, e);
+                }
+                else if (IS_CONTROL_PRESSED && (e.Key == Windows.System.VirtualKey.Q || e.Key == Windows.System.VirtualKey.W))
+                {
+                    MainApp.Instance.MainWindow.Close();
+                }
+                else if(CurrentPage is IPageWithKeyboardShortcuts)
+                {
+                    if (e.Key == Windows.System.VirtualKey.F5 || (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.R))
+                    {
+                        (CurrentPage as IPageWithKeyboardShortcuts)?.ReloadTriggered();
+                    }
+                    else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.F)
+                    {
+                        (CurrentPage as IPageWithKeyboardShortcuts)?.SearchTriggered();
+                    }
+                    else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.A)
+                    {
+                        (CurrentPage as IPageWithKeyboardShortcuts)?.SelectAllTriggered();
+                    }
                 }
             };
         }
