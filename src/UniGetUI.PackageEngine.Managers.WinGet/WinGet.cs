@@ -92,7 +92,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StandardOutputEncoding = System.Text.Encoding.UTF8,
+                StandardInputEncoding = System.Text.Encoding.UTF8,
+                StandardErrorEncoding = System.Text.Encoding.UTF8,
             };
 
             var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
@@ -164,7 +166,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StandardOutputEncoding = System.Text.Encoding.UTF8,
+                StandardInputEncoding = System.Text.Encoding.UTF8,
+                StandardErrorEncoding = System.Text.Encoding.UTF8,
             };
 
             var logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);

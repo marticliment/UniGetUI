@@ -396,12 +396,12 @@ namespace UniGetUI.Interface
             if (DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START && reason == ReloadReason.FirstRun)
                 return;
 
-            MainSubtitle.Text = CoreTools.Translate("Loading...");
-            BackgroundText.Text = CoreTools.AutoTranslated("Loading...");
+            MainSubtitle.Text = MainSubtitle_StillLoading;
+            BackgroundText.Text = MainSubtitle_StillLoading;
             BackgroundText.Visibility = Visibility.Visible;
             LoadingProgressBar.Visibility = Visibility.Visible;
             SourcesPlaceholderText.Visibility = Visibility.Visible;
-            SourcesPlaceholderText.Text = CoreTools.AutoTranslated("Loading...");
+            SourcesPlaceholderText.Text = MainSubtitle_StillLoading;
             SourcesTreeViewGrid.Visibility = Visibility.Collapsed;
 
             ClearPackageList();
@@ -527,14 +527,14 @@ namespace UniGetUI.Interface
             }
             FilteredPackages.BlockSorting = false;
             FilteredPackages.Sort();
-            UpdatePackageCount(StillLoading);
+            UpdatePackageCount();
         }
 
-        public void UpdatePackageCount(bool StillLoading = false)
+        public void UpdatePackageCount()
         {
             if (FilteredPackages.Count() == 0)
             {
-                if (!StillLoading)
+                if(LoadingProgressBar.Visibility == Visibility.Collapsed)
                 {
                     if (Packages.Count() == 0)
                     {
@@ -552,8 +552,10 @@ namespace UniGetUI.Interface
                 }
                 else
                 {
+                    BackgroundText.Visibility = PackageList.Items.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
                     BackgroundText.Text = MainSubtitle_StillLoading;
-                    BackgroundText.Visibility = Packages.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+                    SourcesPlaceholderText.Visibility = Packages.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+                    SourcesPlaceholderText.Text = MainSubtitle_StillLoading;
                     MainSubtitle.Text = MainSubtitle_StillLoading;
                 }
 

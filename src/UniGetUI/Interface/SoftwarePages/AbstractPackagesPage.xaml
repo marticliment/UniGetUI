@@ -850,16 +850,17 @@
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <widgets:TranslatedTextBlock x:Name="BackgroundText" Text="Search for packages to start" Grid.Row="1" Grid.Column="1" FontSize="30" FontWeight="Bold" FontFamily="Segoe UI Variable Display"
-                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Opacity="0.5"/>
+                    <TextBlock x:Name="BackgroundText" 
+                        Text="Hello World Lorem Ipsum dolor sit amet" 
+                        TextAlignment="Center" VerticalAlignment="Center"
+                        TextWrapping="Wrap"
+                        Grid.Row="1" Grid.Column="1" 
+                        FontSize="30" FontWeight="Bold" FontFamily="Segoe UI Variable Display"
+                        Opacity="0.5"/>
                 </Grid>
 
             </Grid>
