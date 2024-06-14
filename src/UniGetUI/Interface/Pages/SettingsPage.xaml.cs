@@ -525,5 +525,10 @@ namespace UniGetUI.Interface
                 }
             }
         }
+
+        private void UseUserGSudoToggle_StateChanged(object sender, CheckBoxEventArgs e)
+        {
+            ExperimentalSettingsExpander.ShowRestartRequiredBanner();
+        }
     }
 }

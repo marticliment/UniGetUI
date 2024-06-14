@@ -263,6 +263,12 @@
                                 StateChanged="DisableWidgetsApi_StateChanged"
                                 />
                             <widgets:CheckboxCard
+                                x:Name="UseUserGSudoToggle"
+                                Text="Use installed GSudo instead of the bundled one"
+                                SettingName="UseUserGSudo"
+                                StateChanged="UseUserGSudoToggle_StateChanged"
+                                />
+                            <widgets:CheckboxCard
                                 Text="Allow parallel installs (NOT RECOMMENDED)"
                                 SettingName="AllowParallelInstalls"
                                 />
