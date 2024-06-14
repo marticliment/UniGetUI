@@ -510,7 +510,7 @@
   "Updating WingetUI" : "Actualitzant el WingetUI",
   "Url" : "Enllaç",
   "Use a custom icon and screenshot database URL" : "Utilitza una base de dades d'icones i captures de pantalla personalitzades",
-  "Use installed GSudo instead of the bundled one (requires app restart)" : "Utilitza el GSudo present al sistema en comptes del que inclou l'aplicació (requereix un reinici)",
+  "Use installed GSudo instead of the bundled one" : "Utilitza el GSudo present al sistema en comptes del que inclou l'aplicació",
   "Use system Chocolatey" : "Utilitza el Chocolatey del sistema",
   "Use system Chocolatey (Needs a restart)" : "Utilitza el Chocolatey del sistema (Requereix un reinici)",
   "Use system Winget (Needs a restart)" : "Utilitza el Winget del sistema (Requereix un reinici)",

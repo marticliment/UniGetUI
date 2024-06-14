@@ -510,7 +510,7 @@
   "Updating WingetUI" : "Aktualizace WingetUI",
   "Url" : "Url",
   "Use a custom icon and screenshot database URL" : "Použít vlastní databázi ikonek s screenshotů",
-  "Use installed GSudo instead of the bundled one (requires app restart)" : "Použít nainstalované GSudo namísto přibaleného (vyžaduje restart aplikace)",
+  "Use installed GSudo instead of the bundled one" : "Použít nainstalované GSudo namísto přibaleného (vyžaduje restart aplikace)",
   "Use system Chocolatey" : "Použij systémový Chocolatey",
   "Use system Chocolatey (Needs a restart)" : "Použít systémový Chocolatey (vyžaduje restart aplikace)",
   "Use system Winget (Needs a restart)" : "Použít systémový Winget (vyžaduje restart aplikace)",

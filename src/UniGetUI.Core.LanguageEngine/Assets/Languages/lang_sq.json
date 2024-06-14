@@ -510,7 +510,7 @@
   "Updating WingetUI" : "Po përditësohet WingetUI",
   "Url" : "Url",
   "Use a custom icon and screenshot database URL" : "Përdor një URL të bazës së të dhënave për ikona dhe pamje të ekranit të personalizuara",
-  "Use installed GSudo instead of the bundled one (requires app restart)" : "Përdor instaluesin GSudo në vend të atij të paracaktuar (kërkon rinisjen e aplikacionit)",
+  "Use installed GSudo instead of the bundled one" : "Përdor instaluesin GSudo në vend të atij të paracaktuar (kërkon rinisjen e aplikacionit)",
   "Use system Chocolatey" : "Përdor Chocolatey-n e sistemit",
   "Use system Chocolatey (Needs a restart)" : "Përdor Chocolatey-n e sistemit (Kërkon rinisje)",
   "Use system Winget (Needs a restart)" : "Përdor Winget-in e sistemit (kërkon rinisje)",

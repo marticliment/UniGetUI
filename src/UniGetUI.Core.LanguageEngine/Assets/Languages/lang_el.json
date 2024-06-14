@@ -510,7 +510,7 @@
   "Updating WingetUI" : "Ενημέρωση WingetUI",
   "Url" : "Διεύθυνση URL",
   "Use a custom icon and screenshot database URL" : "Χρήση διεύθυνσης URL προσαρμοσμένης βάσης δεδομένων για εικονίδιο και στιγμιότυπα οθόνης",
-  "Use installed GSudo instead of the bundled one (requires app restart)" : "Χρήση του εγκατεστημένου GSudo αντί του ενσωματωμένου (απαιτείται επανεκκίνηση της εφαρμογής)",
+  "Use installed GSudo instead of the bundled one" : "Χρήση του εγκατεστημένου GSudo αντί του ενσωματωμένου (απαιτείται επανεκκίνηση της εφαρμογής)",
   "Use system Chocolatey" : "Χρήση Chocolatey συστήματος",
   "Use system Chocolatey (Needs a restart)" : "Χρήση Chocolatey του συστήματος (Απαιτείται επανεκκίνηση)",
   "Use system Winget (Needs a restart)" : "Χρήση Winget συστήματος (Απαιτείται επανεκκίνηση)",

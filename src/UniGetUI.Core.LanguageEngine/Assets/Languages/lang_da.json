@@ -510,7 +510,7 @@
   "Updating WingetUI" : "Opdatere WingetUI",
   "Url" : "URL",
   "Use a custom icon and screenshot database URL" : "Brug brugerdefineret ikon og screenshot database URL",
-  "Use installed GSudo instead of the bundled one (requires app restart)" : null,
+  "Use installed GSudo instead of the bundled one" : null,
   "Use system Chocolatey" : "Brug systemets Chocolatey",
   "Use system Chocolatey (Needs a restart)" : "Brug systemets Chocolatey (Kræver genstart)",
   "Use system Winget (Needs a restart)" : "Brug systemets Winget (Kræver genstart)",

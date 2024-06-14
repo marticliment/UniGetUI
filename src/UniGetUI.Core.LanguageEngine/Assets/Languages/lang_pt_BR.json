@@ -510,7 +510,7 @@
   "Updating WingetUI" : "Atualizando o WingetUI",
   "Url" : "Url",
   "Use a custom icon and screenshot database URL" : "Usar um banco de dados de ícones e capturas de tela personalizados",
-  "Use installed GSudo instead of the bundled one (requires app restart)" : "Utilizar o GSudo instalado em vez do incluído (requer a reinicialização do aplicativo)",
+  "Use installed GSudo instead of the bundled one" : "Utilizar o GSudo instalado em vez do incluído (requer a reinicialização do aplicativo)",
   "Use system Chocolatey" : "Use o sistema Chocolatey",
   "Use system Chocolatey (Needs a restart)" : "Utilizar o Chocolatey do sistema (Precisa reiniciar)",
   "Use system Winget (Needs a restart)" : "Utilizar o Winget do sistema (Precisa reiniciar)",

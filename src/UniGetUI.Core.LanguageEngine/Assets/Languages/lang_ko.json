@@ -510,7 +510,7 @@
   "Updating WingetUI" : "WingetUI 업데이트",
   "Url" : "Url",
   "Use a custom icon and screenshot database URL" : "사용자 지정 아이콘 및 스크린샷 데이터베이스 URL 사용",
-  "Use installed GSudo instead of the bundled one (requires app restart)" : "설치된 GSudo 사용(앱 다시 시작 필요)",
+  "Use installed GSudo instead of the bundled one" : "설치된 GSudo 사용(앱 다시 시작 필요)",
   "Use system Chocolatey" : null,
   "Use system Chocolatey (Needs a restart)" : "시스템 기본 Chocolatey 사용(재시작 필요)",
   "Use system Winget (Needs a restart)" : "시스템 기본 Winget 사용(재시작 필요)",

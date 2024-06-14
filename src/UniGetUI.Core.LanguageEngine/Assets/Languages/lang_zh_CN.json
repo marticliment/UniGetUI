@@ -510,7 +510,7 @@
   "Updating WingetUI" : "正在更新 WingetUI",
   "Url" : "Url",
   "Use a custom icon and screenshot database URL" : "使用自定义的图标和截图数据库 URL",
-  "Use installed GSudo instead of the bundled one (requires app restart)" : "使用已安装的 GSudo 而不是该软件内置的 GSudo（需要重新启动应用程序）",
+  "Use installed GSudo instead of the bundled one" : "使用已安装的 GSudo 而不是该软件内置的 GSudo（需要重新启动应用程序）",
   "Use system Chocolatey" : "使用系统 Chocolatey",
   "Use system Chocolatey (Needs a restart)" : "使用系统 Chocolatey（需要重启）",
   "Use system Winget (Needs a restart)" : "使用系统内置 Winget（需要重启）",

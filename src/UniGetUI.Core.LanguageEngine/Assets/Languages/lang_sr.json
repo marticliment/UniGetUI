@@ -510,7 +510,7 @@
   "Updating WingetUI" : "Ажурирање WingetUI",
   "Url" : "Линк",
   "Use a custom icon and screenshot database URL" : "Користите URL са прилагођеним иконама и скриншотовима",
-  "Use installed GSudo instead of the bundled one (requires app restart)" : "Користите инсталирани GSudo уместо привезаног (захтева поновно покретање апликације)",
+  "Use installed GSudo instead of the bundled one" : "Користите инсталирани GSudo уместо привезаног (захтева поновно покретање апликације)",
   "Use system Chocolatey" : null,
   "Use system Chocolatey (Needs a restart)" : "Користите системски Chocolatey (Захтева поновно покретање)",
   "Use system Winget (Needs a restart)" : "Користите системски Winget (Захтева поновно покретање)",
