@@ -91,10 +91,12 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 }
                 Get-InstalledModule | Test-GalleryModuleUpdate
 
+
                 exit
                 """;
             await p.StandardInput.WriteLineAsync(command);
             logger.AddToStdIn(command);
+            p.StandardInput.Close();
 
             string? line;
             List<Package> Packages = new();
