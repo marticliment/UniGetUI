@@ -7,6 +7,7 @@ using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Managers.Chocolatey;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -55,7 +56,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             };
 
             SourceProvider = new ChocolateySourceProvider(this);
-            
+            PackageDetailsProvider = new ChocolateyDetailsProvider(this);
         }
         
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()

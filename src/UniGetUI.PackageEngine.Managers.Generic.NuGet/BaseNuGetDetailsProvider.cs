@@ -13,7 +13,7 @@ using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
-    internal class BaseNuGetDetailsProvider : BasePackageDetailsProvider<PackageManager>
+    public class BaseNuGetDetailsProvider : BasePackageDetailsProvider<PackageManager>
     {
         public BaseNuGetDetailsProvider(BaseNuGet manager) : base(manager) { }
 
@@ -129,36 +129,35 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
             Uri SearchUrl = new($"{package.Source.Url}/FindPackagesById()?id='{package.Id}'");
-            Logger.Debug($"Begin package version search with url={SearchUrl} on manager {Manager.Name}"); 
+            Logger.Debug($"Begin package version search with url={SearchUrl} on manager {Manager.Name}");
 
-            using (HttpClient client = new(CoreData.GenericHttpClientParameters))
+            List<string> results = new();
+
+            HttpClient client = new(CoreData.GenericHttpClientParameters);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
+
+            HttpResponseMessage response = await client.GetAsync(SearchUrl);
+            if (!response.IsSuccessStatusCode)
             {
-                client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-                HttpResponseMessage response = await client.GetAsync(SearchUrl);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    Logger.Warn($"Failed to fetch api at Url={SearchUrl} with status code {response.StatusCode} to load versions");
-                    return [];
-                }
-
-                string SearchResults = await response.Content.ReadAsStringAsync();
-                MatchCollection matches = Regex.Matches(SearchResults, "Version='([^<>']+)'");
-
-                List<string> results = new();
-                HashSet<string> alreadyProcessed = new();
-
-                foreach (Match match in matches)
-                    if(!alreadyProcessed.Contains(match.Groups[1].Value) && match.Success)
-                    {
-                        results.Add(match.Groups[1].Value);
-                        alreadyProcessed.Add(match.Groups[1].Value);
-                    }
-
-                results.Reverse();
-                return results.ToArray();
-
+                Logger.Warn($"Failed to fetch api at Url={SearchUrl} with status code {response.StatusCode} to load versions");
+                return [];
             }
+
+            string SearchResults = await response.Content.ReadAsStringAsync();
+            HashSet<string> alreadyProcessed = new();
+
+            MatchCollection matches = Regex.Matches(SearchResults, "Version='([^<>']+)'");
+            foreach (Match match in matches)
+            {
+                if (!alreadyProcessed.Contains(match.Groups[1].Value) && match.Success)
+                {
+                    results.Add(match.Groups[1].Value);
+                    alreadyProcessed.Add(match.Groups[1].Value);
+                }
+            }
+
+            results.Sort(StringComparer.OrdinalIgnoreCase);
+            return results.ToArray();
         }
     }
 }
