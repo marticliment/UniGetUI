@@ -532,8 +532,13 @@ namespace UniGetUI.Interface
                 Logger.Error(ex);
                 return;
             }
-
-            if (IsRectangleFullyVisible(X, Y, Width, Height))
+            
+            if(State == 1)
+            {
+                if (AppWindow.Presenter is OverlappedPresenter presenter) presenter.Maximize();
+                else Logger.Warn("MainWindow.AppWindow.Presenter is not OverlappedPresenter presenter!");
+            }
+            else if (IsRectangleFullyVisible(X, Y, Width, Height))
             {
                 AppWindow.Resize(new Windows.Graphics.SizeInt32(Width, Height));
                 AppWindow.Move(new Windows.Graphics.PointInt32(X, Y));
@@ -543,11 +548,7 @@ namespace UniGetUI.Interface
                 Logger.Warn("Restored geometry was outside of desktop bounds");
             }
             
-            if(State == 1)
-            {
-                if (AppWindow.Presenter is OverlappedPresenter presenter) presenter.Maximize();
-                else Logger.Warn("MainWindow.AppWindow.Presenter is not OverlappedPresenter presenter!");
-            }
+            
         }
         private bool IsRectangleFullyVisible(int x, int y, int width, int height)
         {
