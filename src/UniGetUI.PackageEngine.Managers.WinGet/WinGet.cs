@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using UniGetUI.Core.Data;
@@ -320,10 +321,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            List<string> parameters = new() { Properties.UninstallVerb };
-            parameters.AddRange(new string[] { "--id", package.Id, "--exact" });
+            List<string> parameters = [ Properties.UninstallVerb, "--id", package.Id, "--exact"];
             if(!package.Source.IsVirtualManager)
-                parameters.AddRange(new string[] { "--source", package.Source.Name });
+                parameters.AddRange(["--source", package.Source.Name ]);
 
             parameters.Add("--accept-source-agreements");
 
@@ -338,7 +338,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             if (options.Version != "")
-                parameters.AddRange(new string[] { "--version", options.Version, "--force" });
+                parameters.AddRange(["--version", options.Version, "--force" ]);
+            else if (package.IsUpgradable && package.NewVersion != "")
+                parameters.AddRange(["--version", package.NewVersion]);
+            else if (package.Version != "Unknown")
+                parameters.AddRange(["--version", package.Version]);
 
             if (options.InteractiveInstallation)
                 parameters.Add("--interactive");

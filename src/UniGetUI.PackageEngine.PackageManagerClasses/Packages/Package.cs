@@ -162,7 +162,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             NewVersion = "";
             VersionAsFloat = GetFloatVersion();
             Tag = PackageTag.Default;
-            __hash = Manager.Name + "\\" + Source.Name + "\\" + Id;
+            __hash = Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version;
             IsUpgradable = false;
         }
 
