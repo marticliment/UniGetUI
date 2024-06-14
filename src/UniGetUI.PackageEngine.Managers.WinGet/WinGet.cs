@@ -366,6 +366,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             if (output_string.Contains("No applicable upgrade found") || output_string.Contains("No newer package versions are available from the configured sources"))
                 return OperationVeredict.Succeeded;
 
+            /*
             if (output_string.Contains("winget settings --enable InstallerHashOverride"))
             {
                 Logger.Info("Enabling skip hash ckeck for winget...");
@@ -385,7 +386,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 p.Start();
                 p.WaitForExit();
                 return OperationVeredict.AutoRetry;
-            }
+            */
 
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
