@@ -152,7 +152,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 Package[] packages = await FindPackages_UnSafe(query).WaitAsync(TimeSpan.FromSeconds(60));
                 for (int i = 0; i < packages.Length; i++)
                 {
-                    packages[i] = PackageFactory.GetAvailablePackageIfRepeated(packages[i]);
+                    packages[i] = PackageCacher.GetAvailablePackage(packages[i]);
                 }
                 Logger.Info($"Found {packages.Length} available packages from {Name} with the query {query}");
                 return packages;
@@ -179,7 +179,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 await RefreshPackageIndexes().WaitAsync(TimeSpan.FromSeconds(60));
                 Package[] packages = await GetAvailableUpdates_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
                 for (int i = 0; i < packages.Length; i++)
-                    packages[i] = PackageFactory.GetUpgradablePackageIfRepeated(packages[i]);
+                    packages[i] = PackageCacher.GetUpgradablePackage(packages[i]);
                 Logger.Info($"Found {packages.Length} available updates from {Name}");
                 return packages;
             }
@@ -203,7 +203,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             {
                 Package[] packages = await GetInstalledPackages_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
                 for (int i = 0; i < packages.Length; i++)
-                    packages[i] = PackageFactory.GetInstalledPackageIfRepeated(packages[i]);
+                    packages[i] = PackageCacher.GetInstalledPackage(packages[i]);
                 Logger.Info($"Found {packages.Length} installed packages from {Name}");
                 return packages;
             }

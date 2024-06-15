@@ -423,7 +423,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetInstalledPackage()
         {
-            return PackageFactory.FindPackageOnInstalledOrNull(this);
+            return PackageCacher.GetInstalledPackageOrNull(this);
             
         }
 
@@ -433,7 +433,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetAvailablePackage()
         {
-            return PackageFactory.FindPackageOnAvailableOrNull(this);
+            return PackageCacher.GetAvailablePackageOrNull(this);
         }
 
         /// <summary>
@@ -442,7 +442,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetUpgradablePackage()
         {
-            return PackageFactory.FindPackageOnUpdatesOrNull(this);
+            return PackageCacher.GetUpgradablePackageOrNull(this);
         }
 
         /// <summary>
@@ -458,7 +458,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public bool NewerVersionIsInstalled()
         {
             if(!IsUpgradable) return false;
-            return PackageFactory.NewerVersionIsInstalled(this);
+            return PackageCacher.NewerVersionIsInstalled(this);
         }
 
     }
