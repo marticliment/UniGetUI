@@ -14,16 +14,14 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
     {
         public PipPackageDetailsProvider(Pip manager) : base(manager) { }
 
-        protected override async Task<PackageDetails> GetPackageDetails_Unsafe(Package package)
+        protected override async Task GetPackageDetails_Unsafe(PackageDetails details)
         {
-            PackageDetails details = new(package);
-
             var logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails);
 
             string JsonString;
             HttpClient client = new(CoreData.GenericHttpClientParameters);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-            JsonString = await client.GetStringAsync($"https://pypi.org/pypi/{package.Id}/json");
+            JsonString = await client.GetStringAsync($"https://pypi.org/pypi/{details.Package.Id}/json");
 
             JsonObject? RawInfo = JsonObject.Parse(JsonString) as JsonObject;
 
@@ -31,7 +29,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             {
                 logger.Error($"Can't load package info on manager {Manager.Name}, JsonObject? RawInfo was null");
                 logger.Close(1);
-                return details;
+                return;
             }
 
             JsonObject? infoNode = RawInfo["info"] as JsonObject;
@@ -117,7 +115,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             catch (Exception ex) { logger.Error("Can't load installer data: " + ex); }
 
             logger.Close(0);
-            return details;
+            return;
         }
 
         protected override Task<CacheableIcon?> GetPackageIcon_Unsafe(Package package)

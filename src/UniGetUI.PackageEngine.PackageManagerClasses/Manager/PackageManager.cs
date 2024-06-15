@@ -392,21 +392,26 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 throw new Exception($"Manager {Name} does not have a valid PackageDetailsProvider helper");
         }
 #pragma warning disable CS8602
-        public async Task<PackageDetails> GetPackageDetails(Package package)
+        /*public async Task<PackageDetails> GetPackageDetails(Package package)
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageDetails was called"); return new(package); };
+            var details = new PackageDetails(package);
+            await GetPackageDetails(details);
+            return details;
+        }*/
+
+        public async Task GetPackageDetails(PackageDetails details)
+        {
+            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageDetails was called"); return; };
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageDetails");
-                PackageDetails details = await PackageDetailsProvider.GetPackageDetails(package);
-                Logger.Info($"Loaded details for package {package.Id} on manager {Name}");
-                return details;
+                await PackageDetailsProvider.GetPackageDetails(details);
+                Logger.Info($"Loaded details for package {details.Package.Id} on manager {Name}");
             }
             catch (Exception e)
             {
                 Logger.Error("Error finding installed packages on manager " + Name);
                 Logger.Error(e);
-                return new PackageDetails(package);
             }
         }
 

@@ -17,26 +17,23 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
     {
         public BaseNuGetDetailsProvider(BaseNuGet manager) : base(manager) { }
 
-        protected override async Task<PackageDetails> GetPackageDetails_Unsafe(Package package)
-        {
-            PackageDetails details = new(package);
+        protected override async Task GetPackageDetails_Unsafe(PackageDetails details)
+        { 
             var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
             try
             {
-
-                details.ManifestUrl = PackageManifestLoader.GetPackageManifestUrl(package);
-                string? PackageManifestContents = await PackageManifestLoader.GetPackageManifestContent(package);
+                details.ManifestUrl = PackageManifestLoader.GetPackageManifestUrl(details.Package);
+                string? PackageManifestContents = await PackageManifestLoader.GetPackageManifestContent(details.Package);
                 logger.Log(PackageManifestContents);
 
                 if (PackageManifestContents == null)
                 {
-                    logger.Error($"No manifest content could be loaded for package {package.Id} on manager {package.Manager.Name}, returning empty PackageDetails");
+                    logger.Error($"No manifest content could be loaded for package {details.Package.Id} on manager {details.Package.Manager.Name}, returning empty PackageDetails");
                     logger.Close(1);
-                    return details;
+                    return;
                 }
 
-                // details.InstallerUrl = new Uri($"https://globalcdn.nuget.org/packages/{package.Id}.{package.Version}.nupkg");
-                details.InstallerUrl = PackageManifestLoader.GetPackageNuGetPackageUrl(package);
+                details.InstallerUrl = PackageManifestLoader.GetPackageNuGetPackageUrl(details.Package);
                 details.InstallerType = CoreTools.Translate("NuPkg (zipped manifest)");
                 details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
 
@@ -90,13 +87,13 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 }
 
                 logger.Close(0);
-                return details;
+                return;
             }
             catch (Exception e)
             {
                 logger.Error(e);
                 logger.Close(1);
-                return details;
+                return;
             }
         }
 

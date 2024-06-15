@@ -29,10 +29,10 @@ namespace UniGetUI.Interface.Dialogs
         public Package Package;
         private InstallOptionsPage InstallOptionsPage;
         public event EventHandler? Close;
-        private PackageDetails? Info;
         OperationType OperationRole;
         bool PackageHasScreenshots = false;
         public ObservableCollection<TextBlock> ShowableTags = new();
+        Uri InvalidUri = new("about:blank");
 
         private enum LayoutMode
         {
@@ -131,9 +131,9 @@ namespace UniGetUI.Interface.Dialogs
             LoadScreenshots();
 
             string NotFound = CoreTools.Translate("Not available");
-            Uri InvalidUri = new("about:blank");
-            Info = await Package.Manager.GetPackageDetails(Package);
-            Logger.Debug("Received info " + Info);
+            
+            var details = Package.Details;
+            if (!details.IsPopulated) await details.Load();
 
             string command = "";
 
@@ -156,42 +156,42 @@ namespace UniGetUI.Interface.Dialogs
             LoadingIndicator.Visibility = Visibility.Collapsed;
 
             // Basic details section
-            SetTextToItem(DescriptionContent, Info.Description);
-            SetTextToItem(HomepageUrl_Content, Info.HomepageUrl);
-            SetTextToItem(Author_Content, Info.Author);
-            SetTextToItem(Publisher_Content, Info.Publisher);
+            SetTextToItem(DescriptionContent, details.Description);
+            SetTextToItem(HomepageUrl_Content, details.HomepageUrl);
+            SetTextToItem(Author_Content, details.Author);
+            SetTextToItem(Publisher_Content, details.Publisher);
 
-            if (Info.License != null && Info.LicenseUrl != null)
+            if (details.License != null && details.LicenseUrl != null)
             {
-                SetTextToItem(License_Content_Text, Info.License);
-                SetTextToItem(License_Content_Uri, Info.LicenseUrl, "(", ")");
+                SetTextToItem(License_Content_Text, details.License);
+                SetTextToItem(License_Content_Uri, details.LicenseUrl, "(", ")");
             }
-            else if (Info.License != null && Info.LicenseUrl == null)
+            else if (details.License != null && details.LicenseUrl == null)
             {
-                SetTextToItem(License_Content_Text, Info.License);
+                SetTextToItem(License_Content_Text, details.License);
                 SetTextToItem(License_Content_Uri, "");
             }
-            else if (Info.License == null && Info.LicenseUrl != null)
+            else if (details.License == null && details.LicenseUrl != null)
             {
                 SetTextToItem(License_Content_Text, "");
-                SetTextToItem(License_Content_Uri, Info.LicenseUrl);
+                SetTextToItem(License_Content_Uri, details.LicenseUrl);
             }
             else
             {
                 SetTextToItem(License_Content_Text, null);
-                SetTextToItem(License_Content_Uri, Info.LicenseUrl);
+                SetTextToItem(License_Content_Uri, details.LicenseUrl);
             }
 
             // Extended details section
-            SetTextToItem(ManifestUrl_Content, Info.ManifestUrl);
+            SetTextToItem(ManifestUrl_Content, details.ManifestUrl);
             if (Package.Manager == MainApp.Choco)
                 SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA512") + ": ");
             else
                 SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA256") + ": ");
-            SetTextToItem(InstallerHash_Content, Info.InstallerHash);
-            if (Info.InstallerUrl != null)
+            SetTextToItem(InstallerHash_Content, details.InstallerHash);
+            if (details.InstallerUrl != null)
             {
-                SetTextToItem(InstallerSize_Content, Info.InstallerSize > 0? $" ({Info.InstallerSize} MB)": $" ({CoreTools.Translate("Unknown size")})");
+                SetTextToItem(InstallerSize_Content, details.InstallerSize > 0? $" ({details.InstallerSize} MB)": $" ({CoreTools.Translate("Unknown size")})");
                 SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Download installer"));
             }
             else
@@ -199,14 +199,14 @@ namespace UniGetUI.Interface.Dialogs
                 SetTextToItem(InstallerSize_Content, "");
                 SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Installer not available"));
             }
-            SetTextToItem(InstallerUrl_Content, Info.InstallerUrl);
-            SetTextToItem(InstallerType_Content, Info.InstallerType);
-            SetTextToItem(UpdateDate_Content, Info.UpdateDate);
-            SetTextToItem(ReleaseNotes_Content, Info.ReleaseNotes);
-            SetTextToItem(ReleaseNotesUrl_Content, Info.ReleaseNotesUrl);
+            SetTextToItem(InstallerUrl_Content, details.InstallerUrl);
+            SetTextToItem(InstallerType_Content, details.InstallerType);
+            SetTextToItem(UpdateDate_Content, details.UpdateDate);
+            SetTextToItem(ReleaseNotes_Content, details.ReleaseNotes);
+            SetTextToItem(ReleaseNotesUrl_Content, details.ReleaseNotesUrl);
 
             ShowableTags.Clear();
-            foreach (string tag in Info.Tags)
+            foreach (string tag in details.Tags)
                 ShowableTags.Add(new TextBlock() { 
                     Text = tag, 
                     VerticalAlignment = VerticalAlignment.Center,
@@ -306,20 +306,19 @@ namespace UniGetUI.Interface.Dialogs
             bool running = true;
             try
             {
-                if (Info?.InstallerUrl == null)
+                if (Package.Details?.InstallerUrl == null)
                     return;
-
                 
                 FileSavePicker savePicker = new();
                 MainWindow window = MainApp.Instance.MainWindow;
                 IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
-                savePicker.SuggestedFileName = Package.Id + " installer." + Info.InstallerUrl.ToString().Split('.')[^1];
+                savePicker.SuggestedFileName = Package.Id + " installer." + Package.Details.InstallerUrl.ToString().Split('.')[^1];
                 
-                if (Info.InstallerUrl.ToString().Split('.')[^1] == "nupkg")
+                if (Package.Details.InstallerUrl.ToString().Split('.')[^1] == "nupkg")
                     savePicker.FileTypeChoices.Add("Compressed Manifest File", new System.Collections.Generic.List<string>() { ".zip" });
-                savePicker.FileTypeChoices.Add("Default", new System.Collections.Generic.List<string>() { "." + Info.InstallerUrl.ToString().Split('.')[^1] });
+                savePicker.FileTypeChoices.Add("Default", new System.Collections.Generic.List<string>() { "." + Package.Details.InstallerUrl.ToString().Split('.')[^1] });
                 
                 StorageFile file = await savePicker.PickSaveFileAsync();
                 if (file != null)
@@ -327,12 +326,12 @@ namespace UniGetUI.Interface.Dialogs
                     Func<Task> loader = async () =>
                     {
                         List<string> texts = [
-                            "[≡≡≡≡        ]",
-                            "[  ≡≡≡≡      ]",
-                            "[    ≡≡≡≡    ]",
-                            "[      ≡≡≡≡  ]",
-                            "[        ≡≡≡≡]",
-                            "[≡≡        ≡≡]"];
+                            " .   ",
+                            " ..  ",
+                            " ... ",
+                            "  ...",
+                            "   ..",
+                            "    ."];
                         int i = 0;
                         string baseString = CoreTools.Translate("Downloading installer for {package}", new Dictionary<string, object?> { { "package", Package.Name } });
                         while (running)
@@ -348,7 +347,7 @@ namespace UniGetUI.Interface.Dialogs
                     
                     using HttpClient httpClient = new(CoreData.GenericHttpClientParameters);
                     httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-                    await using Stream s = await httpClient.GetStreamAsync(Info.InstallerUrl);
+                    await using Stream s = await httpClient.GetStreamAsync(Package.Details.InstallerUrl);
                     await using FileStream fs = File.OpenWrite(file.Path.ToString());
                     await s.CopyToAsync(fs);
                     fs.Dispose();

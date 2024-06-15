@@ -25,6 +25,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         private bool __show_icon_highlight = false;
         private string __hash = "";
 
+        public PackageDetails Details { get; }
+
         public int NewVersionLabelWidth { get { return IsUpgradable? 125: 0; } }
         public int NewVersionIconWidth { get { return IsUpgradable? 24: 0; } }
 
@@ -164,6 +166,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Tag = PackageTag.Default;
             __hash = Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version;
             IsUpgradable = false;
+            Details = new PackageDetails(this);
         }
 
         /// <summary>
@@ -192,6 +195,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Tag = PackageTag.Default;
             __hash = Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version + "->" + NewVersion;
             IsUpgradable = true;
+            Details = new PackageDetails(this);
         }
 
 

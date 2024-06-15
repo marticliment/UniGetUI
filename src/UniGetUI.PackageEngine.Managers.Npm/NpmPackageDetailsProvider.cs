@@ -13,21 +13,20 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
     {
         public NpmPackageDetailsProvider(Npm manager) : base(manager) { }
 
-        protected override async Task<PackageDetails> GetPackageDetails_Unsafe(Package package)
+        protected override async Task GetPackageDetails_Unsafe(PackageDetails details)
         {
-            PackageDetails details = new(package);
             try
             {
                 details.InstallerType = "Tarball";
-                details.ManifestUrl = new Uri($"https://www.npmjs.com/package/{package.Id}");
-                details.ReleaseNotesUrl = new Uri($"https://www.npmjs.com/package/{package.Id}?activeTab=versions");
+                details.ManifestUrl = new Uri($"https://www.npmjs.com/package/{details.Package.Id}");
+                details.ReleaseNotesUrl = new Uri($"https://www.npmjs.com/package/{details.Package.Id}?activeTab=versions");
 
                 using (Process p = new())
                 {
                     p.StartInfo = new ProcessStartInfo()
                     {
                         FileName = Manager.Status.ExecutablePath,
-                        Arguments = Manager.Properties.ExecutableCallArgs + " info " + package.Id,
+                        Arguments = Manager.Properties.ExecutableCallArgs + " info " + details.Package.Id,
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
@@ -100,7 +99,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 Logger.Error(e);
             }
 
-            return details;
+            return;
         }
 
         protected override Task<CacheableIcon?> GetPackageIcon_Unsafe(Package package)
