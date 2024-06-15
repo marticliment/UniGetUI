@@ -20,7 +20,7 @@ namespace UniGetUI.Interface.Dialogs
         public Package Package;
         public event EventHandler? Close;
 
-        public InstallOptionsPage(Package package, OperationType Operation) : this(package, Operation, new InstallationOptions(package)) { }
+        public InstallOptionsPage(Package package, OperationType Operation) : this(package, Operation, InstallationOptions.FromPackage(package)) { }
         public InstallOptionsPage(Package package, InstallationOptions options) : this(package, OperationType.None, options) { }
         public InstallOptionsPage(Package package, OperationType Operation, InstallationOptions options)
         {
@@ -151,7 +151,7 @@ namespace UniGetUI.Interface.Dialogs
         public async void SaveToDisk()
         {
 
-            (await GetUpdatedOptions()).SaveOptionsToDisk();
+            (await GetUpdatedOptions()).SaveToDisk();
         }
 
         private void SelectDir_Click(object sender, RoutedEventArgs e)

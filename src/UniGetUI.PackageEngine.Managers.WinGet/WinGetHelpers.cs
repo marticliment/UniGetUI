@@ -39,7 +39,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         public Task<Package[]> FindPackages_UnSafe(WinGet ManagerInstance, string query);
         public Task<ManagerSource[]> GetSources_UnSafe(WinGet ManagerInstance);
         public Task<string[]> GetPackageVersions_Unsafe(WinGet ManagerInstance, Package package);
-        public Task<PackageDetails> GetPackageDetails_UnSafe(WinGet ManagerInstance, Package package);
+        public Task GetPackageDetails_UnSafe(WinGet ManagerInstance, PackageDetails details);
 
     }
 
@@ -217,31 +217,29 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             var versions = NativePackage.AvailableVersions.Select(x => x.Version).ToArray();
             foreach (var version in versions) logger.Log(version);
             logger.Close(0);
-            return versions;
+            return versions ?? [];
         }
 
-        public async Task<PackageDetails> GetPackageDetails_UnSafe(WinGet ManagerInstance, Package package)
+        public async Task GetPackageDetails_UnSafe(WinGet ManagerInstance, PackageDetails details)
         {
-            PackageDetails details = new(package);
-
             var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
 
-            if (package.Source.Name == "winget")
+            if (details.Package.Source.Name == "winget")
                 details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
-                    + package.Id[0].ToString().ToLower() + "/"
-                    + package.Id.Split('.')[0] + "/"
-                    + String.Join("/", (package.Id.Contains('.') ? package.Id.Split('.')[1..] : package.Id.Split('.')))
+                    + details.Package.Id[0].ToString().ToLower() + "/"
+                    + details.Package.Id.Split('.')[0] + "/"
+                    + String.Join("/", (details.Package.Id.Contains('.') ? details.Package.Id.Split('.')[1..] : details.Package.Id.Split('.')))
                 );
-            else if (package.Source.Name == "msstore")
-                details.ManifestUrl = new Uri("https://apps.microsoft.com/detail/" + package.Id);
+            else if (details.Package.Source.Name == "msstore")
+                details.ManifestUrl = new Uri("https://apps.microsoft.com/detail/" + details.Package.Id);
 
             // Find the native package for the given Package object
-            PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
+            PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(details.Package.Source.Name);
             if (Catalog == null)
             {
-                logger.Error("Failed to get catalog " + package.Source.Name + ". Is the package local?");
+                logger.Error("Failed to get catalog " + details.Package.Source.Name + ". Is the package local?");
                 logger.Close(1);
-                return details;
+                return;
             }
 
             // Connect to catalog
@@ -249,16 +247,16 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             ConnectResult ConnectResult = await Task.Run(() => Catalog.Connect());
             if (ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
             {
-                logger.Error("Failed to connect to catalog " + package.Source.Name);
+                logger.Error("Failed to connect to catalog " + details.Package.Source.Name);
                 logger.Close(1);
-                return details;
+                return;
             }
 
             // Match only the exact same Id
             FindPackagesOptions packageMatchFilter = Factory.CreateFindPackagesOptions();
             PackageMatchFilter filters = Factory.CreatePackageMatchFilter();
             filters.Field = Deployment.PackageMatchField.Id;
-            filters.Value = package.Id;
+            filters.Value = details.Package.Id;
             filters.Option = Deployment.PackageFieldMatchOption.Equals;
             packageMatchFilter.Filters.Add(filters);
             packageMatchFilter.ResultLimit = 1;
@@ -266,9 +264,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
             {
-                logger.Error("WinGet: Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                logger.Error("WinGet: Failed to find package " + details.Package.Id + " in catalog " + details.Package.Source.Name);
                 logger.Close(1);
-                return details;
+                return;
             }
 
             // Get the Native Package
@@ -312,7 +310,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             ProcessStartInfo startInfo = new()
             {
                 FileName = Path.Join(CoreData.UniGetUIExecutableDirectory, "winget-cli_x64", "winget.exe"),
-                Arguments = ManagerInstance.Properties.ExecutableCallArgs + " show --id " + package.Id + " --exact --disable-interactivity --accept-source-agreements --source " + package.Source.Name,
+                Arguments = ManagerInstance.Properties.ExecutableCallArgs + " show --id " + details.Package.Id + " --exact --disable-interactivity --accept-source-agreements --source " + details.Package.Source.Name,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
@@ -365,7 +363,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             }
             logger.Close(0);
-            return details;
+            return;
         }
     }
 
@@ -448,28 +446,20 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         }
 
-        public async Task<PackageDetails> GetPackageDetails_UnSafe(WinGet ManagerInstance, Package package)
+        public async Task GetPackageDetails_UnSafe(WinGet ManagerInstance, PackageDetails details)
         {
-            PackageDetails details = new(package);
-
-            if (package.Source.Name == "winget")
+            if (details.Package.Source.Name == "winget")
                 details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
-                    + package.Id[0].ToString().ToLower() + "/"
-                    + package.Id.Split('.')[0] + "/"
-                    + String.Join("/", (package.Id.Contains('.') ? package.Id.Split('.')[1..] : package.Id.Split('.')))
+                    + details.Package.Id[0].ToString().ToLower() + "/"
+                    + details.Package.Id.Split('.')[0] + "/"
+                    + String.Join("/", (details.Package.Id.Contains('.') ? details.Package.Id.Split('.')[1..] : details.Package.Id.Split('.')))
                 );
-            else if (package.Source.Name == "msstore")
-                details.ManifestUrl = new Uri("https://apps.microsoft.com/detail/" + package.Id);
+            else if (details.Package.Source.Name == "msstore")
+                details.ManifestUrl = new Uri("https://apps.microsoft.com/detail/" + details.Package.Id);
 
             // Get the output for the best matching locale
             Process process = new();
-            string packageIdentifier;
-            if (!package.Id.Contains("…"))
-                packageIdentifier = "--id " + package.Id + " --exact";
-            else if (!package.Name.Contains("…"))
-                packageIdentifier = "--name " + package.Id + " --exact";
-            else
-                packageIdentifier = "--id " + package.Id;
+            string packageIdentifier = "--id " + details.Package.Id + " --exact";
 
             List<string> output = new();
             bool LocaleFound = true;
@@ -503,7 +493,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             if (!LocaleFound)
             {
                 output.Clear();
-                Logger.Info("Winget could not found culture data for package Id=" + package.Id + " and Culture=" + System.Globalization.CultureInfo.CurrentCulture.ToString() + ". Trying to get data for en-US");
+                Logger.Info("Winget could not found culture data for package Id=" + details.Package.Id + " and Culture=" + System.Globalization.CultureInfo.CurrentCulture.ToString() + ". Trying to get data for en-US");
                 process = new Process();
                 LocaleFound = true;
                 startInfo = new()
@@ -536,7 +526,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             if (!LocaleFound)
             {
                 output.Clear();
-                Logger.Info("Winget could not found culture data for package Id=" + package.Id + " and Culture=en-US. Loading default");
+                Logger.Info("Winget could not found culture data for package Id=" + details.Package.Id + " and Culture=en-US. Loading default");
                 LocaleFound = true;
                 process = new Process();
                 startInfo = new()
@@ -644,7 +634,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             }
 
-            return details;
+            return;
         }
 
         public async Task<string[]> GetPackageVersions_Unsafe(WinGet ManagerInstance, Package package)

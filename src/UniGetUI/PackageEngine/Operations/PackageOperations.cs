@@ -65,7 +65,7 @@ namespace UniGetUI.PackageEngine.Operations
             Package.SetTag(PackageTag.BeingProcessed);
         }
 
-        public PackageOperation(Package package, bool IgnoreParallelInstalls = false) : this(package, new InstallationOptions(package), IgnoreParallelInstalls) { }
+        public PackageOperation(Package package, bool IgnoreParallelInstalls = false) : this(package, InstallationOptions.FromPackage(package), IgnoreParallelInstalls) { }
     }
 
     public class InstallPackageOperation : PackageOperation

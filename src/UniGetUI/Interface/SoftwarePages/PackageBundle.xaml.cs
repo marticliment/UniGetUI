@@ -512,7 +512,7 @@ namespace UniGetUI.Interface
                     if (package.IsChecked && package.IsValid)
                     {
                         // Actually import settings
-                        package.InstallOptions.SaveOptionsToDisk();
+                        package.InstallOptions.SaveToDisk();
 
                         if (package.UpdateOptions.IgnoredVersion != "")
                             await package.Package.AddToIgnoredUpdatesAsync(package.UpdateOptions.IgnoredVersion);

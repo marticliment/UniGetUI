@@ -10,10 +10,10 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Interfaces
         /// This method is fail-safe and will return a valid but empty PackageDetails object with the package 
         /// id if an error occurs.
         /// </summary>
-        /// <param name="package"></param>
+        /// <param name="details">The PackageDetails instance to load</param>
         /// <returns>A PackageDetails object</returns>
-        public abstract Task<PackageDetails> GetPackageDetails(Package package);
-        
+        public abstract Task GetPackageDetails(PackageDetails details);
+
 
         /// <summary>
         /// Returns the available versions to install for the given package. 

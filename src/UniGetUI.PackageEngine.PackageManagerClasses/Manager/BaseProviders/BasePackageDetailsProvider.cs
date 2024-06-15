@@ -15,9 +15,9 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
             Manager = manager;
         }
 
-        public async Task<PackageDetails> GetPackageDetails(Package package)
+        public async Task GetPackageDetails(PackageDetails details)
         {
-            return await GetPackageDetails_Unsafe(package);
+            await GetPackageDetails_Unsafe(details);
         }
 
         public async Task<string[]> GetPackageVersions(Package package)
@@ -83,7 +83,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
             return URIs;
         }
 
-        protected abstract Task<PackageDetails> GetPackageDetails_Unsafe(Package package);
+        protected abstract Task GetPackageDetails_Unsafe(PackageDetails details);
         protected abstract Task<string[]> GetPackageVersions_Unsafe(Package package);
         protected abstract Task<CacheableIcon?> GetPackageIcon_Unsafe(Package package);
         protected abstract Task<Uri[]> GetPackageScreenshots_Unsafe(Package package);

@@ -152,7 +152,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 Package[] packages = await FindPackages_UnSafe(query).WaitAsync(TimeSpan.FromSeconds(60));
                 for (int i = 0; i < packages.Length; i++)
                 {
-                    packages[i] = PackageFactory.GetAvailablePackageIfRepeated(packages[i]);
+                    packages[i] = PackageCacher.GetAvailablePackage(packages[i]);
                 }
                 Logger.Info($"Found {packages.Length} available packages from {Name} with the query {query}");
                 return packages;
@@ -179,7 +179,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 await RefreshPackageIndexes().WaitAsync(TimeSpan.FromSeconds(60));
                 Package[] packages = await GetAvailableUpdates_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
                 for (int i = 0; i < packages.Length; i++)
-                    packages[i] = PackageFactory.GetUpgradablePackageIfRepeated(packages[i]);
+                    packages[i] = PackageCacher.GetUpgradablePackage(packages[i]);
                 Logger.Info($"Found {packages.Length} available updates from {Name}");
                 return packages;
             }
@@ -203,7 +203,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             {
                 Package[] packages = await GetInstalledPackages_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
                 for (int i = 0; i < packages.Length; i++)
-                    packages[i] = PackageFactory.GetInstalledPackageIfRepeated(packages[i]);
+                    packages[i] = PackageCacher.GetInstalledPackage(packages[i]);
                 Logger.Info($"Found {packages.Length} installed packages from {Name}");
                 return packages;
             }
@@ -392,21 +392,26 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 throw new Exception($"Manager {Name} does not have a valid PackageDetailsProvider helper");
         }
 #pragma warning disable CS8602
-        public async Task<PackageDetails> GetPackageDetails(Package package)
+        /*public async Task<PackageDetails> GetPackageDetails(Package package)
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageDetails was called"); return new(package); };
+            var details = new PackageDetails(package);
+            await GetPackageDetails(details);
+            return details;
+        }*/
+
+        public async Task GetPackageDetails(PackageDetails details)
+        {
+            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageDetails was called"); return; };
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageDetails");
-                PackageDetails details = await PackageDetailsProvider.GetPackageDetails(package);
-                Logger.Info($"Loaded details for package {package.Id} on manager {Name}");
-                return details;
+                await PackageDetailsProvider.GetPackageDetails(details);
+                Logger.Info($"Loaded details for package {details.Package.Id} on manager {Name}");
             }
             catch (Exception e)
             {
                 Logger.Error("Error finding installed packages on manager " + Name);
                 Logger.Error(e);
-                return new PackageDetails(package);
             }
         }
 

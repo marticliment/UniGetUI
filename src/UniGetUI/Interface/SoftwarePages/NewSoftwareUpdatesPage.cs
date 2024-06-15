@@ -273,23 +273,23 @@ namespace UniGetUI.Interface.SoftwarePages
                 foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
             };
-            UpdateAsAdmin.Click += (s, e) =>
+            UpdateAsAdmin.Click += async (s, e) =>
             {
                 foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
-                            new InstallationOptions(package) { RunAsAdministrator = true }));
+                            await InstallationOptions.FromPackageAsync(package, elevated: true)));
             };
-            UpdateSkipHash.Click += (s, e) =>
+            UpdateSkipHash.Click += async (s, e) =>
             {
                 foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
-                            new InstallationOptions(package) { SkipHashCheck = true }));
+                            await InstallationOptions.FromPackageAsync(package, no_integrity: true)));
             };
-            UpdateInteractive.Click += (s, e) =>
+            UpdateInteractive.Click += async (s, e) =>
             {
                 foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
-                            new InstallationOptions(package) { InteractiveInstallation = true }));
+                            await InstallationOptions.FromPackageAsync(package, interactive: true)));
             };
 
             SharePackage.Click += (s, e) =>
@@ -458,31 +458,31 @@ namespace UniGetUI.Interface.SoftwarePages
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
         }
 
-        private void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
+        private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
-                new InstallationOptions(package) { SkipHashCheck = true }));
+                await InstallationOptions.FromPackageAsync(package, no_integrity: true)));
         }
 
-        private void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
+        private async void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
-                new InstallationOptions(package) { InteractiveInstallation = true }));
+                await InstallationOptions.FromPackageAsync(package, interactive: true)));
         }
 
-        private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
+        private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
-                new InstallationOptions(package) { RunAsAdministrator = true }));
+                await InstallationOptions.FromPackageAsync(package, elevated: true)));
         }
 
         private void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)

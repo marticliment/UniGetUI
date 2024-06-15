@@ -24,6 +24,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         private float __opacity = 1;
         private bool __show_icon_highlight = false;
         private string __hash = "";
+        private string __unique_hash = "";
+
+        public PackageDetails Details { get; }
 
         public int NewVersionLabelWidth { get { return IsUpgradable? 125: 0; } }
         public int NewVersionIconWidth { get { return IsUpgradable? 24: 0; } }
@@ -122,16 +125,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public string IsCheckedAsString { get { return IsChecked ? "True" : "False"; } }
         public string Name { get; }
-        public string Id { get; set; }
+        public string Id { get; }
         public string Version { get; }
         public double VersionAsFloat { get; }
         public double NewVersionAsFloat { get; }
-        public ManagerSource Source { get; set; }
+        public ManagerSource Source { get; }
         public PackageManager Manager { get; }
-        public string UniqueId { get; }
-        public string NewVersion { get; set; }
-        public virtual bool IsUpgradable { get; private set; }
-        public PackageScope Scope { get; set; }
+        public string NewVersion { get; }
+        public virtual bool IsUpgradable { get; }
+        public PackageScope Scope { get; set;  }
         public string SourceAsString
         {
             get
@@ -155,15 +157,16 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Name = name;
             Id = id;
             Version = version;
+            VersionAsFloat = CoreTools.GetVersionStringAsFloat(version);
             Source = source;
             Manager = manager;
             Scope = scope;
-            UniqueId = $"{Manager.Properties.Name}\\{Id}\\{Version}";
             NewVersion = "";
-            VersionAsFloat = GetFloatVersion();
             Tag = PackageTag.Default;
-            __hash = Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version;
+            __hash = Manager.Name + "\\" + Source.Name + "\\" + Id;
+            __unique_hash = Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version;
             IsUpgradable = false;
+            Details = new PackageDetails(this);
         }
 
         /// <summary>
@@ -176,42 +179,67 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <param name="source"></param>
         /// <param name="manager"></param>
         /// <param name="scope"></param>
-
         public Package(string name, string id, string installed_version, string new_version, ManagerSource source, PackageManager manager, PackageScope scope = PackageScope.Local)
+            : this(name, id, installed_version, source, manager, scope)
         {
-            Name = name;
-            Id = id;
-            Version = installed_version;
-            NewVersion = new_version;
-            Source = source;
-            Manager = manager;
-            Scope = scope;
-            UniqueId = $"{Manager.Properties.Name}\\{Id}\\{Version}->{NewVersion}";
-            IsChecked = true;
-            NewVersionAsFloat = GetFloatNewVersion();
-            Tag = PackageTag.Default;
-            __hash = Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version + "->" + NewVersion;
             IsUpgradable = true;
+            NewVersion = new_version;
+            NewVersionAsFloat = CoreTools.GetVersionStringAsFloat(new_version);
+            __unique_hash = Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version + "->" + NewVersion;
+            
+            // Packages in the updates tab are checked by default
+            IsChecked = true;
         }
 
-
+        /// <summary>
+        /// Returns an identifier that can be used to compare different packahe instances that refer to the same package.
+        /// What is taken into account:
+        ///    - Manager and Source
+        ///    - Package Identifier
+        /// For more specific comparsion use GetUniqueHash()
+        /// </summary>
+        /// <returns></returns>
         public string GetHash()
         {
             return __hash;
         }
 
+        /// <summary>
+        /// Returns an identifier that can be used to compare different packahe instances that refer to the same package.
+        /// What is taken into account:
+        ///    - Manager and Source
+        ///    - Package Identifier
+        ///    - Package version
+        ///    - Package new version (if any)
+        /// </summary>
+        /// <returns></returns>
+        public string GetUniqueHash()
+        {
+            return __unique_hash;
+        }
 
         /// <summary>
-        /// Internal method
+        /// Check wether two packages are **REALLY** the same package. This check does take versions into account
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="other"></param>
         /// <returns></returns>
-        public override bool Equals(object? obj)
+        public override bool Equals(object? other)
         {
-            if (!(obj is Package))
-                return false;
-            else
-                return (obj as Package)?.GetHash() == GetHash();
+            if (other is not Package) return false;
+            if ((other as Package)?.Manager != Manager) return false;
+            return (other as Package)?.GetUniqueHash() == GetUniqueHash();
+        }
+        
+        /// <summary>
+        /// Check wether two package instances represent the same package
+        /// </summary>
+        /// <param name="other">A package</param>
+        /// <returns>Wether the two instances refer to the same instance</returns>
+        public bool IsEquivalentTo(Package? other)
+        {
+            if (other is not Package) return false;
+            if (other?.Manager != this.Manager) return false;
+            return GetHash() == other.GetHash();
         }
 
         /// <summary>
@@ -261,28 +289,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
         }
 
+        /// <summary>
+        /// Retrieves a list og URIs representing the available screenshots for this package.
+        /// </summary>
+        /// <returns></returns>
         public async Task<Uri[]> GetPackageScreenshots()
         {
             return await Manager.GetPackageScreenshotsUrl(this);
         }
 
-        /// <summary>
-        /// Returns a float representation of the package's version for comparison purposes.
-        /// </summary>
-        /// <returns>A float value. Returns 0.0F if the version could not be parsed</returns>
-        public double GetFloatVersion()
-        {
-            return CoreTools.GetVersionStringAsFloat(Version);
-        }
-
-        /// <summary>
-        /// Returns a float representation of the package's New Version (if any) for comparison purposes.
-        /// </summary>
-        /// <returns>A float value. Returns 0.0F if the version could not be parsed</returns>
-        public double GetFloatNewVersion()
-        {
-            return CoreTools.GetVersionStringAsFloat(Version);
-        }
 
         /// <summary>
         /// Adds the package to the ignored updates list. If no version is provided, all updates are ignored.
@@ -419,7 +434,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetInstalledPackage()
         {
-            return PackageFactory.FindPackageOnInstalledOrNull(this);
+            return PackageCacher.GetInstalledPackageOrNull(this);
             
         }
 
@@ -429,7 +444,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetAvailablePackage()
         {
-            return PackageFactory.FindPackageOnAvailableOrNull(this);
+            return PackageCacher.GetAvailablePackageOrNull(this);
         }
 
         /// <summary>
@@ -438,7 +453,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns>a Package object if found, null if not</returns>
         public Package? GetUpgradablePackage()
         {
-            return PackageFactory.FindPackageOnUpdatesOrNull(this);
+            return PackageCacher.GetUpgradablePackageOrNull(this);
         }
 
         /// <summary>
@@ -454,7 +469,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public bool NewerVersionIsInstalled()
         {
             if(!IsUpgradable) return false;
-            return PackageFactory.NewerVersionIsInstalled(this);
+            return PackageCacher.NewerVersionIsInstalled(this);
         }
 
     }

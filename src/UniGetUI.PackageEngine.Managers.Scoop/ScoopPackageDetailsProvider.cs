@@ -14,14 +14,12 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
     {
         public ScoopPackageDetailsProvider(Scoop manager) : base(manager) { }
 
-        protected override async Task<PackageDetails> GetPackageDetails_Unsafe(Package package)
+        protected override async Task GetPackageDetails_Unsafe(PackageDetails details)
         {
-            PackageDetails details = new(package);
-
-            if (package.Source.Url != null)
+            if (details.Package.Source.Url != null)
                 try
                 {
-                    details.ManifestUrl = new Uri(package.Source.Url.ToString() + "/blob/master/bucket/" + package.Id + ".json");
+                    details.ManifestUrl = new Uri(details.Package.Source.Url.ToString() + "/blob/master/bucket/" + details.Package.Id + ".json");
                 }
                 catch (Exception ex)
                 {
@@ -33,7 +31,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Manager.Status.ExecutablePath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " cat " + package.Source.Name + "/" + package.Id,
+                Arguments = Manager.Properties.ExecutableCallArgs + " cat " + details.Package.Source.Name + "/" + details.Package.Id,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -153,7 +151,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             catch (Exception ex) { logger.AddToStdErr("Can't load notes URL: " + ex); }
 
             logger.Close(0);
-            return details;
+            return;
 
         }
 

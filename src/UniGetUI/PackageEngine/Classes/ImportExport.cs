@@ -157,7 +157,7 @@ namespace UniGetUI.PackageEngine.Classes
             Serializable.Version = Package.Version;
             Serializable.Source = Package.Source.Name;
             Serializable.ManagerName = Package.Manager.Name;
-            Serializable.InstallationOptions = InstallOptions.Serialized();
+            Serializable.InstallationOptions = InstallOptions.AsSerializable();
             Serializable.Updates = UpdateOptions;
             return Serializable;
         }
@@ -242,7 +242,7 @@ namespace UniGetUI.PackageEngine.Classes
             __manager = manager;
         }
 
-        public InvalidBundledPackage(Package package) : base(package, new InstallationOptions(package, reset: true), new SerializableUpdatesOptions_v1())
+        public InvalidBundledPackage(Package package) : base(package, InstallationOptions.FromPackage(package), new SerializableUpdatesOptions_v1())
         {
             IsValid = false;
             DrawOpacity = 0.5;

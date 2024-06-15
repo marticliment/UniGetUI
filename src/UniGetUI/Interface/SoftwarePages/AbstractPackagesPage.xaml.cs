@@ -690,7 +690,7 @@ namespace UniGetUI.Interface
         public void RemoveCorrespondingPackages(Package foreignPackage)
         {
             foreach (Package package in Packages.ToArray())
-                if (package == foreignPackage || package.Equals(foreignPackage))
+                if (package == foreignPackage || package.IsEquivalentTo(foreignPackage))
                 {
                     package.Tag = PackageTag.Default;
                     Packages.Remove(package);
