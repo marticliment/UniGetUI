@@ -232,8 +232,8 @@ namespace UniGetUI.Interface.SoftwarePages
             };
 
             UninstallSelected.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray()); };
-            UninstallAsAdmin.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), AsAdmin: true); };
-            UninstallInteractive.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), Interactive: true); };
+            UninstallAsAdmin.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), elevated: true); };
+            UninstallInteractive.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), interactive: true); };
 
             SharePackage.Click += (s, e) =>
             {
@@ -341,13 +341,17 @@ namespace UniGetUI.Interface.SoftwarePages
                 MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, options));
 
         }
-        public async void ConfirmAndUninstall(Package[] packages, bool AsAdmin = false, bool Interactive = false, bool RemoveData = false)
+        public async void ConfirmAndUninstall(Package[] packages, bool? elevated = null, bool? interactive = null, bool? remove_data = null)
         {
-            if (packages.Length == 0)
-                return;
+            if (packages.Length == 0) return;
             if (packages.Length == 1)
             {
-                ConfirmAndUninstall(packages[0], new InstallationOptions(packages[0]) { RunAsAdministrator = AsAdmin, InteractiveInstallation = Interactive, RemoveDataOnUninstall = RemoveData });
+                ConfirmAndUninstall(packages[0], await InstallationOptions.FromPackageAsync(
+                    packages[0], 
+                    elevated: elevated, 
+                    interactive: interactive, 
+                    remove_data: remove_data
+                ));
                 return;
             }
 
@@ -373,13 +377,13 @@ namespace UniGetUI.Interface.SoftwarePages
             dialog.Content = p;
 
             if (await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary)
+            {
                 foreach (Package package in packages)
-                    MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, new InstallationOptions(package)
-                    {
-                        RunAsAdministrator = AsAdmin,
-                        InteractiveInstallation = Interactive,
-                        RemoveDataOnUninstall = RemoveData
-                    }));
+                {
+                    MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package,
+                        await InstallationOptions.FromPackageAsync(package, elevated, interactive, remove_data: remove_data)));
+                }
+            }
         }
 
         public async Task BackupPackages()
@@ -422,38 +426,36 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        private void MenuUninstall_Invoked(object sender, RoutedEventArgs args)
+        private async void MenuUninstall_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
-            ConfirmAndUninstall(package, new InstallationOptions(package));
+            ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package));
         }
 
-        private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
+        private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package  == null)
                 return;
-            ConfirmAndUninstall(package, new InstallationOptions(package) { RunAsAdministrator = true });
+            ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, elevated: true));
         }
 
-        private void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
+        private async void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
-            ConfirmAndUninstall(package,
-                new InstallationOptions(package) { InteractiveInstallation = true });
+            ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, interactive: true));
         }
 
-        private void MenuRemoveData_Invoked(object sender, RoutedEventArgs args)
+        private async void MenuRemoveData_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = PackageList.SelectedItem as Package;
             if (!Initialized || package == null)
                 return;
-            ConfirmAndUninstall(package,
-                new InstallationOptions(package) { RemoveDataOnUninstall = true });
+            ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, remove_data: true));
         }
 
         private void MenuReinstall_Invoked(object sender, RoutedEventArgs args)
@@ -500,14 +502,14 @@ namespace UniGetUI.Interface.SoftwarePages
             if (package != null && 
                 await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(package, OperationType.Uninstall))
             {
-                ConfirmAndUninstall(package, new InstallationOptions(package));
+                ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package));
             }
         }
 
         public async void AddInstalledPackage(Package foreignPackage)
         {
             foreach (Package package in Packages.ToArray())
-                if (package == foreignPackage || package.Equals(foreignPackage))
+                if (package == foreignPackage || package.IsEquivalentTo(foreignPackage))
                     return;
             await WhenAddingPackage(foreignPackage);
             Packages.Add(foreignPackage);
