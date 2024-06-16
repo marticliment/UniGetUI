@@ -26,7 +26,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
         private string __hash = "";
         private string __unique_hash = "";
 
-        public PackageDetails Details { get; }
+        private PackageDetails? __details = null;
+        public PackageDetails Details { get
+            {
+                if (__details == null) __details = new PackageDetails(this);
+                return __details;
+            }
+        }
 
         public int NewVersionLabelWidth { get { return IsUpgradable? 125: 0; } }
         public int NewVersionIconWidth { get { return IsUpgradable? 24: 0; } }
@@ -166,7 +172,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
             __hash = Manager.Name + "\\" + Source.Name + "\\" + Id;
             __unique_hash = Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version;
             IsUpgradable = false;
-            Details = new PackageDetails(this);
         }
 
         /// <summary>
