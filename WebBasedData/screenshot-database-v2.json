@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11706,
-        "done": 5051,
-        "packages_with_icon": 5051,
-        "packages_with_screenshot": 557,
-        "total_screenshots": 1740
+        "total": 11707,
+        "done": 5052,
+        "packages_with_icon": 5052,
+        "packages_with_screenshot": 558,
+        "total_screenshots": 1745
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -49116,17 +49116,27 @@
             "icon": "",
             "images": []
         },
-        "zyplayer": {
-            "icon": "",
-            "images": []
+        "yandex-music": {
+            "icon": "https://yastatic.net/s3/doc-binary/src/mediaservices/yandex_music_icon_ru_darkbg.png",
+            "images": [
+                "https://i.postimg.cc/SKqXqtWD/i-RF5-Jgd-Z1-Q.png",
+                "https://i.postimg.cc/rsb0kVJr/Mo-Tmun1zjd.png",
+                "https://i.postimg.cc/L40ZfDp8/nl-Rywj-YEux.png",
+                "https://i.postimg.cc/6Q08QLcw/Scfmnn-Mo48.png",
+                "https://i.postimg.cc/HxkV8cvM/u-ARCBXBW1-L.png"
+            ]
         },
-        "__test_entry_DO_NOT_EDIT_PLEASE": {
+        "zyplayer": {
             "icon": "https://this.is.a.test/url/used_for/automated_unit_testing.png",
             "images": [
                 "https://image_number.com/1.png",
                 "https://image_number.com/2.png",
                 "https://image_number.com/3.png"
             ]
+        },
+        "__test_entry_DO_NOT_EDIT_PLEASE": {
+            "icon": "",
+            "images": []
         }
     }
 }
