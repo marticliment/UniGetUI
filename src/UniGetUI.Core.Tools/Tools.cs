@@ -2,7 +2,9 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Net;
+using System.Security.Cryptography;
 using System.Security.Principal;
+using System.Text;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
@@ -370,6 +372,9 @@ Crash Traceback:
             await p.WaitForExitAsync();
         }
 
+        /// <summary>
+        /// Reset UAC cache for the current process
+        /// </summary>
         public static async Task ResetUACForCurrentProcess()
         {
             Logger.Info("Resetting administrator rights cache for process id " + Process.GetCurrentProcess().Id);
@@ -387,6 +392,18 @@ Crash Traceback:
             };
             p.Start();
             await p.WaitForExitAsync();
+        }
+
+        /// <summary>
+        /// Returns the hash of the given string in the form of a long integer.
+        /// The long integer is built with the first half of the MD5 sum of the given string
+        /// </summary>
+        /// <param name="inputString">A non-empty string</param>
+        /// <returns>A long integer containing the first half of the bytes resultng from MD5suming inputString</returns>
+        public static long HashStringAsLong(string inputString)
+        {
+            byte[] bytes = MD5.HashData(Encoding.UTF8.GetBytes(inputString));
+            return BitConverter.ToInt64(bytes, 0);
         }
     }
 }

@@ -23,8 +23,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
         private PackageTag __tag;
         private float __opacity = 1;
         private bool __show_icon_highlight = false;
-        private string __hash = "";
-        private string __unique_hash = "";
+        // private string __hash = "";
+        // private string __unique_hash = "";
+
+        private long __hash;
+        private long __versioned_hash;
 
         private PackageDetails? __details = null;
         public PackageDetails Details { get
@@ -169,8 +172,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Scope = scope;
             NewVersion = "";
             Tag = PackageTag.Default;
-            __hash = Manager.Name + "\\" + Source.Name + "\\" + Id;
-            __unique_hash = Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version;
+            __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id);
+            __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version);
             IsUpgradable = false;
         }
 
@@ -190,8 +193,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             IsUpgradable = true;
             NewVersion = new_version;
             NewVersionAsFloat = CoreTools.GetVersionStringAsFloat(new_version);
-            __unique_hash = Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version + "->" + NewVersion;
-            
+            __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version + "->" + NewVersion);
+
             // Packages in the updates tab are checked by default
             IsChecked = true;
         }
@@ -201,10 +204,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// What is taken into account:
         ///    - Manager and Source
         ///    - Package Identifier
-        /// For more specific comparsion use GetUniqueHash()
+        /// For more specific comparsion use GetVersionedHash()
         /// </summary>
         /// <returns></returns>
-        public string GetHash()
+        public long GetHash()
         {
             return __hash;
         }
@@ -218,33 +221,38 @@ namespace UniGetUI.PackageEngine.PackageClasses
         ///    - Package new version (if any)
         /// </summary>
         /// <returns></returns>
-        public string GetUniqueHash()
+        public long GetVersionedHash()
         {
-            return __unique_hash;
+            return __versioned_hash;
         }
 
         /// <summary>
-        /// Check wether two packages are **REALLY** the same package. This check does take versions into account
+        /// Check wether two packages are **REALLY** the same package.
+        /// What is taken into account:
+        ///    - Manager and Source
+        ///    - Package Identifier
+        ///    - Package version
+        ///    - Package new version (if any)
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         public override bool Equals(object? other)
         {
-            if (other is not Package) return false;
-            if ((other as Package)?.Manager != Manager) return false;
-            return (other as Package)?.GetUniqueHash() == GetUniqueHash();
+            return __versioned_hash == (other as Package)?.__versioned_hash;
         }
-        
+
         /// <summary>
-        /// Check wether two package instances represent the same package
+        /// Check wether two package instances represent the same package.
+        /// What is taken into account:
+        ///    - Manager and Source
+        ///    - Package Identifier
+        /// For more specific comparsion use package.Equals(object? other)
         /// </summary>
         /// <param name="other">A package</param>
         /// <returns>Wether the two instances refer to the same instance</returns>
         public bool IsEquivalentTo(Package? other)
-        {
-            if (other is not Package) return false;
-            if (other?.Manager != this.Manager) return false;
-            return GetHash() == other.GetHash();
+        { 
+            return __hash == other?.__hash;
         }
 
         /// <summary>
@@ -440,7 +448,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public Package? GetInstalledPackage()
         {
             return PackageCacher.GetInstalledPackageOrNull(this);
-            
         }
 
         /// <summary>

@@ -5,12 +5,12 @@ namespace UniGetUI.PackageEngine.Classes.Packages
 {
     internal static class PackageCacher
     {
-        private static Dictionary<PackageManager, Dictionary<string, Package>> __available_packages = new();
-        private static Dictionary<PackageManager, Dictionary<string, Package>> __upgradable_packages = new();
-        private static Dictionary<PackageManager, Dictionary<string, Package>> __installed_packages = new();
+        private static Dictionary<PackageManager, Dictionary<long, Package>> __available_pkgs = new();
+        private static Dictionary<PackageManager, Dictionary<long, Package>> __upgradable_pkgs = new();
+        private static Dictionary<PackageManager, Dictionary<long, Package>> __installed_pkgs = new();
 
         /// <summary>
-        /// Will check if a given Package is already in the cache.
+        /// Will check if a given Package is already in the cache. If not, it will be added to it
         /// This checks only the "Discover Packages" cache
         /// </summary>
         /// <param name="p">The package to check</param>
@@ -18,11 +18,12 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         public static Package GetAvailablePackage(Package p)
         {
             Package? new_package = GetAvailablePackageOrNull(p);
+            if (new_package == null) AddPackageToCache(p, __available_pkgs);
             return new_package ?? p;
         }
 
         /// <summary>
-        /// Will check if a given Package is already in the cache.
+        /// Will check if a given Package is already in the cache. If not, it will be added to it
         /// This checks only the "Software Updates" cache
         /// </summary>
         /// <param name="p">The package to check</param>
@@ -30,11 +31,12 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         public static Package GetUpgradablePackage(Package p)
         {
             Package? new_package = GetUpgradablePackageOrNull(p);
+            if (new_package == null) AddPackageToCache(p, __upgradable_pkgs);
             return new_package ?? p;
         }
 
         /// <summary>
-        /// Will check if a given Package is already in the cache.
+        /// Will check if a given Package is already in the cache. If not, it will be added to it
         /// This checks only the "Installed Packages" cache
         /// </summary>
         /// <param name="p">The package to check</param>
@@ -42,6 +44,7 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         public static Package GetInstalledPackage(Package p)
         {
             Package? new_package = GetInstalledPackageOrNull(p);
+            if (new_package == null) AddPackageToCache(p, __installed_pkgs);
             return new_package ?? p;
         }
 
@@ -49,23 +52,17 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         /// Will check if a given Package is already in the cache.
         /// This checks only the "Discover Packages" cache
         /// </summary>
-        /// <param name="p">The package to check</param>
+        /// <param name="other">The package to check</param>
         /// <returns>The already existing package if any, otherwhise null</returns>
-        public static Package? GetAvailablePackageOrNull(Package p)
+        public static Package? GetAvailablePackageOrNull(Package other)
         {
-            if (!__available_packages.ContainsKey(p.Manager))
+            if (__available_pkgs.TryGetValue(other.Manager, out var manager_pkgs))
             {
-                return null;
-            }
-
-            foreach (Package package in __available_packages[p.Manager].Values)
-            {
-                if (p.Equals(package))
+                if(manager_pkgs.TryGetValue(other.GetHash(), out Package? equivalent_package))
                 {
-                    return package;
+                    return equivalent_package;
                 }
             }
-
             return null;
         }
 
@@ -73,23 +70,17 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         /// Will check if a given Package is already in the cache.
         /// This checks only the "Software Updates" cache
         /// </summary>
-        /// <param name="p">The package to check</param>
+        /// <param name="other">The package to check</param>
         /// <returns>The already existing package if any, otherwhise null</returns>
-        public static Package? GetUpgradablePackageOrNull(Package p)
+        public static Package? GetUpgradablePackageOrNull(Package other)
         {
-            if (!__upgradable_packages.ContainsKey(p.Manager))
+            if (__upgradable_pkgs.TryGetValue(other.Manager, out var manager_pkgs))
             {
-                return null;
-            }
-
-            foreach (Package package in __upgradable_packages[p.Manager].Values)
-            {
-                if (p.Equals(package))
+                if (manager_pkgs.TryGetValue(other.GetHash(), out Package? equivalent_package))
                 {
-                    return package;
+                    return equivalent_package;
                 }
             }
-
             return null;
         }
 
@@ -97,47 +88,49 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         /// Will check if a given Package is already in the cache.
         /// This checks only the "Installed Packages" cache
         /// </summary>
-        /// <param name="p">The package to check</param>
+        /// <param name="other">The package to check</param>
         /// <returns>The already existing package if any, otherwhise null</returns>
-        public static Package? GetInstalledPackageOrNull(Package p)
+        public static Package? GetInstalledPackageOrNull(Package other)
         {
-            if (!__installed_packages.ContainsKey(p.Manager))
+            if (__installed_pkgs.TryGetValue(other.Manager, out var manager_pkgs))
             {
-                return null;
-            }
-
-            foreach (Package package in __installed_packages[p.Manager].Values)
-            {
-                if (p.Equals(package))
+                if (manager_pkgs.TryGetValue(other.GetVersionedHash(), out Package? equivalent_package))
                 {
-                    return package;
+                    return equivalent_package;
                 }
             }
-
             return null;
         }
 
         /// <summary>
         /// Checks wether a Package with a newer version has been found in the Installed Packages cache
         /// </summary>
-        /// <param name="p">The package to check agains</param>
+        /// <param name="other">The package to check agains</param>
         /// <returns>True if a newer version was found, false otherwhise</returns>
-        public static bool NewerVersionIsInstalled(Package p)
+        public static bool NewerVersionIsInstalled(Package other)
         {
-            if (!__installed_packages.ContainsKey(p.Manager))
+            if (__installed_pkgs.TryGetValue(other.Manager, out var manager_pkgs))
             {
-                return false;
-            }
-
-            foreach (Package package in __installed_packages[p.Manager].Values)
-            {
-                if (package.Manager == p.Manager && package.Id == p.Id && package.Version == p.NewVersion && package.Source.Name == p.Source.Name)
+                foreach (Package found in manager_pkgs.Values)
                 {
-                    return true;
+                    if (found.IsEquivalentTo(other) && found.Version == other.NewVersion)
+                    {
+                        return true;
+                    }
                 }
             }
 
             return false;
+        }
+
+        private static void AddPackageToCache(Package package, Dictionary<PackageManager, Dictionary<long, Package>> map)
+        {
+            if(!map.ContainsKey(package.Manager))
+            {
+                map.Add(package.Manager, new());
+            }
+            var hash = map == __installed_pkgs ? package.GetVersionedHash() : package.GetHash();
+            map[package.Manager].Add(hash, package);
         }
     }
 }

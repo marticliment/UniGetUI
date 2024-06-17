@@ -14,7 +14,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// </summary>
     public class InstallationOptions
     {
-        private static Dictionary<string, InstallationOptions?> OptionsCache = new();
+        private static Dictionary<long, InstallationOptions?> OptionsCache = new();
 
         public bool SkipHashCheck { get; set; } = false;
         public bool InteractiveInstallation { get; set; } = false;
