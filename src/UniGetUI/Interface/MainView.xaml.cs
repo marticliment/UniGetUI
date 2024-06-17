@@ -420,12 +420,9 @@ namespace UniGetUI.Interface
 
             CurrentPage = TargetPage;
 
-            if (CurrentPage == DiscoverPage)
-                DiscoverPage.PackageList.Focus(FocusState.Programmatic);
-            else if (CurrentPage == UpdatesPage)
-                UpdatesPage.PackageList.Focus(FocusState.Programmatic);
-            else if (CurrentPage == InstalledPage)
-                InstalledPage.PackageList.Focus(FocusState.Programmatic);
+
+            if (CurrentPage is AbstractPackagesPage)
+                (CurrentPage as AbstractPackagesPage)?.FocusPackageList();
             else if (CurrentPage == BundlesPage)
                 BundlesPage.PackageList.Focus(FocusState.Programmatic);
         }

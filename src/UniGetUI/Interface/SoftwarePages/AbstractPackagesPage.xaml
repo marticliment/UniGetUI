@@ -12,7 +12,9 @@
     mc:Ignorable="d"
     Name="DiscoverPage"
     NavigationCacheMode="Required"
-    xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses">
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations" 
+    xmlns:collections="using:CommunityToolkit.WinUI.Collections" 
+    xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses">
 
     <animations:Implicit.ShowAnimations>
         <animations:TranslationAnimation Duration="0:0:0.25" From="0,100,0" To="0"/>
@@ -580,7 +582,7 @@
                     Grid.Column="10" Grid.Row="0"
                     VerticalAlignment="Center"
                     Text="{x:Bind Source.ToString()}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Source.ToString()}"
+                    ToolTipService.ToolTip="{x:Bind SourceAsString}"
                     />
             </Grid>
         </DataTemplate>
@@ -842,11 +844,11 @@
                     <Button Name="SourceHeader" Grid.Column="10" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" CornerRadius="0,4,4,0" BorderThickness="0"/>
                 </Grid>
 
-                <ListView x:Name="PackageList" x:FieldModifier="public" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"
-                    ItemsSource="{x:Bind FilteredPackages, Mode=TwoWay}"
+                <ListView x:Name="PackageList" x:FieldModifier="protected" 
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"
                     ItemTemplate="{StaticResource PackageTemplate}"
                     CanBeScrollAnchor="False"/>
-
+                    <!-- ItemsSource="{x:Bind FilteredPackages, Mode=TwoWay}" -->
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>

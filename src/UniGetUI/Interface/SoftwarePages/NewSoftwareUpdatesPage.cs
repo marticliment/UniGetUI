@@ -261,7 +261,7 @@ namespace UniGetUI.Interface.SoftwarePages
             ManageIgnored.Click += async (s, e) => { await MainApp.Instance.MainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
             IgnoreSelected.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in PackageCollection.ToArray()) if (package.IsChecked)
                     {
                         await package.AddToIgnoredUpdatesAsync();
                         MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
@@ -270,24 +270,24 @@ namespace UniGetUI.Interface.SoftwarePages
 
             UpdateSelected.Click += (s, e) =>
             {
-                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in PackageCollection.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
             };
             UpdateAsAdmin.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in PackageCollection.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
                             await InstallationOptions.FromPackageAsync(package, elevated: true)));
             };
             UpdateSkipHash.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in PackageCollection.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
                             await InstallationOptions.FromPackageAsync(package, no_integrity: true)));
             };
             UpdateInteractive.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in PackageCollection.ToArray()) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
                             await InstallationOptions.FromPackageAsync(package, interactive: true)));
             };

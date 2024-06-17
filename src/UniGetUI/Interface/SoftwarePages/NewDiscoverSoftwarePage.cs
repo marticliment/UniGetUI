@@ -185,27 +185,27 @@ namespace UniGetUI.Interface.SoftwarePages
 
             InstallSelected.Click += (s, e) =>
             {
-                foreach (Package package in FilteredPackages) if (package.IsChecked)
+                foreach (Package package in PackageCollection) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
             };
 
             InstallAsAdmin.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages) if (package.IsChecked)
+                foreach (Package package in PackageCollection) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
                             await InstallationOptions.FromPackageAsync(package, elevated: true)));
             };
 
             InstallSkipHash.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages) if (package.IsChecked)
+                foreach (Package package in PackageCollection) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
                             await InstallationOptions.FromPackageAsync(package, no_integrity: true)));
             };
 
             InstallInteractive.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages) if (package.IsChecked)
+                foreach (Package package in PackageCollection) if (package.IsChecked)
                         MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
                             await InstallationOptions.FromPackageAsync(package, interactive: true)));
             };
@@ -315,7 +315,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
-            await MainApp.Instance.MainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.ToArray().Where(x => x.IsChecked));
+            await MainApp.Instance.MainWindow.NavigationPage.BundlesPage.AddPackages(Packages.ToArray().Where(x => x.IsChecked));
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs e)
@@ -390,15 +390,17 @@ namespace UniGetUI.Interface.SoftwarePages
             await LoadPackages();
             QueryBothRadio.IsChecked = true;
             MainApp.Instance.MainWindow.HideLoadingDialog();
-            if (FilteredPackages.Count == 1)
+            if (PackageCollection.Count == 1)
             {
                 Logger.Debug("Only one package was found for pId=" + pId + ", showing it.");
-                await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
+                Package? package = PackageCollection[0] as Package;
+                if (package is null) throw new Exception("PackageCollection[0] was suppoised to be a valid Package object");
+                await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package, OperationType.Install);
             }
-            else if (FilteredPackages.Count > 1)
+            else if (PackageCollection.Count > 1)
             {
                 string managerName = pSource.Contains(':') ? pSource.Split(':')[0] : pSource;
-                foreach (Package match in FilteredPackages)
+                foreach (Package match in PackageCollection)
                     if (match.Source.Manager.Name == managerName)
                     {
                         Logger.Debug("Equivalent package for pId=" + pId + " and pSource=" + pSource + " found: " + match.ToString());
@@ -406,7 +408,9 @@ namespace UniGetUI.Interface.SoftwarePages
                         return;
                     }
                 Logger.Debug("No package found with the exact same manager, showing the first one.");
-                await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
+                Package? package = PackageCollection[0] as Package;
+                if (package is null) throw new Exception("PackageCollection[0] was suppoised to be a valid Package object");
+                await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package, OperationType.Install);
             }
             else
             {

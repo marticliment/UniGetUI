@@ -224,16 +224,16 @@ namespace UniGetUI.Interface.SoftwarePages
             ManageIgnored.Click += async (s, e) => { await MainApp.Instance.MainWindow.NavigationPage.ManageIgnoredUpdatesDialog(); };
             IgnoreSelected.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
+                foreach (Package package in PackageCollection.ToArray()) if (package.IsChecked)
                     {
                         MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
                         await package.AddToIgnoredUpdatesAsync();
                     }
             };
 
-            UninstallSelected.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray()); };
-            UninstallAsAdmin.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), elevated: true); };
-            UninstallInteractive.Click += (s, e) => { ConfirmAndUninstall(FilteredPackages.Where(x => x.IsChecked).ToArray(), interactive: true); };
+            UninstallSelected.Click += (s, e) => { ConfirmAndUninstall(Packages.Where(x => x.IsChecked).ToArray()); };
+            UninstallAsAdmin.Click += (s, e) => { ConfirmAndUninstall(Packages.Where(x => x.IsChecked).ToArray(), elevated: true); };
+            UninstallInteractive.Click += (s, e) => { ConfirmAndUninstall(Packages.Where(x => x.IsChecked).ToArray(), interactive: true); };
 
             SharePackage.Click += (s, e) =>
             {
@@ -322,7 +322,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
-            await MainApp.Instance.MainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.ToArray().Where(x => x.IsChecked));
+            await MainApp.Instance.MainWindow.NavigationPage.BundlesPage.AddPackages(Packages.ToArray().Where(x => x.IsChecked));
         }
 
         public async void ConfirmAndUninstall(Package package, InstallationOptions options)
