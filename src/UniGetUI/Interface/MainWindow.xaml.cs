@@ -261,6 +261,7 @@ namespace UniGetUI.Interface
             TrayIcon.DoubleClickCommand = ShowHideCommand;
             TrayIcon.NoLeftClickDelay = true;
             TrayIcon.ContextFlyout = TrayMenu;
+            MainApp.Instance.ThemeListener.ThemeChanged += (sender) => UpdateSystemTrayStatus();
             UpdateSystemTrayStatus();
         }
 
