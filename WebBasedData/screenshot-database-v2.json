@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11707,
-        "done": 5052,
-        "packages_with_icon": 5052,
+        "done": 5075,
+        "packages_with_icon": 5075,
         "packages_with_screenshot": 558,
         "total_screenshots": 1745
     },
@@ -32626,61 +32626,61 @@
             "images": []
         },
         "python-2": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
         "python-3-0": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
         "python-3-1": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
         "python-3-10": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": [
                 "https://i.postimg.cc/NFqHC0Bj/Python-IDLE.png"
             ]
         },
         "python-3-11": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
         "python-3-12": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
         "python-3-2": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
         "python-3-3": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
         "python-3-4": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
         "python-3-5": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
         "python-3-6": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
         "python-3-7": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
         "python-3-8": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
         "python-3-9": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
         "python-cheetah": {
@@ -32740,7 +32740,7 @@
             "images": []
         },
         "pythonlauncher": {
-            "icon": "",
+            "icon": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-1024.png",
             "images": []
         },
         "pythontkguibuilder": {
@@ -42603,15 +42603,15 @@
             "images": []
         },
         "unity-2020": {
-            "icon": "",
+            "icon": "https://companieslogo.com/img/orig/U-ea48bc1d.png",
             "images": []
         },
         "unity-2021": {
-            "icon": "",
+            "icon": "https://companieslogo.com/img/orig/U-ea48bc1d.png",
             "images": []
         },
         "unity-2022": {
-            "icon": "",
+            "icon": "https://companieslogo.com/img/orig/U-ea48bc1d.png",
             "images": []
         },
         "unity-android": {
@@ -43590,7 +43590,7 @@
             "images": []
         },
         "ventoy": {
-            "icon": "",
+            "icon": "https://pics.computerbase.de/9/3/5/0/1/logo-256.png",
             "images": []
         },
         "veracity": {
@@ -43838,15 +43838,15 @@
             "images": []
         },
         "vim-tux": {
-            "icon": "",
+            "icon": "https://1.bp.blogspot.com/-hAugYyJ2NAg/X9EREuqFVxI/AAAAAAAAH8Y/l29y_XcmVBU8YrqN51HFni5eJLtpaoB0gCLcBGAsYHQ/s320/vim-editor.png",
             "images": []
         },
         "vim-x64": {
-            "icon": "",
+            "icon": "https://1.bp.blogspot.com/-hAugYyJ2NAg/X9EREuqFVxI/AAAAAAAAH8Y/l29y_XcmVBU8YrqN51HFni5eJLtpaoB0gCLcBGAsYHQ/s320/vim-editor.png",
             "images": []
         },
         "vim-x86": {
-            "icon": "",
+            "icon": "https://1.bp.blogspot.com/-hAugYyJ2NAg/X9EREuqFVxI/AAAAAAAAH8Y/l29y_XcmVBU8YrqN51HFni5eJLtpaoB0gCLcBGAsYHQ/s320/vim-editor.png",
             "images": []
         },
         "vimtutor": {
@@ -46007,7 +46007,7 @@
             "images": []
         },
         "webtorrent": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/webtorrent-desktop.0.24.0.png",
             "images": []
         },
         "webtorrent-desktop": {
