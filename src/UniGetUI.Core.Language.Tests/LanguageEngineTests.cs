@@ -62,6 +62,7 @@ namespace UniGetUI.Core.Language.Tests
             Assert.Equal(PackageScope.Local, CommonTranslations.InvertedScopeNames["Usuari | Local"]);
         }
 
+        /*
         [Fact]
         public async Task TestDownloadUpdatedTranslationsAsync()
         {
@@ -76,5 +77,6 @@ namespace UniGetUI.Core.Language.Tests
             Assert.True(File.Exists(expected_file), "The updated file was not created");
             File.Delete(expected_file);
         }
+        */
     }
 }

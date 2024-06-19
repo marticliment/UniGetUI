@@ -3,8 +3,8 @@
         "total": 11707,
         "done": 5075,
         "packages_with_icon": 5075,
-        "packages_with_screenshot": 558,
-        "total_screenshots": 1745
+        "packages_with_screenshot": 559,
+        "total_screenshots": 1746
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -16810,6 +16810,12 @@
         "google-pinyin": {
             "icon": "",
             "images": []
+        },
+        "google-play-games-beta": {
+            "icon": "",
+            "images": [
+                "https://www.gstatic.com/play/games/pc/googleplaygames-beta-opengraph-7ab5c9b4.png"
+            ]
         },
         "google-translate-chrome": {
             "icon": "https://community.chocolatey.org/content/packageimages/google-translate-chrome.2.0.7.png",
@@ -48980,6 +48986,14 @@
             "icon": "",
             "images": []
         },
+        "__test_entry_DO_NOT_EDIT_PLEASE": {
+            "icon": "https://this.is.a.test/url/used_for/automated_unit_testing.png",
+            "images": [
+                "https://image_number.com/1.png",
+                "https://image_number.com/2.png",
+                "https://image_number.com/3.png"
+            ]
+        },
         "zulip": {
             "icon": "",
             "images": []
@@ -49125,18 +49139,6 @@
                 "https://i.postimg.cc/6Q08QLcw/Scfmnn-Mo48.png",
                 "https://i.postimg.cc/HxkV8cvM/u-ARCBXBW1-L.png"
             ]
-        },
-        "zyplayer": {
-            "icon": "https://this.is.a.test/url/used_for/automated_unit_testing.png",
-            "images": [
-                "https://image_number.com/1.png",
-                "https://image_number.com/2.png",
-                "https://image_number.com/3.png"
-            ]
-        },
-        "__test_entry_DO_NOT_EDIT_PLEASE": {
-            "icon": "",
-            "images": []
         }
     }
 }
