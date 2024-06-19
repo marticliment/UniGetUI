@@ -107,7 +107,7 @@ namespace UniGetUI.Interface
             get
             {
                 return CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.",
-                        Packages.Count.ToString(), FilteredPackages.Count())
+                        Packages.Count, FilteredPackages.Count())
                         + " " + (SHOW_LAST_CHECKED_TIME? CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()): "");
             }
         }

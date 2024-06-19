@@ -26,10 +26,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="MessageFormat" Version="7.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\UniGetUI.Core.Data\UniGetUI.Core.Data.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.LanguageEngine\UniGetUI.Core.LanguageEngine.csproj" />
     <ProjectReference Include="..\UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj" />

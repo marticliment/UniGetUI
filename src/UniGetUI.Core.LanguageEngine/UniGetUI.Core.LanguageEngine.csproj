@@ -27,6 +27,10 @@
 	</PropertyGroup>
 
   <ItemGroup>
+	  <PackageReference Include="MessageFormat" Version="7.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Assets\Data\LanguagesReference.json" />
     <None Remove="Assets\Data\TranslatedPercentages.json" />
     <None Remove="Assets\Data\Translators.json" />
