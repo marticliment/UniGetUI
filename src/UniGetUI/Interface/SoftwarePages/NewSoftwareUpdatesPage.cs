@@ -525,14 +525,5 @@ namespace UniGetUI.Interface.SoftwarePages
                     if (package.Manager.Name == manager)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
         }
-
-        public Package? GetPackageForId(string id, string? sourceName = null)
-        {
-            foreach (var package in Loader.Packages)
-                if (package.Id == id && (sourceName == null || package.Source.Name == sourceName))
-                    return package;
-            
-            return null;
-        }
     }
 }

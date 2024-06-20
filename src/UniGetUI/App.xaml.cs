@@ -234,9 +234,42 @@ namespace UniGetUI
                 
                 IconDatabase.InitializeInstance();
                 IconDatabase.Instance.LoadIconAndScreenshotsDatabase();
+
+                // Bind the background api to the main interface
+
+                BackgroundApi.OnOpenWindow += (s, e) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                { 
+                    MainWindow.Activate();
+                });
+
+                BackgroundApi.OnOpenUpdatesPage += (s, e) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                { 
+                    MainWindow?.NavigationPage?.UpdatesNavButton.ForceClick();
+                    MainWindow?.Activate();
+                });
                 
-                if (!Settings.Get("DisableApi"))
-                    _ = BackgroundApi.Start();
+                BackgroundApi.OnShowSharedPackage += (s, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    MainWindow?.NavigationPage?.DiscoverPage.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
+                    MainWindow?.Activate();
+                });
+
+                BackgroundApi.OnUpgradeAll += (s, e) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    MainWindow?.NavigationPage?.UpdatesPage.UpdateAll();
+                });
+
+                BackgroundApi.OnUpgradeAllForManager += (s, manager) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    MainWindow?.NavigationPage?.UpdatesPage.UpdateAllPackagesForManager(manager);
+                });
+
+                BackgroundApi.OnUpgradePackage += (s, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    MainWindow?.NavigationPage?.UpdatesPage.UpdatePackageForId(package);
+                });
+
+                if (!Settings.Get("DisableApi")) _ = BackgroundApi.Start();
 
                 _ = MainWindow.DoEntryTextAnimationAsync();
 

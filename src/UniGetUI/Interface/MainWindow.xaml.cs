@@ -264,7 +264,6 @@ namespace UniGetUI.Interface
             UpdateSystemTrayStatus();
         }
 
-
         public void UpdateSystemTrayStatus()
         {
             string modifier = "_empty";
@@ -326,7 +325,6 @@ namespace UniGetUI.Interface
             else
                 TrayIcon.Visibility = Visibility.Visible;
         }
-
 
         public void SwitchToInterface()
         {

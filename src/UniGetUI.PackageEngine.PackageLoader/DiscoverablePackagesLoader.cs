@@ -10,7 +10,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
-    public class DiscoverablePackagesLoader : BasePackageLoader
+    public class DiscoverablePackagesLoader : AbstractPackageLoader
     {
         private string QUERY_TEXT = string.Empty;
 

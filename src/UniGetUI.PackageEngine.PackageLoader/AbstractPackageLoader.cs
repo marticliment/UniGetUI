@@ -228,5 +228,14 @@ namespace UniGetUI.PackageEngine.PackageLoader
             }
             return result;
         }
+
+        public Package? GetPackageForId(string id, string? sourceName = null)
+        {
+            foreach (var package in Packages)
+                if (package.Id == id && (sourceName == null || package.Source.Name == sourceName))
+                    return package;
+
+            return null;
+        }
     }
 }
