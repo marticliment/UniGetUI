@@ -5,6 +5,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.Interface
@@ -164,7 +165,7 @@ namespace UniGetUI.Interface
                     return 401;
 
                 string packages = "";
-                foreach (Package package in MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.Packages)
+                foreach (Package package in PEInterface.UpgradablePackagesLoader.Packages)
                 {
                     if (package.Tag == PackageTag.OnQueue || package.Tag == PackageTag.BeingProcessed)
                         continue; // Do not show already processed packages on queue 
