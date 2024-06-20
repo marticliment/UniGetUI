@@ -377,7 +377,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 Logger.Debug("Starting package backup");
                 List<BundledPackage> packagestoExport = new();
-                foreach (Package package in Packages)
+                foreach (Package package in Loader.Packages)
                     packagestoExport.Add(await BundledPackage.FromPackageAsync(package));
 
                 string BackupContents = await PackageBundlePage.GetBundleStringFromPackages(packagestoExport.ToArray(), BundleFormatType.JSON);

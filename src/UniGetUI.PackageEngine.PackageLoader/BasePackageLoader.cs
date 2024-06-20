@@ -94,6 +94,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                                 await WhenAddingPackage(package);
                                 // TODO: AddPackageToSourcesList(package);
                             }
+                            PackagesChanged?.Invoke(this, EventArgs.Empty);
                         }
                         tasks.Remove(task);
                     }

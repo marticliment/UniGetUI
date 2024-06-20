@@ -314,7 +314,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             try
             {
-                MainApp.Instance.TooltipStatus.AvailableUpdates = Packages.Count();
+                MainApp.Instance.TooltipStatus.AvailableUpdates = Loader.Packages.Count();
             }
             catch (Exception)
             { }
@@ -322,7 +322,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public void UpdateAll()
         {
-            foreach (Package package in Packages)
+            foreach (Package package in Loader.Packages)
             {
                 if (package.Tag != PackageTag.BeingProcessed && package.Tag != PackageTag.OnQueue)
                     MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
@@ -332,7 +332,7 @@ namespace UniGetUI.Interface.SoftwarePages
         protected override async Task WhenPackagesLoaded(ReloadReason reason)
         {
             List<Package> upgradablePackages = new();
-            foreach (Package package in Packages)
+            foreach (Package package in Loader.Packages)
             {
                 if (package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
                     upgradablePackages.Add(package);
@@ -506,7 +506,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public void UpdatePackageForId(string id)
         {
-            foreach (Package package in Packages)
+            foreach (Package package in Loader.Packages)
             {
                 if (package.Id == id)
                 {
@@ -520,7 +520,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public void UpdateAllPackagesForManager(string manager)
         {
-            foreach (Package package in Packages)
+            foreach (Package package in Loader.Packages)
                 if (package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
                     if (package.Manager.Name == manager)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
@@ -528,7 +528,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public Package? GetPackageForId(string id, string? sourceName = null)
         {
-            foreach (var package in Packages)
+            foreach (var package in Loader.Packages)
                 if (package.Id == id && (sourceName == null || package.Source.Name == sourceName))
                     return package;
             

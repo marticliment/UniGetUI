@@ -97,6 +97,7 @@ namespace UniGetUI.Interface
             Manager = manager;
             List = list;
         }
+
         public async Task RemoveFromIgnoredUpdates()
         {
             string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
@@ -107,7 +108,7 @@ namespace UniGetUI.Interface
                 await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
             }
 
-            foreach (Package package in MainApp.Instance.MainWindow.NavigationPage.InstalledPage.Packages)
+            foreach (Package package in PEInterface.InstalledPackagesLoader.Packages)
                 if (package.Id == Id && Manager == package.Manager)
                 {
                     package.SetTag(PackageTag.Default);
