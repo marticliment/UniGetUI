@@ -11,14 +11,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.Managers.ChocolateyManager;
-using UniGetUI.PackageEngine.Managers.DotNetManager;
-using UniGetUI.PackageEngine.Managers.NpmManager;
-using UniGetUI.PackageEngine.Managers.PipManager;
-using UniGetUI.PackageEngine.Managers.PowerShellManager;
-using UniGetUI.PackageEngine.Managers.ScoopManager;
-using UniGetUI.PackageEngine.Managers.WingetManager;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Operations;
 using Windows.Foundation.Collections;
 
@@ -37,18 +30,10 @@ namespace UniGetUI
             private int _available_updates = 0;
             public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; MainApp.Instance.MainWindow.UpdateSystemTrayStatus(); } }
         }
-#pragma warning disable CS8618
-        public static Scoop Scoop;
-        public static WinGet Winget;
-        public static Chocolatey Choco;
-        public static Pip Pip;
-        public static Npm Npm;
-        public static DotNet Dotnet;
-        public static PowerShell PowerShell;
+
         public List<AbstractOperation> OperationQueue = new();
 
         public bool RaiseExceptionAsFatal = true;
-        public readonly List<PackageManager> PackageManagerList = new();
 
         public Interface.SettingsInterface settings;
         public MainWindow MainWindow;
@@ -57,32 +42,16 @@ namespace UniGetUI
 
         private BackgroundApiRunner BackgroundApi = new();
         private const int ManagerLoadTimeout = 10000; // 10 seconds timeout for Package Manager initialization
+#pragma warning disable CS8618
         public static MainApp Instance;
         public __tooltip_options TooltipStatus = new();
 
         public MainApp() : base()
         {
+#pragma warning restore CS8618
             try
             {
                 Instance = this;
-                Scoop = new();
-                Winget = new();
-                Choco = new();
-                Pip = new();
-                Npm = new();
-                Dotnet = new();
-                PowerShell = new();
-
-                PackageManagerList.AddRange(new PackageManager[]
-                {
-                    Winget,
-                    Scoop,
-                    Choco,
-                    Pip,
-                    Npm,
-                    Dotnet,
-                    PowerShell
-                });
 
                 InitializeComponent();
 
@@ -259,8 +228,6 @@ namespace UniGetUI
         {
             try
             {
-                InitializePackageManagers();
-
                 // Run other initializations asynchronously
                 if(!Settings.Get("DisableAutoUpdateWingetUI"))
                     UpdateUniGetUIIfPossible();
@@ -273,7 +240,7 @@ namespace UniGetUI
 
                 _ = MainWindow.DoEntryTextAnimationAsync();
 
-                await InitializeAllManagersAsync();
+                await PEInterface.Initialize();
 
                 Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();
@@ -286,41 +253,6 @@ namespace UniGetUI
             {
                 CoreTools.ReportFatalException(e);
             }
-        }
-
-        /// <summary>
-        /// Constructs Package Manager objects
-        /// </summary>
-        private void InitializePackageManagers()
-        {
-            
-        }
-
-        /// <summary>
-        /// Initializes Package Manager objects (asynchronously)
-        /// </summary>
-        /// <returns></returns>
-        private async Task InitializeAllManagersAsync()
-        {
-            List<Task> initializeTasks = new();
-
-            foreach (PackageManager manager in PackageManagerList)
-            {
-                initializeTasks.Add(manager.InitializeAsync());
-            }
-
-
-            Task ManagersMetaTask = Task.WhenAll(initializeTasks);
-            try
-            {
-                await ManagersMetaTask.WaitAsync(TimeSpan.FromMilliseconds(ManagerLoadTimeout));
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-            if (ManagersMetaTask.IsCompletedSuccessfully == false)
-                Logger.Warn("Timeout: Not all package managers have finished initializing.");
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs args)

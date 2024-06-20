@@ -7,6 +7,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Operations;
@@ -19,6 +20,12 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuAsAdmin;
         private BetterMenuItem? MenuInteractive;
         private BetterMenuItem? MenuskipHash;
+
+        public NewSoftwareUpdatesPage()
+        : base(PEInterface.UpgradablePackagesLoader)
+        {
+
+        }
 
         public override void GenerateUIText()
         {
@@ -264,7 +271,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                     {
                         await package.AddToIgnoredUpdatesAsync();
-                        MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
+                        PEInterface.UpgradablePackagesLoader.Remove(package);
                     }
             };
 
@@ -302,29 +309,6 @@ namespace UniGetUI.Interface.SoftwarePages
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
 
         }
-
-        protected override async Task<bool> IsPackageValid(Package package)
-        {
-            if (await package.HasUpdatesIgnoredAsync(package.NewVersion))
-                return false;
-
-            if (package.IsUpgradable && package.NewerVersionIsInstalled())
-                return false;
-            
-            return true;
-        }
-
-        protected override Task<Package[]> LoadPackagesFromManager(PackageManager manager)
-        {
-            return manager.GetAvailableUpdates();
-        }
-#pragma warning disable 
-        protected override async Task WhenAddingPackage(Package package)
-        {
-            package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);
-            package.GetInstalledPackage()?.SetTag(PackageTag.IsUpgradable);
-        }
-#pragma warning restore
 
         protected override void WhenPackageCountUpdated()
         {
@@ -508,7 +492,7 @@ namespace UniGetUI.Interface.SoftwarePages
             if (!Initialized || package == null)
                 return;
             _ = package.AddToIgnoredUpdatesAsync();
-            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
+            PEInterface.UpgradablePackagesLoader.Remove(package);
         }
 
         private void MenuSkipVersion_Invoked(object sender, RoutedEventArgs e)
@@ -517,7 +501,7 @@ namespace UniGetUI.Interface.SoftwarePages
             if (!Initialized || package == null)
                 return;
             _ = package.AddToIgnoredUpdatesAsync((package).NewVersion);
-            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
+            PEInterface.UpgradablePackagesLoader.Remove(package);
         }
 
         public void UpdatePackageForId(string id)

@@ -10,11 +10,13 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.PackageLoader;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -28,6 +30,8 @@ namespace UniGetUI.Interface
         protected bool DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = false;
         protected bool MEGA_QUERY_BOX_ENABLED = false;
         protected bool SHOW_LAST_CHECKED_TIME = false;
+
+        protected BasePackageLoader Loader;
 
         protected enum ReloadReason
         {
@@ -74,11 +78,6 @@ namespace UniGetUI.Interface
 
         public bool RoleIsUpdateLike { get { return PageRole == OperationType.Update; } }
 
-
-
-        protected abstract Task<Package[]> LoadPackagesFromManager(PackageManager manager);
-        protected abstract Task<bool> IsPackageValid(Package package);
-        protected abstract Task WhenAddingPackage(Package package);
         protected abstract Task WhenPackagesLoaded(ReloadReason reason);
         protected abstract void WhenPackageCountUpdated();
         protected abstract void WhenShowingContextMenu(Package package);
@@ -119,8 +118,15 @@ namespace UniGetUI.Interface
 
 
 
-        public AbstractPackagesPage()
+        public AbstractPackagesPage(BasePackageLoader loader)
         {
+            Loader = loader;
+            Packages = Loader.Packages;
+
+            Loader.StartedLoading += Loader_StartedLoading;
+            Loader.FinishedLoading += Loader_FinishedLoading;
+            Loader.PackagesChanged += Loader_PackagesChanged;
+
             InitializeComponent();
             LastPackageLoadTime = DateTime.Now;
             QueryBothRadio.IsChecked = true;
@@ -132,6 +138,7 @@ namespace UniGetUI.Interface
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 FilterPackages(QueryBlock.Text);
             };
+
             QueryBlock.TextChanged += (s, e) => { if (InstantSearchCheckbox.IsChecked == true) FilterPackages(QueryBlock.Text); };
             QueryBlock.KeyUp += (s, e) => {
                 if (e.Key == Windows.System.VirtualKey.Enter)
@@ -275,6 +282,28 @@ namespace UniGetUI.Interface
             MegaQueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
         }
 
+        private void Loader_PackagesChanged(object? sender, EventArgs e)
+        {
+            foreach (var package in Packages)
+                AddPackageToSourcesList(package);
+
+            UpdatePackageCount();
+            FilterPackages(QueryBlock.Text);
+        }
+
+        private void Loader_FinishedLoading(object? sender, EventArgs e)
+        {
+            LoadingProgressBar.Visibility = Visibility.Collapsed;
+            UpdatePackageCount();
+            FilterPackages(QueryBlock.Text);
+        }
+
+        private void Loader_StartedLoading(object? sender, EventArgs e)
+        {
+            LoadingProgressBar.Visibility = Visibility.Visible;
+            UpdatePackageCount();
+        }
+
         public void SearchTriggered()
         {
             QueryBlock.Focus(FocusState.Pointer);
@@ -391,71 +420,12 @@ namespace UniGetUI.Interface
 
         protected async Task LoadPackages(ReloadReason reason)
         {
-            if (!Initialized)
-                return;
-
-            if (LoadingProgressBar.Visibility == Visibility.Visible)
-                return; // If already loading, don't load again
-
-            if (DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START && reason == ReloadReason.FirstRun)
-                return;
-
-            MainSubtitle.Text = MainSubtitle_StillLoading;
-            BackgroundText.Text = MainSubtitle_StillLoading;
-            BackgroundText.Visibility = Visibility.Visible;
-            LoadingProgressBar.Visibility = Visibility.Visible;
-            SourcesPlaceholderText.Visibility = Visibility.Visible;
-            SourcesPlaceholderText.Text = MainSubtitle_StillLoading;
-            SourcesTreeViewGrid.Visibility = Visibility.Collapsed;
-
-            ClearPackageList();
-
-            await Task.Delay(100);
-
-            List<Task<Package[]>> tasks = new();
-
-            foreach (PackageManager manager in MainApp.Instance.PackageManagerList)
+            if(!(Loader.IsLoading) && (Loader.IsLoaded || reason == ReloadReason.External || reason == ReloadReason.Manual || reason == ReloadReason.Automated))
             {
-                if (manager.IsEnabled() && manager.Status.Found)
-                {
-                    Task<Package[]> task = LoadPackagesFromManager(manager);
-                    tasks.Add(task);
-                }
+                Loader.ClearPackages();
+                await Loader.ReloadPackages();
             }
-
-            while (tasks.Count > 0)
-            {
-                foreach (Task<Package[]> task in tasks.ToArray())
-                {
-                    if (!task.IsCompleted)
-                        await Task.Delay(100);
-
-                    if (task.IsCompleted)
-                    {
-                        if (task.IsCompletedSuccessfully)
-                        {
-                            int InitialCount = Packages.Count;
-                            foreach (Package package in task.Result)
-                            {
-                                if (!await IsPackageValid(package))
-                                    continue;
-
-                                Packages.Add(package);
-                                await WhenAddingPackage(package);
-                                AddPackageToSourcesList(package);
-                            }
-                            if (InitialCount < Packages.Count)
-                                FilterPackages(QueryBlock.Text.Trim(), StillLoading: true);
-                        }
-                        tasks.Remove(task);
-                    }
-                }
-            }
-
-            LoadingProgressBar.Visibility = Visibility.Collapsed;
-            LastPackageLoadTime = DateTime.Now;
-            FilterPackages(QueryBlock.Text, StillLoading: false);
-            await WhenPackagesLoaded(reason);
+            Loader_PackagesChanged(this, EventArgs.Empty);
         }
 
         public void FilterPackages(string query, bool StillLoading = false)
@@ -533,7 +503,6 @@ namespace UniGetUI.Interface
             FilteredPackages.Sort();
             UpdatePackageCount();
         }
-
         public void UpdatePackageCount()
         {
             if (FilteredPackages.Count() == 0)
@@ -582,7 +551,6 @@ namespace UniGetUI.Interface
             
             WhenPackageCountUpdated();
         }
-
         public void SortPackages(string Sorter)
         {
             if (!Initialized)
@@ -687,7 +655,7 @@ namespace UniGetUI.Interface
             AllSelected = false;
         }
 
-        public void RemoveCorrespondingPackages(Package foreignPackage)
+        /*public void RemoveCorrespondingPackages(Package foreignPackage)
         {
             foreach (Package package in Packages.ToArray())
                 if (package == foreignPackage || package.IsEquivalentTo(foreignPackage))
@@ -699,7 +667,7 @@ namespace UniGetUI.Interface
                         FilteredPackages.Remove(package);
                 }
             UpdatePackageCount();
-        }
+        }*/
 
         private void SidepanelWidth_SizeChanged(object sender, SizeChangedEventArgs e)
         {

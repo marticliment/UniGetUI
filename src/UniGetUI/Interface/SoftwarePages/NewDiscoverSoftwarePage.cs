@@ -4,6 +4,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Operations;
@@ -16,6 +17,10 @@ namespace UniGetUI.Interface.SoftwarePages
         BetterMenuItem? MenuAsAdmin;
         BetterMenuItem? MenuInteractive;
         BetterMenuItem? MenuSkipHash;
+        public NewDiscoverSoftwarePage()
+        : base(PEInterface.DiscoveredPackagesLoader)
+        {
+        }
 
         public override BetterMenu GenerateContextMenu()
         {
@@ -259,33 +264,6 @@ namespace UniGetUI.Interface.SoftwarePages
             QueryOptionsGroup.SelectedIndex = 2;
             QueryOptionsGroup.SelectedItem = QueryBothRadio;
         }
-
-#pragma warning disable
-        protected override async Task<bool> IsPackageValid(Package package)
-        {
-            return true;
-        }
-#pragma warning restore
-
-        protected override Task<Package[]> LoadPackagesFromManager(PackageManager manager)
-        {
-            string text = QueryBlock.Text;
-            text = CoreTools.EnsureSafeQueryString(text);
-            if (text == string.Empty)
-                return new Task<Package[]>(() => { return []; });
-            else
-                return manager.FindPackages(text);
-        }
-
-#pragma warning disable
-        protected override async Task WhenAddingPackage(Package package)
-        {
-            if (package.GetUpgradablePackage() != null)
-                package.SetTag(PackageTag.IsUpgradable);
-            else if (package.GetInstalledPackage() != null)
-                package.SetTag(PackageTag.AlreadyInstalled);
-        }
-#pragma warning restore
 
         protected override void WhenPackageCountUpdated()
         {

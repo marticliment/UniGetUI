@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.PackageLoader
@@ -38,10 +40,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public event EventHandler<EventArgs>? StartedLoading;
 
         bool ALLOW_MULTIPLE_PACKAGE_VERSIONS = false;
-        string LOADER_IDENTIFIER;
+        protected string LOADER_IDENTIFIER;
+        protected IEnumerable<PackageManager> Managers { get; private set; }
 
-        public BasePackageLoader(bool AllowMultiplePackageVersions = false) 
-        { 
+        public BasePackageLoader(IEnumerable<PackageManager> managers, bool AllowMultiplePackageVersions = false) 
+        {
+            Managers = managers;
             Packages = new ObservableCollection<Package>();
             PackageReference = new Dictionary<long, Package>();
             IsLoaded = false;
@@ -57,7 +61,45 @@ namespace UniGetUI.PackageEngine.PackageLoader
         {
             IsLoading = true;
             StartedLoading?.Invoke(this, new EventArgs());
-            await LoadPackagesFromManagers();
+
+            List<Task<Package[]>> tasks = new();
+
+            foreach (PackageManager manager in Managers)
+            {
+                if (manager.IsEnabled() && manager.Status.Found)
+                {
+                    Task<Package[]> task = LoadPackagesFromManager(manager);
+                    tasks.Add(task);
+                }
+            }
+
+            while (tasks.Count > 0)
+            {
+                foreach (Task<Package[]> task in tasks.ToArray())
+                {
+                    if (!task.IsCompleted)
+                        await Task.Delay(100);
+
+                    if (task.IsCompleted)
+                    {
+                        if (task.IsCompletedSuccessfully)
+                        {
+                            int InitialCount = Packages.Count;
+                            foreach (Package package in task.Result)
+                            {
+                                if (Contains(package) || !await IsPackageValid(package))
+                                    continue;
+
+                                AddPackage(package);
+                                await WhenAddingPackage(package);
+                                // TODO: AddPackageToSourcesList(package);
+                            }
+                        }
+                        tasks.Remove(task);
+                    }
+                }
+            }
+
             IsLoading = false;
             FinishedLoading?.Invoke(this, new EventArgs());
             IsLoaded = true;
@@ -75,10 +117,25 @@ namespace UniGetUI.PackageEngine.PackageLoader
         }
 
         /// <summary>
-        /// Loads the packages from the PackageManager
+        /// Loads the packages from the given manager
         /// </summary>
+        /// <param name="manager">The manager from which to load packages</param>
+        /// <returns>A task that will load the packages</returns>
+        protected abstract Task<Package[]> LoadPackagesFromManager(PackageManager manager);
+
+        /// <summary>
+        /// Checks whether the package is valid or must be skipped
+        /// </summary>
+        /// <param name="package">The package to check</param>
+        /// <returns>True if the package can be added, false otherwhise</returns>
+        protected abstract Task<bool> IsPackageValid(Package package);
+
+        /// <summary>
+        /// A method to post-process packages after they have been added.
+        /// </summary>
+        /// <param name="package">The package to process</param>
         /// <returns></returns>
-        protected abstract Task LoadPackagesFromManagers();
+        protected abstract Task WhenAddingPackage(Package package);
 
         /// <summary>
         /// Checks wether a package is contained on the current Loader

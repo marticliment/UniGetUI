@@ -285,6 +285,8 @@
     <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.PowerShell\UniGetUI.PackageEngine.Managers.PowerShell.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Scoop\UniGetUI.PackageEngine.Managers.Scoop.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.WinGet\UniGetUI.PackageEngine.Managers.WinGet.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.PackageEngine\UniGetUI.PackageEngine.PEInterface.csproj" />
+    <ProjectReference Include="..\UniGetUI.PackageEngine.PackageLoader\UniGetUI.PackageEngine.PackageLoader.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.PackageManagerClasses\UniGetUI.PackageEngine.Classes.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Serializable\UniGetUI.PackageEngine.Serializable.csproj" />
   </ItemGroup>

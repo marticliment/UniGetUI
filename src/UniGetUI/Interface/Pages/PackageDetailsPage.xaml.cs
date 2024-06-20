@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -184,7 +185,7 @@ namespace UniGetUI.Interface.Dialogs
 
             // Extended details section
             SetTextToItem(ManifestUrl_Content, details.ManifestUrl);
-            if (Package.Manager == MainApp.Choco)
+            if (Package.Manager == PEInterface.Chocolatey)
                 SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA512") + ": ");
             else
                 SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA256") + ": ");

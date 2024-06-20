@@ -1,12 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
-    public class InstalledPackagesLoader // : BasePackageLoader
+    public class InstalledPackagesLoader : BasePackageLoader
     {
+        public InstalledPackagesLoader(IEnumerable<PackageManager> managers)
+        : base(managers, AllowMultiplePackageVersions: true)
+        {
+            LOADER_IDENTIFIER = "INSTALLED_PACKAGES";
+        }
+
+#pragma warning disable
+        protected override async Task<bool> IsPackageValid(Package package)
+        {
+            return true;
+        }
+#pragma warning restore
+
+        protected override Task<Package[]> LoadPackagesFromManager(PackageManager manager)
+        {
+            return manager.GetInstalledPackages();
+        }
+
+        protected override async Task WhenAddingPackage(Package package)
+        {
+            if (await package.HasUpdatesIgnoredAsync(Version: "*"))
+                package.Tag = PackageTag.Pinned;
+            else if (package.GetUpgradablePackage() != null)
+                package.Tag = PackageTag.IsUpgradable;
+
+            package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
+        }
     }
 }

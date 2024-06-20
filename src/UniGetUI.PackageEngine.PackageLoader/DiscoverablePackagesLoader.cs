@@ -3,39 +3,47 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
-    public class UpgradablePackagesLoader : BasePackageLoader
+    public class DiscoverablePackagesLoader : BasePackageLoader
     {
-        public UpgradablePackagesLoader(IEnumerable<PackageManager> managers)
+        private string QUERY_TEXT = string.Empty;
+
+        public DiscoverablePackagesLoader(IEnumerable<PackageManager> managers)
         : base(managers, AllowMultiplePackageVersions: false)
         {
             LOADER_IDENTIFIER = "DISCOVERABLE_PACKAGES";
         }
+
+#pragma warning disable
         protected override async Task<bool> IsPackageValid(Package package)
         {
-            if (await package.HasUpdatesIgnoredAsync(package.NewVersion))
-                return false;
-
-            if (package.IsUpgradable && package.NewerVersionIsInstalled())
-                return false;
-
             return true;
         }
+#pragma warning restore
 
         protected override Task<Package[]> LoadPackagesFromManager(PackageManager manager)
         {
-            return manager.GetAvailableUpdates();
+            string text = QUERY_TEXT;
+            text = CoreTools.EnsureSafeQueryString(text);
+            if (text == string.Empty)
+                return new Task<Package[]>(() => { return []; });
+            else
+                return manager.FindPackages(text);
         }
-#pragma warning disable 
+
+#pragma warning disable
         protected override async Task WhenAddingPackage(Package package)
         {
-            package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);
-            package.GetInstalledPackage()?.SetTag(PackageTag.IsUpgradable);
+            if (package.GetUpgradablePackage() != null)
+                package.SetTag(PackageTag.IsUpgradable);
+            else if (package.GetInstalledPackage() != null)
+                package.SetTag(PackageTag.AlreadyInstalled);
         }
 #pragma warning restore
     }

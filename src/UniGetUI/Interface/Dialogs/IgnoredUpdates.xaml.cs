@@ -6,6 +6,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -33,7 +34,7 @@ namespace UniGetUI.Interface
 
             Dictionary<string, PackageManager> ManagerNameReference = new();
 
-            foreach (PackageManager Manager in MainApp.Instance.PackageManagerList)
+            foreach (PackageManager Manager in PEInterface.Managers)
             {
                 ManagerNameReference.Add(Manager.Name.ToLower(), Manager);
             }
@@ -49,7 +50,7 @@ namespace UniGetUI.Interface
 
             foreach (KeyValuePair<string, JsonNode?> keypair in IgnoredUpdatesJson)
             {
-                PackageManager manager = MainApp.Winget; // Manager by default
+                PackageManager manager = PEInterface.WinGet; // Manager by default
                 if (ManagerNameReference.ContainsKey(keypair.Key.Split("\\")[0]))
                     manager = ManagerNameReference[keypair.Key.Split("\\")[0]];
 
