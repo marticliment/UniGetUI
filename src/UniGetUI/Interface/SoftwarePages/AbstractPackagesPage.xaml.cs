@@ -31,7 +31,7 @@ namespace UniGetUI.Interface
         protected bool MEGA_QUERY_BOX_ENABLED = false;
         protected bool SHOW_LAST_CHECKED_TIME = false;
 
-        protected BasePackageLoader Loader;
+        protected AbstractPackageLoader Loader;
 
         protected enum ReloadReason
         {
@@ -117,7 +117,7 @@ namespace UniGetUI.Interface
 
 
 
-        public AbstractPackagesPage(BasePackageLoader loader)
+        public AbstractPackagesPage(AbstractPackageLoader loader)
         {
             Loader = loader;
 

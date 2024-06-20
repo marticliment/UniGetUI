@@ -9,7 +9,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
-    public class UpgradablePackagesLoader : BasePackageLoader
+    public class UpgradablePackagesLoader : AbstractPackageLoader
     {
         public UpgradablePackagesLoader(IEnumerable<PackageManager> managers)
         : base(managers, AllowMultiplePackageVersions: false)

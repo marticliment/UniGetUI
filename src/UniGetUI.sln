@@ -82,7 +82,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Solution.props = Solution.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.PackageLoader", "UniGetUI.PackageEngine.PackageLoader\UniGetUI.PackageEngine.PackageLoader.csproj", "{27E0B288-7DFF-468D-9360-035E8CE123CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.PackageLoaders", "UniGetUI.PackageEngine.PackageLoader\UniGetUI.PackageEngine.PackageLoaders.csproj", "{27E0B288-7DFF-468D-9360-035E8CE123CB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.PEInterface", "UniGetUI.PackageEngine.PackageEngine\UniGetUI.PackageEngine.PEInterface.csproj", "{20F43119-EA00-440D-B3B5-44F96592F4C8}"
 EndProject

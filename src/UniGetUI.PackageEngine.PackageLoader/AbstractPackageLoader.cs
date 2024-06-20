@@ -6,7 +6,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
-    public abstract class BasePackageLoader
+    public abstract class AbstractPackageLoader
     {
         /// <summary>
         /// Checks if the loader has loaded packages
@@ -43,7 +43,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         protected string LOADER_IDENTIFIER;
         protected IEnumerable<PackageManager> Managers { get; private set; }
 
-        public BasePackageLoader(IEnumerable<PackageManager> managers, bool AllowMultiplePackageVersions = false) 
+        public AbstractPackageLoader(IEnumerable<PackageManager> managers, bool AllowMultiplePackageVersions = false) 
         {
             Managers = managers;
             Packages = new ObservableCollection<Package>();

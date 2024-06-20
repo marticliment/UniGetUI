@@ -4,7 +4,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
-    public class InstalledPackagesLoader : BasePackageLoader
+    public class InstalledPackagesLoader : AbstractPackageLoader
     {
         public InstalledPackagesLoader(IEnumerable<PackageManager> managers)
         : base(managers, AllowMultiplePackageVersions: true)
