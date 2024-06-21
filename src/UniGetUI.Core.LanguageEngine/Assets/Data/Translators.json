@@ -454,7 +454,12 @@
       "link": ""
     }
   ],
-  "sv": [],
+  "sv": [
+    {
+      "name": "curudel",
+      "link": "https://github.com/curudel"
+    }
+  ],
   "tg": [
     {
       "name": "lasersPew",
