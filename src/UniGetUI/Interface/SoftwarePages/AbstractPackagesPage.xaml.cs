@@ -47,6 +47,7 @@ namespace UniGetUI.Interface
             public string MainSubtitle_StillLoading;
             public string NoMatches_BackgroundText;
         }
+
         protected enum ReloadReason
         {
             FirstRun,

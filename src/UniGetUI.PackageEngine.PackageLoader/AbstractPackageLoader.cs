@@ -41,6 +41,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         bool ALLOW_MULTIPLE_PACKAGE_VERSIONS = false;
         protected string LOADER_IDENTIFIER;
+        private int LoadOperationIdentifier = 0;
         protected IEnumerable<PackageManager> Managers { get; private set; }
 
         public AbstractPackageLoader(IEnumerable<PackageManager> managers, bool AllowMultiplePackageVersions = false) 
@@ -54,11 +55,27 @@ namespace UniGetUI.PackageEngine.PackageLoader
         }
 
         /// <summary>
+        /// Stops the current loading process
+        /// </summary>
+        public void StopLoading()
+        {
+            if (!IsLoading) return;
+
+            LoadOperationIdentifier = -1;
+            IsLoaded = false;
+            IsLoading = false;
+            FinishedLoading?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
         /// Will trigger a forceful reload of the packages
         /// </summary>
         /// <returns></returns>
         public virtual async Task ReloadPackages()
         {
+            StopLoading();
+            LoadOperationIdentifier = new Random().Next();
+            int current_identifier = LoadOperationIdentifier;
             IsLoading = true;
             StartedLoading?.Invoke(this, new EventArgs());
 
@@ -82,7 +99,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
                     if (task.IsCompleted)
                     {
-                        if (task.IsCompletedSuccessfully)
+                        if (LoadOperationIdentifier == current_identifier && task.IsCompletedSuccessfully)
                         {
                             int InitialCount = Packages.Count;
                             foreach (Package package in task.Result)
@@ -101,9 +118,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 }
             }
 
-            IsLoading = false;
-            FinishedLoading?.Invoke(this, new EventArgs());
-            IsLoaded = true;
+            if (LoadOperationIdentifier == current_identifier)
+            {
+                IsLoading = false;
+                FinishedLoading?.Invoke(this, new EventArgs());
+                IsLoaded = true;
+            }
         }
 
         /// <summary>
