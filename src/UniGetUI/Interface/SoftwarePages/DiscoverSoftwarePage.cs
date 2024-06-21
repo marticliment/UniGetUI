@@ -265,7 +265,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private void Event_SearchPackages(object sender, RoutedEventArgs e)
         {
             if (QueryBlock.Text.Trim() != "")
-                _ = (Loader as DiscoverablePackagesLoader)?.ReloadPackages();
+                _ = (Loader as DiscoverablePackagesLoader)?.ReloadPackages(QueryBlock.Text.Trim());
         }
 
         protected override void WhenPackageCountUpdated()
