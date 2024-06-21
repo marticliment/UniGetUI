@@ -1,6 +1,7 @@
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UniGetUI.Core.Classes;
@@ -148,12 +149,13 @@ namespace UniGetUI.Interface
             QueryOptionsGroup.SelectedIndex = 2;
             LoadingProgressBar.Visibility = Visibility.Collapsed;
             Initialized = true;
+            LocalPackagesNode = new TreeViewNode { Content = CoreTools.Translate("Local"), IsExpanded = false };
+            
             ReloadButton.Click += async (s, e) => { await LoadPackages(); };
             FindButton.Click += (s, e) => { 
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 FilterPackages(QueryBlock.Text);
             };
-
             QueryBlock.TextChanged += (s, e) => { if (InstantSearchCheckbox.IsChecked == true) FilterPackages(QueryBlock.Text); };
             QueryBlock.KeyUp += (s, e) => {
                 if (e.Key == VirtualKey.Enter)
@@ -162,7 +164,6 @@ namespace UniGetUI.Interface
                     FilterPackages(QueryBlock.Text);
                 }
             };
-            
             QueryBlock.TextChanged += (s, e) => {
                 if (MEGA_QUERY_BOX_ENABLED &&  QueryBlock.Text.Trim() == "")
                 {
@@ -174,7 +175,6 @@ namespace UniGetUI.Interface
                     MegaQueryBlock.Text = "";
                 }
             };
-
             MegaQueryBlock.KeyUp += (s, e) => {
                 if (e.Key == VirtualKey.Enter)
                 {
@@ -183,16 +183,12 @@ namespace UniGetUI.Interface
                     FilterPackages(QueryBlock.Text);
                 }
             };
-
             MegaFindButton.Click += (s, e) =>
             {
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 QueryBlock.Text = MegaQueryBlock.Text.Trim();
                 FilterPackages(QueryBlock.Text);
             };
-
-            LocalPackagesNode = new TreeViewNode { Content = CoreTools.Translate("Local"), IsExpanded = false };
-
             SourcesTreeView.Tapped += (s, e) =>
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement)?.DataContext != null)
@@ -210,7 +206,6 @@ namespace UniGetUI.Interface
                     }
                 }
             };
-
             SourcesTreeView.RightTapped += (s, e) =>
             {
                 if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement)?.DataContext != null)
@@ -227,12 +222,10 @@ namespace UniGetUI.Interface
                     }
                 }
             };
-
             PackageList.DoubleTapped += (s, e) =>
             {
                 ShowDetailsForPackage(PackageList.SelectedItem as Package);
             };
-
             PackageList.RightTapped += (s, e) =>
             {
                 if (e.OriginalSource is FrameworkElement element)
@@ -252,7 +245,6 @@ namespace UniGetUI.Interface
                     }
                 }
             };
-
             PackageList.KeyUp += (s, e) =>
             {
                 bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
@@ -278,6 +270,13 @@ namespace UniGetUI.Interface
 
             LoadInterface();
             _ = LoadPackages(ReloadReason.FirstRun);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            Loader.StartedLoading -= Loader_StartedLoading;
+            Loader.FinishedLoading -= Loader_FinishedLoading;
+            Loader.PackagesChanged -= Loader_PackagesChanged;
         }
 
         private void Loader_PackagesChanged(object? sender, EventArgs e)
