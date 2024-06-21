@@ -37,7 +37,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MainSubtitle_StillLoading = CoreTools.Translate("Loading packages"),
             NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
 
-            PageTitle = CoreTools.AutoTranslated("Discover Packages"),
+            PageTitle = CoreTools.Translate("Discover Packages"),
             Glyph = "\uF6FA"
         })
         {   

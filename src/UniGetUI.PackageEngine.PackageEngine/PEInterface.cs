@@ -20,19 +20,19 @@ namespace UniGetUI.PackageEngine
     {
         private const int ManagerLoadTimeout = 10000; // 10 seconds timeout for Package Manager initialization
 
-        public static WinGet WinGet = new WinGet();
-        public static Scoop Scoop = new Scoop();
-        public static Chocolatey Chocolatey = new Chocolatey();
-        public static Npm Npm = new Npm();
-        public static Pip Pip = new Pip();
-        public static DotNet DotNet = new DotNet();
-        public static PowerShell PowerShell = new PowerShell();
+        public static readonly WinGet WinGet = new WinGet();
+        public static readonly Scoop Scoop = new Scoop();
+        public static readonly Chocolatey Chocolatey = new Chocolatey();
+        public static readonly Npm Npm = new Npm();
+        public static readonly Pip Pip = new Pip();
+        public static readonly DotNet DotNet = new DotNet();
+        public static readonly PowerShell PowerShell = new PowerShell();
 
-        public static PackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, DotNet, PowerShell];
+        public static readonly PackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, DotNet, PowerShell];
 
-        public static DiscoverablePackagesLoader DiscoveredPackagesLoader = new(Managers);
-        public static UpgradablePackagesLoader UpgradablePackagesLoader = new(Managers);
-        public static InstalledPackagesLoader InstalledPackagesLoader = new(Managers);
+        public static readonly DiscoverablePackagesLoader DiscoveredPackagesLoader = new(Managers);
+        public static readonly UpgradablePackagesLoader UpgradablePackagesLoader = new(Managers);
+        public static readonly InstalledPackagesLoader InstalledPackagesLoader = new(Managers);
 
         public static async Task Initialize()
         {
