@@ -15,7 +15,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class NewInstalledPackagesPage : AbstractPackagesPage
+    public class InstalledPackagesPage : AbstractPackagesPage
     {
         bool HasDoneBackup = false;
 
@@ -23,9 +23,31 @@ namespace UniGetUI.Interface.SoftwarePages
         BetterMenuItem? MenuInteractive;
         BetterMenuItem? MenuRemoveData;
 
-        public NewInstalledPackagesPage()
-        : base(PEInterface.InstalledPackagesLoader)
+        public InstalledPackagesPage()
+        : base(new PackagesPageData()
         {
+            DisableAutomaticPackageLoadOnStart = false,
+            MegaQueryBlockEnabled = false,
+            ShowLastLoadTime = false,
+            PageName = "Installed",
+
+            Loader = PEInterface.InstalledPackagesLoader,
+            PageRole = OperationType.Uninstall,
+
+            NoPackages_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
+            NoPackages_SourcesText = CoreTools.Translate("No packages were found"),
+            NoPackages_SubtitleText_Base = CoreTools.Translate("No packages were found"),
+            MainSubtitle_StillLoading = CoreTools.Translate("Loading packages"),
+            NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
+
+            PageTitle = CoreTools.AutoTranslated("Installed Packages"),
+            Glyph = "\uE977"
+        })
+        {
+            QuerySimilarResultsRadio.IsEnabled = false;
+            QueryOptionsGroup.SelectedIndex = 1;
+            QueryOptionsGroup.SelectedIndex = 2;
+            QueryOptionsGroup.SelectedItem = QueryBothRadio;
         }
 
         public override BetterMenu GenerateContextMenu()
@@ -249,29 +271,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
-        }
-
-        public override void GenerateUIText()
-        {
-            PAGE_NAME = "Installed";
-
-
-            PageRole = OperationType.Uninstall;
-            
-            NoPackages_BackgroundText = CoreTools.Translate("No packages were found");
-            NoPackages_SourcesText = CoreTools.Translate("No packages were found");
-            NoPackages_SubtitleMainText = NoPackages_SourcesText;
-
-            NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria");
-            NoMatches_SourcesText = CoreTools.Translate("No matches were found");
-
-            MainTitleText = CoreTools.AutoTranslated("Installed Packages");
-            MainTitleGlyph = "\uE977";
-
-            QuerySimilarResultsRadio.IsEnabled = false;
-            QueryOptionsGroup.SelectedIndex = 1;
-            QueryOptionsGroup.SelectedIndex = 2;
-            QueryOptionsGroup.SelectedItem = QueryBothRadio;
         }
 
         protected override void WhenPackageCountUpdated()

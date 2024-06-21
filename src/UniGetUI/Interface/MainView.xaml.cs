@@ -25,8 +25,8 @@ namespace UniGetUI.Interface
     {
         public SettingsInterface SettingsPage;
         public NewDiscoverSoftwarePage DiscoverPage;
-        public NewSoftwareUpdatesPage UpdatesPage;
-        public NewInstalledPackagesPage InstalledPage;
+        public SoftwareUpdatesPage UpdatesPage;
+        public InstalledPackagesPage InstalledPage;
         public HelpDialog? HelpPage;
         public PackageBundlePage BundlesPage;
         public Page? OldPage;
@@ -43,9 +43,9 @@ namespace UniGetUI.Interface
             BundleBadge = __bundle_count_badge;
             OperationStackPanel = __operations_list_stackpanel;
             DiscoverPage = new NewDiscoverSoftwarePage();
-            UpdatesPage = new NewSoftwareUpdatesPage();
+            UpdatesPage = new SoftwareUpdatesPage();
             UpdatesPage.ExternalCountBadge = UpdatesBadge;
-            InstalledPage = new NewInstalledPackagesPage();
+            InstalledPage = new InstalledPackagesPage();
             BundlesPage = new PackageBundlePage();
             SettingsPage = new SettingsInterface();
 

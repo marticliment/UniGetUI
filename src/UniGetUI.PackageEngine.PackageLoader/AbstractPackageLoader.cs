@@ -57,7 +57,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// Will trigger a forceful reload of the packages
         /// </summary>
         /// <returns></returns>
-        public async Task ReloadPackages()
+        public virtual async Task ReloadPackages()
         {
             IsLoading = true;
             StartedLoading?.Invoke(this, new EventArgs());

@@ -20,6 +20,18 @@ namespace UniGetUI.PackageEngine.PackageLoader
             LOADER_IDENTIFIER = "DISCOVERABLE_PACKAGES";
         }
 
+        public async Task ReloadPackages(string query)
+        {
+            QUERY_TEXT = query;
+            await ReloadPackages();
+        }
+
+        public override async Task ReloadPackages()
+        {
+            if (QUERY_TEXT == "") return;
+            else await base.ReloadPackages();
+        }
+
 #pragma warning disable
         protected override async Task<bool> IsPackageValid(Package package)
         {

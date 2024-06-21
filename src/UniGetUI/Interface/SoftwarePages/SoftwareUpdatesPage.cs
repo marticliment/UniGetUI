@@ -15,34 +15,33 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class NewSoftwareUpdatesPage : AbstractPackagesPage
+    public class SoftwareUpdatesPage : AbstractPackagesPage
     {
         private BetterMenuItem? MenuAsAdmin;
         private BetterMenuItem? MenuInteractive;
         private BetterMenuItem? MenuskipHash;
 
-        public NewSoftwareUpdatesPage()
-        : base(PEInterface.UpgradablePackagesLoader)
+        public SoftwareUpdatesPage()
+        : base(new PackagesPageData()
         {
+            DisableAutomaticPackageLoadOnStart = false,
+            MegaQueryBlockEnabled = false,
+            ShowLastLoadTime = true,
+            PageName = "Updates",
 
-        }
+            Loader = PEInterface.UpgradablePackagesLoader,
+            PageRole = OperationType.Update,
 
-        public override void GenerateUIText()
+            NoPackages_BackgroundText = CoreTools.Translate("Hooray! No updates were found."),
+            NoPackages_SourcesText = CoreTools.Translate("Everything is up to date"),
+            NoPackages_SubtitleText_Base = CoreTools.Translate("Everything is up to date"),
+            MainSubtitle_StillLoading = CoreTools.Translate("Loading packages"),
+            NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
+
+            PageTitle = CoreTools.AutoTranslated("Software Updates"),
+            Glyph = "\uE895"
+        })
         {
-            PAGE_NAME = "Updates";
-            SHOW_LAST_CHECKED_TIME = true;
-
-            PageRole = OperationType.Update;
-            NoPackages_BackgroundText = CoreTools.Translate("Hooray! No updates were found.");
-            NoPackages_SourcesText = CoreTools.Translate("Everything is up to date");
-            NoPackages_SubtitleMainText = NoPackages_SourcesText;
-
-            NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria");
-            NoMatches_SourcesText = CoreTools.Translate("No packages were found");
-
-            MainTitleText = CoreTools.AutoTranslated("Software Updates");
-            MainTitleGlyph = "\uE895";
-
             QuerySimilarResultsRadio.IsEnabled = false;
             QueryOptionsGroup.SelectedIndex = 1;
             QueryOptionsGroup.SelectedIndex = 2;
@@ -165,9 +164,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin.IsEnabled = package.Manager.Capabilities.CanRunAsAdmin;
             MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
             MenuskipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
-
         }
-
 
         public override void GenerateToolBar()
         {
