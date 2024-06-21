@@ -277,6 +277,7 @@ namespace UniGetUI.Interface
             Loader.StartedLoading -= Loader_StartedLoading;
             Loader.FinishedLoading -= Loader_FinishedLoading;
             Loader.PackagesChanged -= Loader_PackagesChanged;
+            base.OnNavigatedFrom(e);
         }
 
         private void Loader_PackagesChanged(object? sender, EventArgs e)
