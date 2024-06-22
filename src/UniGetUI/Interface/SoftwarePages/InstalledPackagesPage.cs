@@ -310,56 +310,15 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public async void ConfirmAndUninstall(Package package, InstallationOptions options)
         {
-            ContentDialog dialog = new();
-
-            dialog.XamlRoot = XamlRoot;
-            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.Title = CoreTools.Translate("Are you sure?");
-            dialog.PrimaryButtonText = CoreTools.Translate("No");
-            dialog.SecondaryButtonText = CoreTools.Translate("Yes");
-            dialog.DefaultButton = ContentDialogButton.Primary;
-            dialog.Content = CoreTools.Translate("Do you really want to uninstall {0}?", package.Name);
-
-            if (await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary)
+            if (await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(package))
+            {
                 MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, options));
-
+            }
         }
+
         public async void ConfirmAndUninstall(Package[] packages, bool? elevated = null, bool? interactive = null, bool? remove_data = null)
         {
-            if (packages.Length == 0) return;
-            if (packages.Length == 1)
-            {
-                ConfirmAndUninstall(packages[0], await InstallationOptions.FromPackageAsync(
-                    packages[0], 
-                    elevated: elevated, 
-                    interactive: interactive, 
-                    remove_data: remove_data
-                ));
-                return;
-            }
-
-            ContentDialog dialog = new();
-
-            dialog.XamlRoot = XamlRoot;
-            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.Title = CoreTools.Translate("Are you sure?");
-            dialog.PrimaryButtonText = CoreTools.Translate("No");
-            dialog.SecondaryButtonText = CoreTools.Translate("Yes");
-            dialog.DefaultButton = ContentDialogButton.Primary;
-
-            StackPanel p = new();
-            p.Children.Add(new TextBlock { Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?", packages.Length), Margin = new Thickness(0, 0, 0, 5) });
-
-            string pkgList = "";
-            foreach (Package package in packages)
-                pkgList += " ● " + package.Name + "\x0a";
-
-            TextBlock PackageListTextBlock = new() { FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Consolas"), Text = pkgList };
-            p.Children.Add(new ScrollView { Content = PackageListTextBlock, MaxHeight = 200 });
-
-            dialog.Content = p;
-
-            if (await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary)
+            if (await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(packages))
             {
                 foreach (Package package in packages)
                 {

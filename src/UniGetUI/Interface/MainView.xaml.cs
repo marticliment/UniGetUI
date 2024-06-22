@@ -483,6 +483,55 @@ namespace UniGetUI.Interface
 
         }
 
+        public async Task<bool> ConfirmUninstallation(Package package)
+        {
+            ContentDialog dialog = new();
+
+            dialog.XamlRoot = XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = CoreTools.Translate("Are you sure?");
+            dialog.PrimaryButtonText = CoreTools.Translate("No");
+            dialog.SecondaryButtonText = CoreTools.Translate("Yes");
+            dialog.DefaultButton = ContentDialogButton.Primary;
+            dialog.Content = CoreTools.Translate("Do you really want to uninstall {0}?", package.Name);
+
+            return await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary;
+        }
+
+        public async Task<bool> ConfirmUninstallation(Package[] packages)
+        {
+            if (packages.Length == 0) return false;
+            if (packages.Length == 1)
+            {
+                return await ConfirmUninstallation(packages[0]);
+            }
+
+            ContentDialog dialog = new();
+
+            dialog.XamlRoot = XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = CoreTools.Translate("Are you sure?");
+            dialog.PrimaryButtonText = CoreTools.Translate("No");
+            dialog.SecondaryButtonText = CoreTools.Translate("Yes");
+            dialog.DefaultButton = ContentDialogButton.Primary;
+
+            StackPanel p = new();
+            p.Children.Add(new TextBlock { Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?", packages.Length), Margin = new Thickness(0, 0, 0, 5) });
+
+            string pkgList = "";
+            foreach (Package package in packages)
+                pkgList += " ● " + package.Name + "\x0a";
+
+            TextBlock PackageListTextBlock = new() { FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Consolas"), Text = pkgList };
+            p.Children.Add(new ScrollView { Content = PackageListTextBlock, MaxHeight = 200 });
+
+            dialog.Content = p;
+
+            return await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary;
+        }
+
+
+
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
         {
             NavigateToPage(new Logger_LogPage(Logger_LogType.OperationHistory));
