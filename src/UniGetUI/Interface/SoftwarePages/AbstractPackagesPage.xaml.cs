@@ -272,14 +272,6 @@ namespace UniGetUI.Interface
             _ = LoadPackages(ReloadReason.FirstRun);
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            Loader.StartedLoading -= Loader_StartedLoading;
-            Loader.FinishedLoading -= Loader_FinishedLoading;
-            Loader.PackagesChanged -= Loader_PackagesChanged;
-            base.OnNavigatedFrom(e);
-        }
-
         private void Loader_PackagesChanged(object? sender, EventArgs e)
         {
             if (Loader.Packages.Count == 0)
