@@ -54,6 +54,9 @@ namespace UniGetUI.PackageEngine
             }
             if (ManagersMetaTask.IsCompletedSuccessfully == false)
                 Logger.Warn("Timeout: Not all package managers have finished initializing.");
+
+            _ = UpgradablePackagesLoader.ReloadPackages();
+            _ = InstalledPackagesLoader.ReloadPackages();
         }
     }
 }

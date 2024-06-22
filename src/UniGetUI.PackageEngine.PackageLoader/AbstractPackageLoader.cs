@@ -44,14 +44,14 @@ namespace UniGetUI.PackageEngine.PackageLoader
         private int LoadOperationIdentifier = 0;
         protected IEnumerable<PackageManager> Managers { get; private set; }
 
-        public AbstractPackageLoader(IEnumerable<PackageManager> managers, bool AllowMultiplePackageVersions = false) 
+        public AbstractPackageLoader(IEnumerable<PackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false) 
         {
             Managers = managers;
             Packages = new ObservableCollection<Package>();
             PackageReference = new Dictionary<long, Package>();
             IsLoaded = false;
             IsLoading = false;
-            LOADER_IDENTIFIER = "ABSTRACT";
+            LOADER_IDENTIFIER = identifier;
         }
 
         /// <summary>
@@ -59,8 +59,6 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public void StopLoading()
         {
-            if (!IsLoading) return;
-
             LoadOperationIdentifier = -1;
             IsLoaded = false;
             IsLoading = false;
@@ -73,7 +71,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <returns></returns>
         public virtual async Task ReloadPackages()
         {
-            StopLoading();
+            ClearPackages();
             LoadOperationIdentifier = new Random().Next();
             int current_identifier = LoadOperationIdentifier;
             IsLoading = true;
@@ -120,10 +118,10 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
             if (LoadOperationIdentifier == current_identifier)
             {
-                IsLoading = false;
                 FinishedLoading?.Invoke(this, new EventArgs());
                 IsLoaded = true;
             }
+            IsLoading = false;
         }
 
         /// <summary>
@@ -131,9 +129,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public void ClearPackages()
         {
+            StopLoading();
             Packages.Clear();
             PackageReference.Clear();
             IsLoaded = false;
+            IsLoading = false;
             PackagesChanged?.Invoke(this, new EventArgs());
         }
 

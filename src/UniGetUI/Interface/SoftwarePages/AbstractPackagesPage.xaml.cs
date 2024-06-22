@@ -82,7 +82,6 @@ namespace UniGetUI.Interface
         private bool AllSelected = true;
         int lastSavedWidth = 0;
 
-
         protected abstract Task WhenPackagesLoaded(ReloadReason reason);
         protected abstract void WhenPackageCountUpdated();
         protected abstract void WhenShowingContextMenu(Package package);
@@ -142,12 +141,12 @@ namespace UniGetUI.Interface
             else
             {
                 Loader_FinishedLoading(this, EventArgs.Empty);
+                FilterPackages(QueryBlock.Text);
             }
 
             LastPackageLoadTime = DateTime.Now;
             QueryBothRadio.IsChecked = true;
             QueryOptionsGroup.SelectedIndex = 2;
-            LoadingProgressBar.Visibility = Visibility.Collapsed;
             Initialized = true;
             LocalPackagesNode = new TreeViewNode { Content = CoreTools.Translate("Local"), IsExpanded = false };
             
@@ -269,11 +268,17 @@ namespace UniGetUI.Interface
             };
 
             LoadInterface();
-            _ = LoadPackages(ReloadReason.FirstRun);
         }
 
         private void Loader_PackagesChanged(object? sender, EventArgs e)
         {
+            // Ensure we are in the UI thread
+            if(Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() == null)
+            {
+                DispatcherQueue.TryEnqueue(() => Loader_PackagesChanged(sender, e));
+                return;
+            }
+
             if (Loader.Packages.Count == 0)
             {
                 ClearPackageList();
@@ -283,20 +288,33 @@ namespace UniGetUI.Interface
                 foreach (var package in Loader.Packages)
                     AddPackageToSourcesList(package);
             }
-
-            UpdatePackageCount();
             FilterPackages(QueryBlock.Text);
         }
 
         private void Loader_FinishedLoading(object? sender, EventArgs e)
         {
+            // Ensure we are in the UI thread
+            if (Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() == null)
+            {
+                DispatcherQueue.TryEnqueue(() => Loader_FinishedLoading(sender, e));
+                return;
+            }
+            
             LoadingProgressBar.Visibility = Visibility.Collapsed;
+            LastPackageLoadTime = DateTime.Now;
+            WhenPackagesLoaded(ReloadReason.External);
             UpdatePackageCount();
             FilterPackages(QueryBlock.Text);
         }
 
         private void Loader_StartedLoading(object? sender, EventArgs e)
         {
+            // Ensure we are in the UI thread
+            if (Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() == null)
+            {
+                DispatcherQueue.TryEnqueue(() => Loader_StartedLoading(sender, e));
+                return;
+            }
             LoadingProgressBar.Visibility = Visibility.Visible;
             UpdatePackageCount();
         }

@@ -414,21 +414,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             }
 
-            if (!Settings.Get("DisableAutoCheckforUpdates") && reason != ReloadReason.Manual && reason != ReloadReason.External)
-            {
-                long waitTime = 3600;
-                try
-                {
-                    waitTime = long.Parse(Settings.GetValue("UpdatesCheckInterval"));
-                    Logger.Debug($"Starting check for updates wait interval with waitTime={waitTime}");
-                }
-                catch
-                {
-                    Logger.Debug("Invalid value for UpdatesCheckInterval, using default value of 3600 seconds");
-                }
-                await Task.Delay(TimeSpan.FromSeconds(waitTime));
-                _ = LoadPackages(ReloadReason.Automated);
-            }
+            /**/
         }
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)

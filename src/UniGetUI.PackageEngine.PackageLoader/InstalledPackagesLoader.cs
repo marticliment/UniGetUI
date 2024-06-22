@@ -7,9 +7,8 @@ namespace UniGetUI.PackageEngine.PackageLoader
     public class InstalledPackagesLoader : AbstractPackageLoader
     {
         public InstalledPackagesLoader(IEnumerable<PackageManager> managers)
-        : base(managers, AllowMultiplePackageVersions: true)
+        : base(managers, "INSTALLED_PACKAGES", AllowMultiplePackageVersions: true)
         {
-            LOADER_IDENTIFIER = "INSTALLED_PACKAGES";
         }
 
 #pragma warning disable

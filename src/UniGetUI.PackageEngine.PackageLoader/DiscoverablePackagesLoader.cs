@@ -15,10 +15,8 @@ namespace UniGetUI.PackageEngine.PackageLoader
         private string QUERY_TEXT = string.Empty;
 
         public DiscoverablePackagesLoader(IEnumerable<PackageManager> managers)
-        : base(managers, AllowMultiplePackageVersions: false)
-        {
-            LOADER_IDENTIFIER = "DISCOVERABLE_PACKAGES";
-        }
+        : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false)
+        { }
 
         public async Task ReloadPackages(string query)
         {
