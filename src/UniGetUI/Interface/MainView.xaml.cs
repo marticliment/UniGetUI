@@ -120,20 +120,17 @@ namespace UniGetUI.Interface
                 {
                     MainApp.Instance.MainWindow.Close();
                 }
-                else if(CurrentPage is IPageWithKeyboardShortcuts)
+                else if (e.Key == Windows.System.VirtualKey.F5 || (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.R))
                 {
-                    if (e.Key == Windows.System.VirtualKey.F5 || (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.R))
-                    {
-                        (CurrentPage as IPageWithKeyboardShortcuts)?.ReloadTriggered();
-                    }
-                    else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.F)
-                    {
-                        (CurrentPage as IPageWithKeyboardShortcuts)?.SearchTriggered();
-                    }
-                    else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.A)
-                    {
-                        (CurrentPage as IPageWithKeyboardShortcuts)?.SelectAllTriggered();
-                    }
+                    (CurrentPage as IPageWithKeyboardShortcuts)?.ReloadTriggered();
+                }
+                else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.F)
+                {
+                    (CurrentPage as IPageWithKeyboardShortcuts)?.SearchTriggered();
+                }
+                else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.A)
+                {
+                    (CurrentPage as IPageWithKeyboardShortcuts)?.SelectAllTriggered();
                 }
             };
         }
@@ -418,6 +415,7 @@ namespace UniGetUI.Interface
             foreach (Page page in PageButtonReference.Keys)
                 page.Visibility = (page == TargetPage) ? Visibility.Visible : Visibility.Collapsed;
 
+            OldPage = CurrentPage;
             CurrentPage = TargetPage;
 
             if (CurrentPage == DiscoverPage)
