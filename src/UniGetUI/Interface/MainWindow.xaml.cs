@@ -13,6 +13,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.PackageClasses;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
@@ -105,16 +106,10 @@ namespace UniGetUI.Interface
             else if (args.Contains("action") && args["action"] == "openUniGetUIOnUpdatesTab")
             {
                 NavigationPage.UpdatesNavButton.ForceClick();
-
-                if (NavigationPage != null && NavigationPage.InstalledPage != null)
-                    _ = NavigationPage.InstalledPage.LoadPackages();
                 Activate();
             }
             else
             {
-
-                if (NavigationPage != null && NavigationPage.InstalledPage != null)
-                    _ = NavigationPage.InstalledPage.LoadPackages();
                 Activate();
             }
             Logger.Debug("Notification activated: " + args.ToString() + " " + input.ToString());
@@ -173,8 +168,8 @@ namespace UniGetUI.Interface
             }
 
             SetForegroundWindow(GetWindowHandle());
-            if (NavigationPage != null && NavigationPage.InstalledPage != null)
-                _ = NavigationPage.InstalledPage.LoadPackages();
+            if (!PEInterface.InstalledPackagesLoader.IsLoading)
+                _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
 
             (this as Window).Activate();
         }

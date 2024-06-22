@@ -15,12 +15,12 @@ using Windows.System;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class NewDiscoverSoftwarePage : AbstractPackagesPage
+    public class DiscoverSoftwarePage : AbstractPackagesPage
     {
         BetterMenuItem? MenuAsAdmin;
         BetterMenuItem? MenuInteractive;
         BetterMenuItem? MenuSkipHash;
-        public NewDiscoverSoftwarePage()
+        public DiscoverSoftwarePage()
         : base(new PackagesPageData()
         {
             DisableAutomaticPackageLoadOnStart = true,
