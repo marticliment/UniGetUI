@@ -46,7 +46,7 @@ namespace UniGetUI.Core.Language.Tests
         {
             LanguageEngine engine = new();
             engine.LoadLanguage("random-nonexistent-language");
-            Assert.Equal("en", engine.Translate("locale"));
+            Assert.Equal("en", engine.Locale);
         }
 
         [Fact]
