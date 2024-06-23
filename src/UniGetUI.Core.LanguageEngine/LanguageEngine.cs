@@ -1,4 +1,7 @@
-﻿using System.Text.Json.Nodes;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Text.Json.Nodes;
+using Jeffijoe.MessageFormat;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -15,7 +18,7 @@ namespace UniGetUI.Core.Language
             string LangName = Settings.GetValue("PreferredLanguage");
             if (LangName == "default" || LangName == "")
             {
-                LangName = System.Globalization.CultureInfo.CurrentUICulture.ToString().Replace("-", "_");
+                LangName = CultureInfo.CurrentUICulture.ToString().Replace("-", "_");
             }
             LoadLanguage((ForceLanguage != "")? ForceLanguage: LangName);
         }
