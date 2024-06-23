@@ -14,6 +14,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
@@ -322,7 +323,7 @@ namespace UniGetUI.Interface
             int HiddenPackagesDueToSource = 0;
             foreach (BundledPackage match in MatchingList)
             {
-                if ((VisibleManagers.Contains(match.Package.Manager) && match.Package.Manager != MainApp.Winget) || VisibleSources.Contains(match.Package.Source))
+                if ((VisibleManagers.Contains(match.Package.Manager) && match.Package.Manager != PEInterface.WinGet) || VisibleSources.Contains(match.Package.Source))
                     FilteredPackages.Add(match);
                 else
                     HiddenPackagesDueToSource++;
@@ -547,8 +548,8 @@ namespace UniGetUI.Interface
                     MainApp.Instance.MainWindow.SharePackage(package.Package);
             };
 
-            SelectAll.Click += (s, e) => { SelectAllItems(); };
-            SelectNone.Click += (s, e) => { ClearItemSelection(); };
+            SelectAll.Click += (s, e) => SelectAllItems();
+            SelectNone.Click += (s, e) => ClearItemSelection();
 
         }
 
@@ -714,7 +715,7 @@ namespace UniGetUI.Interface
 
             // Get a list of all managers
             Dictionary<string, PackageManager> ManagerSourceReference = new();
-            foreach (PackageManager manager in MainApp.Instance.PackageManagerList)
+            foreach (PackageManager manager in PEInterface.Managers)
             {
                 ManagerSourceReference.Add(manager.Name, manager);
             }

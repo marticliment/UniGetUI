@@ -38,6 +38,7 @@ namespace UniGetUI.PackageEngine.Operations
             if (!IGNORE_PARALLEL_OPERATION_SETTINGS && (Settings.Get("AllowParallelInstalls") || Settings.Get($"AllowParallelInstallsForManager{Package.Manager.Name}")))
             {
                 Logger.Debug("Parallel installs are allowed. Skipping queue check");
+                Package.SetTag(PackageTag.BeingProcessed);
                 return;
             }
 
@@ -61,8 +62,8 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 await Task.Delay(100);
             }
-
             Package.SetTag(PackageTag.BeingProcessed);
+
         }
 
         public PackageOperation(Package package, bool IgnoreParallelInstalls = false) : this(package, InstallationOptions.FromPackage(package), IgnoreParallelInstalls) { }
@@ -151,7 +152,7 @@ namespace UniGetUI.PackageEngine.Operations
             LineInfoText = CoreTools.Translate("{package} was installed successfully", new Dictionary<string, object?>{ { "package", Package.Name } });
 
             Package.SetTag(PackageTag.AlreadyInstalled);
-            MainApp.Instance.MainWindow.NavigationPage.InstalledPage.AddInstalledPackage(Package);
+            PEInterface.InstalledPackagesLoader.AddForeign(Package);
 
             if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
 
@@ -267,7 +268,7 @@ namespace UniGetUI.PackageEngine.Operations
             if(await Package.HasUpdatesIgnoredAsync() && await Package.GetIgnoredUpdatesVersionAsync() != "*")
                 await Package.RemoveFromIgnoredUpdatesAsync();
 
-            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
+            PEInterface.UpgradablePackagesLoader.Remove(Package);
 
             if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
                 try
@@ -379,8 +380,8 @@ namespace UniGetUI.PackageEngine.Operations
             LineInfoText = CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?>{ { "package", Package.Name } });
 
             Package.GetAvailablePackage()?.SetTag(PackageTag.Default);
-            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(Package);
-            MainApp.Instance.MainWindow.NavigationPage.InstalledPage.RemoveCorrespondingPackages(Package);
+            PEInterface.UpgradablePackagesLoader.Remove(Package);
+            PEInterface.InstalledPackagesLoader.Remove(Package);
 
             if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
                 try

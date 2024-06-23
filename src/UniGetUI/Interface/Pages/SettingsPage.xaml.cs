@@ -11,6 +11,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -93,7 +94,7 @@ namespace UniGetUI.Interface
 
             // Admin Settings Section
             int index = 2;
-            foreach (PackageManager manager in MainApp.Instance.PackageManagerList)
+            foreach (PackageManager manager in PEInterface.Managers)
             {
             }
 
@@ -105,7 +106,7 @@ namespace UniGetUI.Interface
             Dictionary<PackageManager, SettingsEntry> PackageManagerExpanders = new();
             Dictionary<PackageManager, List<SettingsCard>> ExtraSettingsCards = new();
 
-            foreach (PackageManager Manager in MainApp.Instance.PackageManagerList)
+            foreach (PackageManager Manager in PEInterface.Managers)
             {
                 ExtraSettingsCards.Add(Manager, new List<SettingsCard>());
             }
@@ -117,19 +118,19 @@ namespace UniGetUI.Interface
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), CoreTools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
             };
 
-            ExtraSettingsCards[MainApp.Winget].Add(Winget_ResetSources);
+            ExtraSettingsCards[PEInterface.WinGet].Add(Winget_ResetSources);
 
             ButtonCard Scoop_Install = new() { Text = CoreTools.AutoTranslated("Install Scoop"), ButtonText = CoreTools.AutoTranslated("Install") };
             Scoop_Install.Click += (s, e) =>
             {
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"), CoreTools.Translate("Scoop Installer - WingetUI"));
-                PackageManagerExpanders[MainApp.Scoop].ShowRestartRequiredBanner();
+                PackageManagerExpanders[PEInterface.Scoop].ShowRestartRequiredBanner();
             };
             ButtonCard Scoop_Uninstall = new() { Text = CoreTools.AutoTranslated("Uninstall Scoop (and its packages)"), ButtonText = CoreTools.AutoTranslated("Uninstall") };
             Scoop_Uninstall.Click += (s, e) =>
             {
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"), CoreTools.Translate("Scoop Uninstaller - WingetUI"));
-                PackageManagerExpanders[MainApp.Scoop].ShowRestartRequiredBanner();
+                PackageManagerExpanders[PEInterface.Scoop].ShowRestartRequiredBanner();
             };
             ButtonCard Scoop_ResetAppCache = new() { Text = CoreTools.AutoTranslated("Run cleanup and clear cache"), ButtonText = CoreTools.AutoTranslated("Run") };
             Scoop_ResetAppCache.Click += (s, e) =>
@@ -137,21 +138,21 @@ namespace UniGetUI.Interface
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"), CoreTools.Translate("Clearing Scoop cache - WingetUI"), RunAsAdmin: true);
             };
 
-            ExtraSettingsCards[MainApp.Scoop].Add(Scoop_Install);
-            ExtraSettingsCards[MainApp.Scoop].Add(Scoop_Uninstall);
-            ExtraSettingsCards[MainApp.Scoop].Add(Scoop_ResetAppCache);
+            ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_Install);
+            ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_Uninstall);
+            ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_ResetAppCache);
 
             CheckboxCard Chocolatey_SystemChoco = new() { Text = CoreTools.AutoTranslated("Use system Chocolatey"), SettingName = "UseSystemChocolatey" };
             Chocolatey_SystemChoco.StateChanged += (s, e) =>
             {
-                PackageManagerExpanders[MainApp.Choco].ShowRestartRequiredBanner();
+                PackageManagerExpanders[PEInterface.Chocolatey].ShowRestartRequiredBanner();
             };
 
-            ExtraSettingsCards[MainApp.Choco].Add(Chocolatey_SystemChoco);
+            ExtraSettingsCards[PEInterface.Chocolatey].Add(Chocolatey_SystemChoco);
 
 
 
-            foreach (PackageManager Manager in MainApp.Instance.PackageManagerList)
+            foreach (PackageManager Manager in PEInterface.Managers)
             {
 
                 SettingsEntry ManagerExpander = new()
