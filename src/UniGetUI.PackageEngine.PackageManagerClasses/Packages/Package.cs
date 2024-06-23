@@ -10,6 +10,7 @@ using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using Windows.Globalization;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
@@ -143,14 +144,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public string NewVersion { get; }
         public virtual bool IsUpgradable { get; }
         public PackageScope Scope { get; set;  }
-        public string SourceAsString
-        {
-            get
-            {
-                if (Source != null) return Source.ToString();
-                else return "";
-            }
-        }
+        public string SourceAsString {  get; private set; }
+
+        public string AutomationName { get; private set; }
 
         /// <summary>
         /// Constuct a package with a given name, id, version, source and manager, and an optional scope.
@@ -172,6 +168,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Scope = scope;
             NewVersion = "";
             Tag = PackageTag.Default;
+            SourceAsString = source.ToString();
+            AutomationName = CoreTools.Translate("Package {name} from {manager}", new Dictionary<string, object?> { {"name", Name },{ "manager", SourceAsString } });
             __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id);
             __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version);
             IsUpgradable = false;
