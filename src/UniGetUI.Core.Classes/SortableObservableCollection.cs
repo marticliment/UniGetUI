@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 
 namespace UniGetUI.Core.Classes
 {
-    public class SortableObservableCollection<T> : ObservableCollection<T>
+    public class SortableObservableCollection<T> : ObservableCollection<T> where T: IIndexableListItem
     {
         public Func<T, object>? SortingSelector { get; set; }
         public bool Descending { get; set; }
@@ -26,12 +26,14 @@ namespace UniGetUI.Core.Classes
             BlockSorting = true;
 
             if (SortingSelector == null)
-                throw new Exception("SortableObservableCollection<T>.SortingSelector must not be null when sorting a function");
+                throw new Exception("SortableObservableCollection<T>.SortingSelector must not be null when sorting");
 
             List<T> sorted = Descending ? this.OrderByDescending(SortingSelector).ToList() : this.OrderBy(SortingSelector).ToList();
             foreach (T item in sorted)
             {
+                int index = sorted.IndexOf(item);
                 Move(IndexOf(item), sorted.IndexOf(item));
+                item.Index = index;
             }
             BlockSorting = false;
             base.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));

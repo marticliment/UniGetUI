@@ -396,9 +396,6 @@ namespace UniGetUI.Interface
 
         private void NavigateToPage(Page TargetPage)
         {
-            foreach (Page page in PageButtonReference.Keys)
-                if (page.Visibility == Visibility.Visible)
-                    OldPage = page;
             if (!PageButtonReference.ContainsKey(TargetPage))
             {
                 PageButtonReference.Add(TargetPage, MoreNavButton);
@@ -418,14 +415,8 @@ namespace UniGetUI.Interface
             OldPage = CurrentPage;
             CurrentPage = TargetPage;
 
-            if (CurrentPage == DiscoverPage)
-                DiscoverPage.PackageList.Focus(FocusState.Programmatic);
-            else if (CurrentPage == UpdatesPage)
-                UpdatesPage.PackageList.Focus(FocusState.Programmatic);
-            else if (CurrentPage == InstalledPage)
-                InstalledPage.PackageList.Focus(FocusState.Programmatic);
-            else if (CurrentPage == BundlesPage)
-                BundlesPage.PackageList.Focus(FocusState.Programmatic);
+            (CurrentPage as AbstractPackagesPage)?.FocusPackageList();
+            if (CurrentPage == BundlesPage) BundlesPage.PackageList.Focus(FocusState.Programmatic);
         }
 
         private async void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
