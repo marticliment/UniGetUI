@@ -276,7 +276,7 @@ namespace UniGetUI.Interface.SoftwarePages
         }
 
 #pragma warning disable
-        protected override async Task WhenPackagesLoaded(ReloadReason reason)
+        protected override void WhenPackagesLoaded(ReloadReason reason)
         {
             return;
         }

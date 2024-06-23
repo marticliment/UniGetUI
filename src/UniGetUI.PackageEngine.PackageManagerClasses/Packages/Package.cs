@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Nodes;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
@@ -10,10 +12,12 @@ using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using Windows.Globalization;
+using Windows.Storage.Search;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
-    public class Package : INotifyPropertyChanged
+    public class Package : INotifyPropertyChanged, IIndexableListItem
     {
         // Internal properties
         private bool __is_checked = false;
@@ -132,6 +136,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             set { __opacity = value; OnPropertyChanged(); }
         }
 
+        
         public string IsCheckedAsString { get { return IsChecked ? "True" : "False"; } }
         public string Name { get; }
         public string Id { get; }
@@ -142,15 +147,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public PackageManager Manager { get; }
         public string NewVersion { get; }
         public virtual bool IsUpgradable { get; }
-        public PackageScope Scope { get; set;  }
-        public string SourceAsString
-        {
-            get
-            {
-                if (Source != null) return Source.ToString();
-                else return "";
-            }
-        }
+        public PackageScope Scope { get; set; }
+        public string SourceAsString {  get; private set; }
+
+        public int Index { get; set; }
+        public Package SelfInstance;
+
+        public string AutomationName { get; private set; }
 
         /// <summary>
         /// Constuct a package with a given name, id, version, source and manager, and an optional scope.
@@ -163,6 +166,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <param name="scope"></param>
         public Package(string name, string id, string version, ManagerSource source, PackageManager manager, PackageScope scope = PackageScope.Local)
         {
+            SelfInstance = this;
             Name = name;
             Id = id;
             Version = version;
@@ -172,6 +176,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Scope = scope;
             NewVersion = "";
             Tag = PackageTag.Default;
+            SourceAsString = source.ToString();
+            AutomationName = CoreTools.Translate("Package {name} from {manager}", new Dictionary<string, object?> { {"name", Name },{ "manager", SourceAsString } });
             __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id);
             __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version);
             IsUpgradable = false;

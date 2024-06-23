@@ -1,6 +1,7 @@
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -82,7 +83,7 @@ namespace UniGetUI.Interface
         private bool AllSelected = true;
         int lastSavedWidth = 0;
 
-        protected abstract Task WhenPackagesLoaded(ReloadReason reason);
+        protected abstract void WhenPackagesLoaded(ReloadReason reason);
         protected abstract void WhenPackageCountUpdated();
         protected abstract void WhenShowingContextMenu(Package package);
         public abstract void GenerateToolBar();
@@ -148,124 +149,93 @@ namespace UniGetUI.Interface
             QueryBothRadio.IsChecked = true;
             QueryOptionsGroup.SelectedIndex = 2;
             Initialized = true;
-            LocalPackagesNode = new TreeViewNode { Content = CoreTools.Translate("Local"), IsExpanded = false };
+            LocalPackagesNode = new TreeViewNode { 
+                Content = CoreTools.Translate("Local"), 
+                IsExpanded = false 
+            };
             
-            ReloadButton.Click += async (s, e) => { await LoadPackages(); };
+            ReloadButton.Click += async (s, e) => await LoadPackages();
+            
+            // Handle Find Button click on the Query Block
             FindButton.Click += (s, e) => { 
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 FilterPackages(QueryBlock.Text);
             };
-            QueryBlock.TextChanged += (s, e) => { if (InstantSearchCheckbox.IsChecked == true) FilterPackages(QueryBlock.Text); };
-            QueryBlock.KeyUp += (s, e) => {
-                if (e.Key == VirtualKey.Enter)
-                {
-                    MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
+            
+            // Handle Enter pressed on the QueryBlock
+            QueryBlock.KeyUp += (s, e) =>
+            {
+                if (e.Key != VirtualKey.Enter)
+                    return;
+                MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
+                FilterPackages(QueryBlock.Text);
+
+            };
+
+            // Handle showing the MegaQueryBlock
+            QueryBlock.TextChanged += (s, e) =>
+            {
+                if (InstantSearchCheckbox.IsChecked == true) 
                     FilterPackages(QueryBlock.Text);
-                }
+
+                if (!MEGA_QUERY_BOX_ENABLED || QueryBlock.Text.Trim() != "")
+                    return;
+
+                MegaQueryBlockGrid.Visibility = Visibility.Visible;
+                BackgroundText.Visibility = Visibility.Collapsed;
+                ClearPackageList();
+                UpdatePackageCount();
+                MegaQueryBlock.Focus(FocusState.Programmatic);
+                MegaQueryBlock.Text = "";
             };
-            QueryBlock.TextChanged += (s, e) => {
-                if (MEGA_QUERY_BOX_ENABLED &&  QueryBlock.Text.Trim() == "")
-                {
-                    MegaQueryBlockGrid.Visibility = Visibility.Visible;
-                    BackgroundText.Visibility = Visibility.Collapsed;
-                    ClearPackageList();
-                    UpdatePackageCount();
-                    MegaQueryBlock.Focus(FocusState.Programmatic);
-                    MegaQueryBlock.Text = "";
-                }
+
+            // Handle the Enter Pressed event on the MegaQueryBlock
+            MegaQueryBlock.KeyUp += (s, e) =>
+            {
+                if (e.Key != VirtualKey.Enter)
+                    return;
+                MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
+                QueryBlock.Text = MegaQueryBlock.Text.Trim();
+                FilterPackages(QueryBlock.Text);
             };
-            MegaQueryBlock.KeyUp += (s, e) => {
-                if (e.Key == VirtualKey.Enter)
-                {
-                    MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
-                    QueryBlock.Text = MegaQueryBlock.Text.Trim();
-                    FilterPackages(QueryBlock.Text);
-                }
-            };
+
+            // Hande the MegaQueryBlock search button click
             MegaFindButton.Click += (s, e) =>
             {
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 QueryBlock.Text = MegaQueryBlock.Text.Trim();
                 FilterPackages(QueryBlock.Text);
             };
+
+            // Handle when a source is clicked
             SourcesTreeView.Tapped += (s, e) =>
             {
-                if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement)?.DataContext != null)
-                {
-                    if ((e.OriginalSource as FrameworkElement)?.DataContext is TreeViewNode)
-                    {
-                        TreeViewNode? node = (e.OriginalSource as FrameworkElement)?.DataContext as TreeViewNode;
-                        if (node == null)
-                            return;
-                        if (SourcesTreeView.SelectedNodes.Contains(node))
-                            SourcesTreeView.SelectedNodes.Remove(node);
-                        else
-                            SourcesTreeView.SelectedNodes.Add(node);
-                        FilterPackages(QueryBlock.Text.Trim());
-                    }
-                }
+                TreeViewNode? node = (e.OriginalSource as FrameworkElement)?.DataContext as TreeViewNode;
+                if (node == null) return;
+
+                if (SourcesTreeView.SelectedNodes.Contains(node)) SourcesTreeView.SelectedNodes.Remove(node);
+                else SourcesTreeView.SelectedNodes.Add(node);
+                FilterPackages(QueryBlock.Text.Trim());
             };
+
+            // Handle when a source is double-clicked
             SourcesTreeView.RightTapped += (s, e) =>
             {
-                if (e.OriginalSource != null && (e.OriginalSource as FrameworkElement)?.DataContext != null)
-                {
-                    if ((e.OriginalSource as FrameworkElement)?.DataContext is TreeViewNode)
-                    {
-                        TreeViewNode? node = (e.OriginalSource as FrameworkElement)?.DataContext as TreeViewNode;
-                        if (node == null)
-                            return;
+                TreeViewNode? node = (e.OriginalSource as FrameworkElement)?.DataContext as TreeViewNode;
+                if (node == null) return;
 
-                        SourcesTreeView.SelectedNodes.Clear();
-                        SourcesTreeView.SelectedNodes.Add(node);
-                        FilterPackages(QueryBlock.Text.Trim());
-                    }
-                }
+                SourcesTreeView.SelectedNodes.Clear();
+                SourcesTreeView.SelectedNodes.Add(node);
+                FilterPackages(QueryBlock.Text.Trim());
             };
-            PackageList.DoubleTapped += (s, e) =>
-            {
-                ShowDetailsForPackage(PackageList.SelectedItem as Package);
-            };
-            PackageList.RightTapped += (s, e) =>
-            {
-                if (e.OriginalSource is FrameworkElement element)
-                {
-                    try
-                    {
-                        if (element.DataContext != null && element.DataContext is Package package)
-                        {
-                            PackageList.SelectedItem = package;
-                            WhenShowingContextMenu(package);
-                            (PackageList.ContextFlyout as BetterMenu)?.ShowAt(PackageList, e.GetPosition(PackageList));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Warn(ex);
-                    }
-                }
-            };
+
+            // Handle when a key is pressed on the package list
             PackageList.KeyUp += (s, e) =>
             {
-                bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-                bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
-                bool IS_ALT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
-
-                if (e.Key == VirtualKey.Enter && PackageList.SelectedItem != null)
-                {
-                    if (IS_ALT_PRESSED)
-                        ShowInstallationOptionsForPackage(PackageList.SelectedItem as Package);
-                    else if (IS_CONTROL_PRESSED)
-                        PerformMainPackageAction(PackageList.SelectedItem as Package);
-                    else
-                        ShowDetailsForPackage(PackageList.SelectedItem as Package);
-                }                
-                else if (e.Key == VirtualKey.Space)
-                {
-                    Package? package = PackageList.SelectedItem as Package;
-                    if(package != null)
-                        package.IsChecked = !package.IsChecked;
-                }
+                
             };
+
+            PackageList.ContextFlyout = GenerateContextMenu();
 
             LoadInterface();
         }
@@ -383,7 +353,7 @@ namespace UniGetUI.Interface
         {
             if (!Initialized)
                 return;
-            PackageList.SelectedItem = package;
+            // TODO: PackageList.SelectedItem = package;
         }
 
         private void FilterOptionsChanged(object sender, RoutedEventArgs e)
@@ -498,10 +468,13 @@ namespace UniGetUI.Interface
             foreach (Package match in MatchingList)
             {
                 if (VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
+                {
                     FilteredPackages.Add(match);
+                }
             }
             FilteredPackages.BlockSorting = false;
             FilteredPackages.Sort();
+
             UpdatePackageCount();
         }
         public void UpdatePackageCount()
@@ -527,7 +500,7 @@ namespace UniGetUI.Interface
                 }
                 else
                 {
-                    BackgroundText.Visibility = PackageList.Items.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+                    BackgroundText.Visibility = FilteredPackages.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
                     BackgroundText.Text = MainSubtitle_StillLoading;
                     SourcesPlaceholderText.Visibility = Loader.Packages.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
                     SourcesPlaceholderText.Text = MainSubtitle_StillLoading;
@@ -565,9 +538,6 @@ namespace UniGetUI.Interface
                     Logger.Warn("Sorter element is null on AbstractPackagePage");
                 return a.GetType()?.GetProperty(Sorter)?.GetValue(a) ?? 0;
             }; FilteredPackages.Sort();
-
-            if (FilteredPackages.Count > 0)
-                PackageList.ScrollIntoView(FilteredPackages[0]);
         }
         private void LoadInterface()
         {
@@ -610,7 +580,6 @@ namespace UniGetUI.Interface
             VersionHeader.Click += (s, e) => { SortPackages("VersionAsFloat"); };
             NewVersionHeader.Click += (s, e) => { SortPackages("NewVersionAsFloat"); };
             SourceHeader.Click += (s, e) => { SortPackages("SourceAsString"); };
-            PackageList.ContextFlyout = GenerateContextMenu();
             GenerateToolBar();
         }
         protected void SelectAllSourcesButton_Click(object sender, RoutedEventArgs e)
@@ -668,6 +637,7 @@ namespace UniGetUI.Interface
                 control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;
             }
         }
+
         protected void PerformMainPackageAction(Package? package)
         {
             if(package == null) return;
@@ -678,6 +648,51 @@ namespace UniGetUI.Interface
                 MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
             else // if (PageRole == OperationType.Uninstall)
                 MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
+        }
+
+        public void FocusPackageList()
+        { 
+            PackageList.Focus(FocusState.Programmatic); 
+        }
+
+        private void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            PackageItemContainer? container = (sender as PackageItemContainer);
+            Package? package = container?.Package;
+            if (container is null || package is null) return;
+            PackageList.Select(package.Index);
+            WhenShowingContextMenu(package);
+        }
+
+        private void PackageItemContainer_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            Package? package = (sender as PackageItemContainer)?.Package;
+            if (package is null) return;
+            PackageList.Select(package.Index);
+            ShowDetailsForPackage(package);
+        }
+
+        private void PackageItemContainer_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            Package? package = (sender as PackageItemContainer)?.Package;
+            
+            bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+            bool IS_ALT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftMenu).HasFlag(CoreVirtualKeyStates.Down);
+            IS_ALT_PRESSED |= InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.RightMenu).HasFlag(CoreVirtualKeyStates.Down);
+            
+
+            if (e.Key == VirtualKey.Enter && package is not null)
+            {
+                if (IS_ALT_PRESSED) ShowInstallationOptionsForPackage(package);
+                else if (IS_CONTROL_PRESSED) PerformMainPackageAction(package);
+                else ShowDetailsForPackage(package);
+                Logger.Info("KEYEVEMT");
+            }
+            else if (e.Key == VirtualKey.Space && package is not null)
+            {
+                package.IsChecked = !package.IsChecked;
+            }
         }
     }
 }

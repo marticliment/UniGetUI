@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -57,9 +58,10 @@ namespace UniGetUI.PackageEngine.Classes
 
     
 
-    public class BundledPackage : INotifyPropertyChanged
+    public class BundledPackage : INotifyPropertyChanged, IIndexableListItem
     {
         public Package Package { get; }
+        public int Index { get; set; }
         public bool IsValid { get; set; } = true;
         public InstallationOptions InstallOptions { get; set; }
         public SerializableUpdatesOptions_v1 UpdateOptions;
