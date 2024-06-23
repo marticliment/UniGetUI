@@ -83,7 +83,7 @@ namespace UniGetUI.Interface
         private bool AllSelected = true;
         int lastSavedWidth = 0;
 
-        protected abstract Task WhenPackagesLoaded(ReloadReason reason);
+        protected abstract void WhenPackagesLoaded(ReloadReason reason);
         protected abstract void WhenPackageCountUpdated();
         protected abstract void WhenShowingContextMenu(Package package);
         public abstract void GenerateToolBar();

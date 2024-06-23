@@ -326,7 +326,7 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        protected override async Task WhenPackagesLoaded(ReloadReason reason)
+        protected override void WhenPackagesLoaded(ReloadReason reason)
         {
             List<Package> upgradablePackages = new();
             foreach (Package package in Loader.Packages)
@@ -413,8 +413,6 @@ namespace UniGetUI.Interface.SoftwarePages
                     }
                 }
             }
-
-            /**/
         }
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
