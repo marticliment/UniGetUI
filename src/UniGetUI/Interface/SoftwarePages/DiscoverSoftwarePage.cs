@@ -205,56 +205,51 @@ namespace UniGetUI.Interface.SoftwarePages
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)
+            {
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
+            }
 
-            PackageDetails.Click += (s, e) =>
-            {
-                if (PackageList.SelectedItem != null)
-                    ShowDetailsForPackage(PackageList.SelectedItem as Package);
-            };
-
+            PackageDetails.Click += (s, e) => ShowDetailsForPackage(SelectedItem);
             ExportSelection.Click += ExportSelection_Click;
-            HelpButton.Click += (s, e) => { MainApp.Instance.MainWindow.NavigationPage.ShowHelp(); };
-
-            InstallationSettings.Click += (s, e) =>
-            {
-                ShowInstallationOptionsForPackage(PackageList.SelectedItem as Package);
-            };
+            HelpButton.Click += (s, e) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
+            InstallationSettings.Click += (s, e) => ShowInstallationOptionsForPackage(SelectedItem);
 
             InstallSelected.Click += (s, e) =>
             {
-                foreach (Package package in FilteredPackages) if (package.IsChecked)
-                        MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
+                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
             };
 
             InstallAsAdmin.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages) if (package.IsChecked)
-                        MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
-                            await InstallationOptions.FromPackageAsync(package, elevated: true)));
+                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                {
+                    var options = await InstallationOptions.FromPackageAsync(package, elevated: true);
+                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
+                }
             };
 
             InstallSkipHash.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages) if (package.IsChecked)
-                        MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
-                            await InstallationOptions.FromPackageAsync(package, no_integrity: true)));
+                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                {
+                    var options = await InstallationOptions.FromPackageAsync(package, no_integrity: true);
+                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
+                }
             };
 
             InstallInteractive.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages) if (package.IsChecked)
-                        MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
-                            await InstallationOptions.FromPackageAsync(package, interactive: true)));
+                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                {
+                    var options = await InstallationOptions.FromPackageAsync(package, interactive: true);
+                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
+                }
             };
 
-            SharePackage.Click += (s, e) =>
-            {
-                MainApp.Instance.MainWindow.SharePackage(PackageList.SelectedItem as Package);
-            };
-
-            SelectAll.Click += (s, e) => { SelectAllItems(); };
-            SelectNone.Click += (s, e) => { ClearItemSelection(); };
+            SharePackage.Click += (s, e) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
+            SelectAll.Click += (s, e) => FilteredPackages.SelectAll();
+            SelectNone.Click += (s, e) => FilteredPackages.ClearSelection();
         }
 
         public override async Task LoadPackages()
@@ -298,24 +293,24 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
-            await MainApp.Instance.MainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.ToArray().Where(x => x.IsChecked));
+            await MainApp.Instance.MainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.GetCheckedPackages());
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs e)
         {
-            ShowDetailsForPackage(PackageList.SelectedItem as Package);
+            ShowDetailsForPackage(SelectedItem);
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs e)
         {
             if (!Initialized || PackageList.SelectedItem == null)
                 return;
-            MainApp.Instance.MainWindow.SharePackage(PackageList.SelectedItem as Package);
+            MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = PackageList.SelectedItem as Package;
+            Package? package = SelectedItem;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
@@ -323,7 +318,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = PackageList.SelectedItem as Package;
+            Package? package = SelectedItem;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
@@ -332,7 +327,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = PackageList.SelectedItem as Package;
+            Package? package = SelectedItem;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
@@ -341,7 +336,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = PackageList.SelectedItem as Package;
+            Package? package = SelectedItem;
             if (!Initialized || package == null)
                 return;
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
@@ -350,7 +345,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            ShowInstallationOptionsForPackage(PackageList.SelectedItem as Package);
+            ShowInstallationOptionsForPackage(SelectedItem);
         }
 
         public void ShowSharedPackage_ThreadSafe(string pId, string pSource)
@@ -376,12 +371,12 @@ namespace UniGetUI.Interface.SoftwarePages
             if (FilteredPackages.Count == 1)
             {
                 Logger.Debug("Only one package was found for pId=" + pId + ", showing it.");
-                await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
+                await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0].Package, OperationType.Install);
             }
             else if (FilteredPackages.Count > 1)
             {
                 string managerName = pSource.Contains(':') ? pSource.Split(':')[0] : pSource;
-                foreach (Package match in FilteredPackages)
+                foreach (Package match in FilteredPackages.GetPackages())
                     if (match.Source.Manager.Name == managerName)
                     {
                         Logger.Debug("Equivalent package for pId=" + pId + " and pSource=" + pSource + " found: " + match.ToString());
@@ -389,7 +384,7 @@ namespace UniGetUI.Interface.SoftwarePages
                         return;
                     }
                 Logger.Debug("No package found with the exact same manager, showing the first one.");
-                await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0], OperationType.Install);
+                await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0].Package, OperationType.Install);
             }
             else
             {

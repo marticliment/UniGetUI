@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
@@ -14,11 +15,13 @@ using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
+using Windows.ApplicationModel.Appointments;
 using Windows.System;
 using Windows.UI.Core;
 
@@ -68,8 +71,13 @@ namespace UniGetUI.Interface
         protected DateTime LastPackageLoadTime { get; private set; }
         protected OperationType PAGE_ROLE { get; private set; }
 
+        protected Package? SelectedItem
+        {
+            get => (PackageList.SelectedItem as PackageWrapper)?.Package;
+        }
+
         protected AbstractPackageLoader Loader;
-        public SortableObservableCollection<Package> FilteredPackages = new() { SortingSelector = (a) => (a.Name) };
+        public ObservablePackageCollection FilteredPackages = new();
         protected List<PackageManager> UsedManagers = new();
         protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
@@ -77,8 +85,8 @@ namespace UniGetUI.Interface
         private TreeViewNode LocalPackagesNode;
         public InfoBadge? ExternalCountBadge;
 
-        public int NewVersionLabelWidth { get { return RoleIsUpdateLike ? 125 : 0; } }
-        public int NewVersionIconWidth { get { return RoleIsUpdateLike ? 24 : 0; } }
+        public int NewVersionLabelWidth { get => RoleIsUpdateLike ? 125 : 0; }
+        public int NewVersionIconWidth { get => RoleIsUpdateLike ? 24 : 0; }
         protected bool Initialized = false;
         private bool AllSelected = true;
         int lastSavedWidth = 0;
@@ -299,9 +307,9 @@ namespace UniGetUI.Interface
         public void SelectAllTriggered()
         {
             if (AllSelected)
-                ClearItemSelection();
+                FilteredPackages.SelectAll();
             else
-                SelectAllItems();
+                FilteredPackages.ClearSelection();
         }
         protected void AddPackageToSourcesList(Package package)
         {
@@ -348,12 +356,6 @@ namespace UniGetUI.Interface
                 else
                     RootNodeForManager[source.Manager].Children.Add(item);
             }
-        }
-        private void PackageContextMenu_AboutToShow(object sender, Package package)
-        {
-            if (!Initialized)
-                return;
-            // TODO: PackageList.SelectedItem = package;
         }
 
         private void FilterOptionsChanged(object sender, RoutedEventArgs e)
@@ -526,18 +528,14 @@ namespace UniGetUI.Interface
             
             WhenPackageCountUpdated();
         }
-        public void SortPackages(string Sorter)
+        public void SortPackages(ObservablePackageCollection.Sorter sorter)
         {
             if (!Initialized)
                 return;
 
             FilteredPackages.Descending = !FilteredPackages.Descending;
-            FilteredPackages.SortingSelector = (a) =>
-            {
-                if (a.GetType()?.GetProperty(Sorter)?.GetValue(a) == null)
-                    Logger.Warn("Sorter element is null on AbstractPackagePage");
-                return a.GetType()?.GetProperty(Sorter)?.GetValue(a) ?? 0;
-            }; FilteredPackages.Sort();
+            FilteredPackages.SetSorter(sorter);
+            FilteredPackages.Sort();
         }
         private void LoadInterface()
         {
@@ -574,12 +572,12 @@ namespace UniGetUI.Interface
             NewVersionHeader.Content = CoreTools.Translate("New version");
             SourceHeader.Content = CoreTools.Translate("Source");
 
-            CheckboxHeader.Click += (s, e) => { SortPackages("IsCheckedAsString"); };
-            NameHeader.Click += (s, e) => { SortPackages("Name"); };
-            IdHeader.Click += (s, e) => { SortPackages("Id"); };
-            VersionHeader.Click += (s, e) => { SortPackages("VersionAsFloat"); };
-            NewVersionHeader.Click += (s, e) => { SortPackages("NewVersionAsFloat"); };
-            SourceHeader.Click += (s, e) => { SortPackages("SourceAsString"); };
+            CheckboxHeader.Click += (s, e) => SortPackages(ObservablePackageCollection.Sorter.Checked);
+            NameHeader.Click += (s, e) => SortPackages(ObservablePackageCollection.Sorter.Name);
+            IdHeader.Click += (s, e) => { SortPackages(ObservablePackageCollection.Sorter.Id); };
+            VersionHeader.Click += (s, e) => SortPackages(ObservablePackageCollection.Sorter.Version);
+            NewVersionHeader.Click += (s, e) => SortPackages(ObservablePackageCollection.Sorter.NewVersion);
+            SourceHeader.Click += (s, e) => SortPackages(ObservablePackageCollection.Sorter.Source);
             GenerateToolBar();
         }
         protected void SelectAllSourcesButton_Click(object sender, RoutedEventArgs e)
@@ -601,7 +599,7 @@ namespace UniGetUI.Interface
         }
         protected void SharePackage(Package? package)
         {
-            if(package == null)
+            if (package == null)
                 return;
             MainApp.Instance.MainWindow.SharePackage(package);
         }
@@ -613,18 +611,7 @@ namespace UniGetUI.Interface
             if (await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(package, PAGE_ROLE))
                 PerformMainPackageAction(package);
         }
-        protected void SelectAllItems()
-        {
-            foreach (Package package in FilteredPackages)
-                package.IsChecked = true;
-            AllSelected = true;
-        }
-        protected void ClearItemSelection()
-        {
-            foreach (Package package in FilteredPackages)
-                package.IsChecked = false;
-            AllSelected = false;
-        }
+
         private void SidepanelWidth_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (e.NewSize.Width == ((int)(e.NewSize.Width / 10)) || e.NewSize.Width == 25)
@@ -657,19 +644,19 @@ namespace UniGetUI.Interface
 
         private void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            PackageItemContainer? container = (sender as PackageItemContainer);
-            Package? package = container?.Package;
-            if (container is null || package is null) return;
-            PackageList.Select(package.Index);
-            WhenShowingContextMenu(package);
+            var container = (sender as PackageItemContainer);
+            if (container is null) return;
+            if (container is null) return;
+            PackageList.Select(container.Wrapper.Index);
+            WhenShowingContextMenu(container.Package);
         }
 
         private void PackageItemContainer_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            Package? package = (sender as PackageItemContainer)?.Package;
-            if (package is null) return;
-            PackageList.Select(package.Index);
-            ShowDetailsForPackage(package);
+            var container = (sender as PackageItemContainer);
+            if (container is null) return;
+            PackageList.Select(container.Wrapper.Index);
+            ShowDetailsForPackage(container.Package);
         }
 
         private void PackageItemContainer_KeyUp(object sender, KeyRoutedEventArgs e)
@@ -687,7 +674,6 @@ namespace UniGetUI.Interface
                 if (IS_ALT_PRESSED) ShowInstallationOptionsForPackage(package);
                 else if (IS_CONTROL_PRESSED) PerformMainPackageAction(package);
                 else ShowDetailsForPackage(package);
-                Logger.Info("KEYEVEMT");
             }
             else if (e.Key == VirtualKey.Space && package is not null)
             {

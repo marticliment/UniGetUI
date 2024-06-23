@@ -487,12 +487,12 @@ namespace UniGetUI.Interface
             return await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary;
         }
 
-        public async Task<bool> ConfirmUninstallation(Package[] packages)
+        public async Task<bool> ConfirmUninstallation(IEnumerable<Package> packages)
         {
-            if (packages.Length == 0) return false;
-            if (packages.Length == 1)
+            if (packages.Count() == 0) return false;
+            if (packages.Count() == 1)
             {
-                return await ConfirmUninstallation(packages[0]);
+                return await ConfirmUninstallation(packages.First());
             }
 
             ContentDialog dialog = new();
@@ -505,7 +505,10 @@ namespace UniGetUI.Interface
             dialog.DefaultButton = ContentDialogButton.Primary;
 
             StackPanel p = new();
-            p.Children.Add(new TextBlock { Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?", packages.Length), Margin = new Thickness(0, 0, 0, 5) });
+            p.Children.Add(new TextBlock { 
+                Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?", packages.Count()), 
+                Margin = new Thickness(0, 0, 0, 5) 
+            });
 
             string pkgList = "";
             foreach (Package package in packages)

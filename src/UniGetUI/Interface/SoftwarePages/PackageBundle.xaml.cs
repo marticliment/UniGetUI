@@ -548,8 +548,8 @@ namespace UniGetUI.Interface
                     MainApp.Instance.MainWindow.SharePackage(package.Package);
             };
 
-            SelectAll.Click += (s, e) => { SelectAllItems(); };
-            SelectNone.Click += (s, e) => { ClearItemSelection(); };
+            SelectAll.Click += (s, e) => SelectAllItems();
+            SelectNone.Click += (s, e) => ClearItemSelection();
 
         }
 

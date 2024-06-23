@@ -38,6 +38,7 @@ namespace UniGetUI.PackageEngine.Operations
             if (!IGNORE_PARALLEL_OPERATION_SETTINGS && (Settings.Get("AllowParallelInstalls") || Settings.Get($"AllowParallelInstallsForManager{Package.Manager.Name}")))
             {
                 Logger.Debug("Parallel installs are allowed. Skipping queue check");
+                Package.SetTag(PackageTag.BeingProcessed);
                 return;
             }
 
@@ -61,8 +62,8 @@ namespace UniGetUI.PackageEngine.Operations
                 }
                 await Task.Delay(100);
             }
-
             Package.SetTag(PackageTag.BeingProcessed);
+
         }
 
         public PackageOperation(Package package, bool IgnoreParallelInstalls = false) : this(package, InstallationOptions.FromPackage(package), IgnoreParallelInstalls) { }

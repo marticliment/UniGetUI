@@ -497,14 +497,13 @@
             </Setter>
         </Style>
 
-        <DataTemplate x:Key="PackageTemplate" x:DataType="pkgClasses:Package">
-            <widgets:PackageItemContainer AutomationProperties.Name="{x:Bind AutomationName}" CornerRadius="4"
-                Package="{x:Bind SelfInstance}"
+        <DataTemplate x:Key="PackageTemplate" x:DataType="pkgClasses:PackageWrapper">
+            <widgets:PackageItemContainer AutomationProperties.Name="{x:Bind Package.AutomationName}" CornerRadius="4"
+                Package="{x:Bind Package}" Wrapper="{x:Bind Self}"
                 RightTapped="PackageItemContainer_RightTapped" 
                 DoubleTapped="PackageItemContainer_DoubleTapped"
-                KeyUp="PackageItemContainer_KeyUp"
-                                          >
-                
+                KeyUp="PackageItemContainer_KeyUp">
+
                 <Grid ColumnSpacing="5" Opacity="{x:Bind ListedOpacity, Mode=OneWay}" Padding="12,3,8,3">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
@@ -542,7 +541,7 @@
                     <TextBlock 
                     Grid.Column="2" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind Name}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                    Text="{x:Bind Package.Name}" FontSize="13" FontFamily="Segoe UI Variable Text"
                     ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                     />
                     <widgets:LocalIcon
@@ -553,8 +552,8 @@
                     <TextBlock 
                     Grid.Column="4" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind Id}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Id}"
+                    Text="{x:Bind Package.Id}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                    ToolTipService.ToolTip="{x:Bind Package.Id}"
                     />
                     <widgets:LocalIcon
                     IconName="version"
@@ -564,30 +563,30 @@
                     <TextBlock 
                     Grid.Column="6" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind Version}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Version}"
+                    Text="{x:Bind Package.Version}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                    ToolTipService.ToolTip="{x:Bind Package.Version}"
                     />
                     <widgets:LocalIcon
-                    IconName="newversion" Visibility="{x:Bind IsUpgradable}"
+                    IconName="newversion" Visibility="{x:Bind Package.IsUpgradable}"
                     Grid.Column="7" Grid.Row="0"
                     VerticalAlignment="Center"
                     />
                     <TextBlock 
                     Grid.Column="8" Grid.Row="0"
-                    VerticalAlignment="Center" Visibility="{x:Bind IsUpgradable}"
-                    Text="{x:Bind NewVersion}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind NewVersion}"
+                    VerticalAlignment="Center" Visibility="{x:Bind Package.IsUpgradable}"
+                    Text="{x:Bind Package.NewVersion}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                    ToolTipService.ToolTip="{x:Bind Package.NewVersion}"
                     />
                     <widgets:LocalIcon
                     Grid.Column="9" Grid.Row="0"
                     VerticalAlignment="Center"
-                    IconName="{x:Bind Source.IconId}"
+                    IconName="{x:Bind Package.Source.IconId}"
                     />
                     <TextBlock 
                     Grid.Column="10" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind Source.ToString()}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Source.ToString()}"
+                    Text="{x:Bind Package.Source.ToString()}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                    ToolTipService.ToolTip="{x:Bind Package.Source.ToString()}"
                     />
                 </Grid>
             </widgets:PackageItemContainer>
