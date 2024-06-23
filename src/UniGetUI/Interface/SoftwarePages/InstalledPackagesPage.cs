@@ -6,6 +6,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -14,13 +15,40 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class NewInstalledPackagesPage : AbstractPackagesPage
+    public class InstalledPackagesPage : AbstractPackagesPage
     {
         bool HasDoneBackup = false;
 
         BetterMenuItem? MenuAsAdmin;
         BetterMenuItem? MenuInteractive;
         BetterMenuItem? MenuRemoveData;
+
+        public InstalledPackagesPage()
+        : base(new PackagesPageData()
+        {
+            DisableAutomaticPackageLoadOnStart = false,
+            MegaQueryBlockEnabled = false,
+            ShowLastLoadTime = false,
+            PageName = "Installed",
+
+            Loader = PEInterface.InstalledPackagesLoader,
+            PageRole = OperationType.Uninstall,
+
+            NoPackages_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
+            NoPackages_SourcesText = CoreTools.Translate("No packages were found"),
+            NoPackages_SubtitleText_Base = CoreTools.Translate("No packages were found"),
+            MainSubtitle_StillLoading = CoreTools.Translate("Loading packages"),
+            NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
+
+            PageTitle = CoreTools.Translate("Installed Packages"),
+            Glyph = "\uE977"
+        })
+        {
+            QuerySimilarResultsRadio.IsEnabled = false;
+            QueryOptionsGroup.SelectedIndex = 1;
+            QueryOptionsGroup.SelectedIndex = 2;
+            QueryOptionsGroup.SelectedItem = QueryBothRadio;
+        }
 
         public override BetterMenu GenerateContextMenu()
         {
@@ -226,7 +254,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                     {
-                        MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
+                        PEInterface.UpgradablePackagesLoader.Remove(package);
                         await package.AddToIgnoredUpdatesAsync();
                     }
             };
@@ -243,51 +271,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             SelectAll.Click += (s, e) => { SelectAllItems(); };
             SelectNone.Click += (s, e) => { ClearItemSelection(); };
-        }
-
-        public override void GenerateUIText()
-        {
-            PAGE_NAME = "Installed";
-
-
-            PageRole = OperationType.Uninstall;
-            
-            NoPackages_BackgroundText = CoreTools.Translate("No packages were found");
-            NoPackages_SourcesText = CoreTools.Translate("No packages were found");
-            NoPackages_SubtitleMainText = NoPackages_SourcesText;
-
-            NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria");
-            NoMatches_SourcesText = CoreTools.Translate("No matches were found");
-
-            MainTitleText = CoreTools.AutoTranslated("Installed Packages");
-            MainTitleGlyph = "\uE977";
-
-            QuerySimilarResultsRadio.IsEnabled = false;
-            QueryOptionsGroup.SelectedIndex = 1;
-            QueryOptionsGroup.SelectedIndex = 2;
-            QueryOptionsGroup.SelectedItem = QueryBothRadio;
-        }
-
-#pragma warning disable
-        protected override async Task<bool> IsPackageValid(Package package)
-        {
-            return true;
-        }
-#pragma warning restore
-
-        protected override Task<Package[]> LoadPackagesFromManager(PackageManager manager)
-        {
-            return manager.GetInstalledPackages();
-        }
-
-        protected override async Task WhenAddingPackage(Package package)
-        {
-            if (await package.HasUpdatesIgnoredAsync(Version: "*"))
-                package.Tag = PackageTag.Pinned;
-            else if (package.GetUpgradablePackage() != null)
-                package.Tag = PackageTag.IsUpgradable;
-
-            package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
         }
 
         protected override void WhenPackageCountUpdated()
@@ -327,56 +310,15 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public async void ConfirmAndUninstall(Package package, InstallationOptions options)
         {
-            ContentDialog dialog = new();
-
-            dialog.XamlRoot = XamlRoot;
-            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.Title = CoreTools.Translate("Are you sure?");
-            dialog.PrimaryButtonText = CoreTools.Translate("No");
-            dialog.SecondaryButtonText = CoreTools.Translate("Yes");
-            dialog.DefaultButton = ContentDialogButton.Primary;
-            dialog.Content = CoreTools.Translate("Do you really want to uninstall {0}?", package.Name);
-
-            if (await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary)
+            if (await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(package))
+            {
                 MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, options));
-
+            }
         }
+
         public async void ConfirmAndUninstall(Package[] packages, bool? elevated = null, bool? interactive = null, bool? remove_data = null)
         {
-            if (packages.Length == 0) return;
-            if (packages.Length == 1)
-            {
-                ConfirmAndUninstall(packages[0], await InstallationOptions.FromPackageAsync(
-                    packages[0], 
-                    elevated: elevated, 
-                    interactive: interactive, 
-                    remove_data: remove_data
-                ));
-                return;
-            }
-
-            ContentDialog dialog = new();
-
-            dialog.XamlRoot = XamlRoot;
-            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.Title = CoreTools.Translate("Are you sure?");
-            dialog.PrimaryButtonText = CoreTools.Translate("No");
-            dialog.SecondaryButtonText = CoreTools.Translate("Yes");
-            dialog.DefaultButton = ContentDialogButton.Primary;
-
-            StackPanel p = new();
-            p.Children.Add(new TextBlock { Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?", packages.Length), Margin = new Thickness(0, 0, 0, 5) });
-
-            string pkgList = "";
-            foreach (Package package in packages)
-                pkgList += " ● " + package.Name + "\x0a";
-
-            TextBlock PackageListTextBlock = new() { FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Consolas"), Text = pkgList };
-            p.Children.Add(new ScrollView { Content = PackageListTextBlock, MaxHeight = 200 });
-
-            dialog.Content = p;
-
-            if (await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary)
+            if (await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(packages))
             {
                 foreach (Package package in packages)
                 {
@@ -393,7 +335,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 Logger.Debug("Starting package backup");
                 List<BundledPackage> packagestoExport = new();
-                foreach (Package package in Packages)
+                foreach (Package package in Loader.Packages)
                     packagestoExport.Add(await BundledPackage.FromPackageAsync(package));
 
                 string BackupContents = await PackageBundlePage.GetBundleStringFromPackages(packagestoExport.ToArray(), BundleFormatType.JSON);
@@ -481,7 +423,7 @@ namespace UniGetUI.Interface.SoftwarePages
             if (!Initialized || package == null)
                 return;
             _ = package.AddToIgnoredUpdatesAsync();
-            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
+            PEInterface.UpgradablePackagesLoader.Remove(package);
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)
@@ -504,16 +446,6 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package));
             }
-        }
-
-        public async void AddInstalledPackage(Package foreignPackage)
-        {
-            foreach (Package package in Packages.ToArray())
-                if (package == foreignPackage || package.IsEquivalentTo(foreignPackage))
-                    return;
-            await WhenAddingPackage(foreignPackage);
-            Packages.Add(foreignPackage);
-            UpdatePackageCount();
         }
     }
 }

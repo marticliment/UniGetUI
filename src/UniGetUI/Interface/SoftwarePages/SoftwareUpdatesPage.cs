@@ -7,6 +7,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Operations;
@@ -14,28 +15,33 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class NewSoftwareUpdatesPage : AbstractPackagesPage
+    public class SoftwareUpdatesPage : AbstractPackagesPage
     {
         private BetterMenuItem? MenuAsAdmin;
         private BetterMenuItem? MenuInteractive;
         private BetterMenuItem? MenuskipHash;
 
-        public override void GenerateUIText()
+        public SoftwareUpdatesPage()
+        : base(new PackagesPageData()
         {
-            PAGE_NAME = "Updates";
-            SHOW_LAST_CHECKED_TIME = true;
+            DisableAutomaticPackageLoadOnStart = false,
+            MegaQueryBlockEnabled = false,
+            ShowLastLoadTime = true,
+            PageName = "Updates",
 
-            PageRole = OperationType.Update;
-            NoPackages_BackgroundText = CoreTools.Translate("Hooray! No updates were found.");
-            NoPackages_SourcesText = CoreTools.Translate("Everything is up to date");
-            NoPackages_SubtitleMainText = NoPackages_SourcesText;
+            Loader = PEInterface.UpgradablePackagesLoader,
+            PageRole = OperationType.Update,
 
-            NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria");
-            NoMatches_SourcesText = CoreTools.Translate("No packages were found");
+            NoPackages_BackgroundText = CoreTools.Translate("Hooray! No updates were found."),
+            NoPackages_SourcesText = CoreTools.Translate("Everything is up to date"),
+            NoPackages_SubtitleText_Base = CoreTools.Translate("Everything is up to date"),
+            MainSubtitle_StillLoading = CoreTools.Translate("Loading packages"),
+            NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
 
-            MainTitleText = CoreTools.AutoTranslated("Software Updates");
-            MainTitleGlyph = "\uE895";
-
+            PageTitle = CoreTools.Translate("Software Updates"),
+            Glyph = "\uE895"
+        })
+        {
             QuerySimilarResultsRadio.IsEnabled = false;
             QueryOptionsGroup.SelectedIndex = 1;
             QueryOptionsGroup.SelectedIndex = 2;
@@ -158,9 +164,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin.IsEnabled = package.Manager.Capabilities.CanRunAsAdmin;
             MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
             MenuskipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
-
         }
-
 
         public override void GenerateToolBar()
         {
@@ -264,7 +268,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 foreach (Package package in FilteredPackages.ToArray()) if (package.IsChecked)
                     {
                         await package.AddToIgnoredUpdatesAsync();
-                        MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
+                        PEInterface.UpgradablePackagesLoader.Remove(package);
                     }
             };
 
@@ -303,34 +307,11 @@ namespace UniGetUI.Interface.SoftwarePages
 
         }
 
-        protected override async Task<bool> IsPackageValid(Package package)
-        {
-            if (await package.HasUpdatesIgnoredAsync(package.NewVersion))
-                return false;
-
-            if (package.IsUpgradable && package.NewerVersionIsInstalled())
-                return false;
-            
-            return true;
-        }
-
-        protected override Task<Package[]> LoadPackagesFromManager(PackageManager manager)
-        {
-            return manager.GetAvailableUpdates();
-        }
-#pragma warning disable 
-        protected override async Task WhenAddingPackage(Package package)
-        {
-            package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);
-            package.GetInstalledPackage()?.SetTag(PackageTag.IsUpgradable);
-        }
-#pragma warning restore
-
         protected override void WhenPackageCountUpdated()
         {
             try
             {
-                MainApp.Instance.TooltipStatus.AvailableUpdates = Packages.Count();
+                MainApp.Instance.TooltipStatus.AvailableUpdates = Loader.Packages.Count();
             }
             catch (Exception)
             { }
@@ -338,7 +319,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public void UpdateAll()
         {
-            foreach (Package package in Packages)
+            foreach (Package package in Loader.Packages)
             {
                 if (package.Tag != PackageTag.BeingProcessed && package.Tag != PackageTag.OnQueue)
                     MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
@@ -348,7 +329,7 @@ namespace UniGetUI.Interface.SoftwarePages
         protected override async Task WhenPackagesLoaded(ReloadReason reason)
         {
             List<Package> upgradablePackages = new();
-            foreach (Package package in Packages)
+            foreach (Package package in Loader.Packages)
             {
                 if (package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
                     upgradablePackages.Add(package);
@@ -433,21 +414,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             }
 
-            if (!Settings.Get("DisableAutoCheckforUpdates") && reason != ReloadReason.Manual && reason != ReloadReason.External)
-            {
-                long waitTime = 3600;
-                try
-                {
-                    waitTime = long.Parse(Settings.GetValue("UpdatesCheckInterval"));
-                    Logger.Debug($"Starting check for updates wait interval with waitTime={waitTime}");
-                }
-                catch
-                {
-                    Logger.Debug("Invalid value for UpdatesCheckInterval, using default value of 3600 seconds");
-                }
-                await Task.Delay(TimeSpan.FromSeconds(waitTime));
-                _ = LoadPackages(ReloadReason.Automated);
-            }
+            /**/
         }
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
@@ -508,7 +475,7 @@ namespace UniGetUI.Interface.SoftwarePages
             if (!Initialized || package == null)
                 return;
             _ = package.AddToIgnoredUpdatesAsync();
-            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
+            PEInterface.UpgradablePackagesLoader.Remove(package);
         }
 
         private void MenuSkipVersion_Invoked(object sender, RoutedEventArgs e)
@@ -517,12 +484,12 @@ namespace UniGetUI.Interface.SoftwarePages
             if (!Initialized || package == null)
                 return;
             _ = package.AddToIgnoredUpdatesAsync((package).NewVersion);
-            MainApp.Instance.MainWindow.NavigationPage.UpdatesPage.RemoveCorrespondingPackages(package);
+            PEInterface.UpgradablePackagesLoader.Remove(package);
         }
 
         public void UpdatePackageForId(string id)
         {
-            foreach (Package package in Packages)
+            foreach (Package package in Loader.Packages)
             {
                 if (package.Id == id)
                 {
@@ -536,19 +503,10 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public void UpdateAllPackagesForManager(string manager)
         {
-            foreach (Package package in Packages)
+            foreach (Package package in Loader.Packages)
                 if (package.Tag != PackageTag.OnQueue && package.Tag != PackageTag.BeingProcessed)
                     if (package.Manager.Name == manager)
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
-        }
-
-        public Package? GetPackageForId(string id, string? sourceName = null)
-        {
-            foreach (var package in Packages)
-                if (package.Id == id && (sourceName == null || package.Source.Name == sourceName))
-                    return package;
-            
-            return null;
         }
     }
 }

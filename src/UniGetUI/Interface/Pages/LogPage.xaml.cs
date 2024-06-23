@@ -8,6 +8,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
@@ -51,7 +52,7 @@ namespace UniGetUI.Interface.Pages
             } else if (Logger_LogType == Logger_LogType.ManagerLogs)
             {
                 LogLevelCombo.Items.Clear();
-                foreach (var manager in MainApp.Instance.PackageManagerList)
+                foreach (var manager in PEInterface.Managers)
                 {
                     LogLevelCombo.Items.Add(manager.Name);
                     LogLevelCombo.Items.Add($"{manager.Name} ({CoreTools.Translate("Verbose")})");
@@ -183,7 +184,7 @@ namespace UniGetUI.Interface.Pages
             else if (Logger_LogType == Logger_LogType.ManagerLogs)
             {
                 bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains("(") ?? false;
-                foreach (var manager in MainApp.Instance.PackageManagerList)
+                foreach (var manager in PEInterface.Managers)
                     if (manager.Name.Contains(LogLevelCombo.SelectedValue?.ToString()?.Split(' ')[0] ?? "uncontained_word"))
                     {
                         var TaskLogger = manager.TaskLogger;

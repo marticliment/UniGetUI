@@ -614,7 +614,7 @@
             </Grid.RowDefinitions>
             <FontIcon Grid.Column="0" Grid.Row="0" Grid.RowSpan="3"
                 x:Name="HeaderIcon" FontSize="50" FontWeight="Normal" Height="60" Width="60"/>
-            <widgets:TranslatedTextBlock x:Name="MainTitle" x:FieldModifier="protected"
+            <TextBlock x:Name="MainTitle" x:FieldModifier="protected"
                 Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" 
                 Text="" FontSize="30" Height="48"
                 HorizontalAlignment="Left"

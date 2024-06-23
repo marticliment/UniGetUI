@@ -24,9 +24,9 @@ namespace UniGetUI.Interface
     public sealed partial class MainView : UserControl
     {
         public SettingsInterface SettingsPage;
-        public NewDiscoverSoftwarePage DiscoverPage;
-        public NewSoftwareUpdatesPage UpdatesPage;
-        public NewInstalledPackagesPage InstalledPage;
+        public DiscoverSoftwarePage DiscoverPage;
+        public SoftwareUpdatesPage UpdatesPage;
+        public InstalledPackagesPage InstalledPage;
         public HelpDialog? HelpPage;
         public PackageBundlePage BundlesPage;
         public Page? OldPage;
@@ -42,10 +42,10 @@ namespace UniGetUI.Interface
             UpdatesBadge = __updates_count_badge;
             BundleBadge = __bundle_count_badge;
             OperationStackPanel = __operations_list_stackpanel;
-            DiscoverPage = new NewDiscoverSoftwarePage();
-            UpdatesPage = new NewSoftwareUpdatesPage();
+            DiscoverPage = new DiscoverSoftwarePage();
+            UpdatesPage = new SoftwareUpdatesPage();
             UpdatesPage.ExternalCountBadge = UpdatesBadge;
-            InstalledPage = new NewInstalledPackagesPage();
+            InstalledPage = new InstalledPackagesPage();
             BundlesPage = new PackageBundlePage();
             SettingsPage = new SettingsInterface();
 
@@ -120,20 +120,17 @@ namespace UniGetUI.Interface
                 {
                     MainApp.Instance.MainWindow.Close();
                 }
-                else if(CurrentPage is IPageWithKeyboardShortcuts)
+                else if (e.Key == Windows.System.VirtualKey.F5 || (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.R))
                 {
-                    if (e.Key == Windows.System.VirtualKey.F5 || (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.R))
-                    {
-                        (CurrentPage as IPageWithKeyboardShortcuts)?.ReloadTriggered();
-                    }
-                    else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.F)
-                    {
-                        (CurrentPage as IPageWithKeyboardShortcuts)?.SearchTriggered();
-                    }
-                    else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.A)
-                    {
-                        (CurrentPage as IPageWithKeyboardShortcuts)?.SelectAllTriggered();
-                    }
+                    (CurrentPage as IPageWithKeyboardShortcuts)?.ReloadTriggered();
+                }
+                else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.F)
+                {
+                    (CurrentPage as IPageWithKeyboardShortcuts)?.SearchTriggered();
+                }
+                else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.A)
+                {
+                    (CurrentPage as IPageWithKeyboardShortcuts)?.SelectAllTriggered();
                 }
             };
         }
@@ -418,6 +415,7 @@ namespace UniGetUI.Interface
             foreach (Page page in PageButtonReference.Keys)
                 page.Visibility = (page == TargetPage) ? Visibility.Visible : Visibility.Collapsed;
 
+            OldPage = CurrentPage;
             CurrentPage = TargetPage;
 
             if (CurrentPage == DiscoverPage)
@@ -482,6 +480,55 @@ namespace UniGetUI.Interface
             DetailsDialog = null;
 
         }
+
+        public async Task<bool> ConfirmUninstallation(Package package)
+        {
+            ContentDialog dialog = new();
+
+            dialog.XamlRoot = XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = CoreTools.Translate("Are you sure?");
+            dialog.PrimaryButtonText = CoreTools.Translate("No");
+            dialog.SecondaryButtonText = CoreTools.Translate("Yes");
+            dialog.DefaultButton = ContentDialogButton.Primary;
+            dialog.Content = CoreTools.Translate("Do you really want to uninstall {0}?", package.Name);
+
+            return await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary;
+        }
+
+        public async Task<bool> ConfirmUninstallation(Package[] packages)
+        {
+            if (packages.Length == 0) return false;
+            if (packages.Length == 1)
+            {
+                return await ConfirmUninstallation(packages[0]);
+            }
+
+            ContentDialog dialog = new();
+
+            dialog.XamlRoot = XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = CoreTools.Translate("Are you sure?");
+            dialog.PrimaryButtonText = CoreTools.Translate("No");
+            dialog.SecondaryButtonText = CoreTools.Translate("Yes");
+            dialog.DefaultButton = ContentDialogButton.Primary;
+
+            StackPanel p = new();
+            p.Children.Add(new TextBlock { Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?", packages.Length), Margin = new Thickness(0, 0, 0, 5) });
+
+            string pkgList = "";
+            foreach (Package package in packages)
+                pkgList += " ● " + package.Name + "\x0a";
+
+            TextBlock PackageListTextBlock = new() { FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Consolas"), Text = pkgList };
+            p.Children.Add(new ScrollView { Content = PackageListTextBlock, MaxHeight = 200 });
+
+            dialog.Content = p;
+
+            return await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary;
+        }
+
+
 
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
         {

@@ -191,7 +191,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
             IsUpgradable = true;
             NewVersion = new_version;
             NewVersionAsFloat = CoreTools.GetVersionStringAsFloat(new_version);
-            __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version + "->" + NewVersion);
 
             // Packages in the updates tab are checked by default
             IsChecked = true;
