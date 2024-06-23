@@ -1,21 +1,59 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Threading.Tasks.Dataflow;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.PackageLoader;
+using Windows.System;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class NewDiscoverSoftwarePage : AbstractPackagesPage
+    public class DiscoverSoftwarePage : AbstractPackagesPage
     {
         BetterMenuItem? MenuAsAdmin;
         BetterMenuItem? MenuInteractive;
         BetterMenuItem? MenuSkipHash;
+        public DiscoverSoftwarePage()
+        : base(new PackagesPageData()
+        {
+            DisableAutomaticPackageLoadOnStart = true,
+            MegaQueryBlockEnabled = true,
+            ShowLastLoadTime = false,
+            PageName = "Discover",
+
+            Loader = PEInterface.DiscoveredPackagesLoader,
+            PageRole = OperationType.Install,
+
+            NoPackages_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
+            NoPackages_SourcesText = CoreTools.Translate("No packages were found"),
+            NoPackages_SubtitleText_Base = CoreTools.Translate("No packages were found"),
+            MainSubtitle_StillLoading = CoreTools.Translate("Loading packages"),
+            NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
+
+            PageTitle = CoreTools.Translate("Discover Packages"),
+            Glyph = "\uF6FA"
+        })
+        {   
+            InstantSearchCheckbox.IsEnabled = false;
+            InstantSearchCheckbox.Visibility = Visibility.Collapsed;
+
+            FindButton.Click += Event_SearchPackages;
+            MegaFindButton.Click += Event_SearchPackages;
+
+            QueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) Event_SearchPackages(s, e); };
+            MegaQueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) Event_SearchPackages(s, e); };
+
+            QueryOptionsGroup.SelectedIndex = 1;
+            QueryOptionsGroup.SelectedIndex = 2;
+            QueryOptionsGroup.SelectedItem = QueryBothRadio;
+        }
 
         public override BetterMenu GenerateContextMenu()
         {
@@ -224,68 +262,13 @@ namespace UniGetUI.Interface.SoftwarePages
             if(QueryBlock.Text.Trim() != "") await LoadPackages(ReloadReason.External);
         }
 
-        public override void GenerateUIText()
+        private void Event_SearchPackages(object sender, RoutedEventArgs e)
         {
-            DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = true;
-            MEGA_QUERY_BOX_ENABLED = true;
-            PAGE_NAME = "Discover";
-
-            PageRole = OperationType.Install;
-            InstantSearchCheckbox.IsEnabled = false;
-            InstantSearchCheckbox.Visibility = Visibility.Collapsed;
-
-            FindButton.Click += (s, e) => { if(QueryBlock.Text.Trim() != "") _ = LoadPackages(ReloadReason.Manual); };
-            QueryBlock.KeyUp += (s, e) =>
-            {
-                if (QueryBlock.Text.Trim() != "" && e.Key == Windows.System.VirtualKey.Enter)
-                    _ = LoadPackages(ReloadReason.Manual);
-            };
-
-            MegaFindButton.Click += (s, e) => { if (QueryBlock.Text.Trim() != "") _ = LoadPackages(ReloadReason.Manual); };
-            MegaQueryBlock.KeyUp += (s, e) => { if (QueryBlock.Text.Trim() != "" && e.Key == Windows.System.VirtualKey.Enter) _ = LoadPackages(ReloadReason.Manual); };
-
-
-            NoPackages_BackgroundText = CoreTools.Translate("No results were found matching the input criteria");
-            NoPackages_SourcesText = CoreTools.Translate("No packages were found");
-            NoPackages_SubtitleMainText = NoPackages_SourcesText;
-
-            NoMatches_BackgroundText = NoPackages_BackgroundText;
-            NoMatches_SourcesText = NoPackages_SourcesText;
-
-            MainTitleText = CoreTools.AutoTranslated("Discover Packages");
-            MainTitleGlyph = "\uF6FA";
-
-            QueryOptionsGroup.SelectedIndex = 1;
-            QueryOptionsGroup.SelectedIndex = 2;
-            QueryOptionsGroup.SelectedItem = QueryBothRadio;
-        }
-
-#pragma warning disable
-        protected override async Task<bool> IsPackageValid(Package package)
-        {
-            return true;
-        }
-#pragma warning restore
-
-        protected override Task<Package[]> LoadPackagesFromManager(PackageManager manager)
-        {
-            string text = QueryBlock.Text;
-            text = CoreTools.EnsureSafeQueryString(text);
-            if (text == string.Empty)
-                return new Task<Package[]>(() => { return []; });
+            if (QueryBlock.Text.Trim() != "")
+                _ = (Loader as DiscoverablePackagesLoader)?.ReloadPackages(QueryBlock.Text.Trim());
             else
-                return manager.FindPackages(text);
+                Loader.StopLoading();
         }
-
-#pragma warning disable
-        protected override async Task WhenAddingPackage(Package package)
-        {
-            if (package.GetUpgradablePackage() != null)
-                package.SetTag(PackageTag.IsUpgradable);
-            else if (package.GetInstalledPackage() != null)
-                package.SetTag(PackageTag.AlreadyInstalled);
-        }
-#pragma warning restore
 
         protected override void WhenPackageCountUpdated()
         {

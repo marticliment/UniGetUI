@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -184,7 +185,7 @@ namespace UniGetUI.Interface.Dialogs
 
             // Extended details section
             SetTextToItem(ManifestUrl_Content, details.ManifestUrl);
-            if (Package.Manager == MainApp.Choco)
+            if (Package.Manager == PEInterface.Chocolatey)
                 SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA512") + ": ");
             else
                 SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA256") + ": ");
@@ -278,7 +279,7 @@ namespace UniGetUI.Interface.Dialogs
 
         }
 
-        public void ActionButton_Click(object sender, RoutedEventArgs e)
+        public async void ActionButton_Click(object sender, RoutedEventArgs e)
         {
             Close?.Invoke(this, new EventArgs());
             InstallOptionsPage.SaveToDisk();
@@ -287,9 +288,12 @@ namespace UniGetUI.Interface.Dialogs
                 case OperationType.Install:
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(Package, InstallOptionsPage.Options));
                     break;
+                
                 case OperationType.Uninstall:
-                    MainApp.Instance.MainWindow.NavigationPage.InstalledPage.ConfirmAndUninstall(Package, InstallOptionsPage.Options);
+                    if(await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(Package))
+                        MainApp.Instance.AddOperationToList(new UninstallPackageOperation(Package, InstallOptionsPage.Options));    
                     break;
+                
                 case OperationType.Update:
                     MainApp.Instance.AddOperationToList(new UpdatePackageOperation(Package, InstallOptionsPage.Options));
                     break;

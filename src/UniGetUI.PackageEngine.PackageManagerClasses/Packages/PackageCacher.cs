@@ -5,9 +5,9 @@ namespace UniGetUI.PackageEngine.Classes.Packages
 {
     internal static class PackageCacher
     {
-        private static Dictionary<PackageManager, Dictionary<long, Package>> __available_pkgs = new();
-        private static Dictionary<PackageManager, Dictionary<long, Package>> __upgradable_pkgs = new();
-        private static Dictionary<PackageManager, Dictionary<long, Package>> __installed_pkgs = new();
+        private static Dictionary<long, Package> __available_pkgs = new();
+        private static Dictionary<long, Package> __upgradable_pkgs = new();
+        private static Dictionary<long, Package> __installed_pkgs = new();
 
         /// <summary>
         /// Will check if a given Package is already in the cache. If not, it will be added to it
@@ -56,12 +56,9 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         /// <returns>The already existing package if any, otherwhise null</returns>
         public static Package? GetAvailablePackageOrNull(Package other)
         {
-            if (__available_pkgs.TryGetValue(other.Manager, out var manager_pkgs))
+            if(__available_pkgs.TryGetValue(other.GetHash(), out Package? equivalent_package))
             {
-                if(manager_pkgs.TryGetValue(other.GetHash(), out Package? equivalent_package))
-                {
-                    return equivalent_package;
-                }
+                return equivalent_package;
             }
             return null;
         }
@@ -74,12 +71,9 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         /// <returns>The already existing package if any, otherwhise null</returns>
         public static Package? GetUpgradablePackageOrNull(Package other)
         {
-            if (__upgradable_pkgs.TryGetValue(other.Manager, out var manager_pkgs))
+            if (__upgradable_pkgs.TryGetValue(other.GetHash(), out Package? equivalent_package))
             {
-                if (manager_pkgs.TryGetValue(other.GetHash(), out Package? equivalent_package))
-                {
-                    return equivalent_package;
-                }
+                return equivalent_package;
             }
             return null;
         }
@@ -92,12 +86,9 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         /// <returns>The already existing package if any, otherwhise null</returns>
         public static Package? GetInstalledPackageOrNull(Package other)
         {
-            if (__installed_pkgs.TryGetValue(other.Manager, out var manager_pkgs))
+            if (__installed_pkgs.TryGetValue(other.GetVersionedHash(), out Package? equivalent_package))
             {
-                if (manager_pkgs.TryGetValue(other.GetVersionedHash(), out Package? equivalent_package))
-                {
-                    return equivalent_package;
-                }
+                return equivalent_package;
             }
             return null;
         }
@@ -109,28 +100,21 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         /// <returns>True if a newer version was found, false otherwhise</returns>
         public static bool NewerVersionIsInstalled(Package other)
         {
-            if (__installed_pkgs.TryGetValue(other.Manager, out var manager_pkgs))
+            foreach (Package found in __installed_pkgs.Values)
             {
-                foreach (Package found in manager_pkgs.Values)
+                if (found.IsEquivalentTo(other) && found.VersionAsFloat == other.NewVersionAsFloat)
                 {
-                    if (found.IsEquivalentTo(other) && found.Version == other.NewVersion)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
             return false;
         }
 
-        private static void AddPackageToCache(Package package, Dictionary<PackageManager, Dictionary<long, Package>> map)
+        private static void AddPackageToCache(Package package, Dictionary<long, Package> map)
         {
-            if(!map.ContainsKey(package.Manager))
-            {
-                map.Add(package.Manager, new());
-            }
             var hash = map == __installed_pkgs ? package.GetVersionedHash() : package.GetHash();
-            map[package.Manager].Add(hash, package);
+            map.Add(hash, package);
         }
     }
 }
