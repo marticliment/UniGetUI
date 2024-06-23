@@ -31,10 +31,12 @@ namespace UniGetUI.Core.Classes
             List<T> sorted = Descending ? this.OrderByDescending(SortingSelector).ToList() : this.OrderBy(SortingSelector).ToList();
             foreach (T item in sorted)
             {
-                int index = sorted.IndexOf(item);
                 Move(IndexOf(item), sorted.IndexOf(item));
-                item.Index = index;
             }
+            
+            for(int i = 0; i < Count; i++)
+                this[i].Index = i;
+
             BlockSorting = false;
             base.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
