@@ -1,5 +1,4 @@
-﻿using Jeffijoe.MessageFormat;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
 using System.Net;
 using System.Security.Cryptography;
@@ -19,7 +18,7 @@ namespace UniGetUI.Core.Tools
             AutomaticDecompression = DecompressionMethods.All
         };
 
-        private static LanguageEngine? LanguageEngine;
+        private static LanguageEngine LanguageEngine = new();
 
         /// <summary>
         /// Translate a string to the current language
@@ -27,23 +26,22 @@ namespace UniGetUI.Core.Tools
         /// <param name="text">The string to translate</param>
         /// <returns>The translated string if available, the original string otherwise</returns>
         public static string Translate(string text) {
-            if(LanguageEngine == null) LanguageEngine = new LanguageEngine();
             return LanguageEngine.Translate(text);
         }
 
         public static string Translate(string text, Dictionary<string, object?> dict)
         {
-            return MessageFormatter.Format(Translate(text), dict);
+            return LanguageEngine.Translate(text, dict);
         }
 
         public static string Translate(string text, params object[] values)
         {
-            Dictionary<string, object?> dict = new();
+            Dictionary<string, object?> dict = [];
             foreach ((object item, int index) in values.Select((item, index) => (item, index)))
             {
                 dict.Add(index.ToString(), item);
             }
-            return MessageFormatter.Format(Translate(text), dict);
+            return Translate(text, dict);
         }
 
         public static void ReloadLanguageEngineInstance(string ForceLanguage = "")
@@ -152,7 +150,7 @@ namespace UniGetUI.Core.Tools
             string LangName = "Unknown";
             try
             {
-                LangName = Translate("langName");
+                LangName = LanguageEngine.Locale;
             }
             catch { }
 
