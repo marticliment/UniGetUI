@@ -53,15 +53,15 @@ namespace UniGetUI.Interface
             External
         }
 
-        protected bool DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START { get; private set; } = false;
-        protected bool MEGA_QUERY_BOX_ENABLED { get; private set; } = false;
-        protected bool SHOW_LAST_CHECKED_TIME { get; private set; } = false;
-        public string INSTANT_SEARCH_SETTING_NAME { get => $"DisableInstantSearch{PAGE_NAME}Tab"; }
-        public string SIDEPANEL_WIDTH_SETTING_NAME { get => $"SidepanelWidth{PAGE_NAME}Page"; }
-        protected string PAGE_NAME { get; private set; }
-        public bool RoleIsUpdateLike { get => PAGE_ROLE == OperationType.Update; }
+        protected readonly bool DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = false;
+        protected readonly bool MEGA_QUERY_BOX_ENABLED = false;
+        protected readonly bool SHOW_LAST_CHECKED_TIME = false;
+        public readonly string INSTANT_SEARCH_SETTING_NAME;
+        public readonly string SIDEPANEL_WIDTH_SETTING_NAME;
+        protected readonly string PAGE_NAME;
+        public readonly bool RoleIsUpdateLike;
         protected DateTime LastPackageLoadTime { get; private set; }
-        protected OperationType PAGE_ROLE { get; private set; }
+        protected readonly OperationType PAGE_ROLE;
 
         protected Package? SelectedItem
         {
@@ -77,11 +77,11 @@ namespace UniGetUI.Interface
         private readonly TreeViewNode LocalPackagesNode;
         public InfoBadge? ExternalCountBadge;
 
-        public int NewVersionLabelWidth { get => RoleIsUpdateLike ? 125 : 0; }
-        public int NewVersionIconWidth { get => RoleIsUpdateLike ? 24 : 0; }
+        public readonly int NewVersionLabelWidth;
+        public readonly int NewVersionIconWidth;
+        
         protected bool Initialized = false;
         private readonly bool AllSelected = true;
-        int lastSavedWidth = 0;
 
         protected abstract void WhenPackagesLoaded(ReloadReason reason);
         protected abstract void WhenPackageCountUpdated();
@@ -89,17 +89,19 @@ namespace UniGetUI.Interface
         public abstract void GenerateToolBar();
         public abstract BetterMenu GenerateContextMenu();
 
-        protected string NoPackages_BackgroundText { get; private set; }
-        protected string NoPackages_SourcesText { get; private set; }
-        protected string MainSubtitle_StillLoading { get; private set; }
-        protected string NoPackages_SubtitleText_Base { get; private set; }
+        protected readonly string NoPackages_BackgroundText;
+        protected readonly string NoPackages_SourcesText; 
+        protected readonly string MainSubtitle_StillLoading;
+        protected readonly string NoPackages_SubtitleText_Base;
+        protected readonly string NoMatches_BackgroundText;
+        
+        protected Func<int, int, string> FoundPackages_SubtitleText_Base = (a, b) => CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.", a, b);
+        
         protected string NoPackages_SubtitleText
         {
             get => NoPackages_SubtitleText_Base + 
                 (SHOW_LAST_CHECKED_TIME ? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()) : "");
         }
-        protected string NoMatches_BackgroundText { get; private set; }
-        protected Func<int, int, string> FoundPackages_SubtitleText_Base = (a, b) => CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.", a, b);
         protected string NoMatches_SubtitleText
         {
             get => FoundPackages_SubtitleText_Base(Loader.Packages.Count(), FilteredPackages.Count()) +
@@ -118,9 +120,16 @@ namespace UniGetUI.Interface
             SHOW_LAST_CHECKED_TIME = data.ShowLastLoadTime;
 
             PAGE_ROLE = data.PageRole;
+            RoleIsUpdateLike = PAGE_ROLE == OperationType.Update;
+            NewVersionLabelWidth = RoleIsUpdateLike ? 125 : 0;
+            NewVersionIconWidth = RoleIsUpdateLike ? 24 : 0;
+
             Loader = data.Loader;
 
             PAGE_NAME = data.PageName;
+            INSTANT_SEARCH_SETTING_NAME = $"DisableInstantSearch{PAGE_NAME}Tab";
+            SIDEPANEL_WIDTH_SETTING_NAME = $"SidepanelWidth{PAGE_NAME}Page";
+
             MainTitle.Text = data.PageTitle;
             HeaderIcon.Glyph = data.Glyph;
 
@@ -609,7 +618,6 @@ namespace UniGetUI.Interface
             if (e.NewSize.Width == ((int)(e.NewSize.Width / 10)) || e.NewSize.Width == 25)
                 return;
 
-            lastSavedWidth = ((int)(e.NewSize.Width / 10));
             Settings.SetValue("SidepanelWidthUpdatesPage", ((int)e.NewSize.Width).ToString());
             foreach (UIElement control in SidePanelGrid.Children)
             {
