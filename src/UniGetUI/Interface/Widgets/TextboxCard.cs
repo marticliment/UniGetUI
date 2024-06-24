@@ -96,6 +96,7 @@ namespace UniGetUI.Interface.Widgets
 
             _textbox = new TextBox();
             _textbox.MinWidth = 200;
+            _textbox.MaxWidth = 300;
 
             StackPanel s = new();
             s.Orientation = Orientation.Horizontal;
