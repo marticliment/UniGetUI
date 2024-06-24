@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11707,
-        "done": 5075,
-        "packages_with_icon": 5075,
-        "packages_with_screenshot": 559,
-        "total_screenshots": 1746
+        "done": 5076,
+        "packages_with_icon": 5076,
+        "packages_with_screenshot": 561,
+        "total_screenshots": 1749
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -100,7 +100,7 @@
         "1password": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/5/5b/1Password_icon.png",
             "images": [
-                "https://developer.1password.com/img/meta-og-image.png",
+                "w",
                 "https://1password.com/img/tour/storage.6b7de1841abbfabf58300e55c8832b8b.png",
                 "https://1password.com/img/tour/security.a8d93c2a861e79fe51636df1ecf5fa9d.png",
                 "https://1password.com/img/tour/watchtower.5279b033f16276640b046442f41e8c9a.png"
@@ -7528,8 +7528,11 @@
             "images": []
         },
         "clickup": {
-            "icon": "https://community.chocolatey.org/content/packageimages/ClickUp.0.0.6.1.png",
-            "images": []
+            "icon": "https://clickup.com/landing/images/for-se-page/clickup.png",
+            "images": [
+                "https://clickup.com/assets/home-test/projects.png",
+                "https://clickup.com/assets/home-test/collaborate.png"
+            ]
         },
         "client": {
             "icon": "",
@@ -46470,8 +46473,10 @@
             "images": []
         },
         "windirstat": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/hGB1VDfg/windirstat-1-1-2-20161210.png",
+            "images": [
+                "https://i.postimg.cc/gjnVGrBy/image.png"
+            ]
         },
         "windjview": {
             "icon": "https://i.imgur.com/8x1CTVD.png",
