@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel;
-using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Nodes;
-using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
@@ -12,8 +10,6 @@ using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using Windows.Globalization;
-using Windows.Storage.Search;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {

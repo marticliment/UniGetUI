@@ -74,7 +74,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
             p.Start();
 
             string? line;
@@ -119,7 +119,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            var logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
             p.Start();
 
             string? line;

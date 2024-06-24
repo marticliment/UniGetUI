@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization.Metadata;
-
 namespace UniGetUI.Core.Classes.Tests
 {
     public class SortableObservableCollectionTests

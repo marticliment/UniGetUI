@@ -12,7 +12,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
     internal class WinGetPackageDetailsProvider : BasePackageDetailsProvider<UniGetUIManagers.PackageManager>
     {
-        private static Dictionary<string, string> __msstore_package_manifests = new();
+        private static readonly Dictionary<string, string> __msstore_package_manifests = new();
 
         struct MicrosoftStoreProductType
         {

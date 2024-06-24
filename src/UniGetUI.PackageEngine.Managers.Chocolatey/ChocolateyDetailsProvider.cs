@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using UniGetUI.Core.Data;
-using UniGetUI.Core.Logging;
+﻿using System.Diagnostics;
 using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -37,7 +28,7 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
                 }
             };
 
-            var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
 
             p.Start();
 

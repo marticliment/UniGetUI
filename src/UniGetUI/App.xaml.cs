@@ -40,7 +40,7 @@ namespace UniGetUI
         public ThemeListener ThemeListener;
 
 
-        private BackgroundApiRunner BackgroundApi = new();
+        private readonly BackgroundApiRunner BackgroundApi = new();
         private const int ManagerLoadTimeout = 10000; // 10 seconds timeout for Package Manager initialization
 #pragma warning disable CS8618
         public static MainApp Instance;

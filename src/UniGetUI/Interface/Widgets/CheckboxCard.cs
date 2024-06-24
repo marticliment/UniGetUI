@@ -35,7 +35,7 @@ namespace UniGetUI.Interface.Widgets
 
         public event EventHandler<CheckBoxEventArgs>? StateChanged;
 
-        DependencyProperty SettingProperty;
+        readonly DependencyProperty SettingProperty;
 
         public string Text
         {
@@ -43,9 +43,9 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(TextProperty, value);
         }
 
-        DependencyProperty TextProperty;
+        readonly DependencyProperty TextProperty;
 
-        DependencyProperty IsCheckBoxChecked = DependencyProperty.Register(
+        readonly DependencyProperty IsCheckBoxChecked = DependencyProperty.Register(
         nameof(Checked),
         typeof(bool),
         typeof(CheckboxCard),

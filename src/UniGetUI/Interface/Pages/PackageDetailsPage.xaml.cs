@@ -11,7 +11,6 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
-using Windows.Media.Protection.PlayReady;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
@@ -28,12 +27,12 @@ namespace UniGetUI.Interface.Dialogs
     public sealed partial class PackageDetailsPage : Page
     {
         public Package Package;
-        private InstallOptionsPage InstallOptionsPage;
+        private readonly InstallOptionsPage InstallOptionsPage;
         public event EventHandler? Close;
-        OperationType OperationRole;
+        readonly OperationType OperationRole;
         bool PackageHasScreenshots = false;
         public ObservableCollection<TextBlock> ShowableTags = new();
-        Uri InvalidUri = new("about:blank");
+        readonly Uri InvalidUri = new("about:blank");
 
         private enum LayoutMode
         {
@@ -132,8 +131,8 @@ namespace UniGetUI.Interface.Dialogs
             LoadScreenshots();
 
             string NotFound = CoreTools.Translate("Not available");
-            
-            var details = Package.Details;
+
+            PackageDetails details = Package.Details;
             if (!details.IsPopulated) await details.Load();
 
             string command = "";

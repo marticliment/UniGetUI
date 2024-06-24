@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Timers;
-using System.Threading.Tasks;
-using UniGetUI.Core.Classes;
-using UniGetUI.Core.Logging;
+﻿using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
-using Windows.System;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {

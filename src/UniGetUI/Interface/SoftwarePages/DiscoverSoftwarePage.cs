@@ -1,13 +1,10 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System.Threading.Tasks.Dataflow;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
@@ -224,7 +221,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 foreach (Package package in FilteredPackages.GetCheckedPackages())
                 {
-                    var options = await InstallationOptions.FromPackageAsync(package, elevated: true);
+                    InstallationOptions options = await InstallationOptions.FromPackageAsync(package, elevated: true);
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
                 }
             };
@@ -233,7 +230,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 foreach (Package package in FilteredPackages.GetCheckedPackages())
                 {
-                    var options = await InstallationOptions.FromPackageAsync(package, no_integrity: true);
+                    InstallationOptions options = await InstallationOptions.FromPackageAsync(package, no_integrity: true);
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
                 }
             };
@@ -242,7 +239,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 foreach (Package package in FilteredPackages.GetCheckedPackages())
                 {
-                    var options = await InstallationOptions.FromPackageAsync(package, interactive: true);
+                    InstallationOptions options = await InstallationOptions.FromPackageAsync(package, interactive: true);
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
                 }
             };

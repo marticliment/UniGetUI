@@ -1,13 +1,12 @@
-﻿using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.PackageClasses;
+﻿using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Classes.Packages
 {
     internal static class PackageCacher
     {
-        private static Dictionary<long, Package> __available_pkgs = new();
-        private static Dictionary<long, Package> __upgradable_pkgs = new();
-        private static Dictionary<long, Package> __installed_pkgs = new();
+        private static readonly Dictionary<long, Package> __available_pkgs = new();
+        private static readonly Dictionary<long, Package> __upgradable_pkgs = new();
+        private static readonly Dictionary<long, Package> __installed_pkgs = new();
 
         /// <summary>
         /// Will check if a given Package is already in the cache. If not, it will be added to it
@@ -113,7 +112,7 @@ namespace UniGetUI.PackageEngine.Classes.Packages
 
         private static void AddPackageToCache(Package package, Dictionary<long, Package> map)
         {
-            var hash = map == __installed_pkgs ? package.GetVersionedHash() : package.GetHash();
+            long hash = map == __installed_pkgs ? package.GetVersionedHash() : package.GetHash();
             map.Add(hash, package);
         }
     }

@@ -4,9 +4,9 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
 {
     public class ManagerSourceFactory
     {
-        private PackageManager __manager;
-        private Dictionary<string, ManagerSource> __reference;
-        private Uri __default_uri = new("https://marticliment.com/unigetui/");
+        private readonly PackageManager __manager;
+        private readonly Dictionary<string, ManagerSource> __reference;
+        private readonly Uri __default_uri = new("https://marticliment.com/unigetui/");
 
         public ManagerSourceFactory(PackageManager manager)
         {

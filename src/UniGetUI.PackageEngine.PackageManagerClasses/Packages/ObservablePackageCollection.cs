@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.ComponentModel;
 using UniGetUI.Core.Classes;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
-using UniGetUI.PackageEngine.PackageClasses;
-using Windows.Devices.Bluetooth.Advertisement;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
@@ -196,7 +186,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public new void Clear()
         {
-            foreach(var wrapper in this)
+            foreach(PackageWrapper wrapper in this)
             {
                 wrapper.Dispose();
             }
@@ -210,8 +200,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns></returns>
         public List<Package> GetPackages()
         {
-            List<Package> packages = new List<Package>();
-            foreach (var wrapper in this)
+            List<Package> packages = new();
+            foreach (PackageWrapper wrapper in this)
                     packages.Add(wrapper.Package);
             return packages;
         }
@@ -222,8 +212,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns></returns>
         public List<Package> GetCheckedPackages()
         {
-            List<Package> packages = new List<Package>();
-            foreach (var wrapper in this)
+            List<Package> packages = new();
+            foreach (PackageWrapper wrapper in this)
             {
                 if (wrapper.Package.IsChecked)
                     packages.Add(wrapper.Package);
@@ -236,7 +226,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public void SelectAll()
         {
-            foreach (var wrapper in this)
+            foreach (PackageWrapper wrapper in this)
                 wrapper.Package.IsChecked = true;
         }
         
@@ -245,7 +235,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public void ClearSelection()
         {
-            foreach (var wrapper in this)
+            foreach (PackageWrapper wrapper in this)
                 wrapper.Package.IsChecked = false;
         }
     }

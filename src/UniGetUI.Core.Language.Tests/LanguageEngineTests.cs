@@ -1,5 +1,4 @@
-﻿using UniGetUI.Core.Data;
-using UniGetUI.PackageEngine.Enums;
+﻿using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.Core.Language.Tests
 {

@@ -24,9 +24,9 @@ namespace UniGetUI.Interface
     /// </summary>
     public sealed partial class SettingsInterface : Page
     {
-        HyperlinkButton ResetBackupDirectory;
-        HyperlinkButton OpenBackupDirectory;
-        TextBlock BackupDirectoryLabel;
+        readonly HyperlinkButton ResetBackupDirectory;
+        readonly HyperlinkButton OpenBackupDirectory;
+        readonly TextBlock BackupDirectoryLabel;
 
 
         public SettingsInterface()

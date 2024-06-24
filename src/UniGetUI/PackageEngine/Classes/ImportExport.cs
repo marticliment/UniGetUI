@@ -185,11 +185,11 @@ namespace UniGetUI.PackageEngine.Classes
 
     public class InvalidBundledPackage : BundledPackage
     {
-        string __name;
-        string __id;
-        string __version;
-        string __source;
-        string __manager;
+        readonly string __name;
+        readonly string __id;
+        readonly string __version;
+        readonly string __source;
+        readonly string __manager;
 
         public override string Name
         {

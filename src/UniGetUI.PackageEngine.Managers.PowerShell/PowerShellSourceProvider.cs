@@ -51,7 +51,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
 
             p.Start();
 

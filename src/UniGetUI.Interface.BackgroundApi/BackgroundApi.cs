@@ -196,7 +196,7 @@ namespace UniGetUI.Interface
                     packages.Append($"{package.Name.Replace('|', '-')}|{package.Id}|{package.Version}|{package.NewVersion}|{package.Source}|{package.Manager.Name}|{icon}&&");
                 }
 
-                var pkgs_ = packages.ToString();
+                string pkgs_ = packages.ToString();
 
                 if (pkgs_.Length > 2)
                     pkgs_ = pkgs_[..(pkgs_.Length - 2)];

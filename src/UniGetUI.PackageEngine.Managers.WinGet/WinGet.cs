@@ -1,14 +1,11 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
-using Windows.Media.AppBroadcasting;
 
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
@@ -98,7 +95,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 StandardErrorEncoding = System.Text.Encoding.UTF8,
             };
 
-            var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
             p.Start();
 
@@ -172,10 +169,10 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 StandardErrorEncoding = System.Text.Encoding.UTF8,
             };
 
-            var logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
             p.Start();
 
-            var command = """
+            string command = """
                 Set-ExecutionPolicy Bypass -Scope Process -Force
                 function Print-WinGetPackage {
                     param (
@@ -489,7 +486,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            var logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
 
             p.Start();
             logger.AddToStdOut(await p.StandardOutput.ReadToEndAsync());
@@ -502,8 +499,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
     internal class LocalWingetSource: ManagerSource
     {
-        private string name;
-        private string __icon_id;
+        private readonly string name;
+        private readonly string __icon_id;
         public override string IconId { get { return __icon_id; } }
 
         public LocalWingetSource(WinGet manager, string name, string iconId) 

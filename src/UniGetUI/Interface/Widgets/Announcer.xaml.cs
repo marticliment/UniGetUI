@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
-using Windows.Media.Protection.PlayReady;
 using Windows.UI.Text;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -22,10 +21,10 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(UrlProperty, value);
         }
 
-        DependencyProperty UrlProperty;
+        readonly DependencyProperty UrlProperty;
 
 
-        private static HttpClient NetClient = new(CoreData.GenericHttpClientParameters);
+        private static readonly HttpClient NetClient = new(CoreData.GenericHttpClientParameters);
         public Announcer()
         {
             NetClient.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);

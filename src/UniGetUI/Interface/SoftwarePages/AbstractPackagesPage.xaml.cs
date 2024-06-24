@@ -2,26 +2,18 @@ using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Navigation;
-using System.Collections.ObjectModel;
-using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices.WindowsRuntime;
-using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
-using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
-using Windows.ApplicationModel.Appointments;
 using Windows.System;
 using Windows.UI.Core;
 
@@ -82,13 +74,13 @@ namespace UniGetUI.Interface
         protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
         protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
         protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
-        private TreeViewNode LocalPackagesNode;
+        private readonly TreeViewNode LocalPackagesNode;
         public InfoBadge? ExternalCountBadge;
 
         public int NewVersionLabelWidth { get => RoleIsUpdateLike ? 125 : 0; }
         public int NewVersionIconWidth { get => RoleIsUpdateLike ? 24 : 0; }
         protected bool Initialized = false;
-        private bool AllSelected = true;
+        private readonly bool AllSelected = true;
         int lastSavedWidth = 0;
 
         protected abstract void WhenPackagesLoaded(ReloadReason reason);
@@ -263,7 +255,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                foreach (var package in Loader.Packages)
+                foreach (Package package in Loader.Packages)
                     AddPackageToSourcesList(package);
             }
             FilterPackages(QueryBlock.Text);
@@ -644,7 +636,7 @@ namespace UniGetUI.Interface
 
         private void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            var container = (sender as PackageItemContainer);
+            PackageItemContainer? container = (sender as PackageItemContainer);
             if (container is null) return;
             if (container is null) return;
             PackageList.Select(container.Wrapper.Index);
@@ -653,7 +645,7 @@ namespace UniGetUI.Interface
 
         private void PackageItemContainer_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            var container = (sender as PackageItemContainer);
+            PackageItemContainer? container = (sender as PackageItemContainer);
             if (container is null) return;
             PackageList.Select(container.Wrapper.Index);
             ShowDetailsForPackage(container.Package);

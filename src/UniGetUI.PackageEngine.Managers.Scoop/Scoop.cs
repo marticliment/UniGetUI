@@ -86,7 +86,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         CreateNoWindow = true
                     }
                 };
-                var aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
+                ManagerClasses.Classes.ProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
                 proc.Start();
                 aux_logger.AddToStdOut(await proc.StandardOutput.ReadToEndAsync());
                 aux_logger.AddToStdErr(await proc.StandardError.ReadToEndAsync());
@@ -108,7 +108,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
-            var logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
             p.Start();
 
@@ -167,7 +167,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
-            var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
             p.Start();
 
@@ -224,7 +224,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
-            var logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
             p.Start();
 
             string? line;
@@ -379,7 +379,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
             p.StartInfo = StartInfo;
-            var logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
             p.Start();
             logger.AddToStdOut(await p.StandardOutput.ReadToEndAsync());
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());

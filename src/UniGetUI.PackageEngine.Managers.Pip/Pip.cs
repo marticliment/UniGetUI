@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
@@ -65,7 +64,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         CreateNoWindow = true,
                     }
                 };
-                var aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
+                ProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
                 proc.Start();
 
                 aux_logger.AddToStdOut(await proc.StandardOutput.ReadToEndAsync());
@@ -90,7 +89,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             };
 
-            var logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
             p.Start();
 
@@ -126,7 +125,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
@@ -138,7 +137,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
             p.Start();
 
@@ -176,7 +175,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
 
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Status.ExecutablePath,
@@ -187,8 +186,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 CreateNoWindow = true,
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
-        
-            var logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+
+            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
 
             p.Start();
 
