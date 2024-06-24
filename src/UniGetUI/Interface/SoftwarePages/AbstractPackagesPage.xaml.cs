@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.Serialization.Formatters;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -29,6 +30,7 @@ namespace UniGetUI.Interface
         {
             public bool DisableAutomaticPackageLoadOnStart;
             public bool MegaQueryBlockEnabled;
+            public bool PackagesAreCheckedByDefault;
             public bool ShowLastLoadTime;
             public bool DisableSuggestedResultsRadio;
 
@@ -139,6 +141,7 @@ namespace UniGetUI.Interface
 
             NoMatches_BackgroundText = data.NoMatches_BackgroundText;
 
+            SelectAllCheckBox.IsChecked = data.PackagesAreCheckedByDefault;
             QuerySimilarResultsRadio.IsEnabled = !data.DisableSuggestedResultsRadio;
             QueryOptionsGroup.SelectedIndex = 1;
             QueryOptionsGroup.SelectedIndex = 2;
@@ -267,16 +270,14 @@ namespace UniGetUI.Interface
             InstantSearchCheckbox.IsChecked = !Settings.Get(INSTANT_SEARCH_SETTING_NAME);
 
             HeaderIcon.FontWeight = new Windows.UI.Text.FontWeight(700);
-            CheckboxHeader.Content = " ";
             NameHeader.Content = CoreTools.Translate("Package Name");
             IdHeader.Content = CoreTools.Translate("Package ID");
             VersionHeader.Content = CoreTools.Translate("Version");
             NewVersionHeader.Content = CoreTools.Translate("New version");
             SourceHeader.Content = CoreTools.Translate("Source");
 
-            CheckboxHeader.Click += (s, e) => SortPackagesBy(ObservablePackageCollection.Sorter.Checked);
             NameHeader.Click += (s, e) => SortPackagesBy(ObservablePackageCollection.Sorter.Name);
-            IdHeader.Click += (s, e) => { SortPackagesBy(ObservablePackageCollection.Sorter.Id); };
+            IdHeader.Click += (s, e) => SortPackagesBy(ObservablePackageCollection.Sorter.Id);
             VersionHeader.Click += (s, e) => SortPackagesBy(ObservablePackageCollection.Sorter.Version);
             NewVersionHeader.Click += (s, e) => SortPackagesBy(ObservablePackageCollection.Sorter.NewVersion);
             SourceHeader.Click += (s, e) => SortPackagesBy(ObservablePackageCollection.Sorter.Source);
@@ -675,6 +676,14 @@ namespace UniGetUI.Interface
             {
                 package.IsChecked = !package.IsChecked;
             }
+        }
+
+        private void SelectAllCheckBox_ValueChanged(object sender, RoutedEventArgs e)
+        {
+            if (SelectAllCheckBox.IsChecked == true) 
+                FilteredPackages.SelectAll();
+            else 
+                FilteredPackages.ClearSelection();
         }
     }
 }

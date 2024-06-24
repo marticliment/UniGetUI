@@ -22,6 +22,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             DisableAutomaticPackageLoadOnStart = true,
             MegaQueryBlockEnabled = true,
+            PackagesAreCheckedByDefault = false,
             ShowLastLoadTime = false,
             DisableSuggestedResultsRadio = false,
             PageName = "Discover",
@@ -133,9 +134,6 @@ namespace UniGetUI.Interface.SoftwarePages
             AppBarButton PackageDetails = new();
             AppBarButton SharePackage = new();
 
-            AppBarButton SelectAll = new();
-            AppBarButton SelectNone = new();
-
             AppBarButton ExportSelection = new();
 
             AppBarButton HelpButton = new();
@@ -149,9 +147,6 @@ namespace UniGetUI.Interface.SoftwarePages
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(PackageDetails);
             ToolBar.PrimaryCommands.Add(SharePackage);
-            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
-            ToolBar.PrimaryCommands.Add(SelectAll);
-            ToolBar.PrimaryCommands.Add(SelectNone);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(ExportSelection);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
@@ -167,8 +162,6 @@ namespace UniGetUI.Interface.SoftwarePages
                 { InstallationSettings,   CoreTools.Translate("Installation options") },
                 { PackageDetails,         " " + CoreTools.Translate("Package details") },
                 { SharePackage,           " " + CoreTools.Translate("Share") },
-                { SelectAll,              " " + CoreTools.Translate("Select all") },
-                { SelectNone,             " " + CoreTools.Translate("Clear selection") },
                 { ExportSelection,        CoreTools.Translate("Add selection to bundle") },
                 { HelpButton,             CoreTools.Translate("Help") }
             };
@@ -190,8 +183,6 @@ namespace UniGetUI.Interface.SoftwarePages
                 { InstallationSettings, "options" },
                 { PackageDetails,       "info" },
                 { SharePackage,         "share" },
-                { SelectAll,            "selectall" },
-                { SelectNone,           "selectnone" },
                 { ExportSelection,      "add_to" },
                 { HelpButton,           "help" }
             };
@@ -240,8 +231,6 @@ namespace UniGetUI.Interface.SoftwarePages
             };
 
             SharePackage.Click += (s, e) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
-            SelectAll.Click += (s, e) => FilteredPackages.SelectAll();
-            SelectNone.Click += (s, e) => FilteredPackages.ClearSelection();
         }
 
         public override async Task LoadPackages()

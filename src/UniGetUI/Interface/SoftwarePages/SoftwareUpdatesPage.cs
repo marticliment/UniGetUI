@@ -26,6 +26,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DisableAutomaticPackageLoadOnStart = false,
             MegaQueryBlockEnabled = false,
             ShowLastLoadTime = true,
+            PackagesAreCheckedByDefault = true,
             DisableSuggestedResultsRadio = true,
             PageName = "Updates",
 
@@ -176,9 +177,6 @@ namespace UniGetUI.Interface.SoftwarePages
             AppBarButton PackageDetails = new();
             AppBarButton SharePackage = new();
 
-            AppBarButton SelectAll = new();
-            AppBarButton SelectNone = new();
-
             AppBarButton IgnoreSelected = new();
             AppBarButton ManageIgnored = new();
 
@@ -193,9 +191,6 @@ namespace UniGetUI.Interface.SoftwarePages
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(PackageDetails);
             ToolBar.PrimaryCommands.Add(SharePackage);
-            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
-            ToolBar.PrimaryCommands.Add(SelectAll);
-            ToolBar.PrimaryCommands.Add(SelectNone);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(IgnoreSelected);
             ToolBar.PrimaryCommands.Add(ManageIgnored);
@@ -212,8 +207,6 @@ namespace UniGetUI.Interface.SoftwarePages
                 { InstallationSettings, " " + CoreTools.Translate("Installation options") },
                 { PackageDetails,       " " + CoreTools.Translate("Package details") },
                 { SharePackage,         " " + CoreTools.Translate("Share") },
-                { SelectAll,            " " + CoreTools.Translate("Select all") },
-                { SelectNone,           " " + CoreTools.Translate("Clear selection") },
                 { IgnoreSelected,       CoreTools.Translate("Ignore selected packages") },
                 { ManageIgnored,        CoreTools.Translate("Manage ignored updates") },
                 { HelpButton,           CoreTools.Translate("Help") }
@@ -236,8 +229,6 @@ namespace UniGetUI.Interface.SoftwarePages
                 { InstallationSettings, "options" },
                 { PackageDetails,       "info" },
                 { SharePackage,         "share" },
-                { SelectAll,            "selectall" },
-                { SelectNone,           "selectnone" },
                 { IgnoreSelected,       "pin" },
                 { ManageIgnored,        "clipboard_list" },
                 { HelpButton,           "help" }
@@ -296,9 +287,6 @@ namespace UniGetUI.Interface.SoftwarePages
             };
 
             SharePackage.Click += (s, e) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
-            SelectAll.Click += (s, e) => FilteredPackages.SelectAll();
-            SelectNone.Click += (s, e) => FilteredPackages.ClearSelection();
-
         }
 
         protected override void WhenPackageCountUpdated()
