@@ -27,6 +27,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DisableAutomaticPackageLoadOnStart = false,
             MegaQueryBlockEnabled = false,
             ShowLastLoadTime = false,
+            DisableSuggestedResultsRadio = true,
             PageName = "Installed",
 
             Loader = PEInterface.InstalledPackagesLoader,
@@ -42,10 +43,6 @@ namespace UniGetUI.Interface.SoftwarePages
             Glyph = "\uE977"
         })
         {
-            QuerySimilarResultsRadio.IsEnabled = false;
-            QueryOptionsGroup.SelectedIndex = 1;
-            QueryOptionsGroup.SelectedIndex = 2;
-            QueryOptionsGroup.SelectedItem = QueryBothRadio;
         }
 
         public override BetterMenu GenerateContextMenu()
@@ -149,8 +146,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public override void GenerateToolBar()
         {
-            if (!Initialized)
-                return;
             AppBarButton UninstallSelected = new();
             AppBarButton UninstallAsAdmin = new();
             AppBarButton UninstallInteractive = new();
@@ -352,48 +347,47 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuUninstall_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package));
         }
 
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package  == null)
-                return;
+            if (package == null) return;
             ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, elevated: true));
         }
 
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, interactive: true));
         }
 
         private async void MenuRemoveData_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, remove_data: true));
         }
 
         private void MenuReinstall_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
         }
 
         private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, IgnoreParallelInstalls: true));
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, IgnoreParallelInstalls: true));
 
@@ -401,17 +395,16 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             _ = package.AddToIgnoredUpdatesAsync();
             PEInterface.UpgradablePackagesLoader.Remove(package);
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
-                return;
-            MainApp.Instance.MainWindow.SharePackage((SelectedItem));
+            if (PackageList.SelectedItem == null) return;
+            MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs args)

@@ -30,6 +30,7 @@ namespace UniGetUI.Interface
             public bool DisableAutomaticPackageLoadOnStart;
             public bool MegaQueryBlockEnabled;
             public bool ShowLastLoadTime;
+            public bool DisableSuggestedResultsRadio;
 
             public OperationType PageRole;
             public AbstractPackageLoader Loader;
@@ -138,6 +139,11 @@ namespace UniGetUI.Interface
 
             NoMatches_BackgroundText = data.NoMatches_BackgroundText;
 
+            QuerySimilarResultsRadio.IsEnabled = !data.DisableSuggestedResultsRadio;
+            QueryOptionsGroup.SelectedIndex = 1;
+            QueryOptionsGroup.SelectedIndex = 2;
+            QueryOptionsGroup.SelectedItem = QueryBothRadio;
+
             Loader.StartedLoading += Loader_StartedLoading;
             Loader.FinishedLoading += Loader_FinishedLoading;
             Loader.PackagesChanged += Loader_PackagesChanged;
@@ -153,8 +159,6 @@ namespace UniGetUI.Interface
             }
 
             LastPackageLoadTime = DateTime.Now;
-            QueryBothRadio.IsChecked = true;
-            QueryOptionsGroup.SelectedIndex = 2;
             LocalPackagesNode = new TreeViewNode { 
                 Content = CoreTools.Translate("Local"), 
                 IsExpanded = false 
@@ -256,6 +260,7 @@ namespace UniGetUI.Interface
             {
                 Settings.SetValue(SIDEPANEL_WIDTH_SETTING_NAME, "250");
             }
+
             BodyGrid.ColumnDefinitions.ElementAt(0).Width = new GridLength(width);
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
             MegaQueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
@@ -388,7 +393,10 @@ namespace UniGetUI.Interface
         }
 
         private void FilterOptionsChanged(object sender, RoutedEventArgs e)
-        { FilterPackages(); }
+        {
+            if (QueryBothRadio == null) return; 
+            FilterPackages(); 
+        }
 
         private void InstantSearchValueChanged(object sender, RoutedEventArgs e)
         { Settings.Set(INSTANT_SEARCH_SETTING_NAME, InstantSearchCheckbox.IsChecked == false); }

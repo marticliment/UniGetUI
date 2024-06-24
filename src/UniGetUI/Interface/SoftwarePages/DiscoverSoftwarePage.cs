@@ -23,6 +23,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DisableAutomaticPackageLoadOnStart = true,
             MegaQueryBlockEnabled = true,
             ShowLastLoadTime = false,
+            DisableSuggestedResultsRadio = false,
             PageName = "Discover",
 
             Loader = PEInterface.DiscoveredPackagesLoader,
@@ -46,10 +47,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             QueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) Event_SearchPackages(s, e); };
             MegaQueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) Event_SearchPackages(s, e); };
-
-            QueryOptionsGroup.SelectedIndex = 1;
-            QueryOptionsGroup.SelectedIndex = 2;
-            QueryOptionsGroup.SelectedItem = QueryBothRadio;
         }
 
         public override BetterMenu GenerateContextMenu()
@@ -126,8 +123,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public override void GenerateToolBar()
         {
-            if (!Initialized)
-                return;
             AppBarButton InstallSelected = new();
             AppBarButton InstallAsAdmin = new();
             AppBarButton InstallSkipHash = new();
@@ -300,24 +295,23 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
-                return;
+            if (PackageList.SelectedItem == null) return;
             MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
         }
 
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, no_integrity: true)));
         }
@@ -325,8 +319,8 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, interactive: true)));
         }
@@ -334,8 +328,8 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+            
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, elevated: true)));
         }
@@ -352,9 +346,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void ShowSharedPackage(string pId, string pSource)
         {
-            if (!Initialized)
-                return;
-
             Logger.Info($"Showing shared package with pId=${pId} and pSource=${pSource}...");
 
             MainApp.Instance.MainWindow.Activate();

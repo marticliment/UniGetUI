@@ -26,6 +26,7 @@ namespace UniGetUI.Interface.SoftwarePages
             DisableAutomaticPackageLoadOnStart = false,
             MegaQueryBlockEnabled = false,
             ShowLastLoadTime = true,
+            DisableSuggestedResultsRadio = true,
             PageName = "Updates",
 
             Loader = PEInterface.UpgradablePackagesLoader,
@@ -41,10 +42,6 @@ namespace UniGetUI.Interface.SoftwarePages
             Glyph = "\uE895"
         })
         {
-            QuerySimilarResultsRadio.IsEnabled = false;
-            QueryOptionsGroup.SelectedIndex = 1;
-            QueryOptionsGroup.SelectedIndex = 2;
-            QueryOptionsGroup.SelectedItem = QueryBothRadio;
         }
 
         public override BetterMenu GenerateContextMenu()
@@ -415,16 +412,16 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
         }
 
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, no_integrity: true)));
         }
@@ -432,8 +429,8 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, interactive: true)));
         }
@@ -441,8 +438,8 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, elevated: true)));
         }
@@ -450,8 +447,8 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, IgnoreParallelInstalls: true));
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, IgnoreParallelInstalls: true));
         }
@@ -459,16 +456,16 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
         }
 
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             _ = package.AddToIgnoredUpdatesAsync();
             PEInterface.UpgradablePackagesLoader.Remove(package);
         }
@@ -476,8 +473,8 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuSkipVersion_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (!Initialized || package == null)
-                return;
+            if (package == null) return;
+
             _ = package.AddToIgnoredUpdatesAsync((package).NewVersion);
             PEInterface.UpgradablePackagesLoader.Remove(package);
         }
