@@ -1,28 +1,24 @@
 /.vscode/
 src/.vscode/
-src/wingetui-old-project/__pycache__
-src/wingetui-old-project/lang/__pycache__/*
-src/wingetui-old-project/build/
-src/wingetui-old-project/dist/
-src/wingetui-old-project/winget-cli.1.2.0/
-"WingetUI Store.exe"
-WingetUI Store Installer.exe
+"UniGetUI Store.exe"
+UniGetUI Store Installer.exe
+UniGetUI Installer.exe
 WingetUI Installer.exe
-WingetUI Store.exe
-WingetUI.exe
+UniGetUI Store.exe
+UniGetUI.exe
 installer.iss
 Output/
 *.old
 vcredist.exe
-wingetuiBin/
-wingetui_bin/
-wingetuiBin.zip
+UniGetUIBin/
+UniGetUI_bin/
+UniGetUIBin.zip
 APIKEY.txt
 *.pyc
 WebBasedData/screenshot_database.xlsx
 WebBasedData/screenshot-database.json.backup
 *.log
-wingetui/wingettest.py
+UniGetUI/wingettest.py
 *.nupkg
 
 wui-1.7.0-console.zip
@@ -33,46 +29,52 @@ dllexp.exe
 sign.cmd.lnk
 src/packages/
 
-src/wingetui/bin
-src/wingetui/obj
+src/UniGetUI/bin
+src/UniGetUI/obj
 
-src/WindowsPackageManager.Interop/.vs
 src/WindowsPackageManager.Interop/bin
 src/WindowsPackageManager.Interop/obj
+src/WindowsPackageManager.Interop/out
+src/WindowsPackageManager.Interop/outpublish
 
-src/WindowsPackageManager.DLL.Interop/.vs
-src/WindowsPackageManager.DLL.Interop/bin
-src/WindowsPackageManager.DLL.Interop/packages
-src/WindowsPackageManager.DLL.Interop/x64
-src/WindowsPackageManager.DLL.Interop/obj
-src/WindowsPackageManager.DLL.Interop/Console*
+src/UniGetU*/bin
+src/UniGetU*/obj
+src/UniGetU*/out
+src/UniGetU*/outpublish
+
+src/ExternalLibraries.*/bin
+src/ExternalLibraries.*/obj
+src/ExternalLibraries.*/out
+src/ExternalLibraries.*/outpublish
 
 src/.vs
 src/.vscode
 new-names.docx
 
-src/wingetui/choco-cli/logs/
-src/wingetui/choco-cli/lib/
-src/wingetui/choco-cli/lib-bad/
-src/wingetui/choco-cli/.chocolatey/
-src/wingetui/choco-cli/lib/chocolatey-compatibility.extension/*
-src/wingetui/choco-cli/extensions/chocolatey-core/*
-src/wingetui/choco-cli/extensions/chocolatey-compatibility/*
-src/wingetui/choco-cli/lib-bkp/
-src/wingetui/choco-cli/extensions/chocolatey-windowsupdate/*
-src/wingetui/choco-cli/bin/chocolatey.exe
-src/wingetui/choco-cli/redirects/chocolatey.exe
-src/wingetui/choco-cli/redirects/chocolatey.exe.ignore
-src/wingetui/choco-cli/redirects/cinst.exe
-src/wingetui/choco-cli/redirects/cinst.exe.ignore
-src/wingetui/choco-cli/redirects/clist.exe
-src/wingetui/choco-cli/redirects/clist.exe.ignore
-src/wingetui/choco-cli/redirects/cpush.exe
-src/wingetui/choco-cli/redirects/cpush.exe.ignore
-src/wingetui/choco-cli/redirects/cuninst.exe
-src/wingetui/choco-cli/redirects/cuninst.exe.ignore
-src/wingetui/choco-cli/redirects/cup.exe
-src/wingetui/choco-cli/redirects/cup.exe.ignore
-src/wingetui/choco-cli/bin/ssh-copy-id.exe
-src/wingetui/choco-cli/extensions/chocolatey-visualstudio/
-src/wingetui/choco-cli/extensions/chocolatey-dotnetfx/
+src/UniGetUI/choco-cli/logs/
+src/UniGetUI/choco-cli/lib/
+src/UniGetUI/choco-cli/lib-bad/
+src/UniGetUI/choco-cli/.chocolatey/
+src/UniGetUI/choco-cli/lib/chocolatey-compatibility.extension/*
+src/UniGetUI/choco-cli/extensions/chocolatey-core/*
+src/UniGetUI/choco-cli/extensions/chocolatey-compatibility/*
+src/UniGetUI/choco-cli/lib-bkp/
+src/UniGetUI/choco-cli/extensions/chocolatey-windowsupdate/*
+src/UniGetUI/choco-cli/bin/chocolatey.exe
+src/UniGetUI/choco-cli/redirects/chocolatey.exe
+src/UniGetUI/choco-cli/redirects/chocolatey.exe.ignore
+src/UniGetUI/choco-cli/redirects/cinst.exe
+src/UniGetUI/choco-cli/redirects/cinst.exe.ignore
+src/UniGetUI/choco-cli/redirects/clist.exe
+src/UniGetUI/choco-cli/redirects/clist.exe.ignore
+src/UniGetUI/choco-cli/redirects/cpush.exe
+src/UniGetUI/choco-cli/redirects/cpush.exe.ignore
+src/UniGetUI/choco-cli/redirects/cuninst.exe
+src/UniGetUI/choco-cli/redirects/cuninst.exe.ignore
+src/UniGetUI/choco-cli/redirects/cup.exe
+src/UniGetUI/choco-cli/redirects/cup.exe.ignore
+src/UniGetUI/choco-cli/bin/ssh-copy-id.exe
+src/UniGetUI/choco-cli/extensions/chocolatey-visualstudio/
+src/UniGetUI/choco-cli/extensions/chocolatey-dotnetfx/
+
+*.user

@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<fileSnapshot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <files>
-    <file path="C:\ProgramData\chocolatey\lib\dotnetfx\dotnetfx.nupkg" checksum="59CF25E7E81EFA316FE0EB0B15B464EA" />
-    <file path="C:\ProgramData\chocolatey\lib\dotnetfx\dotnetfx.nuspec" checksum="426664C6CA32AA5194973946D0447516" />
-    <file path="C:\ProgramData\chocolatey\lib\dotnetfx\tools\ChocolateyInstall.ps1" checksum="2A23C3A559DC9BE31B264407DEAD89D7" />
-  </files>
-</fileSnapshot>
