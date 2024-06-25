@@ -236,10 +236,14 @@ To mitigate the risks of downloading malware, Microsoft has implemented a few ch
 `--daemon`: Start WingetUI without spawning a new window. WingetUI will run minimized on the system tray. WingetUI is called with this parameter when launched at startup. **Autostart WingetUI in the notifications area** must be enabled for this parameter to work.<br>
 `--welcomewizard` (or simply `--welcome`): Show a window to choose which package managers to use.<br>
 `--updateapps`: Enable automatic installation of available updates.<br>
-`--report-all-errors`: May help debug crashes (WingetUI 3.0 and newer)
+`--report-all-errors`: May help debug crashes (WingetUI 3.0 and newer)<br>
+Since 3.1.0: `--uninstall-unigetui`: Attempts to unregister UniGetUI from the notification panel, and silently quit<br>
+Since 3.1.0: `--migrate-wingetui-to-unigetui`: Attempts to migrate WingetUI data folders and shortcuts to UniGetUI, and silently quits<br>
 
 ### Installer command-line parameters:
 The installer is inno-setup based, so it supports regular Inno Setup command-line parameters. Additionally, it also supports the following parameters:
- <br>`/NoAutoStart`: Will not launch WingetUI after installing it.
+<br>`/NoAutoStart`: Will not launch WingetUI after installing it.
 <br> `/ALLUSERS`: Install WingetUI for every user
 <br> `/CURRENTUSER`: Install WingetUI for the current user only
+<br> Since 3.1.0: `/NoChocolatey`: Do NOT install chocolatey within WingetUI
+<br> Since 3.1.0: `/NoWinGet `: Do NOT install WinGet and Microsoft.WinGet.Client if not installed **(not recommended)**
