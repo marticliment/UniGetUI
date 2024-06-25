@@ -230,25 +230,20 @@ Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: 
 [Files]
 Source: "unigetui_bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
 Source: "unigetui_bin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
-Source: "src\UniGetUI.PackageEngine.Managers.Chocolatey\choco-cli*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall\chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
+Source: "src\UniGetUI.PackageEngine.Managers.Chocolatey\choco-cli\*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall\chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
 Source: "InstallerExtras\EnsureWinGet.ps1"; DestDir: "{tmp}"; Flags: deleteafterinstall
 
 
 [Icons]
-; Yes, they do have a space. This has been done in purpose for the updater to handle properly the new shortcuts
 Name: "{autostartmenu}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\startmenuicon
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\desktopicon
 
 [Run]
-; Filename: "{tmp}\appsdk.exe"; Flags: runhidden; Parameters: "--force"; StatusMsg: "Installing Windows App Sdk (x64)"; 
-Filename: "powershell.exe"; Parameters: "-ExecutionPolicy Bypass -File ""{tmp}\EnsureWinGet.ps1"""; StatusMsg: "Ensuring WinGet is installed properly"; WorkingDir: {app}; Flags: runhidden; Check: not CmdLineParamExists('/NoWinGet');
-; Flags: runhidden
+Filename: "powershell.exe"; Parameters: "-ExecutionPolicy Bypass -File ""{tmp}\EnsureWinGet.ps1"""; StatusMsg: "Ensuring WinGet is installed properly"; WorkingDir: {app}; Check: not CmdLineParamExists('/NoWinGet'); Flags: runhidden
  
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall; Check: not CmdLineParamExists('/NoAutoStart');
 
 Filename: "{app}\{#MyAppExeName}"; Parameters: "--migrate-wingetui-to-unigetui"; StatusMsg: "Removing old icons...";
-; Check: not CmdLineParamExists('/NoAutoStart');
-; Autostart is required to finish installation properly from an update, hence autostart will be obligatory
 
 
 [UninstallRun]    

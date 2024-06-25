@@ -23,6 +23,7 @@ if ((Get-Module -Name Microsoft.WinGet.Client -ListAvailable).Version -ge '1.7.1
 } else {
     Write-Output "Updating Microsoft.WinGet.Client module..."
     Update-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force
+    Install-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -AllowClobber
 }
 
 if ($null -eq (Get-Command "winget.exe" -ErrorAction SilentlyContinue)) 
@@ -32,3 +33,15 @@ if ($null -eq (Get-Command "winget.exe" -ErrorAction SilentlyContinue))
     Repair-WinGetPackageManager
     Write-Output "WinGet was installed successfully"
 }
+
+Write-Output "Checking for updates for Microsoft.WinGet.Client module..."
+if ((Get-Module -Name Microsoft.WinGet.Client -ListAvailable).Version -ge '1.7.10861')
+{
+    Write-Output "Microsoft.WinGet.Client is up-to-date"
+} else {
+    Write-Output "Updating Microsoft.WinGet.Client module..."
+    Update-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force
+    Install-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -AllowClobber
+}
+
+

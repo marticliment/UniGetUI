@@ -34,7 +34,8 @@ mkdir unigetui_bin
 robocopy src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish unigetui_bin *.* /MOVE /E
 rem pushd src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish
 pushd unigetui_bin
-"Y:\- Signing\signtool-x64\signtool.exe" sign /v /debug /fd SHA256 /tr "http://timestamp.acs.microsoft.com" /td SHA256 /dlib "Y:\- Signing\azure.codesigning.client\x64\Azure.CodeSigning.Dlib.dll" /dmdf "Y:\- Signing\metadata.json" C:\SomePrograms\WingetUI-Store\unigetui_bin\WingetUI.exe C:\SomePrograms\WingetUI-Store\unigetui_bin\WingetUI.dll
+"C:\SomePrograms\- Signing\signtool-x64\signtool.exe" sign /v /debug /fd SHA256 /tr "http://timestamp.acs.microsoft.com" /td SHA256 /dlib "C:\SomePrograms\- Signing\azure.codesigning.client\x64\Azure.CodeSigning.Dlib.dll" /dmdf "C:\SomePrograms\- Signing\metadata.json" C:\SomePrograms\WingetUI-Store\unigetui_bin\WingetUI.exe
+"C:\SomePrograms\- Signing\signtool-x64\signtool.exe" sign /v /debug /fd SHA256 /tr "http://timestamp.acs.microsoft.com" /td SHA256 /dlib "C:\SomePrograms\- Signing\azure.codesigning.client\x64\Azure.CodeSigning.Dlib.dll" /dmdf "C:\SomePrograms\- Signing\metadata.json" C:\SomePrograms\WingetUI-Store\unigetui_bin\WingetUI.dll
 echo .
 echo .
 echo You may want to sign now the following executables
@@ -54,7 +55,9 @@ if exist %INSTALLATOR% (
     echo You may now sign the installer
     "Y:\- Signing\signtool-x64\signtool.exe" sign /v /debug /fd SHA256 /tr "http://timestamp.acs.microsoft.com" /td SHA256 /dlib "Y:\- Signing\azure.codesigning.client\x64\Azure.CodeSigning.Dlib.dll" /dmdf "Y:\- Signing\metadata.json" "WingetUI Installer.exe"
     pause
-    "wingetUI Installer.exe"
+    del "UniGetUI Installer.exe"
+    copy "WingetUI Installer.exe" "UniGetUI Installer.exe" 
+    "WingetUI Installer.exe"
 ) else (
     echo "Make installer was skipped, because the installer is missing."
 )
