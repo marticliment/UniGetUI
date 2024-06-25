@@ -52,7 +52,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             string path = which_res.Item2;
             if (!which_res.Item1)
             {
-                Process proc = new Process();
+                Process proc = new();
                 proc.StartInfo = new ProcessStartInfo()
                 {
                     FileName = Status.ExecutablePath,
@@ -63,7 +63,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     CreateNoWindow = true,
                 };
 
-                var aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
+                ManagerClasses.Classes.ProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
                 proc.Start();
 
                 aux_logger.AddToStdOut(await proc.StandardOutput.ReadToEndAsync());
@@ -74,7 +74,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 path = "dotnet-tools-outdated.exe";
             }
 
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = path,
@@ -86,7 +86,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
             p.Start();
 
             string? line;
@@ -123,9 +123,9 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = new();
-            foreach (var scope in new PackageScope[] { PackageScope.Local, PackageScope.Global})
+            foreach (PackageScope scope in new PackageScope[] { PackageScope.Local, PackageScope.Global})
             {
-                Process p = new Process();
+                Process p = new();
                 p.StartInfo = new ProcessStartInfo()
                 {
                     FileName = Status.ExecutablePath,
@@ -137,7 +137,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 };
 
-                var logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+                ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
                 p.Start();
 
                 string? line;

@@ -10,28 +10,28 @@ namespace UniGetUI.Interface.Widgets
 {
     public sealed class SettingsEntry : SettingsExpander
     {
-        private InfoBar infoBar;
-        private Button RestartButton;
+        private readonly InfoBar infoBar;
+        private readonly Button RestartButton;
         public string Text
         {
             get => (string)GetValue(TextProperty);
             set => SetValue(TextProperty, value);
         }
-        DependencyProperty TextProperty;
+        readonly DependencyProperty TextProperty;
 
         public string UnderText
         {
             get => (string)GetValue(UnderTextProperty);
             set => SetValue(UnderTextProperty, value);
         }
-        DependencyProperty UnderTextProperty;
+        readonly DependencyProperty UnderTextProperty;
 
         public string Icon
         {
             get => (string)GetValue(IconProperty);
             set => SetValue(IconProperty, value);
         }
-        DependencyProperty IconProperty;
+        readonly DependencyProperty IconProperty;
 
 
         public SettingsEntry()

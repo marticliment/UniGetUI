@@ -108,9 +108,9 @@ namespace UniGetUI.PackageEngine.Operations
         protected Process Process = new();
         protected ObservableCollection<string> ProcessOutput = new();
 
-        private ContentDialog OutputDialog = new();
-        private ScrollViewer LiveOutputScrollBar = new();
-        private RichTextBlock LiveOutputTextBlock = new();
+        private readonly ContentDialog OutputDialog = new();
+        private readonly ScrollViewer LiveOutputScrollBar = new();
+        private readonly RichTextBlock LiveOutputTextBlock = new();
 
         public OperationStatus Status
         {

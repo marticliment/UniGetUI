@@ -36,7 +36,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                         StandardOutputEncoding = System.Text.Encoding.UTF8
                     };
 
-                    var logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
+                    ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
                     p.Start();
 
                     string? outLine;
@@ -114,7 +114,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Manager.Status.ExecutablePath,
@@ -128,7 +128,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            var logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions, p);
+            ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions, p);
             p.Start();
 
             string? line;

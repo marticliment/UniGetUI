@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -22,7 +21,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// The collection of currently available packages
         /// </summary>
         public ObservableCollection<Package> Packages { get; private set; }
-        private Dictionary<long, Package> PackageReference;
+        private readonly Dictionary<long, Package> PackageReference;
 
         /// <summary>
         /// Fires when a block of packages (one package or more) is added or removed to the loader
@@ -39,7 +38,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public event EventHandler<EventArgs>? StartedLoading;
 
-        bool ALLOW_MULTIPLE_PACKAGE_VERSIONS = false;
+        readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS = false;
         protected string LOADER_IDENTIFIER;
         private int LoadOperationIdentifier = 0;
         protected IEnumerable<PackageManager> Managers { get; private set; }
@@ -237,7 +236,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public IEnumerable<Package> GetEquivalentPackages(Package? package)
         {
             if (package == null) return [];
-            List<Package> result = new List<Package>();
+            List<Package> result = new();
             long hash_to_match = package.GetHash();
             foreach (Package local_package in Packages)
             {
@@ -251,7 +250,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         public Package? GetPackageForId(string id, string? sourceName = null)
         {
-            foreach (var package in Packages)
+            foreach (Package package in Packages)
                 if (package.Id == id && (sourceName == null || package.Source.Name == sourceName))
                     return package;
 

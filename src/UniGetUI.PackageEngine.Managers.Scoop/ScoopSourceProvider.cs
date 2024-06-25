@@ -46,7 +46,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 p.StartInfo.StandardInputEncoding = System.Text.Encoding.UTF8;
                 p.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
 
-                var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
+                ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
 
                 List<ManagerSource> sources = new();
 

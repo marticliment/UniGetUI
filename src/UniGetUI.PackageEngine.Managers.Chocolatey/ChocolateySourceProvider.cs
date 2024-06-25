@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Enums;
@@ -48,7 +47,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
             p.Start();
 
             string? line;

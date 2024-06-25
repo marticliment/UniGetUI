@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
@@ -59,7 +58,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            var logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
             p.Start();
             
             string? line;
@@ -107,7 +106,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 };
 
-                var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+                ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
                 p.Start();
 
                 string? line;
@@ -153,7 +152,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 };
 
-                var logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+                ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
                 p.Start();
                 
                 string? line;

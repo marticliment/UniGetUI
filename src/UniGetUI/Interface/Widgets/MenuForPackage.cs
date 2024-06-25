@@ -15,20 +15,20 @@ namespace UniGetUI.Interface.Widgets
 
     public class BetterMenuItem : MenuFlyoutItem
     {
-        DependencyProperty IconNameProperty;
+        readonly DependencyProperty IconNameProperty;
 
         public string IconName
         {
             get => (string)GetValue(IconNameProperty);
-            set => SetValue(IconNameProperty, (string)value);
+            set => SetValue(IconNameProperty, value);
         }
 
-        new DependencyProperty TextProperty;
+        new readonly DependencyProperty TextProperty;
 
         new public string Text
         {
             get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, (string)value);
+            set => SetValue(TextProperty, value);
         }
 
         public BetterMenuItem() : base()
@@ -61,7 +61,7 @@ namespace UniGetUI.Interface.Widgets
     public class MenuForPackage : MenuFlyout
     {
         public event EventHandler<Package>? AboutToShow;
-        DependencyProperty PackageProperty;
+        readonly DependencyProperty PackageProperty;
 
         public MenuForPackage() : base()
         {
@@ -85,7 +85,7 @@ namespace UniGetUI.Interface.Widgets
     {
         public event EventHandler<Package>? Invoked;
 
-        DependencyProperty PackageProperty;
+        readonly DependencyProperty PackageProperty;
 
         public Package Package
         {
@@ -93,12 +93,12 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(PackageProperty, value);
         }
 
-        DependencyProperty IconNameProperty;
+        readonly DependencyProperty IconNameProperty;
 
         public string IconName
         {
             get => (string)GetValue(IconNameProperty);
-            set => SetValue(IconNameProperty, (string)value);
+            set => SetValue(IconNameProperty, value);
         }
 
         public MenuItemForPackage() : base()

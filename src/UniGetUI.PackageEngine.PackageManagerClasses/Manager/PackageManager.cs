@@ -31,7 +31,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         public BaseSourceProvider<PackageManager>? SourceProvider;
         public BasePackageDetailsProvider<PackageManager>? PackageDetailsProvider;
-        private bool __base_constructor_called = false;
+        private readonly bool __base_constructor_called = false;
 
         public PackageManager()
         {

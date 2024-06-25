@@ -14,7 +14,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// </summary>
     public class InstallationOptions
     {
-        private static Dictionary<long, InstallationOptions?> OptionsCache = new();
+        private static readonly Dictionary<long, InstallationOptions?> OptionsCache = new();
 
         public bool SkipHashCheck { get; set; } = false;
         public bool InteractiveInstallation { get; set; } = false;
@@ -29,7 +29,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public Package Package { get; }
 
-        private string __save_filename;
+        private readonly string __save_filename;
 
         private InstallationOptions(Package package)
         {

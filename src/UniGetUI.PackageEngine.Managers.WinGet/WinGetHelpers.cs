@@ -59,7 +59,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public async Task<Package[]> FindPackages_UnSafe(WinGet ManagerInstance, string query)
         {
-            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
+            ManagerClasses.Classes.NativeTaskLogger logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
 
             List<Package> Packages = new();
             FindPackagesOptions PackageFilters = Factory.CreateFindPackagesOptions();
@@ -131,7 +131,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     FindPackagesResult FoundPackages = CatalogTaskPair.Value.Result;
                     foreach (MatchResult package in FoundPackages.Matches.ToArray())
                     {
-                        var catPkg = package.CatalogPackage;
+                        CatalogPackage catPkg = package.CatalogPackage;
                         // Create the Package item and add it to the list
                         logger.Log($"Found package: {catPkg.Name}|{catPkg.Name}|{catPkg.DefaultInstallVersion.Version} on catalog {source.Name}");
                         Packages.Add(new Package(
@@ -156,7 +156,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         public async Task<ManagerSource[]> GetSources_UnSafe(WinGet ManagerInstance)
         {
             List<ManagerSource> sources = new();
-            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.ListSources);
+            ManagerClasses.Classes.NativeTaskLogger logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.ListSources);
 
             foreach (PackageCatalogReference catalog in await Task.Run(() => WinGetManager.GetPackageCatalogs().ToArray()))
                 try
@@ -174,7 +174,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public async Task<string[]> GetPackageVersions_Unsafe(WinGet ManagerInstance, Package package)
         {
-            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions);
+            ManagerClasses.Classes.NativeTaskLogger logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions);
 
             // Find the native package for the given Package object
             PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
@@ -214,15 +214,15 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             // Get the Native Package
             CatalogPackage NativePackage = SearchResult.Result.Matches.First().CatalogPackage;
-            var versions = NativePackage.AvailableVersions.Select(x => x.Version).ToArray();
-            foreach (var version in versions) logger.Log(version);
+            string[] versions = NativePackage.AvailableVersions.Select(x => x.Version).ToArray();
+            foreach (string? version in versions) logger.Log(version);
             logger.Close(0);
             return versions ?? [];
         }
 
         public async Task GetPackageDetails_UnSafe(WinGet ManagerInstance, PackageDetails details)
         {
-            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
+            ManagerClasses.Classes.NativeTaskLogger logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
 
             if (details.Package.Source.Name == "winget")
                 details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
@@ -371,7 +371,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
     internal class BundledWinGetHelper : IWinGetPackageHelper
     {
 
-        private string WinGetBundledPath;
+        private readonly string WinGetBundledPath;
         public BundledWinGetHelper()
         {
             WinGetBundledPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_x64", "winget.exe");
@@ -395,9 +395,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             p.Start();
 
-            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
-            var command = """
+            string command = """
                 Set-ExecutionPolicy Bypass -Scope Process -Force
                 function Print-WinGetPackage {
                     param (
@@ -654,7 +654,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             };
 
-            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
 
             p.Start();
 
@@ -697,7 +697,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             p.Start();
 
-            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
             bool dashesPassed = false;
             string? line;

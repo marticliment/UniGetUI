@@ -22,10 +22,10 @@ namespace UniGetUI.Interface.Widgets
 
     public sealed class ComboboxCard : SettingsCard
     {
-        private ComboBox _combobox;
-        private ObservableCollection<string> _elements;
-        private Dictionary<string, string> _values_ref;
-        private Dictionary<string, string> _inverted_val_ref;
+        private readonly ComboBox _combobox;
+        private readonly ObservableCollection<string> _elements;
+        private readonly Dictionary<string, string> _values_ref;
+        private readonly Dictionary<string, string> _inverted_val_ref;
 
         public string SettingName
         {
@@ -39,7 +39,7 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(SettingProperty, value);
         }
 
-        DependencyProperty SettingProperty = DependencyProperty.Register(
+        readonly DependencyProperty SettingProperty = DependencyProperty.Register(
         nameof(SettingName),
         typeof(string),
         typeof(CheckboxCard),
@@ -51,7 +51,7 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(TextProperty, value);
         }
 
-        DependencyProperty TextProperty;
+        readonly DependencyProperty TextProperty;
 
         public event EventHandler<ComboCardEventArgs>? ValueChanged;
 

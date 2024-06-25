@@ -2,7 +2,6 @@
 using System.Text.Json.Nodes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -16,7 +15,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         protected override async Task GetPackageDetails_Unsafe(PackageDetails details)
         {
-            var logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails);
+            ManagerClasses.Classes.NativeTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails);
 
             string JsonString;
             HttpClient client = new(CoreData.GenericHttpClientParameters);
@@ -130,7 +129,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
-            Process p = new Process();
+            Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
                 FileName = Manager.Status.ExecutablePath,
@@ -143,7 +142,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            var logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions, p);
             p.Start();
 
             string? line;

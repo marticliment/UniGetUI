@@ -1,8 +1,6 @@
-﻿using System.Net;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Web;
 using UniGetUI.Core.Data;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -45,7 +43,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         {
             List<Package> Packages = new();
 
-            var logger = TaskLogger.CreateNew(Enums.LoggableTaskType.FindPackages);
+            ManagerClasses.Classes.NativeTaskLogger logger = TaskLogger.CreateNew(Enums.LoggableTaskType.FindPackages);
 
             ManagerSource[] sources;
             if (Capabilities.SupportsCustomSources)

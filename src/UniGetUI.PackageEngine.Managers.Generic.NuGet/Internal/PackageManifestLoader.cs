@@ -1,5 +1,4 @@
-﻿using System.Net;
-using UniGetUI.Core.Data;
+﻿using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -7,7 +6,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
 {
     internal static class PackageManifestLoader
     {
-        private static Dictionary<string, string> __manifest_cache = new();
+        private static readonly Dictionary<string, string> __manifest_cache = new();
 
         /// <summary>
         /// Returns the URL to the manifest of a NuGet-based package

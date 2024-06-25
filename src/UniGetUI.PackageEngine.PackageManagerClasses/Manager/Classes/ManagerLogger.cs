@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 {
     public class ManagerLogger
     {
-        PackageManager Manager;
+        readonly PackageManager Manager;
         public List<TaskLogger> Operations = new();
 
         public ManagerLogger(PackageManager manager)
@@ -19,14 +19,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             if (process.StartInfo == null)
                 throw new Exception("Given process instance did not have a valid StartInfo value");
 
-            var operation =  new ProcessTaskLogger(Manager, type, process.StartInfo.FileName, process.StartInfo.Arguments);
+            ProcessTaskLogger operation =  new(Manager, type, process.StartInfo.FileName, process.StartInfo.Arguments);
             Operations.Add(operation);
             return operation;
         }
 
         public NativeTaskLogger CreateNew(LoggableTaskType type)
         {
-            var operation = new NativeTaskLogger(Manager, type);
+            NativeTaskLogger operation = new(Manager, type);
             Operations.Add(operation);
             return operation;
         }
@@ -82,14 +82,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
     public class ProcessTaskLogger : TaskLogger
     {
-        PackageManager Manager;
-        LoggableTaskType Type;
+        readonly PackageManager Manager;
+        readonly LoggableTaskType Type;
 
-        string Executable;
-        string Arguments;
-        List<string> StdIn = new();
-        List<string> StdOut = new();
-        List<string> StdErr = new();
+        readonly string Executable;
+        readonly string Arguments;
+        readonly List<string> StdIn = new();
+        readonly List<string> StdOut = new();
+        readonly List<string> StdErr = new();
 
         public ProcessTaskLogger(PackageManager manager, LoggableTaskType type, string executable, string arguments) : base()
         {
@@ -156,7 +156,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 result.Add("0");
                 result.Add("0-- Process STDIN");
                 if(verbose)
-                    foreach (var line in StdIn)
+                    foreach (string line in StdIn)
                         result.Add("3  " + line);
                 else
                     result.Add("1 ...");
@@ -166,7 +166,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 result.Add("0");
                 result.Add("0-- Process STDOUT");
                 if(verbose)
-                    foreach (var line in StdOut)
+                    foreach (string line in StdOut)
                         result.Add("1  " + line);
                 else
                     result.Add("1 ...");
@@ -175,7 +175,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             {
                 result.Add("0");
                 result.Add("0-- Process STDERR");
-                foreach (var line in StdErr)
+                foreach (string line in StdErr)
                     result.Add("2  " + line);
             }
             result.Add("0");
@@ -196,11 +196,11 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
     public class NativeTaskLogger : TaskLogger
     {
-        PackageManager Manager;
-        LoggableTaskType Type;
+        readonly PackageManager Manager;
+        readonly LoggableTaskType Type;
 
-        List<string> Info = new();
-        List<string> Errors = new();
+        readonly List<string> Info = new();
+        readonly List<string> Errors = new();
 
         public NativeTaskLogger(PackageManager manager, LoggableTaskType type) : base()
         {
@@ -244,7 +244,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             else if (verbose && CachedVerboseMessage != null && isComplete)
                 return CachedVerboseMessage;
 
-            List<string> result = new List<string>();
+            List<string> result = new();
             result.Add($"0Logged native task on manager {Manager.Name}. Task type is {Type}");
             result.Add($"0Process start time: {StartTime}");
             if (EndTime == null)
@@ -256,7 +256,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 result.Add("0");
                 result.Add("0-- Task information");
                 if (verbose)
-                    foreach (var line in Info)
+                    foreach (string line in Info)
                         result.Add("1  " + line);
                 else
                     result.Add("1 ...");
@@ -265,7 +265,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             {
                 result.Add("0");
                 result.Add("0-- Task errors");
-                foreach (var line in Errors)
+                foreach (string line in Errors)
                     result.Add("2  " + line);
             }
             result.Add("0");

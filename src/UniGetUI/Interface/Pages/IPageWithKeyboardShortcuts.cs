@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.ApplicationModel.VoiceCommands;
-
-namespace UniGetUI.Interface.Pages
+﻿namespace UniGetUI.Interface.Pages
 {
     /// <summary>
     /// Any object that can perform any of the following listed actions should 

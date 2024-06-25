@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Data;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Dialogs;
@@ -34,7 +33,7 @@ namespace UniGetUI.Interface
         public InfoBadge UpdatesBadge;
         public InfoBadge BundleBadge;
         public StackPanel OperationStackPanel;
-        private Dictionary<Page, NavButton> PageButtonReference = new();
+        private readonly Dictionary<Page, NavButton> PageButtonReference = new();
 
         public MainView()
         {

@@ -43,9 +43,9 @@ namespace UniGetUI.Interface
         protected ProgressBar LoadingProgressBar;
         protected MenuFlyout? ContextMenu;
 
-        private bool Initialized = false;
+        private readonly bool Initialized = false;
         private bool AllSelected = false;
-        TreeViewNode LocalPackagesNode;
+        readonly TreeViewNode LocalPackagesNode;
         int lastSavedWidth = 0;
 
         public string InstantSearchSettingString = "DisableInstantSearchInstalledTab";

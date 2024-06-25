@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using System.Diagnostics;
-using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -52,7 +51,7 @@ namespace UniGetUI.Interface.Pages
             } else if (Logger_LogType == Logger_LogType.ManagerLogs)
             {
                 LogLevelCombo.Items.Clear();
-                foreach (var manager in PEInterface.Managers)
+                foreach (PackageEngine.ManagerClasses.Manager.PackageManager manager in PEInterface.Managers)
                 {
                     LogLevelCombo.Items.Add(manager.Name);
                     LogLevelCombo.Items.Add($"{manager.Name} ({CoreTools.Translate("Verbose")})");
@@ -184,21 +183,21 @@ namespace UniGetUI.Interface.Pages
             else if (Logger_LogType == Logger_LogType.ManagerLogs)
             {
                 bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains("(") ?? false;
-                foreach (var manager in PEInterface.Managers)
+                foreach (PackageEngine.ManagerClasses.Manager.PackageManager manager in PEInterface.Managers)
                     if (manager.Name.Contains(LogLevelCombo.SelectedValue?.ToString()?.Split(' ')[0] ?? "uncontained_word"))
                     {
-                        var TaskLogger = manager.TaskLogger;
+                        PackageEngine.ManagerClasses.Classes.ManagerLogger TaskLogger = manager.TaskLogger;
                         LogTextBox.Blocks.Clear();
-                        Paragraph versionParagraph = new Paragraph();
+                        Paragraph versionParagraph = new();
                         versionParagraph.Inlines.Add(new Run() { Text = $"Manager {manager.Name} with version:\n" });
                         versionParagraph.Inlines.Add(new Run() { Text = manager.Status.Version });
                         versionParagraph.Inlines.Add(new Run() { Text = $"\n\n——————————————————————————————————————————\n\n" });
                         LogTextBox.Blocks.Add(versionParagraph);
 
-                        foreach (var operation in TaskLogger.Operations)
+                        foreach (PackageEngine.ManagerClasses.Classes.TaskLogger operation in TaskLogger.Operations)
                         {
                             Paragraph p = new();
-                            foreach (var line in operation.AsColoredString(verbose))
+                            foreach (string line in operation.AsColoredString(verbose))
                             {
                                 Brush color;
                                 switch (line[0])

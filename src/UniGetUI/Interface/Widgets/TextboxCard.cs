@@ -19,8 +19,8 @@ namespace UniGetUI.Interface.Widgets
 
     public sealed class TextboxCard : SettingsCard
     {
-        private TextBox _textbox = new();
-        private HyperlinkButton _helpbutton = new();
+        private readonly TextBox _textbox = new();
+        private readonly HyperlinkButton _helpbutton = new();
 
         public string SettingName
         {
@@ -46,13 +46,13 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(HelpUrlProperty, value);
         }
 
-        DependencyProperty PlaceholderProperty;
+        readonly DependencyProperty PlaceholderProperty;
 
-        DependencyProperty SettingProperty;
+        readonly DependencyProperty SettingProperty;
 
-        DependencyProperty TextProperty;
+        readonly DependencyProperty TextProperty;
 
-        DependencyProperty HelpUrlProperty;
+        readonly DependencyProperty HelpUrlProperty;
 
         public event EventHandler<TextboxEventArgs>? ValueChanged;
 
@@ -96,6 +96,7 @@ namespace UniGetUI.Interface.Widgets
 
             _textbox = new TextBox();
             _textbox.MinWidth = 200;
+            _textbox.MaxWidth = 300;
 
             StackPanel s = new();
             s.Orientation = Orientation.Horizontal;

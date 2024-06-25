@@ -9,7 +9,7 @@ namespace UniGetUI.Interface.Widgets
         private bool __registered_theme_event = false;
         public DependencyProperty IconNameProperty;
 
-        private static Dictionary<string, BitmapImage> bitmap_cache = new();
+        private static readonly Dictionary<string, BitmapImage> bitmap_cache = new();
 
         public string IconName
         {
@@ -62,7 +62,7 @@ namespace UniGetUI.Interface.Widgets
             }
             else
             {
-                var image = new BitmapImage();
+                BitmapImage image = new();
                 image.UriSource = new Uri($"ms-appx:///Assets/Images/{image_file}");
                 bitmap_cache.Add(image_file, image);
                 Source = image;
