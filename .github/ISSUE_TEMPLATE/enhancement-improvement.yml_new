@@ -1,12 +1,12 @@
 name: '🚧 Suggest an improvement or an enhancement'
-description: Propose an improvement to UniGetUI
+description: Propose an improvement to UniGetUI.
 title: "[ENHANCEMENT] (Enter your description here)"
 labels: ["enhancement"]
 assignees: marticliment
 body:
   - type: checkboxes
     attributes:
-      label: Please confirm these before moving forward
+      label: Please confirm these before moving forward.
       description: Please confirm the following before posting your issue.
       options:
         - label: I have searched for my feature proposal and have not found a work-in-progress/duplicate/resolved/discarded issue.
@@ -18,7 +18,7 @@ body:
   - type: textarea
     attributes:
       label: Describe the improvement
-      placeholder: Explain how you see this enhancement, providing as many details as possible about it
+      placeholder: Explain how you see this enhancement, providing as many details as possible about it.
     validations:
       required: true
   - type: textarea
