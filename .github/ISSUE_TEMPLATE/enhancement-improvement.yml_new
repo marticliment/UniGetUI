@@ -23,7 +23,7 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: Describe how this improvement could help users.
+      label: Describe how this improvement could help users
       placeholder: For what would it be useful?
     validations:
       required: true
