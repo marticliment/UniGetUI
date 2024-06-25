@@ -1,19 +1,19 @@
 name: '🚑 Report a crash or a hang'
-description: UniGetUI is not launching, is hard-crashing or is hanging at some point
+description: UniGetUI is not launching, is hard-crashing or is hanging at some point.
 title: "[CRASH] (Enter your description here)"
 labels: ["bug", "important"]
 assignees: marticliment
 body:
   - type: checkboxes
     attributes:
-      label: Please confirm these before moving forward
+      label: Please confirm these before moving forward.
       description: Please confirm the following before posting your issue.
       options:
-        - label: I have tried deleting a folder named `.wingetui` placed on the user directory
+        - label: I have tried deleting a folder named `.wingetui` placed on the user directory.
           required: true
-        - label: I have tried reinstalling UniGetUI
+        - label: I have tried reinstalling UniGetUI.
           required: true
-        - label: I have tested that this issue has not been fixed in the latest [(beta or stable) release](https://github.com/marticliment/WingetUI/releases/).
+        - label: I have tested that this issue has not been fixed in the latest [(beta or stable) release].(https://github.com/marticliment/WingetUI/releases/).
           required: true
   - type: textarea
     attributes:
