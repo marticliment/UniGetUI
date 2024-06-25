@@ -26,21 +26,21 @@ body:
   - type: textarea
     attributes:
       label: Steps to reproduce the issue
-      placeholder: How can this issue be reproduced? List here, if known, the steps followed before this issue appeared
+      placeholder: How can this issue be reproduced? List here, if known, the steps followed before this issue appeared.
     validations:
       required: false
   - type: textarea
     attributes:
       label: WingetUI Log
       render: "text"
-      placeholder: Paste here your WingetUI logs. Click the button on the top-right corner of WingetUI -> WingetUI Log
+      placeholder: Paste here your WingetUI logs. Click the button on the top-right corner of WingetUI -> WingetUI Log.
     validations:
       required: true
   - type: textarea
     attributes:
       label: Package Managers Logs
       render: "text"
-      placeholder: Paste here your Package Manager logs. Click the button on the top-right corner of WingetUI -> Package Manager logs
+      placeholder: Paste here your Package Manager logs. Click the button on the top-right corner of WingetUI -> Package Manager logs.
     validations:
       required: true
   - type: textarea
