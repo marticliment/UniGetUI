@@ -14,7 +14,7 @@ rem clean old builds
 taskkill /im wingetui.exe /f
 
 rem Run tests
-dotnet test src/UniGetUI.sln
+dotnet test src/UniGetUI.sln -v q --nologo
 
 rem check exit code of the last command
 if %errorlevel% neq 0 (
@@ -27,7 +27,14 @@ dotnet clean src/UniGetUI.sln
 dotnet publish src/UniGetUI/UniGetUI.csproj /noLogo /property:Configuration=Release /property:Platform=x64
 
 rem sign code
-pushd src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish
+
+rmdir /Q /S unigetui_bin
+
+mkdir unigetui_bin
+robocopy src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish unigetui_bin *.* /MOVE /E
+rem pushd src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish
+pushd unigetui_bin
+"Y:\- Signing\signtool-x64\signtool.exe" sign /v /debug /fd SHA256 /tr "http://timestamp.acs.microsoft.com" /td SHA256 /dlib "Y:\- Signing\azure.codesigning.client\x64\Azure.CodeSigning.Dlib.dll" /dmdf "Y:\- Signing\metadata.json" C:\SomePrograms\WingetUI-Store\unigetui_bin\WingetUI.exe C:\SomePrograms\WingetUI-Store\unigetui_bin\WingetUI.dll
 echo .
 echo .
 echo You may want to sign now the following executables

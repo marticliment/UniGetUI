@@ -10,9 +10,7 @@ installer.iss
 Output/
 *.old
 vcredist.exe
-UniGetUIBin/
-UniGetUI_bin/
-UniGetUIBin.zip
+unigetui_bin/
 APIKEY.txt
 *.pyc
 WebBasedData/screenshot_database.xlsx

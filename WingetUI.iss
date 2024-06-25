@@ -222,15 +222,15 @@ Name: "portableinstall"; Description: "{cm:PortInst}"; GroupDescription: "{cm:In
 Name: "regularinstall"; Description: "{cm:RegInst}"; GroupDescription: "{cm:InstallType}"; Flags: exclusive   
 Name: "regularinstall\startmenuicon"; Description: "{cm:RegStartMmenuIcon}"; GroupDescription: "{cm:ShCuts}"; 
 Name: "regularinstall\desktopicon"; Description: "{cm:RegDesktopIcon}"; GroupDescription: "{cm:ShCuts}";
-Name: "chocoinstall"; Description: "Install Chocolatey"; GroupDescription: " ";
+Name: "regularinstall\chocoinstall"; Description: "Install Chocolatey"; GroupDescription: "{cm:ShCuts}";
 
 [Registry]
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue; Tasks: regularinstall
 
 [Files]
-Source: "src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
-Source: "src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
-Source: "src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish\choco-cli\*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall, chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
+Source: "unigetui_bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
+Source: "unigetui_bin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
+Source: "src\UniGetUI.PackageEngine.Managers.Chocolatey\choco-cli*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall\chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
 Source: "InstallerExtras\EnsureWinGet.ps1"; DestDir: "{tmp}"; Flags: deleteafterinstall
 
 
