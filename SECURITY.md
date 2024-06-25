@@ -2,8 +2,8 @@
 
 ## Supported Versions
 
-Only the latest version of WingetUI will be supported. Older releases won't be supported or maintained 
+We will only support and maintain the latest version of WingetUI. Any older releases will not receive support or maintenance.
 
 ## Reporting a Vulnerability
 
-Regarding vulnerabilities, please treat them as if they were regular bugs (report them through GitHub Issues).
+If you discover a vulnerability, please report it through GitHub Issues. Treat it as you would any other bug.
