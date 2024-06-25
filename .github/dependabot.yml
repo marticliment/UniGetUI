@@ -1,6 +1,6 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/"
+    directory: "/src/"
     schedule:
-      interval: "daily"
+      interval: "weekly"

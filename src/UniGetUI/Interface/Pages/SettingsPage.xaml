@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="UniGetUI.Interface.SettingsInterface"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:UniGetUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:UI="using:CommunityToolkit.WinUI"
+    xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    mc:Ignorable="d"
+    NavigationCacheMode="Required"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations">
+
+    <animations:Implicit.ShowAnimations>
+        <animations:TranslationAnimation Duration="0:0:0.25" From="0,100,0" To="0"/>
+        <animations:OpacityAnimation Duration="0:0:0.25" From="0" To="1"/>
+    </animations:Implicit.ShowAnimations>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <ScrollViewer Grid.Column="0" Grid.Row="0" HorizontalScrollMode="Disabled">
+            <Grid HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" MinWidth="0"/>
+                    <ColumnDefinition Width="100000*" MaxWidth="800"/>
+                    <ColumnDefinition Width="auto" MinWidth="0"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel x:Name="MainLayout" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Orientation="Vertical" Spacing="8" Margin="0,0,0,20">
+                    <widgets:Announcer
+                        x:Name="SettingsAnnouncer"
+                        Url="https://marticliment.com/resources/annoucements/unigetui"
+                        />
+                    <widgets:TranslatedTextBlock FontSize="40" FontWeight="Bold" WrappingMode="NoWrap" Text="WingetUI Settings" Suffix="                                                          ." HorizontalAlignment="Stretch"/>
+                    <widgets:SettingsEntry
+                        x:Name="GeneralSettingsExpander"
+                        Text="General preferences"
+                        UnderText="Language, theme and other miscellaneous preferences"
+                        Icon="settings"
+                        >
+                        <Toolkit:SettingsExpander.Items>
+                            <widgets:ComboboxCard
+                                x:Name="LanguageSelector"
+                                Text="WingetUI display language:"
+                                SettingName="PreferredLanguage"
+                                ValueChanged="LanguageSelector_ValueChanged"
+                                >
+
+                                <Toolkit:SettingsCard.Description>
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <widgets:TranslatedTextBlock Text="Is your language missing or incomplete?" Opacity=".8" VerticalAlignment="Center"/>
+                                        <HyperlinkButton
+                                        Padding="0"
+                                            NavigateUri="https://github.com/marticliment/WingetUI/wiki#translating-wingetui"
+                                        >
+                                            <widgets:TranslatedTextBlock Text="Become a translator"/>
+                                        </HyperlinkButton>
+                                    </StackPanel>
+                                </Toolkit:SettingsCard.Description>
+                            </widgets:ComboboxCard>
+                            <widgets:ButtonCard
+                                Text="Open the welcome wizard"
+                                ButtonText="Open"
+                                Click="OpenWelcomeWizard"
+                                IsEnabled="False"
+                            />
+                            <widgets:CheckboxCard
+                                Text="Update WingetUI automatically"
+                                SettingName="DisableAutoUpdateWingetUI"
+                                />
+                            <widgets:CheckboxCard
+                                x:Name="DisableAutoCheckForUpdates"
+                                Text="Check for package updates periodically"
+                                SettingName="DisableAutoCheckforUpdates"
+                                />
+                            <widgets:ComboboxCard
+                                x:Name="UpdatesCheckIntervalSelector"
+                                Text="Check for updates every:"
+                                SettingName="UpdatesCheckInterval"
+                                ValueChanged="UpdatesCheckIntervalSelector_ValueChanged"
+                                />
+                            <widgets:CheckboxCard
+                                Text="Update packages automatically"
+                                SettingName="AutomaticallyUpdatePackages"
+                                />
+                            <widgets:ComboboxCard
+                                x:Name="ThemeSelector"
+                                Text="Application theme:"
+                                SettingName="PreferredTheme"
+                                ValueChanged="ThemeSelector_ValueChanged"
+                                />
+                            <widgets:ButtonCard
+                                Text="Import settings from a local file"
+                                ButtonText="Import"
+                                Click="ImportSettings"
+                            />
+                            <widgets:ButtonCard
+                                Text="Export settings to a local file"
+                                ButtonText="Export"
+                                Click="ExportSettings"
+                            />
+                            <widgets:ButtonCard
+                                Text="Reset WingetUI"
+                                ButtonText="Reset"
+                                Click="ResetWingetUI"
+                            />
+                        </Toolkit:SettingsExpander.Items>
+                    </widgets:SettingsEntry>
+                    <widgets:SettingsEntry
+                            Text="Startup options"
+                            UnderText="WingetUI autostart behaviour, application launch settings"
+                            Icon="launch">
+                        <Toolkit:SettingsExpander.Items>
+                            <widgets:ButtonCard
+                                Text="Manage WingetUI autostart behaviour from the Settings app"
+                                ButtonText="Open"
+                                Click="EditAutostartSettings_Click"
+                            />
+                            <widgets:CheckboxCard
+                                Text="Update package indexes on launch"
+                                SettingName="DisableUpdateIndexes"
+                                />
+                            <widgets:CheckboxCard
+                                Text="Enable Scoop cleanup on launch"
+                                SettingName="EnableScoopCleanup"
+                                />
+                        </Toolkit:SettingsExpander.Items>
+                    </widgets:SettingsEntry>
+                    <widgets:SettingsEntry
+                            Text="User interface preferences"
+                            UnderText="Action when double-clicking packages, hide successful installations"
+                            Icon="interactive">
+                        <Toolkit:SettingsExpander.Items>
+                            <widgets:CheckboxCard
+                                Text="Do not remove successful operations from the list automatically"
+                                SettingName="MaintainSuccessfulInstalls"
+                                />
+                        </Toolkit:SettingsExpander.Items>
+                    </widgets:SettingsEntry>
+                    <widgets:SettingsEntry
+                            Text="Notification tray options"
+                            UnderText="WingetUI tray application preferences"
+                            Icon="systemtray">
+                        <Toolkit:SettingsExpander.Items>
+                            <widgets:CheckboxCard
+                                Text="Close WingetUI to the notification area"
+                                SettingName="DisableSystemTray"
+                                StateChanged="DisableSystemTray_StateChanged"
+                                />
+                            <widgets:CheckboxCard
+                                Text="Enable WingetUI notifications"
+                                SettingName="DisableNotifications"
+                                />
+                            <widgets:CheckboxCard
+                                Text="Show a notification when there are available updates"
+                                SettingName="DisableUpdatesNotifications"
+                                />
+                            <widgets:CheckboxCard
+                                Text="Show a notification when an installation fails"
+                                SettingName="DisableErrorNotifications"
+                                />
+                            <widgets:CheckboxCard
+                                Text="Show a notification when an installation finishes successfully"
+                                SettingName="DisableSuccessNotifications"
+                                />
+                        </Toolkit:SettingsExpander.Items>
+                    </widgets:SettingsEntry>
+                    <widgets:SettingsEntry
+                            Text="Backup installed packages"
+                            UnderText="Automatically save a list of all your installed packages to easily restore them."
+                            Icon="disk">
+                        <Toolkit:SettingsExpander.Items>
+                            <widgets:CheckboxCard
+                                Text="Periodically perform a backup of the installed packages"
+                                x:Name="EnablePackageBackupCheckBox"
+                                StateChanged="EnablePackageBackupCheckBox_StateChanged"
+                                SettingName="EnablePackageBackup"
+                                />
+                            <Toolkit:SettingsCard>
+                                <Toolkit:SettingsCard.Description>
+                                    <StackPanel Orientation="Vertical">
+                                        <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will include the complete list of the installed packages and their installation options. Ignored updates and skipped versions will also be saved." />
+                                        <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will NOT include any binary file nor any program's saved data." />
+                                        <widgets:TranslatedTextBlock Prefix=" ● " Text="The size of the backup is estimated to be less than 1MB." />
+                                        <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will be performed after login." />
+                                    </StackPanel>
+                                </Toolkit:SettingsCard.Description>
+                            </Toolkit:SettingsCard>
+                            <widgets:CheckboxCard
+                                Text="Add a timestamp to the backup file names"
+                                x:Name="EnableBackupTimestampingCheckBox"
+                                SettingName="EnableBackupTimestamping"
+                                />
+                            <widgets:TextboxCard
+                                Text="Set a custom backup file name"
+                                Placeholder="Leave empty for default"
+                                SettingName="ChangeBackupFileName"
+                                x:Name="ChangeBackupFileNameTextBox"
+                                />
+                            <widgets:ButtonCard
+                                Text="Change backup output directory"
+                                ButtonText="Select"
+                                x:Name="ChangeBackupDirectory"
+                                Click="ChangeBackupDirectory_Click"
+                                >
+                                <Toolkit:SettingsCard.Description>
+                                    <StackPanel Orientation="Horizontal" Spacing="5">
+                                        <!-- DO NOT MODIFY TEXTBLOCK NOR HYPERLINKBUTTONs. THEY HAVE BEEN HARDCODED IN THEIR CURRENT ORDER -->
+                                        <TextBlock Name="OutputBackupPathLabel" VerticalAlignment="Center"/>
+                                        <HyperlinkButton Name="ResetBackupPath" Click="ResetBackupPath_Click" />
+                                        <HyperlinkButton Name="OpenBackupPath" Click="OpenBackupPath_Click" />
+                                    </StackPanel>
+                                </Toolkit:SettingsCard.Description>
+
+                            </widgets:ButtonCard>
+                            <widgets:ButtonCard
+                                Text="Perform a backup now"
+                                ButtonText="Backup"
+                                x:Name="BackupNowButton"
+                                Click="DoBackup_Click"
+                                />
+                        </Toolkit:SettingsExpander.Items>
+                    </widgets:SettingsEntry>
+                    <widgets:SettingsEntry
+                            x:Name="AdminSettingsExpander"
+                            Text="Administrator privileges preferences"
+                            UnderText="Ask once or always for administrator rights, elevate installations by default"
+                            Icon="runasadmin">
+                        <Toolkit:SettingsExpander.Items>
+                            <widgets:CheckboxCard
+                                x:Name="DoCacheAdminRights"
+                                Text="Ask only once for administrator privileges (not recommended)"
+                                SettingName="DoCacheAdminRights"
+                                StateChanged="DoCacheAdminRights_StateChanged"
+                                />
+                            <widgets:CheckboxCard
+                                x:Name="DoCacheAdminRightsForBatches"
+                                Text="Ask for administrator privileges once for each batch of operations"
+                                SettingName="DoCacheAdminRightsForBatches"
+                                StateChanged="DoCacheAdminRights_StateChanged"
+                                />
+                        </Toolkit:SettingsExpander.Items>
+                    </widgets:SettingsEntry>
+                    <widgets:SettingsEntry
+                        x:Name="ExperimentalSettingsExpander"
+                            Text="Experimental settings and developer options"
+                            UnderText="Beta features and other options that shouldn't be touched"
+                            Icon="testing">
+                        <Toolkit:SettingsExpander.Items>
+                            <widgets:CheckboxCard
+                                x:Name="DisableWidgetsApi"
+                                Text="Enable background api (WingetUI Widgets and Sharing, port 7058)"
+                                SettingName="DisableApi"
+                                StateChanged="DisableWidgetsApi_StateChanged"
+                                />
+                            <widgets:CheckboxCard
+                                x:Name="UseUserGSudoToggle"
+                                Text="Use installed GSudo instead of the bundled one"
+                                SettingName="UseUserGSudo"
+                                StateChanged="UseUserGSudoToggle_StateChanged"
+                                />
+                            <widgets:CheckboxCard
+                                Text="Allow parallel installs (NOT RECOMMENDED)"
+                                SettingName="AllowParallelInstalls"
+                                />
+                            <widgets:CheckboxCard
+                                x:Name="UseSystemWinget"
+                                Text="Use system Winget (System language must be set to english)"
+                                SettingName="UseSystemWinget"
+                                StateChanged="UseSystemWinget_StateChanged"
+                                />
+                            <widgets:CheckboxCard
+                                x:Name="ForceArmWinget"
+                                Text="Force ARM compiled winget version (ONLY FOR ARM64 SYSTEMS)"
+                                SettingName="EnableArmWinget"
+                                StateChanged="ForceArmWinget_StateChanged"
+                                />
+                            <widgets:CheckboxCard
+                                x:Name="DisableDownloadingNewTranslations"
+                                Text="Download updated language files from GitHub automatically"
+                                SettingName="DisableLangAutoUpdater"
+                                StateChanged="DisableDownloadingNewTranslations_StateChanged"
+                                />
+                            <widgets:TextboxCard
+                                Text="Use a custom icon and screenshot database URL"
+                                Placeholder="Leave empty for default"
+                                SettingName="IconDataBaseURL"
+                                HelpUrl="https://www.marticliment.com/unigetui/help/icons-and-screenshots#custom-source"
+                                ValueChanged="TextboxCard_ValueChanged"
+                                />
+                        </Toolkit:SettingsExpander.Items>
+                    </widgets:SettingsEntry>
+                    <widgets:TranslatedTextBlock Margin="0,50,0,0" FontSize="30" WrappingMode="Wrap" FontWeight="Bold" Text="Package Managers" HorizontalAlignment="Stretch"/>
+                    <widgets:TranslatedTextBlock Margin="0" FontSize="15" Opacity="0.7" WrappingMode="Wrap" Text="By toggling a package manager off, you will no longer be able to see or update its packages." HorizontalAlignment="Stretch"/>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

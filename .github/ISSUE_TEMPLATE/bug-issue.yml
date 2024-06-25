@@ -1,5 +1,5 @@
 name: '🐞 Report an issue or a bug'
-description: Report issues or unexpected behaviours
+description: Report issues or unexpected behaviors
 title: "[BUG] (Enter your description here)"
 labels: ["bug"]
 assignees: marticliment
@@ -46,7 +46,7 @@ body:
   - type: textarea
     attributes:
       label: Relevant information
-      placeholder: Other relevant information about this issue. Perhaps if you have some special settings enabled or any other detail that could be related.
+      placeholder: Other relevant information about this issue. Perhaps you have some special settings enabled or any other detail that could be related.
     validations:
       required: false
   - type: textarea

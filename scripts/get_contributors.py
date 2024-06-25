@@ -35,7 +35,7 @@ for contributor in response.json():
 # contributorsInfo = {json.dumps(contributorsInfo, indent=2, ensure_ascii=False)}
 # """
 
-contributors_filepath = os.path.normpath(os.path.join(root_dir, "src/wingetui/Assets/Data/Contributors.list"))
+contributors_filepath = os.path.normpath(os.path.join(root_dir, "src/UniGetUI.Core.Data/Assets/Data/Contributors.list"))
 with open(contributors_filepath, "w", encoding="utf-8") as f:
     f.writelines(contributors)
 

@@ -1,1 +1,0 @@
-﻿This file forces MSBuild to copy the otherwise empty lib folder to WingetUI's bin folder

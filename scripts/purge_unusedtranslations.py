@@ -4,7 +4,7 @@ import os
 
 try:
     root_dir = os.path.join(os.path.dirname(__file__), "..")
-    os.chdir(os.path.normpath(os.path.join(root_dir, "wingetui/Core/Languages")))
+    os.chdir(os.path.normpath(os.path.join(root_dir, "UniGetUI/Core/Languages")))
 
     contents = ""
 
