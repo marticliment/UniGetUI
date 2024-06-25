@@ -16,12 +16,12 @@ body:
   - type: textarea
     attributes:
       label: Describe the new feature
-      placeholder: Explain how you see this new feature, providing as many details as possible about it
+      placeholder: Explain how you see this new feature, providing as many details as possible about it.
     validations:
       required: true
   - type: textarea
     attributes:
-      label: Describe how this new feature could help users.
+      label: Describe how this new feature could help users
       placeholder: For what would it be useful?
     validations:
       required: true
