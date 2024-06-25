@@ -5,12 +5,24 @@
 
 rem update resources
 python scripts/apply_versions.py
+
+pause
+
 pushd scripts
 python download_translations.py
 popd ..
 
 rem clean old builds
 taskkill /im wingetui.exe /f
+
+rem Run tests
+dotnet test src/UniGetUI.sln
+
+rem check exit code of the last command
+if %errorlevel% neq 0 (
+    echo "The tests failed!."
+    pause
+)
 
 rem build executable
 dotnet clean src/UniGetUI.sln
