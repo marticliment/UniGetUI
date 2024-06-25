@@ -11,12 +11,12 @@
 	  <SdkVersion>8.0.204</SdkVersion>
 	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	  <PublishSelfContained>true</PublishSelfContained>
-	  <FileVersion>3.1.0.0</FileVersion>
-	  <InformationalVersion>3.1.0-alpha0</InformationalVersion>
+<FileVersion>3.1.0.0</FileVersion>
+<InformationalVersion>3.1.0-beta0</InformationalVersion>
 	  <Product>UniGetUI</Product>
 	  <Authors>Martí Climent and the contributors</Authors>
 	  <PublisherName>Martí Climent</PublisherName>
-	  <ApplicationVersion>3.1.0-alpha0</ApplicationVersion>
+<ApplicationVersion>3.1.0-beta0</ApplicationVersion>
 	  <Copyright>2024, Martí Climent</Copyright>
 	  <Nullable>enable</Nullable>
   </PropertyGroup>

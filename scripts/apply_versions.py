@@ -45,11 +45,10 @@ try:
     for csproj_file in csproj_files:
         # Perform your desired operations on each .csproj file
         # For example, you can call the `fileReplaceLinesWith` function here
-        print(csproj_file)
         fileReplaceLinesWith(csproj_file, {
-            "<FileVersion>": f"{versionISS}</FileVersion>",
-            "<InformationalVersion>": f"{versionName}</InformationalVersion>",
-            "<ApplicationVersion>": f"{versionName}</ApplicationVersion>",
+            "<FileVersion>": f"{versionISS}</FileVersion>\n",
+            "<InformationalVersion>": f"{versionName}</InformationalVersion>\n",
+            "<ApplicationVersion>": f"{versionName}</ApplicationVersion>\n",
             # Your replacement dictionary here
         }, encoding="utf-8-sig")
 

@@ -6,8 +6,6 @@
 rem update resources
 python scripts/apply_versions.py
 
-pause
-
 pushd scripts
 python download_translations.py
 popd ..
