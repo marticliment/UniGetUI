@@ -83,8 +83,8 @@ namespace UniGetUI.Core.Tools
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName = "cmd.exe",
-                    Arguments = "/C where " + command,
+                    FileName = Path.Join(Environment.SystemDirectory, "where.exe"),
+                    Arguments = command,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
