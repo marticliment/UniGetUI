@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11707,
-        "done": 5076,
-        "packages_with_icon": 5076,
-        "packages_with_screenshot": 561,
-        "total_screenshots": 1749
+        "done": 5077,
+        "packages_with_icon": 5077,
+        "packages_with_screenshot": 566,
+        "total_screenshots": 1761
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -5693,19 +5693,31 @@
         },
         "brave": {
             "icon": "https://images2.imgbox.com/ba/f3/TN24YrQw_o.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/RZBLqdDV/Brave-headpic.png",
+                "https://i.postimg.cc/tg9nGmmW/image.png"
+            ]
         },
         "brave-beta": {
             "icon": "https://images2.imgbox.com/ba/f3/TN24YrQw_o.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/RZBLqdDV/Brave-headpic.png",
+                "https://i.postimg.cc/tg9nGmmW/image.png"
+            ]
         },
         "brave-dev": {
             "icon": "https://images2.imgbox.com/ba/f3/TN24YrQw_o.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/RZBLqdDV/Brave-headpic.png",
+                "https://i.postimg.cc/tg9nGmmW/image.png"
+            ]
         },
         "brave-nightly": {
             "icon": "https://images2.imgbox.com/ba/f3/TN24YrQw_o.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/RZBLqdDV/Brave-headpic.png",
+                "https://i.postimg.cc/tg9nGmmW/image.png"
+            ]
         },
         "breaktimer": {
             "icon": "",
@@ -19417,8 +19429,13 @@
             "images": []
         },
         "insomnia": {
-            "icon": "",
-            "images": []
+            "icon": "https://community.chocolatey.org/content/packageimages/insomnia-rest-api-client.2023.9.2.png",
+            "images": [
+                "https://i.postimg.cc/yNCXgPp8/image.png",
+                "https://i.postimg.cc/B6qTNv0W/image.png",
+                "https://i.postimg.cc/Bbbx9wbM/image.png",
+                "https://i.postimg.cc/Qt0pzr8F/image.png"
+            ]
         },
         "insomnia-designer": {
             "icon": "https://community.chocolatey.org/content/packageimages/insomnia-designer.2020.5.2.png",
