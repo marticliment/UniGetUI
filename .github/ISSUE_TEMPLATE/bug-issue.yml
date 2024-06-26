@@ -11,11 +11,11 @@ body:
       options:
         - label: I have searched for my issue and have not found a work-in-progress/duplicate/resolved issue.
           required: true
-        - label: I have tested that this issue has not been fixed in the latest [(beta or stable) release].(https://github.com/marticliment/WingetUI/releases/).
+        - label: I have tested that this issue has not been fixed in the latest [(beta or stable) release](https://github.com/marticliment/WingetUI/releases/).
           required: true
         - label: I have checked the [FAQ](https://github.com/marticliment/WingetUI#frequently-asked-questions) section for solutions.
           required: true
-        - label: This issue is about a bug (if it is not, please use the [correct template].(https://github.com/marticliment/WingetUI/issues/new/choose))
+        - label: This issue is about a bug (if it is not, please use the [correct template](https://github.com/marticliment/WingetUI/issues/new/choose)).
           required: true
   - type: input
     attributes:
@@ -45,7 +45,7 @@ body:
     attributes:
       label: WingetUI Log
       render: "text"
-      placeholder: Paste here your WingetUI logs. Click the button on the top-right corner of WingetUI -> WingetUI Log.
+      placeholder: Paste here your UniGetUI logs. Click the button on the top-right corner of WingetUI -> WingetUI Log.
     validations:
       required: true
   - type: textarea
