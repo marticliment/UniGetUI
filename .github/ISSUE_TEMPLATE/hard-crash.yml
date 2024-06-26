@@ -13,7 +13,7 @@ body:
           required: true
         - label: I have tried reinstalling WingetUI.
           required: true
-        - label: I have tested that this issue has not been fixed in the latest [(beta or stable) release].(https://github.com/marticliment/WingetUI/releases/).
+        - label: I have tested that this issue has not been fixed in the latest [(beta or stable) release](https://github.com/marticliment/WingetUI/releases/).
           required: true
   - type: textarea
     attributes:
