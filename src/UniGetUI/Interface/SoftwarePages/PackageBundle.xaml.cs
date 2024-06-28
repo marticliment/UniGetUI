@@ -16,8 +16,10 @@ using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Classes.Manager;
+using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -28,7 +30,7 @@ using Windows.UI.Core;
 
 namespace UniGetUI.Interface
 {
-    public partial class PackageBundlePage : Page, IPageWithKeyboardShortcuts
+    /*public partial class PackageBundlePage : Page, IPageWithKeyboardShortcuts
     {
         public ObservableCollection<BundledPackage> Packages = new();
         public SortableObservableCollection<BundledPackage> FilteredPackages = new() { SortingSelector = (a) => (a.Package.Name) };
@@ -179,11 +181,11 @@ namespace UniGetUI.Interface
         }
 
 
-        protected void AddPackageToSourcesList(Package package)
+        protected void AddPackageToSourcesList(IPackage package)
         {
             if (!Initialized)
                 return;
-            ManagerSource source = package.Source;
+            /*ManagerSource source = package.Source;
             if (!UsedManagers.Contains(source.Manager))
             {
                 UsedManagers.Add(source.Manager);
@@ -241,7 +243,7 @@ namespace UniGetUI.Interface
          *  DO NOT MODIFY THE UPPER PART OF THIS FILE
          * 
          * 
-         */
+         
 
         public void ClearList()
         {
@@ -720,7 +722,7 @@ namespace UniGetUI.Interface
                 ManagerSourceReference.Add(manager.Name, manager);
             }
 
-            foreach (SerializableValidPackage_v1 DeserializedPackage in DeserializedData.packages)
+            foreach (SerializablePackage_v1 DeserializedPackage in DeserializedData.packages)
             {
                 // Check if the manager exists
                 if (!ManagerSourceReference.ContainsKey(DeserializedPackage.ManagerName))
@@ -743,7 +745,7 @@ namespace UniGetUI.Interface
                     continue;
                 }
 
-                ManagerSource? Source = PackageManager.Properties.DefaultSource;
+                IManagerSource? Source = PackageManager.Properties.DefaultSource;
 
                 if (PackageManager.Capabilities.SupportsCustomSources)
                 {
@@ -758,7 +760,7 @@ namespace UniGetUI.Interface
                     }
                 }
 
-                Package package = new(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, Source, PackageManager);
+                IPackage? package = new(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, Source, PackageManager);
 
                 InstallationOptions InstallOptions = InstallationOptions.FromSerialized(DeserializedPackage.InstallationOptions, package);
                 SerializableUpdatesOptions_v1 UpdateOptions = DeserializedPackage.Updates;
@@ -864,5 +866,5 @@ namespace UniGetUI.Interface
         }
 
 
-    }
+    }*/
 }

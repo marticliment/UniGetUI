@@ -3,67 +3,21 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Classes.Manager;
+using UniGetUI.PackageEngine.Classes.Serializable;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.Classes
 {
-
-    public class SerializableBundle_v1
-    {
-        public double export_version { get; set; } = 2.0;
-        public List<SerializableValidPackage_v1> packages { get; set; } = new();
-        public string incompatible_packages_info { get; set; } = "Incompatible packages cannot be installed from WingetUI, but they have been listed here for logging purposes.";
-        public List<SerializableIncompatiblePackage_v1> incompatible_packages { get; set; } = new();
-
-    }
-    
-    public class SerializableUpdatesOptions_v1
-    {
-        public bool UpdatesIgnored { get; set; } = false;
-        public string IgnoredVersion { get; set; } = "";
-        public static async Task<SerializableUpdatesOptions_v1> FromPackageAsync(Package package)
-        {
-            SerializableUpdatesOptions_v1 Serializable = new();
-            Serializable.UpdatesIgnored = await package.HasUpdatesIgnoredAsync();
-            Serializable.IgnoredVersion = await package.GetIgnoredUpdatesVersionAsync();
-            return Serializable;
-        }
-    }
-
-    public class SerializableValidPackage_v1
-    {
-        public string Id { get; set; } = "";
-        public string Name { get; set; } = "";
-        public string Version { get; set; } = "";
-        public string Source { get; set; } = "";
-        public string ManagerName { get; set; } = "";
-        public SerializableInstallationOptions_v1 InstallationOptions { get; set; } = new();
-        public SerializableUpdatesOptions_v1 Updates { get; set; } = new();
-    }
-
-    
-
-    public class SerializableIncompatiblePackage_v1
-    {
-        public string Id { get; set; } = "";
-        public string Name { get; set; } = "";
-        public string Version { get; set; } = "";
-        public string Source { get; set; } = "";
-    }
-
-
-
-    
-
     public class BundledPackage : INotifyPropertyChanged, IIndexableListItem
     {
-        public Package Package { get; }
+        public IPackage Package { get; }
         public int Index { get; set; }
         public bool IsValid { get; set; } = true;
-        public InstallationOptions InstallOptions { get; set; }
+        public IInstallationOptions InstallOptions { get; set; }
         public SerializableUpdatesOptions_v1 UpdateOptions;
 
         public double DrawOpacity = 1;
@@ -116,15 +70,18 @@ namespace UniGetUI.PackageEngine.Classes
                 return Package.Source.IconId;
             }
         }
-        public static async Task<BundledPackage> FromPackageAsync(Package package)
+        public static async Task<BundledPackage> FromPackageAsync(IPackage package)
         {
             InstallationOptions iOptions = await InstallationOptions.FromPackageAsync(package);
-            SerializableUpdatesOptions_v1 uOptions = await SerializableUpdatesOptions_v1.FromPackageAsync(package);
+            SerializableUpdatesOptions_v1 uOptions = new();
+
+            uOptions.UpdatesIgnored = await package.HasUpdatesIgnoredAsync();
+            uOptions.IgnoredVersion = await package.GetIgnoredUpdatesVersionAsync();
 
             return new BundledPackage(package, iOptions, uOptions);
         }
 
-        public BundledPackage(Package package, InstallationOptions options, SerializableUpdatesOptions_v1 updateOptions)
+        public BundledPackage(IPackage package, IInstallationOptions options, SerializableUpdatesOptions_v1 updateOptions)
         {
             Package = package;
             InstallOptions = options;
@@ -139,9 +96,11 @@ namespace UniGetUI.PackageEngine.Classes
 
         public void RemoveFromList(object sender, RoutedEventArgs e)
         {
-            MainApp.Instance.MainWindow.NavigationPage.BundlesPage.Packages.Remove(this);
+            //TODO: FIXME
+            /*MainApp.Instance.MainWindow.NavigationPage.BundlesPage.Packages.Remove(this);
             MainApp.Instance.MainWindow.NavigationPage.BundlesPage.FilteredPackages.Remove(this);
             MainApp.Instance.MainWindow.NavigationPage.BundlesPage.UpdateCount();
+            */
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
@@ -151,9 +110,9 @@ namespace UniGetUI.PackageEngine.Classes
 
 
 
-        public virtual SerializableValidPackage_v1 AsSerializable()
+        public virtual SerializablePackage_v1 AsSerializable()
         {
-            SerializableValidPackage_v1 Serializable = new();
+            SerializablePackage_v1 Serializable = new();
             Serializable.Id = Id;
             Serializable.Name = Name;
             Serializable.Version = Package.Version;
@@ -174,7 +133,7 @@ namespace UniGetUI.PackageEngine.Classes
             return Serializable;
         }
 
-        public static Package FromSerialized(SerializableValidPackage_v1 DeserializedPackage, PackageManager manager, ManagerSource source)
+        public static Package FromSerialized(SerializablePackage_v1 DeserializedPackage, PackageManager manager, ManagerSource source)
         {
             return new Package(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, source, manager);
         }
@@ -244,7 +203,7 @@ namespace UniGetUI.PackageEngine.Classes
             __manager = manager;
         }
 
-        public InvalidBundledPackage(Package package) : base(package, InstallationOptions.FromPackage(package), new SerializableUpdatesOptions_v1())
+        public InvalidBundledPackage(IPackage package) : base(package, InstallationOptions.FromPackage(package), new SerializableUpdatesOptions_v1())
         {
             IsValid = false;
             DrawOpacity = 0.5;
@@ -272,7 +231,7 @@ namespace UniGetUI.PackageEngine.Classes
             await Task.Delay(0);
         }
 
-        public override SerializableValidPackage_v1 AsSerializable()
+        public override SerializablePackage_v1 AsSerializable()
         {
             throw new System.Exception("Cannot serialize an invalid package as a bundled package. Call Serialized_Incompatible() instead ");
         }

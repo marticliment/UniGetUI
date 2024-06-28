@@ -819,7 +819,6 @@
                 </Grid>
 
                 <ListView x:Name="__package_list" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"
-                    ItemsSource="{x:Bind FilteredPackages, Mode=TwoWay}"
                     ItemTemplate="{StaticResource PackageTemplate}"
                     CanBeScrollAnchor="False"
                 >

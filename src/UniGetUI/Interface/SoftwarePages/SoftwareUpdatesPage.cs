@@ -9,6 +9,7 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -152,7 +153,7 @@ namespace UniGetUI.Interface.SoftwarePages
             return ContextMenu;
         }
 
-        protected override void WhenShowingContextMenu(Package package)
+        protected override void WhenShowingContextMenu(IPackage package)
         {
             if(MenuAsAdmin == null || MenuInteractive == null || MenuskipHash == null)
             {
@@ -399,7 +400,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null) return;
 
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
@@ -407,7 +408,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null) return;
 
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
@@ -416,7 +417,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null) return;
 
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
@@ -425,7 +426,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null) return;
 
             MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
@@ -434,7 +435,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null) return;
 
             MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, IgnoreParallelInstalls: true));
@@ -443,7 +444,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null) return;
 
             MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
@@ -451,7 +452,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null) return;
 
             _ = package.AddToIgnoredUpdatesAsync();
@@ -460,7 +461,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuSkipVersion_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null) return;
 
             _ = package.AddToIgnoredUpdatesAsync((package).NewVersion);

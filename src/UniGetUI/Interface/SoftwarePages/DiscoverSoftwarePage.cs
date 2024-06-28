@@ -5,6 +5,7 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
@@ -258,7 +259,7 @@ namespace UniGetUI.Interface.SoftwarePages
         }
 #pragma warning restore
 
-        protected override void WhenShowingContextMenu(Package package)
+        protected override void WhenShowingContextMenu(IPackage package)
         {
             if (MenuAsAdmin == null || MenuInteractive == null || MenuSkipHash == null)
             {
@@ -271,10 +272,10 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuSkipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
         }
 
-        private async void ExportSelection_Click(object sender, RoutedEventArgs e)
+        private void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
-            await MainApp.Instance.MainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.GetCheckedPackages());
+            PEInterface.PackageBundlesLoader.AddPackages(FilteredPackages.GetCheckedPackages());
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs e)
@@ -290,7 +291,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null) return;
 
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
@@ -298,7 +299,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null) return;
 
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
@@ -307,7 +308,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null) return;
 
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
@@ -316,7 +317,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null) return;
             
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
