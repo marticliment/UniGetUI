@@ -10,6 +10,7 @@ using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Serializable;
 
@@ -27,7 +28,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         SerializableUpdatesOptions_v1 updates_options;
         SerializableInstallationOptions_v1 installation_options;
 
-        public ImportedPackage(SerializablePackage_v1 raw_data, PackageManager manager, ManagerSource source)
+        public ImportedPackage(SerializablePackage_v1 raw_data, IPackageManager manager, IManagerSource source)
             : base(raw_data.Name, raw_data.Id, raw_data.Version, source, manager)
         {
             installation_options = raw_data.InstallationOptions;

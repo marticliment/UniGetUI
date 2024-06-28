@@ -1,21 +1,30 @@
-﻿using Microsoft.UI.Xaml;
+﻿using ExternalLibraries.Pickers;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Classes;
+using UniGetUI.PackageEngine.Classes.Manager;
+using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.PackageLoader;
+using Windows.Media.Devices;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -27,29 +36,29 @@ namespace UniGetUI.Interface.SoftwarePages
 
             BetterMenuItem? MenuAsAdmin;
             BetterMenuItem? MenuInteractive;
-            BetterMenuItem? MenuRemoveData;
+            BetterMenuItem? MenuSkipHash;
 
             public NewPackageBundlesPage()
             : base(new PackagesPageData()
             {
-                DisableAutomaticPackageLoadOnStart = false,
+                DisableAutomaticPackageLoadOnStart = true,
                 MegaQueryBlockEnabled = false,
                 ShowLastLoadTime = false,
                 PackagesAreCheckedByDefault = false,
                 DisableSuggestedResultsRadio = true,
-                PageName = "Installed",
+                PageName = "Bundles",
 
-                Loader = PEInterface.InstalledPackagesLoader,
+                Loader = PEInterface.PackageBundlesLoader,
                 PageRole = OperationType.Uninstall,
 
-                NoPackages_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
-                NoPackages_SourcesText = CoreTools.Translate("No packages were found"),
-                NoPackages_SubtitleText_Base = CoreTools.Translate("No packages were found"),
+                NoPackages_BackgroundText = CoreTools.Translate("Add packages or open an existing package bundle"),
+                NoPackages_SourcesText = CoreTools.Translate("Add packages to start"),
+                NoPackages_SubtitleText_Base = CoreTools.Translate("The current bundle has no packages. Add some packages to get started"),
                 MainSubtitle_StillLoading = CoreTools.Translate("Loading packages"),
                 NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
 
-                PageTitle = CoreTools.Translate("Installed Packages"),
-                Glyph = "\uE977"
+                PageTitle = CoreTools.Translate("Package Bundles"),
+                Glyph = "\uF133"
             })
             {
             }
@@ -59,8 +68,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 BetterMenu menu = new();
                 BetterMenuItem menuUninstall = new()
                 {
-                    Text = "Uninstall",
-                    IconName = "trash",
+                    Text = "Install",
+                    IconName = "newversion",
                     KeyboardAcceleratorTextOverride = "Ctrl+Enter"
                 };
                 menuUninstall.Click += MenuUninstall_Invoked;
@@ -81,7 +90,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 MenuAsAdmin = new BetterMenuItem
                 {
-                    Text = "Uninstall as administrator",
+                    Text = "Install as administrator",
                     IconName = "runasadmin"
                 };
                 MenuAsAdmin.Click += MenuAsAdmin_Invoked;
@@ -89,48 +98,31 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 MenuInteractive = new BetterMenuItem
                 {
-                    Text = "Interactive uninstall",
+                    Text = "Interactive installation",
                     IconName = "interactive"
                 };
                 MenuInteractive.Click += MenuInteractive_Invoked;
                 menu.Items.Add(MenuInteractive);
 
-                MenuRemoveData = new BetterMenuItem
+                MenuSkipHash = new BetterMenuItem
                 {
-                    Text = "Uninstall and remove data",
-                    IconName = "menu_close"
+                    Text = "Skip hash checks",
+                    IconName = "checksum"
                 };
-                MenuRemoveData.Click += MenuRemoveData_Invoked;
-                menu.Items.Add(MenuRemoveData);
+                MenuSkipHash.Click += MenuRemoveData_Invoked;
+                menu.Items.Add(MenuSkipHash);
 
                 menu.Items.Add(new MenuFlyoutSeparator());
 
-                BetterMenuItem menuReinstall = new()
+                BetterMenuItem menuRemoveFromList = new()
                 {
-                    Text = "Reinstall package",
-                    IconName = "newversion"
+                    Text = "Remove from list",
+                    IconName = "trash"
                 };
-                menuReinstall.Click += MenuReinstall_Invoked;
-                menu.Items.Add(menuReinstall);
-
-                BetterMenuItem menuUninstallThenReinstall = new()
-                {
-                    Text = "Uninstall package, then reinstall it",
-                    IconName = "undelete"
-                };
-                menuUninstallThenReinstall.Click += MenuUninstallThenReinstall_Invoked;
-                menu.Items.Add(menuUninstallThenReinstall);
-
+                menuRemoveFromList.Click += MenuRemoveFromList_Invoked;
+                menu.Items.Add(menuRemoveFromList);
                 menu.Items.Add(new MenuFlyoutSeparator());
-
-                BetterMenuItem menuIgnorePackage = new()
-                {
-                    Text = "Ignore updates for this package",
-                    IconName = "pin"
-                };
-                menuIgnorePackage.Click += MenuIgnorePackage_Invoked;
-                menu.Items.Add(menuIgnorePackage);
-
+                
                 menu.Items.Add(new MenuFlyoutSeparator());
 
                 BetterMenuItem menuShare = new()
@@ -155,50 +147,50 @@ namespace UniGetUI.Interface.SoftwarePages
 
             public override void GenerateToolBar()
             {
-                AppBarButton UninstallSelected = new();
-                AppBarButton UninstallAsAdmin = new();
-                AppBarButton UninstallInteractive = new();
-                AppBarButton InstallationSettings = new();
-
+                AppBarButton OpenBundle = new();
+                AppBarButton NewBundle = new();
+                AppBarButton InstallPackages = new();
+                AppBarButton InstallAsAdmin = new();
+                AppBarButton InstallInteractive = new();
+                AppBarButton InstallSkipHash = new();
+                AppBarButton RemoveSelected = new();
+                AppBarButton ExportBundle = new();
                 AppBarButton PackageDetails = new();
                 AppBarButton SharePackage = new();
-
-                AppBarButton IgnoreSelected = new();
-                AppBarButton ManageIgnored = new();
-                AppBarButton ExportSelection = new();
-
                 AppBarButton HelpButton = new();
 
-                ToolBar.PrimaryCommands.Add(UninstallSelected);
-                ToolBar.PrimaryCommands.Add(UninstallAsAdmin);
-                ToolBar.PrimaryCommands.Add(UninstallInteractive);
+                ToolBar.PrimaryCommands.Add(NewBundle);
+                ToolBar.PrimaryCommands.Add(OpenBundle);
+                ToolBar.PrimaryCommands.Add(ExportBundle);
                 ToolBar.PrimaryCommands.Add(new AppBarSeparator());
-                ToolBar.PrimaryCommands.Add(InstallationSettings);
+                ToolBar.PrimaryCommands.Add(InstallPackages);
+                ToolBar.PrimaryCommands.Add(InstallAsAdmin);
+                ToolBar.PrimaryCommands.Add(InstallInteractive);
+                ToolBar.PrimaryCommands.Add(InstallSkipHash);
+                ToolBar.PrimaryCommands.Add(new AppBarSeparator());
+                ToolBar.PrimaryCommands.Add(new AppBarSeparator());
+                ToolBar.PrimaryCommands.Add(RemoveSelected);
                 ToolBar.PrimaryCommands.Add(new AppBarSeparator());
                 ToolBar.PrimaryCommands.Add(PackageDetails);
                 ToolBar.PrimaryCommands.Add(SharePackage);
                 ToolBar.PrimaryCommands.Add(new AppBarSeparator());
-                ToolBar.PrimaryCommands.Add(IgnoreSelected);
-                ToolBar.PrimaryCommands.Add(ManageIgnored);
-                ToolBar.PrimaryCommands.Add(new AppBarSeparator());
-                ToolBar.PrimaryCommands.Add(ExportSelection);
-                ToolBar.PrimaryCommands.Add(new AppBarSeparator());
                 ToolBar.PrimaryCommands.Add(HelpButton);
 
                 Dictionary<AppBarButton, string> Labels = new()
-            { // Entries with a trailing space are collapsed
-              // Their texts will be used as the tooltip
-                { UninstallSelected,    CoreTools.Translate("Uninstall selected packages") },
-                { UninstallAsAdmin,     " " + CoreTools.Translate("Uninstall as administrator") },
-                { UninstallInteractive, " " + CoreTools.Translate("Interactive uninstall") },
-                { InstallationSettings, " " + CoreTools.Translate("Installation options") },
-                { PackageDetails,       " " + CoreTools.Translate("Package details") },
-                { SharePackage,         " " + CoreTools.Translate("Share") },
-                { IgnoreSelected,       CoreTools.Translate("Ignore selected packages") },
-                { ManageIgnored,        CoreTools.Translate("Manage ignored updates") },
-                { ExportSelection,      CoreTools.Translate("Add selection to bundle") },
-                { HelpButton,           CoreTools.Translate("Help") }
-            };
+                { // Entries with a trailing space are collapsed
+                  // Their texts will be used as the tooltip
+                    { NewBundle,              CoreTools.Translate("New bundle") },
+                    { InstallPackages,        CoreTools.Translate("Install selection") },
+                    { InstallAsAdmin,     " " + CoreTools.Translate("Uninstall as administrator") },
+                    { InstallInteractive, " " + CoreTools.Translate("Interactive uninstall") },
+                    { InstallSkipHash, " " + CoreTools.Translate("Skip integrity checks") },
+                    { OpenBundle,             CoreTools.Translate("Open existing bundle") },
+                    { RemoveSelected,         CoreTools.Translate("Remove selection from bundle") },
+                    { ExportBundle,           CoreTools.Translate("Save bundle as") },
+                    { PackageDetails,         " " + CoreTools.Translate("Package details") },
+                    { SharePackage,           " " + CoreTools.Translate("Share") },
+                    { HelpButton,             CoreTools.Translate("Help") }
+                };
 
                 foreach (AppBarButton toolButton in Labels.Keys)
                 {
@@ -209,41 +201,87 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
 
                 Dictionary<AppBarButton, string> Icons = new()
-            {
-                { UninstallSelected,      "trash" },
-                { UninstallAsAdmin,       "runasadmin" },
-                { UninstallInteractive,   "interactive" },
-                { InstallationSettings,   "options" },
-                { PackageDetails,         "info" },
-                { SharePackage,           "share" },
-                { IgnoreSelected,         "pin" },
-                { ManageIgnored,          "clipboard_list" },
-                { ExportSelection,        "add_to" },
-                { HelpButton,             "help" }
-            };
+                {
+                    { NewBundle,              "add_to" },
+                    { InstallPackages,        "newversion" },
+                    { InstallAsAdmin,       "runasadmin" },
+                    { InstallInteractive,   "interactive" },
+                    { InstallSkipHash,   "checksum" },
+                    { OpenBundle,             "openfolder" },
+                    { RemoveSelected,         "trash" },
+                    { ExportBundle,           "save" },
+                    { PackageDetails,         "info" },
+                    { SharePackage,           "share" },
+                    { HelpButton,             "help" }
+                };
 
                 foreach (AppBarButton toolButton in Icons.Keys)
                     toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
-                PackageDetails.Click += (s, e) => ShowDetailsForPackage(SelectedItem);
-
-                ExportSelection.Click += ExportSelection_Click;
-                HelpButton.Click += (s, e) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
-                InstallationSettings.Click += (s, e) => ShowInstallationOptionsForPackage(SelectedItem);
-                ManageIgnored.Click += async (s, e) => await MainApp.Instance.MainWindow.NavigationPage.ManageIgnoredUpdatesDialog();
-                IgnoreSelected.Click += async (s, e) =>
+                PackageDetails.Click += (s, e) =>
                 {
-                    foreach (Package package in FilteredPackages.GetCheckedPackages())
-                    {
-                        PEInterface.UpgradablePackagesLoader.Remove(package);
-                        await package.AddToIgnoredUpdatesAsync();
-                    }
+                    Package? package = SelectedItem as Package;
+                    if (package != null)
+                        _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package, OperationType.None);
                 };
 
-                UninstallSelected.Click += (s, e) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
-                UninstallAsAdmin.Click += (s, e) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), elevated: true);
-                UninstallInteractive.Click += (s, e) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), interactive: true);
-                SharePackage.Click += (s, e) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
+                HelpButton.Click += (s, e) => { MainApp.Instance.MainWindow.NavigationPage.ShowHelp(); };
+
+                NewBundle.Click += (s, e) =>
+                {
+                    FilteredPackages.Clear();
+                };
+
+                RemoveSelected.Click += (s, e) =>
+                {
+                    foreach (Package package in FilteredPackages.GetCheckedPackages())
+                        PEInterface.PackageBundlesLoader.Remove(package);
+                };
+
+                InstallPackages.Click += async (s, e) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages());
+                InstallSkipHash.Click += async (s, e) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), skiphash: true);
+                InstallInteractive.Click += async (s, e) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), interactive: true);
+                InstallAsAdmin.Click += async (s, e) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), elevated: true);
+
+
+                OpenBundle.Click += (s, e) =>
+                {
+                    FilteredPackages.Clear();
+                    OpenFile();
+                };
+
+                ExportBundle.Click += (s, e) =>
+                {
+                    SaveFile();
+                };
+
+                SharePackage.Click += (s, e) =>
+                {
+                    Package? package = SelectedItem as Package;
+                    if (package != null) MainApp.Instance.MainWindow.SharePackage(package);
+                };
+
+            }
+
+            public async Task ImportAndInstallPackage(IEnumerable<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? skiphash = null)
+            {
+                MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Preparing packages, please wait..."));
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
+                {
+                    ImportedPackage? imported = package as ImportedPackage;
+                    if (imported != null) await imported.RegisterPackage();
+                }
+
+                MainApp.Instance.MainWindow.HideLoadingDialog();
+
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
+                {
+                    if (package is Package)
+                    {
+                        MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
+                            await InstallationOptions.FromPackageAsync(package, elevated, interactive, skiphash)));
+                    }
+                }
             }
 
             protected override void WhenPackageCountUpdated()
@@ -254,17 +292,13 @@ namespace UniGetUI.Interface.SoftwarePages
 #pragma warning disable
             protected override void WhenPackagesLoaded(ReloadReason reason)
             {
-                if (!HasDoneBackup)
-                {
-                    if (Settings.Get("EnablePackageBackup"))
-                        _ = BackupPackages();
-                }
+                return;
             }
 #pragma warning restore
 
             protected override void WhenShowingContextMenu(IPackage package)
             {
-                if (MenuAsAdmin == null || MenuInteractive == null || MenuRemoveData == null)
+                if (MenuAsAdmin == null || MenuInteractive == null || MenuSkipHash == null)
                 {
                     Logger.Error("Menu items are null on InstalledPackagesTab");
                     return;
@@ -272,7 +306,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 MenuAsAdmin.IsEnabled = package.Manager.Capabilities.CanRunAsAdmin;
                 MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
-                MenuRemoveData.IsEnabled = package.Manager.Capabilities.CanRemoveDataOnUninstall;
+                MenuSkipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
             }
 
             private void ExportSelection_Click(object sender, RoutedEventArgs e)
@@ -298,49 +332,6 @@ namespace UniGetUI.Interface.SoftwarePages
                         MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package,
                             await InstallationOptions.FromPackageAsync(package, elevated, interactive, remove_data: remove_data)));
                     }
-                }
-            }
-
-            public async Task BackupPackages()
-            {
-
-                try
-                {
-                    // TODO: FIXME
-
-                    Logger.Debug("Starting package backup");
-                    /*List<BundledPackage> packagestoExport = new();
-                    foreach (Package package in Loader.Packages)
-                        packagestoExport.Add(await BundledPackage.FromPackageAsync(package));
-
-                    string BackupContents = await PackageBundlePage.GetBundleStringFromPackages(packagestoExport.ToArray(), BundleFormatType.JSON);
-
-                    string dirName = Settings.GetValue("ChangeBackupOutputDirectory");
-                    if (dirName == "")
-                        dirName = CoreData.UniGetUI_DefaultBackupDirectory;
-
-                    if (!Directory.Exists(dirName))
-                        Directory.CreateDirectory(dirName);
-
-                    string fileName = Settings.GetValue("ChangeBackupFileName");
-                    if (fileName == "")
-                        fileName = CoreTools.Translate("{pcName} installed packages", new Dictionary<string, object?> { { "pcName", Environment.MachineName } });
-
-                    if (Settings.Get("EnableBackupTimestamping"))
-                        fileName += " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
-
-                    fileName += ".json";
-
-                    string filePath = Path.Combine(dirName, fileName);
-                    await File.WriteAllTextAsync(filePath, BackupContents);
-                    HasDoneBackup = true;
-                    Logger.ImportantInfo("Backup saved to " + filePath);
-                */
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error("An error occurred while performing a backup");
-                    Logger.Error(ex);
                 }
             }
 
@@ -421,6 +412,208 @@ namespace UniGetUI.Interface.SoftwarePages
                     ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package));
                 }
             }
+            private void MenuRemoveFromList_Invoked(object sender, RoutedEventArgs args)
+            {
+                IPackage? package = SelectedItem;
+                if (package == null) return;
+                PEInterface.PackageBundlesLoader.Remove(package);
+            }
+
+
+            public async Task OpenFile()
+            {
+                try
+                {
+                    // Select file
+                    FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
+                    string file = picker.Show(new List<string>() { "*.json", "*.yaml", "*.xml" });
+                    if (file == String.Empty)
+                        return;
+
+                    MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Loading packages, please wait..."));
+
+                    // Read file
+                    BundleFormatType formatType;
+                    if (file.Split('.')[^1].ToLower() == "yaml")
+                        formatType = BundleFormatType.YAML;
+                    else if (file.Split('.')[^1].ToLower() == "xml")
+                        formatType = BundleFormatType.XML;
+                    else
+                        formatType = BundleFormatType.JSON;
+
+                    string fileContent = await File.ReadAllTextAsync(file);
+
+                    // Import packages to list
+                    await AddFromBundle(fileContent, formatType);
+
+                    MainApp.Instance.MainWindow.HideLoadingDialog();
+
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Could not load packages from a file");
+                    Logger.Error(ex);
+                    MainApp.Instance.MainWindow.HideLoadingDialog();
+                }
+            }
+
+            public async Task SaveFile()
+            {
+                try
+                {
+                    // Get file 
+                    // Save file
+                    string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, CoreTools.Translate("Package bundle") + ".json");
+                    if (file != String.Empty)
+                    {
+                        // Loading dialog
+                        MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Saving packages, please wait..."));
+
+                        // Select appropriate format
+                        BundleFormatType formatType;
+                        if (file.Split('.')[^1].ToLower() == "yaml")
+                            formatType = BundleFormatType.YAML;
+                        else if (file.Split('.')[^1].ToLower() == "xml")
+                            formatType = BundleFormatType.XML;
+                        else
+                            formatType = BundleFormatType.JSON;
+
+                        // Save serialized data
+                        await File.WriteAllTextAsync(file, await CreateBundle(PEInterface.PackageBundlesLoader.Packages, formatType));
+
+                        MainApp.Instance.MainWindow.HideLoadingDialog();
+
+                        // Launch file
+                        Process.Start(new ProcessStartInfo()
+                        {
+                            FileName = "explorer.exe",
+                            Arguments = @$"/select, ""{file}"""
+                        });
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MainApp.Instance.MainWindow.HideLoadingDialog();
+                    Logger.Error("An error occurred when saving packages to a file");
+                    Logger.Error(ex);
+                }
+            }
+
+            public static async Task<string> CreateBundle(IEnumerable<IPackage> packages, BundleFormatType formatType = BundleFormatType.JSON)
+            {
+                SerializableBundle_v1 exportable = new();
+                foreach (IPackage package in packages)
+                    if (package is Package && !package.Source.IsVirtualManager)
+                        exportable.packages.Add(await package.AsSerializable());
+                    else
+                        exportable.incompatible_packages.Add(package.AsSerializable_Incompatible());
+
+                Logger.Debug("Finished loading serializable objects. Serializing with format " + formatType.ToString());
+                string ExportableData;
+
+                if (formatType == BundleFormatType.JSON)
+                    ExportableData = JsonSerializer.Serialize<SerializableBundle_v1>(exportable, new JsonSerializerOptions { WriteIndented = true });
+                else if (formatType == BundleFormatType.YAML)
+                {
+                    YamlDotNet.Serialization.ISerializer serializer = new YamlDotNet.Serialization.SerializerBuilder()
+                        .Build();
+                    ExportableData = serializer.Serialize(exportable);
+                }
+                else
+                {
+                    string tempfile = Path.GetTempFileName();
+                    StreamWriter writer = new(tempfile);
+                    XmlSerializer serializer = new(typeof(SerializableBundle_v1));
+                    serializer.Serialize(writer, exportable);
+                    writer.Close();
+                    ExportableData = await File.ReadAllTextAsync(tempfile);
+                    File.Delete(tempfile);
+
+                }
+
+                Logger.Debug("Serialization finished successfully");
+
+                return ExportableData;
+            }
+
+            public async Task AddFromBundle(string content, BundleFormatType format)
+            {
+                // Deserialize data
+                SerializableBundle_v1? DeserializedData;
+                if (format == BundleFormatType.JSON)
+                {
+                    DeserializedData = JsonSerializer.Deserialize<SerializableBundle_v1>(content);
+                }
+                else if (format == BundleFormatType.YAML)
+                {
+                    YamlDotNet.Serialization.IDeserializer deserializer = new YamlDotNet.Serialization.DeserializerBuilder()
+                        .Build();
+                    DeserializedData = deserializer.Deserialize<SerializableBundle_v1>(content);
+                }
+                else
+                {
+                    string tempfile = Path.GetTempFileName();
+                    await File.WriteAllTextAsync(tempfile, content);
+                    StreamReader reader = new(tempfile);
+                    XmlSerializer serializer = new(typeof(SerializableBundle_v1));
+                    DeserializedData = serializer.Deserialize(reader) as SerializableBundle_v1;
+                    reader.Close();
+                    File.Delete(tempfile);
+                }
+
+                if (DeserializedData == null)
+                    throw new Exception($"Deserialized data was null for content {content} and format {format}");
+
+                List<IPackage> packages = new List<IPackage>();
+
+                foreach (SerializablePackage_v1 DeserializedPackage in DeserializedData.packages)
+                {
+                    packages.Add(PackageFromSerializable(DeserializedPackage));
+                }
+
+                foreach (SerializableIncompatiblePackage_v1 DeserializedPackage in DeserializedData.incompatible_packages)
+                {
+                    packages.Add(PackageFromSerializable(DeserializedPackage));
+                }
+
+                PEInterface.PackageBundlesLoader.AddPackages(packages);
+            }
+
+            public static IPackage PackageFromSerializable(SerializablePackage_v1 raw_package)
+            {
+                IPackageManager? manager = null;
+                IManagerSource? source = null;
+
+                foreach (var possible_manager in PEInterface.Managers)
+                {
+                    if (possible_manager.Name == raw_package.ManagerName)
+                    {
+                        manager = possible_manager;
+                        break;
+                    }
+                }
+
+                if (manager?.Capabilities.SupportsCustomSources == true)
+                    source = manager?.SourceProvider?.SourceFactory.GetSourceIfExists(raw_package.Source);
+                else
+                    source = manager?.DefaultSource;
+
+                if (manager is null || source is null)
+                {
+                    return PackageFromSerializable(raw_package.GetInvalidEquivalent());
+                }
+
+                return new ImportedPackage(raw_package, manager, source);
+            }
+
+            public static IPackage PackageFromSerializable(SerializableIncompatiblePackage_v1 raw_package)
+            {
+                return new InvalidPackage(raw_package.Name, raw_package.Id, raw_package.Version, raw_package.Source);
+            }
         }
+
+
     }
+
 }

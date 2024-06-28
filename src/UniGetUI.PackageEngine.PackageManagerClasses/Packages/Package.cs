@@ -34,14 +34,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         private PackageDetails? __details = null;
         public IPackageDetails Details
-        { 
+        {
             get => __details ??= new PackageDetails(this);
         }
 
         public PackageTag Tag
         {
-            get  => __tag;
-            set {
+            get => __tag;
+            set
+            {
                 __tag = value;
                 OnPropertyChanged(nameof(Tag));
             }
@@ -86,7 +87,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             NewVersion = "";
             Tag = PackageTag.Default;
             SourceAsString = source.ToString();
-            AutomationName = CoreTools.Translate("Package {name} from {manager}", new Dictionary<string, object?> { {"name", Name },{ "manager", SourceAsString } });
+            AutomationName = CoreTools.Translate("Package {name} from {manager}", new Dictionary<string, object?> { { "name", Name }, { "manager", SourceAsString } });
             __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id);
             __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version);
             IsUpgradable = false;
@@ -125,17 +126,17 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public override bool Equals(object? other)
         {
-            return __versioned_hash == (other as Package)?.__versioned_hash;
+            return __versioned_hash == (other as IPackage)?.GetHash();
         }
 
         public bool IsEquivalentTo(IPackage? other)
-        { 
-            return __hash == (other as Package)?.__hash;
+        {
+            return __hash == (other as IPackage)?.GetHash();
         }
 
         public string GetIconId()
         {
-            string iconId = Id.ToLower(); 
+            string iconId = Id.ToLower();
             if (Manager.Name == "Winget")
                 iconId = string.Join('.', iconId.Split(".")[1..]);
             else if (Manager.Name == "Chocolatey")
@@ -258,7 +259,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 if (IgnoredUpdatesJson == null)
                     throw new Exception("The IgnoredUpdates database seems to be invalid!");
-                
+
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
                     return IgnoredUpdatesJson[IgnoredId]?.ToString() ?? "";
                 else
@@ -299,41 +300,38 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public virtual bool NewerVersionIsInstalled()
         {
-            if(!IsUpgradable) return false;
+            if (!IsUpgradable) return false;
             return PackageCacher.NewerVersionIsInstalled(this);
         }
 
-        /*
-        public static Package FromSerializable(SerializablePackage_v1 raw_package)
+        public async Task<SerializablePackage_v1> AsSerializable()
         {
-            PackageManager? manager = null;
-            ManagerSource? source = null;
-
-            foreach (var possible_manager in ManagersList)
+            return new SerializablePackage_v1()
             {
-                if (possible_manager.Name == raw_package.ManagerName)
+                Id = Id,
+                Name = Name,
+                Version = Version,
+                Source = Source.Name,
+                ManagerName = Manager.Name,
+                InstallationOptions = (await InstallationOptions.FromPackageAsync(this)).AsSerializable(),
+                Updates = new SerializableUpdatesOptions_v1()
                 {
-                    manager = possible_manager;
-                    break;
+                    IgnoredVersion = await GetIgnoredUpdatesVersionAsync(),
+                    UpdatesIgnored = await HasUpdatesIgnoredAsync(),
                 }
-            }
-
-            if (manager?.Capabilities.SupportsCustomSources == true)
-                source = manager?.SourceProvider?.SourceFactory.GetSourceIfExists(raw_package.Source);
-            else
-                source = manager?.DefaultSource;
-
-            if (manager is null || source is null)
-            {
-                return FromSerializable(raw_package.GetInvalidEquivalent());
-            }
-
-            return new ImportedPackage(raw_package, manager, source);
+            };
         }
 
-        public static InvalidImportedPackage FromSerializable(SerializableIncompatiblePackage_v1 raw_package)
+        public SerializableIncompatiblePackage_v1 AsSerializable_Incompatible()
         {
-            return new InvalidImportedPackage(raw_package.Name, raw_package.Id, raw_package.Version, raw_package.Source);            
-        }*/
+            return new SerializableIncompatiblePackage_v1()
+            {
+                Id = Id,
+                Name = Name,
+                Version = Version,
+                Source = Source.Name,
+            };
+        }
     }
 }
+

@@ -169,9 +169,6 @@
     <PRIResource Remove="Intereface\**" />
   </ItemGroup>
   <ItemGroup>
-    <Page Remove="Interface\SoftwarePages\PackageBundle.xaml" />
-  </ItemGroup>
-  <ItemGroup>
     <None Update="Assets\Images\*.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

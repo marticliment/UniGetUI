@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
@@ -152,5 +153,8 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// <returns></returns>
         public bool NewerVersionIsInstalled();
 
+        public Task<SerializablePackage_v1> AsSerializable();
+
+        public SerializableIncompatiblePackage_v1 AsSerializable_Incompatible();
     }
 }
