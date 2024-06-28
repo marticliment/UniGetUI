@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11707,
-        "done": 5076,
-        "packages_with_icon": 5076,
-        "packages_with_screenshot": 561,
-        "total_screenshots": 1749
+        "done": 5083,
+        "packages_with_icon": 5083,
+        "packages_with_screenshot": 570,
+        "total_screenshots": 1770
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -5312,7 +5312,7 @@
             ]
         },
         "blitz-gg": {
-            "icon": "https://community.chocolatey.org/content/packageimages/blitz.gg.2.0.86.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/blitz.gg.2.1.184.png",
             "images": []
         },
         "blobby2": {
@@ -5350,8 +5350,11 @@
             "images": []
         },
         "bloxstrap": {
-            "icon": "",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/pizzaboxer/bloxstrap/main/Images/Bloxstrap.png",
+            "images": [
+                "https://i.postimg.cc/wvB1ZKtG/image.png",
+                "https://i.postimg.cc/JndsW-TZ4/image.png"
+            ]
         },
         "blu-rayplayer": {
             "icon": "",
@@ -5693,19 +5696,31 @@
         },
         "brave": {
             "icon": "https://images2.imgbox.com/ba/f3/TN24YrQw_o.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/RZBLqdDV/Brave-headpic.png",
+                "https://i.postimg.cc/tg9nGmmW/image.png"
+            ]
         },
         "brave-beta": {
             "icon": "https://images2.imgbox.com/ba/f3/TN24YrQw_o.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/RZBLqdDV/Brave-headpic.png",
+                "https://i.postimg.cc/tg9nGmmW/image.png"
+            ]
         },
         "brave-dev": {
             "icon": "https://images2.imgbox.com/ba/f3/TN24YrQw_o.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/RZBLqdDV/Brave-headpic.png",
+                "https://i.postimg.cc/tg9nGmmW/image.png"
+            ]
         },
         "brave-nightly": {
             "icon": "https://images2.imgbox.com/ba/f3/TN24YrQw_o.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/RZBLqdDV/Brave-headpic.png",
+                "https://i.postimg.cc/tg9nGmmW/image.png"
+            ]
         },
         "breaktimer": {
             "icon": "",
@@ -6350,7 +6365,7 @@
             ]
         },
         "capa": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/26HZSjRY/logo.png",
             "images": []
         },
         "capcut": {
@@ -11749,12 +11764,16 @@
             "images": []
         },
         "driverbooster": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/driverbooster.11.5.0.85.png",
             "images": []
         },
         "drivereasy": {
-            "icon": "",
-            "images": []
+            "icon": "https://community.chocolatey.org/content/packageimages/drivereasyfree.6.0.0.png",
+            "images": [
+                "https://i.postimg.cc/KYP7xy8c/image.png",
+                "https://i.postimg.cc/x8CLvJyq/image.png",
+                "https://i.postimg.cc/pTkD5Yjg/image.png"
+            ]
         },
         "drivereasyfree": {
             "icon": "https://community.chocolatey.org/content/packageimages/drivereasyfree.5.7.4.png",
@@ -12187,8 +12206,12 @@
             "images": []
         },
         "ea-app": {
-            "icon": "",
-            "images": []
+            "icon": "https://community.chocolatey.org/content/packageimages/ea-app.13.218.0.5731.png",
+            "images": [
+                "https://i.postimg.cc/8cPmZnDp/image.png",
+                "https://i.postimg.cc/Vk34zR9g/image.png",
+                "https://i.postimg.cc/8PcbW3tw/image.png"
+            ]
         },
         "eac": {
             "icon": "",
@@ -14271,8 +14294,10 @@
             "images": []
         },
         "firebase": {
-            "icon": "",
-            "images": []
+            "icon": "https://firebase.google.com/_pwa/firebase/icons/icon-512x512.png",
+            "images": [
+                "https://firebase.google.com/images/social.png"
+            ]
         },
         "firebasecli": {
             "icon": "",
@@ -19417,8 +19442,13 @@
             "images": []
         },
         "insomnia": {
-            "icon": "",
-            "images": []
+            "icon": "https://community.chocolatey.org/content/packageimages/insomnia-rest-api-client.2023.9.2.png",
+            "images": [
+                "https://i.postimg.cc/yNCXgPp8/image.png",
+                "https://i.postimg.cc/B6qTNv0W/image.png",
+                "https://i.postimg.cc/Bbbx9wbM/image.png",
+                "https://i.postimg.cc/Qt0pzr8F/image.png"
+            ]
         },
         "insomnia-designer": {
             "icon": "https://community.chocolatey.org/content/packageimages/insomnia-designer.2020.5.2.png",
