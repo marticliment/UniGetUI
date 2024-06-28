@@ -234,8 +234,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 RemoveSelected.Click += (s, e) =>
                 {
-                    foreach (Package package in FilteredPackages.GetCheckedPackages())
-                        PEInterface.PackageBundlesLoader.Remove(package);
+                    foreach (IPackage package in FilteredPackages.GetCheckedPackages())
+                        Loader.Remove(package);
                 };
 
                 InstallPackages.Click += async (s, e) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages());
@@ -327,7 +327,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 if (await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(packages))
                 {
-                    foreach (Package package in packages)
+                    foreach (IPackage package in packages)
                     {
                         MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package,
                             await InstallationOptions.FromPackageAsync(package, elevated, interactive, remove_data: remove_data)));
@@ -416,7 +416,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 IPackage? package = SelectedItem;
                 if (package == null) return;
-                PEInterface.PackageBundlesLoader.Remove(package);
+                Loader.Remove(package);
             }
 
 
@@ -479,7 +479,7 @@ namespace UniGetUI.Interface.SoftwarePages
                             formatType = BundleFormatType.JSON;
 
                         // Save serialized data
-                        await File.WriteAllTextAsync(file, await CreateBundle(PEInterface.PackageBundlesLoader.Packages, formatType));
+                        await File.WriteAllTextAsync(file, await CreateBundle(Loader.Packages, formatType));
 
                         MainApp.Instance.MainWindow.HideLoadingDialog();
 
@@ -609,7 +609,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             public static IPackage PackageFromSerializable(SerializableIncompatiblePackage_v1 raw_package)
             {
-                return new InvalidPackage(raw_package.Name, raw_package.Id, raw_package.Version, raw_package.Source);
+                return new InvalidPackage(raw_package);
             }
         }
 

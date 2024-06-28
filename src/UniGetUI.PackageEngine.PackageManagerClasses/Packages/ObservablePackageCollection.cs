@@ -32,7 +32,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// Add a package to the collection
         /// </summary>
         /// <param name="p"></param>
-        public void Add(Package p)
+        public void Add(IPackage p)
         {
             base.Add(new PackageWrapper(p));
         }

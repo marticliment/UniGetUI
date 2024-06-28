@@ -200,13 +200,13 @@ namespace UniGetUI.Interface.SoftwarePages
 
             InstallSelected.Click += (s, e) =>
             {
-                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
             };
 
             InstallAsAdmin.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, elevated: true);
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
@@ -215,7 +215,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             InstallSkipHash.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, no_integrity: true);
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
@@ -224,7 +224,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             InstallInteractive.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, interactive: true);
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
@@ -354,7 +354,7 @@ namespace UniGetUI.Interface.SoftwarePages
             else if (FilteredPackages.Count > 1)
             {
                 string managerName = pSource.Contains(':') ? pSource.Split(':')[0] : pSource;
-                foreach (Package match in FilteredPackages.GetPackages())
+                foreach (IPackage match in FilteredPackages.GetPackages())
                     if (match.Source.Manager.Name == managerName)
                     {
                         Logger.Debug("Equivalent package for pId=" + pId + " and pSource=" + pSource + " found: " + match.ToString());

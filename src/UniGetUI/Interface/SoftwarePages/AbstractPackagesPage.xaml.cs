@@ -302,7 +302,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                foreach (Package package in Loader.Packages)
+                foreach (IPackage package in Loader.Packages)
                     AddPackageToSourcesList(package);
             }
             FilterPackages();
@@ -503,7 +503,7 @@ namespace UniGetUI.Interface
                 MatchingList = Loader.Packages;
 
             FilteredPackages.BlockSorting = true;
-            foreach (Package match in MatchingList)
+            foreach (IPackage match in MatchingList)
             {
                 if (VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
                 {

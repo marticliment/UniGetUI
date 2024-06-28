@@ -227,7 +227,7 @@ namespace UniGetUI.Interface.SoftwarePages
             ManageIgnored.Click += async (s, e) => await MainApp.Instance.MainWindow.NavigationPage.ManageIgnoredUpdatesDialog();
             IgnoreSelected.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     PEInterface.UpgradablePackagesLoader.Remove(package);
                     await package.AddToIgnoredUpdatesAsync();
@@ -287,7 +287,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             if (await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(packages))
             {
-                foreach (Package package in packages)
+                foreach (IPackage package in packages)
                 {
                     MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package,
                         await InstallationOptions.FromPackageAsync(package, elevated, interactive, remove_data: remove_data)));

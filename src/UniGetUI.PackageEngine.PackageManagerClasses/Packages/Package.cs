@@ -15,10 +15,6 @@ using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using Windows.Devices.Bluetooth.Advertisement;
-using Windows.Devices.PointOfService;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {

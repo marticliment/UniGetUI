@@ -2,11 +2,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Nodes;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Classes.Serializable;
@@ -18,8 +20,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
 {
     public class InvalidPackage : IPackage, INotifyPropertyChanged
     {
-
-        public InvalidPackage(string name, string id, string version, string source) { }
         public IPackageDetails Details => throw new NotImplementedException();
 
         public PackageTag Tag { get => PackageTag.Unavailable; set { } }
@@ -43,7 +43,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public double NewVersionAsFloat { get => .0F; }
 
-        public IManagerSource Source => throw new NotImplementedException();
+        public IManagerSource Source { get; }
 
         public IPackageManager Manager => throw new NotImplementedException();
 
@@ -67,6 +67,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             VersionAsFloat = CoreTools.GetVersionStringAsFloat(data.Version);
             SourceAsString = data.Source;
             AutomationName = data.Name;
+            Source = new NullSource(data.Source);
 
             __hash = CoreTools.HashStringAsLong(data.Name + data.Id);
             __extended_hash = CoreTools.HashStringAsLong(data.Name + data.Id + data.Version);
@@ -161,6 +162,35 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public void SetTag(PackageTag tag)
         {
             return;
+        }
+    }
+
+    public class NullSource: IManagerSource
+    {
+        public string IconId { get; }
+        public bool IsVirtualManager { get; }
+        public IPackageManager Manager { get; }
+        public string Name { get; }
+        public Uri Url { get; set; }
+        public int? PackageCount { get; }
+        public string? UpdateDate { get; }
+
+        public NullSource(string name)
+        {
+            Name = name;
+            Url = new Uri("about:blank");
+            IsVirtualManager = true;
+            IconId = "question";
+            Manager = NullPackageManager.Instance;
+        }
+
+        /// <summary>
+        /// Returns a human-readable string representing the source name
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }
