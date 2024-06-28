@@ -60,7 +60,7 @@ choco install wingetui
 
 ## Update WingetUI
 
-WingetUI has a built-in autoupdater. However, it can also be updated like any other package within WingetUI (since WingetUI is available through Winget and Scoop).
+WingetUI has a built-in auto-updater. However, it can also be updated like any other package within WingetUI (since WingetUI is available through Winget and Scoop).
 
 
 ## Support the developer
