@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11707,
-        "done": 5083,
-        "packages_with_icon": 5083,
-        "packages_with_screenshot": 570,
-        "total_screenshots": 1770
+        "done": 5096,
+        "packages_with_icon": 5096,
+        "packages_with_screenshot": 573,
+        "total_screenshots": 1794
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -2811,7 +2811,7 @@
             "images": []
         },
         "archisteamfarm": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/RZp6THtr/image.png",
             "images": []
         },
         "archive": {
@@ -5935,7 +5935,7 @@
             "images": []
         },
         "buildtools2015": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/g2xkmBx5/image.png",
             "images": []
         },
         "bulk-crap-uninstaller": {
@@ -6675,7 +6675,7 @@
             "images": []
         },
         "cemui": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/cemu.2.0.20220910.png",
             "images": []
         },
         "centbrowser": {
@@ -6851,7 +6851,7 @@
             "images": []
         },
         "cheat-engine": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/653Bf1f3/image.png",
             "images": []
         },
         "check-mk": {
@@ -12222,8 +12222,12 @@
             "images": []
         },
         "eadesktop": {
-            "icon": "https://cdn2.steamgriddb.com/icon/ff51fb7a9bcb22c595616b4fa368880a/32/256x256.png",
-            "images": []
+            "icon": "https://community.chocolatey.org/content/packageimages/ea-app.13.218.0.5731.png",
+            "images": [
+                "https://i.postimg.cc/8cPmZnDp/image.png",
+                "https://i.postimg.cc/Vk34zR9g/image.png",
+                "https://i.postimg.cc/8PcbW3tw/image.png"
+            ]
         },
         "eagle": {
             "icon": "https://file.notion.so/f/s/57a94bd2-72f4-4e2c-bfd4-3722aec63d08/App_icon2x.png?id=a0767f65-6d49-41bb-83af-e2f7d9f8a449&table=block&spaceId=e28893ab-ca65-405a-a390-f6c1f240bb0a&expirationTimestamp=1686564255238&signature=vb95tH7m38oSH6sWYoccpC9MLMIJ0aXTcs9pxB91Mms&downloadName=App+icon%402x.png",
@@ -13062,8 +13066,13 @@
             "images": []
         },
         "enlisted": {
-            "icon": "",
-            "images": []
+            "icon": "https://cdn2.steamgriddb.com/logo/64608f951c2e26fcddeb4dca75459470.png",
+            "images": [
+                "https://cdn2.steamgriddb.com/grid/a9d43cc09feae3b311d88ccb52827849.png",
+                "https://cdn2.steamgriddb.com/grid/6a474493748e16188f5723d881c2338a.png",
+                "https://cdn2.steamgriddb.com/hero/95c14ff9ca2c5d8ead4a18b1e830d504.png",
+                "https://cdn2.steamgriddb.com/hero/ccb946faf2ff655ccffee7f306a81888.png"
+            ]
         },
         "enonic": {
             "icon": "",
@@ -38925,7 +38934,8 @@
         "steam": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png",
             "images": [
-                "https://i.postimg.cc/wMp1cbQt/Steam-service.png"
+                "https://i.postimg.cc/dV3DDVx5/steam.png",
+                "https://i.postimg.cc/7ZRhzyvw/image.png"
             ]
         },
         "steam-cleaner": {
@@ -39809,34 +39819,34 @@
             "images": []
         },
         "sysinternals-autoruns": {
-            "icon": "",
+            "icon": "https://learn.microsoft.com/en-us/sysinternals/media/index/sysinternals.png",
             "images": [
                 "https://learn.microsoft.com/en-us/sysinternals/downloads/media/autoruns/autoruns_v13.png",
                 "https://www.bleepstatic.com/download/screenshots/a/autoruns/everything-tab.jpg"
             ]
         },
         "sysinternals-bginfo": {
-            "icon": "",
+            "icon": "https://learn.microsoft.com/en-us/sysinternals/media/index/sysinternals.png",
             "images": []
         },
         "sysinternals-desktops": {
-            "icon": "",
+            "icon": "https://learn.microsoft.com/en-us/sysinternals/media/index/sysinternals.png",
             "images": []
         },
         "sysinternals-processexpl\u2026": {
-            "icon": "",
+            "icon": "https://learn.microsoft.com/en-us/sysinternals/media/index/sysinternals.png",
             "images": []
         },
         "sysinternals-processmoni\u2026": {
-            "icon": "",
+            "icon": "https://learn.microsoft.com/en-us/sysinternals/media/index/sysinternals.png",
             "images": []
         },
         "sysinternals-rdcman": {
-            "icon": "",
+            "icon": "https://learn.microsoft.com/en-us/sysinternals/media/index/sysinternals.png",
             "images": []
         },
         "sysinternals-tcpview": {
-            "icon": "",
+            "icon": "https://learn.microsoft.com/en-us/sysinternals/media/index/sysinternals.png",
             "images": []
         },
         "syspin": {
@@ -45722,8 +45732,25 @@
             "images": []
         },
         "warthunder": {
-            "icon": "",
-            "images": []
+            "icon": "https://cdn2.steamgriddb.com/icon_thumb/3fdc6213681ba98cb5a95150380e0e04.png",
+            "images": [
+                "https://cdn2.steamgriddb.com/logo/54d22f8632eb479849f7bad14f024ce5.png",
+                "https://i.postimg.cc/x8sJFJZb/image.png",
+                "https://i.postimg.cc/rsyRJCfk/image.png",
+                "https://cdn2.steamgriddb.com/hero/632e3ccec223290601ef00e26aa62bd0.png",
+                "https://cdn2.steamgriddb.com/hero/1a551b7323fefa14d9b4ac09bd73ee49.png",
+                "https://cdn2.steamgriddb.com/hero/460c9b5698f98c052062fd25e2b2f6de.png",
+                "https://cdn2.steamgriddb.com/hero/a8c5a73459631beb2cbe6af3c74628e8.png",
+                "https://cdn2.steamgriddb.com/hero/dc19fa59fb460f069c2e609348abfc77.png",
+                "https://cdn2.steamgriddb.com/hero/d5e7a42f848de89069733d940881fa90.png",
+                "https://cdn2.steamgriddb.com/hero/e38b7566fe907e0d2fec9a0f9af72d9f.png",
+                "https://i.postimg.cc/zBzTtrf6/image.png",
+                "https://i.postimg.cc/yxWcKycT/image.png",
+                "https://i.postimg.cc/PJcZ5vMn/image.png",
+                "https://i.postimg.cc/Bn2DJ6LR/image.png",
+                "https://i.postimg.cc/1zPFXQDX/image.png",
+                "https://i.postimg.cc/7LV2TWNV/image.png"
+            ]
         },
         "warzone2100": {
             "icon": "",
