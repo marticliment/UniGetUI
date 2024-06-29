@@ -249,6 +249,8 @@ namespace UniGetUI.Interface
             XamlUICommand ShowHideCommand = new();
             ShowHideCommand.ExecuteRequested += (s, e) =>
             {
+                if(MainApp.Instance.TooltipStatus.AvailableUpdates > 0)
+                    MainApp.Instance?.MainWindow?.NavigationPage?.UpdatesNavButton?.ForceClick();
                 Activate();
             };
 
