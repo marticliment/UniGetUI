@@ -34,12 +34,13 @@ namespace UniGetUI.Core.Language
         /// <param name="lang">the language code</param>
         public void LoadLanguage(string lang)
         {
-            Locale = LanguageData.LanguageReference.ContainsKey(lang)
-                ? lang
-                : LanguageData.LanguageReference.ContainsKey(lang[0..2])
-                    ? lang[0..2]
-                    : "en";
-            MainLangDict = LoadLanguageFile(lang);
+            Locale = "en";
+            if (LanguageData.LanguageReference.ContainsKey(lang)) 
+                Locale = lang;
+            else if (LanguageData.LanguageReference.ContainsKey(lang[0..2])) 
+                Locale = lang[0..2];
+            
+            MainLangDict = LoadLanguageFile(Locale);
             Formatter = new() { Locale = Locale.Replace('_', '-') };
 
             LoadStaticTranslation();
@@ -61,7 +62,12 @@ namespace UniGetUI.Core.Language
                 if (ForceBundled)
                 {
                     LangFileToLoad = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
+                    if(!File.Exists(LangFileToLoad))
+                    {
+                        Logger.Error($"Tried to access a non-existing bundled language file! file={LangFileToLoad}");
+                    }
                 }
+
 
                 Dictionary<string, string>? __LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject)?.ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
 

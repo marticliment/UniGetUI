@@ -58,7 +58,7 @@ namespace UniGetUI.Interface
 
                 ApiTokenHolder.Token = CoreTools.RandomString(64);
                 Settings.SetValue("CurrentSessionToken", ApiTokenHolder.Token);
-                Logger.Info("Api auth token: " + ApiTokenHolder.Token);
+                Logger.Info("Randomly-generated background API auth token for the current session: " + ApiTokenHolder.Token);
 
                 __running = true;
                 NancyHost host;
