@@ -59,94 +59,97 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public async Task<Package[]> FindPackages_UnSafe(WinGet ManagerInstance, string query)
         {
-            ManagerClasses.Classes.NativeTaskLogger logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
-
             List<Package> Packages = new();
-            FindPackagesOptions PackageFilters = Factory.CreateFindPackagesOptions();
-
-            logger.Log("Generating filters...");
-            // Name filter
-            PackageMatchFilter FilterName = Factory.CreatePackageMatchFilter();
-            FilterName.Field = PackageMatchField.Name;
-            FilterName.Value = query;
-            FilterName.Option = PackageFieldMatchOption.ContainsCaseInsensitive;
-            PackageFilters.Filters.Add(FilterName);
-
-            // Id filter
-            PackageMatchFilter FilterId = Factory.CreatePackageMatchFilter();
-            FilterId.Field = PackageMatchField.Id;
-            FilterId.Value = query;
-            FilterId.Option = PackageFieldMatchOption.ContainsCaseInsensitive;
-            PackageFilters.Filters.Add(FilterId);
-
-            // Load catalogs
-            logger.Log("Loading available catalogs...");
-            IReadOnlyList<PackageCatalogReference> AvailableCatalogs = WinGetManager.GetPackageCatalogs();
-            Dictionary<PackageCatalogReference, Task<FindPackagesResult>> FindPackageTasks = new();
-
-            // Spawn Tasks to find packages on catalogs
-            logger.Log("Spawning catalog fetching tasks...");
-            foreach (PackageCatalogReference CatalogReference in AvailableCatalogs.ToArray())
+            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
+            foreach(string query_part in query.Replace(".", " ").Split(" "))
             {
-                // Connect to catalog
-                CatalogReference.AcceptSourceAgreements = true;
-                ConnectResult result = await CatalogReference.ConnectAsync();
-                if (result.Status == ConnectResultStatus.Ok)
+                FindPackagesOptions PackageFilters = Factory.CreateFindPackagesOptions();
+
+                logger.Log("Generating filters...");
+                // Name filter
+                PackageMatchFilter FilterName = Factory.CreatePackageMatchFilter();
+                FilterName.Field = PackageMatchField.Name;
+                FilterName.Value = query_part;
+                FilterName.Option = PackageFieldMatchOption.ContainsCaseInsensitive;
+                PackageFilters.Filters.Add(FilterName);
+
+                // Id filter
+                PackageMatchFilter FilterId = Factory.CreatePackageMatchFilter();
+                FilterId.Field = PackageMatchField.Id;
+                FilterId.Value = query_part;
+                FilterId.Option = PackageFieldMatchOption.ContainsCaseInsensitive;
+                PackageFilters.Filters.Add(FilterId);
+
+                // Load catalogs
+                logger.Log("Loading available catalogs...");
+                IReadOnlyList<PackageCatalogReference> AvailableCatalogs = WinGetManager.GetPackageCatalogs();
+                Dictionary<PackageCatalogReference, Task<FindPackagesResult>> FindPackageTasks = new();
+
+                // Spawn Tasks to find packages on catalogs
+                logger.Log("Spawning catalog fetching tasks...");
+                foreach (PackageCatalogReference CatalogReference in AvailableCatalogs.ToArray())
+                {
+                    logger.Log($"Begin search on catalog {CatalogReference.Info.Name}");
+                    // Connect to catalog
+                    CatalogReference.AcceptSourceAgreements = true;
+                    ConnectResult result = await CatalogReference.ConnectAsync();
+                    if (result.Status == ConnectResultStatus.Ok)
+                    {
+                        try
+                        {
+                            // Create task and spawn it
+                            Task<FindPackagesResult> task = new(() => result.PackageCatalog.FindPackages(PackageFilters));
+                            task.Start();
+
+                            // Add task to list
+                            FindPackageTasks.Add(
+                                CatalogReference,
+                                task
+                            );
+                        }
+                        catch (Exception e)
+                        {
+                            logger.Error("WinGet: Catalog " + CatalogReference.Info.Name + " failed to spawn FindPackages task.");
+                            logger.Error(e);
+                        }
+                    }
+                    else
+                    {
+                        logger.Error("WinGet: Catalog " + CatalogReference.Info.Name + " failed to connect.");
+                    }
+                }
+
+                // Wait for tasks completion
+                await Task.WhenAll(FindPackageTasks.Values.ToArray());
+                logger.Log($"All catalogs fetched. Fetching results for query piece {query_part}");
+
+                foreach (KeyValuePair<PackageCatalogReference, Task<FindPackagesResult>> CatalogTaskPair in FindPackageTasks)
                 {
                     try
                     {
-                        // Create task and spawn it
-                        Task<FindPackagesResult> task = new(() => result.PackageCatalog.FindPackages(PackageFilters));
-                        task.Start();
+                        // Get the source for the catalog
+                        ManagerSource source = ManagerInstance.GetSourceOrDefault(CatalogTaskPair.Key.Info.Name);
 
-                        // Add task to list
-                        FindPackageTasks.Add(
-                            CatalogReference,
-                            task
-                        );
+                        FindPackagesResult FoundPackages = CatalogTaskPair.Value.Result;
+                        foreach (MatchResult package in FoundPackages.Matches.ToArray())
+                        {
+                            CatalogPackage catPkg = package.CatalogPackage;
+                            // Create the Package item and add it to the list
+                            logger.Log($"Found package: {catPkg.Name}|{catPkg.Id}|{catPkg.DefaultInstallVersion.Version} on catalog {source.Name}");
+                            Packages.Add(new Package(
+                                catPkg.Name,
+                                catPkg.Id,
+                                catPkg.DefaultInstallVersion.Version,
+                                source,
+                                ManagerInstance
+                            ));
+                        }
                     }
                     catch (Exception e)
                     {
-                        logger.Error("WinGet: Catalog " + CatalogReference.Info.Name + " failed to spawn FindPackages task.");
+                        logger.Error("WinGet: Catalog " + CatalogTaskPair.Key.Info.Name + " failed to get available packages.");
                         logger.Error(e);
                     }
-                }
-                else
-                {
-                    logger.Error("WinGet: Catalog " + CatalogReference.Info.Name + " failed to connect.");
-                }
-            }
-
-            // Wait for tasks completion
-            await Task.WhenAll(FindPackageTasks.Values.ToArray());
-            logger.Log($"All catalogs fetched. Fetching results for query {query}");
-
-            foreach (KeyValuePair<PackageCatalogReference, Task<FindPackagesResult>> CatalogTaskPair in FindPackageTasks)
-            {
-                try
-                {
-                    // Get the source for the catalog
-                    ManagerSource source = ManagerInstance.GetSourceOrDefault(CatalogTaskPair.Key.Info.Name);
-
-                    FindPackagesResult FoundPackages = CatalogTaskPair.Value.Result;
-                    foreach (MatchResult package in FoundPackages.Matches.ToArray())
-                    {
-                        CatalogPackage catPkg = package.CatalogPackage;
-                        // Create the Package item and add it to the list
-                        logger.Log($"Found package: {catPkg.Name}|{catPkg.Name}|{catPkg.DefaultInstallVersion.Version} on catalog {source.Name}");
-                        Packages.Add(new Package(
-                            catPkg.Name,
-                            catPkg.Id,
-                            catPkg.DefaultInstallVersion.Version,
-                            source,
-                            ManagerInstance
-                        ));
-                    }
-                }
-                catch (Exception e)
-                {
-                    logger.Error("WinGet: Catalog " + CatalogTaskPair.Key.Info.Name + " failed to get available packages.");
-                    logger.Error(e);
                 }
             }
             logger.Close(0);
