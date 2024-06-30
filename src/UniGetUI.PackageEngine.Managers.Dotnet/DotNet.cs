@@ -23,7 +23,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 new ManagerDependency(
                     ".NET Tools Outdated",
                     Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
-                    "-ExecutionPolicy Bypass -NoLogo -NoProfile -NonInteractive -Command dotnet tool install --global dotnet-tools-outdated",
+                    "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {dotnet tool install --global dotnet-tools-outdated: ; if($error.count -ne 0){pause}}\"",
                     async () => (await CoreTools.Which("dotnet-tools-outdated.exe")).Item1)
             ];
 

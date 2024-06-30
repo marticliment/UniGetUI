@@ -27,7 +27,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 new ManagerDependency(
                     "Scoop-Search",
                     Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
-                    "-ExecutionPolicy Bypass -NoLogo -NoProfile -NonInteractive -Command scoop install main/scoop-search",
+                    "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {scoop install main/scoop-search; if($error.count -ne 0){pause}}\"",
                     async () => (await CoreTools.Which("scoop-search.exe")).Item1)
             ];
 
