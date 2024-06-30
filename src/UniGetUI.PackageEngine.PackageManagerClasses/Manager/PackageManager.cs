@@ -6,6 +6,7 @@ using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
+using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.Interfaces;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Manager.Providers;
@@ -28,6 +29,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
         public bool ManagerReady { get; set; } = false;
         public ManagerLogger TaskLogger;
+        public IEnumerable<ManagerDependency> Dependencies { get; protected set; } = [];
 
         public BaseSourceProvider<PackageManager>? SourceProvider;
         public BasePackageDetailsProvider<PackageManager>? PackageDetailsProvider;

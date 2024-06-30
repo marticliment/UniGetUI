@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
+using System.Diagnostics;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -13,6 +14,7 @@ using UniGetUI.Interface.SoftwarePages;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
+using Windows.ApplicationModel.UserDataTasks.DataProvider;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -520,8 +522,6 @@ namespace UniGetUI.Interface
 
             return await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary;
         }
-
-
 
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
         {

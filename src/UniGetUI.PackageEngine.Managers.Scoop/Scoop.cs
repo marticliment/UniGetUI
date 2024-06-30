@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -14,14 +15,22 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
     public class Scoop : PackageManager
     {
-        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
-        new public static string[] FALSE_PACKAGE_IDS = new string[] { "No" };
-        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "Matches" };
+        new public static string[] FALSE_PACKAGE_NAMES = [""];
+        new public static string[] FALSE_PACKAGE_IDS = ["No"];
+        new public static string[] FALSE_PACKAGE_VERSIONS = ["Matches"];
 
         long LastScoopSourceUpdateTime = 0;
 
         public Scoop(): base()
         {
+            Dependencies = [
+                new ManagerDependency(
+                    "Scoop-Search",
+                    Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                    "-ExecutionPolicy Bypass -NoLogo -NoProfile -NonInteractive -Command scoop install main/scoop-search",
+                    async () => (await CoreTools.Which("scoop-search.exe")).Item1)
+            ];
+
             Capabilities = new ManagerCapabilities()
             {
                 CanRunAsAdmin = true,

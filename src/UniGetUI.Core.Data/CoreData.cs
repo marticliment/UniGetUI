@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Data
@@ -155,12 +156,12 @@ namespace UniGetUI.Core.Data
         public static string UniGetUIExecutableFile
         {
             get {
-                string? filename = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                string? filename = Process.GetCurrentProcess().MainModule?.FileName;
                 if (filename != null)
-                    return filename;
+                    return filename.Replace(".dll", ".exe");
                 else
                     Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
-                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UiGetUI", "UniGetUI.exe");
+                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UniGetUI", "UniGetUI.exe");
             }
         }
 
