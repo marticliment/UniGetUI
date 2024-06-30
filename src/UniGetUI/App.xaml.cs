@@ -12,6 +12,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Operations;
 using Windows.Foundation.Collections;
 
@@ -273,14 +274,38 @@ namespace UniGetUI
 
                 _ = MainWindow.DoEntryTextAnimationAsync();
 
+                // Load package managers
                 await PEInterface.Initialize();
 
-                Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();
                 RaiseExceptionAsFatal = false;
-
                 if (Environment.GetCommandLineArgs().Contains("--load-and-quit"))
                     DisposeAndQuit(0);
+
+                // Check for missing dependencies on package managers
+                List<ManagerDependency> missing_deps = new();
+                foreach (var manager in PEInterface.Managers)
+                {
+                    if (!manager.IsReady()) continue;
+
+                    foreach (var dependency in manager.Dependencies)
+                    {
+                        bool present = await dependency.IsInstalled();
+                        if (!present)
+                        {
+                            Logger.Warn($"Dependency {dependency.Name} was not found for manager {manager.Name}, installing...");
+                            missing_deps.Add(dependency);
+                        }
+                        else
+                        {
+                            Logger.Info($"Dependency {dependency.Name} for manager {manager.Name} is present");
+                        }
+                    }
+                }
+                await MainWindow.ShowMissingDependenciesQuery(missing_deps);
+
+                Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
+
             }
             catch (Exception e)
             {
@@ -447,10 +472,9 @@ namespace UniGetUI
             }
         }
 
-        public void RestartApp()
+        public void KillAndRestart()
         {
-            Logger.Info(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
-            Process.Start(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
+            Process.Start(CoreData.UniGetUIExecutableFile);
             DisposeAndQuit(0);
         }
     }

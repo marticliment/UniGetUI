@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -18,6 +19,14 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
         public DotNet() : base()
         {
+            Dependencies = [
+                new ManagerDependency(
+                    ".NET Tools Outdated",
+                    Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                    "-ExecutionPolicy Bypass -NoLogo -NoProfile -NonInteractive -Command dotnet tool install --global dotnet-tools-outdated",
+                    async () => (await CoreTools.Which("dotnet-tools-outdated.exe")).Item1)
+            ];
+
             Capabilities = new ManagerCapabilities()
             {
                 CanRunAsAdmin = true,
