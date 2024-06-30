@@ -12,11 +12,11 @@
 	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	  <PublishSelfContained>true</PublishSelfContained>
 <FileVersion>3.1.0.0</FileVersion>
-<InformationalVersion>3.1.0-beta0</InformationalVersion>
+<InformationalVersion>3.1.0-beta1</InformationalVersion>
 	  <Product>UniGetUI</Product>
 	  <Authors>Martí Climent and the contributors</Authors>
 	  <PublisherName>Martí Climent</PublisherName>
-<ApplicationVersion>3.1.0-beta0</ApplicationVersion>
+<ApplicationVersion>3.1.0-beta1</ApplicationVersion>
 	  <Copyright>2024, Martí Climent</Copyright>
 	  <Nullable>enable</Nullable>
   </PropertyGroup>

@@ -12,7 +12,7 @@ if (!(Get-Command -Verb Repair -Noun WinGetPackageManager)) {
     }
     Write-Output "Installing Microsoft.WinGet.Client..."
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Confirm:$false
-    Install-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -AllowClobber
+    Install-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force
     Write-Output "Microsoft.WinGet.Client was installed successfully"
 }
 
@@ -23,7 +23,7 @@ if ((Get-Module -Name Microsoft.WinGet.Client -ListAvailable).Version -ge '1.7.1
 } else {
     Write-Output "Updating Microsoft.WinGet.Client module..."
     Update-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force
-    Install-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -AllowClobber
+    Install-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force
 }
 
 if ($null -eq (Get-Command "winget.exe" -ErrorAction SilentlyContinue)) 
@@ -41,7 +41,7 @@ if ((Get-Module -Name Microsoft.WinGet.Client -ListAvailable).Version -ge '1.7.1
 } else {
     Write-Output "Updating Microsoft.WinGet.Client module..."
     Update-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force
-    Install-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -AllowClobber
+    Install-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force
 }
 
 
