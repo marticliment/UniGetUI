@@ -11,7 +11,7 @@ Check out the [Supported Package Managers Table](#supported-package-managers) fo
 
 **This is WingetUI's official repository. If you are searching for WingetUI's homepage, please refer to [https://www.marticliment.com/wingetui/](https://www.marticliment.com/wingetui/)**
 
-**Disclaimer:** This project has no connection with any supported package managers — it's completely unofficial. Be aware that I, the developer of WingetUI, I am NOT responsible for the downloaded apps.
+**Disclaimer:** This project has no connection with any supported package managers — it's completely unofficial. Be aware that I, the developer of WingetUI, am NOT responsible for the downloaded apps.
 
 ![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fmarticliment.com%2Fresources%2Fbadges%2Fdev-status.json)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/marticliment/WingetUI/dotnet-test.yml?branch=main&style=for-the-badge&label=Tests)
