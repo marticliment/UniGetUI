@@ -22,8 +22,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         private LocalWingetSource GOGSource { get; set; }
         private LocalWingetSource MicrosoftStoreSource { get; set; }
 
+        private string PowerShellPath;
+        private string PowerShellBaseArgs;
+
         public WinGet(): base()
         {
+            PowerShellPath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
+            PowerShellBaseArgs = "-ExecutionPolicy Bypass -NoLogo -NoProfile -NonInteractive";
+
             Capabilities = new ManagerCapabilities()
             {
                 CanRunAsAdmin = true,
@@ -84,7 +90,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
-                FileName = "powershell.exe",
+                FileName = PowerShellPath,
+                Arguments = PowerShellBaseArgs,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -100,7 +107,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             p.Start();
 
             string command = """
-                 Set-ExecutionPolicy Bypass -Scope Process -Force
+                 Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
+                 Import-Module Microsoft.WinGet.Client
                  function Print-WinGetPackage {
                      param (
                          [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
@@ -158,7 +166,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             Process p = new();
             p.StartInfo = new ProcessStartInfo()
             {
-                FileName = "powershell.exe",
+                FileName = PowerShellPath,
+                Arguments = PowerShellBaseArgs,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -173,7 +182,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             p.Start();
 
             string command = """
-                Set-ExecutionPolicy Bypass -Scope Process -Force
+                Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
+                Import-Module Microsoft.WinGet.Client
                 function Print-WinGetPackage {
                     param (
                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
@@ -440,8 +450,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName = "powershell.exe",
-                    Arguments = "-NoProfile -Command Write-Output (Get-InstalledModule -Name Microsoft.WinGet.Client).Version",
+                    FileName = PowerShellPath,
+                    Arguments = PowerShellBaseArgs + " -Command Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

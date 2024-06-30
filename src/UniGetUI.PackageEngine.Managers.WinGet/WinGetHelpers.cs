@@ -46,7 +46,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
     internal class NativeWinGetHelper : IWinGetPackageHelper
     {
         public WindowsPackageManagerStandardFactory Factory;
-        public Deployment.PackageManager WinGetManager;
+        public PackageManager WinGetManager;
 
         public NativeWinGetHelper()
         {
@@ -67,22 +67,22 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             logger.Log("Generating filters...");
             // Name filter
             PackageMatchFilter FilterName = Factory.CreatePackageMatchFilter();
-            FilterName.Field = Deployment.PackageMatchField.Name;
+            FilterName.Field = PackageMatchField.Name;
             FilterName.Value = query;
-            FilterName.Option = Deployment.PackageFieldMatchOption.ContainsCaseInsensitive;
+            FilterName.Option = PackageFieldMatchOption.ContainsCaseInsensitive;
             PackageFilters.Filters.Add(FilterName);
 
             // Id filter
             PackageMatchFilter FilterId = Factory.CreatePackageMatchFilter();
-            FilterId.Field = Deployment.PackageMatchField.Name;
+            FilterId.Field = PackageMatchField.Id;
             FilterId.Value = query;
-            FilterId.Option = Deployment.PackageFieldMatchOption.ContainsCaseInsensitive;
+            FilterId.Option = PackageFieldMatchOption.ContainsCaseInsensitive;
             PackageFilters.Filters.Add(FilterId);
 
             // Load catalogs
             logger.Log("Loading available catalogs...");
             IReadOnlyList<PackageCatalogReference> AvailableCatalogs = WinGetManager.GetPackageCatalogs();
-            Dictionary<Deployment.PackageCatalogReference, Task<Deployment.FindPackagesResult>> FindPackageTasks = new();
+            Dictionary<PackageCatalogReference, Task<FindPackagesResult>> FindPackageTasks = new();
 
             // Spawn Tasks to find packages on catalogs
             logger.Log("Spawning catalog fetching tasks...");
@@ -91,7 +91,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 // Connect to catalog
                 CatalogReference.AcceptSourceAgreements = true;
                 ConnectResult result = await CatalogReference.ConnectAsync();
-                if (result.Status == Deployment.ConnectResultStatus.Ok)
+                if (result.Status == ConnectResultStatus.Ok)
                 {
                     try
                     {
@@ -188,7 +188,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             // Connect to catalog
             Catalog.AcceptSourceAgreements = true;
             ConnectResult ConnectResult = await Task.Run(() => Catalog.Connect());
-            if (ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
+            if (ConnectResult.Status != ConnectResultStatus.Ok)
             {
                 logger.Error("Failed to connect to catalog " + package.Source.Name);
                 logger.Close(1);
@@ -198,9 +198,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             // Match only the exact same Id
             FindPackagesOptions packageMatchFilter = Factory.CreateFindPackagesOptions();
             PackageMatchFilter filters = Factory.CreatePackageMatchFilter();
-            filters.Field = Deployment.PackageMatchField.Id;
+            filters.Field = PackageMatchField.Id;
             filters.Value = package.Id;
-            filters.Option = Deployment.PackageFieldMatchOption.Equals;
+            filters.Option = PackageFieldMatchOption.Equals;
             packageMatchFilter.Filters.Add(filters);
             packageMatchFilter.ResultLimit = 1;
             Task<FindPackagesResult> SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
@@ -245,7 +245,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             // Connect to catalog
             Catalog.AcceptSourceAgreements = true;
             ConnectResult ConnectResult = await Task.Run(() => Catalog.Connect());
-            if (ConnectResult.Status != Deployment.ConnectResultStatus.Ok)
+            if (ConnectResult.Status != ConnectResultStatus.Ok)
             {
                 logger.Error("Failed to connect to catalog " + details.Package.Source.Name);
                 logger.Close(1);
@@ -255,9 +255,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             // Match only the exact same Id
             FindPackagesOptions packageMatchFilter = Factory.CreateFindPackagesOptions();
             PackageMatchFilter filters = Factory.CreatePackageMatchFilter();
-            filters.Field = Deployment.PackageMatchField.Id;
+            filters.Field = PackageMatchField.Id;
             filters.Value = details.Package.Id;
-            filters.Option = Deployment.PackageFieldMatchOption.Equals;
+            filters.Option = PackageFieldMatchOption.Equals;
             packageMatchFilter.Filters.Add(filters);
             packageMatchFilter.ResultLimit = 1;
             Task<FindPackagesResult> SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
