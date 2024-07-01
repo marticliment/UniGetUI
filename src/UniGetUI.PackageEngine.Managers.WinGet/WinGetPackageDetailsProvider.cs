@@ -37,8 +37,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             if(package.Source.Name == "msstore")
                 return await GetMicrosoftStorePackageIcon(package);
 
-            // Logger.Warn("Non-MSStore WinGet Native Icons have been forcefully disabled on code");
-            // return null;
+            Logger.Warn("Non-MSStore WinGet Native Icons have been forcefully disabled on code");
+            return null;
             return await GetWinGetPackageIcon(package);
         }
 
