@@ -24,11 +24,18 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         public Scoop(): base()
         {
             Dependencies = [
+                // Scoop-Search is required for search to work
                 new ManagerDependency(
                     "Scoop-Search",
                     Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {scoop install main/scoop-search; if($error.count -ne 0){pause}}\"",
-                    async () => (await CoreTools.Which("scoop-search.exe")).Item1)
+                    async () => (await CoreTools.Which("scoop-search.exe")).Item1),
+                // GIT is required for scoop updates to work
+                new ManagerDependency(
+                    "Git",
+                    Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                    "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {scoop install main/git; if($error.count -ne 0){pause}}\"",
+                    async () => (await CoreTools.Which("git.exe")).Item1)
             ];
 
             Capabilities = new ManagerCapabilities()
@@ -37,7 +44,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 CanSkipIntegrityChecks = true,
                 CanRemoveDataOnUninstall = true,
                 SupportsCustomArchitectures = true,
-                SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64 },
+                SupportedCustomArchitectures = [Architecture.X86, Architecture.X64, Architecture.Arm64],
                 SupportsCustomScopes = true,
                 SupportsCustomSources = true,
                 Sources = new ManagerSource.Capabilities()
