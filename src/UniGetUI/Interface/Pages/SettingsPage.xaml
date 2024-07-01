@@ -269,20 +269,8 @@
                                 StateChanged="UseUserGSudoToggle_StateChanged"
                                 />
                             <widgets:CheckboxCard
-                                Text="Allow parallel installs (NOT RECOMMENDED)"
+                                Text="Allow package operations to be performed in parallel"
                                 SettingName="AllowParallelInstalls"
-                                />
-                            <widgets:CheckboxCard
-                                x:Name="UseSystemWinget"
-                                Text="Use system Winget (System language must be set to english)"
-                                SettingName="UseSystemWinget"
-                                StateChanged="UseSystemWinget_StateChanged"
-                                />
-                            <widgets:CheckboxCard
-                                x:Name="ForceArmWinget"
-                                Text="Force ARM compiled winget version (ONLY FOR ARM64 SYSTEMS)"
-                                SettingName="EnableArmWinget"
-                                StateChanged="ForceArmWinget_StateChanged"
                                 />
                             <widgets:CheckboxCard
                                 x:Name="DisableDownloadingNewTranslations"

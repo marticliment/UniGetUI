@@ -277,6 +277,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
+
             process.Start();
             status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
 

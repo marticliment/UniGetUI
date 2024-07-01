@@ -35,9 +35,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             Dependencies = [
                 new ManagerDependency(
-                    "Microsoft.WinGet.Client",
+                    "WinGet PowerShell Module",
                     PowerShellPath,
-                    PowerShellPromptArgs + " -Command \"& {Install-Module -Name Microsoft.WinGet.Client -Force -Confirm:$false; if($error.count -ne 0){pause}}\"",
+                    PowerShellPromptArgs + " -Command \"& {Install-Module -Name Microsoft.WinGet.Client -Force -Confirm:$false -Scope CurrentUser; if($error.count -ne 0){pause}}\"",
                     async () =>
                     {
                         Process p = new Process()

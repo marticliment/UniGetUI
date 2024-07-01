@@ -18,6 +18,7 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.Email.DataProvider;
 using Windows.Foundation.Collections;
  
 namespace UniGetUI.Interface
@@ -475,6 +476,18 @@ namespace UniGetUI.Interface
         {
             ContentDialog dialog = new();
 
+            string PREVIOUSLY_ATTEMPTED_PREF = $"AlreadyAttemptedToInstall{dep_name}";
+            string DEP_SKIPPED_PREF = $"SkippedInstalling{dep_name}";
+
+            if (Settings.Get(DEP_SKIPPED_PREF))
+            {
+                Logger.Error($"Dependency {dep_name} was not found, and the user set it to not be reminded of the midding dependency");
+                return;
+            }
+
+            bool NotFirstTime = Settings.Get(PREVIOUSLY_ATTEMPTED_PREF);
+            Settings.Set(PREVIOUSLY_ATTEMPTED_PREF, true);
+
             dialog.XamlRoot = this.MainContentGrid.XamlRoot;
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             dialog.Title = CoreTools.Translate("Missing dependency") + (total > 1? $" ({current}/{total})": "");
@@ -489,7 +502,7 @@ namespace UniGetUI.Interface
             
             p.Children.Add(new TextBlock
             {
-                Text = CoreTools.Translate($"UniGetUI requires {dep_name} operate, but it was not found on your system."),
+                Text = CoreTools.Translate($"UniGetUI requires {dep_name} to operate, but it was not found on your system."),
                 TextWrapping = TextWrapping.Wrap,
                 Margin = new Thickness(0, 0, 0, 5)
             });
@@ -503,6 +516,16 @@ namespace UniGetUI.Interface
                 FontStyle = Windows.UI.Text.FontStyle.Italic,
             };
             p.Children.Add(infotext);
+
+            CheckBox c = new CheckBox();
+            if (NotFirstTime)
+            {
+                c.Content = CoreTools.Translate("Do not show this dialog again for {0}", dep_name);
+                c.IsChecked = false;
+                c.Checked += (s, e) => Settings.Set(DEP_SKIPPED_PREF, true);
+                c.Unchecked += (s, e) => Settings.Set(DEP_SKIPPED_PREF, false);
+                p.Children.Add(c);
+            }
 
             ProgressBar progress = new ProgressBar();
             progress.IsIndeterminate = false;
@@ -519,6 +542,7 @@ namespace UniGetUI.Interface
                         progress.Opacity = 1.0F;
                         progress.IsIndeterminate = true;
                         block_closing = true;
+                        c.IsEnabled = false;
                         dialog.IsPrimaryButtonEnabled = false;
                         dialog.IsSecondaryButtonEnabled = false;
                         dialog.SecondaryButtonText = "";

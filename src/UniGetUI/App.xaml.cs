@@ -230,25 +230,25 @@ namespace UniGetUI
             try
             {
                 // Run other initializations asynchronously
-                if(!Settings.Get("DisableAutoUpdateWingetUI"))
+                if (!Settings.Get("DisableAutoUpdateWingetUI"))
                     UpdateUniGetUIIfPossible();
-                
+
                 IconDatabase.InitializeInstance();
                 IconDatabase.Instance.LoadIconAndScreenshotsDatabase();
 
                 // Bind the background api to the main interface
 
                 BackgroundApi.OnOpenWindow += (s, e) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                { 
+                {
                     MainWindow.Activate();
                 });
 
                 BackgroundApi.OnOpenUpdatesPage += (s, e) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                { 
+                {
                     MainWindow?.NavigationPage?.UpdatesNavButton.ForceClick();
                     MainWindow?.Activate();
                 });
-                
+
                 BackgroundApi.OnShowSharedPackage += (s, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
                     MainWindow?.NavigationPage?.DiscoverPage.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
@@ -281,28 +281,7 @@ namespace UniGetUI
                 RaiseExceptionAsFatal = false;
                 if (Environment.GetCommandLineArgs().Contains("--load-and-quit"))
                     DisposeAndQuit(0);
-
-                // Check for missing dependencies on package managers
-                List<ManagerDependency> missing_deps = new();
-                foreach (var manager in PEInterface.Managers)
-                {
-                    if (!manager.IsReady()) continue;
-
-                    foreach (var dependency in manager.Dependencies)
-                    {
-                        bool present = await dependency.IsInstalled();
-                        if (!present)
-                        {
-                            Logger.Warn($"Dependency {dependency.Name} was not found for manager {manager.Name}, installing...");
-                            missing_deps.Add(dependency);
-                        }
-                        else
-                        {
-                            Logger.Info($"Dependency {dependency.Name} for manager {manager.Name} is present");
-                        }
-                    }
-                }
-                await MainWindow.ShowMissingDependenciesQuery(missing_deps);
+                await CheckForMissingDependencies();
 
                 Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
 
@@ -311,6 +290,36 @@ namespace UniGetUI
             {
                 CoreTools.ReportFatalException(e);
             }
+        }
+
+        private async Task CheckForMissingDependencies()
+        {
+            // Check for missing dependencies on package managers
+            List<ManagerDependency> missing_deps = new();
+            foreach (var manager in PEInterface.Managers)
+            {
+                if (!manager.IsReady()) continue;
+
+                foreach (var dependency in manager.Dependencies)
+                {
+                    bool present = await dependency.IsInstalled();
+                    if (!present)
+                    {
+                        if (Settings.Get($"SkippedInstalling{dependency.Name}"))
+                        {
+                            Logger.Error($"Dependency {dependency.Name} was not found, and the user set it to not be reminded of the midding dependency");
+                        } else {
+                            Logger.Warn($"Dependency {dependency.Name} was not found for manager {manager.Name}, marking to prompt...");
+                            missing_deps.Add(dependency);
+                        }
+                    }
+                    else
+                    {
+                        Logger.Info($"Dependency {dependency.Name} for manager {manager.Name} is present");
+                    }
+                }
+            }
+            await MainWindow.ShowMissingDependenciesQuery(missing_deps);
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
