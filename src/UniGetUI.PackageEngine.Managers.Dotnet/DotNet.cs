@@ -248,6 +248,27 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 StartInfo = new ProcessStartInfo()
                 {
                     FileName = status.ExecutablePath,
+                    Arguments = "tool -h",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
+            };
+            process.Start();
+            await process.WaitForExitAsync();
+            if(process.ExitCode != 0)
+            {
+                status.Found = false;
+                return status;
+            }
+
+            process = new()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = status.ExecutablePath,
                     Arguments = "--version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
