@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11707,
-        "done": 5096,
-        "packages_with_icon": 5096,
-        "packages_with_screenshot": 573,
-        "total_screenshots": 1794
+        "done": 5101,
+        "packages_with_icon": 5101,
+        "packages_with_screenshot": 579,
+        "total_screenshots": 1809
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -6203,19 +6203,36 @@
         },
         "caffeine": {
             "icon": "https://community.chocolatey.org/content/packageimages/caffeine.1.97.0.20210517.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/Qd8z0pVh/byCzdam.png"
+            ]
         },
         "cairo": {
-            "icon": "",
-            "images": []
+            "icon": "https://cairoshell.com/img/favicon.png",
+            "images": [
+                "https://cairoshell.com/img/ss_dynDesk.jpg",
+                "https://cairoshell.com/img/ss_progs.png",
+                "https://cairoshell.com/img/ss_taskbar.png",
+                "https://cairoshell.com/img/ss_stacks.png"
+            ]
         },
         "cairo-desktop": {
-            "icon": "",
-            "images": []
+            "icon": "https://cairoshell.com/img/favicon.png",
+            "images": [
+                "https://cairoshell.com/img/ss_dynDesk.jpg",
+                "https://cairoshell.com/img/ss_progs.png",
+                "https://cairoshell.com/img/ss_taskbar.png",
+                "https://cairoshell.com/img/ss_stacks.png"
+            ]
         },
         "cairoshell": {
-            "icon": "",
-            "images": []
+            "icon": "https://cairoshell.com/img/favicon.png",
+            "images": [
+                "https://cairoshell.com/img/ss_dynDesk.jpg",
+                "https://cairoshell.com/img/ss_progs.png",
+                "https://cairoshell.com/img/ss_taskbar.png",
+                "https://cairoshell.com/img/ss_stacks.png"
+            ]
         },
         "cajviewer": {
             "icon": "",
@@ -28668,8 +28685,10 @@
             "images": []
         },
         "opautoclicker": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/1XDdYBp5/image.png",
+            "images": [
+                "https://i.postimg.cc/xTShbr2k/image.png"
+            ]
         },
         "opc-components": {
             "icon": "https://community.chocolatey.org/content/packageimages/opc-components.106.0.201.2.png",
@@ -46353,8 +46372,10 @@
             "images": []
         },
         "win-caffeinate": {
-            "icon": "",
-            "images": []
+            "icon": "https://community.chocolatey.org/content/packageimages/caffeine.1.97.0.20210517.png",
+            "images": [
+                "https://i.postimg.cc/Qd8z0pVh/byCzdam.png"
+            ]
         },
         "win-dynamic-desktop": {
             "icon": "",
@@ -46930,7 +46951,7 @@
             "images": []
         },
         "wingetui": {
-            "icon": "https://raw.githubusercontent.com/marticliment/WingetUI/main/src/wingetui/Assets/Images/icon.png",
+            "icon": "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/icon.png",
             "images": [
                 "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_1.png",
                 "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_2.png",
@@ -46944,7 +46965,7 @@
             ]
         },
         "wingetuistore": {
-            "icon": "https://raw.githubusercontent.com/marticliment/WingetUI/main/src/wingetui/Assets/Images/icon.png",
+            "icon": "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/icon.png",
             "images": [
                 "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_1.png",
                 "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_2.png",
