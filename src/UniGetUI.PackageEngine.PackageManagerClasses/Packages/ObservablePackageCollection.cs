@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using UniGetUI.Core.Classes;
-using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Enums;
+﻿using UniGetUI.Core.Classes;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
@@ -91,7 +88,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             List<Package> packages = new();
             foreach (PackageWrapper wrapper in this)
-                    packages.Add(wrapper.Package);
+            {
+                packages.Add(wrapper.Package);
+            }
+
             return packages;
         }
 
@@ -105,7 +105,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             foreach (PackageWrapper wrapper in this)
             {
                 if (wrapper.Package.IsChecked)
+                {
                     packages.Add(wrapper.Package);
+                }
             }
             return packages;
         }
@@ -116,7 +118,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public void SelectAll()
         {
             foreach (PackageWrapper wrapper in this)
+            {
                 wrapper.Package.IsChecked = true;
+            }
         }
         
         /// <summary>
@@ -125,7 +129,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public void ClearSelection()
         {
             foreach (PackageWrapper wrapper in this)
+            {
                 wrapper.Package.IsChecked = false;
+            }
         }
     }
 }

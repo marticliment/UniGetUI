@@ -35,11 +35,15 @@ namespace UniGetUI.Core.Language
         public void LoadLanguage(string lang)
         {
             Locale = "en";
-            if (LanguageData.LanguageReference.ContainsKey(lang)) 
+            if (LanguageData.LanguageReference.ContainsKey(lang))
+            {
                 Locale = lang;
-            else if (LanguageData.LanguageReference.ContainsKey(lang[0..2])) 
+            }
+            else if (LanguageData.LanguageReference.ContainsKey(lang[0..2]))
+            {
                 Locale = lang[0..2];
-            
+            }
+
             MainLangDict = LoadLanguageFile(Locale);
             Formatter = new() { Locale = Locale.Replace('_', '-') };
 
@@ -72,12 +76,18 @@ namespace UniGetUI.Core.Language
                 Dictionary<string, string>? __LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject)?.ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
 
                 if (__LangDict != null)
+                {
                     LangDict = __LangDict;
+                }
                 else
+                {
                     Logger.Error($"Deserialization of language file {LangFileToLoad} resulted in a null object");
+                }
 
                 if (!Settings.Get("DisableLangAutoUpdater"))
+                {
                     _ = DownloadUpdatedLanguageFile(LangKey);
+                }
 
                 return LangDict;
             }
@@ -106,7 +116,9 @@ namespace UniGetUI.Core.Language
                 string fileContents = await client.GetStringAsync(NewFile);
 
                 if (!Directory.Exists(CoreData.UniGetUICacheDirectory_Lang))
+                {
                     Directory.CreateDirectory(CoreData.UniGetUICacheDirectory_Lang);
+                }
 
                 File.WriteAllText(Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json"), fileContents);
 
@@ -134,22 +146,34 @@ namespace UniGetUI.Core.Language
             if (key == "WingetUI")
             {
                 if (MainLangDict.ContainsKey("formerly WingetUI") && MainLangDict["formerly WingetUI"] != "")
+                {
                     return "UniGetUI (" + MainLangDict["formerly WingetUI"] + ")";
+                }
+
                 return "UniGetUI (formerly WingetUI)";
             }
             else if (key == "Formerly known as WingetUI")
             {
                 if (MainLangDict.ContainsKey(key))
+                {
                     return MainLangDict[key];
+                }
+
                 return key;
             }
 
             if (key == null || key == "")
+            {
                 return "";
+            }
             else if (MainLangDict.ContainsKey(key) && MainLangDict[key] != "")
+            {
                 return MainLangDict[key].Replace("WingetUI", "UniGetUI");
+            }
             else
+            {
                 return key.Replace("WingetUI", "UniGetUI");
+            }
         }
 
         public string Translate(string key, Dictionary<string, object?> dict)

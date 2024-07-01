@@ -95,9 +95,13 @@ namespace UniGetUI.PackageEngine.Classes
             get
             {
                 if (UpdateOptions == null || !UpdateOptions.UpdatesIgnored)
+                {
                     return CoreTools.Translate("Latest");
+                }
                 else
+                {
                     return Package.Version;
+                }
             }
         }
 
@@ -220,7 +224,10 @@ namespace UniGetUI.PackageEngine.Classes
             get
             {
                 if (__source == "")
+                {
                     return __manager;
+                }
+
                 return __manager + ": " + __source;
             }
         }

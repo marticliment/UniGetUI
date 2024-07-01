@@ -107,17 +107,27 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 if (!DashesPassed)
                 {
                     if (line.Contains("----"))
+                    {
                         DashesPassed = true;
+                    }
                 }
                 else
                 {
                     string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
                     if (elements.Length < 3)
+                    {
                         continue;
+                    }
 
-                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+                    for (int i = 0; i < elements.Length; i++)
+                    {
+                        elements[i] = elements[i].Trim();
+                    }
+
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    {
                         continue;
+                    }
 
                     Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, PackageScope.Global));
                 }
@@ -157,17 +167,27 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     if (!DashesPassed)
                     {
                         if (line.Contains("----"))
+                        {
                             DashesPassed = true;
+                        }
                     }
                     else
                     {
                         string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
                         if (elements.Length < 2)
+                        {
                             continue;
+                        }
 
-                        for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+                        for (int i = 0; i < elements.Length; i++)
+                        {
+                            elements[i] = elements[i].Trim();
+                        }
+
                         if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                        {
                             continue;
+                        }
 
                         Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, scope));
                     }
@@ -206,13 +226,21 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             parameters[0] = Properties.UpdateVerb;
 
             if (options.Architecture == Architecture.X86)
+            {
                 parameters.AddRange(new string[] { "--arch", "x86" });
+            }
             else if (options.Architecture == Architecture.X64)
+            {
                 parameters.AddRange(new string[] { "--arch", "x64" });
+            }
             else if (options.Architecture == Architecture.Arm)
+            {
                 parameters.AddRange(new string[] { "--arch", "arm32" });
+            }
             else if (options.Architecture == Architecture.Arm64)
+            {
                 parameters.AddRange(new string[] { "--arch", "arm64" });
+            }
 
             return parameters.ToArray();
         }
@@ -222,12 +250,18 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             List<string> parameters = new() { Properties.UninstallVerb, package.Id };
 
             if (options.CustomParameters != null)
+            {
                 parameters.AddRange(options.CustomParameters);
+            }
 
             if (options.CustomInstallLocation != "")
+            {
                 parameters.AddRange(new string[] { "--tool-path", "\"" + options.CustomInstallLocation + "\"" });
+            }
             else if (package.Scope == PackageScope.Global)
+            {
                 parameters.Add("--global");
+            }
 
             return parameters.ToArray();
         }
@@ -241,7 +275,9 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             status.Found = which_res.Item1;
 
             if (!status.Found)
+            {
                 return status;
+            }
 
             Process process = new()
             {

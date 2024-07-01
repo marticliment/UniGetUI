@@ -44,12 +44,16 @@ namespace UniGetUI.Interface.Dialogs
 
 
             if (Package.Manager.Capabilities.SupportsCustomArchitectures)
+            {
                 foreach (Architecture arch in Package.Manager.Capabilities.SupportedCustomArchitectures)
                 {
                     ArchitectureComboBox.Items.Add(CommonTranslations.ArchNames[arch]);
                     if (Options.Architecture == arch)
+                    {
                         ArchitectureComboBox.SelectedValue = CommonTranslations.ArchNames[arch];
+                    }
                 }
+            }
 
             VersionComboBox.IsEnabled = (Operation == OperationType.Install || Operation == OperationType.None) && (Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease);
             VersionComboBox.SelectionChanged += (s, e) =>
@@ -60,13 +64,19 @@ namespace UniGetUI.Interface.Dialogs
             {
                 VersionComboBox.Items.Add(CoreTools.Translate("PreRelease"));
                 if (Options.PreRelease)
+                {
                     VersionComboBox.SelectedValue = CoreTools.Translate("PreRelease");
+                }
             }
 
             if (Package.Manager.Capabilities.SupportsCustomVersions)
+            {
                 _ = LoadVersions();
+            }
             else
+            {
                 VersionProgress.Visibility = Visibility.Collapsed;
+            }
 
             ScopeCombo.IsEnabled = Package.Manager.Capabilities.SupportsCustomScopes;
             ScopeCombo.Items.Add(CoreTools.Translate("Default"));
@@ -75,10 +85,15 @@ namespace UniGetUI.Interface.Dialogs
             {
                 ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
                 if (Options.InstallationScope == PackageScope.Local)
+                {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Local];
+                }
+
                 ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Global]));
                 if (Options.InstallationScope == PackageScope.Global)
+                {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
+                }
             }
 
 
@@ -87,7 +102,9 @@ namespace UniGetUI.Interface.Dialogs
             CustomInstallLocation.Text = Options.CustomInstallLocation;
 
             if (Options.CustomParameters != null)
+            {
                 CustomParameters.Text = String.Join(' ', Options.CustomParameters);
+            }
 
             LoadIgnoredUpdates();
         }
@@ -107,7 +124,9 @@ namespace UniGetUI.Interface.Dialogs
             {
                 VersionComboBox.Items.Add(ver);
                 if (Options.Version == ver)
+                {
                     VersionComboBox.SelectedValue = ver;
+                }
             }
 
             VersionProgress.Visibility = Visibility.Collapsed;
@@ -120,30 +139,46 @@ namespace UniGetUI.Interface.Dialogs
             Options.SkipHashCheck = HashCheckbox?.IsChecked ?? false;
 
             if (CommonTranslations.InvertedArchNames.ContainsKey(ArchitectureComboBox.SelectedValue.ToString() ?? ""))
+            {
                 Options.Architecture = CommonTranslations.InvertedArchNames[ArchitectureComboBox.SelectedValue.ToString() ?? ""];
+            }
             else
+            {
                 Options.Architecture = null;
+            }
 
             if (CommonTranslations.InvertedScopeNames.ContainsKey(ScopeCombo.SelectedValue.ToString() ?? ""))
+            {
                 Options.InstallationScope = CommonTranslations.InvertedScopeNames[ScopeCombo.SelectedValue.ToString() ?? ""];
+            }
             else
+            {
                 Options.InstallationScope = null;
+            }
 
             Options.CustomInstallLocation = CustomInstallLocation.Text;
             Options.CustomParameters = CustomParameters.Text.Split(' ').ToList();
             Options.PreRelease = VersionComboBox.SelectedValue.ToString() == CoreTools.Translate("PreRelease");
 
             if (VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("PreRelease") && VersionComboBox.SelectedValue.ToString() != CoreTools.Translate("Latest"))
+            {
                 Options.Version = VersionComboBox.SelectedValue.ToString() ?? "";
+            }
             else
+            {
                 Options.Version = "";
+            }
 
             if (IgnoreUpdatesCheckbox?.IsChecked ?? false)
+            {
                 await Package.AddToIgnoredUpdatesAsync(version: "*");
+            }
             else
             {
                 if (await Package.GetIgnoredUpdatesVersionAsync() == "*")
+                {
                     await Package.RemoveFromIgnoredUpdatesAsync();
+                }
             }
             return Options;
         }
@@ -159,7 +194,9 @@ namespace UniGetUI.Interface.Dialogs
             ExternalLibraries.Pickers.FolderPicker openPicker = new(MainApp.Instance.MainWindow.GetWindowHandle());
             string folder = openPicker.Show();
             if (folder != String.Empty)
+            {
                 CustomInstallLocation.Text = folder;
+            }
         }
 
         private void ResetDir_Click(object sender, RoutedEventArgs e)

@@ -20,10 +20,14 @@ namespace UniGetUI.PackageEngine.PackageLoader
         protected override async Task<bool> IsPackageValid(Package package)
         {
             if (await package.HasUpdatesIgnoredAsync(package.NewVersion))
+            {
                 return false;
+            }
 
             if (package.IsUpgradable && package.NewerVersionIsInstalled())
+            {
                 return false;
+            }
 
             return true;
         }

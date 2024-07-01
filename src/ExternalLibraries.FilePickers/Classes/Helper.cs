@@ -30,7 +30,9 @@ internal static class Helper
             }
 
             if (dialog.Show(windowHandle) != 0)
+            {
                 return string.Empty;
+            }
 
             dialog.GetResult(out IShellItem item);
             item.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, out string path);
@@ -59,10 +61,14 @@ internal static class Helper
             }
 
             if (!string.IsNullOrEmpty(name))
+            {
                 dialog.SetFileName(name);
+            }
 
             if (dialog.Show(windowHandle) != 0)
+            {
                 return string.Empty;
+            }
 
             dialog.GetResult(out IShellItem item);
             item.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, out string path);

@@ -83,7 +83,10 @@ namespace UniGetUI.Interface.Widgets
         public void AddItem(string name, string value, bool translate)
         {
             if (translate)
+            {
                 name = CoreTools.Translate(name);
+            }
+
             _elements.Add(name);
             _values_ref.Add(name, value);
             _inverted_val_ref.Add(value, name);

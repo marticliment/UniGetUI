@@ -38,7 +38,9 @@ namespace UniGetUI.Core.Classes.Tests
             Assert.Equal(5, SortableCollection[4].Value);
 
             for (int i = 0; i < SortableCollection.Count; i++)
+            {
                 Assert.Equal(i, SortableCollection[i].Index);
+            }
         }
     }
 }

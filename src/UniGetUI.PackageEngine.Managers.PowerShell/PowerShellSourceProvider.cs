@@ -15,7 +15,10 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         public override string[] GetAddSourceParameters(ManagerSource source)
         {
             if (source.Url.ToString() == "https://www.powershellgallery.com/api/v2")
+            {
                 return [ "Register-PSRepository", "-Default" ];
+            }
+
             return [ "Register-PSRepository", "-Name", source.Name, "-SourceLocation", source.Url.ToString() ];
         }
 
@@ -63,18 +66,24 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 try
                 {
                     if (string.IsNullOrEmpty(line))
+                    {
                         continue;
+                    }
 
                     if (!dashesPassed)
                     {
                         if (line.Contains("---"))
+                        {
                             dashesPassed = true;
+                        }
                     }
                     else
                     {
                         string[] parts = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
                         if (parts.Length >= 3)
+                        {
                             sources.Add(new ManagerSource(Manager, parts[0].Trim(), new Uri(parts[2].Trim())));
+                        }
                     }
                 }
                 catch (Exception e)

@@ -23,13 +23,13 @@ namespace UniGetUI
         public class __tooltip_options
         {
             private int _errors_occurred = 0;
-            public int ErrorsOccurred { get { return _errors_occurred; } set { _errors_occurred = value; MainApp.Instance.MainWindow.UpdateSystemTrayStatus(); } }
+            public int ErrorsOccurred { get { return _errors_occurred; } set { _errors_occurred = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
             private bool _restart_required = false;
-            public bool RestartRequired { get { return _restart_required; } set { _restart_required = value; MainApp.Instance.MainWindow.UpdateSystemTrayStatus(); } }
+            public bool RestartRequired { get { return _restart_required; } set { _restart_required = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
             private int _operations_in_progress = 0;
-            public int OperationsInProgress { get { return _operations_in_progress; } set { _operations_in_progress = value; MainApp.Instance.MainWindow.UpdateSystemTrayStatus(); } }
+            public int OperationsInProgress { get { return _operations_in_progress; } set { _operations_in_progress = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
             private int _available_updates = 0;
-            public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; MainApp.Instance.MainWindow.UpdateSystemTrayStatus(); } }
+            public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
         }
 
         public List<AbstractOperation> OperationQueue = new();
@@ -120,7 +120,9 @@ namespace UniGetUI
                 Logger.Error(" -");
                 Logger.Error(" -");
                 if (Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal || MainWindow == null)
+                {
                     CoreTools.ReportFatalException(e.Exception);
+                }
                 else
                 {
                     MainWindow.ErrorBanner.Title = CoreTools.Translate("Something went wrong");
@@ -146,7 +148,10 @@ namespace UniGetUI
             {
                 string WebViewPath = Path.Join(Path.GetTempPath(), "UniGetUI", "WebView");
                 if (!Directory.Exists(WebViewPath))
+                {
                     Directory.CreateDirectory(WebViewPath);
+                }
+
                 Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", WebViewPath);
             }
             catch (Exception e)
@@ -172,7 +177,9 @@ namespace UniGetUI
             Microsoft.UI.Windowing.AppWindow appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
             if (appWindow != null)
+            {
                 appWindow.Closing += MainWindow.HandleClosingEvent;
+            }
         }
 
 
@@ -231,7 +238,9 @@ namespace UniGetUI
             {
                 // Run other initializations asynchronously
                 if (!Settings.Get("DisableAutoUpdateWingetUI"))
+                {
                     UpdateUniGetUIIfPossible();
+                }
 
                 IconDatabase.InitializeInstance();
                 IconDatabase.Instance.LoadIconAndScreenshotsDatabase();
@@ -270,7 +279,10 @@ namespace UniGetUI
                     MainWindow?.NavigationPage?.UpdatesPage.UpdatePackageForId(package);
                 });
 
-                if (!Settings.Get("DisableApi")) _ = BackgroundApi.Start();
+                if (!Settings.Get("DisableApi"))
+                {
+                    _ = BackgroundApi.Start();
+                }
 
                 _ = MainWindow.DoEntryTextAnimationAsync();
 
@@ -280,7 +292,10 @@ namespace UniGetUI
                 MainWindow.SwitchToInterface();
                 RaiseExceptionAsFatal = false;
                 if (Environment.GetCommandLineArgs().Contains("--load-and-quit"))
+                {
                     DisposeAndQuit(0);
+                }
+
                 await CheckForMissingDependencies();
 
                 Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
@@ -296,11 +311,14 @@ namespace UniGetUI
         {
             // Check for missing dependencies on package managers
             List<ManagerDependency> missing_deps = new();
-            foreach (var manager in PEInterface.Managers)
+            foreach (PackageEngine.ManagerClasses.Manager.PackageManager manager in PEInterface.Managers)
             {
-                if (!manager.IsReady()) continue;
+                if (!manager.IsReady())
+                {
+                    continue;
+                }
 
-                foreach (var dependency in manager.Dependencies)
+                foreach (ManagerDependency dependency in manager.Dependencies)
                 {
                     bool present = await dependency.IsInstalled();
                     if (!present)
@@ -367,7 +385,9 @@ namespace UniGetUI
 
 
                 if (!fileContents.Contains("///"))
+                {
                     throw new FormatException("The updates file does not follow the FloatVersion///Sha256Hash format");
+                }
 
                 float LatestVersion = float.Parse(fileContents.Split("///")[0].Replace("\n", "").Trim(), CultureInfo.InvariantCulture);
                 string InstallerHash = fileContents.Split("///")[1].Replace("\n", "").Trim().ToLower();
@@ -392,8 +412,8 @@ namespace UniGetUI
                     {
                         client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                         HttpResponseMessage result = await client.GetAsync(DownloadUrl);
-                        using (FileStream fs = new(InstallerPath, FileMode.CreateNew))
-                            await result.Content.CopyToAsync(fs);
+                        using FileStream fs = new(InstallerPath, FileMode.CreateNew);
+                        await result.Content.CopyToAsync(fs);
                     }
 
                     string Hash = "";
@@ -416,10 +436,14 @@ namespace UniGetUI
                         banner.IsClosable = true;
 
                         if (MainWindow.Visible)
+                        {
                             Logger.Debug("Waiting for mainWindow to be hidden");
+                        }
 
                         while (MainWindow.Visible)
+                        {
                             await Task.Delay(100);
+                        }
 
                         if (Settings.Get("DisableAutoUpdateWingetUI"))
                         {
@@ -474,7 +498,9 @@ namespace UniGetUI
                 Logger.Error(e);
 
                 if (round >= 3)
+                {
                     return;
+                }
 
                 await Task.Delay(600000); // Try again in 10 minutes
                 UpdateUniGetUIIfPossible(round + 1);

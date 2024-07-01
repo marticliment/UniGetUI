@@ -52,13 +52,21 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         {
             // BEGIN integrity check
             if (!__base_constructor_called)
+            {
                 throw new Exception($"The Manager {Properties.Name} has not called the base constructor.");
+            }
             else if (Capabilities.IsDummy)
+            {
                 throw new Exception($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Capabilities object");
+            }
             else if (Properties.IsDummy)
+            {
                 throw new Exception($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Properties object");
+            }
             else if (Capabilities.SupportsCustomSources && SourceProvider == null)
+            {
                 throw new Exception($"Manager {Name} has been declared as SupportsCustomSources but has no helper associated with it");
+            }
             // END integrity check
 
             DefaultSource = Properties.DefaultSource;
@@ -181,7 +189,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 await RefreshPackageIndexes().WaitAsync(TimeSpan.FromSeconds(60));
                 Package[] packages = await GetAvailableUpdates_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
                 for (int i = 0; i < packages.Length; i++)
+                {
                     packages[i] = PackageCacher.GetUpgradablePackage(packages[i]);
+                }
+
                 Logger.Info($"Found {packages.Length} available updates from {Name}");
                 return packages;
             }
@@ -205,7 +216,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             {
                 Package[] packages = await GetInstalledPackages_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
                 for (int i = 0; i < packages.Length; i++)
+                {
                     packages[i] = PackageCacher.GetInstalledPackage(packages[i]);
+                }
+
                 Logger.Info($"Found {packages.Length} installed packages from {Name}");
                 return packages;
             }
@@ -325,9 +339,13 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         private void AssertSourceCompatibility(string MethodName)
         {
             if (!Capabilities.SupportsCustomSources)
+            {
                 throw new Exception($"Manager {Name} does not support custom sources but yet {MethodName} method was called.\n {Environment.StackTrace}");
+            }
             else if (SourceProvider == null)
+            {
                 throw new Exception($"Manager {Name} does support custom sources but yet the source helper is null");
+            }
         }
 #pragma warning disable CS8602
         public ManagerSource GetSourceOrDefault(string SourceName)
@@ -391,7 +409,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         private void AssertPackageDetailsCompatibility(string MethodName)
         {
             if (PackageDetailsProvider == null)
+            {
                 throw new Exception($"Manager {Name} does not have a valid PackageDetailsProvider helper");
+            }
         }
 #pragma warning disable CS8602
         /*public async Task<PackageDetails> GetPackageDetails(Package package)
@@ -424,9 +444,13 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             {
                 AssertPackageDetailsCompatibility("GetPackageVersions");
                 if (package.Manager.Capabilities.SupportsCustomVersions)
+                {
                     return await PackageDetailsProvider.GetPackageVersions(package);
+                }
                 else
+                {
                     return [];
+                }
             }
             catch (Exception e)
             {

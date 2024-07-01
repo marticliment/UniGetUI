@@ -12,7 +12,10 @@ namespace UniGetUI.Core.IconEngine.Tests
         {
             string extension = url.Split(".")[^1];
             string expectedFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, managerName, packageId + "." + extension);
-            if(File.Exists(expectedFile)) File.Delete(expectedFile);
+            if(File.Exists(expectedFile))
+            {
+                File.Delete(expectedFile);
+            }
 
             CacheableIcon icon = new(new Uri(url), data);
             string path = await IconCacheEngine.DownloadIconOrCache(icon, managerName, packageId);
@@ -36,7 +39,10 @@ namespace UniGetUI.Core.IconEngine.Tests
         {
             string extension = url.Split(".")[^1];
             string expectedFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, managerName, packageId + "." + extension);
-            if (File.Exists(expectedFile)) File.Delete(expectedFile);
+            if (File.Exists(expectedFile))
+            {
+                File.Delete(expectedFile);
+            }
 
             CacheableIcon icon = new(new Uri(url), version);
             string path = await IconCacheEngine.DownloadIconOrCache(icon, managerName, packageId);
@@ -69,7 +75,10 @@ namespace UniGetUI.Core.IconEngine.Tests
         {
             string extension = url.Split(".")[^1];
             string expectedFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, managerName, packageId + "." + extension);
-            if (File.Exists(expectedFile)) File.Delete(expectedFile);
+            if (File.Exists(expectedFile))
+            {
+                File.Delete(expectedFile);
+            }
 
             CacheableIcon icon = new(new Uri(url), size);
             string path = await IconCacheEngine.DownloadIconOrCache(icon, managerName, packageId);

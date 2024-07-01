@@ -50,7 +50,9 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
                     client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     HttpResponseMessage response = await client.GetAsync(PackageManifestUrl);
                     if (!response.IsSuccessStatusCode && package.Version.EndsWith(".0"))
+                    {
                         response = await client.GetAsync(new Uri(PackageManifestUrl.ToString().Replace(".0')", "')")));
+                    }
 
                     if (!response.IsSuccessStatusCode)
                     {

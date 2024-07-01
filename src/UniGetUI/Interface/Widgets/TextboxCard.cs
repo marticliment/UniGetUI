@@ -112,13 +112,22 @@ namespace UniGetUI.Interface.Widgets
             string SanitizedText = _textbox.Text;
 
             if (SettingName.Contains("File"))
+            {
                 foreach (char rem in "#%&{}\\/<>*?$!'\":;@`|~")
+                {
                     SanitizedText = SanitizedText.Replace(rem.ToString(), "");
+                }
+            }
 
             if (SanitizedText != "")
+            {
                 Settings.SetValue(SettingName, SanitizedText);
+            }
             else
+            {
                 Settings.Set(SettingName, false);
+            }
+
             TextboxEventArgs args = new();
             ValueChanged?.Invoke(this, args);
         }

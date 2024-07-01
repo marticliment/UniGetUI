@@ -17,14 +17,22 @@
 
             //Assert
             if (string.IsNullOrEmpty(profilePicture))
+            {
                 Assert.False(actual.HasPicture);
+            }
             else
+            {
                 Assert.True(actual.HasPicture);
+            }
 
             if (string.IsNullOrEmpty(gitHubUrl))
+            {
                 Assert.False(actual.HasGitHubProfile);
+            }
             else
+            {
                 Assert.True(actual.HasGitHubProfile);
+            }
         }
     }
 }

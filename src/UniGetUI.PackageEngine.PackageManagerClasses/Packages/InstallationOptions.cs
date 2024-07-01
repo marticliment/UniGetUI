@@ -58,10 +58,25 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 OptionsCache.Add(package.GetHash(), instance);
             }
 
-            if (elevated != null) instance.RunAsAdministrator = (bool)elevated;
-            if (interactive != null) instance.InteractiveInstallation = (bool)interactive;
-            if (no_integrity != null) instance.SkipHashCheck = (bool)no_integrity;
-            if (remove_data != null) instance.RemoveDataOnUninstall = (bool)remove_data;
+            if (elevated != null)
+            {
+                instance.RunAsAdministrator = (bool)elevated;
+            }
+
+            if (interactive != null)
+            {
+                instance.InteractiveInstallation = (bool)interactive;
+            }
+
+            if (no_integrity != null)
+            {
+                instance.SkipHashCheck = (bool)no_integrity;
+            }
+
+            if (remove_data != null)
+            {
+                instance.RemoveDataOnUninstall = (bool)remove_data;
+            }
 
             return instance;
         }
@@ -166,7 +181,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 FileInfo optionsFile = GetPackageOptionsFile();
                 if (optionsFile.Directory?.Exists == false)
+                {
                     optionsFile.Directory.Create();
+                }
 
                 string fileContents = JsonSerializer.Serialize(AsSerializable());
                 File.WriteAllText(optionsFile.FullName, fileContents);
@@ -187,15 +204,18 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 if (!optionsFile.Exists)
+                {
                     return;
-
+                }
 
                 using FileStream inputStream = optionsFile.OpenRead();
                 SerializableInstallationOptions_v1? options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(inputStream);
 
                 if (options == null)
+                {
                     throw new Exception("Deserialized options cannot be null!");
-                
+                }
+
                 FromSerializable(options);
                 Logger.Debug($"InstallationOptions loaded successfully from disk for package {Package.Id}");
             }

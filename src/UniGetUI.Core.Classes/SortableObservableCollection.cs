@@ -16,7 +16,10 @@ namespace UniGetUI.Core.Classes
                 if (SortingSelector == null
                     || e.Action == NotifyCollectionChangedAction.Remove
                     || e.Action == NotifyCollectionChangedAction.Reset)
+                {
                     return;
+                }
+
                 Sort();
             }
         }
@@ -26,7 +29,9 @@ namespace UniGetUI.Core.Classes
             BlockSorting = true;
 
             if (SortingSelector == null)
+            {
                 throw new Exception("SortableObservableCollection<T>.SortingSelector must not be null when sorting");
+            }
 
             List<T> sorted = Descending ? this.OrderByDescending(SortingSelector).ToList() : this.OrderBy(SortingSelector).ToList();
             foreach (T item in sorted)
@@ -35,7 +40,9 @@ namespace UniGetUI.Core.Classes
             }
             
             for(int i = 0; i < Count; i++)
+            {
                 this[i].Index = i;
+            }
 
             BlockSorting = false;
             base.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));

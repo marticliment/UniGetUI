@@ -142,12 +142,19 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 {
                     string[] elements = line.Trim().Split(" ");
                     if (elements.Length < 2)
+                    {
                         continue;
+                    }
 
-                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+                    for (int i = 0; i < elements.Length; i++)
+                    {
+                        elements[i] = elements[i].Trim();
+                    }
 
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    {
                         continue;
+                    }
 
                     Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1].Replace("(", "").Replace(")", ""), source, this));
                 }
@@ -164,7 +171,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             foreach (Package InstalledPackage in await GetInstalledPackages())
             {
                 if (!InstalledPackages.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.Version))
+                {
                     InstalledPackages.Add(InstalledPackage.Id + "." + InstalledPackage.Version, InstalledPackage);
+                }
             }
 
             List<Package> Packages = new();
@@ -195,18 +204,27 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 if (!DashesPassed)
                 {
                     if (line.Contains("---"))
+                    {
                         DashesPassed = true;
+                    }
                 }
                 else if (line.Trim() != "")
                 {
                     string[] elements = Regex.Replace(line, " {2,}", " ").Trim().Split(" ");
                     if (elements.Length < 3)
+                    {
                         continue;
+                    }
 
-                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+                    for (int i = 0; i < elements.Length; i++)
+                    {
+                        elements[i] = elements[i].Trim();
+                    }
 
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    {
                         continue;
+                    }
 
                     if (!InstalledPackages.ContainsKey(elements[0] + "." + elements[1]))
                     {
@@ -251,22 +269,33 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 if (!DashesPassed)
                 {
                     if (line.Contains("---"))
+                    {
                         DashesPassed = true;
+                    }
                 }
                 else if (line.Trim() != "")
                 {
                     string[] elements = Regex.Replace(line, " {2,}", " ").Trim().Split(" ");
                     if (elements.Length < 3)
+                    {
                         continue;
+                    }
 
-                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+                    for (int i = 0; i < elements.Length; i++)
+                    {
+                        elements[i] = elements[i].Trim();
+                    }
 
                     if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    {
                         continue;
+                    }
 
                     PackageScope scope = PackageScope.User;
                     if (line.Contains("Global install"))
+                    {
                         scope = PackageScope.Global;
+                    }
 
                     Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], GetSourceOrDefault(elements[2]), this, scope));
                 }
@@ -292,7 +321,10 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 return OperationVeredict.AutoRetry;
             }
             if (output_string.Contains("was uninstalled"))
+            {
                 return OperationVeredict.Succeeded;
+            }
+
             return OperationVeredict.Failed;
         }
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
@@ -309,7 +341,10 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 return OperationVeredict.AutoRetry;
             }
             if (output_string.Contains("ERROR"))
+            {
                 return OperationVeredict.Failed;
+            }
+
             return OperationVeredict.Succeeded;
         }
         public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
@@ -325,13 +360,19 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             parameters.Add(package.Source.Name + "/" + package.Id);
 
             if (package.Scope == PackageScope.Global)
+            {
                 parameters.Add("--global");
+            }
 
             if (options.CustomParameters != null)
+            {
                 parameters.AddRange(options.CustomParameters);
+            }
 
             if (options.RemoveDataOnUninstall)
+            {
                 parameters.Add("--purge");
+            }
 
             return parameters.ToArray();
         }
@@ -430,7 +471,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             Status = status; // Wee need this for the RunCleanup method to get the executable path
             if (status.Found && IsEnabled() && Settings.Get("EnableScoopCleanup"))
+            {
                 RunCleanup();
+            }
 
             return status;
         }

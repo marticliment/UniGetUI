@@ -8,8 +8,12 @@ namespace UniGetUI.Core.Data.Tests
             List<string> MissingUrls = new();
 
             foreach (string library in LicenseData.LicenseNames.Keys)
-                if(!LicenseData.LicenseURLs.ContainsKey(library))
+            {
+                if (!LicenseData.LicenseURLs.ContainsKey(library))
+                {
                     MissingUrls.Add(library);
+                }
+            }
 
             Assert.True(MissingUrls.Count == 0, "The list of missing licenses is not empty: " + MissingUrls.ToArray().ToString());
         }
@@ -20,8 +24,12 @@ namespace UniGetUI.Core.Data.Tests
             List<string> MissingUrls = new();
 
             foreach (string library in LicenseData.LicenseNames.Keys)
+            {
                 if (!LicenseData.HomepageUrls.ContainsKey(library))
+                {
                     MissingUrls.Add(library);
+                }
+            }
 
             Assert.True(MissingUrls.Count == 0, "The list of missing licenses is not empty: " + MissingUrls.ToArray().ToString());
         }

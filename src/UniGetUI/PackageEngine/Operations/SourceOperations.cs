@@ -89,9 +89,13 @@ namespace UniGetUI.PackageEngine.Operations
             );
             
             if (result == ContentDialogResult.Primary)
+            {
                 return AfterFinshAction.Retry;
+            }
             else
+            {
                 return AfterFinshAction.ManualClose;
+            }
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
@@ -99,8 +103,9 @@ namespace UniGetUI.PackageEngine.Operations
             OperationSucceeded?.Invoke(this, new EventArgs());
             LineInfoText = CoreTools.Translate("The source {source} was added to {manager} successfully", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
             if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
-                
-                try{
+            {
+                try
+                {
                     new ToastContentBuilder()
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
@@ -113,6 +118,8 @@ namespace UniGetUI.PackageEngine.Operations
                     Logger.Warn("Failed to show toast notification");
                     Logger.Warn(ex);
                 }
+            }
+
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
@@ -184,9 +191,13 @@ namespace UniGetUI.PackageEngine.Operations
             );
 
             if (result == ContentDialogResult.Primary)
+            {
                 return AfterFinshAction.Retry;
+            }
             else
+            {
                 return AfterFinshAction.ManualClose;
+            }
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
@@ -194,6 +205,7 @@ namespace UniGetUI.PackageEngine.Operations
             OperationSucceeded?.Invoke(this, new EventArgs());
             LineInfoText = CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
             if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
+            {
                 try { 
                 new ToastContentBuilder()
                     .AddArgument("action", "OpenUniGetUI")
@@ -207,6 +219,8 @@ namespace UniGetUI.PackageEngine.Operations
                     Logger.Warn("Failed to show toast notification");
                     Logger.Warn(ex);
                 }
+            }
+
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }

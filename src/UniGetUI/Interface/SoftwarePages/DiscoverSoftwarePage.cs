@@ -46,8 +46,8 @@ namespace UniGetUI.Interface.SoftwarePages
             FindButton.Click += Event_SearchPackages;
             MegaFindButton.Click += Event_SearchPackages;
 
-            QueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) Event_SearchPackages(s, e); };
-            MegaQueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) Event_SearchPackages(s, e); };
+            QueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) { Event_SearchPackages(s, e); } };
+            MegaQueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) { Event_SearchPackages(s, e); } };
         }
 
         public override BetterMenu GenerateContextMenu()
@@ -170,7 +170,10 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 toolButton.IsCompact = Labels[toolButton][0] == ' ';
                 if (toolButton.IsCompact)
+                {
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
+                }
+
                 toolButton.Label = Labels[toolButton].Trim();
             }
 
@@ -200,7 +203,9 @@ namespace UniGetUI.Interface.SoftwarePages
             InstallSelected.Click += (s, e) =>
             {
                 foreach (Package package in FilteredPackages.GetCheckedPackages())
+                {
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
+                }
             };
 
             InstallAsAdmin.Click += async (s, e) =>
@@ -235,15 +240,22 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public override async Task LoadPackages()
         {
-            if(QueryBlock.Text.Trim() != "") await LoadPackages(ReloadReason.External);
+            if(QueryBlock.Text.Trim() != "")
+            {
+                await LoadPackages(ReloadReason.External);
+            }
         }
 
         private void Event_SearchPackages(object sender, RoutedEventArgs e)
         {
             if (QueryBlock.Text.Trim() != "")
+            {
                 _ = (Loader as DiscoverablePackagesLoader)?.ReloadPackages(QueryBlock.Text.Trim());
+            }
             else
+            {
                 Loader.StopLoading();
+            }
         }
 
         protected override void WhenPackageCountUpdated()
@@ -284,14 +296,21 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs e)
         {
-            if (PackageList.SelectedItem == null) return;
+            if (PackageList.SelectedItem == null)
+            {
+                return;
+            }
+
             MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
         }
@@ -299,7 +318,10 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, no_integrity: true)));
@@ -308,7 +330,10 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, interactive: true)));
@@ -317,8 +342,11 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (package == null) return;
-            
+            if (package == null)
+            {
+                return;
+            }
+
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, elevated: true)));
         }
@@ -354,12 +382,15 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 string managerName = pSource.Contains(':') ? pSource.Split(':')[0] : pSource;
                 foreach (Package match in FilteredPackages.GetPackages())
+                {
                     if (match.Source.Manager.Name == managerName)
                     {
                         Logger.Debug("Equivalent package for pId=" + pId + " and pSource=" + pSource + " found: " + match.ToString());
                         await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(match, OperationType.Install);
                         return;
                     }
+                }
+
                 Logger.Debug("No package found with the exact same manager, showing the first one.");
                 await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0].Package, OperationType.Install);
             }

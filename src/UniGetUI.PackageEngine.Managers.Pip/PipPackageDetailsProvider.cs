@@ -37,37 +37,49 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 try
                 {
                     if (infoNode.ContainsKey("author"))
+                    {
                         details.Author = CoreTools.GetStringOrNull(infoNode["author"]?.ToString());
+                    }
                 }
                 catch (Exception ex) { logger.Error("Can't load author: " + ex); }
                 try
                 {
                     if (infoNode.ContainsKey("home_page"))
+                    {
                         details.HomepageUrl = CoreTools.GetUriOrNull(infoNode["home_page"]?.ToString());
+                    }
                 }
                 catch (Exception ex) { logger.Error("Can't load home_page: " + ex); }
                 try
                 {
                     if (infoNode.ContainsKey("package_url"))
+                    {
                         details.ManifestUrl = CoreTools.GetUriOrNull(infoNode["package_url"]?.ToString());
+                    }
                 }
                 catch (Exception ex) { logger.Error("Can't load package_url: " + ex); }
                 try
                 {
                     if (infoNode.ContainsKey("summary"))
+                    {
                         details.Description = CoreTools.GetStringOrNull(infoNode["summary"]?.ToString());
+                    }
                 }
                 catch (Exception ex) { logger.Error("Can't load summary: " + ex); }
                 try
                 {
                     if (infoNode.ContainsKey("license"))
+                    {
                         details.License = CoreTools.GetStringOrNull(infoNode["license"]?.ToString());
+                    }
                 }
                 catch (Exception ex) { logger.Error("Can't load license: " + ex); }
                 try
                 {
                     if (infoNode.ContainsKey("maintainer"))
+                    {
                         details.Publisher = CoreTools.GetStringOrNull(infoNode["maintainer"]?.ToString());
+                    }
                 }
                 catch (Exception ex) { logger.Error("Can't load maintainer: " + ex); }
                 try
@@ -77,11 +89,20 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     {
                         List<string> Tags = new();
                         foreach (string? line in infoNode["classifiers"] as JsonArray ?? new())
+                        {
                             if (line?.Contains("License ::") ?? false)
+                            {
                                 details.License = line.Split("::")[^1].Trim();
+                            }
                             else if (line?.Contains("Topic ::") ?? false)
+                            {
                                 if (!Tags.Contains(line.Split("::")[^1].Trim()))
+                                {
                                     Tags.Add(line.Split("::")[^1].Trim());
+                                }
+                            }
+                        }
+
                         details.Tags = Tags.ToArray();
                     }
                 }
@@ -92,10 +113,13 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             {
                 JsonObject? url = null;
                 if (RawInfo.ContainsKey("url"))
-
+                {
                     url = RawInfo["url"] as JsonObject;
+                }
                 else if (RawInfo.ContainsKey("urls"))
+                {
                     url = (RawInfo["urls"] as JsonArray)?[0] as JsonObject;
+                }
 
                 if (url != null)
                 {
@@ -151,7 +175,9 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             {
                 logger.AddToStdOut(line);
                 if (line.Contains("Available versions:"))
+                {
                     result = line.Replace("Available versions:", "").Trim().Split(", ");
+                }
             }
 
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());

@@ -18,7 +18,9 @@ namespace UniGetUI.Interface.Pages.AboutPages
         {
             InitializeComponent();
             foreach(Person person in LanguageData.TranslatorsList)
+            {
                 TranslatorList.Add(person);
+            }
         }
     }
 }

@@ -56,7 +56,9 @@ namespace UniGetUI.Interface.Dialogs
             SizeChanged += PackageDetailsPage_SizeChanged;
 
             if (operationRole == OperationType.None)
+            {
                 operationRole = OperationType.Install;
+            }
 
             switch (operationRole)
             {
@@ -133,7 +135,10 @@ namespace UniGetUI.Interface.Dialogs
             string NotFound = CoreTools.Translate("Not available");
 
             PackageDetails details = Package.Details;
-            if (!details.IsPopulated) await details.Load();
+            if (!details.IsPopulated)
+            {
+                await details.Load();
+            }
 
             string command = "";
 
@@ -185,9 +190,14 @@ namespace UniGetUI.Interface.Dialogs
             // Extended details section
             SetTextToItem(ManifestUrl_Content, details.ManifestUrl);
             if (Package.Manager == PEInterface.Chocolatey)
+            {
                 SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA512") + ": ");
+            }
             else
+            {
                 SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA256") + ": ");
+            }
+
             SetTextToItem(InstallerHash_Content, details.InstallerHash);
             if (details.InstallerUrl != null)
             {
@@ -207,11 +217,13 @@ namespace UniGetUI.Interface.Dialogs
 
             ShowableTags.Clear();
             foreach (string tag in details.Tags)
+            {
                 ShowableTags.Add(new TextBlock() { 
                     Text = tag, 
                     VerticalAlignment = VerticalAlignment.Center,
                     TextLineBounds = TextLineBounds.Tight
                 });
+            }
         }
 
         public void SetTextToItem(Run r, string? s)
@@ -270,7 +282,9 @@ namespace UniGetUI.Interface.Dialogs
                 IconsExtraBanner.Visibility = Visibility.Visible;
                 ScreenshotsCarroussel.Items.Clear();
                 foreach (Uri image in screenshots)
+                {
                     ScreenshotsCarroussel.Items.Add(new Image { Source = new BitmapImage(image) });
+                }
             }
 
             __layout_mode = LayoutMode.Unloaded;
@@ -290,7 +304,10 @@ namespace UniGetUI.Interface.Dialogs
                 
                 case OperationType.Uninstall:
                     if(await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(Package))
-                        MainApp.Instance.AddOperationToList(new UninstallPackageOperation(Package, InstallOptionsPage.Options));    
+                    {
+                        MainApp.Instance.AddOperationToList(new UninstallPackageOperation(Package, InstallOptionsPage.Options));
+                    }
+
                     break;
                 
                 case OperationType.Update:
@@ -310,8 +327,10 @@ namespace UniGetUI.Interface.Dialogs
             try
             {
                 if (Package.Details?.InstallerUrl == null)
+                {
                     return;
-                
+                }
+
                 FileSavePicker savePicker = new();
                 MainWindow window = MainApp.Instance.MainWindow;
                 IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
@@ -320,7 +339,10 @@ namespace UniGetUI.Interface.Dialogs
                 savePicker.SuggestedFileName = Package.Id + " installer." + Package.Details.InstallerUrl.ToString().Split('.')[^1];
                 
                 if (Package.Details.InstallerUrl.ToString().Split('.')[^1] == "nupkg")
+                {
                     savePicker.FileTypeChoices.Add("Compressed Manifest File", new System.Collections.Generic.List<string>() { ".zip" });
+                }
+
                 savePicker.FileTypeChoices.Add("Default", new System.Collections.Generic.List<string>() { "." + Package.Details.InstallerUrl.ToString().Split('.')[^1] });
                 
                 StorageFile file = await savePicker.PickSaveFileAsync();

@@ -38,7 +38,9 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
             {
                 logger.AddToStdOut(line);
                 if (line.Contains("[Approved]"))
+                {
                     versions.Add(line.Split(' ')[1].Trim());
+                }
             }
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();

@@ -35,7 +35,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             
             if(package.Source.Name == "msstore")
+            {
                 return await GetMicrosoftStorePackageIcon(package);
+            }
 
             Logger.Warn("Non-MSStore WinGet Native Icons have been forcefully disabled on code");
             return null;
@@ -45,11 +47,15 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         protected override async Task<Uri[]> GetPackageScreenshots_Unsafe(Package package)
         {
             if (package.Source.Name != "msstore")
+            {
                 return [];
+            }
 
             string? ResponseContent = await GetMicrosoftStorePackageManifest(package);
             if (ResponseContent == null)
+            {
                 return [];
+            }
 
             Match IconArray = Regex.Match(ResponseContent, "(?:\"|')Images(?:\"|'): ?\\[([^\\]]+)\\]");
             if (!IconArray.Success)
@@ -64,15 +70,21 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
 
                 if (!ImageEntry.Success)
+                {
                     continue;
+                }
 
                 Match ImagePurpose = Regex.Match(ImageEntry.Groups[1].Value, "(?:\"|')ImagePurpose(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
                 if (!ImagePurpose.Success || ImagePurpose.Groups[1].Value != "Screenshot")
+                {
                     continue;
+                }
 
                 Match ImageUrl = Regex.Match(ImageEntry.Groups[1].Value, "(?:\"|')Uri(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
-                if (!ImageUrl.Success) 
+                if (!ImageUrl.Success)
+                {
                     continue;
+                }
 
                 FoundIcons.Add(new Uri("https:" + ImageUrl.Groups[1].Value));
             }
@@ -84,7 +96,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         private async Task<string?> GetMicrosoftStorePackageManifest(Package package)
         {
             if(__msstore_package_manifests.ContainsKey(package.Id))
+            {
                 return __msstore_package_manifests[package.Id];
+            }
 
             string CountryCode = CultureInfo.CurrentCulture.Name.Split("-")[^1];
             string Locale = CultureInfo.CurrentCulture.Name;
@@ -113,7 +127,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             Logger.Debug("Microsoft Store API call status code: " + httpResponse.StatusCode);
 
-            if(result != "" && httpResponse.StatusCode == HttpStatusCode.OK) __msstore_package_manifests[package.Id] = result;
+            if(result != "" && httpResponse.StatusCode == HttpStatusCode.OK)
+            {
+                __msstore_package_manifests[package.Id] = result;
+            }
+
             return result;
         }
 
@@ -121,7 +139,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             string? ResponseContent = await GetMicrosoftStorePackageManifest(package);
             if (ResponseContent == null)
+            {
                 return null;
+            }
 
             Match IconArray = Regex.Match(ResponseContent, "(?:\"|')Images(?:\"|'): ?\\[([^\\]]+)\\]");
             if (!IconArray.Success)
@@ -137,17 +157,23 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 string CurrentImage = ImageEntry.Groups[1].Value;
 
                 if (!ImageEntry.Success)
+                {
                     continue;
+                }
 
                 Match ImagePurpose = Regex.Match(CurrentImage, "(?:\"|')ImagePurpose(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
                 if (!ImagePurpose.Success || ImagePurpose.Groups[1].Value != "Tile")
+                {
                     continue;
+                }
 
                 Match ImageUrl = Regex.Match(CurrentImage, "(?:\"|')Uri(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
                 Match ImageSize = Regex.Match(CurrentImage, "(?:\"|')Height(?:\"|'): ?([^,]+)");
 
                 if (!ImageUrl.Success || !ImageSize.Success)
+                {
                     continue;
+                }
 
                 FoundIcons[int.Parse(ImageSize.Groups[1].Value)] = ImageUrl.Groups[1].Value;
             }

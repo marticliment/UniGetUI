@@ -21,78 +21,76 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 details.ManifestUrl = new Uri($"https://www.npmjs.com/package/{details.Package.Id}");
                 details.ReleaseNotesUrl = new Uri($"https://www.npmjs.com/package/{details.Package.Id}?activeTab=versions");
 
-                using (Process p = new())
+                using Process p = new();
+                p.StartInfo = new ProcessStartInfo()
                 {
-                    p.StartInfo = new ProcessStartInfo()
-                    {
-                        FileName = Manager.Status.ExecutablePath,
-                        Arguments = Manager.Properties.ExecutableCallArgs + " info " + details.Package.Id,
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        RedirectStandardInput = true,
-                        CreateNoWindow = true,
-                        WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                        StandardOutputEncoding = System.Text.Encoding.UTF8
-                    };
+                    FileName = Manager.Status.ExecutablePath,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " info " + details.Package.Id,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    CreateNoWindow = true,
+                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                };
 
-                    ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
-                    p.Start();
+                ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
+                p.Start();
 
-                    string? outLine;
-                    int lineNo = 0;
-                    bool ReadingMaintainer = false;
-                    while ((outLine = await p.StandardOutput.ReadLineAsync()) != null)
+                string? outLine;
+                int lineNo = 0;
+                bool ReadingMaintainer = false;
+                while ((outLine = await p.StandardOutput.ReadLineAsync()) != null)
+                {
+                    try
                     {
-                        try
+                        lineNo++;
+                        if (lineNo == 2)
                         {
-                            lineNo++;
-                            if (lineNo == 2)
-                            {
-                                details.License = outLine.Split("|")[1];
-                            }
-                            else if (lineNo == 3)
-                            {
-                                details.Description = outLine.Trim();
-                            }
-                            else if (lineNo == 4)
-                            {
-                                details.HomepageUrl = new Uri(outLine.Trim());
-                            }
-                            else if (outLine.StartsWith(".tarball"))
-                            {
-                                details.InstallerUrl = new Uri(outLine.Replace(".tarball: ", "").Trim());
-                                details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
-                            }
-                            else if (outLine.StartsWith(".integrity"))
-                            {
-                                details.InstallerHash = outLine.Replace(".integrity: sha512-", "").Replace("==", "").Trim();
-                            }
-                            else if (outLine.StartsWith("maintainers:"))
-                            {
-                                ReadingMaintainer = true;
-                            }
-                            else if (ReadingMaintainer)
-                            {
-                                ReadingMaintainer = false;
-                                details.Author = outLine.Replace("-", "").Split('<')[0].Trim();
-                            }
-                            else if (outLine.StartsWith("published"))
-                            {
-                                details.Publisher = outLine.Split("by").Last().Split('<')[0].Trim();
-                                details.UpdateDate = outLine.Replace("published", "").Split("by")[0].Trim();
-                            }
+                            details.License = outLine.Split("|")[1];
                         }
-                        catch (Exception e)
+                        else if (lineNo == 3)
                         {
-                            logger.AddToStdErr(e.ToString());
+                            details.Description = outLine.Trim();
+                        }
+                        else if (lineNo == 4)
+                        {
+                            details.HomepageUrl = new Uri(outLine.Trim());
+                        }
+                        else if (outLine.StartsWith(".tarball"))
+                        {
+                            details.InstallerUrl = new Uri(outLine.Replace(".tarball: ", "").Trim());
+                            details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
+                        }
+                        else if (outLine.StartsWith(".integrity"))
+                        {
+                            details.InstallerHash = outLine.Replace(".integrity: sha512-", "").Replace("==", "").Trim();
+                        }
+                        else if (outLine.StartsWith("maintainers:"))
+                        {
+                            ReadingMaintainer = true;
+                        }
+                        else if (ReadingMaintainer)
+                        {
+                            ReadingMaintainer = false;
+                            details.Author = outLine.Replace("-", "").Split('<')[0].Trim();
+                        }
+                        else if (outLine.StartsWith("published"))
+                        {
+                            details.Publisher = outLine.Split("by").Last().Split('<')[0].Trim();
+                            details.UpdateDate = outLine.Replace("published", "").Split("by")[0].Trim();
                         }
                     }
-
-                    logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-                    await p.WaitForExitAsync();
-                    logger.Close(p.ExitCode);
+                    catch (Exception e)
+                    {
+                        logger.AddToStdErr(e.ToString());
+                    }
                 }
+
+                logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+                await p.WaitForExitAsync();
+                logger.Close(p.ExitCode);
             }
             catch (Exception e)
             {
@@ -138,7 +136,9 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             {
                 logger.AddToStdOut(line);
                 if (line.Contains("\""))
+                {
                     versions.Add(line.Trim().TrimStart('"').TrimEnd(',').TrimEnd('"'));
+                }
             }
 
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());

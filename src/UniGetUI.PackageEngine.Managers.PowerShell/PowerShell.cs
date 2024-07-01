@@ -104,16 +104,25 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             {
                 logger.AddToStdOut(line);
                 if (line.StartsWith(">>"))
+                {
                     continue;
+                }
 
                 string[] elements = line.Split('|');
                 if (elements.Length < 4)
+                {
                     continue;
+                }
 
-                for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+                for (int i = 0; i < elements.Length; i++)
+                {
+                    elements[i] = elements[i].Trim();
+                }
 
                 if (elements[1] + ".0" == elements[2] || elements[1] + ".0.0" == elements[2])
+                {
                     continue;
+                }
 
                 Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], GetSourceOrDefault(elements[3]), this));
             }
@@ -152,15 +161,22 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 if (!DashesPassed)
                 {
                     if (line.Contains("-----"))
+                    {
                         DashesPassed = true;
+                    }
                 }
                 else
                 {
                     string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
                     if (elements.Length < 3)
+                    {
                         continue;
+                    }
 
-                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+                    for (int i = 0; i < elements.Length; i++)
+                    {
+                        elements[i] = elements[i].Trim();
+                    }
 
                     Packages.Add(new Package(CoreTools.FormatAsName(elements[1]), elements[1], elements[0], GetSourceOrDefault(elements[2]), this));
                 }
@@ -202,12 +218,18 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             parameters.AddRange(new string[] { "-AllowClobber" });
             if (package.Scope == PackageScope.Global)
+            {
                 parameters.AddRange(new string[] { "-Scope", "AllUsers" });
+            }
             else
+            {
                 parameters.AddRange(new string[] { "-Scope", "CurrentUser" });
+            }
 
             if (options.Version != "")
+            {
                 parameters.AddRange(new string[] { "-RequiredVersion", options.Version });
+            }
 
             return parameters.ToArray();
 
@@ -218,10 +240,14 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             parameters[0] = Properties.UpdateVerb;
 
             if (options.PreRelease)
+            {
                 parameters.Add("-AllowPrerelease");
+            }
 
             if (options.SkipHashCheck)
+            {
                 parameters.Add("-SkipPublisherCheck");
+            }
 
             return parameters.ToArray();
         }
@@ -231,7 +257,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             List<string> parameters = new() { Properties.UninstallVerb, "-Name", package.Id, "-Confirm:$false", "-Force" };
 
             if (options.CustomParameters != null)
+            {
                 parameters.AddRange(options.CustomParameters);
+            }
 
             return parameters.ToArray();
         }
@@ -245,7 +273,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             status.Found = File.Exists(status.ExecutablePath);
 
             if (!status.Found)
+            {
                 return status;
+            }
 
             Process process = new()
             {

@@ -19,9 +19,13 @@ namespace UniGetUI.Core.Tools.Tests
             Assert.Equal(CoreTools.Translate(textEntry), langEngine.Translate(textEntry));
 
             if (TranslationExists)
+            {
                 Assert.NotEqual(CoreTools.Translate(textEntry), textEntry);
+            }
             else
+            {
                 Assert.Equal(CoreTools.Translate(textEntry), textEntry);
+            }
 
             Assert.Equal(CoreTools.AutoTranslated(textEntry), textEntry);
         }
@@ -86,8 +90,12 @@ namespace UniGetUI.Core.Tools.Tests
             }
 
             foreach (string s in new string[] { string1, string2, string3})
+            {
                 foreach (char c in s)
-                   Assert.True("abcdefghijklmnopqrstuvwxyz0123456789".Contains(c));
+                {
+                    Assert.True("abcdefghijklmnopqrstuvwxyz0123456789".Contains(c));
+                }
+            }
         }
 
         [Theory]

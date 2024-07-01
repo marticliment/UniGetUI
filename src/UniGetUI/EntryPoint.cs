@@ -18,13 +18,19 @@ namespace UniGetUI
                 CoreData.IsDaemon = args.Contains("--daemon");
 
                 if (args.Contains("--uninstall-unigetui") || args.Contains("--uninstall-wingetui"))
+                {
                     // If the app is being uninstalled, run the cleaner and exit
                     UninstallPreps();
+                }
                 else if (args.Contains("--migrate-wingetui-to-unigetui"))
+                {
                     WingetUIToUniGetUIMigrator();
+                }
                 else
+                {
                     // Otherwise, run UniGetUI as normal
                     _ = AsyncMain(args);
+                }
             }
             catch (Exception e)
             {
@@ -97,7 +103,9 @@ namespace UniGetUI
                     {
                         MainApp? AppInstance = MainApp.Current as MainApp;
                         if(AppInstance != null)
+                        {
                             await AppInstance.ShowMainWindowFromRedirectAsync();
+                        }
                     };
                 }
                 else
@@ -150,13 +158,17 @@ namespace UniGetUI
                 };
 
                 foreach (string path in BasePaths)
+                {
                     foreach (string old_wingetui_icon in new string[] { "WingetUI.lnk", "WingetUI .lnk", "UniGetUI (formerly WingetUI) .lnk" })
+                    {
                         try
                         {
                             string old_file = Path.Join(path, old_wingetui_icon);
                             string new_file = Path.Join(path, "UniGetUI (formerly WingetUI).lnk");
                             if (!File.Exists(old_file))
+                            {
                                 continue;
+                            }
                             else if (File.Exists(old_file) && File.Exists(new_file))
                             {
                                 Logger.Info("Deleting shortcut " + old_file + " since new shortcut already exists");
@@ -173,6 +185,8 @@ namespace UniGetUI
                             Logger.Warn($"An error occurred while migrating the shortcut {Path.Join(path, old_wingetui_icon)}");
                             Logger.Warn(ex);
                         }
+                    }
+                }
             }
             catch (Exception ex)
             {

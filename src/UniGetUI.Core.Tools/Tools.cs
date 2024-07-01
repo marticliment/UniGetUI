@@ -96,9 +96,14 @@ namespace UniGetUI.Core.Tools
             string? line = await process.StandardOutput.ReadLineAsync();
             string output;
             if (line == null)
+            {
                 output = "";
+            }
             else
+            {
                 output = line.Trim();
+            }
+
             await process.WaitForExitAsync();
             if (process.ExitCode != 0 || output == "")
             {
@@ -124,9 +129,13 @@ namespace UniGetUI.Core.Tools
             for (int i = 0; i < name.Length; i++)
             {
                 if (i == 0 || name[i - 1] == ' ')
+                {
                     newName += name[i].ToString().ToUpper();
+                }
                 else
+                {
                     newName += name[i];
+                }
             }
             return newName;
         }
@@ -239,7 +248,9 @@ Crash Traceback:
         public static async Task<long> GetFileSizeAsyncAsLong(Uri? url)
         {
             if(url == null)
+            {
                 return 0;
+            }
 
             try
             {
@@ -277,7 +288,9 @@ Crash Traceback:
                 foreach (char _char in Version)
                 {
                     if (char.IsDigit(_char))
+                    {
                         _ver += _char;
+                    }
                     else if (_char == '.')
                     {
                         if (!_dotAdded)
@@ -289,12 +302,15 @@ Crash Traceback:
                 }
                 double res = -1;
                 if (_ver != "" && _ver != ".")
+                {
                     try
                     {
                         double val = double.Parse(_ver, CultureInfo.InvariantCulture);
                         return val;
                     }
                     catch { }
+                }
+
                 return res;
             }
             catch
@@ -333,7 +349,11 @@ Crash Traceback:
         /// <returns>a string? instance</returns>
         public static string? GetStringOrNull(string? value)
         {
-            if (value == "") return null;
+            if (value == "")
+            {
+                return null;
+            }
+
             return value;
         }
 
@@ -344,7 +364,11 @@ Crash Traceback:
         /// <returns>an Uri? instance</returns>
         public static Uri? GetUriOrNull(string? url)
         {
-            if (url == "" || url == null) return null;
+            if (url == "" || url == null)
+            {
+                return null;
+            }
+
             return new Uri(url);
         }
 

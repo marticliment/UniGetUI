@@ -18,9 +18,8 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.ApplicationModel.Email.DataProvider;
 using Windows.Foundation.Collections;
- 
+
 namespace UniGetUI.Interface
 {
     public sealed partial class MainWindow : Window
@@ -105,7 +104,9 @@ namespace UniGetUI.Interface
         public void HandleNotificationActivation(ToastArguments args, ValueSet input)
         {
             if (args.Contains("action") && args["action"] == "updateAll")
+            {
                 NavigationPage.UpdatesPage.UpdateAll();
+            }
             else if (args.Contains("action") && args["action"] == "openUniGetUIOnUpdatesTab")
             {
                 NavigationPage.UpdatesNavButton.ForceClick();
@@ -157,7 +158,9 @@ namespace UniGetUI.Interface
 
                     ContentDialogResult result = await ShowDialogAsync(d);
                     if (result == ContentDialogResult.Primary)
+                    {
                         MainApp.Instance.DisposeAndQuit();
+                    }
                 }
             }
         }
@@ -172,9 +175,9 @@ namespace UniGetUI.Interface
 
             SetForegroundWindow(GetWindowHandle());
             if (!PEInterface.InstalledPackagesLoader.IsLoading)
+            {
                 _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
-
-            (this as Window).Activate();
+            } (this as Window).Activate();
         }
 
         public void HideWindow()
@@ -253,7 +256,10 @@ namespace UniGetUI.Interface
             ShowHideCommand.ExecuteRequested += (s, e) =>
             {
                 if(MainApp.Instance.TooltipStatus.AvailableUpdates > 0)
+                {
                     MainApp.Instance?.MainWindow?.NavigationPage?.UpdatesNavButton?.ForceClick();
+                }
+
                 Activate();
             };
 
@@ -288,9 +294,13 @@ namespace UniGetUI.Interface
             {
                 modifier = "_green";
                 if (MainApp.Instance.TooltipStatus.AvailableUpdates == 1)
+                {
                     tooltip = CoreTools.Translate("1 update is available") + " - " + Title;
+                }
                 else
+                {
                     tooltip = CoreTools.Translate("{0} updates are available", MainApp.Instance.TooltipStatus.AvailableUpdates) + " - " + Title;
+                }
             }
             if(TrayIcon == null)
             {
@@ -311,19 +321,26 @@ namespace UniGetUI.Interface
                 theme = registryValue > 0 ? ApplicationTheme.Light : ApplicationTheme.Dark;
             }
             if (theme == ApplicationTheme.Light)
+            {
                 modifier += "_black";
+            }
             else
+            {
                 modifier += "_white";
-
+            }
 
             string FullIconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "\\Assets\\Images\\tray" + modifier + ".ico");
 
             TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage { UriSource = new Uri(FullIconPath) });
 
             if(Settings.Get("DisableSystemTray"))
+            {
                 TrayIcon.Visibility = Visibility.Collapsed;
+            }
             else
+            {
                 TrayIcon.Visibility = Visibility.Visible;
+            }
         }
 
         public void SwitchToInterface()
@@ -359,18 +376,27 @@ namespace UniGetUI.Interface
             else
             {
                 if (ContentRoot.ActualTheme == ElementTheme.Dark)
+                {
                     MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
+                }
                 else
+                {
                     MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Light;
+                }
+
                 ContentRoot.RequestedTheme = ElementTheme.Default;
             }
 
             if (AppWindowTitleBar.IsCustomizationSupported())
             {
                 if (MainApp.Instance.ThemeListener.CurrentTheme == ApplicationTheme.Light)
+                {
                     AppWindow.TitleBar.ButtonForegroundColor = Colors.Black;
+                }
                 else
+                {
                     AppWindow.TitleBar.ButtonForegroundColor = Colors.White;
+                }
             }
             else
             {
@@ -397,13 +423,17 @@ namespace UniGetUI.Interface
                 LoadingSthDalog.Hide();
             }
             if (LoadingDialogCount < 0)
+            {
                 LoadingDialogCount = 0;
+            }
         }
 
         public void SharePackage(Package? package)
         {
             if (package == null)
+            {
                 return;
+            }
 
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
 
@@ -441,12 +471,19 @@ namespace UniGetUI.Interface
             try
             {
                 if (HighPriority && DialogQueue.Count >= 1)
+                {
                     DialogQueue.Insert(1, dialog);
+                }
                 else
+                {
                     DialogQueue.Add(dialog);
+                }
 
                 while (DialogQueue[0] != dialog)
+                {
                     await Task.Delay(100);
+                }
+
                 dialog.RequestedTheme = ContentRoot.RequestedTheme;
                 ContentDialogResult result = await dialog.ShowAsync();
                 DialogQueue.Remove(dialog);
@@ -457,7 +494,10 @@ namespace UniGetUI.Interface
                 Logger.Error("An error occurred while showing a ContentDialog via ShowDialogAsync()");
                 Logger.Error(e);
                 if (DialogQueue.Contains(dialog))
+                {
                     DialogQueue.Remove(dialog);
+                }
+
                 return ContentDialogResult.None;
             }
         }
@@ -466,7 +506,7 @@ namespace UniGetUI.Interface
         {
             int current = 1;
             int total = dependencies.Count();
-            foreach (var dependency in dependencies)
+            foreach (ManagerDependency dependency in dependencies)
             {
                 await ShowMissingDependencyQuery(dependency.Name, dependency.InstallFileName, dependency.InstallArguments, current++, total);
             }
@@ -507,7 +547,7 @@ namespace UniGetUI.Interface
                 Margin = new Thickness(0, 0, 0, 5)
             });
 
-            TextBlock infotext = new TextBlock
+            TextBlock infotext = new()
             {
                 Text = CoreTools.Translate($"Click on Install to begin the installation process. If you skip the installation, UniGetUI may not work as expected."),
                 TextWrapping = TextWrapping.Wrap,
@@ -517,7 +557,7 @@ namespace UniGetUI.Interface
             };
             p.Children.Add(infotext);
 
-            CheckBox c = new CheckBox();
+            CheckBox c = new();
             if (NotFirstTime)
             {
                 c.Content = CoreTools.Translate("Do not show this dialog again for {0}", dep_name);
@@ -527,7 +567,7 @@ namespace UniGetUI.Interface
                 p.Children.Add(c);
             }
 
-            ProgressBar progress = new ProgressBar();
+            ProgressBar progress = new();
             progress.IsIndeterminate = false;
             progress.Opacity = .0F;
             p.Children.Add(progress);
@@ -548,7 +588,7 @@ namespace UniGetUI.Interface
                         dialog.SecondaryButtonText = "";
                         dialog.PrimaryButtonText = CoreTools.Translate("Please wait");
                         infotext.Text = CoreTools.Translate("Please wait while {0} is being installed. A black window may show up. Please wait until it closes.", dep_name);
-                        Process p = new Process()
+                        Process p = new()
                         {
                             StartInfo = new ProcessStartInfo()
                             {
@@ -622,15 +662,23 @@ namespace UniGetUI.Interface
                 await Task.Delay(100);
 
                 if (old_height != AppWindow.Size.Height || old_width != AppWindow.Size.Width)
+                {
                     return;
+                }
             }
 
             int windowState = 0;
             if (AppWindow.Presenter is OverlappedPresenter presenter)
             {
-                if (presenter.State == OverlappedPresenterState.Maximized) windowState = 1;
+                if (presenter.State == OverlappedPresenterState.Maximized)
+                {
+                    windowState = 1;
+                }
             }
-            else Logger.Warn("MainWindow.AppWindow.Presenter is not OverlappedPresenter presenter!");
+            else
+            {
+                Logger.Warn("MainWindow.AppWindow.Presenter is not OverlappedPresenter presenter!");
+            }
 
             string geometry = $"{AppWindow.Position.X},{AppWindow.Position.Y},{AppWindow.Size.Width},{AppWindow.Size.Height},{windowState}";
             
@@ -666,8 +714,14 @@ namespace UniGetUI.Interface
             
             if(State == 1)
             {
-                if (AppWindow.Presenter is OverlappedPresenter presenter) presenter.Maximize();
-                else Logger.Warn("MainWindow.AppWindow.Presenter is not OverlappedPresenter presenter!");
+                if (AppWindow.Presenter is OverlappedPresenter presenter)
+                {
+                    presenter.Maximize();
+                }
+                else
+                {
+                    Logger.Warn("MainWindow.AppWindow.Presenter is not OverlappedPresenter presenter!");
+                }
             }
             else if (IsRectangleFullyVisible(X, Y, Width, Height))
             {
@@ -689,7 +743,11 @@ namespace UniGetUI.Interface
             {
                 MONITORINFO monitorInfo = new();
                 monitorInfo.cbSize = Marshal.SizeOf(typeof(MONITORINFO));
-                if (GetMonitorInfo(hMonitor, ref monitorInfo)) monitorInfos.Add(monitorInfo);
+                if (GetMonitorInfo(hMonitor, ref monitorInfo))
+                {
+                    monitorInfos.Add(monitorInfo);
+                }
+
                 return true;
             };
 
@@ -702,17 +760,36 @@ namespace UniGetUI.Interface
 
             foreach (MONITORINFO monitorInfo in monitorInfos)
             {
-                if (monitorInfo.rcMonitor.Left < minX) minX = monitorInfo.rcMonitor.Left;
-                if (monitorInfo.rcMonitor.Top < minY) minY = monitorInfo.rcMonitor.Top;
-                if (monitorInfo.rcMonitor.Right > maxX) maxX = monitorInfo.rcMonitor.Right;
-                if (monitorInfo.rcMonitor.Bottom > maxY) maxY = monitorInfo.rcMonitor.Bottom;
+                if (monitorInfo.rcMonitor.Left < minX)
+                {
+                    minX = monitorInfo.rcMonitor.Left;
+                }
+
+                if (monitorInfo.rcMonitor.Top < minY)
+                {
+                    minY = monitorInfo.rcMonitor.Top;
+                }
+
+                if (monitorInfo.rcMonitor.Right > maxX)
+                {
+                    maxX = monitorInfo.rcMonitor.Right;
+                }
+
+                if (monitorInfo.rcMonitor.Bottom > maxY)
+                {
+                    maxY = monitorInfo.rcMonitor.Bottom;
+                }
             }
 
             if (x + 10 < minX || x + width - 10 > maxX 
              || y + 10 < minY || y + height - 10 > maxY)
+            {
                 return false;
+            }
             else
+            {
                 return true;
+            }
         }
     }
 }

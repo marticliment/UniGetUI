@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
-using System.Diagnostics;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -14,7 +13,6 @@ using UniGetUI.Interface.SoftwarePages;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
-using Windows.ApplicationModel.UserDataTasks.DataProvider;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -103,13 +101,25 @@ namespace UniGetUI.Interface
                     {
                         if (!IS_SHIFT_PRESSED)
                         {
-                            if (NextPageReference.ContainsKey(CurrentPage)) NextPageReference[CurrentPage].ForceClick();
-                            else DiscoverNavButton.ForceClick();
+                            if (NextPageReference.ContainsKey(CurrentPage))
+                            {
+                                NextPageReference[CurrentPage].ForceClick();
+                            }
+                            else
+                            {
+                                DiscoverNavButton.ForceClick();
+                            }
                         }
                         else
                         {
-                            if (PreviousTabReference.ContainsKey(CurrentPage)) PreviousTabReference[CurrentPage].ForceClick();
-                            else DiscoverNavButton.ForceClick();
+                            if (PreviousTabReference.ContainsKey(CurrentPage))
+                            {
+                                PreviousTabReference[CurrentPage].ForceClick();
+                            }
+                            else
+                            {
+                                DiscoverNavButton.ForceClick();
+                            }
                         }
                     }
                 }
@@ -160,7 +170,10 @@ namespace UniGetUI.Interface
         {
 
             foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
+            {
                 button.ToggleButton.IsChecked = false;
+            }
+
             MoreNavButton.ToggleButton.IsChecked = true;
 
             (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
@@ -169,7 +182,9 @@ namespace UniGetUI.Interface
             MoreNavButtonMenu.Closed += (s, e) =>
             {
                 foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
+                {
                     button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage ?? DiscoverPage]);
+                }
             };
         }
 
@@ -190,13 +205,18 @@ namespace UniGetUI.Interface
             AboutDialog.PrimaryButtonText = CoreTools.Translate("Close");
             AboutPage.Close += (s, e) => { AboutDialog.Hide(); };
             foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
+            {
                 button.ToggleButton.IsChecked = false;
+            }
 
             await MainApp.Instance.MainWindow.ShowDialogAsync(AboutDialog);
 
             AboutDialog.Content = null;
             foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
+            {
                 button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage ?? DiscoverPage]);
+            }
+
             AboutDialog = null;
         }
 
@@ -302,7 +322,10 @@ namespace UniGetUI.Interface
 
             Paragraph par = new();
             foreach (string line in processOutput)
+            {
                 par.Inlines.Add(new Run { Text = line + "\x0a" });
+            }
+
             CommandLineOutput.Blocks.Add(par);
             
             grid.Children.Add(headerContent);
@@ -347,13 +370,22 @@ namespace UniGetUI.Interface
             OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
             if (Operation == OperationType.Install)
+            {
                 OptionsDialog.SecondaryButtonText = CoreTools.Translate("Install");
+            }
             else if (Operation == OperationType.Update)
+            {
                 OptionsDialog.SecondaryButtonText = CoreTools.Translate("Update");
+            }
             else if (Operation == OperationType.Uninstall)
+            {
                 OptionsDialog.SecondaryButtonText = CoreTools.Translate("Uninstall");
+            }
             else
+            {
                 OptionsDialog.SecondaryButtonText = "";
+            }
+
             OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
             OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
@@ -411,13 +443,18 @@ namespace UniGetUI.Interface
             }
 
             foreach (Page page in PageButtonReference.Keys)
+            {
                 page.Visibility = (page == TargetPage) ? Visibility.Visible : Visibility.Collapsed;
+            }
 
             OldPage = CurrentPage;
             CurrentPage = TargetPage;
 
             (CurrentPage as AbstractPackagesPage)?.FocusPackageList();
-            if (CurrentPage == BundlesPage) BundlesPage.PackageList.Focus(FocusState.Programmatic);
+            if (CurrentPage == BundlesPage)
+            {
+                BundlesPage.PackageList.Focus(FocusState.Programmatic);
+            }
         }
 
         private async void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
@@ -490,7 +527,11 @@ namespace UniGetUI.Interface
 
         public async Task<bool> ConfirmUninstallation(IEnumerable<Package> packages)
         {
-            if (packages.Count() == 0) return false;
+            if (packages.Count() == 0)
+            {
+                return false;
+            }
+
             if (packages.Count() == 1)
             {
                 return await ConfirmUninstallation(packages.First());
@@ -513,7 +554,9 @@ namespace UniGetUI.Interface
 
             string pkgList = "";
             foreach (Package package in packages)
+            {
                 pkgList += " ● " + package.Name + "\x0a";
+            }
 
             TextBlock PackageListTextBlock = new() { FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Consolas"), Text = pkgList };
             p.Children.Add(new ScrollView { Content = PackageListTextBlock, MaxHeight = 200 });
@@ -545,7 +588,10 @@ namespace UniGetUI.Interface
         public void ShowHelp()
         {
             if (HelpPage == null)
+            {
                 HelpPage = new HelpDialog();
+            }
+
             NavigateToPage(HelpPage);
         }
 

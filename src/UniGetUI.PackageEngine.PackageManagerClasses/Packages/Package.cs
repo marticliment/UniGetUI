@@ -168,11 +168,18 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             string iconId = Id.ToLower(); 
             if (Manager.Name == "Winget")
+            {
                 iconId = string.Join('.', iconId.Split(".")[1..]);
+            }
             else if (Manager.Name == "Chocolatey")
+            {
                 iconId = iconId.Replace(".install", "").Replace(".portable", "");
+            }
             else if (Manager.Name == "Scoop")
+            {
                 iconId = iconId.Replace(".app", "");
+            }
+
             return iconId;
         }
 
@@ -192,9 +199,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 Uri Icon;
                 if (path == "")
+                {
                     Icon = new Uri("ms-appx:///Assets/Images/package_color.png");
+                }
                 else
+                {
                     Icon = new Uri("file:///" + path);
+                }
 
                 Logger.Debug($"Icon for package {Id} was loaded from {Icon}");
                 return Icon;
@@ -231,10 +242,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
                 if (IgnoredUpdatesJson == null)
+                {
                     throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                }
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
+                {
                     IgnoredUpdatesJson.Remove(IgnoredId);
+                }
+
                 IgnoredUpdatesJson.Add(IgnoredId, version);
                 await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
                 GetInstalledPackage()?.SetTag(PackageTag.Pinned);
@@ -259,7 +275,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
                 if (IgnoredUpdatesJson == null)
+                {
                     throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                }
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
                 {
@@ -292,12 +310,18 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
                 if (IgnoredUpdatesJson == null)
+                {
                     throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                }
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId) && (IgnoredUpdatesJson[IgnoredId]?.ToString() == "*" || IgnoredUpdatesJson[IgnoredId]?.ToString() == Version))
+                {
                     return true;
+                }
                 else
+                {
                     return false;
+                }
             }
             catch (Exception ex)
             {
@@ -322,12 +346,18 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
                 if (IgnoredUpdatesJson == null)
+                {
                     throw new Exception("The IgnoredUpdates database seems to be invalid!");
-                
+                }
+
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
+                {
                     return IgnoredUpdatesJson[IgnoredId]?.ToString() ?? "";
+                }
                 else
+                {
                     return "";
+                }
             }
             catch (Exception ex)
             {
@@ -385,7 +415,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public bool NewerVersionIsInstalled()
         {
-            if(!IsUpgradable) return false;
+            if(!IsUpgradable)
+            {
+                return false;
+            }
+
             return PackageCacher.NewerVersionIsInstalled(this);
         }
 

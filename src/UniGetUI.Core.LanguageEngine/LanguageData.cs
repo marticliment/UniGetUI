@@ -20,7 +20,9 @@ namespace UniGetUI.Core.Language
             get
             {
                 if (__translators_list == null)
+                {
                     __translators_list = LoadLanguageTranslatorList();
+                }
 
                 return __translators_list;
             }
@@ -31,7 +33,10 @@ namespace UniGetUI.Core.Language
         {
             get {
                 if (__language_reference == null)
+                {
                     __language_reference = LoadLanguageReference();
+                }
+
                 return __language_reference;
             }
         }
@@ -42,7 +47,10 @@ namespace UniGetUI.Core.Language
             get
             {
                 if (__translation_percentages == null)
+                {
                     __translation_percentages = LoadTranslationPercentages();
+                }
+
                 return __translation_percentages;
             }
         }
@@ -51,18 +59,26 @@ namespace UniGetUI.Core.Language
         {
             JsonObject? val = JsonObject.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "TranslatedPercentages.json"))) as JsonObject;
             if (val != null)
+            {
                 return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("404%" + x.Key)).ToString()));
+            }
             else
+            {
                 return new(new Dictionary<string, string>());
+            }
         }
 
         private static ReadOnlyDictionary<string, string> LoadLanguageReference()
         {
             JsonObject? val = JsonObject.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "LanguagesReference.json"))) as JsonObject;
             if (val != null)
+            {
                 return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("NoNameLang_" + x.Key)).ToString()));
+            }
             else
+            {
                 return new(new Dictionary<string, string>());
+            }
         }
 
         private static Person[] LoadLanguageTranslatorList()
@@ -70,7 +86,10 @@ namespace UniGetUI.Core.Language
             string JsonContents = File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "Translators.json"));
             JsonObject? TranslatorsInfo = JsonNode.Parse(JsonContents) as JsonObject;
 
-            if (TranslatorsInfo == null) return [];
+            if (TranslatorsInfo == null)
+            {
+                return [];
+            }
 
             List<Person> result = new();
             foreach (KeyValuePair<string, JsonNode?> langKey in TranslatorsInfo)
@@ -85,11 +104,16 @@ namespace UniGetUI.Core.Language
                 bool LangShown = false;
                 foreach (JsonNode? translator in TranslatorsForLang)
                 {
-                    if (translator is null) continue;
+                    if (translator is null)
+                    {
+                        continue;
+                    }
 
                     Uri? url = null;
                     if (translator["link"] != null && translator["link"]?.ToString() != "")
+                    {
                         url = new Uri((translator["link"] ?? "").ToString());
+                    }
 
                     Person person = new(
                         Name: (url != null ? "@" : "") + (translator["name"] ?? "").ToString(),

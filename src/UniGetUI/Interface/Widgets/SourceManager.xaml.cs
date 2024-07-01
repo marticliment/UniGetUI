@@ -41,7 +41,9 @@ namespace UniGetUI.Interface.Widgets
             InitializeComponent();
 
             if (!Manager.Capabilities.SupportsCustomSources)
+            {
                 throw new Exception($"Attempted to create a SourceManager class from Manager {Manager.Name}, which does not support custom sources");
+            }
 
             Header.Text = CoreTools.Translate("Manage {0} sources", Manager.Properties.Name);
             AddSourceButton.Content = CoreTools.Translate("Add source");
@@ -118,9 +120,14 @@ namespace UniGetUI.Interface.Widgets
                     {
                         AddSourceOperation op;
                         if (CoreTools.Translate("Other") != SourcesCombo.SelectedValue.ToString())
+                        {
                             op = new AddSourceOperation(NameSourceRef[SourcesCombo.SelectedValue.ToString() ?? ""]);
+                        }
                         else
+                        {
                             op = new AddSourceOperation(new ManagerSource(this.Manager, SourceNameTextBox.Text, new Uri(SourceUrlTextBox.Text)));
+                        }
+
                         MainApp.Instance.AddOperationToList(op);
                         op.OperationSucceeded += (sender, e) => { LoadSources(); };
 
@@ -148,7 +155,9 @@ namespace UniGetUI.Interface.Widgets
         public async void LoadSources()
         {
             if (!Manager.IsReady())
+            {
                 return;
+            }
 
             LoadingBar.Visibility = Visibility.Visible;
             Sources.Clear();
@@ -157,7 +166,9 @@ namespace UniGetUI.Interface.Widgets
                 Sources.Add(new SourceItem(this, Source));
             }
             if (Sources.Count > 0)
+            {
                 _datagrid.SelectedIndex = 0;
+            }
 
             LoadingBar.Visibility = Visibility.Collapsed;
         }

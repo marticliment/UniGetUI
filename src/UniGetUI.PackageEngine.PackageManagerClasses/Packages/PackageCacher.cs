@@ -17,7 +17,11 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         public static Package GetAvailablePackage(Package p)
         {
             Package? new_package = GetAvailablePackageOrNull(p);
-            if (new_package == null) AddPackageToCache(p, __available_pkgs);
+            if (new_package == null)
+            {
+                AddPackageToCache(p, __available_pkgs);
+            }
+
             return new_package ?? p;
         }
 
@@ -30,7 +34,11 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         public static Package GetUpgradablePackage(Package p)
         {
             Package? new_package = GetUpgradablePackageOrNull(p);
-            if (new_package == null) AddPackageToCache(p, __upgradable_pkgs);
+            if (new_package == null)
+            {
+                AddPackageToCache(p, __upgradable_pkgs);
+            }
+
             return new_package ?? p;
         }
 
@@ -43,7 +51,11 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         public static Package GetInstalledPackage(Package p)
         {
             Package? new_package = GetInstalledPackageOrNull(p);
-            if (new_package == null) AddPackageToCache(p, __installed_pkgs);
+            if (new_package == null)
+            {
+                AddPackageToCache(p, __installed_pkgs);
+            }
+
             return new_package ?? p;
         }
 

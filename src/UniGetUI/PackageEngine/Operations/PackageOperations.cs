@@ -142,9 +142,13 @@ namespace UniGetUI.PackageEngine.Operations
             );
 
             if (result == ContentDialogResult.Primary)
+            {
                 return AfterFinshAction.Retry;
+            }
             else
+            {
                 return AfterFinshAction.ManualClose;
+            }
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
@@ -155,7 +159,7 @@ namespace UniGetUI.PackageEngine.Operations
             PEInterface.InstalledPackagesLoader.AddForeign(Package);
 
             if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
-
+            {
                 try
                 {
                     new ToastContentBuilder()
@@ -170,6 +174,8 @@ namespace UniGetUI.PackageEngine.Operations
                     Logger.Warn("Failed to show toast notification");
                     Logger.Warn(ex);
                 }
+            }
+
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
@@ -253,9 +259,13 @@ namespace UniGetUI.PackageEngine.Operations
             );
 
             if (result == ContentDialogResult.Primary)
+            {
                 return AfterFinshAction.Retry;
+            }
             else
+            {
                 return AfterFinshAction.ManualClose;
+            }
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
@@ -266,11 +276,14 @@ namespace UniGetUI.PackageEngine.Operations
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
 
             if(await Package.HasUpdatesIgnoredAsync() && await Package.GetIgnoredUpdatesVersionAsync() != "*")
+            {
                 await Package.RemoveFromIgnoredUpdatesAsync();
+            }
 
             PEInterface.UpgradablePackagesLoader.Remove(Package);
 
             if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
+            {
                 try
                 {
                     new ToastContentBuilder()
@@ -285,9 +298,12 @@ namespace UniGetUI.PackageEngine.Operations
                     Logger.Warn("Failed to show toast notification");
                     Logger.Warn(ex);
                 }
+            }
 
             if (Package.Version == "Unknown")
+            {
                 await Package.AddToIgnoredUpdatesAsync(Package.NewVersion);
+            }
 
             return AfterFinshAction.TimeoutClose;
         }
@@ -348,6 +364,7 @@ namespace UniGetUI.PackageEngine.Operations
             Package.SetTag(PackageTag.Failed);
 
             if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
+            {
                 try
                 {
                     new ToastContentBuilder()
@@ -362,6 +379,7 @@ namespace UniGetUI.PackageEngine.Operations
                     Logger.Warn("Failed to show toast notification");
                     Logger.Warn(ex);
                 }
+            }
 
             ContentDialogResult result = await MainApp.Instance.MainWindow.NavigationPage.ShowOperationFailedDialog(
                 ProcessOutput,
@@ -370,9 +388,13 @@ namespace UniGetUI.PackageEngine.Operations
             );
 
             if (result == ContentDialogResult.Primary)
+            {
                 return AfterFinshAction.Retry;
+            }
             else
+            {
                 return AfterFinshAction.ManualClose;
+            }
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
@@ -384,6 +406,7 @@ namespace UniGetUI.PackageEngine.Operations
             PEInterface.InstalledPackagesLoader.Remove(Package);
 
             if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
+            {
                 try
                 {
                     new ToastContentBuilder()
@@ -398,6 +421,8 @@ namespace UniGetUI.PackageEngine.Operations
                     Logger.Warn("Failed to show toast notification");
                     Logger.Warn(ex);
                 }
+            }
+
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }

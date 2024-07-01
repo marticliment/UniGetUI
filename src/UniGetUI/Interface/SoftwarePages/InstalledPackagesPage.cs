@@ -196,7 +196,10 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 toolButton.IsCompact = Labels[toolButton][0] == ' ';
                 if (toolButton.IsCompact)
+                {
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
+                }
+
                 toolButton.Label = Labels[toolButton].Trim();
             }
 
@@ -215,7 +218,9 @@ namespace UniGetUI.Interface.SoftwarePages
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)
+            {
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
+            }
 
             PackageDetails.Click += (s, e) => ShowDetailsForPackage(SelectedItem);
 
@@ -301,23 +306,33 @@ namespace UniGetUI.Interface.SoftwarePages
                 Logger.Debug("Starting package backup");
                 List<BundledPackage> packagestoExport = new();
                 foreach (Package package in Loader.Packages)
+                {
                     packagestoExport.Add(await BundledPackage.FromPackageAsync(package));
+                }
 
                 string BackupContents = await PackageBundlePage.GetBundleStringFromPackages(packagestoExport.ToArray(), BundleFormatType.JSON);
 
                 string dirName = Settings.GetValue("ChangeBackupOutputDirectory");
                 if (dirName == "")
+                {
                     dirName = CoreData.UniGetUI_DefaultBackupDirectory;
+                }
 
                 if (!Directory.Exists(dirName))
+                {
                     Directory.CreateDirectory(dirName);
+                }
 
                 string fileName = Settings.GetValue("ChangeBackupFileName");
                 if (fileName == "")
+                {
                     fileName = CoreTools.Translate("{pcName} installed packages", new Dictionary<string, object?>{ { "pcName", Environment.MachineName } });
+                }
 
                 if (Settings.Get("EnableBackupTimestamping"))
+                {
                     fileName += " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
+                }
 
                 fileName += ".json";
 
@@ -336,7 +351,10 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuUninstall_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package));
         }
@@ -344,14 +362,21 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
+
             ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, elevated: true));
         }
 
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, interactive: true));
         }
@@ -359,7 +384,10 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuRemoveData_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, remove_data: true));
         }
@@ -367,7 +395,10 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuReinstall_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
         }
@@ -375,7 +406,10 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, IgnoreParallelInstalls: true));
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, IgnoreParallelInstalls: true));
@@ -384,7 +418,10 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)
         {
             Package? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             _ = package.AddToIgnoredUpdatesAsync();
             PEInterface.UpgradablePackagesLoader.Remove(package);
@@ -392,7 +429,11 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)
         {
-            if (PackageList.SelectedItem == null) return;
+            if (PackageList.SelectedItem == null)
+            {
+                return;
+            }
+
             MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 

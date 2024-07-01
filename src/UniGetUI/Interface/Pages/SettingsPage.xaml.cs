@@ -39,7 +39,9 @@ namespace UniGetUI.Interface
             foreach (string key in lang_dict.Keys)
             {
                 if (LanguageData.TranslationPercentages.ContainsKey(key) && key != "en")
+                {
                     lang_dict[key] = lang_dict[key] + " (" + LanguageData.TranslationPercentages[key] + ")";
+                }
             }
 
             bool isFirst = true;
@@ -74,7 +76,9 @@ namespace UniGetUI.Interface
             UpdatesCheckIntervalSelector.ShowAddedItems();
 
             if (Settings.GetValue("PreferredTheme") == "")
+            {
                 Settings.SetValue("PreferredTheme", "auto");
+            }
 
             ThemeSelector.AddItem(CoreTools.AutoTranslated("Light"), "light");
             ThemeSelector.AddItem(CoreTools.AutoTranslated("Dark"), "dark");
@@ -186,7 +190,9 @@ namespace UniGetUI.Interface
                         ManagerStatus.Severity = InfoBarSeverity.Success;
                         ManagerStatus.Title = CoreTools.Translate("{pm} is enabled and ready to go", new Dictionary<string, object?>{ { "pm", Manager.Name } });
                         if (!Manager.Status.Version.Contains("\n"))
+                        {
                             ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?>{ { "pm", Manager.Name } }) + " " + Manager.Status.Version;
+                        }
                         else if (ShowVersion)
                         {
                             ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?>{ { "pm", Manager.Name } });
@@ -237,13 +243,19 @@ namespace UniGetUI.Interface
                 void EnableOrDisableEntries()
                 {
                     if (ExtraSettingsCards.ContainsKey(Manager))
+                    {
                         foreach (SettingsCard card in ExtraSettingsCards[Manager])
                         {
                             if (ManagerSwitch.IsOn)
+                            {
                                 card.Visibility = Visibility.Visible;
+                            }
                             else
+                            {
                                 card.Visibility = Visibility.Collapsed;
+                            }
                         }
+                    }
                 }
 
 
@@ -284,10 +296,12 @@ namespace UniGetUI.Interface
                 }
 
                 if (ExtraSettingsCards.ContainsKey(Manager))
+                {
                     foreach (SettingsCard card in ExtraSettingsCards[Manager])
                     {
                         ManagerExpander.Items.Add(card);
                     }
+                }
 
                 SetManagerStatus(Manager);
                 EnableOrDisableEntries();
@@ -319,7 +333,9 @@ namespace UniGetUI.Interface
                 ResetWingetUI(sender, e);
                 Dictionary<string, string> settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file)) ?? new();
                 foreach (KeyValuePair<string, string> entry in settings)
+                {
                     Settings.SetValue(entry.Key, entry.Value);
+                }
 
                 GeneralSettingsExpander.ShowRestartRequiredBanner();
             }
@@ -342,7 +358,10 @@ namespace UniGetUI.Interface
                     foreach (string path in Directory.EnumerateFiles(CoreData.UniGetUIDataDirectory))
                     {
                         if (Path.GetFileName(path).Contains('.') || IgnoredSettings.Contains(Path.GetFileName(path)))
+                        {
                             continue;
+                        }
+
                         settings.Add(Path.GetFileName(path), await File.ReadAllTextAsync(path));
                     }
 
@@ -421,12 +440,17 @@ namespace UniGetUI.Interface
         {
             string directory = Settings.GetValue("ChangeBackupOutputDirectory");
             if (directory == "")
+            {
                 directory = CoreData.UniGetUI_DefaultBackupDirectory;
+            }
 
             directory = directory.Replace("/", "\\");
 
             if (!Directory.Exists(directory))
+            {
                 Directory.CreateDirectory(directory);
+            }
+
             Process.Start("explorer.exe", directory);
 
         }
@@ -505,8 +529,10 @@ namespace UniGetUI.Interface
         public void EnablePackageBackupUI(bool enabled)
         {
             if (BackupNowButton == null)
+            {
                 return; // This could happen when this event is triggered but the SettingsPage
-                        // hasn't finished initializing yet.
+            }
+            // hasn't finished initializing yet.
             EnableBackupTimestampingCheckBox.IsEnabled = enabled;
             ChangeBackupFileNameTextBox.IsEnabled = enabled;
             ChangeBackupDirectory.IsEnabled = enabled;

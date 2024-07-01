@@ -92,7 +92,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 foreach (Task<Package[]> task in tasks.ToArray())
                 {
                     if (!task.IsCompleted)
+                    {
                         await Task.Delay(100);
+                    }
 
                     if (task.IsCompleted)
                     {
@@ -102,7 +104,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
                             foreach (Package package in task.Result)
                             {
                                 if (Contains(package) || !await IsPackageValid(package))
+                                {
                                     continue;
+                                }
 
                                 AddPackage(package);
                                 await WhenAddingPackage(package);
@@ -195,8 +199,16 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <param name="package">The package to add</param>
         public void AddForeign(Package? package)
         {
-            if(package == null) return;
-            if(Contains(package)) return;
+            if(package == null)
+            {
+                return;
+            }
+
+            if (Contains(package))
+            {
+                return;
+            }
+
             AddPackage(package);
             PackagesChanged?.Invoke(this, new EventArgs());
         }
@@ -207,8 +219,16 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <param name="package"></param>
         public void Remove(Package? package)
         {
-            if (package == null) return;
-            if (!Contains(package)) return;
+            if (package == null)
+            {
+                return;
+            }
+
+            if (!Contains(package))
+            {
+                return;
+            }
+
             Packages.Remove(package);
             PackageReference.Remove(HashPackage(package));
             PackagesChanged?.Invoke(this, new EventArgs());
@@ -222,8 +242,16 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <returns>A Package? object</returns>
         public Package? GetEquivalentPackage(Package? package)
         {
-            if(package == null) return null;
-            if(!Contains(package)) return null;
+            if(package == null)
+            {
+                return null;
+            }
+
+            if (!Contains(package))
+            {
+                return null;
+            }
+
             return PackageReference[HashPackage(package)];
         }
 
@@ -235,7 +263,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <returns>A IEnumerable<Package> object</returns>
         public IEnumerable<Package> GetEquivalentPackages(Package? package)
         {
-            if (package == null) return [];
+            if (package == null)
+            {
+                return [];
+            }
+
             List<Package> result = new();
             long hash_to_match = package.GetHash();
             foreach (Package local_package in Packages)
@@ -251,8 +283,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public Package? GetPackageForId(string id, string? sourceName = null)
         {
             foreach (Package package in Packages)
+            {
                 if (package.Id == id && (sourceName == null || package.Source.Name == sourceName))
+                {
                     return package;
+                }
+            }
 
             return null;
         }

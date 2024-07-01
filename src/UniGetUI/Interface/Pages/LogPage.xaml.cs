@@ -85,7 +85,10 @@ namespace UniGetUI.Interface.Pages
             foreach (string line in body.Split("\n"))
             {
                 if (line.Replace("\r", "").Replace("\n", "").Trim() == "")
+                {
                     continue;
+                }
+
                 paragraph.Inlines.Add(new Run { Text = line.Replace("\r", "").Replace("\n", "") });
                 paragraph.Inlines.Add(new LineBreak());
             }
@@ -126,16 +129,26 @@ namespace UniGetUI.Interface.Pages
                 {
                     Paragraph p = new();
                     if (log_entry.Content == "")
+                    {
                         continue;
+                    }
 
                     if (LOG_LEVEL == 1 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info || log_entry.Severity == LogEntry.SeverityLevel.Success || log_entry.Severity == LogEntry.SeverityLevel.Warning))
+                    {
                         continue;
+                    }
                     else if(LOG_LEVEL == 2 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info || log_entry.Severity == LogEntry.SeverityLevel.Success))
+                    {
                         continue;
+                    }
                     else if(LOG_LEVEL == 3 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info))
+                    {
                         continue;
+                    }
                     else if(LOG_LEVEL == 4 && (log_entry.Severity == LogEntry.SeverityLevel.Debug))
+                    {
                         continue;
+                    }
 
                     Brush color;
 
@@ -165,6 +178,7 @@ namespace UniGetUI.Interface.Pages
                     string[] lines = log_entry.Content.Split('\n');
                     int date_length = -1;
                     foreach(string line in lines)
+                    {
                         if (date_length == -1)
                         {
                             p.Inlines.Add(new Run { Text = $"[{log_entry.Time}] {line}\n", Foreground = color });
@@ -174,7 +188,7 @@ namespace UniGetUI.Interface.Pages
                         {
                             p.Inlines.Add(new Run { Text = new string(' ', date_length) + line + "\n", Foreground = color });
                         }
-                    ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
+                    } ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
                     LogTextBox.Blocks.Add(p);
                 }
                 MainScroller.ScrollToVerticalOffset(MainScroller.ScrollableHeight);
@@ -184,6 +198,7 @@ namespace UniGetUI.Interface.Pages
             {
                 bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains("(") ?? false;
                 foreach (PackageEngine.ManagerClasses.Manager.PackageManager manager in PEInterface.Managers)
+                {
                     if (manager.Name.Contains(LogLevelCombo.SelectedValue?.ToString()?.Split(' ')[0] ?? "uncontained_word"))
                     {
                         PackageEngine.ManagerClasses.Classes.ManagerLogger TaskLogger = manager.TaskLogger;
@@ -231,6 +246,8 @@ namespace UniGetUI.Interface.Pages
                         }
                         break;
                     }
+                }
+
                 MainScroller.ScrollToVerticalOffset(MainScroller.ScrollableHeight);
             }
             else if (Logger_LogType == Logger_LogType.OperationHistory)

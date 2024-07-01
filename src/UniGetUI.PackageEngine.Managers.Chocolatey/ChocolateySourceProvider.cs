@@ -57,15 +57,21 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 try
                 {
                     if (string.IsNullOrEmpty(line))
+                    {
                         continue;
+                    }
 
                     if (line.Contains(" - ") && line.Contains(" | "))
                     {
                         string[] parts = line.Trim().Split('|')[0].Trim().Split(" - ");
                         if (parts[1].Trim() == "https://community.chocolatey.org/api/v2/")
+                        {
                             sources.Add(new ManagerSource(Manager, "community", new Uri("https://community.chocolatey.org/api/v2/")));
+                        }
                         else
+                        {
                             sources.Add(new ManagerSource(Manager, parts[0].Trim(), new Uri(parts[1].Trim())));
+                        }
                     }
                 }
                 catch (Exception e)

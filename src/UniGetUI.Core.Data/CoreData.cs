@@ -41,7 +41,11 @@ namespace UniGetUI.Core.Data
             get
             {
                 string path = Path.Join(UniGetUIDataDirectory, "InstallationOptions");
-                if(!Directory.Exists(path)) Directory.CreateDirectory(path);
+                if(!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
                 return path;
             }
         }
@@ -108,7 +112,10 @@ namespace UniGetUI.Core.Data
                 // Calling the UniGetUIDataDirectory will create the directory if it does not exist
                 string file_path = Path.Join(UniGetUIDataDirectory, "IgnoredPackageUpdates.json");
                 if (!File.Exists(file_path))
+                {
                     File.WriteAllText(file_path, "{}");
+                }
+
                 return file_path;
             }
         }
@@ -143,9 +150,14 @@ namespace UniGetUI.Core.Data
             get {
                 string? dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 if (dir != null)
+                {
                     return dir;
+                }
                 else
+                {
                     Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
+                }
+
                 return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UiGetUI");
             }
         }
@@ -158,9 +170,14 @@ namespace UniGetUI.Core.Data
             get {
                 string? filename = Process.GetCurrentProcess().MainModule?.FileName;
                 if (filename != null)
+                {
                     return filename.Replace(".dll", ".exe");
+                }
                 else
+                {
                     Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
+                }
+
                 return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UniGetUI", "UniGetUI.exe");
             }
         }
@@ -180,7 +197,9 @@ namespace UniGetUI.Core.Data
         private static string GetNewDataDirectoryOrMoveOld(string old_path, string new_path)
         {
             if (Directory.Exists(new_path) && !Directory.Exists(old_path))
+            {
                 return new_path;
+            }
             else if (Directory.Exists(new_path) && Directory.Exists(old_path))
             {
                 try
@@ -194,7 +213,9 @@ namespace UniGetUI.Core.Data
                             Directory.CreateDirectory(new_subdir);
                         }
                         else
+                        {
                             Logger.Debug("Directory " + new_subdir + " already exists");
+                        }
                     }
 
                     foreach (string old_file in Directory.GetFiles(old_path, "*", SearchOption.AllDirectories))

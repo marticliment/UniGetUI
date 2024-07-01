@@ -70,12 +70,16 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 if (!HeaderPassed)
                 {
                     if (line.Contains("NAME"))
+                    {
                         HeaderPassed = true;
+                    }
                     else
                     {
                         string[] elements = line.Split('\t');
                         if (elements.Length >= 5)
+                        {
                             Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[4], DefaultSource, this));
+                        }
                     }
                 }
             }
@@ -117,10 +121,14 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     if (elements.Length >= 4)
                     {
                         if (elements[2][0] == '@')
+                        {
                             elements[2] = "%" + elements[2][1..];
+                        }
 
                         if (elements[3][0] == '@')
+                        {
                             elements[3] = "%" + elements[3][1..];
+                        }
 
                         Packages.Add(new Package(CoreTools.FormatAsName(elements[2].Split('@')[0]).Replace('%', '@'), elements[2].Split('@')[0].Replace('%', '@'), elements[3].Split('@')[^1].Replace('%', '@'), elements[2].Split('@')[^1].Replace('%', '@'), DefaultSource, this, scope));
                     }
@@ -167,7 +175,10 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                             if (line.Contains(" @"))
                             {
                                 elements[0] = "@" + elements[1];
-                                if (elements.Length >= 3) elements[1] = elements[2];
+                                if (elements.Length >= 3)
+                                {
+                                    elements[1] = elements[2];
+                                }
                             }
                             Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, scope));
                         }
@@ -201,15 +212,23 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             parameters[0] = Properties.InstallVerb;
 
             if (options.Version != "")
+            {
                 parameters[1] = package.Id + "@" + package.Version;
+            }
             else
+            {
                 parameters[1] = package.Id + "@latest";
+            }
 
             if (options.PreRelease)
+            {
                 parameters.AddRange(["--include", "dev"]);
-            
+            }
+
             if (options.InstallationScope == PackageScope.Global)
+            {
                 parameters.Add("--global");
+            }
 
             return parameters.ToArray();
         }
@@ -225,10 +244,14 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             List<string> parameters = new() { Properties.UninstallVerb, package.Id };
 
             if (options.CustomParameters != null)
+            {
                 parameters.AddRange(options.CustomParameters);
+            }
 
             if (package.Scope == PackageScope.Global)
+            {
                 parameters.Add("--global");
+            }
 
             return parameters.ToArray();
 
@@ -242,7 +265,9 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             status.Found = (await CoreTools.Which("npm")).Item1;
 
             if (!status.Found)
+            {
                 return status;
+            }
 
             Process process = new()
             {
