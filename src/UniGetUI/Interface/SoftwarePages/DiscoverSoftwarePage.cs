@@ -368,6 +368,10 @@ namespace UniGetUI.Interface.SoftwarePages
             MainApp.Instance.MainWindow.Activate();
 
             MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait...", pId));
+            MainApp.Instance.MainWindow.NavigationPage.DiscoverNavButton.ForceClick();
+            MegaQueryBlock.Visibility = Visibility.Collapsed;
+            MegaFindButton.Visibility = Visibility.Collapsed;
+
             QueryIdRadio.IsChecked = true;
             QueryBlock.Text = pId;
             await PEInterface.DiscoveredPackagesLoader.ReloadPackages(pId);
@@ -376,23 +380,36 @@ namespace UniGetUI.Interface.SoftwarePages
             if (FilteredPackages.Count == 1)
             {
                 Logger.Debug("Only one package was found for pId=" + pId + ", showing it.");
-                await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0].Package, OperationType.Install);
+                ShowDetailsForPackage(FilteredPackages[0].Package);
             }
             else if (FilteredPackages.Count > 1)
             {
+                // Find a package that matches both the Id and the Source
                 string managerName = pSource.Contains(':') ? pSource.Split(':')[0] : pSource;
                 foreach (Package match in FilteredPackages.GetPackages())
                 {
-                    if (match.Source.Manager.Name == managerName)
+                    if (match.Source.Manager.Name == managerName && match.Id == pId)
                     {
                         Logger.Debug("Equivalent package for pId=" + pId + " and pSource=" + pSource + " found: " + match.ToString());
-                        await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(match, OperationType.Install);
+                        ShowDetailsForPackage(match);
+                        return;
+                    }
+                }
+                
+                Logger.Info($"No package was found with Id={pId} and Source={pSource}, checking for Id only.");
+                // Find a package that matches the Id only
+                foreach (Package match in FilteredPackages.GetPackages())
+                {
+                    if (match.Id == pId)
+                    {
+                        Logger.Debug("Equivalent package for pId=" + pId + " and pSource=" + pSource + " found: " + match.ToString());
+                        ShowDetailsForPackage(match);
                         return;
                     }
                 }
 
                 Logger.Debug("No package found with the exact same manager, showing the first one.");
-                await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(FilteredPackages[0].Package, OperationType.Install);
+                ShowDetailsForPackage(FilteredPackages[0].Package);
             }
             else
             {
