@@ -352,20 +352,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 parameters.Add("--location"); parameters.Add($"\"{options.CustomInstallLocation}\"");
             }
 
-            switch (options.Architecture)
-            {
-                case null:
-                    break;
-                case Architecture.X86:
-                    parameters.Add("--architecture"); parameters.Add("x86");
-                    break;
-                case Architecture.X64:
-                    parameters.Add("--architecture"); parameters.Add("x64");
-                    break;
-                case Architecture.Arm64:
-                    parameters.Add("--architecture"); parameters.Add("arm64");
-                    break;
-            }
+            parameters.AddRange(options.Architecture switch
+                {
+                    Architecture.X86 => ["--architecture", "x86"],
+                    Architecture.X64 => ["--architecture", "x64"],
+                    Architecture.Arm64 => ["--architecture", "arm64"],
+                    _ => []
+                }
+            );
             return parameters.ToArray();
         }
         public override string[] GetUpdateParameters(Package package, InstallationOptions options)
@@ -397,17 +391,15 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             parameters.Add("--accept-source-agreements");
-
-            switch (options.InstallationScope)
-            {
-                case PackageScope.Local:
-                    parameters.Add("--scope"); parameters.Add("user");
-                    break;
-                case PackageScope.Global:
-                    parameters.Add("--scope"); parameters.Add("machine");
-                    break;
-            }
-
+                
+            parameters.AddRange(options.InstallationScope switch
+                {
+                    PackageScope.Local => ["--scope", "user"],
+                    PackageScope.Global => ["--scope", "machine"],
+                    _ => []
+                }
+            );
+            
             if (options.Version != "")
             {
                 parameters.AddRange(["--version", $"\"{options.Version}\"", "--force"]);
@@ -452,29 +444,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 return OperationVeredict.Succeeded;
             }
-
-            /*
-            if (output_string.Contains("winget settings --enable InstallerHashOverride"))
-            {
-                Logger.Info("Enabling skip hash ckeck for winget...");
-                Process p = new()
-                {
-                    StartInfo = new ProcessStartInfo()
-                    {
-                        FileName = CoreData.GSudoPath,
-                        Arguments = $"\"{Status.ExecutablePath}\"" + Properties.ExecutableCallArgs + " settings --enable InstallerHashOverride",
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        CreateNoWindow = true,
-                        StandardOutputEncoding = System.Text.Encoding.UTF8
-                    }
-                };
-                p.Start();
-                p.WaitForExit();
-                return OperationVeredict.AutoRetry;
-            */
-
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
