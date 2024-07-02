@@ -32,7 +32,7 @@ namespace UniGetUI
             public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
         }
 
-        public List<AbstractOperation> OperationQueue = new();
+        public List<AbstractOperation> OperationQueue = [];
 
         public bool RaiseExceptionAsFatal = true;
 
@@ -310,7 +310,7 @@ namespace UniGetUI
         private async Task CheckForMissingDependencies()
         {
             // Check for missing dependencies on package managers
-            List<ManagerDependency> missing_deps = new();
+            List<ManagerDependency> missing_deps = [];
             foreach (PackageEngine.ManagerClasses.Manager.PackageManager manager in PEInterface.Managers)
             {
                 if (!manager.IsReady())
@@ -326,7 +326,9 @@ namespace UniGetUI
                         if (Settings.Get($"SkippedInstalling{dependency.Name}"))
                         {
                             Logger.Error($"Dependency {dependency.Name} was not found, and the user set it to not be reminded of the midding dependency");
-                        } else {
+                        }
+                        else
+                        {
                             Logger.Warn($"Dependency {dependency.Name} was not found for manager {manager.Name}, marking to prompt...");
                             missing_deps.Add(dependency);
                         }
@@ -428,8 +430,10 @@ namespace UniGetUI
 
                         banner.Title = CoreTools.Translate("WingetUI {0} is ready to be installed.", LatestVersion.ToString(CultureInfo.InvariantCulture));
                         banner.Message = CoreTools.Translate("The update will be installed upon closing WingetUI");
-                        banner.ActionButton = new Button();
-                        banner.ActionButton.Content = CoreTools.Translate("Update now");
+                        banner.ActionButton = new Button
+                        {
+                            Content = CoreTools.Translate("Update now")
+                        };
                         banner.ActionButton.Click += (sender, args) => { MainWindow.HideWindow(); };
                         banner.Severity = InfoBarSeverity.Success;
                         banner.IsOpen = true;

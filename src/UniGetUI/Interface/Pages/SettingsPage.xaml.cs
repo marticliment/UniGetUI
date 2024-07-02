@@ -86,10 +86,10 @@ namespace UniGetUI.Interface
             ThemeSelector.ShowAddedItems();
 
             // Backup Section
-            BackupDirectoryLabel = (TextBlock)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(0));
-            ResetBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(1));
-            OpenBackupDirectory = (HyperlinkButton)(((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2));
-            
+            BackupDirectoryLabel = (TextBlock)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(0);
+            ResetBackupDirectory = (HyperlinkButton)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(1);
+            OpenBackupDirectory = (HyperlinkButton)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2);
+
             EnablePackageBackupUI(Settings.Get("EnablePackageBackup"));
 
             ResetBackupDirectory.Content = CoreTools.Translate("Reset");
@@ -107,12 +107,12 @@ namespace UniGetUI.Interface
 
 
             // Package Manager banners;
-            Dictionary<PackageManager, SettingsEntry> PackageManagerExpanders = new();
-            Dictionary<PackageManager, List<SettingsCard>> ExtraSettingsCards = new();
+            Dictionary<PackageManager, SettingsEntry> PackageManagerExpanders = [];
+            Dictionary<PackageManager, List<SettingsCard>> ExtraSettingsCards = [];
 
             foreach (PackageManager Manager in PEInterface.Managers)
             {
-                ExtraSettingsCards.Add(Manager, new List<SettingsCard>());
+                ExtraSettingsCards.Add(Manager, []);
             }
 
 
@@ -169,9 +169,11 @@ namespace UniGetUI.Interface
                 InfoBar ManagerStatus = new();
 
                 TextBlock LongVersion = new();
-                HyperlinkButton ShowVersionButton = new();
-                ShowVersionButton.Content = CoreTools.Translate("Expand version");
-                ShowVersionButton.Visibility = Visibility.Collapsed;
+                HyperlinkButton ShowVersionButton = new()
+                {
+                    Content = CoreTools.Translate("Expand version"),
+                    Visibility = Visibility.Collapsed
+                };
                 ManagerStatus.ActionButton = ShowVersionButton;
                 ShowVersionButton.Click += (s, e) => { SetManagerStatus(Manager, true); };
 
@@ -188,14 +190,14 @@ namespace UniGetUI.Interface
                     if (Manager.IsEnabled() && Manager.Status.Found)
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Success;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} is enabled and ready to go", new Dictionary<string, object?>{ { "pm", Manager.Name } });
+                        ManagerStatus.Title = CoreTools.Translate("{pm} is enabled and ready to go", new Dictionary<string, object?> { { "pm", Manager.Name } });
                         if (!Manager.Status.Version.Contains("\n"))
                         {
-                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?>{ { "pm", Manager.Name } }) + " " + Manager.Status.Version;
+                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?> { { "pm", Manager.Name } }) + " " + Manager.Status.Version;
                         }
                         else if (ShowVersion)
                         {
-                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?>{ { "pm", Manager.Name } });
+                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?> { { "pm", Manager.Name } });
                             LongVersion.Visibility = Visibility.Visible;
                         }
                         else
@@ -208,14 +210,14 @@ namespace UniGetUI.Interface
                     else if (Manager.IsEnabled() && !Manager.Status.Found)
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Error;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} was not found!", new Dictionary<string, object?>{ { "pm", Manager.Name } });
-                        ManagerStatus.Message = CoreTools.Translate("You may need to install {pm} in order to use it with WingetUI.", new Dictionary<string, object?>{ { "pm", Manager.Name } });
+                        ManagerStatus.Title = CoreTools.Translate("{pm} was not found!", new Dictionary<string, object?> { { "pm", Manager.Name } });
+                        ManagerStatus.Message = CoreTools.Translate("You may need to install {pm} in order to use it with WingetUI.", new Dictionary<string, object?> { { "pm", Manager.Name } });
                     }
                     else if (!Manager.IsEnabled())
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Informational;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} is disabled", new Dictionary<string, object?>{ { "pm", Manager.Name } });
-                        ManagerStatus.Message = CoreTools.Translate("Enable it to install packages from {pm}.", new Dictionary<string, object?>{ { "pm", Manager.Name } });
+                        ManagerStatus.Title = CoreTools.Translate("{pm} is disabled", new Dictionary<string, object?> { { "pm", Manager.Name } });
+                        ManagerStatus.Message = CoreTools.Translate("Enable it to install packages from {pm}.", new Dictionary<string, object?> { { "pm", Manager.Name } });
                     }
                 }
 
@@ -261,8 +263,12 @@ namespace UniGetUI.Interface
 
                 index = 0;
 
-                SettingsCard ManagerPath = new() { Description = Manager.Status.ExecutablePath + " " + Manager.Properties.ExecutableCallArgs, IsClickEnabled = true };
-                ManagerPath.ActionIcon = new SymbolIcon(Symbol.Copy);
+                SettingsCard ManagerPath = new()
+                {
+                    Description = Manager.Status.ExecutablePath + " " + Manager.Properties.ExecutableCallArgs,
+                    IsClickEnabled = true,
+                    ActionIcon = new SymbolIcon(Symbol.Copy)
+                };
                 ManagerPath.Click += (s, e) =>
                 {
                     WindowsClipboard.SetText(ManagerPath.Description.ToString() ?? "");
@@ -326,12 +332,12 @@ namespace UniGetUI.Interface
         private void ImportSettings(object sender, Interface.Widgets.ButtonCardEventArgs e)
         {
             ExternalLibraries.Pickers.FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
-            string file = picker.Show(new List<string> { "*.json" });
+            string file = picker.Show(["*.json"]);
 
             if (file != string.Empty)
             {
                 ResetWingetUI(sender, e);
-                Dictionary<string, string> settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file)) ?? new();
+                Dictionary<string, string> settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file)) ?? [];
                 foreach (KeyValuePair<string, string> entry in settings)
                 {
                     Settings.SetValue(entry.Key, entry.Value);
@@ -346,7 +352,7 @@ namespace UniGetUI.Interface
             try
             {
                 ExternalLibraries.Pickers.FileSavePicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
-                string file = picker.Show(new List<string> { "*.json" }, CoreTools.Translate("WingetUI Settings") + ".json");
+                string file = picker.Show(["*.json"], CoreTools.Translate("WingetUI Settings") + ".json");
 
                 if (file != String.Empty)
                 {
@@ -354,7 +360,7 @@ namespace UniGetUI.Interface
 
                     string[] IgnoredSettings = new string[] { "OperationHistory", "CurrentSessionToken", "OldWindowGeometry" };
 
-                    Dictionary<string, string> settings = new();
+                    Dictionary<string, string> settings = [];
                     foreach (string path in Directory.EnumerateFiles(CoreData.UniGetUIDataDirectory))
                     {
                         if (Path.GetFileName(path).Contains('.') || IgnoredSettings.Contains(Path.GetFileName(path)))
@@ -505,13 +511,15 @@ namespace UniGetUI.Interface
 
         private void EditAutostartSettings_Click(object sender, ButtonCardEventArgs e)
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = "cmd.exe",
-                Arguments = "/c start ms-settings:startupapps",
-                UseShellExecute = true,
-                CreateNoWindow = true
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = "cmd.exe",
+                    Arguments = "/c start ms-settings:startupapps",
+                    UseShellExecute = true,
+                    CreateNoWindow = true
+                }
             };
             p.Start();
         }
