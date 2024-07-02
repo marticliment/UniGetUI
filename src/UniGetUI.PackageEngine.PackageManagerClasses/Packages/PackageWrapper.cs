@@ -95,7 +95,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 PackageTag.Default => Package.Name,
                 PackageTag.AlreadyInstalled => CoreTools.Translate("This package is already installed"),
-                PackageTag.IsUpgradable => CoreTools.Translate("This package can be upgraded to version {0}", Package.NewVersion),
+                PackageTag.IsUpgradable => CoreTools.Translate("This package can be upgraded to version {0}", Package.GetUpgradablePackage()?.NewVersion ?? "-1"),
                 PackageTag.Pinned => CoreTools.Translate("Updates for this package are ignored"),
                 PackageTag.OnQueue => CoreTools.Translate("This package is on the queue"),
                 PackageTag.BeingProcessed => CoreTools.Translate("This package is being processed"),
