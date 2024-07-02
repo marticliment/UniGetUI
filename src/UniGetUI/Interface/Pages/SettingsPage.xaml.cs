@@ -435,10 +435,6 @@ namespace UniGetUI.Interface
                 BackupDirectoryLabel.Text = folder;
                 ResetBackupDirectory.IsEnabled = true;
             }
-            else
-            {
-                ResetBackupPath_Click(sender, e);
-            }
 
         }
 
