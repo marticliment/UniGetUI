@@ -6,8 +6,8 @@ namespace UniGetUI.Core.Data
 {
     public static class CoreData
     {
-        public const string VersionName = "3.1.0-beta1"; // Do not modify this line, use file scripts/apply_versions.py
-        public const double VersionNumber = 3.0993; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName =  "3.1.0-beta2"; // Do not modify this line, use file scripts/apply_versions.py
+        public const double VersionNumber =  3.0994; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
         public static HttpClientHandler GenericHttpClientParameters
