@@ -340,7 +340,7 @@ namespace UniGetUI.Interface
                 Dictionary<string, string> settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file)) ?? [];
                 foreach (KeyValuePair<string, string> entry in settings)
                 {
-                    Settings.SetValue(entry.Key, entry.Value);
+                    File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, entry.Key), entry.Value);
                 }
 
                 GeneralSettingsExpander.ShowRestartRequiredBanner();
@@ -363,7 +363,7 @@ namespace UniGetUI.Interface
                     Dictionary<string, string> settings = [];
                     foreach (string path in Directory.EnumerateFiles(CoreData.UniGetUIDataDirectory))
                     {
-                        if (Path.GetFileName(path).Contains('.') || IgnoredSettings.Contains(Path.GetFileName(path)))
+                        if (IgnoredSettings.Contains(Path.GetFileName(path)))
                         {
                             continue;
                         }
