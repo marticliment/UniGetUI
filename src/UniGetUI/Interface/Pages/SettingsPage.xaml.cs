@@ -52,7 +52,7 @@ namespace UniGetUI.Interface
             }
             LanguageSelector.ShowAddedItems();
 
-
+            NotificationSettingsEntry.IsEnabled = DisableSystemTray.Checked;
 
             Dictionary<string, string> updates_dict = new()
             {
@@ -527,6 +527,10 @@ namespace UniGetUI.Interface
         private void DisableSystemTray_StateChanged(object sender, CheckBoxEventArgs e)
         {
             MainApp.Instance.MainWindow.UpdateSystemTrayStatus();
+            if (NotificationSettingsEntry is not null)
+            {
+                NotificationSettingsEntry.IsEnabled = DisableSystemTray.Checked;
+            }
         }
 
         private void EnablePackageBackupCheckBox_StateChanged(object sender, CheckBoxEventArgs e)
