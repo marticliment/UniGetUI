@@ -155,7 +155,6 @@ namespace UniGetUI.Interface
             ExtraSettingsCards[PEInterface.Chocolatey].Add(Chocolatey_SystemChoco);
 
 
-
             foreach (PackageManager Manager in PEInterface.Managers)
             {
 

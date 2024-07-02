@@ -9,6 +9,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Pages;
+using UniGetUI.Interface.Pages.LogPage;
 using UniGetUI.Interface.SoftwarePages;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Enums;
@@ -593,17 +594,17 @@ namespace UniGetUI.Interface
 
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
         {
-            NavigateToPage(new Logger_LogPage(Logger_LogType.OperationHistory));
+            NavigateToPage(new OperationHistoryPage());
         }
 
         private void ManagerLogsMenu_Click(object sender, RoutedEventArgs e)
         {
-            NavigateToPage(new Logger_LogPage(Logger_LogType.ManagerLogs));
+            NavigateToPage(new ManagerLogsPage());
         }
 
         public void UniGetUILogs_Click(object sender, RoutedEventArgs e)
         {
-            NavigateToPage(new Logger_LogPage(Logger_LogType.UniGetUILog));
+            NavigateToPage(new AppLogPage());
         }
 
         private void HelpMenu_Click(object sender, RoutedEventArgs e)
