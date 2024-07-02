@@ -373,7 +373,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     ShowButtons = true;
                 }
 
-                if (!Settings.Get("DisableUpdatesNotifications") && !Settings.Get("DisableNotifications"))
+                if (!(Settings.Get("DisableUpdatesNotifications") || Settings.Get("DisableNotifications")))
                 {
                     try
                     {

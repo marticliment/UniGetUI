@@ -466,7 +466,7 @@ namespace UniGetUI.Interface
         {
             if (!Loader.IsLoading && (!Loader.IsLoaded || reason == ReloadReason.External || reason == ReloadReason.Manual || reason == ReloadReason.Automated))
             {
-                Loader.ClearPackages();
+                Loader.ClearPackages(emitFinishSignal: false);
                 await Loader.ReloadPackages();
             }
             Loader_PackagesChanged(this, EventArgs.Empty);

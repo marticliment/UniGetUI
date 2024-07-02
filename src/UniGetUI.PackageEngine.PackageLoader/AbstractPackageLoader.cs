@@ -56,12 +56,15 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <summary>
         /// Stops the current loading process
         /// </summary>
-        public void StopLoading()
+        public void StopLoading(bool emitFinishSignal = true) 
         {
             LoadOperationIdentifier = -1;
             IsLoaded = false;
             IsLoading = false;
-            FinishedLoading?.Invoke(this, EventArgs.Empty);
+            if (emitFinishSignal)
+            {
+                FinishedLoading?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -70,7 +73,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <returns></returns>
         public virtual async Task ReloadPackages()
         {
-            ClearPackages();
+            ClearPackages(emitFinishSignal: false);
             LoadOperationIdentifier = new Random().Next();
             int current_identifier = LoadOperationIdentifier;
             IsLoading = true;
@@ -130,9 +133,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <summary>
         /// Resets the packages available on the loader
         /// </summary>
-        public void ClearPackages()
+        public void ClearPackages(bool emitFinishSignal = true)
         {
-            StopLoading();
+            StopLoading(emitFinishSignal);
             Packages.Clear();
             PackageReference.Clear();
             IsLoaded = false;
