@@ -275,6 +275,12 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 {
                     Logger.Info("Moving Bundled Chocolatey from old path to new path...");
 
+                    if(Path.GetRelativePath(Environment.GetEnvironmentVariable("chocolateyinstall", EnvironmentVariableTarget.User) ?? "", old_choco_path) == ".")
+                    {
+                        Logger.ImportantInfo("Migrating ChocolateyInstall environment variable to new location");
+                        Environment.SetEnvironmentVariable("chocolateyinstall", new_choco_path, EnvironmentVariableTarget.User);
+                    }
+
                     if (!Directory.Exists(new_choco_path))
                     {
                         Directory.CreateDirectory(new_choco_path);
@@ -375,7 +381,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 string? path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
                 if (!path?.Contains(status.ExecutablePath.Replace("\\choco.exe", "\\bin")) ?? false)
                 {
-                    Logger.Info("Adding chocolatey to path since it was not on path.");
+                    Logger.ImportantInfo("Adding chocolatey to path since it was not on path.");
                     Environment.SetEnvironmentVariable("PATH", $"{status.ExecutablePath.Replace("\\choco.exe", "\\bin")};{path}", EnvironmentVariableTarget.User);
                     Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.User);
                 }
