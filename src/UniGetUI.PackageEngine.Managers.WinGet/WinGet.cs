@@ -349,7 +349,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             if (options.CustomInstallLocation != "")
             {
-                parameters.Add("--location"); parameters.Add("\"" + options.CustomInstallLocation + "\"");
+                parameters.Add("--location"); parameters.Add($"\"{options.CustomInstallLocation}\"");
             }
 
             switch (options.Architecture)
@@ -410,15 +410,15 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             if (options.Version != "")
             {
-                parameters.AddRange(["--version", options.Version, "--force"]);
+                parameters.AddRange(["--version", $"\"{options.Version}\"", "--force"]);
             }
             else if (package.IsUpgradable && package.NewVersion != "")
             {
-                parameters.AddRange(["--version", package.NewVersion]);
+                parameters.AddRange(["--version", $"\"{package.NewVersion}\""]);
             }
             else if (package.Version != "Unknown")
             {
-                parameters.AddRange(["--version", package.Version]);
+                parameters.AddRange(["--version", $"\"{package.Version}\""]);
             }
 
             if (options.InteractiveInstallation)
