@@ -6,18 +6,20 @@ namespace UniGetUI.Core.Data
 {
     public static class CoreData
     {
-        public const string VersionName =  "3.1.0-beta1"; // Do not modify this line, use file scripts/apply_versions.py
-        public const double VersionNumber =  3.0993; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName = "3.1.0-beta1"; // Do not modify this line, use file scripts/apply_versions.py
+        public const double VersionNumber = 3.0993; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
-        public static HttpClientHandler GenericHttpClientParameters { 
-            get {
+        public static HttpClientHandler GenericHttpClientParameters
+        {
+            get
+            {
                 return new()
                 {
                     AutomaticDecompression = DecompressionMethods.All,
                     AllowAutoRedirect = true,
                 };
-            } 
+            }
         }
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace UniGetUI.Core.Data
             get
             {
                 string path = Path.Join(UniGetUIDataDirectory, "InstallationOptions");
-                if(!Directory.Exists(path))
+                if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
@@ -138,7 +140,7 @@ namespace UniGetUI.Core.Data
         /// The ID of the notification that is used to inform the user that updates are available
         /// </summary>
         public static int UpdatesAvailableNotificationId
-        { 
+        {
             get => 1234;
         }
 
@@ -147,7 +149,8 @@ namespace UniGetUI.Core.Data
         /// </summary>
         public static string UniGetUIExecutableDirectory
         {
-            get {
+            get
+            {
                 string? dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 if (dir != null)
                 {
@@ -167,7 +170,8 @@ namespace UniGetUI.Core.Data
         /// </summary>
         public static string UniGetUIExecutableFile
         {
-            get {
+            get
+            {
                 string? filename = Process.GetCurrentProcess().MainModule?.FileName;
                 if (filename != null)
                 {

@@ -89,7 +89,7 @@ namespace UniGetUI.Core.Tools.Tests
                 Assert.NotEqual(string1, string3);
             }
 
-            foreach (string s in new string[] { string1, string2, string3})
+            foreach (string s in new string[] { string1, string2, string3 })
             {
                 foreach (char c in s)
                 {
@@ -104,7 +104,7 @@ namespace UniGetUI.Core.Tools.Tests
         [InlineData("https://www.marticliment.com/wingetui/wingetui_size_test.txt", 460)]
         public async Task TestFileSizeLoader(string uri, long expectedSize)
         {
-            double size = await CoreTools.GetFileSizeAsync(uri != ""? new Uri(uri): null);
+            double size = await CoreTools.GetFileSizeAsync(uri != "" ? new Uri(uri) : null);
             Assert.Equal(expectedSize / 1048576, size);
         }
 

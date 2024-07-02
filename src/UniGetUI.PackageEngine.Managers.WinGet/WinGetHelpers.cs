@@ -61,9 +61,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public async Task<Package[]> FindPackages_UnSafe(WinGet ManagerInstance, string query)
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             ManagerClasses.Classes.NativeTaskLogger logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
-            foreach(string query_part in query.Replace(".", " ").Split(" "))
+            foreach (string query_part in query.Replace(".", " ").Split(" "))
             {
                 FindPackagesOptions PackageFilters = Factory.CreateFindPackagesOptions();
 
@@ -85,7 +85,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 // Load catalogs
                 logger.Log("Loading available catalogs...");
                 IReadOnlyList<PackageCatalogReference> AvailableCatalogs = WinGetManager.GetPackageCatalogs();
-                Dictionary<PackageCatalogReference, Task<FindPackagesResult>> FindPackageTasks = new();
+                Dictionary<PackageCatalogReference, Task<FindPackagesResult>> FindPackageTasks = [];
 
                 // Spawn Tasks to find packages on catalogs
                 logger.Log("Spawning catalog fetching tasks...");
@@ -160,7 +160,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public async Task<ManagerSource[]> GetSources_UnSafe(WinGet ManagerInstance)
         {
-            List<ManagerSource> sources = new();
+            List<ManagerSource> sources = [];
             ManagerClasses.Classes.NativeTaskLogger logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.ListSources);
 
             foreach (PackageCatalogReference catalog in await Task.Run(() => WinGetManager.GetPackageCatalogs().ToArray()))
@@ -241,7 +241,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
                     + details.Package.Id[0].ToString().ToLower() + "/"
                     + details.Package.Id.Split('.')[0] + "/"
-                    + String.Join("/", (details.Package.Id.Contains('.') ? details.Package.Id.Split('.')[1..] : details.Package.Id.Split('.')))
+                    + String.Join("/", details.Package.Id.Contains('.') ? details.Package.Id.Split('.')[1..] : details.Package.Id.Split('.'))
                 );
             }
             else if (details.Package.Source.Name == "msstore")
@@ -340,7 +340,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             // There is no way yet to retrieve installer URLs right now so this part will be console-parsed.
             // TODO: Replace this code with native code when available on the COM api
             Process process = new();
-            List<string> output = new();
+            List<string> output = [];
             ProcessStartInfo startInfo = new()
             {
                 FileName = Path.Join(CoreData.UniGetUIExecutableDirectory, "winget-cli_x64", "winget.exe"),
@@ -419,18 +419,20 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public async Task<Package[]> FindPackages_UnSafe(WinGet ManagerInstance, string query)
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
 
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = "powershell.exe",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = "powershell.exe",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             p.Start();
@@ -497,7 +499,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
                     + details.Package.Id[0].ToString().ToLower() + "/"
                     + details.Package.Id.Split('.')[0] + "/"
-                    + String.Join("/", (details.Package.Id.Contains('.') ? details.Package.Id.Split('.')[1..] : details.Package.Id.Split('.')))
+                    + String.Join("/", details.Package.Id.Contains('.') ? details.Package.Id.Split('.')[1..] : details.Package.Id.Split('.'))
                 );
             }
             else if (details.Package.Source.Name == "msstore")
@@ -509,7 +511,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             Process process = new();
             string packageIdentifier = "--id " + details.Package.Id + " --exact";
 
-            List<string> output = new();
+            List<string> output = [];
             bool LocaleFound = true;
             ProcessStartInfo startInfo = new()
             {
@@ -736,7 +738,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             p.Start();
 
             string? line;
-            List<string> versions = new();
+            List<string> versions = [];
             bool DashesPassed = false;
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
@@ -761,19 +763,21 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public async Task<ManagerSource[]> GetSources_UnSafe(WinGet ManagerInstance)
         {
-            List<ManagerSource> sources = new();
+            List<ManagerSource> sources = [];
 
-            Process p = new();
-            p.StartInfo = new()
+            Process p = new()
             {
-                FileName = ManagerInstance.Status.ExecutablePath,
-                Arguments = ManagerInstance.Properties.ExecutableCallArgs + " source list",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new()
+                {
+                    FileName = ManagerInstance.Status.ExecutablePath,
+                    Arguments = ManagerInstance.Properties.ExecutableCallArgs + " source list",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             p.Start();

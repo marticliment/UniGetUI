@@ -11,7 +11,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public override string[] GetAddSourceParameters(ManagerSource source)
         {
-            List<string> args = new() { "source", "add", "--name", source.Name, "--arg", source.Url.ToString(), "--accept-source-agreements", "--disable-interactivity" };
+            List<string> args = ["source", "add", "--name", source.Name, "--arg", source.Url.ToString(), "--accept-source-agreements", "--disable-interactivity"];
             if (source.Name != "winget")
             {
                 args.AddRange(new string[] { "--type", "Microsoft.Rest" });

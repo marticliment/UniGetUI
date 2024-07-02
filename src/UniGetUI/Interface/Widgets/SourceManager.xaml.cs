@@ -32,7 +32,7 @@ namespace UniGetUI.Interface.Widgets
     public sealed partial class SourceManager : UserControl
     {
         private PackageManager Manager { get; set; }
-        private ObservableCollection<SourceItem> Sources = new();
+        private ObservableCollection<SourceItem> Sources = [];
 
         private ListView _datagrid { get; set; }
         public SourceManager(PackageManager Manager)
@@ -52,11 +52,13 @@ namespace UniGetUI.Interface.Widgets
                 try
                 {
 
-                    ContentDialog d = new();
-                    d.Title = CoreTools.Translate("Add source");
+                    ContentDialog d = new()
+                    {
+                        Title = CoreTools.Translate("Add source")
+                    };
 
                     ComboBox SourcesCombo = new();
-                    Dictionary<string, ManagerSource> NameSourceRef = new();
+                    Dictionary<string, ManagerSource> NameSourceRef = [];
                     foreach (ManagerSource source in Manager.Properties.KnownSources)
                     {
                         SourcesCombo.Items.Add(source.Name);
@@ -64,8 +66,10 @@ namespace UniGetUI.Interface.Widgets
                     }
 
                     d.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-                    StackPanel p = new();
-                    p.Spacing = 8;
+                    StackPanel p = new()
+                    {
+                        Spacing = 8
+                    };
                     p.Children.Add(new TextBlock { Text = CoreTools.Translate("Select the source you want to add:") });
                     p.Children.Add(SourcesCombo);
 
@@ -135,11 +139,13 @@ namespace UniGetUI.Interface.Widgets
                 }
                 catch (Exception ex)
                 {
-                    ContentDialog d = new();
-                    d.XamlRoot = XamlRoot;
-                    d.Title = CoreTools.Translate("An error occurred");
-                    d.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-                    d.Content = CoreTools.Translate("An error occurred when adding the source: ") + ex.Message;
+                    ContentDialog d = new()
+                    {
+                        XamlRoot = XamlRoot,
+                        Title = CoreTools.Translate("An error occurred"),
+                        Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                        Content = CoreTools.Translate("An error occurred when adding the source: ") + ex.Message
+                    };
                     _ = MainApp.Instance.MainWindow.ShowDialogAsync(d, HighPriority: true);
                     d.PrimaryButtonText = CoreTools.Translate("Close");
                     Logger.Error("An error occurred when adding the source");

@@ -41,7 +41,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
             if (Manager.Capabilities.SupportsCustomPackageIcons)
             {
                 Icon = await GetPackageIcon_Unsafe(package);
-                if(Icon == null)
+                if (Icon == null)
                 {
                     Logger.Debug($"Manager {Manager.Name} did not find a native icon for {package.Id}");
                 }
@@ -54,7 +54,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
             if (Icon == null)
             {
                 string url = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
-                if(url != "")
+                if (url != "")
                 {
                     Icon = new CacheableIcon(new Uri(url), package.Version);
                 }
@@ -66,7 +66,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                 return null;
             }
             else
-            { 
+            {
                 Logger.Info($"Loaded icon with URL={Icon.ToString()} for package Id={package.Id}");
             }
             return Icon;
@@ -85,9 +85,10 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                 Logger.Debug($"Manager {Manager.Name} does not support native screenshots");
             }
 
-            if (URIs.Length == 0){
+            if (URIs.Length == 0)
+            {
                 string[] UrlArray = IconDatabase.Instance.GetScreenshotsUrlForId(package.Id);
-                List<Uri> UriList = new();
+                List<Uri> UriList = [];
                 foreach (string url in UrlArray)
                 {
                     if (url != "")

@@ -7,7 +7,7 @@
         public bool RunAsAdministrator { get; set; } = false;
         public string Architecture { get; set; } = "";
         public string InstallationScope { get; set; } = "";
-        public List<string> CustomParameters { get; set; } = new();
+        public List<string> CustomParameters { get; set; } = [];
         public bool PreRelease { get; set; } = false;
         public string CustomInstallLocation { get; set; } = "";
         public string Version { get; set; } = "";

@@ -10,7 +10,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
 
         public ManagerSourceFactory(PackageManager manager)
         {
-            __reference = new();
+            __reference = [];
             __manager = manager;
         }
 

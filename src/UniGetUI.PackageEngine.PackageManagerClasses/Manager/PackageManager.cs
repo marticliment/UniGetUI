@@ -97,9 +97,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                                "\n█▀▀▀▀▀▀▀▀▀▀▀▀▀ MANAGER LOADED ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀" +
                                "\n█ Name: " + Name +
                                "\n█ Enabled: " + IsEnabled().ToString() +
-                               (IsEnabled() ? 
+                               (IsEnabled() ?
                                "\n█ Found: " + Status.Found.ToString() +
-                               (Status.Found ? 
+                               (Status.Found ?
                                "\n█ Fancye exe name: " + Properties.ExecutableFriendlyName +
                                "\n█ Executable path: " + Status.ExecutablePath +
                                "\n█ Call arguments: " + Properties.ExecutableCallArgs +
@@ -226,7 +226,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             catch (Exception e)
             {
                 Logger.Error("Error finding installed packages on manager " + Name);
-                Logger.Error(e); 
+                Logger.Error(e);
                 return [];
             }
         }

@@ -11,7 +11,7 @@ namespace UniGetUI.Core.Language
 {
     public class LanguageEngine
     {
-        private Dictionary<string, string> MainLangDict = new();
+        private Dictionary<string, string> MainLangDict = [];
 
         [NotNull]
         public string? Locale { get; private set; }
@@ -21,11 +21,11 @@ namespace UniGetUI.Core.Language
         public LanguageEngine(string ForceLanguage = "")
         {
             string LangName = Settings.GetValue("PreferredLanguage");
-            if (LangName == "default" || LangName == "")
+            if (LangName is "default" or "")
             {
                 LangName = CultureInfo.CurrentUICulture.ToString().Replace("-", "_");
             }
-            LoadLanguage((ForceLanguage != "")? ForceLanguage: LangName);
+            LoadLanguage((ForceLanguage != "") ? ForceLanguage : LangName);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace UniGetUI.Core.Language
         {
             try
             {
-                Dictionary<string, string> LangDict = new();
+                Dictionary<string, string> LangDict = [];
                 string LangFileToLoad = Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
 
                 if (!File.Exists(LangFileToLoad) || Settings.Get("DisableLangAutoUpdater"))
@@ -66,7 +66,7 @@ namespace UniGetUI.Core.Language
                 if (ForceBundled)
                 {
                     LangFileToLoad = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
-                    if(!File.Exists(LangFileToLoad))
+                    if (!File.Exists(LangFileToLoad))
                     {
                         Logger.Error($"Tried to access a non-existing bundled language file! file={LangFileToLoad}");
                     }
@@ -95,7 +95,7 @@ namespace UniGetUI.Core.Language
             {
                 Logger.Error($"LoadLanguageFile Failed for LangKey={LangKey}, ForceBundled={ForceBundled}");
                 Logger.Error(e);
-                return new Dictionary<string, string>();
+                return [];
             }
         }
 
@@ -162,7 +162,7 @@ namespace UniGetUI.Core.Language
                 return key;
             }
 
-            if (key == null || key == "")
+            if (key is null or "")
             {
                 return "";
             }

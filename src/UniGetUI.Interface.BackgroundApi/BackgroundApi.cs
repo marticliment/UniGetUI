@@ -27,7 +27,8 @@ namespace UniGetUI.Interface
 
         private bool __running = false;
 
-        public BackgroundApiRunner() {
+        public BackgroundApiRunner()
+        {
             BackgroundApi.OnOpenWindow += (s, e) => OnOpenWindow?.Invoke(s, e);
             BackgroundApi.OnOpenUpdatesPage += (s, e) => OnOpenUpdatesPage?.Invoke(s, e);
             BackgroundApi.OnShowSharedPackage += (s, e) => OnShowSharedPackage?.Invoke(s, e);
@@ -195,7 +196,7 @@ namespace UniGetUI.Interface
                 StringBuilder packages = new();
                 foreach (Package package in PEInterface.UpgradablePackagesLoader.Packages)
                 {
-                    if (package.Tag == PackageTag.OnQueue || package.Tag == PackageTag.BeingProcessed)
+                    if (package.Tag is PackageTag.OnQueue or PackageTag.BeingProcessed)
                     {
                         continue; // Do not show already processed packages on queue 
                     }
@@ -264,7 +265,7 @@ namespace UniGetUI.Interface
                 }
 
                 Logger.Info("[WIDGETS] Updating all packages");
-                OnUpgradeAll?.Invoke(this, EventArgs.Empty);    
+                OnUpgradeAll?.Invoke(this, EventArgs.Empty);
                 return 200;
             });
 

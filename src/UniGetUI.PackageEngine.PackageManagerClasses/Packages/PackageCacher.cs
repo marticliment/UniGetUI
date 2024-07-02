@@ -4,9 +4,9 @@ namespace UniGetUI.PackageEngine.Classes.Packages
 {
     internal static class PackageCacher
     {
-        private static readonly Dictionary<long, Package> __available_pkgs = new();
-        private static readonly Dictionary<long, Package> __upgradable_pkgs = new();
-        private static readonly Dictionary<long, Package> __installed_pkgs = new();
+        private static readonly Dictionary<long, Package> __available_pkgs = [];
+        private static readonly Dictionary<long, Package> __upgradable_pkgs = [];
+        private static readonly Dictionary<long, Package> __installed_pkgs = [];
 
         /// <summary>
         /// Will check if a given Package is already in the cache. If not, it will be added to it
@@ -67,7 +67,7 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         /// <returns>The already existing package if any, otherwhise null</returns>
         public static Package? GetAvailablePackageOrNull(Package other)
         {
-            if(__available_pkgs.TryGetValue(other.GetHash(), out Package? equivalent_package))
+            if (__available_pkgs.TryGetValue(other.GetHash(), out Package? equivalent_package))
             {
                 return equivalent_package;
             }

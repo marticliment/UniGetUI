@@ -32,19 +32,21 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()
         {
-            List<ManagerSource> sources = new();
+            List<ManagerSource> sources = [];
 
-            Process p = new();
-            p.StartInfo = new()
+            Process p = new()
             {
-                FileName = Manager.Status.ExecutablePath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " source list",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new()
+                {
+                    FileName = Manager.Status.ExecutablePath,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " source list",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
@@ -83,7 +85,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
             logger.Close(p.ExitCode);
-            
+
             return sources.ToArray();
         }
     }

@@ -91,8 +91,10 @@ namespace UniGetUI.PackageEngine.Operations
                 startInfo.FileName = Package.Manager.Status.ExecutablePath;
                 startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
             }
-            Process process = new();
-            process.StartInfo = startInfo;
+            Process process = new()
+            {
+                StartInfo = startInfo
+            };
 
             return process;
         }
@@ -113,7 +115,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = CoreTools.Translate("{package} installation failed", new Dictionary<string, object?>{ { "package", Package.Name } });
+            LineInfoText = CoreTools.Translate("{package} installation failed", new Dictionary<string, object?> { { "package", Package.Name } });
 
             Package.SetTag(PackageTag.Failed);
 
@@ -153,7 +155,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
-            LineInfoText = CoreTools.Translate("{package} was installed successfully", new Dictionary<string, object?>{ { "package", Package.Name } });
+            LineInfoText = CoreTools.Translate("{package} was installed successfully", new Dictionary<string, object?> { { "package", Package.Name } });
 
             Package.SetTag(PackageTag.AlreadyInstalled);
             PEInterface.InstalledPackagesLoader.AddForeign(Package);
@@ -166,7 +168,7 @@ namespace UniGetUI.PackageEngine.Operations
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(CoreTools.Translate("Installation succeeded"))
-                    .AddText(CoreTools.Translate("{package} was installed successfully", new Dictionary<string, object?>{ { "package", Package.Name } })).Show();
+                    .AddText(CoreTools.Translate("{package} was installed successfully", new Dictionary<string, object?> { { "package", Package.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -182,7 +184,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async void Initialize()
         {
-            OperationTitle = CoreTools.Translate("{package} Installation", new Dictionary<string, object?>{ { "package", Package.Name } });
+            OperationTitle = CoreTools.Translate("{package} Installation", new Dictionary<string, object?> { { "package", Package.Name } });
             IconSource = await Package.GetIconUrl();
         }
     }
@@ -208,8 +210,10 @@ namespace UniGetUI.PackageEngine.Operations
                 startInfo.FileName = Package.Manager.Status.ExecutablePath;
                 startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
             }
-            Process process = new();
-            process.StartInfo = startInfo;
+            Process process = new()
+            {
+                StartInfo = startInfo
+            };
 
             return process;
         }
@@ -230,7 +234,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = CoreTools.Translate("{package} update failed. Click here for more details.", new Dictionary<string, object?>{ { "package", Package.Name } });
+            LineInfoText = CoreTools.Translate("{package} update failed. Click here for more details.", new Dictionary<string, object?> { { "package", Package.Name } });
 
             Package.SetTag(PackageTag.Failed);
 
@@ -270,12 +274,12 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
-            LineInfoText = CoreTools.Translate("{package} was updated successfully", new Dictionary<string, object?>{ { "package", Package.Name } });
+            LineInfoText = CoreTools.Translate("{package} was updated successfully", new Dictionary<string, object?> { { "package", Package.Name } });
 
             Package.GetInstalledPackage()?.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
 
-            if(await Package.HasUpdatesIgnoredAsync() && await Package.GetIgnoredUpdatesVersionAsync() != "*")
+            if (await Package.HasUpdatesIgnoredAsync() && await Package.GetIgnoredUpdatesVersionAsync() != "*")
             {
                 await Package.RemoveFromIgnoredUpdatesAsync();
             }
@@ -290,7 +294,7 @@ namespace UniGetUI.PackageEngine.Operations
                 .AddArgument("action", "OpenUniGetUI")
                 .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                 .AddText(CoreTools.Translate("Update succeeded"))
-                .AddText(CoreTools.Translate("{package} was updated successfully", new Dictionary<string, object?>{ { "package", Package.Name } })).Show();
+                .AddText(CoreTools.Translate("{package} was updated successfully", new Dictionary<string, object?> { { "package", Package.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -310,7 +314,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async void Initialize()
         {
-            OperationTitle = CoreTools.Translate("{package} Update", new Dictionary<string, object?>{ { "package", Package.Name } });
+            OperationTitle = CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
             IconSource = await Package.GetIconUrl();
         }
     }
@@ -336,8 +340,10 @@ namespace UniGetUI.PackageEngine.Operations
                 startInfo.FileName = Package.Manager.Status.ExecutablePath;
                 startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUninstallParameters(Package, Options));
             }
-            Process process = new();
-            process.StartInfo = startInfo;
+            Process process = new()
+            {
+                StartInfo = startInfo
+            };
 
 
             return process;
@@ -359,7 +365,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = CoreTools.Translate("{package} uninstall failed", new Dictionary<string, object?>{ { "package", Package.Name } });
+            LineInfoText = CoreTools.Translate("{package} uninstall failed", new Dictionary<string, object?> { { "package", Package.Name } });
 
             Package.SetTag(PackageTag.Failed);
 
@@ -371,7 +377,7 @@ namespace UniGetUI.PackageEngine.Operations
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(CoreTools.Translate("Uninstall failed"))
-                    .AddText(CoreTools.Translate("{package} could not be uninstalled", new Dictionary<string, object?>{ { "package", Package.Name } })).Show();
+                    .AddText(CoreTools.Translate("{package} could not be uninstalled", new Dictionary<string, object?> { { "package", Package.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -399,7 +405,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
-            LineInfoText = CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?>{ { "package", Package.Name } });
+            LineInfoText = CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?> { { "package", Package.Name } });
 
             Package.GetAvailablePackage()?.SetTag(PackageTag.Default);
             PEInterface.UpgradablePackagesLoader.Remove(Package);
@@ -413,7 +419,7 @@ namespace UniGetUI.PackageEngine.Operations
                 .AddArgument("action", "OpenUniGetUI")
                 .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                 .AddText(CoreTools.Translate("Uninstall succeeded"))
-                .AddText(CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?>{ { "package", Package.Name } })).Show();
+                .AddText(CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?> { { "package", Package.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -429,7 +435,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async void Initialize()
         {
-            OperationTitle = CoreTools.Translate("{package} Uninstall", new Dictionary<string, object?>{ { "package", Package.Name } });
+            OperationTitle = CoreTools.Translate("{package} Uninstall", new Dictionary<string, object?> { { "package", Package.Name } });
             IconSource = await Package.GetIconUrl();
         }
     }

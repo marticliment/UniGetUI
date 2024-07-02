@@ -72,7 +72,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public new void Clear()
         {
-            foreach(PackageWrapper wrapper in this)
+            foreach (PackageWrapper wrapper in this)
             {
                 wrapper.Dispose();
             }
@@ -86,7 +86,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns></returns>
         public List<Package> GetPackages()
         {
-            List<Package> packages = new();
+            List<Package> packages = [];
             foreach (PackageWrapper wrapper in this)
             {
                 packages.Add(wrapper.Package);
@@ -101,7 +101,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns></returns>
         public List<Package> GetCheckedPackages()
         {
-            List<Package> packages = new();
+            List<Package> packages = [];
             foreach (PackageWrapper wrapper in this)
             {
                 if (wrapper.Package.IsChecked)
@@ -111,7 +111,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
             return packages;
         }
-        
+
         /// <summary>
         /// Mark all packages as checked
         /// </summary>
@@ -122,7 +122,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 wrapper.Package.IsChecked = true;
             }
         }
-        
+
         /// <summary>
         /// Mark all packages as unchecked
         /// </summary>

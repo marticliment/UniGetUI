@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 
 namespace UniGetUI.Core.Classes
 {
-    public class SortableObservableCollection<T> : ObservableCollection<T> where T: IIndexableListItem
+    public class SortableObservableCollection<T> : ObservableCollection<T> where T : IIndexableListItem
     {
         public Func<T, object>? SortingSelector { get; set; }
         public bool Descending { get; set; }
@@ -38,8 +38,8 @@ namespace UniGetUI.Core.Classes
             {
                 Move(IndexOf(item), sorted.IndexOf(item));
             }
-            
-            for(int i = 0; i < Count; i++)
+
+            for (int i = 0; i < Count; i++)
             {
                 this[i].Index = i;
             }

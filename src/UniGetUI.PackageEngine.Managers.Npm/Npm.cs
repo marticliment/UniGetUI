@@ -12,7 +12,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
-        
+
         public Npm() : base()
         {
             Capabilities = new ManagerCapabilities()
@@ -41,28 +41,30 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
             PackageDetailsProvider = new NpmPackageDetailsProvider(this);
         }
-        
+
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\" --parseable",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\" --parseable",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
             p.Start();
-            
+
             string? line;
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             bool HeaderPassed = false;
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
@@ -93,21 +95,23 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             foreach (PackageScope scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
             {
-                Process p = new();
-                p.StartInfo = new ProcessStartInfo()
+                Process p = new()
                 {
-                    FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " outdated --parseable" + (scope == PackageScope.Global ? " --global" : ""),
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                    StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = Status.ExecutablePath,
+                        Arguments = Properties.ExecutableCallArgs + " outdated --parseable" + (scope == PackageScope.Global ? " --global" : ""),
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        RedirectStandardInput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                        StandardOutputEncoding = System.Text.Encoding.UTF8
+                    }
                 };
 
                 ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
@@ -143,26 +147,28 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             foreach (PackageScope scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
             {
-                Process p = new();
-                p.StartInfo = new ProcessStartInfo()
+                Process p = new()
                 {
-                    FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list" + (scope == PackageScope.Global? " --global": ""),
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                    StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = Status.ExecutablePath,
+                        Arguments = Properties.ExecutableCallArgs + " list" + (scope == PackageScope.Global ? " --global" : ""),
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        RedirectStandardInput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                        StandardOutputEncoding = System.Text.Encoding.UTF8
+                    }
                 };
 
                 ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
                 p.Start();
-                
+
                 string? line;
                 while ((line = await p.StandardOutput.ReadLineAsync()) != null)
                 {
@@ -241,7 +247,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         }
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            List<string> parameters = new() { Properties.UninstallVerb, package.Id };
+            List<string> parameters = [Properties.UninstallVerb, package.Id];
 
             if (options.CustomParameters != null)
             {
@@ -259,10 +265,11 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
         protected override async Task<ManagerStatus> LoadManager()
         {
-            ManagerStatus status = new();
-
-            status.ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
-            status.Found = (await CoreTools.Which("npm")).Item1;
+            ManagerStatus status = new()
+            {
+                ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                Found = (await CoreTools.Which("npm")).Item1
+            };
 
             if (!status.Found)
             {
@@ -291,6 +298,6 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return status;
         }
 
-        
+
     }
 }

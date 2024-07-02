@@ -16,15 +16,15 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         {
             if (source.Url.ToString() == "https://www.powershellgallery.com/api/v2")
             {
-                return [ "Register-PSRepository", "-Default" ];
+                return ["Register-PSRepository", "-Default"];
             }
 
-            return [ "Register-PSRepository", "-Name", source.Name, "-SourceLocation", source.Url.ToString() ];
+            return ["Register-PSRepository", "-Name", source.Name, "-SourceLocation", source.Url.ToString()];
         }
 
         public override string[] GetRemoveSourceParameters(ManagerSource source)
         {
-            return [ "Unregister-PSRepository", "-Name", source.Name ];
+            return ["Unregister-PSRepository", "-Name", source.Name];
         }
 
         public override OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
@@ -39,19 +39,21 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()
         {
-            List<ManagerSource> sources = new();
+            List<ManagerSource> sources = [];
 
-            Process p = new();
-            p.StartInfo = new()
+            Process p = new()
             {
-                FileName = Manager.Status.ExecutablePath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " Get-PSRepository",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new()
+                {
+                    FileName = Manager.Status.ExecutablePath,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " Get-PSRepository",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);

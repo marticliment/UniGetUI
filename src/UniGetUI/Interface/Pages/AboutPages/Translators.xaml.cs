@@ -13,11 +13,11 @@ namespace UniGetUI.Interface.Pages.AboutPages
     /// </summary>
     public sealed partial class Translators : Page
     {
-        public ObservableCollection<Person> TranslatorList = new();
+        public ObservableCollection<Person> TranslatorList = [];
         public Translators()
         {
             InitializeComponent();
-            foreach(Person person in LanguageData.TranslatorsList)
+            foreach (Person person in LanguageData.TranslatorsList)
             {
                 TranslatorList.Add(person);
             }

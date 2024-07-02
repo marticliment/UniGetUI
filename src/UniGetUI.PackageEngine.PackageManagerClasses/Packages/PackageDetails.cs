@@ -11,7 +11,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// The package to which this details instance corresponds
         /// </summary>
         public Package Package { get; }
-        
+
         /// <summary>
         /// Wether this PackageDetails instance has valid data or not.
         /// To load valid data, make use of the `Load()` method
@@ -105,10 +105,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns>An asynchronous task that can be awaited</returns>
         public async Task Load()
         {
-            try {
+            try
+            {
                 await Package.Manager.GetPackageDetails(this);
                 IsPopulated = true;
-            } 
+            }
             catch (Exception ex)
             {
                 Logger.Error($"PackageDetails.Load failed for package {Package.Name}");

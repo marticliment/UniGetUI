@@ -130,8 +130,10 @@ namespace UniGetUI.Interface.Widgets
 
         public void SetImage(Uri url)
         {
-            BitmapImage bitmapImage = new();
-            bitmapImage.UriSource = url;
+            BitmapImage bitmapImage = new()
+            {
+                UriSource = url
+            };
             _image.Source = bitmapImage;
 
         }

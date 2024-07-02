@@ -29,16 +29,18 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 }
             }
 
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Manager.Status.ExecutablePath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " cat " + details.Package.Source.Name + "/" + details.Package.Id,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8,
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Manager.Status.ExecutablePath,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " cat " + details.Package.Source.Name + "/" + details.Package.Id,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                }
             };
 
             ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
@@ -48,9 +50,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             logger.AddToStdOut(JsonString);
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
 
-            JsonObject? RawInfo = JsonObject.Parse(JsonString) as JsonObject;
 
-            if(RawInfo == null)
+            if (JsonObject.Parse(JsonString) is not JsonObject RawInfo)
             {
                 throw new Exception("Deserialized RawInfo was null");
             }
@@ -60,7 +61,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 if (RawInfo.ContainsKey("description") && (RawInfo["description"] is JsonArray))
                 {
                     details.Description = "";
-                    foreach (JsonNode? note in RawInfo["description"] as JsonArray ?? new())
+                    foreach (JsonNode? note in RawInfo["description"] as JsonArray ?? [])
                     {
                         details.Description += note?.ToString() + "\n";
                     }
@@ -109,7 +110,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 if (RawInfo.ContainsKey("notes") && (RawInfo["notes"] is JsonArray))
                 {
                     details.ReleaseNotes = "";
-                    foreach (JsonNode? note in RawInfo["notes"] as JsonArray ?? new())
+                    foreach (JsonNode? note in RawInfo["notes"] as JsonArray ?? [])
                     {
                         details.ReleaseNotes += note?.ToString() + "\n";
                     }

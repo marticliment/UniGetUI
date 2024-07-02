@@ -5,7 +5,7 @@ namespace UniGetUI.Core.Data.Tests
         [Fact]
         public void EnsureLicenseUrlsExist()
         {
-            List<string> MissingUrls = new();
+            List<string> MissingUrls = [];
 
             foreach (string library in LicenseData.LicenseNames.Keys)
             {
@@ -21,7 +21,7 @@ namespace UniGetUI.Core.Data.Tests
         [Fact]
         public void EnsureHomepageUrlsExist()
         {
-            List<string> MissingUrls = new();
+            List<string> MissingUrls = [];
 
             foreach (string library in LicenseData.LicenseNames.Keys)
             {

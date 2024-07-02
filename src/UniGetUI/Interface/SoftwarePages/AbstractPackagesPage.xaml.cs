@@ -70,16 +70,16 @@ namespace UniGetUI.Interface
         }
 
         protected AbstractPackageLoader Loader;
-        public ObservablePackageCollection FilteredPackages = new();
-        protected List<PackageManager> UsedManagers = new();
-        protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
-        protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
-        protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
+        public ObservablePackageCollection FilteredPackages = [];
+        protected List<PackageManager> UsedManagers = [];
+        protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = [];
+        protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = [];
+        protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = [];
         private readonly TreeViewNode LocalPackagesNode;
         public InfoBadge? ExternalCountBadge;
 
         public readonly int NewVersionLabelWidth;
-        public readonly int NewVersionIconWidth;        
+        public readonly int NewVersionIconWidth;
         private readonly bool AllSelected = true;
 
         protected abstract void WhenPackagesLoaded(ReloadReason reason);
@@ -89,29 +89,29 @@ namespace UniGetUI.Interface
         public abstract BetterMenu GenerateContextMenu();
 
         protected readonly string NoPackages_BackgroundText;
-        protected readonly string NoPackages_SourcesText; 
+        protected readonly string NoPackages_SourcesText;
         protected readonly string MainSubtitle_StillLoading;
         protected readonly string NoPackages_SubtitleText_Base;
         protected readonly string NoMatches_BackgroundText;
-        
+
         protected Func<int, int, string> FoundPackages_SubtitleText_Base = (a, b) => CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.", a, b);
-        
+
         protected string NoPackages_SubtitleText
         {
-            get => NoPackages_SubtitleText_Base + 
+            get => NoPackages_SubtitleText_Base +
                 (SHOW_LAST_CHECKED_TIME ? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()) : "");
         }
         protected string NoMatches_SubtitleText
         {
             get => FoundPackages_SubtitleText_Base(Loader.Packages.Count(), FilteredPackages.Count()) +
-               (SHOW_LAST_CHECKED_TIME? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()): "");
+               (SHOW_LAST_CHECKED_TIME ? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()) : "");
         }
         protected string FoundPackages_SubtitleText { get => NoMatches_SubtitleText; }
 
         protected AbstractPackagesPage(PackagesPageData data)
         {
             InitializeComponent();
-            
+
             Loader = data.Loader;
 
             DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = data.DisableAutomaticPackageLoadOnStart;
@@ -160,19 +160,21 @@ namespace UniGetUI.Interface
             }
 
             LastPackageLoadTime = DateTime.Now;
-            LocalPackagesNode = new TreeViewNode { 
-                Content = CoreTools.Translate("Local"), 
-                IsExpanded = false 
+            LocalPackagesNode = new TreeViewNode
+            {
+                Content = CoreTools.Translate("Local"),
+                IsExpanded = false
             };
-            
+
             ReloadButton.Click += async (s, e) => await LoadPackages();
-            
+
             // Handle Find Button click on the Query Block
-            FindButton.Click += (s, e) => { 
+            FindButton.Click += (s, e) =>
+            {
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 FilterPackages();
             };
-            
+
             // Handle Enter pressed on the QueryBlock
             QueryBlock.KeyUp += (s, e) =>
             {
@@ -311,7 +313,7 @@ namespace UniGetUI.Interface
         private void Loader_PackagesChanged(object? sender, EventArgs e)
         {
             // Ensure we are in the UI thread
-            if(Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() == null)
+            if (Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() == null)
             {
                 DispatcherQueue.TryEnqueue(() => Loader_PackagesChanged(sender, e));
                 return;
@@ -339,7 +341,7 @@ namespace UniGetUI.Interface
                 DispatcherQueue.TryEnqueue(() => Loader_FinishedLoading(sender, e));
                 return;
             }
-            
+
             LoadingProgressBar.Visibility = Visibility.Collapsed;
             LastPackageLoadTime = DateTime.Now;
             WhenPackagesLoaded(ReloadReason.External);
@@ -389,17 +391,17 @@ namespace UniGetUI.Interface
                 // Smart way to decide whether to check a source or not.
                 // - Always check a source by default if no sources are present
                 // - Otherwise, Check a source only if half of the sources have already been checked
-                if(SourcesTreeView.RootNodes.Count == 0)
+                if (SourcesTreeView.RootNodes.Count == 0)
                 {
                     SourcesTreeView.SelectedNodes.Add(Node);
                 }
-                else if (SourcesTreeView.SelectedNodes.Count >= SourcesTreeView.RootNodes.Count/2)
+                else if (SourcesTreeView.SelectedNodes.Count >= SourcesTreeView.RootNodes.Count / 2)
                 {
                     SourcesTreeView.SelectedNodes.Add(Node);
                 }
 
                 RootNodeForManager.Add(source.Manager, Node);
-                UsedSourcesForManager.Add(source.Manager, new List<ManagerSource>());
+                UsedSourcesForManager.Add(source.Manager, []);
                 SourcesPlaceholderText.Visibility = Visibility.Collapsed;
                 SourcesTreeViewGrid.Visibility = Visibility.Visible;
             }
@@ -433,7 +435,7 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            FilterPackages(); 
+            FilterPackages();
         }
 
         private void InstantSearchValueChanged(object sender, RoutedEventArgs e)
@@ -462,7 +464,7 @@ namespace UniGetUI.Interface
         /// <returns></returns>
         protected async Task LoadPackages(ReloadReason reason)
         {
-            if(!(Loader.IsLoading) && (!Loader.IsLoaded || reason == ReloadReason.External || reason == ReloadReason.Manual || reason == ReloadReason.Automated))
+            if (!Loader.IsLoading && (!Loader.IsLoaded || reason == ReloadReason.External || reason == ReloadReason.Manual || reason == ReloadReason.Automated))
             {
                 Loader.ClearPackages();
                 await Loader.ReloadPackages();
@@ -478,8 +480,8 @@ namespace UniGetUI.Interface
         {
             FilteredPackages.Clear();
 
-            List<ManagerSource> VisibleSources = new();
-            List<PackageManager> VisibleManagers = new();
+            List<ManagerSource> VisibleSources = [];
+            List<PackageManager> VisibleManagers = [];
 
             if (SourcesTreeView.SelectedNodes.Count > 0)
             {
@@ -583,7 +585,7 @@ namespace UniGetUI.Interface
         {
             if (FilteredPackages.Count() == 0)
             {
-                if(LoadingProgressBar.Visibility == Visibility.Collapsed)
+                if (LoadingProgressBar.Visibility == Visibility.Collapsed)
                 {
                     if (Loader.Packages.Count() == 0)
                     {
@@ -612,7 +614,7 @@ namespace UniGetUI.Interface
             else
             {
                 BackgroundText.Text = NoPackages_BackgroundText;
-                BackgroundText.Visibility = Loader.Packages.Count > 0? Visibility.Collapsed: Visibility.Visible;
+                BackgroundText.Visibility = Loader.Packages.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
                 MainSubtitle.Text = FoundPackages_SubtitleText;
             }
 
@@ -651,7 +653,7 @@ namespace UniGetUI.Interface
             SourcesTreeView.SelectedItems.Clear();
             FilterPackages();
         }
-        
+
         protected async void ShowDetailsForPackage(Package? package)
         {
             if (package == null)
@@ -662,7 +664,7 @@ namespace UniGetUI.Interface
             Logger.Warn(PAGE_ROLE.ToString());
             await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package, PAGE_ROLE);
         }
-        
+
         protected void SharePackage(Package? package)
         {
             if (package == null)
@@ -672,10 +674,10 @@ namespace UniGetUI.Interface
 
             MainApp.Instance.MainWindow.SharePackage(package);
         }
-        
+
         protected async void ShowInstallationOptionsForPackage(Package? package)
         {
-            if(package == null)
+            if (package == null)
             {
                 return;
             }
@@ -702,7 +704,7 @@ namespace UniGetUI.Interface
 
         protected void PerformMainPackageAction(Package? package)
         {
-            if(package == null)
+            if (package == null)
             {
                 return;
             }
@@ -726,8 +728,7 @@ namespace UniGetUI.Interface
 
         private void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            PackageItemContainer? container = (sender as PackageItemContainer);
-            if (container is null)
+            if (sender is not PackageItemContainer container)
             {
                 return;
             }
@@ -743,8 +744,7 @@ namespace UniGetUI.Interface
 
         private void PackageItemContainer_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            PackageItemContainer? container = (sender as PackageItemContainer);
-            if (container is null)
+            if (sender is not PackageItemContainer container)
             {
                 return;
             }
@@ -756,12 +756,12 @@ namespace UniGetUI.Interface
         private void PackageItemContainer_KeyUp(object sender, KeyRoutedEventArgs e)
         {
             Package? package = (sender as PackageItemContainer)?.Package;
-            
+
             bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
             bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
             bool IS_ALT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftMenu).HasFlag(CoreVirtualKeyStates.Down);
             IS_ALT_PRESSED |= InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.RightMenu).HasFlag(CoreVirtualKeyStates.Down);
-            
+
 
             if (e.Key == VirtualKey.Enter && package is not null)
             {

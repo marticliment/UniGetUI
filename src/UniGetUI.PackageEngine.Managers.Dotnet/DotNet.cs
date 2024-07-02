@@ -61,15 +61,17 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             string path = which_res.Item2;
             if (!which_res.Item1)
             {
-                Process proc = new();
-                proc.StartInfo = new ProcessStartInfo()
+                Process proc = new()
                 {
-                    FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " install --global dotnet-tools-outdated",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true,
+                    StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = Status.ExecutablePath,
+                        Arguments = Properties.ExecutableCallArgs + " install --global dotnet-tools-outdated",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        CreateNoWindow = true,
+                    }
                 };
 
                 ManagerClasses.Classes.ProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
@@ -79,20 +81,22 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 aux_logger.AddToStdErr(await proc.StandardError.ReadToEndAsync());
                 await proc.WaitForExitAsync();
                 aux_logger.Close(proc.ExitCode);
-                
+
                 path = "dotnet-tools-outdated.exe";
             }
 
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = path,
-                Arguments = "",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = path,
+                    Arguments = "",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
@@ -100,7 +104,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
             string? line;
             bool DashesPassed = false;
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 logger.AddToStdOut(line);
@@ -141,19 +145,21 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            List<Package> Packages = new();
-            foreach (PackageScope scope in new PackageScope[] { PackageScope.Local, PackageScope.Global})
+            List<Package> Packages = [];
+            foreach (PackageScope scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
             {
-                Process p = new();
-                p.StartInfo = new ProcessStartInfo()
+                Process p = new()
                 {
-                    FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + $" list" + (scope == PackageScope.Global? " --global": ""),
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                    StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = Status.ExecutablePath,
+                        Arguments = Properties.ExecutableCallArgs + $" list" + (scope == PackageScope.Global ? " --global" : ""),
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        StandardOutputEncoding = System.Text.Encoding.UTF8
+                    }
                 };
 
                 ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
@@ -247,7 +253,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            List<string> parameters = new() { Properties.UninstallVerb, package.Id };
+            List<string> parameters = [Properties.UninstallVerb, package.Id];
 
             if (options.CustomParameters != null)
             {
@@ -294,7 +300,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             };
             process.Start();
             await process.WaitForExitAsync();
-            if(process.ExitCode != 0)
+            if (process.ExitCode != 0)
             {
                 status.Found = false;
                 return status;

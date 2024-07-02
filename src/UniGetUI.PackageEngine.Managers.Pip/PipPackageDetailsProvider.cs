@@ -22,17 +22,15 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             JsonString = await client.GetStringAsync($"https://pypi.org/pypi/{details.Package.Id}/json");
 
-            JsonObject? RawInfo = JsonObject.Parse(JsonString) as JsonObject;
 
-            if(RawInfo == null)
+            if (JsonObject.Parse(JsonString) is not JsonObject RawInfo)
             {
                 logger.Error($"Can't load package info on manager {Manager.Name}, JsonObject? RawInfo was null");
                 logger.Close(1);
                 return;
             }
 
-            JsonObject? infoNode = RawInfo["info"] as JsonObject;
-            if (infoNode != null)
+            if (RawInfo["info"] is JsonObject infoNode)
             {
                 try
                 {
@@ -84,11 +82,11 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 catch (Exception ex) { logger.Error("Can't load maintainer: " + ex); }
                 try
                 {
-                    if ((infoNode.ContainsKey("classifiers"))
+                    if (infoNode.ContainsKey("classifiers")
                         && (infoNode["classifiers"] is JsonArray))
                     {
-                        List<string> Tags = new();
-                        foreach (string? line in infoNode["classifiers"] as JsonArray ?? new())
+                        List<string> Tags = [];
+                        foreach (string? line in infoNode["classifiers"] as JsonArray ?? [])
                         {
                             if (line?.Contains("License ::") ?? false)
                             {
@@ -153,17 +151,19 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Manager.Status.ExecutablePath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " index versions " + package.Id,
-                RedirectStandardOutput = true,
-                RedirectStandardInput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Manager.Status.ExecutablePath,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " index versions " + package.Id,
+                    RedirectStandardOutput = true,
+                    RedirectStandardInput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions, p);

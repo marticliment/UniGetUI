@@ -112,25 +112,27 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Manager.Status.ExecutablePath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " show " + package.Id + " versions --json",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true,
-                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Manager.Status.ExecutablePath,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " show " + package.Id + " versions --json",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    CreateNoWindow = true,
+                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions, p);
             p.Start();
 
             string? line;
-            List<string> versions = new();
+            List<string> versions = [];
 
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {

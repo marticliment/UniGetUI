@@ -11,8 +11,8 @@
         {
 
             //arrange
-            Person actual = new(Name: name, 
-                                ProfilePicture: profilePicture is null ? null : new Uri(profilePicture), 
+            Person actual = new(Name: name,
+                                ProfilePicture: profilePicture is null ? null : new Uri(profilePicture),
                                 GitHubUrl: gitHubUrl is null ? null : new Uri(gitHubUrl));
 
             //Assert

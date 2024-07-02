@@ -39,7 +39,7 @@ namespace UniGetUI.Interface.SoftwarePages
             PageTitle = CoreTools.Translate("Discover Packages"),
             Glyph = "\uF6FA"
         })
-        {   
+        {
             InstantSearchCheckbox.IsEnabled = false;
             InstantSearchCheckbox.Visibility = Visibility.Collapsed;
 
@@ -240,7 +240,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public override async Task LoadPackages()
         {
-            if(QueryBlock.Text.Trim() != "")
+            if (QueryBlock.Text.Trim() != "")
             {
                 await LoadPackages(ReloadReason.External);
             }
@@ -397,13 +397,15 @@ namespace UniGetUI.Interface.SoftwarePages
             else
             {
                 Logger.Error("No packages were found matching the given pId=" + pId);
-                ContentDialog c = new();
-                c.XamlRoot = XamlRoot;
-                c.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-                c.Title = CoreTools.Translate("Package not found");
-                c.Content = CoreTools.Translate("The package {0} from {1} was not found.", pId, pSource);
-                c.PrimaryButtonText = CoreTools.Translate("OK");
-                c.DefaultButton = ContentDialogButton.Primary;
+                ContentDialog c = new()
+                {
+                    XamlRoot = XamlRoot,
+                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                    Title = CoreTools.Translate("Package not found"),
+                    Content = CoreTools.Translate("The package {0} from {1} was not found.", pId, pSource),
+                    PrimaryButtonText = CoreTools.Translate("OK"),
+                    DefaultButton = ContentDialogButton.Primary
+                };
                 await MainApp.Instance.MainWindow.ShowDialogAsync(c);
             }
         }

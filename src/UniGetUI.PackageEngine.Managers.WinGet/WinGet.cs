@@ -27,7 +27,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         private readonly string PowerShellPromptArgs;
         private readonly string PowerShellInlineArgs;
 
-        public WinGet(): base()
+        public WinGet() : base()
         {
             PowerShellPath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
             PowerShellPromptArgs = "-ExecutionPolicy Bypass -NoLogo -NoProfile";
@@ -112,21 +112,23 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
 
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = PowerShellPath,
-                Arguments = PowerShellPromptArgs,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8,
-                StandardInputEncoding = System.Text.Encoding.UTF8,
-                StandardErrorEncoding = System.Text.Encoding.UTF8,
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = PowerShellPath,
+                    Arguments = PowerShellPromptArgs,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardInputEncoding = System.Text.Encoding.UTF8,
+                    StandardErrorEncoding = System.Text.Encoding.UTF8,
+                }
             };
 
             ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
@@ -162,7 +164,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             await p.StandardInput.WriteAsync(command);
             p.StandardInput.Close();
             logger.AddToStdIn(command);
-            
+
             string? line;
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
@@ -192,21 +194,23 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
 
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = PowerShellPath,
-                Arguments = PowerShellPromptArgs,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8,
-                StandardInputEncoding = System.Text.Encoding.UTF8,
-                StandardErrorEncoding = System.Text.Encoding.UTF8,
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = PowerShellPath,
+                    Arguments = PowerShellPromptArgs,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardInputEncoding = System.Text.Encoding.UTF8,
+                    StandardErrorEncoding = System.Text.Encoding.UTF8,
+                }
             };
 
             ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
@@ -239,7 +243,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             await p.StandardInput.WriteAsync(command);
             p.StandardInput.Close();
             logger.AddToStdIn(command);
-            
+
 
             string? line;
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
@@ -303,7 +307,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
 
                 // Check if source is Ubisoft Connect
-                if (id == "Uplay" || id.Contains("Uplay Install ") && id.Split("Uplay Install").Count() >= 2 && id.Split("Uplay Install")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
+                if (id == "Uplay" || (id.Contains("Uplay Install ") && id.Split("Uplay Install").Count() >= 2 && id.Split("Uplay Install")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0))
                 {
                     return UbisoftConnectSource;
                 }
@@ -350,15 +354,15 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             switch (options.Architecture)
             {
-                case (null):
+                case null:
                     break;
-                case (Architecture.X86):
+                case Architecture.X86:
                     parameters.Add("--architecture"); parameters.Add("x86");
                     break;
-                case (Architecture.X64):
+                case Architecture.X64:
                     parameters.Add("--architecture"); parameters.Add("x64");
                     break;
-                case (Architecture.Arm64):
+                case Architecture.Arm64:
                     parameters.Add("--architecture"); parameters.Add("arm64");
                     break;
             }
@@ -386,27 +390,27 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            List<string> parameters = [ Properties.UninstallVerb, "--id", package.Id, "--exact"];
-            if(!package.Source.IsVirtualManager)
+            List<string> parameters = [Properties.UninstallVerb, "--id", package.Id, "--exact"];
+            if (!package.Source.IsVirtualManager)
             {
-                parameters.AddRange(["--source", package.Source.Name ]);
+                parameters.AddRange(["--source", package.Source.Name]);
             }
 
             parameters.Add("--accept-source-agreements");
 
             switch (options.InstallationScope)
             {
-                case (PackageScope.Local):
+                case PackageScope.Local:
                     parameters.Add("--scope"); parameters.Add("user");
                     break;
-                case (PackageScope.Global):
+                case PackageScope.Global:
                     parameters.Add("--scope"); parameters.Add("machine");
                     break;
             }
 
             if (options.Version != "")
             {
-                parameters.AddRange(["--version", options.Version, "--force" ]);
+                parameters.AddRange(["--version", options.Version, "--force"]);
             }
             else if (package.IsUpgradable && package.NewVersion != "")
             {
@@ -567,17 +571,19 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public override async Task RefreshPackageIndexes()
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " source update --disable-interactivity",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " source update --disable-interactivity",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
@@ -591,13 +597,13 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
     }
 
-    internal class LocalWingetSource: ManagerSource
+    internal class LocalWingetSource : ManagerSource
     {
         private readonly string name;
         private readonly string __icon_id;
         public override string IconId { get { return __icon_id; } }
 
-        public LocalWingetSource(WinGet manager, string name, string iconId) 
+        public LocalWingetSource(WinGet manager, string name, string iconId)
             : base(manager, name, new Uri("https://microsoft.com/local-pc-source"), isVirtualManager: true)
         {
             this.name = name;

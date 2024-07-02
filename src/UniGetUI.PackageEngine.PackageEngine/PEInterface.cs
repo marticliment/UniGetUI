@@ -31,7 +31,7 @@ namespace UniGetUI.PackageEngine
 
         public static async Task Initialize()
         {
-            List<Task> initializeTasks = new();
+            List<Task> initializeTasks = [];
 
             foreach (PackageManager manager in Managers)
             {

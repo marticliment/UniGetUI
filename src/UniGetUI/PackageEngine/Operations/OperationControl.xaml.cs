@@ -82,7 +82,9 @@ namespace UniGetUI.PackageEngine.Operations
         protected string ButtonText
         {
             get { return __button_text; }
-            set { __button_text = value; if (ActionButton != null)
+            set
+            {
+                __button_text = value; if (ActionButton != null)
                 {
                     ActionButton.Content = __button_text;
                 }
@@ -91,7 +93,9 @@ namespace UniGetUI.PackageEngine.Operations
         protected string LineInfoText
         {
             get { return __line_info_text; }
-            set { __line_info_text = value; if (OutputViewewBlock != null)
+            set
+            {
+                __line_info_text = value; if (OutputViewewBlock != null)
                 {
                     OutputViewewBlock.Content = __line_info_text;
                 }
@@ -100,7 +104,9 @@ namespace UniGetUI.PackageEngine.Operations
         protected Uri IconSource
         {
             get { return __icon_source; }
-            set { __icon_source = value; if (PackageIcon != null)
+            set
+            {
+                __icon_source = value; if (PackageIcon != null)
                 {
                     PackageIcon.Source = new BitmapImage(__icon_source);
                 }
@@ -109,7 +115,9 @@ namespace UniGetUI.PackageEngine.Operations
         protected string OperationTitle
         {
             get { return __operation_description; }
-            set { __operation_description = value; if (InfoTextBlock != null)
+            set
+            {
+                __operation_description = value; if (InfoTextBlock != null)
                 {
                     InfoTextBlock.Text = __operation_description;
                 }
@@ -118,7 +126,9 @@ namespace UniGetUI.PackageEngine.Operations
         protected SolidColorBrush? ProgressBarColor
         {
             get { return __progressbar_color; }
-            set { __progressbar_color = value; if (ProgressIndicator != null)
+            set
+            {
+                __progressbar_color = value; if (ProgressIndicator != null)
                 {
                     ProgressIndicator.Foreground = (__progressbar_color != null) ? __progressbar_color : null;
                 }
@@ -130,7 +140,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected event EventHandler<OperationCancelledEventArgs>? CloseRequested;
 #pragma warning restore CS0067
         protected Process Process = new();
-        protected ObservableCollection<string> ProcessOutput = new();
+        protected ObservableCollection<string> ProcessOutput = [];
 
         private readonly ContentDialog OutputDialog = new();
         private readonly ScrollViewer LiveOutputScrollBar = new();
@@ -200,22 +210,28 @@ namespace UniGetUI.PackageEngine.Operations
 
             InitializeComponent();
 
-            OutputDialog = new ContentDialog();
-            OutputDialog.Style = (Style)Application.Current.Resources["DefaultContentDialogStyle"];
-            OutputDialog.XamlRoot = XamlRoot;
+            OutputDialog = new ContentDialog
+            {
+                Style = (Style)Application.Current.Resources["DefaultContentDialogStyle"],
+                XamlRoot = XamlRoot
+            };
             OutputDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OutputDialog.Resources["ContentDialogMaxHeight"] = 1000;
 
-            LiveOutputTextBlock = new RichTextBlock();
-            LiveOutputTextBlock.Margin = new Thickness(8);
-            LiveOutputTextBlock.FontFamily = new FontFamily("Consolas");
+            LiveOutputTextBlock = new RichTextBlock
+            {
+                Margin = new Thickness(8),
+                FontFamily = new FontFamily("Consolas")
+            };
 
-            LiveOutputScrollBar = new ScrollViewer();
-            LiveOutputScrollBar.CornerRadius = new CornerRadius(6);
-            LiveOutputScrollBar.Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"];
-            LiveOutputScrollBar.Height = 400;
-            LiveOutputScrollBar.Width = 600;
-            LiveOutputScrollBar.Content = LiveOutputTextBlock;
+            LiveOutputScrollBar = new ScrollViewer
+            {
+                CornerRadius = new CornerRadius(6),
+                Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"],
+                Height = 400,
+                Width = 600,
+                Content = LiveOutputTextBlock
+            };
 
             OutputDialog.Title = CoreTools.Translate("Live output");
             OutputDialog.CloseButtonText = CoreTools.Translate("Close");
@@ -268,8 +284,10 @@ namespace UniGetUI.PackageEngine.Operations
         {
             OutputDialog.XamlRoot = XamlRoot;
             LiveOutputTextBlock.Blocks.Clear();
-            Paragraph p = new();
-            p.LineHeight = 4.8;
+            Paragraph p = new()
+            {
+                LineHeight = 4.8
+            };
             foreach (string line in ProcessOutput)
             {
                 if (Status != OperationStatus.Failed)
@@ -297,7 +315,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public void ActionButtonClicked(object sender, RoutedEventArgs args)
         {
-            if (Status == OperationStatus.Pending || Status == OperationStatus.Running)
+            if (Status is OperationStatus.Pending or OperationStatus.Running)
             {
                 CancelButtonClicked(Status);
             }
@@ -328,7 +346,7 @@ namespace UniGetUI.PackageEngine.Operations
             Status = OperationStatus.Cancelled;
             LineInfoText = CoreTools.Translate("Operation cancelled");
 
-            if (this as PackageOperation != null)
+            if ((this as PackageOperation) != null)
             {
                 ((PackageOperation)this).Package.Tag = PackageTag.Default;
             }
@@ -391,16 +409,18 @@ namespace UniGetUI.PackageEngine.Operations
 
                 Status = OperationStatus.Running;
                 LineInfoText = CoreTools.Translate("Launching subprocess...");
-                ProcessStartInfo startInfo = new();
-                startInfo.RedirectStandardInput = true;
-                startInfo.RedirectStandardOutput = true;
-                startInfo.RedirectStandardError = true;
-                startInfo.UseShellExecute = false;
-                startInfo.CreateNoWindow = true;
-                startInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
-                startInfo.StandardInputEncoding = System.Text.Encoding.UTF8;
-                startInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
-                startInfo.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                ProcessStartInfo startInfo = new()
+                {
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardInputEncoding = System.Text.Encoding.UTF8,
+                    StandardErrorEncoding = System.Text.Encoding.UTF8,
+                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                };
 
                 Process = await BuildProcessInstance(startInfo);
 
@@ -530,9 +550,7 @@ namespace UniGetUI.PackageEngine.Operations
                     oldHistory = oldHistory.Take(1000).ToArray();
                 }
 
-                List<string> newHistory = new();
-                newHistory.AddRange(ProcessOutput);
-                newHistory.AddRange(oldHistory);
+                List<string> newHistory = [.. ProcessOutput, .. oldHistory];
 
                 Settings.SetValue("OperationHistory", String.Join('\n', newHistory).Replace(" | ", " ║ "));
             }

@@ -47,7 +47,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
 
-            List<ManagerSource> sources = new();
+            List<ManagerSource> sources = [];
 
             p.Start();
 

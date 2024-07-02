@@ -25,7 +25,8 @@ namespace UniGetUI.Core.Tools
         /// </summary>
         /// <param name="text">The string to translate</param>
         /// <returns>The translated string if available, the original string otherwise</returns>
-        public static string Translate(string text) {
+        public static string Translate(string text)
+        {
             return LanguageEngine.Translate(text);
         }
 
@@ -224,7 +225,7 @@ Crash Traceback:
         {
             try
             {
-                return (new WindowsPrincipal(WindowsIdentity.GetCurrent()))
+                return new WindowsPrincipal(WindowsIdentity.GetCurrent())
                           .IsInRole(WindowsBuiltInRole.Administrator);
             }
             catch (Exception e)
@@ -247,7 +248,7 @@ Crash Traceback:
 
         public static async Task<long> GetFileSizeAsyncAsLong(Uri? url)
         {
-            if(url == null)
+            if (url == null)
             {
                 return 0;
             }
@@ -301,7 +302,7 @@ Crash Traceback:
                     }
                 }
                 double res = -1;
-                if (_ver != "" && _ver != ".")
+                if (_ver is not "" and not ".")
                 {
                     try
                     {
@@ -364,7 +365,7 @@ Crash Traceback:
         /// <returns>an Uri? instance</returns>
         public static Uri? GetUriOrNull(string? url)
         {
-            if (url == "" || url == null)
+            if (url is "" or null)
             {
                 return null;
             }
@@ -378,18 +379,20 @@ Crash Traceback:
         public static async Task CacheUACForCurrentProcess()
         {
             Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = CoreData.GSudoPath,
-                Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8,
-            };  
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = CoreData.GSudoPath,
+                    Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                }
+            };
             p.Start();
             await p.WaitForExitAsync();
         }
@@ -400,17 +403,19 @@ Crash Traceback:
         public static async Task ResetUACForCurrentProcess()
         {
             Logger.Info("Resetting administrator rights cache for process id " + Process.GetCurrentProcess().Id);
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = CoreData.GSudoPath,
-                Arguments = "cache off --pid " + Process.GetCurrentProcess().Id,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8,
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = CoreData.GSudoPath,
+                    Arguments = "cache off --pid " + Process.GetCurrentProcess().Id,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                }
             };
             p.Start();
             await p.WaitForExitAsync();

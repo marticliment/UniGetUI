@@ -12,7 +12,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
     internal class WinGetPackageDetailsProvider : BasePackageDetailsProvider<UniGetUIManagers.PackageManager>
     {
-        private static readonly Dictionary<string, string> __msstore_package_manifests = new();
+        private static readonly Dictionary<string, string> __msstore_package_manifests = [];
 
         struct MicrosoftStoreProductType
         {
@@ -20,7 +20,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
 
         public WinGetPackageDetailsProvider(WinGet manager) : base(manager) { }
-        
+
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
             return await WinGetHelper.Instance.GetPackageVersions_Unsafe((WinGet)Manager, package);
@@ -33,8 +33,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override async Task<CacheableIcon?> GetPackageIcon_Unsafe(Package package)
         {
-            
-            if(package.Source.Name == "msstore")
+
+            if (package.Source.Name == "msstore")
             {
                 return await GetMicrosoftStorePackageIcon(package);
             }
@@ -64,7 +64,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return [];
             }
 
-            List<Uri> FoundIcons = new();
+            List<Uri> FoundIcons = [];
 
             foreach (Match ImageEntry in Regex.Matches(IconArray.Groups[1].Value, "{([^}]+)}"))
             {
@@ -95,7 +95,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         private async Task<string?> GetMicrosoftStorePackageManifest(Package package)
         {
-            if(__msstore_package_manifests.ContainsKey(package.Id))
+            if (__msstore_package_manifests.ContainsKey(package.Id))
             {
                 return __msstore_package_manifests[package.Id];
             }
@@ -127,7 +127,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             Logger.Debug("Microsoft Store API call status code: " + httpResponse.StatusCode);
 
-            if(result != "" && httpResponse.StatusCode == HttpStatusCode.OK)
+            if (result != "" && httpResponse.StatusCode == HttpStatusCode.OK)
             {
                 __msstore_package_manifests[package.Id] = result;
             }
@@ -150,7 +150,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return null;
             }
 
-            Dictionary<int, string> FoundIcons = new();
+            Dictionary<int, string> FoundIcons = [];
 
             foreach (Match ImageEntry in Regex.Matches(IconArray.Groups[1].Value, "{([^}]+)}"))
             {

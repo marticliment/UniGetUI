@@ -14,7 +14,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "", "WARNING:", "[notice]", "Package", "DEPRECATION:" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "", "WARNING:", "[notice]", "Package", "DEPRECATION:" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "Ignoring", "invalid" };
-        
+
         public Pip() : base()
         {
             Capabilities = new ManagerCapabilities()
@@ -25,7 +25,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 SupportsPreRelease = true,
             };
 
-            Properties= new ManagerProperties()
+            Properties = new ManagerProperties()
             {
                 Name = "Pip",
                 Description = CoreTools.Translate("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"),
@@ -43,15 +43,15 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             PackageDetailsProvider = new PipPackageDetailsProvider(this);
         }
-        
+
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
 
             Tuple<bool, string> which_res = await CoreTools.Which("parse_pip_search.exe");
             string path = which_res.Item2;
             if (!which_res.Item1)
-            { 
+            {
                 Process proc = new()
                 {
                     StartInfo = new ProcessStartInfo()
@@ -69,7 +69,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
                 aux_logger.AddToStdOut(await proc.StandardOutput.ReadToEndAsync());
                 aux_logger.AddToStdErr(await proc.StandardError.ReadToEndAsync());
-                
+
                 await proc.WaitForExitAsync();
                 aux_logger.Close(proc.ExitCode);
                 path = "parse_pip_search.exe";
@@ -129,22 +129,24 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
             logger.Close(p.ExitCode);
-            
+
             return Packages.ToArray();
         }
 
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " list --outdated",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " list --outdated",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
@@ -153,7 +155,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             string? line;
             bool DashesPassed = false;
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 logger.AddToStdOut(line);
@@ -187,7 +189,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             }
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
-            logger.Close(p.ExitCode);    
+            logger.Close(p.ExitCode);
 
             return Packages.ToArray();
         }
@@ -195,16 +197,18 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
 
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " list",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " list",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
@@ -213,7 +217,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             string? line;
             bool DashesPassed = false;
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 logger.AddToStdOut(line);
@@ -312,7 +316,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            List<string> parameters = new() { Properties.UninstallVerb, package.Id, "--yes", "--no-input", "--no-color", "--no-python-version-warning", "--no-cache" };
+            List<string> parameters = [Properties.UninstallVerb, package.Id, "--yes", "--no-input", "--no-color", "--no-python-version-warning", "--no-cache"];
 
             if (options.CustomParameters != null)
             {

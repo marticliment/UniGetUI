@@ -17,7 +17,7 @@ namespace UniGetUI.Core.IconEngine
     public readonly struct CacheableIcon
     {
         public readonly Uri Url;
-        public readonly byte[] Sha256 = {};
+        public readonly byte[] Sha256 = { };
         public readonly string Version = "";
         public readonly long Size = -1;
         public readonly CachedIconVerificationMethod VerificationMethod;
@@ -28,7 +28,7 @@ namespace UniGetUI.Core.IconEngine
             this.Sha256 = Sha256;
             VerificationMethod = CachedIconVerificationMethod.Sha256Checksum;
         }
-        
+
         public CacheableIcon(Uri uri, string version)
         {
             Url = uri;
@@ -69,7 +69,7 @@ namespace UniGetUI.Core.IconEngine
             CacheableIcon icon = _icon ?? new CacheableIcon();
 
             string extension = icon.Url.AbsolutePath[icon.Url.AbsolutePath.LastIndexOf('.')..][1..];
-            
+
             if (extension.Length > 6)
             {
                 Logger.Warn($"Extension {extension} for file url {icon.Url} seems to be invalid, defaulting to .png");
@@ -87,7 +87,7 @@ namespace UniGetUI.Core.IconEngine
 
             bool FileExists = File.Exists(FilePath);
             bool IsFileValid = false;
-            if(FileExists)
+            if (FileExists)
             {
                 switch (icon.VerificationMethod)
                 {
@@ -95,8 +95,9 @@ namespace UniGetUI.Core.IconEngine
                         try
                         {
                             long size = await CoreTools.GetFileSizeAsyncAsLong(icon.Url);
-                            IsFileValid = (size == icon.Size);
-                        } catch (Exception e)
+                            IsFileValid = size == icon.Size;
+                        }
+                        catch (Exception e)
                         {
                             Logger.Warn($"Failed to verify icon file size for {icon.Url} through FileSize with error {e.Message}");
                         }
@@ -117,10 +118,10 @@ namespace UniGetUI.Core.IconEngine
                     case CachedIconVerificationMethod.PackageVersion:
                         try
                         {
-                            if(File.Exists(VersionPath))
+                            if (File.Exists(VersionPath))
                             {
                                 string localVersion = File.ReadAllText(VersionPath);
-                                IsFileValid = (localVersion == icon.Version);
+                                IsFileValid = localVersion == icon.Version;
                             }
                         }
                         catch (Exception e)
@@ -135,7 +136,7 @@ namespace UniGetUI.Core.IconEngine
                             if (File.Exists(UriPath))
                             {
                                 string localVersion = File.ReadAllText(UriPath);
-                                IsFileValid = (localVersion == icon.Url.ToString());
+                                IsFileValid = localVersion == icon.Url.ToString();
                             }
                         }
                         catch (Exception e)
@@ -151,9 +152,9 @@ namespace UniGetUI.Core.IconEngine
                 }
             }
 
-            Logger.Debug($"Icon for package {PackageId} on manager {ManagerName} with Uri={icon.Url} has been determined to be {(IsFileValid? "VALID": "INVALID")} through verification method {icon.VerificationMethod}");
+            Logger.Debug($"Icon for package {PackageId} on manager {ManagerName} with Uri={icon.Url} has been determined to be {(IsFileValid ? "VALID" : "INVALID")} through verification method {icon.VerificationMethod}");
 
-            if(!IsFileValid)
+            if (!IsFileValid)
             {
                 using HttpClient client = new(CoreData.GenericHttpClientParameters);
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);

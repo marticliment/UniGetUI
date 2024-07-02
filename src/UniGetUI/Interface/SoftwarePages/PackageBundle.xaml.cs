@@ -30,12 +30,12 @@ namespace UniGetUI.Interface
 {
     public partial class PackageBundlePage : Page, IPageWithKeyboardShortcuts
     {
-        public ObservableCollection<BundledPackage> Packages = new();
-        public SortableObservableCollection<BundledPackage> FilteredPackages = new() { SortingSelector = (a) => (a.Package.Name) };
-        protected List<PackageManager> UsedManagers = new();
-        protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = new();
-        protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = new();
-        protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = new();
+        public ObservableCollection<BundledPackage> Packages = [];
+        public SortableObservableCollection<BundledPackage> FilteredPackages = new() { SortingSelector = (a) => a.Package.Name };
+        protected List<PackageManager> UsedManagers = [];
+        protected Dictionary<PackageManager, List<ManagerSource>> UsedSourcesForManager = [];
+        protected Dictionary<PackageManager, TreeViewNode> RootNodeForManager = [];
+        protected Dictionary<ManagerSource, TreeViewNode> NodesForSources = [];
 
         protected TranslatedTextBlock MainTitle;
         protected TranslatedTextBlock MainSubtitle;
@@ -94,8 +94,7 @@ namespace UniGetUI.Interface
 
             PackageList.DoubleTapped += (s, e) =>
             {
-                BundledPackage? package = PackageList.SelectedItem as BundledPackage;
-                if (package == null)
+                if (PackageList.SelectedItem is not BundledPackage package)
                 {
                     return;
                 }
@@ -109,7 +108,7 @@ namespace UniGetUI.Interface
                 {
                     try
                     {
-                        if (element.DataContext != null && element.DataContext is BundledPackage package)
+                        if (element.DataContext is not null and BundledPackage package)
                         {
                             PackageList.SelectedItem = package;
                             MenuInstallSettings.IsEnabled = MenuDetails.IsEnabled = MenuShare.IsEnabled = package.IsValid;
@@ -133,8 +132,7 @@ namespace UniGetUI.Interface
                     }
                     else
                     {
-                        BundledPackage? package = PackageList.SelectedItem as BundledPackage;
-                        if (package == null)
+                        if (PackageList.SelectedItem is not BundledPackage package)
                         {
                             return;
                         }
@@ -155,8 +153,7 @@ namespace UniGetUI.Interface
                 }
                 else if (e.Key == Windows.System.VirtualKey.Space && PackageList.SelectedItem != null)
                 {
-                    BundledPackage? package = PackageList.SelectedItem as BundledPackage;
-                    if (package == null)
+                    if (PackageList.SelectedItem is not BundledPackage package)
                     {
                         return;
                     }
@@ -225,7 +222,7 @@ namespace UniGetUI.Interface
                 SourcesTreeView.RootNodes.Add(Node);
                 SourcesTreeView.SelectedNodes.Add(Node);
                 RootNodeForManager.Add(source.Manager, Node);
-                UsedSourcesForManager.Add(source.Manager, new List<ManagerSource>());
+                UsedSourcesForManager.Add(source.Manager, []);
                 SourcesPlaceholderText.Visibility = Visibility.Collapsed;
                 SourcesTreeViewGrid.Visibility = Visibility.Visible;
             }
@@ -308,8 +305,8 @@ namespace UniGetUI.Interface
             }
 
             FilteredPackages.Clear();
-            List<ManagerSource> VisibleSources = new();
-            List<PackageManager> VisibleManagers = new();
+            List<ManagerSource> VisibleSources = [];
+            List<PackageManager> VisibleManagers = [];
 
             if (SourcesTreeView.SelectedNodes.Count > 0)
             {
@@ -567,8 +564,7 @@ namespace UniGetUI.Interface
 
             PackageDetails.Click += (s, e) =>
             {
-                BundledPackage? package = PackageList.SelectedItem as BundledPackage;
-                if (package != null)
+                if (PackageList.SelectedItem is BundledPackage package)
                 {
                     _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package.Package, OperationType.None);
                 }
@@ -640,8 +636,7 @@ namespace UniGetUI.Interface
 
             SharePackage.Click += (s, e) =>
             {
-                BundledPackage? package = PackageList.SelectedItem as BundledPackage;
-                if (package != null)
+                if (PackageList.SelectedItem is BundledPackage package)
                 {
                     MainApp.Instance.MainWindow.SharePackage(package.Package);
                 }
@@ -654,8 +649,7 @@ namespace UniGetUI.Interface
 
         private void MenuRemoveFromList_Invoked(object sender, RoutedEventArgs args)
         {
-            BundledPackage? package = PackageList.SelectedItem as BundledPackage;
-            if (!Initialized || package == null)
+            if (!Initialized || PackageList.SelectedItem is not BundledPackage package)
             {
                 return;
             }
@@ -666,8 +660,7 @@ namespace UniGetUI.Interface
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)
         {
-            BundledPackage? package = PackageList.SelectedItem as BundledPackage;
-            if (!Initialized || package == null || !package.IsValid)
+            if (!Initialized || PackageList.SelectedItem is not BundledPackage package || !package.IsValid)
             {
                 return;
             }
@@ -677,8 +670,7 @@ namespace UniGetUI.Interface
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs args)
         {
-            BundledPackage? package = PackageList.SelectedItem as BundledPackage;
-            if (!Initialized || package == null || !package.IsValid)
+            if (!Initialized || PackageList.SelectedItem is not BundledPackage package || !package.IsValid)
             {
                 return;
             }
@@ -730,7 +722,7 @@ namespace UniGetUI.Interface
         public async Task AddPackages(IEnumerable<Package> packages)
         {
             MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Preparing packages, please wait..."));
-            List<BundledPackage> bundled = new();
+            List<BundledPackage> bundled = [];
             foreach (Package pkg in packages)
             {
                 if (pkg.Source.IsVirtualManager)
@@ -769,7 +761,7 @@ namespace UniGetUI.Interface
             {
                 // Select file
                 FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
-                string file = picker.Show(new List<string>() { "*.json", "*.yaml", "*.xml" });
+                string file = picker.Show(["*.json", "*.yaml", "*.xml"]);
                 if (file == String.Empty)
                 {
                     return;
@@ -847,7 +839,7 @@ namespace UniGetUI.Interface
             };
 
             // Get a list of all managers
-            Dictionary<string, PackageManager> ManagerSourceReference = new();
+            Dictionary<string, PackageManager> ManagerSourceReference = [];
             foreach (PackageManager manager in PEInterface.Managers)
             {
                 ManagerSourceReference.Add(manager.Name, manager);
@@ -951,17 +943,13 @@ namespace UniGetUI.Interface
             {
                 // Get file 
                 // Save file
-                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, CoreTools.Translate("Package bundle") + ".json");
+                string file = new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle()).Show(["*.json", "*.yaml", "*.xml"], CoreTools.Translate("Package bundle") + ".json");
                 if (file != String.Empty)
                 {
                     // Loading dialog
                     MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Saving packages, please wait..."));
 
-                    List<BundledPackage> packages = new();
-                    foreach (BundledPackage package in Packages)
-                    {
-                        packages.Add(package);
-                    }
+                    List<BundledPackage> packages = [.. Packages];
 
                     // Select appropriate format
                     BundleFormatType formatType;
@@ -1006,7 +994,7 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            lastSavedWidth = ((int)(e.NewSize.Width / 10));
+            lastSavedWidth = (int)(e.NewSize.Width / 10);
             Settings.SetValue("SidepanelWidthBundlesPage", ((int)e.NewSize.Width).ToString());
             foreach (UIElement control in SidePanelGrid.Children)
             {

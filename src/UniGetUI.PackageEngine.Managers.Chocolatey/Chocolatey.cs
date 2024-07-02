@@ -18,7 +18,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "Directory", "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no" };
-        
+
         public Chocolatey() : base()
         {
             Capabilities = new ManagerCapabilities()
@@ -58,27 +58,29 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             SourceProvider = new ChocolateySourceProvider(this);
             PackageDetailsProvider = new ChocolateyDetailsProvider(this);
         }
-        
+
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " outdated",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " outdated",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
             p.Start();
 
             string? line;
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 logger.AddToStdOut(line);
@@ -113,24 +115,26 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " list",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " list",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
             p.Start();
 
             string? line;
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 logger.AddToStdOut(line);
@@ -166,7 +170,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         {
             string output_string = string.Join("\n", Output);
 
-            if (ReturnCode == 1641 || ReturnCode == 0)
+            if (ReturnCode is 1641 or 0)
             {
                 return OperationVeredict.Succeeded;
             }
@@ -191,7 +195,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         {
             string output_string = string.Join("\n", Output);
 
-            if (ReturnCode == 1641 || ReturnCode == 1614 || ReturnCode == 1605 || ReturnCode == 0)
+            if (ReturnCode is 1641 or 1614 or 1605 or 0)
             {
                 return OperationVeredict.Succeeded;
             }
@@ -243,7 +247,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            List<string> parameters = new() { Properties.UninstallVerb, package.Id, "-y" };
+            List<string> parameters = [Properties.UninstallVerb, package.Id, "-y"];
 
             if (options.CustomParameters != null)
             {

@@ -48,7 +48,8 @@ namespace UniGetUI.Interface.Pages
                 LogLevelCombo.Items.Add(CoreTools.Translate("4 - Information (more)"));
                 LogLevelCombo.Items.Add(CoreTools.Translate("5 - information (debug)"));
                 LogLevelCombo.SelectedIndex = 3;
-            } else if (Logger_LogType == Logger_LogType.ManagerLogs)
+            }
+            else if (Logger_LogType == Logger_LogType.ManagerLogs)
             {
                 LogLevelCombo.Items.Clear();
                 foreach (PackageEngine.ManagerClasses.Manager.PackageManager manager in PEInterface.Managers)
@@ -119,7 +120,7 @@ namespace UniGetUI.Interface.Pages
 
 
             bool IS_DARK = MainApp.Instance.ThemeListener.CurrentTheme == ApplicationTheme.Dark;
-            
+
             if (Logger_LogType == Logger_LogType.UniGetUILog)
             {
 
@@ -137,47 +138,31 @@ namespace UniGetUI.Interface.Pages
                     {
                         continue;
                     }
-                    else if(LOG_LEVEL == 2 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info || log_entry.Severity == LogEntry.SeverityLevel.Success))
+                    else if (LOG_LEVEL == 2 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info || log_entry.Severity == LogEntry.SeverityLevel.Success))
                     {
                         continue;
                     }
-                    else if(LOG_LEVEL == 3 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info))
+                    else if (LOG_LEVEL == 3 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info))
                     {
                         continue;
                     }
-                    else if(LOG_LEVEL == 4 && (log_entry.Severity == LogEntry.SeverityLevel.Debug))
+                    else if (LOG_LEVEL == 4 && (log_entry.Severity == LogEntry.SeverityLevel.Debug))
                     {
                         continue;
                     }
 
-                    Brush color;
-
-
-                    switch (log_entry.Severity)
+                    Brush color = log_entry.Severity switch
                     {
-                        case LogEntry.SeverityLevel.Debug:
-                            color = new SolidColorBrush { Color = IS_DARK ? DARK_GREY: LIGHT_GREY };
-                            break;
-                        case LogEntry.SeverityLevel.Info:
-                            color = new SolidColorBrush { Color = IS_DARK ? DARK_LIGHT_GREY : LIGHT_LIGHT_GREY };
-                            break;
-                        case LogEntry.SeverityLevel.Success:
-                            color = new SolidColorBrush { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE};
-                            break;
-                        case LogEntry.SeverityLevel.Warning:
-                            color = new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW };
-                            break;
-                        case LogEntry.SeverityLevel.Error:
-                            color = new SolidColorBrush { Color = IS_DARK ? DARK_RED : LIGHT_RED };
-                            break;
-                        default:
-                            color = new SolidColorBrush { Color = IS_DARK ? DARK_GREY : LIGHT_GREY };
-                            break;
-                    }
-
+                        LogEntry.SeverityLevel.Debug => new SolidColorBrush { Color = IS_DARK ? DARK_GREY : LIGHT_GREY },
+                        LogEntry.SeverityLevel.Info => new SolidColorBrush { Color = IS_DARK ? DARK_LIGHT_GREY : LIGHT_LIGHT_GREY },
+                        LogEntry.SeverityLevel.Success => new SolidColorBrush { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE },
+                        LogEntry.SeverityLevel.Warning => new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW },
+                        LogEntry.SeverityLevel.Error => new SolidColorBrush { Color = IS_DARK ? DARK_RED : LIGHT_RED },
+                        _ => new SolidColorBrush { Color = IS_DARK ? DARK_GREY : LIGHT_GREY },
+                    };
                     string[] lines = log_entry.Content.Split('\n');
                     int date_length = -1;
-                    foreach(string line in lines)
+                    foreach (string line in lines)
                     {
                         if (date_length == -1)
                         {
@@ -214,31 +199,16 @@ namespace UniGetUI.Interface.Pages
                             Paragraph p = new();
                             foreach (string line in operation.AsColoredString(verbose))
                             {
-                                Brush color;
-                                switch (line[0])
+                                Brush color = line[0] switch
                                 {
-                                    case '0':
-                                        color = new SolidColorBrush { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE};
-                                        break;
-                                    case '1':
-                                        color = new SolidColorBrush { Color = IS_DARK ? DARK_LIGHT_GREY : LIGHT_LIGHT_GREY };
-                                        break;
-                                    case '2':
-                                        color = new SolidColorBrush { Color = IS_DARK ? DARK_RED : LIGHT_RED };
-                                        break;
-                                    case '3':
-                                        color = new SolidColorBrush { Color = IS_DARK ? DARK_BLUE : LIGHT_BLUE };
-                                        break;
-                                    case '4':
-                                        color = new SolidColorBrush { Color = IS_DARK ? DARK_GREEN : LIGHT_GREEN };
-                                        break;
-                                    case '5':
-                                        color = new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW };
-                                        break;
-                                    default:
-                                        color = new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW };
-                                        break;
-                                }
+                                    '0' => new SolidColorBrush { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE },
+                                    '1' => new SolidColorBrush { Color = IS_DARK ? DARK_LIGHT_GREY : LIGHT_LIGHT_GREY },
+                                    '2' => new SolidColorBrush { Color = IS_DARK ? DARK_RED : LIGHT_RED },
+                                    '3' => new SolidColorBrush { Color = IS_DARK ? DARK_BLUE : LIGHT_BLUE },
+                                    '4' => new SolidColorBrush { Color = IS_DARK ? DARK_GREEN : LIGHT_GREEN },
+                                    '5' => new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW },
+                                    _ => new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW },
+                                };
                                 p.Inlines.Add(new Run() { Text = line[1..] + "\n", Foreground = color });
                             }
                             ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
@@ -265,10 +235,12 @@ namespace UniGetUI.Interface.Pages
 
         public async void ExportButton_Click(object sender, RoutedEventArgs e)
         {
-            FileSavePicker savePicker = new();
-            savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+            FileSavePicker savePicker = new()
+            {
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+            };
             WinRT.Interop.InitializeWithWindow.Initialize(savePicker, WinRT.Interop.WindowNative.GetWindowHandle(MainApp.Instance.MainWindow));
-            savePicker.FileTypeChoices.Add(CoreTools.Translate("Text"), new List<string>() { ".txt" });
+            savePicker.FileTypeChoices.Add(CoreTools.Translate("Text"), [".txt"]);
             savePicker.SuggestedFileName = CoreTools.Translate("WingetUI Log");
 
             StorageFile file = await savePicker.PickSaveFileAsync();

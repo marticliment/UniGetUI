@@ -26,8 +26,10 @@
             Assert.Equal(Type1Instance1.Attribute1, Type1Instance2.Attribute1);
             Assert.Equal(Type1Instance1, Type1Instance2);
 
-            InheritedClass2 Type2Instance1 = new();
-            Type2Instance1.Attribute1 = 2;
+            InheritedClass2 Type2Instance1 = new()
+            {
+                Attribute1 = 2
+            };
 
             Assert.NotEqual(Type1Instance1.Attribute1, Type2Instance1.Attribute1);
         }

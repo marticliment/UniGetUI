@@ -53,17 +53,19 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         }
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Status.ExecutablePath,
-                Arguments = "",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = "",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
@@ -99,7 +101,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             p.StandardInput.Close();
 
             string? line;
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 logger.AddToStdOut(line);
@@ -136,24 +138,26 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " Get-InstalledModule",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " Get-InstalledModule",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
 
             p.Start();
             string? line;
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             bool DashesPassed = false;
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
@@ -254,7 +258,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            List<string> parameters = new() { Properties.UninstallVerb, "-Name", package.Id, "-Confirm:$false", "-Force" };
+            List<string> parameters = [Properties.UninstallVerb, "-Name", package.Id, "-Confirm:$false", "-Force"];
 
             if (options.CustomParameters != null)
             {
@@ -295,7 +299,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             return status;
         }
-        
+
     }
 
 }

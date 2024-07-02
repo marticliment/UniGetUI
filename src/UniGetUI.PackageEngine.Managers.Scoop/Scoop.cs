@@ -21,7 +21,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         long LastScoopSourceUpdateTime = 0;
 
-        public Scoop(): base()
+        public Scoop() : base()
         {
             Dependencies = [
                 // Scoop-Search is required for search to work
@@ -84,7 +84,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
 
             Tuple<bool, string> which_res = await CoreTools.Which("scoop-search.exe");
             string path = which_res.Item2;
@@ -167,7 +167,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            Dictionary<string, Package> InstalledPackages = new();
+            Dictionary<string, Package> InstalledPackages = [];
             foreach (Package InstalledPackage in await GetInstalledPackages())
             {
                 if (!InstalledPackages.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.Version))
@@ -176,7 +176,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 }
             }
 
-            List<Package> Packages = new();
+            List<Package> Packages = [];
 
 
             Process p = new()
@@ -243,7 +243,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
 
             Process p = new()
             {
@@ -306,11 +306,11 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return Packages.ToArray();
         }
 
-        
+
         public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
             string output_string = string.Join("\n", Output);
-            if ((output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local))
+            if (output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local)
             {
                 package.Scope = PackageScope.Global;
                 return OperationVeredict.AutoRetry;
@@ -330,7 +330,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
         {
             string output_string = string.Join("\n", Output);
-            if ((output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local))
+            if (output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local)
             {
                 package.Scope = PackageScope.Global;
                 return OperationVeredict.AutoRetry;
@@ -354,10 +354,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            List<string> parameters = new();
-
-            parameters.Add(Properties.UninstallVerb);
-            parameters.Add(package.Source.Name + "/" + package.Id);
+            List<string> parameters = [Properties.UninstallVerb, package.Source.Name + "/" + package.Id];
 
             if (package.Scope == PackageScope.Global)
             {

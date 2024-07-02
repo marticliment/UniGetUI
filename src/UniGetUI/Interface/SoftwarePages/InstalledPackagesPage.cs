@@ -240,7 +240,7 @@ namespace UniGetUI.Interface.SoftwarePages
             UninstallSelected.Click += (s, e) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
             UninstallAsAdmin.Click += (s, e) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), elevated: true);
             UninstallInteractive.Click += (s, e) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), interactive: true);
-            SharePackage.Click += (s, e) =>  MainApp.Instance.MainWindow.SharePackage(SelectedItem);
+            SharePackage.Click += (s, e) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
         protected override void WhenPackageCountUpdated()
@@ -261,7 +261,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override void WhenShowingContextMenu(Package package)
         {
-            if(MenuAsAdmin == null || MenuInteractive == null || MenuRemoveData == null)
+            if (MenuAsAdmin == null || MenuInteractive == null || MenuRemoveData == null)
             {
                 Logger.Error("Menu items are null on InstalledPackagesTab");
                 return;
@@ -304,7 +304,7 @@ namespace UniGetUI.Interface.SoftwarePages
             try
             {
                 Logger.Debug("Starting package backup");
-                List<BundledPackage> packagestoExport = new();
+                List<BundledPackage> packagestoExport = [];
                 foreach (Package package in Loader.Packages)
                 {
                     packagestoExport.Add(await BundledPackage.FromPackageAsync(package));
@@ -326,7 +326,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 string fileName = Settings.GetValue("ChangeBackupFileName");
                 if (fileName == "")
                 {
-                    fileName = CoreTools.Translate("{pcName} installed packages", new Dictionary<string, object?>{ { "pcName", Environment.MachineName } });
+                    fileName = CoreTools.Translate("{pcName} installed packages", new Dictionary<string, object?> { { "pcName", Environment.MachineName } });
                 }
 
                 if (Settings.Get("EnableBackupTimestamping"))
@@ -445,7 +445,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
             Package? package = SelectedItem;
-            if (package != null && 
+            if (package != null &&
                 await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(package, OperationType.Uninstall))
             {
                 ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package));

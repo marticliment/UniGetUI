@@ -102,7 +102,7 @@ namespace UniGetUI
                     keyInstance.Activated += async (s, e) =>
                     {
                         MainApp? AppInstance = MainApp.Current as MainApp;
-                        if(AppInstance != null)
+                        if (AppInstance != null)
                         {
                             await AppInstance.ShowMainWindowFromRedirectAsync();
                         }

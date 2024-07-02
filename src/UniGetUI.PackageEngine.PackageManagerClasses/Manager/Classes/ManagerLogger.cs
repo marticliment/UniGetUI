@@ -7,7 +7,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
     public class ManagerLogger
     {
         readonly PackageManager Manager;
-        public List<TaskLogger> Operations = new();
+        public List<TaskLogger> Operations = [];
 
         public ManagerLogger(PackageManager manager)
         {
@@ -21,7 +21,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 throw new Exception("Given process instance did not have a valid StartInfo value");
             }
 
-            ProcessTaskLogger operation =  new(Manager, type, process.StartInfo.FileName, process.StartInfo.Arguments);
+            ProcessTaskLogger operation = new(Manager, type, process.StartInfo.FileName, process.StartInfo.Arguments);
             Operations.Add(operation);
             return operation;
         }
@@ -33,7 +33,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             return operation;
         }
     }
-    
+
     public abstract class TaskLogger
     {
         protected DateTime StartTime;
@@ -56,7 +56,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         ~TaskLogger()
         {
-            if(isOpen)
+            if (isOpen)
             {
                 Close(RETURNCODE_UNSET);
             }
@@ -92,9 +92,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         readonly string Executable;
         readonly string Arguments;
-        readonly List<string> StdIn = new();
-        readonly List<string> StdOut = new();
-        readonly List<string> StdErr = new();
+        readonly List<string> StdIn = [];
+        readonly List<string> StdOut = [];
+        readonly List<string> StdErr = [];
 
         public ProcessTaskLogger(PackageManager manager, LoggableTaskType type, string executable, string arguments) : base()
         {
@@ -187,25 +187,20 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 return CachedVerboseMessage;
             }
 
-            List<string> result = new();
-            result.Add($"0Logged subprocess-based task on manager {Manager.Name}. Task type is {Type}");
-            result.Add($"0Subprocess executable: \"{Executable}\"");
-            result.Add($"0Command-line arguments: \"{Arguments}\"");
-            result.Add($"0Process start time: {StartTime}");
-            if (EndTime == null)
-            {
-                result.Add($"2Process end time:   UNFINISHED");
-            }
-            else
-            {
-                result.Add($"0Process end time:   {EndTime}");
-            }
+            List<string> result =
+            [
+                $"0Logged subprocess-based task on manager {Manager.Name}. Task type is {Type}",
+                $"0Subprocess executable: \"{Executable}\"",
+                $"0Command-line arguments: \"{Arguments}\"",
+                $"0Process start time: {StartTime}",
+                EndTime == null ? $"2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
+            ];
 
             if (StdIn.Count > 0)
             {
                 result.Add("0");
                 result.Add("0-- Process STDIN");
-                if(verbose)
+                if (verbose)
                 {
                     foreach (string line in StdIn)
                     {
@@ -221,7 +216,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             {
                 result.Add("0");
                 result.Add("0-- Process STDOUT");
-                if(verbose)
+                if (verbose)
                 {
                     foreach (string line in StdOut)
                     {
@@ -243,7 +238,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 }
             }
             result.Add("0");
-            if(!isComplete)
+            if (!isComplete)
             {
                 result.Add("5Return code: Process has not finished yet");
             }
@@ -251,7 +246,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             {
                 result.Add("5Return code: UNSPECIFIED");
             }
-            else if(ReturnCode == 0)
+            else if (ReturnCode == 0)
             {
                 result.Add("4Return code: SUCCESS (0)");
             }
@@ -264,7 +259,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             result.Add("0——————————————————————————————————————————");
             result.Add("0");
 
-            if(verbose)
+            if (verbose)
             {
                 return CachedVerboseMessage = result;
             }
@@ -280,8 +275,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         readonly PackageManager Manager;
         readonly LoggableTaskType Type;
 
-        readonly List<string> Info = new();
-        readonly List<string> Errors = new();
+        readonly List<string> Info = [];
+        readonly List<string> Errors = [];
 
         public NativeTaskLogger(PackageManager manager, LoggableTaskType type) : base()
         {
@@ -356,17 +351,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 return CachedVerboseMessage;
             }
 
-            List<string> result = new();
-            result.Add($"0Logged native task on manager {Manager.Name}. Task type is {Type}");
-            result.Add($"0Process start time: {StartTime}");
-            if (EndTime == null)
-            {
-                result.Add($"2Process end time:   UNFINISHED");
-            }
-            else
-            {
-                result.Add($"0Process end time:   {EndTime}");
-            }
+            List<string> result =
+            [
+                $"0Logged native task on manager {Manager.Name}. Task type is {Type}",
+                $"0Process start time: {StartTime}",
+                EndTime == null ? $"2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
+            ];
 
             if (Info.Count > 0)
             {

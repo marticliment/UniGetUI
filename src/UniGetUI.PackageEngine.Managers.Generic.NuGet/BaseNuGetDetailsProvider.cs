@@ -126,7 +126,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             Uri SearchUrl = new($"{package.Source.Url}/FindPackagesById()?id='{package.Id}'");
             Logger.Debug($"Begin package version search with url={SearchUrl} on manager {Manager.Name}");
 
-            List<string> results = new();
+            List<string> results = [];
 
             HttpClient client = new(CoreData.GenericHttpClientParameters);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
@@ -139,7 +139,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
 
             string SearchResults = await response.Content.ReadAsStringAsync();
-            HashSet<string> alreadyProcessed = new();
+            HashSet<string> alreadyProcessed = [];
 
             MatchCollection matches = Regex.Matches(SearchResults, "Version='([^<>']+)'");
             foreach (Match match in matches)

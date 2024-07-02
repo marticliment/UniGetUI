@@ -31,16 +31,14 @@ namespace UniGetUI.Interface
 
         public async Task UpdateData()
         {
-
-            Dictionary<string, PackageManager> ManagerNameReference = new();
+            Dictionary<string, PackageManager> ManagerNameReference = [];
 
             foreach (PackageManager Manager in PEInterface.Managers)
             {
                 ManagerNameReference.Add(Manager.Name.ToLower(), Manager);
             }
 
-            JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
-            if(IgnoredUpdatesJson == null)
+            if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
             {
                 Logger.Warn("Ignored updates JSON database was null after deserialization");
                 return;
@@ -63,8 +61,7 @@ namespace UniGetUI.Interface
 
         private async void IgnoredUpdatesList_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            IgnoredPackage? package = IgnoredUpdatesList.SelectedItem as IgnoredPackage;
-            if (package != null)
+            if (IgnoredUpdatesList.SelectedItem is IgnoredPackage package)
             {
                 await package.RemoveFromIgnoredUpdates();
             }
@@ -112,8 +109,7 @@ namespace UniGetUI.Interface
         public async Task RemoveFromIgnoredUpdates()
         {
             string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-            JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
-            if (IgnoredUpdatesJson != null && IgnoredUpdatesJson.ContainsKey(IgnoredId))
+            if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is JsonObject IgnoredUpdatesJson && IgnoredUpdatesJson.ContainsKey(IgnoredId))
             {
                 IgnoredUpdatesJson.Remove(IgnoredId);
                 await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());

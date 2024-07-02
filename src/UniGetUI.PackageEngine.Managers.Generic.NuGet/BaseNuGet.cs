@@ -21,7 +21,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         public sealed override async Task InitializeAsync()
         {
-            if(PackageDetailsProvider is not BaseNuGetDetailsProvider)
+            if (PackageDetailsProvider is not BaseNuGetDetailsProvider)
             {
                 throw new Exception("NuGet-based package managers must not reassign the PackageDetailsProvider property");
             }
@@ -48,7 +48,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         protected sealed override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
 
             ManagerClasses.Classes.NativeTaskLogger logger = TaskLogger.CreateNew(Enums.LoggableTaskType.FindPackages);
 
@@ -59,7 +59,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
             else
             {
-                sources = [ Properties.DefaultSource ];
+                sources = [Properties.DefaultSource];
             }
 
             foreach (ManagerSource source in sources)
@@ -80,7 +80,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 string SearchResults = await response.Content.ReadAsStringAsync();
                 MatchCollection matches = Regex.Matches(SearchResults, "<entry>([\\s\\S]*?)<\\/entry>");
 
-                Dictionary<string, SearchResult> AlreadyProcessedPackages = new();
+                Dictionary<string, SearchResult> AlreadyProcessedPackages = [];
 
                 foreach (Match match in matches)
                 {
@@ -112,7 +112,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             return Packages.ToArray();
         }
-        
+
     }
 
 }

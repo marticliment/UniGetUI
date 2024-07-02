@@ -33,7 +33,7 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
             p.Start();
 
             string? line;
-            List<string> versions = new();
+            List<string> versions = [];
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 logger.AddToStdOut(line);

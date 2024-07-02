@@ -43,11 +43,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
         private int LoadOperationIdentifier = 0;
         protected IEnumerable<PackageManager> Managers { get; private set; }
 
-        public AbstractPackageLoader(IEnumerable<PackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false) 
+        public AbstractPackageLoader(IEnumerable<PackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false)
         {
             Managers = managers;
-            Packages = new ObservableCollection<Package>();
-            PackageReference = new Dictionary<long, Package>();
+            Packages = [];
+            PackageReference = [];
             IsLoaded = false;
             IsLoading = false;
             LOADER_IDENTIFIER = identifier;
@@ -76,7 +76,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             IsLoading = true;
             StartedLoading?.Invoke(this, new EventArgs());
 
-            List<Task<Package[]>> tasks = new();
+            List<Task<Package[]>> tasks = [];
 
             foreach (PackageManager manager in Managers)
             {
@@ -183,7 +183,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         protected void AddPackage(Package package)
         {
-            if(Contains(package))
+            if (Contains(package))
             {
                 Logger.Error($"ABORTED (Package loader {LOADER_IDENTIFIER}): Internally trying to add package {package.Id} was already found in PackageHash!");
                 return;
@@ -199,7 +199,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <param name="package">The package to add</param>
         public void AddForeign(Package? package)
         {
-            if(package == null)
+            if (package == null)
             {
                 return;
             }
@@ -242,7 +242,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <returns>A Package? object</returns>
         public Package? GetEquivalentPackage(Package? package)
         {
-            if(package == null)
+            if (package == null)
             {
                 return null;
             }
@@ -268,7 +268,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 return [];
             }
 
-            List<Package> result = new();
+            List<Package> result = [];
             long hash_to_match = package.GetHash();
             foreach (Package local_package in Packages)
             {

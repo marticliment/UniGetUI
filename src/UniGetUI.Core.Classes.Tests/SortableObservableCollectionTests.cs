@@ -14,7 +14,7 @@ namespace UniGetUI.Core.Classes.Tests
         {
             int EventTriggeredCount = 0;
 
-            SortableObservableCollection<SortableInt> SortableCollection = new();
+            SortableObservableCollection<SortableInt> SortableCollection = [];
             SortableCollection.CollectionChanged += (s, e) => { EventTriggeredCount++; };
             SortableCollection.SortingSelector = (s) => { return s.Value; };
             SortableCollection.Add(new(1));

@@ -25,14 +25,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         private PackageDetails? __details = null;
         public PackageDetails Details
-        { 
+        {
             get => __details ??= new PackageDetails(this);
         }
 
         public PackageTag Tag
         {
-            get  => __tag;
-            set {
+            get => __tag;
+            set
+            {
                 __tag = value;
                 OnPropertyChanged(nameof(Tag));
             }
@@ -77,7 +78,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             NewVersion = "";
             Tag = PackageTag.Default;
             SourceAsString = source.ToString();
-            AutomationName = CoreTools.Translate("Package {name} from {manager}", new Dictionary<string, object?> { {"name", Name },{ "manager", SourceAsString } });
+            AutomationName = CoreTools.Translate("Package {name} from {manager}", new Dictionary<string, object?> { { "name", Name }, { "manager", SourceAsString } });
             __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id);
             __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version);
             IsUpgradable = false;
@@ -156,7 +157,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <param name="other">A package</param>
         /// <returns>Wether the two instances refer to the same instance</returns>
         public bool IsEquivalentTo(Package? other)
-        { 
+        {
             return __hash == other?.__hash;
         }
 
@@ -166,7 +167,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns>a string with the package's normalized icon id</returns>
         public string GetIconId()
         {
-            string iconId = Id.ToLower(); 
+            string iconId = Id.ToLower();
             if (Manager.Name == "Winget")
             {
                 iconId = string.Join('.', iconId.Split(".")[1..]);
@@ -239,9 +240,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
-                if (IgnoredUpdatesJson == null)
+                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
                 {
                     throw new Exception("The IgnoredUpdates database seems to be invalid!");
                 }
@@ -270,11 +270,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             try
             {
-
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
-                if (IgnoredUpdatesJson == null)
+                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
                 {
                     throw new Exception("The IgnoredUpdates database seems to be invalid!");
                 }
@@ -307,9 +305,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
-                if (IgnoredUpdatesJson == null)
+                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
                 {
                     throw new Exception("The IgnoredUpdates database seems to be invalid!");
                 }
@@ -343,9 +340,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
-                if (IgnoredUpdatesJson == null)
+                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
                 {
                     throw new Exception("The IgnoredUpdates database seems to be invalid!");
                 }
@@ -415,7 +411,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public bool NewerVersionIsInstalled()
         {
-            if(!IsUpgradable)
+            if (!IsUpgradable)
             {
                 return false;
             }
