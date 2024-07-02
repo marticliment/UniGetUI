@@ -25,7 +25,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
         /// <returns>A Uri object</returns>
         public static Uri GetPackageNuGetPackageUrl(Package package)
         {
-            return new Uri($"{package.Source.Url}/Packages/{package.Id}.{package.Version}.nupkg");
+            return new Uri($"{package.Source.Url}/package/{package.Id}/{package.Version}");
         }
 
         /// <summary>

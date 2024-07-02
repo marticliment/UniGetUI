@@ -31,10 +31,36 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     return;
                 }
 
-                details.InstallerUrl = PackageManifestLoader.GetPackageNuGetPackageUrl(details.Package);
+                // details.InstallerUrl = PackageManifestLoader.GetPackageNuGetPackageUrl(details.Package);
                 details.InstallerType = CoreTools.Translate("NuPkg (zipped manifest)");
-                details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
+                //details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
 
+                foreach (Match match in Regex.Matches(PackageManifestContents, @"<content type=[""']\w+\/\w+[""'] src=""([^""]+)"" ?\/>"))
+                {
+                    try
+                    {
+                        details.InstallerUrl = new Uri(match.Groups[1].Value);
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Warn($"Failed to parse NuGet Installer URL on package Id={details.Package.Id} for value={match.Groups[1].Value}: " + ex.Message);
+                    }
+                }
+                
+                foreach (Match match in Regex.Matches(PackageManifestContents, @"<(d\:)?PackageSize (m\:type=""[^""]+"")?>([0-9]+)<\/"))
+                {
+                    try
+                    {
+                        details.InstallerSize = long.Parse(match.Groups[3].Value)/1000000.0;
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Warn($"Failed to parse NuGet Installer Size on package Id={details.Package.Id} for value={match.Groups[1].Value}: " + ex.Message);
+                    } 
+                }
+                
                 foreach (Match match in Regex.Matches(PackageManifestContents, @"<name>[^<>]+<\/name>"))
                 {
                     details.Author = match.Value.Replace("<name>", "").Replace("</name>", "");

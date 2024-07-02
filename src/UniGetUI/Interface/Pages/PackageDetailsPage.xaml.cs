@@ -15,6 +15,7 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
 using Windows.UI.Text;
+using UniGetUI.PackageEngine.Managers.PowerShellManager;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -337,14 +338,17 @@ namespace UniGetUI.Interface.Dialogs
                 IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
-                savePicker.SuggestedFileName = Package.Id + " installer." + Package.Details.InstallerUrl.ToString().Split('.')[^1];
+                string extension = Package.Manager is BaseNuGet
+                    ? "nupkg"
+                    : Package.Details.InstallerUrl.ToString().Split('.')[^1];
+                savePicker.SuggestedFileName = Package.Id + " installer." + extension;
 
                 if (Package.Details.InstallerUrl.ToString().Split('.')[^1] == "nupkg")
                 {
                     savePicker.FileTypeChoices.Add("Compressed Manifest File", [".zip"]);
                 }
 
-                savePicker.FileTypeChoices.Add("Default", ["." + Package.Details.InstallerUrl.ToString().Split('.')[^1]]);
+                savePicker.FileTypeChoices.Add("Default", [$".{extension}"]);
 
                 StorageFile file = await savePicker.PickSaveFileAsync();
                 if (file != null)
