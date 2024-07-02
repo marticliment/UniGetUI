@@ -370,7 +370,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait...", pId));
             QueryIdRadio.IsChecked = true;
             QueryBlock.Text = pId;
-            await LoadPackages();
+            await PEInterface.DiscoveredPackagesLoader.ReloadPackages(pId);
             QueryBothRadio.IsChecked = true;
             MainApp.Instance.MainWindow.HideLoadingDialog();
             if (FilteredPackages.Count == 1)
