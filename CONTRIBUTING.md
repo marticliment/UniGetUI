@@ -1,9 +1,9 @@
 -------------------------------------------------------------
-This repository **respects** people, despite their race, gender, religion, height or culture. Any user who posts offensive or disrespectful content regarding race, gender, religion, height or culture **will be immediately banned from this repository**. No exception will be made.
+This repository **respects** people, despite their race, gender, religion, height, or culture. Any user who posts offensive or disrespectful content regarding race, gender, religion, height or culture **will be immediately banned from this repository**. No exception will be made.
 
 -------------------------------------------------------------
 
-### DO NOT publish garbage PRs to farm Crypto AirDrops. Any user suspected of this action will get banned. Submitting broken code wastes the time of the contributors, who have to spend their free time reviewing, fixing, and testing code that does not even compile, does not break other functionality, or does not introduce any changes at all.  
+### DO NOT publish garbage PRs to farm Crypto AirDrops. Any user suspected of this action will get banned. Submitting broken code wastes the contributors' time, who have to spend their free time reviewing, fixing, and testing code that does not even compile does not break other functionality or does not introduce any changes at all.  
 
 ---------------------------------
 
@@ -14,7 +14,7 @@ This repository **respects** people, despite their race, gender, religion, heigh
 Before reading: All of the rules below are guidelines, which means that they should be followed when possible. Please do not take them literally.
 
 ## Discussions:
- - This is the place to post any questions/doubts regarding WingetUI. Issues and feature requests should be posted in the [issues section](https://github.com/marticliment/WingetUI/issues).
+ - This is the place to post any questions/doubts regarding UniGetUI. Issues and feature requests should be posted in the [issues section](https://github.com/marticliment/UniGetUI/issues).
 
 ## Issues and feature requests:
 
