@@ -31,9 +31,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     return;
                 }
 
-                // details.InstallerUrl = PackageManifestLoader.GetPackageNuGetPackageUrl(details.Package);
                 details.InstallerType = CoreTools.Translate("NuPkg (zipped manifest)");
-                //details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
 
                 foreach (Match match in Regex.Matches(PackageManifestContents, @"<content type=[""']\w+\/\w+[""'] src=""([^""]+)"" ?\/>"))
                 {
