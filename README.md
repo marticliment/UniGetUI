@@ -1,9 +1,9 @@
-# <img src="https://raw.githubusercontent.com/marticliment/WingetUI/main/media/icon.png" height="40">UniGetUI
+# <img src="https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/icon.png" height="40">UniGetUI
 
-[![Downloads@latest](https://img.shields.io/github/downloads/marticliment/WingetUI/3.0.2/total?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe)
-[![Release Version Badge](https://img.shields.io/github/v/release/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/releases)
-[![Issues Badge](https://img.shields.io/github/issues/marticliment/WingetUI?style=for-the-badge)](https://github.com/marticliment/WingetUI/issues)
-[![Closed Issues Badge](https://img.shields.io/github/issues-closed/marticliment/WingetUI?color=%238256d0&style=for-the-badge)](https://github.com/marticliment/WingetUI/issues?q=is%3Aissue+is%3Aclosed)<br>
+[![Downloads@latest](https://img.shields.io/github/downloads/marticliment/UniGetUI/3.0.2/total?style=for-the-badge)](https://github.com/marticliment/UniGetUI/releases/latest/download/WingetUI.Installer.exe)
+[![Release Version Badge](https://img.shields.io/github/v/release/marticliment/UniGetUI?style=for-the-badge)](https://github.com/marticliment/UniGetUI/releases)
+[![Issues Badge](https://img.shields.io/github/issues/marticliment/UniGetUI?style=for-the-badge)](https://github.com/marticliment/UniGetUI/issues)
+[![Closed Issues Badge](https://img.shields.io/github/issues-closed/marticliment/UniGetUI?color=%238256d0&style=for-the-badge)](https://github.com/marticliment/UniGetUI/issues?q=is%3Aissue+is%3Aclosed)<br>
 The main goal of this project is to create an intuitive GUI for the most common CLI package managers for Windows 10 and 11, such as [Winget](https://learn.microsoft.com/en-us/windows/package-manager/), [Scoop](https://scoop.sh/), [Chocolatey](https://chocolatey.org/), [Pip](https://pypi.org/), [Npm](https://www.npmjs.com/), [.NET Tool](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install) and [PowerShell Gallery](https://www.powershellgallery.com/).
 With this app, you can easily download, install, update, and uninstall any software published on the supported package managers — and much more!
 
@@ -34,7 +34,7 @@ Check out the [Supported Package Managers Table](#supported-package-managers) fo
 <p>There are multiple ways to install UniGetUI — choose whichever one you prefer!<br</p>
 
 **Download UniGetUI installer (recommended):**
-<p align="left"><b><a href="https://github.com/marticliment/WingetUI/releases/latest/download/WingetUI.Installer.exe">Click here to download UniGetUI</a></b></p>
+<p align="left"><b><a href="https://github.com/marticliment/UniGetUI/releases/latest/download/WingetUI.Installer.exe">Click here to download UniGetUI</a></b></p>
 
 **Install UniGetUI through Winget:**    
 ```cmd
@@ -105,7 +105,7 @@ It really does make a big difference, and is very much appreciated. Thanks :)
 **3\.** Some installers do not have a GUI, and will ignore the `interactive` flag<br>
 
 # Translating UniGetUI to other languages
-To translate UniGetUI to other languages or to update an old translation, please see [Translating UniGetUI - UniGetUI Wiki](https://github.com/marticliment/WingetUI/wiki#translating-wingetui) for more info.
+To translate UniGetUI to other languages or to update an old translation, please see [Translating UniGetUI - UniGetUI Wiki](https://github.com/marticliment/UniGetUI/wiki#translating-wingetui) for more info.
 
 
 ## Currently Supported languages
@@ -165,28 +165,30 @@ Last updated: Sun Jun 30 22:00:07 2024
  UniGetUI wouldn't have been possible without the help of our dear contributors. From the person who fixed a typo to the person who improved half of the code, UniGetUI wouldn't be possible without them! :smile:<br><br>
 
 ## Contributors:
- [![My dear contributors](https://contrib.rocks/image?repo=marticliment/WingetUI)](https://github.com/marticliment/WingetUI/graphs/contributors)<br><br>
+ [![My dear contributors](https://contrib.rocks/image?repo=marticliment/UniGetUI)](https://github.com/marticliment/UniGetUI/graphs/contributors)<br><br>
  
 
 # Screenshots
  
-![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_1.png)
+![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_1.png)
 
-![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_2.png)
+![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_2.png)
 
-![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_3.png)
+![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_3.png)
 
-![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_4.png)
+![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_4.png)
 
-![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_5.png)
+![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_5.png)
 
-![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_6.png)
+![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_6.png)
 
-![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_7.png)
+![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_7.png)
 
-![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_8.png)
+![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_8.png)
 
-![image](https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_9.png)
+![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_9.png)
+
+![image](https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_10.png)
 
 
 # Frequently asked questions
@@ -225,7 +227,7 @@ A: UniGetUI, Microsoft and Scoop aren't responsible for the packages available f
 
 To mitigate the risks of downloading malware, Microsoft has implemented a few checks for the software available on Winget. Even so, It's recommended to only download software from publishers that you trust. 
 
-<br><p align="center"><i>Check out the <a href="https://github.com/marticliment/WingetUI/wiki">Wiki</a> for more information!</i></p>
+<br><p align="center"><i>Check out the <a href="https://github.com/marticliment/UniGetUI/wiki">Wiki</a> for more information!</i></p>
 
 ## Command-line parameters:
 `--daemon`: Start UniGetUI without spawning a new window. UniGetUI will run minimized on the system tray. UniGetUI is called with this parameter when launched at startup. **Autostart UniGetUI in the notifications area** must be enabled for this parameter to work.<br>
