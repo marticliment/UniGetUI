@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="UniGetUI.Interface.Pages.Logger_LogPage"
+    x:Class="UniGetUI.Interface.Pages.BaseLogPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniGetUI.Interface.Pages"
@@ -33,16 +33,16 @@
             <Button Grid.Column="1" Name="ExportButton" Click="ExportButton_Click" CornerRadius="0,6,6,0">
                 <widgets:TranslatedTextBlock Text="Export to a file"/>
             </Button>
-            <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="10">
+            <StackPanel Name="LogLevelPane" Grid.Column="3" Orientation="Horizontal" Spacing="10">
                 <widgets:TranslatedTextBlock Text="Log level:" VerticalAlignment="Center"/>
-                <ComboBox Name="LogLevelCombo" SelectionChanged="LogLevelCombo_SelectionChanged" PlaceholderText="Pick a color" Width="250" CornerRadius="6"/>
+                <ComboBox Name="LogLevelCombo" x:FieldModifier="protected" SelectionChanged="LogLevelCombo_SelectionChanged" PlaceholderText="Pick a color" Width="250" CornerRadius="6"/>
             </StackPanel>
             <Button Grid.Column="5" Name="ReloadButton" Click="ReloadButton_Click">
                 <widgets:TranslatedTextBlock Text="Reload log"/>
             </Button>
         </Grid>
-        <ScrollViewer Name="MainScroller" Grid.Row="1" HorizontalScrollMode="Disabled" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" CornerRadius="8">
-            <RichTextBlock LineHeight="18"  Name="LogTextBox" FontFamily="Consolas" TextWrapping="WrapWholeWords" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="8"/>
+        <ScrollViewer  x:FieldModifier="protected" Name="MainScroller" Grid.Row="1" HorizontalScrollMode="Disabled" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" CornerRadius="8">
+            <RichTextBlock  x:FieldModifier="protected" LineHeight="18"  Name="LogTextBox" FontFamily="Consolas" TextWrapping="WrapWholeWords" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="8"/>
         </ScrollViewer>
     </Grid>
 </Page>

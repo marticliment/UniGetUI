@@ -10,7 +10,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
 
         public ManagerSourceFactory(PackageManager manager)
         {
-            __reference = new();
+            __reference = [];
             __manager = manager;
         }
 
@@ -58,7 +58,9 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
             {
                 ManagerSource existing_source = __reference[source.Name];
                 if (existing_source.Url == __default_uri)
+                {
                     existing_source.ReplaceUrl(source.Url);
+                }
             }
         }
 

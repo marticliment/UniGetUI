@@ -50,8 +50,10 @@ namespace UniGetUI.Interface.Widgets
             typeof(ButtonCard),
             new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = CoreTools.Translate((string)e.NewValue); })));
 
-            _button = new Button();
-            _button.MinWidth = 200;
+            _button = new Button
+            {
+                MinWidth = 200
+            };
             _button.Click += (s, e) => { Click?.Invoke(this, new ButtonCardEventArgs()); };
 
             DefaultStyleKey = typeof(ButtonCard);

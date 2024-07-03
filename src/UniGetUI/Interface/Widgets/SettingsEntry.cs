@@ -61,14 +61,18 @@ namespace UniGetUI.Interface.Widgets
             CornerRadius = new CornerRadius(8);
             HorizontalAlignment = HorizontalAlignment.Stretch;
 
-            infoBar = new InfoBar();
-            infoBar.Severity = InfoBarSeverity.Warning;
-            infoBar.Title = "";
-            infoBar.Message = CoreTools.Translate("Restart WingetUI to fully apply changes");
-            infoBar.CornerRadius = new CornerRadius(0);
-            infoBar.BorderThickness = new Thickness(0);
-            RestartButton = new Button();
-            RestartButton.HorizontalAlignment = HorizontalAlignment.Right;
+            infoBar = new InfoBar
+            {
+                Severity = InfoBarSeverity.Warning,
+                Title = "",
+                Message = CoreTools.Translate("Restart WingetUI to fully apply changes"),
+                CornerRadius = new CornerRadius(0),
+                BorderThickness = new Thickness(0)
+            };
+            RestartButton = new Button
+            {
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
             infoBar.ActionButton = RestartButton;
             RestartButton.Content = CoreTools.Translate("Restart WingetUI");
             RestartButton.Click += (s, e) => { MainApp.Instance.KillAndRestart(); };

@@ -31,7 +31,7 @@ namespace UniGetUI.PackageEngine
 
         public static async Task Initialize()
         {
-            List<Task> initializeTasks = new();
+            List<Task> initializeTasks = [];
 
             foreach (PackageManager manager in Managers)
             {
@@ -48,7 +48,9 @@ namespace UniGetUI.PackageEngine
                 Logger.Error(e);
             }
             if (ManagersMetaTask.IsCompletedSuccessfully == false)
+            {
                 Logger.Warn("Timeout: Not all package managers have finished initializing.");
+            }
 
             _ = UpgradablePackagesLoader.ReloadPackages();
             _ = InstalledPackagesLoader.ReloadPackages();

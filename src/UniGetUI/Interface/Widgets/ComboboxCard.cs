@@ -63,12 +63,14 @@ namespace UniGetUI.Interface.Widgets
             typeof(CheckboxCard),
             new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = CoreTools.Translate((string)e.NewValue); })));
 
-            _elements = new ObservableCollection<string>();
-            _values_ref = new Dictionary<string, string>();
-            _inverted_val_ref = new Dictionary<string, string>();
+            _elements = [];
+            _values_ref = [];
+            _inverted_val_ref = [];
 
-            _combobox = new ComboBox();
-            _combobox.MinWidth = 200;
+            _combobox = new ComboBox
+            {
+                MinWidth = 200
+            };
             _combobox.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Source = _elements });
 
             DefaultStyleKey = typeof(CheckboxCard);
@@ -83,7 +85,10 @@ namespace UniGetUI.Interface.Widgets
         public void AddItem(string name, string value, bool translate)
         {
             if (translate)
+            {
                 name = CoreTools.Translate(name);
+            }
+
             _elements.Add(name);
             _values_ref.Add(name, value);
             _inverted_val_ref.Add(value, name);

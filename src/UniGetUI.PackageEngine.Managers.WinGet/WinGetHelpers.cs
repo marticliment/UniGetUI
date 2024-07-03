@@ -8,7 +8,6 @@ using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 using WindowsPackageManager.Interop;
-using Deployment = Microsoft.Management.Deployment;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
@@ -51,7 +50,10 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         public NativeWinGetHelper()
         {
             if (CoreTools.IsAdministrator())
+            {
                 Logger.Info("Running elevated, WinGet class registration is likely to fail");
+            }
+
             Factory = new WindowsPackageManagerStandardFactory();
             WinGetManager = Factory.CreatePackageManager();
         }
@@ -59,9 +61,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public async Task<Package[]> FindPackages_UnSafe(WinGet ManagerInstance, string query)
         {
-            List<Package> Packages = new();
-            var logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
-            foreach(string query_part in query.Replace(".", " ").Split(" "))
+            List<Package> Packages = [];
+            ManagerClasses.Classes.NativeTaskLogger logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
+            foreach (string query_part in query.Replace(".", " ").Split(" "))
             {
                 FindPackagesOptions PackageFilters = Factory.CreateFindPackagesOptions();
 
@@ -83,7 +85,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 // Load catalogs
                 logger.Log("Loading available catalogs...");
                 IReadOnlyList<PackageCatalogReference> AvailableCatalogs = WinGetManager.GetPackageCatalogs();
-                Dictionary<PackageCatalogReference, Task<FindPackagesResult>> FindPackageTasks = new();
+                Dictionary<PackageCatalogReference, Task<FindPackagesResult>> FindPackageTasks = [];
 
                 // Spawn Tasks to find packages on catalogs
                 logger.Log("Spawning catalog fetching tasks...");
@@ -158,10 +160,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public async Task<ManagerSource[]> GetSources_UnSafe(WinGet ManagerInstance)
         {
-            List<ManagerSource> sources = new();
+            List<ManagerSource> sources = [];
             ManagerClasses.Classes.NativeTaskLogger logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.ListSources);
 
             foreach (PackageCatalogReference catalog in await Task.Run(() => WinGetManager.GetPackageCatalogs().ToArray()))
+            {
                 try
                 {
                     logger.Log($"Found source {catalog.Info.Name} with argument {catalog.Info.Argument}");
@@ -171,6 +174,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 {
                     logger.Error(e);
                 }
+            }
+
             logger.Close(0);
             return sources.ToArray();
         }
@@ -218,7 +223,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             // Get the Native Package
             CatalogPackage NativePackage = SearchResult.Result.Matches.First().CatalogPackage;
             string[] versions = NativePackage.AvailableVersions.Select(x => x.Version).ToArray();
-            foreach (string? version in versions) logger.Log(version);
+            foreach (string? version in versions)
+            {
+                logger.Log(version);
+            }
+
             logger.Close(0);
             return versions ?? [];
         }
@@ -228,13 +237,17 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             ManagerClasses.Classes.NativeTaskLogger logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
 
             if (details.Package.Source.Name == "winget")
+            {
                 details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
                     + details.Package.Id[0].ToString().ToLower() + "/"
                     + details.Package.Id.Split('.')[0] + "/"
-                    + String.Join("/", (details.Package.Id.Contains('.') ? details.Package.Id.Split('.')[1..] : details.Package.Id.Split('.')))
+                    + String.Join("/", details.Package.Id.Contains('.') ? details.Package.Id.Split('.')[1..] : details.Package.Id.Split('.'))
                 );
+            }
             else if (details.Package.Source.Name == "msstore")
+            {
                 details.ManifestUrl = new Uri("https://apps.microsoft.com/detail/" + details.Package.Id);
+            }
 
             // Find the native package for the given Package object
             PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(details.Package.Source.Name);
@@ -279,37 +292,55 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             CatalogPackageMetadata NativeDetails = NativePackage.DefaultInstallVersion.GetCatalogPackageMetadata(Windows.System.UserProfile.GlobalizationPreferences.Languages[0]);
 
             if (NativeDetails.Author != "")
+            {
                 details.Author = NativeDetails.Author;
+            }
 
             if (NativeDetails.Description != "")
+            {
                 details.Description = NativeDetails.Description;
+            }
 
             if (NativeDetails.PackageUrl != "")
+            {
                 details.HomepageUrl = new Uri(NativeDetails.PackageUrl);
+            }
 
             if (NativeDetails.License != "")
+            {
                 details.License = NativeDetails.License;
+            }
 
             if (NativeDetails.LicenseUrl != "")
+            {
                 details.LicenseUrl = new Uri(NativeDetails.LicenseUrl);
+            }
 
             if (NativeDetails.Publisher != "")
+            {
                 details.Publisher = NativeDetails.Publisher;
+            }
 
             if (NativeDetails.ReleaseNotes != "")
+            {
                 details.ReleaseNotes = NativeDetails.ReleaseNotes;
+            }
 
             if (NativeDetails.ReleaseNotesUrl != "")
+            {
                 details.ReleaseNotesUrl = new Uri(NativeDetails.ReleaseNotesUrl);
+            }
 
             if (NativeDetails.Tags != null)
+            {
                 details.Tags = NativeDetails.Tags.ToArray();
+            }
 
 
             // There is no way yet to retrieve installer URLs right now so this part will be console-parsed.
             // TODO: Replace this code with native code when available on the COM api
             Process process = new();
-            List<string> output = new();
+            List<string> output = [];
             ProcessStartInfo startInfo = new()
             {
                 FileName = Path.Join(CoreData.UniGetUIExecutableDirectory, "winget-cli_x64", "winget.exe"),
@@ -331,11 +362,13 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             // Retrieve the output
             string? _line;
             while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
+            {
                 if (_line.Trim() != "")
                 {
                     logger.Log(_line);
                     output.Add(_line);
                 }
+            }
 
             logger.Error(await process.StandardError.ReadToEndAsync());
 
@@ -346,18 +379,22 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 {
                     string line = __line.Trim();
                     if (line.Contains("Installer SHA256:"))
+                    {
                         details.InstallerHash = line.Split(":")[1].Trim();
-
+                    }
                     else if (line.Contains("Installer Url:"))
                     {
                         details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
                         details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
                     }
                     else if (line.Contains("Release Date:"))
+                    {
                         details.UpdateDate = line.Split(":")[1].Trim();
-
+                    }
                     else if (line.Contains("Installer Type:"))
+                    {
                         details.InstallerType = line.Split(":")[1].Trim();
+                    }
                 }
                 catch (Exception e)
                 {
@@ -382,18 +419,20 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public async Task<Package[]> FindPackages_UnSafe(WinGet ManagerInstance, string query)
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
 
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = "powershell.exe",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = "powershell.exe",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             p.Start();
@@ -430,11 +469,15 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 logger.AddToStdOut(line);
                 if (!line.StartsWith("#"))
+                {
                     continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
+                }
 
                 string[] elements = line.Split('\t');
                 if (elements.Length < 4)
+                {
                     continue;
+                }
 
                 ManagerSource source = ManagerInstance.GetSourceOrDefault(elements[3]);
 
@@ -452,19 +495,23 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         public async Task GetPackageDetails_UnSafe(WinGet ManagerInstance, PackageDetails details)
         {
             if (details.Package.Source.Name == "winget")
+            {
                 details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
                     + details.Package.Id[0].ToString().ToLower() + "/"
                     + details.Package.Id.Split('.')[0] + "/"
-                    + String.Join("/", (details.Package.Id.Contains('.') ? details.Package.Id.Split('.')[1..] : details.Package.Id.Split('.')))
+                    + String.Join("/", details.Package.Id.Contains('.') ? details.Package.Id.Split('.')[1..] : details.Package.Id.Split('.'))
                 );
+            }
             else if (details.Package.Source.Name == "msstore")
+            {
                 details.ManifestUrl = new Uri("https://apps.microsoft.com/detail/" + details.Package.Id);
+            }
 
             // Get the output for the best matching locale
             Process process = new();
             string packageIdentifier = "--id " + details.Package.Id + " --exact";
 
-            List<string> output = new();
+            List<string> output = [];
             bool LocaleFound = true;
             ProcessStartInfo startInfo = new()
             {
@@ -482,6 +529,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             string? _line;
             while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
+            {
                 if (_line.Trim() != "")
                 {
                     output.Add(_line);
@@ -491,6 +539,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                         break;
                     }
                 }
+            }
 
             // Load fallback english locale
             if (!LocaleFound)
@@ -514,6 +563,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 process.Start();
 
                 while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
+                {
                     if (_line.Trim() != "")
                     {
                         output.Add(_line);
@@ -523,6 +573,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                             break;
                         }
                     }
+                }
             }
 
             // Load default locale
@@ -547,10 +598,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 process.Start();
 
                 while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
+                {
                     if (_line.Trim() != "")
                     {
                         output.Add(_line);
                     }
+                }
             }
 
             // Parse the output
@@ -563,57 +616,80 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 {
                     string line = __line.TrimEnd();
                     if (line == "")
+                    {
                         continue;
+                    }
 
                     // Check if a multiline field is being loaded
                     if (line.StartsWith(" ") && IsLoadingDescription)
+                    {
                         details.Description += "\n" + line.Trim();
+                    }
                     else if (line.StartsWith(" ") && IsLoadingReleaseNotes)
+                    {
                         details.ReleaseNotes += "\n" + line.Trim();
+                    }
                     else if (line.StartsWith(" ") && IsLoadingTags)
+                    {
                         details.Tags = details.Tags.Append(line.Trim()).ToArray();
+                    }
 
                     // Stop loading multiline fields
                     else if (IsLoadingDescription)
+                    {
                         IsLoadingDescription = false;
+                    }
                     else if (IsLoadingReleaseNotes)
+                    {
                         IsLoadingReleaseNotes = false;
+                    }
                     else if (IsLoadingTags)
+                    {
                         IsLoadingTags = false;
+                    }
 
                     // Check for singleline fields
                     if (line.Contains("Publisher:"))
+                    {
                         details.Publisher = line.Split(":")[1].Trim();
-
+                    }
                     else if (line.Contains("Author:"))
+                    {
                         details.Author = line.Split(":")[1].Trim();
-
+                    }
                     else if (line.Contains("Homepage:"))
+                    {
                         details.HomepageUrl = new Uri(line.Replace("Homepage:", "").Trim());
-
+                    }
                     else if (line.Contains("License:"))
+                    {
                         details.License = line.Split(":")[1].Trim();
-
+                    }
                     else if (line.Contains("License Url:"))
+                    {
                         details.LicenseUrl = new Uri(line.Replace("License Url:", "").Trim());
-
+                    }
                     else if (line.Contains("Installer SHA256:"))
+                    {
                         details.InstallerHash = line.Split(":")[1].Trim();
-
+                    }
                     else if (line.Contains("Installer Url:"))
                     {
                         details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
                         details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
                     }
                     else if (line.Contains("Release Date:"))
+                    {
                         details.UpdateDate = line.Split(":")[1].Trim();
-
+                    }
                     else if (line.Contains("Release Notes Url:"))
+                    {
                         details.ReleaseNotesUrl = new Uri(line.Replace("Release Notes Url:", "").Trim());
-
+                    }
                     else if (line.Contains("Installer Type:"))
+                    {
                         details.InstallerType = line.Split(":")[1].Trim();
-
+                    }
                     else if (line.Contains("Description:"))
                     {
                         details.Description = line.Split(":")[1].Trim();
@@ -662,7 +738,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             p.Start();
 
             string? line;
-            List<string> versions = new();
+            List<string> versions = [];
             bool DashesPassed = false;
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
@@ -670,10 +746,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 if (!DashesPassed)
                 {
                     if (line.Contains("---"))
+                    {
                         DashesPassed = true;
+                    }
                 }
                 else
+                {
                     versions.Add(line.Trim());
+                }
             }
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
@@ -683,19 +763,21 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public async Task<ManagerSource[]> GetSources_UnSafe(WinGet ManagerInstance)
         {
-            List<ManagerSource> sources = new();
+            List<ManagerSource> sources = [];
 
-            Process p = new();
-            p.StartInfo = new()
+            Process p = new()
             {
-                FileName = ManagerInstance.Status.ExecutablePath,
-                Arguments = ManagerInstance.Properties.ExecutableCallArgs + " source list",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new()
+                {
+                    FileName = ManagerInstance.Status.ExecutablePath,
+                    Arguments = ManagerInstance.Properties.ExecutableCallArgs + " source list",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             p.Start();
@@ -710,18 +792,24 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 try
                 {
                     if (string.IsNullOrEmpty(line))
+                    {
                         continue;
+                    }
 
                     if (!dashesPassed)
                     {
                         if (line.Contains("---"))
+                        {
                             dashesPassed = true;
+                        }
                     }
                     else
                     {
                         string[] parts = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
                         if (parts.Length > 1)
+                        {
                             sources.Add(new ManagerSource(ManagerInstance, parts[0].Trim(), new Uri(parts[1].Trim())));
+                        }
                     }
                 }
                 catch (Exception e)

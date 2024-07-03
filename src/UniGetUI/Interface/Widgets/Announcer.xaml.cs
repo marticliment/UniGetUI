@@ -39,7 +39,7 @@ namespace UniGetUI.Interface.Widgets
             BringIntoViewRequested += (s, e) => { LoadAnnouncements(); };
 
             int i = 0;
-            PointerPressed += (s, e) => { if (i++ % 3 != 0) LoadAnnouncements(); };
+            PointerPressed += (s, e) => { if (i++ % 3 != 0) { LoadAnnouncements(); } };
 
             SetText(CoreTools.Translate("Fetching latest announcements, please wait..."));
             _textblock.TextWrapping = TextWrapping.Wrap;
@@ -51,7 +51,9 @@ namespace UniGetUI.Interface.Widgets
             {
                 Uri announcement_url = Url;
                 if (retry)
+                {
                     announcement_url = new Uri(Url.ToString().Replace("https://", "http://"));
+                }
 
                 HttpResponseMessage response = await NetClient.GetAsync(announcement_url);
                 if (response.IsSuccessStatusCode)
@@ -70,7 +72,9 @@ namespace UniGetUI.Interface.Widgets
                     SetText(CoreTools.Translate("Could not load announcements - HTTP status code is $CODE").Replace("$CODE", response.StatusCode.ToString()));
                     SetImage(new Uri("ms-appx:///Assets/Images/warn.png"));
                     if (!retry)
+                    {
                         LoadAnnouncements(true);
+                    }
                 }
             }
             catch (Exception ex)
@@ -126,8 +130,10 @@ namespace UniGetUI.Interface.Widgets
 
         public void SetImage(Uri url)
         {
-            BitmapImage bitmapImage = new();
-            bitmapImage.UriSource = url;
+            BitmapImage bitmapImage = new()
+            {
+                UriSource = url
+            };
             _image.Source = bitmapImage;
 
         }

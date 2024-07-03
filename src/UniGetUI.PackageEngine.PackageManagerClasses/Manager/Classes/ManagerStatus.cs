@@ -1,6 +1,6 @@
 ﻿namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
 {
-    public class ManagerStatus
+    public struct ManagerStatus
     {
         public string Version = "";
         public bool Found = false;

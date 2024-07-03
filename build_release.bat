@@ -54,9 +54,9 @@ if exist %INSTALLATOR% (
     %INSTALLATOR% "WingetUI.iss"
     echo You may now sign the installer
     "Y:\- Signing\signtool-x64\signtool.exe" sign /v /debug /fd SHA256 /tr "http://timestamp.acs.microsoft.com" /td SHA256 /dlib "Y:\- Signing\azure.codesigning.client\x64\Azure.CodeSigning.Dlib.dll" /dmdf "Y:\- Signing\metadata.json" "WingetUI Installer.exe"
-    pause
     del "UniGetUI Installer.exe"
     copy "WingetUI Installer.exe" "UniGetUI Installer.exe" 
+    pause
     "WingetUI Installer.exe"
 ) else (
     echo "Make installer was skipped, because the installer is missing."

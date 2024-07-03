@@ -6,7 +6,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
 {
     internal static class PackageManifestLoader
     {
-        private static readonly Dictionary<string, string> __manifest_cache = new();
+        private static readonly Dictionary<string, string> __manifest_cache = [];
 
         /// <summary>
         /// Returns the URL to the manifest of a NuGet-based package
@@ -25,7 +25,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
         /// <returns>A Uri object</returns>
         public static Uri GetPackageNuGetPackageUrl(Package package)
         {
-            return new Uri($"{package.Source.Url}/Packages/{package.Id}.{package.Version}.nupkg");
+            return new Uri($"{package.Source.Url}/package/{package.Id}/{package.Version}");
         }
 
         /// <summary>
@@ -50,7 +50,9 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
                     client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     HttpResponseMessage response = await client.GetAsync(PackageManifestUrl);
                     if (!response.IsSuccessStatusCode && package.Version.EndsWith(".0"))
+                    {
                         response = await client.GetAsync(new Uri(PackageManifestUrl.ToString().Replace(".0')", "')")));
+                    }
 
                     if (!response.IsSuccessStatusCode)
                     {

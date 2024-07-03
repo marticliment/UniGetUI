@@ -41,6 +41,8 @@
                         Url="https://marticliment.com/resources/annoucements/unigetui"
                         />
                     <widgets:TranslatedTextBlock FontSize="40" FontWeight="Bold" WrappingMode="NoWrap" Text="WingetUI Settings" Suffix="                                                          ." HorizontalAlignment="Stretch"/>
+                    
+                    <!-- General Settings -->
                     <widgets:SettingsEntry
                         x:Name="GeneralSettingsExpander"
                         Text="General preferences"
@@ -67,36 +69,15 @@
                                     </StackPanel>
                                 </Toolkit:SettingsCard.Description>
                             </widgets:ComboboxCard>
-                            <widgets:ButtonCard
+                            <!--widgets:ButtonCard
                                 Text="Open the welcome wizard"
                                 ButtonText="Open"
                                 Click="OpenWelcomeWizard"
                                 IsEnabled="False"
-                            />
+                            /-->
                             <widgets:CheckboxCard
                                 Text="Update WingetUI automatically"
                                 SettingName="DisableAutoUpdateWingetUI"
-                                />
-                            <widgets:CheckboxCard
-                                x:Name="DisableAutoCheckForUpdates"
-                                Text="Check for package updates periodically"
-                                SettingName="DisableAutoCheckforUpdates"
-                                />
-                            <widgets:ComboboxCard
-                                x:Name="UpdatesCheckIntervalSelector"
-                                Text="Check for updates every:"
-                                SettingName="UpdatesCheckInterval"
-                                ValueChanged="UpdatesCheckIntervalSelector_ValueChanged"
-                                />
-                            <widgets:CheckboxCard
-                                Text="Update packages automatically"
-                                SettingName="AutomaticallyUpdatePackages"
-                                />
-                            <widgets:ComboboxCard
-                                x:Name="ThemeSelector"
-                                Text="Application theme:"
-                                SettingName="PreferredTheme"
-                                ValueChanged="ThemeSelector_ValueChanged"
                                 />
                             <widgets:ButtonCard
                                 Text="Import settings from a local file"
@@ -115,6 +96,59 @@
                             />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
+
+                    <!-- User interface -->
+                    <widgets:SettingsEntry
+                            Text="User interface preferences"
+                            UnderText="Action when double-clicking packages, hide successful installations"
+                            Icon="interactive">
+                        <Toolkit:SettingsExpander.Items>
+                            <widgets:ComboboxCard
+                                x:Name="ThemeSelector"
+                                Text="Application theme:"
+                                SettingName="PreferredTheme"
+                                ValueChanged="ThemeSelector_ValueChanged"
+                                />
+                            <widgets:CheckboxCard
+                                Text="Do not remove successful operations from the list automatically"
+                                SettingName="MaintainSuccessfulInstalls"
+                                />
+                            <widgets:CheckboxCard
+                                Text="Show UniGetUI on the system tray"
+                                SettingName="DisableSystemTray"
+                                x:Name="DisableSystemTray"
+                                StateChanged="DisableSystemTray_StateChanged"
+                                />
+                        </Toolkit:SettingsExpander.Items>
+                    </widgets:SettingsEntry>
+                    
+                    <!-- Notifications -->
+                    <widgets:SettingsEntry
+                            x:Name="NotificationSettingsEntry"
+                            Text="Notification preferences"
+                            UnderText="Show notifications on different events"
+                            Icon="megaphone">
+                        <Toolkit:SettingsExpander.Items>
+                            <widgets:CheckboxCard
+                                Text="Enable WingetUI notifications"
+                                SettingName="DisableNotifications"
+                                />
+                            <widgets:CheckboxCard
+                                Text="Show a notification when there are available updates"
+                                SettingName="DisableUpdatesNotifications"
+                                />
+                            <widgets:CheckboxCard
+                                Text="Show a notification when an installation fails"
+                                SettingName="DisableErrorNotifications"
+                                />
+                            <widgets:CheckboxCard
+                                Text="Show a notification when an installation finishes successfully"
+                                SettingName="DisableSuccessNotifications"
+                                />
+                        </Toolkit:SettingsExpander.Items>
+                    </widgets:SettingsEntry>
+                    
+                    <!-- Startup options -->
                     <widgets:SettingsEntry
                             Text="Startup options"
                             UnderText="WingetUI autostart behaviour, application launch settings"
@@ -135,45 +169,32 @@
                                 />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
+                    
+                    <!-- Updates Settings -->
                     <widgets:SettingsEntry
-                            Text="User interface preferences"
-                            UnderText="Action when double-clicking packages, hide successful installations"
-                            Icon="interactive">
+                            Text="Updates preferences"
+                            UnderText="Change how UniGetUI checks and installs available updates for your packages"
+                            Icon="menu_updates">
                         <Toolkit:SettingsExpander.Items>
                             <widgets:CheckboxCard
-                                Text="Do not remove successful operations from the list automatically"
-                                SettingName="MaintainSuccessfulInstalls"
+                                x:Name="DisableAutoCheckForUpdates"
+                                Text="Check for package updates periodically"
+                                SettingName="DisableAutoCheckforUpdates"
+                                />
+                            <widgets:ComboboxCard
+                                x:Name="UpdatesCheckIntervalSelector"
+                                Text="Check for updates every:"
+                                SettingName="UpdatesCheckInterval"
+                                ValueChanged="UpdatesCheckIntervalSelector_ValueChanged"
+                                />
+                            <widgets:CheckboxCard
+                                Text="Install available updates automatically"
+                                SettingName="AutomaticallyUpdatePackages"
                                 />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
-                    <widgets:SettingsEntry
-                            Text="Notification tray options"
-                            UnderText="WingetUI tray application preferences"
-                            Icon="systemtray">
-                        <Toolkit:SettingsExpander.Items>
-                            <widgets:CheckboxCard
-                                Text="Close WingetUI to the notification area"
-                                SettingName="DisableSystemTray"
-                                StateChanged="DisableSystemTray_StateChanged"
-                                />
-                            <widgets:CheckboxCard
-                                Text="Enable WingetUI notifications"
-                                SettingName="DisableNotifications"
-                                />
-                            <widgets:CheckboxCard
-                                Text="Show a notification when there are available updates"
-                                SettingName="DisableUpdatesNotifications"
-                                />
-                            <widgets:CheckboxCard
-                                Text="Show a notification when an installation fails"
-                                SettingName="DisableErrorNotifications"
-                                />
-                            <widgets:CheckboxCard
-                                Text="Show a notification when an installation finishes successfully"
-                                SettingName="DisableSuccessNotifications"
-                                />
-                        </Toolkit:SettingsExpander.Items>
-                    </widgets:SettingsEntry>
+                    
+                    <!-- Backup packages -->
                     <widgets:SettingsEntry
                             Text="Backup installed packages"
                             UnderText="Automatically save a list of all your installed packages to easily restore them."
@@ -230,6 +251,8 @@
                                 />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
+                    
+                    <!-- Administrator prefs -->
                     <widgets:SettingsEntry
                             x:Name="AdminSettingsExpander"
                             Text="Administrator privileges preferences"
@@ -250,6 +273,8 @@
                                 />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
+                    
+                    <!-- Experimental -->
                     <widgets:SettingsEntry
                         x:Name="ExperimentalSettingsExpander"
                             Text="Experimental settings and developer options"
@@ -269,20 +294,8 @@
                                 StateChanged="UseUserGSudoToggle_StateChanged"
                                 />
                             <widgets:CheckboxCard
-                                Text="Allow parallel installs (NOT RECOMMENDED)"
+                                Text="Allow package operations to be performed in parallel"
                                 SettingName="AllowParallelInstalls"
-                                />
-                            <widgets:CheckboxCard
-                                x:Name="UseSystemWinget"
-                                Text="Use system Winget (System language must be set to english)"
-                                SettingName="UseSystemWinget"
-                                StateChanged="UseSystemWinget_StateChanged"
-                                />
-                            <widgets:CheckboxCard
-                                x:Name="ForceArmWinget"
-                                Text="Force ARM compiled winget version (ONLY FOR ARM64 SYSTEMS)"
-                                SettingName="EnableArmWinget"
-                                StateChanged="ForceArmWinget_StateChanged"
                                 />
                             <widgets:CheckboxCard
                                 x:Name="DisableDownloadingNewTranslations"

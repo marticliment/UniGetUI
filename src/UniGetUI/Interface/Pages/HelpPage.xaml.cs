@@ -25,9 +25,13 @@ namespace UniGetUI.Interface.Dialogs
                 {
                     e.Cancel = true;
                     if (e.Uri.ToString().Contains("?"))
+                    {
                         WebView.Source = new Uri(e.Uri.ToString() + "&isWingetUIIframe");
+                    }
                     else
+                    {
                         WebView.Source = new Uri(e.Uri.ToString() + "?isWingetUIIframe");
+                    }
                 }
             };
             WebView.NavigationCompleted += (s, e) => { ProgressBar.Visibility = Visibility.Collapsed; };
@@ -43,33 +47,43 @@ namespace UniGetUI.Interface.Dialogs
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             if (Initialized && WebView.CanGoBack)
+            {
                 WebView.GoBack();
+            }
         }
 
         private void RightButton_Click(object sender, RoutedEventArgs e)
         {
 
             if (Initialized && WebView.CanGoForward)
+            {
                 WebView.GoForward();
+            }
         }
 
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
 
             if (Initialized)
+            {
                 WebView.Source = new Uri("https://marticliment.com/unigetui/help");
+            }
         }
 
         private void ReloadButton_Click(object sender, RoutedEventArgs e)
         {
             if (Initialized)
+            {
                 WebView.Reload();
+            }
         }
 
         private void BrowserButton_Click(object sender, RoutedEventArgs e)
         {
             if (Initialized)
+            {
                 Process.Start(new ProcessStartInfo { FileName = WebView.Source.ToString().Replace("?isWingetUIIframe", "").Replace("&isWingetUIIframe", ""), UseShellExecute = true });
+            }
         }
     }
 }

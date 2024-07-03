@@ -27,7 +27,8 @@ namespace UniGetUI.Interface
 
         private bool __running = false;
 
-        public BackgroundApiRunner() {
+        public BackgroundApiRunner()
+        {
             BackgroundApi.OnOpenWindow += (s, e) => OnOpenWindow?.Invoke(s, e);
             BackgroundApi.OnOpenUpdatesPage += (s, e) => OnOpenUpdatesPage?.Invoke(s, e);
             BackgroundApi.OnShowSharedPackage += (s, e) => OnShowSharedPackage?.Invoke(s, e);
@@ -134,7 +135,9 @@ namespace UniGetUI.Interface
                 try
                 {
                     if (Request.Query.@pid == "" || Request.Query.@psource == "")
+                    {
                         return 400;
+                    }
 
                     OnShowSharedPackage?.Invoke(this, new KeyValuePair<string, string>(Request.Query.@pid.ToString(), Request.Query.@psource.ToString()));
 
@@ -165,7 +168,9 @@ namespace UniGetUI.Interface
             Get("/widgets/v1/get_wingetui_version", (parameters) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
+                {
                     return 401;
+                }
 
                 return CoreData.VersionNumber.ToString();
             });
@@ -174,7 +179,9 @@ namespace UniGetUI.Interface
             Get("/widgets/v1/get_updates", async (parameters) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
+                {
                     return 401;
+                }
 
                 if (!PEInterface.UpgradablePackagesLoader.IsLoaded && !PEInterface.UpgradablePackagesLoader.IsLoading)
                 {
@@ -189,8 +196,10 @@ namespace UniGetUI.Interface
                 StringBuilder packages = new();
                 foreach (Package package in PEInterface.UpgradablePackagesLoader.Packages)
                 {
-                    if (package.Tag == PackageTag.OnQueue || package.Tag == PackageTag.BeingProcessed)
+                    if (package.Tag is PackageTag.OnQueue or PackageTag.BeingProcessed)
+                    {
                         continue; // Do not show already processed packages on queue 
+                    }
 
                     string icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={package.Id}&packageSource={package.Source.Name}&token={ApiTokenHolder.Token}";
                     packages.Append($"{package.Name.Replace('|', '-')}|{package.Id}|{package.Version}|{package.NewVersion}|{package.Source}|{package.Manager.Name}|{icon}&&");
@@ -199,7 +208,9 @@ namespace UniGetUI.Interface
                 string pkgs_ = packages.ToString();
 
                 if (pkgs_.Length > 2)
+                {
                     pkgs_ = pkgs_[..(pkgs_.Length - 2)];
+                }
 
                 return pkgs_;
             });
@@ -208,8 +219,10 @@ namespace UniGetUI.Interface
             Get("/widgets/v1/open_wingetui", (parameters) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
+                {
                     return 401;
-                
+                }
+
                 OnOpenWindow?.Invoke(this, EventArgs.Empty);
                 return 200;
             });
@@ -218,7 +231,9 @@ namespace UniGetUI.Interface
             Get("/widgets/v1/view_on_wingetui", (parameters) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
+                {
                     return 401;
+                }
 
                 OnOpenUpdatesPage?.Invoke(this, EventArgs.Empty);
                 return 200;
@@ -228,10 +243,14 @@ namespace UniGetUI.Interface
             Get("/widgets/v1/update_package", (parameters) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
+                {
                     return 401;
+                }
 
                 if (Request.Query.@id == "")
+                {
                     return 400;
+                }
 
                 OnUpgradePackage?.Invoke(this, Request.Query.@id);
                 return 200;
@@ -241,10 +260,12 @@ namespace UniGetUI.Interface
             Get("/widgets/v1/update_all_packages", (parameters) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
+                {
                     return 401;
+                }
 
                 Logger.Info("[WIDGETS] Updating all packages");
-                OnUpgradeAll?.Invoke(this, EventArgs.Empty);    
+                OnUpgradeAll?.Invoke(this, EventArgs.Empty);
                 return 200;
             });
 
@@ -252,12 +273,16 @@ namespace UniGetUI.Interface
             Get("/widgets/v1/update_all_packages_for_source", (parameters) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
+                {
                     return 401;
+                }
 
                 if (Request.Query.@source == "")
+                {
                     return 400;
+                }
 
-                    Logger.Info($"[WIDGETS] Updating all packages for manager {Request.Query.@source}");
+                Logger.Info($"[WIDGETS] Updating all packages for manager {Request.Query.@source}");
                 OnUpgradeAllForManager?.Invoke(this, Request.Query.@source);
                 return 200;
             });
@@ -266,10 +291,14 @@ namespace UniGetUI.Interface
             Get("/widgets/v2/get_icon_for_package", async (parameters) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
+                {
                     return 401;
+                }
 
                 if (Request.Query.@packageId == "" || Request.Query.@packageSource == "")
+                {
                     return 400;
+                }
 
                 string iconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "package_color.png");
                 Package? package = PEInterface.UpgradablePackagesLoader.GetPackageForId(Request.Query.@packageId, Request.Query.@packageSource);
@@ -282,8 +311,10 @@ namespace UniGetUI.Interface
                     }
                     // else, the iconPath will be the preloaded one (package_color.png)
                 }
-                else 
+                else
+                {
                     Logger.Warn($"[API] Package id={Request.Query.@packageId} with sourceName={Request.Query.@packageSource} was not found!");
+                }
 
                 byte[] fileContents = await File.ReadAllBytesAsync(iconPath);
                 return new Response()

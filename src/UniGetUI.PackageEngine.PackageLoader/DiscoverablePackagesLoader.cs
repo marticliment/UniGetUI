@@ -21,8 +21,14 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         public override async Task ReloadPackages()
         {
-            if (QUERY_TEXT == "") return;
-            else await base.ReloadPackages();
+            if (QUERY_TEXT == "")
+            {
+                return;
+            }
+            else
+            {
+                await base.ReloadPackages();
+            }
         }
 
 #pragma warning disable
@@ -37,9 +43,13 @@ namespace UniGetUI.PackageEngine.PackageLoader
             string text = QUERY_TEXT;
             text = CoreTools.EnsureSafeQueryString(text);
             if (text == string.Empty)
+            {
                 return new Task<Package[]>(() => { return []; });
+            }
             else
+            {
                 return manager.FindPackages(text);
+            }
         }
 
 #pragma warning disable

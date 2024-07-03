@@ -14,7 +14,7 @@ namespace UniGetUI.Core.Classes.Tests
         {
             int EventTriggeredCount = 0;
 
-            SortableObservableCollection<SortableInt> SortableCollection = new();
+            SortableObservableCollection<SortableInt> SortableCollection = [];
             SortableCollection.CollectionChanged += (s, e) => { EventTriggeredCount++; };
             SortableCollection.SortingSelector = (s) => { return s.Value; };
             SortableCollection.Add(new(1));
@@ -38,7 +38,9 @@ namespace UniGetUI.Core.Classes.Tests
             Assert.Equal(5, SortableCollection[4].Value);
 
             for (int i = 0; i < SortableCollection.Count; i++)
+            {
                 Assert.Equal(i, SortableCollection[i].Index);
+            }
         }
     }
 }

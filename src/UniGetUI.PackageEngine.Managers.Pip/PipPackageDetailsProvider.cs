@@ -22,66 +22,85 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             JsonString = await client.GetStringAsync($"https://pypi.org/pypi/{details.Package.Id}/json");
 
-            JsonObject? RawInfo = JsonObject.Parse(JsonString) as JsonObject;
 
-            if(RawInfo == null)
+            if (JsonObject.Parse(JsonString) is not JsonObject RawInfo)
             {
                 logger.Error($"Can't load package info on manager {Manager.Name}, JsonObject? RawInfo was null");
                 logger.Close(1);
                 return;
             }
 
-            JsonObject? infoNode = RawInfo["info"] as JsonObject;
-            if (infoNode != null)
+            if (RawInfo["info"] is JsonObject infoNode)
             {
                 try
                 {
                     if (infoNode.ContainsKey("author"))
+                    {
                         details.Author = CoreTools.GetStringOrNull(infoNode["author"]?.ToString());
+                    }
                 }
                 catch (Exception ex) { logger.Error("Can't load author: " + ex); }
                 try
                 {
                     if (infoNode.ContainsKey("home_page"))
+                    {
                         details.HomepageUrl = CoreTools.GetUriOrNull(infoNode["home_page"]?.ToString());
+                    }
                 }
                 catch (Exception ex) { logger.Error("Can't load home_page: " + ex); }
                 try
                 {
                     if (infoNode.ContainsKey("package_url"))
+                    {
                         details.ManifestUrl = CoreTools.GetUriOrNull(infoNode["package_url"]?.ToString());
+                    }
                 }
                 catch (Exception ex) { logger.Error("Can't load package_url: " + ex); }
                 try
                 {
                     if (infoNode.ContainsKey("summary"))
+                    {
                         details.Description = CoreTools.GetStringOrNull(infoNode["summary"]?.ToString());
+                    }
                 }
                 catch (Exception ex) { logger.Error("Can't load summary: " + ex); }
                 try
                 {
                     if (infoNode.ContainsKey("license"))
+                    {
                         details.License = CoreTools.GetStringOrNull(infoNode["license"]?.ToString());
+                    }
                 }
                 catch (Exception ex) { logger.Error("Can't load license: " + ex); }
                 try
                 {
                     if (infoNode.ContainsKey("maintainer"))
+                    {
                         details.Publisher = CoreTools.GetStringOrNull(infoNode["maintainer"]?.ToString());
+                    }
                 }
                 catch (Exception ex) { logger.Error("Can't load maintainer: " + ex); }
                 try
                 {
-                    if ((infoNode.ContainsKey("classifiers"))
+                    if (infoNode.ContainsKey("classifiers")
                         && (infoNode["classifiers"] is JsonArray))
                     {
-                        List<string> Tags = new();
-                        foreach (string? line in infoNode["classifiers"] as JsonArray ?? new())
+                        List<string> Tags = [];
+                        foreach (string? line in infoNode["classifiers"] as JsonArray ?? [])
+                        {
                             if (line?.Contains("License ::") ?? false)
+                            {
                                 details.License = line.Split("::")[^1].Trim();
+                            }
                             else if (line?.Contains("Topic ::") ?? false)
+                            {
                                 if (!Tags.Contains(line.Split("::")[^1].Trim()))
+                                {
                                     Tags.Add(line.Split("::")[^1].Trim());
+                                }
+                            }
+                        }
+
                         details.Tags = Tags.ToArray();
                     }
                 }
@@ -92,10 +111,13 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             {
                 JsonObject? url = null;
                 if (RawInfo.ContainsKey("url"))
-
+                {
                     url = RawInfo["url"] as JsonObject;
+                }
                 else if (RawInfo.ContainsKey("urls"))
+                {
                     url = (RawInfo["urls"] as JsonArray)?[0] as JsonObject;
+                }
 
                 if (url != null)
                 {
@@ -129,17 +151,19 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Manager.Status.ExecutablePath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " index versions " + package.Id,
-                RedirectStandardOutput = true,
-                RedirectStandardInput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Manager.Status.ExecutablePath,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " index versions " + package.Id,
+                    RedirectStandardOutput = true,
+                    RedirectStandardInput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions, p);
@@ -151,7 +175,9 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             {
                 logger.AddToStdOut(line);
                 if (line.Contains("Available versions:"))
+                {
                     result = line.Replace("Available versions:", "").Trim().Split(", ");
+                }
             }
 
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());

@@ -21,7 +21,7 @@ namespace UniGetUI.Core.IconEngine
         {
             get
             {
-                if(__instance == null)
+                if (__instance == null)
                 {
                     Logger.Error("IconStore.Instance was not initialized, creating an empty instance.");
                     InitializeInstance();
@@ -32,14 +32,14 @@ namespace UniGetUI.Core.IconEngine
         }
 
         public static void InitializeInstance()
-        { 
+        {
             __instance = new();
         }
 
         /// <summary>
         /// The icon and screenshot database
         /// </summary>
-        private Dictionary<string, IconScreenshotDatabase_v2.PackageIconAndScreenshots> IconDatabaseData = new();
+        private Dictionary<string, IconScreenshotDatabase_v2.PackageIconAndScreenshots> IconDatabaseData = [];
         private IconCount __icon_count = new();
 
         /// <summary>
@@ -63,7 +63,9 @@ namespace UniGetUI.Core.IconEngine
             {
                 Uri DownloadUrl = new("https://raw.githubusercontent.com/marticliment/WingetUI/main/WebBasedData/screenshot-database-v2.json");
                 if (Settings.Get("IconDataBaseURL"))
+                {
                     DownloadUrl = new Uri(Settings.GetValue("IconDataBaseURL"));
+                }
 
                 using (HttpClient client = new(CoreData.GenericHttpClientParameters))
                 {
@@ -92,12 +94,15 @@ namespace UniGetUI.Core.IconEngine
             {
                 IconScreenshotDatabase_v2 JsonData = JsonSerializer.Deserialize<IconScreenshotDatabase_v2>(await File.ReadAllTextAsync(IconsAndScreenshotsFile));
                 if (JsonData.icons_and_screenshots != null)
+                {
                     IconDatabaseData = JsonData.icons_and_screenshots;
+                }
+
                 __icon_count = new IconCount()
-                    {
-                     PackagesWithIconCount = JsonData.package_count.packages_with_icon,
-                     PackagesWithScreenshotCount = JsonData.package_count.packages_with_screenshot,
-                     TotalScreenshotCount = JsonData.package_count.total_screenshots,
+                {
+                    PackagesWithIconCount = JsonData.package_count.packages_with_icon,
+                    PackagesWithScreenshotCount = JsonData.package_count.packages_with_screenshot,
+                    TotalScreenshotCount = JsonData.package_count.total_screenshots,
                 };
             }
             catch (Exception ex)
@@ -116,7 +121,7 @@ namespace UniGetUI.Core.IconEngine
         {
             return IconDatabaseData.ContainsKey(id) ? IconDatabaseData[id].images.ToArray() : [];
         }
-        
+
         public IconCount GetIconCount()
         {
             return __icon_count;

@@ -17,6 +17,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         protected override async Task GetPackageDetails_Unsafe(PackageDetails details)
         {
             if (details.Package.Source.Url != null)
+            {
                 try
                 {
                     details.ManifestUrl = new Uri(details.Package.Source.Url.ToString() + "/blob/master/bucket/" + details.Package.Id + ".json");
@@ -26,17 +27,20 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     Logger.Error("Cannot load package manifest URL");
                     Logger.Error(ex);
                 }
+            }
 
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Manager.Status.ExecutablePath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " cat " + details.Package.Source.Name + "/" + details.Package.Id,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8,
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Manager.Status.ExecutablePath,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " cat " + details.Package.Source.Name + "/" + details.Package.Id,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                }
             };
 
             ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
@@ -46,9 +50,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             logger.AddToStdOut(JsonString);
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
 
-            JsonObject? RawInfo = JsonObject.Parse(JsonString) as JsonObject;
 
-            if(RawInfo == null)
+            if (JsonObject.Parse(JsonString) is not JsonObject RawInfo)
             {
                 throw new Exception("Deserialized RawInfo was null");
             }
@@ -58,21 +61,30 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 if (RawInfo.ContainsKey("description") && (RawInfo["description"] is JsonArray))
                 {
                     details.Description = "";
-                    foreach (JsonNode? note in RawInfo["description"] as JsonArray ?? new())
+                    foreach (JsonNode? note in RawInfo["description"] as JsonArray ?? [])
+                    {
                         details.Description += note?.ToString() + "\n";
+                    }
+
                     details.Description = details.Description.Replace("\n\n", "\n").Trim();
                 }
                 else if (RawInfo.ContainsKey("description"))
+                {
                     details.Description = CoreTools.GetStringOrNull(RawInfo["description"]?.ToString());
+                }
             }
             catch (Exception ex) { logger.AddToStdErr("Can't load description: " + ex); }
 
             try
             {
                 if (RawInfo.ContainsKey("innosetup"))
+                {
                     details.InstallerType = "Inno Setup (" + CoreTools.Translate("extracted") + ")";
+                }
                 else
+                {
                     details.InstallerType = CoreTools.Translate("Scoop package");
+                }
             }
             catch (Exception ex) { logger.AddToStdErr("Can't load installer type: " + ex); }
 
@@ -82,9 +94,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 {
                     details.HomepageUrl = CoreTools.GetUriOrNull(RawInfo["homepage"]?.ToString());
                     if (details.HomepageUrl?.ToString().Contains("https://github.com/") ?? false)
+                    {
                         details.Author = details.HomepageUrl.ToString().Replace("https://github.com/", "").Split("/")[0];
+                    }
                     else
+                    {
                         details.Author = details.HomepageUrl?.Host.Split(".")[^2];
+                    }
                 }
             }
             catch (Exception ex) { logger.AddToStdErr("Can't load homepage: " + ex); }
@@ -94,12 +110,17 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 if (RawInfo.ContainsKey("notes") && (RawInfo["notes"] is JsonArray))
                 {
                     details.ReleaseNotes = "";
-                    foreach (JsonNode? note in RawInfo["notes"] as JsonArray ?? new())
+                    foreach (JsonNode? note in RawInfo["notes"] as JsonArray ?? [])
+                    {
                         details.ReleaseNotes += note?.ToString() + "\n";
+                    }
+
                     details.ReleaseNotes = details.ReleaseNotes.Replace("\n\n", "\n").Trim();
                 }
                 else if (RawInfo.ContainsKey("notes"))
+                {
                     details.ReleaseNotes = RawInfo["notes"]?.ToString();
+                }
             }
             catch (Exception ex) { logger.AddToStdErr("Can't load notes: " + ex); }
 
@@ -113,7 +134,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         details.LicenseUrl = CoreTools.GetUriOrNull(RawInfo["license"]?["url"]?.ToString());
                     }
                     else
+                    {
                         details.License = RawInfo["license"]?.ToString();
+                    }
                 }
             }
             catch (Exception ex) { logger.AddToStdErr("Can't load license: " + ex); }
@@ -123,14 +146,22 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 if (RawInfo.ContainsKey("url") && RawInfo.ContainsKey("hash"))
                 {
                     if (RawInfo["url"] is JsonArray)
+                    {
                         details.InstallerUrl = CoreTools.GetUriOrNull(RawInfo["url"]?[0]?.ToString());
+                    }
                     else
+                    {
                         details.InstallerUrl = CoreTools.GetUriOrNull(RawInfo["url"]?.ToString());
+                    }
 
                     if (RawInfo["hash"] is JsonArray)
+                    {
                         details.InstallerHash = RawInfo["hash"]?[0]?.ToString();
+                    }
                     else
+                    {
                         details.InstallerHash = RawInfo["hash"]?.ToString();
+                    }
                 }
                 else if (RawInfo.ContainsKey("architecture"))
                 {
@@ -146,7 +177,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             try
             {
                 if (RawInfo.ContainsKey("checkver") && RawInfo["checkver"] is JsonObject && ((RawInfo["checkver"] as JsonObject)?.ContainsKey("url") ?? false))
+                {
                     details.ReleaseNotesUrl = CoreTools.GetUriOrNull(RawInfo["checkver"]?["url"]?.ToString() ?? "");
+                }
             }
             catch (Exception ex) { logger.AddToStdErr("Can't load notes URL: " + ex); }
 

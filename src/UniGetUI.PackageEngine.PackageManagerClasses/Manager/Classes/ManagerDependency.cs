@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UniGetUI.PackageEngine.Classes.Manager.Classes
+﻿namespace UniGetUI.PackageEngine.Classes.Manager.Classes
 {
-    public struct ManagerDependency
+    public readonly struct ManagerDependency
     {
         public readonly string Name;
         public readonly string InstallFileName;

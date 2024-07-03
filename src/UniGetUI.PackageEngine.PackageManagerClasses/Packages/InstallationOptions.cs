@@ -14,7 +14,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// </summary>
     public class InstallationOptions
     {
-        private static readonly Dictionary<long, InstallationOptions?> OptionsCache = new();
+        private static readonly Dictionary<long, InstallationOptions?> OptionsCache = [];
 
         public bool SkipHashCheck { get; set; } = false;
         public bool InteractiveInstallation { get; set; } = false;
@@ -42,7 +42,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         /// <param name="package">The package from which to load the InstallationOptions</param>
         /// <returns>The package's InstallationOptions instance</returns>
-        public static InstallationOptions FromPackage(Package package, bool? elevated = null, bool? 
+        public static InstallationOptions FromPackage(Package package, bool? elevated = null, bool?
             interactive = null, bool? no_integrity = null, bool? remove_data = null)
         {
             InstallationOptions instance;
@@ -58,10 +58,25 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 OptionsCache.Add(package.GetHash(), instance);
             }
 
-            if (elevated != null) instance.RunAsAdministrator = (bool)elevated;
-            if (interactive != null) instance.InteractiveInstallation = (bool)interactive;
-            if (no_integrity != null) instance.SkipHashCheck = (bool)no_integrity;
-            if (remove_data != null) instance.RemoveDataOnUninstall = (bool)remove_data;
+            if (elevated != null)
+            {
+                instance.RunAsAdministrator = (bool)elevated;
+            }
+
+            if (interactive != null)
+            {
+                instance.InteractiveInstallation = (bool)interactive;
+            }
+
+            if (no_integrity != null)
+            {
+                instance.SkipHashCheck = (bool)no_integrity;
+            }
+
+            if (remove_data != null)
+            {
+                instance.RemoveDataOnUninstall = (bool)remove_data;
+            }
 
             return instance;
         }
@@ -71,7 +86,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         /// <param name="package">The package from which to load the InstallationOptions</param>
         /// <returns>The package's InstallationOptions instance</returns>
-        public static async Task<InstallationOptions> FromPackageAsync(Package package, bool? elevated = null, 
+        public static async Task<InstallationOptions> FromPackageAsync(Package package, bool? elevated = null,
             bool? interactive = null, bool? no_integrity = null, bool? remove_data = null)
         {
             return await Task.Run(() => FromPackage(package, elevated, interactive, no_integrity, remove_data));
@@ -122,13 +137,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns></returns>
         public SerializableInstallationOptions_v1 AsSerializable()
         {
-            SerializableInstallationOptions_v1 options = new();
-            options.SkipHashCheck = SkipHashCheck;
-            options.InteractiveInstallation = InteractiveInstallation;
-            options.RunAsAdministrator = RunAsAdministrator;
-            options.CustomInstallLocation = CustomInstallLocation;
-            options.PreRelease = PreRelease;
-            options.Version = Version;
+            SerializableInstallationOptions_v1 options = new()
+            {
+                SkipHashCheck = SkipHashCheck,
+                InteractiveInstallation = InteractiveInstallation,
+                RunAsAdministrator = RunAsAdministrator,
+                CustomInstallLocation = CustomInstallLocation,
+                PreRelease = PreRelease,
+                Version = Version
+            };
             if (Architecture != null)
             {
                 options.Architecture = CommonTranslations.ArchNames[Architecture.Value];
@@ -166,7 +183,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 FileInfo optionsFile = GetPackageOptionsFile();
                 if (optionsFile.Directory?.Exists == false)
+                {
                     optionsFile.Directory.Create();
+                }
 
                 string fileContents = JsonSerializer.Serialize(AsSerializable());
                 File.WriteAllText(optionsFile.FullName, fileContents);
@@ -187,15 +206,18 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 if (!optionsFile.Exists)
+                {
                     return;
-
+                }
 
                 using FileStream inputStream = optionsFile.OpenRead();
                 SerializableInstallationOptions_v1? options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(inputStream);
 
                 if (options == null)
+                {
                     throw new Exception("Deserialized options cannot be null!");
-                
+                }
+
                 FromSerializable(options);
                 Logger.Debug($"InstallationOptions loaded successfully from disk for package {Package.Id}");
             }

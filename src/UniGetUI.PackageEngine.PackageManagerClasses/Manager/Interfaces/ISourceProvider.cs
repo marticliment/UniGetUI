@@ -11,7 +11,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Interfaces
         /// <param name="source">The source to add</param>
         /// <returns>An array containing the parameters to pass to the manager executable</returns>
         public abstract string[] GetAddSourceParameters(ManagerSource source);
-        
+
         /// <summary>
         /// Returns the command-line parameters required to remove the given source from the manager.
         /// </summary>

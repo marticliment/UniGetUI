@@ -4,17 +4,16 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
-using System.Diagnostics;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Pages;
+using UniGetUI.Interface.Pages.LogPage;
 using UniGetUI.Interface.SoftwarePages;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
-using Windows.ApplicationModel.UserDataTasks.DataProvider;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -35,7 +34,7 @@ namespace UniGetUI.Interface
         public InfoBadge UpdatesBadge;
         public InfoBadge BundleBadge;
         public StackPanel OperationStackPanel;
-        private readonly Dictionary<Page, NavButton> PageButtonReference = new();
+        private readonly Dictionary<Page, NavButton> PageButtonReference = [];
 
         public MainView()
         {
@@ -44,8 +43,10 @@ namespace UniGetUI.Interface
             BundleBadge = __bundle_count_badge;
             OperationStackPanel = __operations_list_stackpanel;
             DiscoverPage = new DiscoverSoftwarePage();
-            UpdatesPage = new SoftwareUpdatesPage();
-            UpdatesPage.ExternalCountBadge = UpdatesBadge;
+            UpdatesPage = new SoftwareUpdatesPage
+            {
+                ExternalCountBadge = UpdatesBadge
+            };
             InstalledPage = new InstalledPackagesPage();
             BundlesPage = new PackageBundlePage();
             SettingsPage = new SettingsInterface();
@@ -103,13 +104,25 @@ namespace UniGetUI.Interface
                     {
                         if (!IS_SHIFT_PRESSED)
                         {
-                            if (NextPageReference.ContainsKey(CurrentPage)) NextPageReference[CurrentPage].ForceClick();
-                            else DiscoverNavButton.ForceClick();
+                            if (NextPageReference.ContainsKey(CurrentPage))
+                            {
+                                NextPageReference[CurrentPage].ForceClick();
+                            }
+                            else
+                            {
+                                DiscoverNavButton.ForceClick();
+                            }
                         }
                         else
                         {
-                            if (PreviousTabReference.ContainsKey(CurrentPage)) PreviousTabReference[CurrentPage].ForceClick();
-                            else DiscoverNavButton.ForceClick();
+                            if (PreviousTabReference.ContainsKey(CurrentPage))
+                            {
+                                PreviousTabReference[CurrentPage].ForceClick();
+                            }
+                            else
+                            {
+                                DiscoverNavButton.ForceClick();
+                            }
                         }
                     }
                 }
@@ -160,7 +173,10 @@ namespace UniGetUI.Interface
         {
 
             foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
+            {
                 button.ToggleButton.IsChecked = false;
+            }
+
             MoreNavButton.ToggleButton.IsChecked = true;
 
             (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
@@ -169,7 +185,9 @@ namespace UniGetUI.Interface
             MoreNavButtonMenu.Closed += (s, e) =>
             {
                 foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
-                    button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage ?? DiscoverPage]);
+                {
+                    button.ToggleButton.IsChecked = button == PageButtonReference[CurrentPage ?? DiscoverPage];
+                }
             };
         }
 
@@ -190,21 +208,28 @@ namespace UniGetUI.Interface
             AboutDialog.PrimaryButtonText = CoreTools.Translate("Close");
             AboutPage.Close += (s, e) => { AboutDialog.Hide(); };
             foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
+            {
                 button.ToggleButton.IsChecked = false;
+            }
 
             await MainApp.Instance.MainWindow.ShowDialogAsync(AboutDialog);
 
             AboutDialog.Content = null;
             foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
-                button.ToggleButton.IsChecked = (button == PageButtonReference[CurrentPage ?? DiscoverPage]);
+            {
+                button.ToggleButton.IsChecked = button == PageButtonReference[CurrentPage ?? DiscoverPage];
+            }
+
             AboutDialog = null;
         }
 
         public async Task ManageIgnoredUpdatesDialog()
         {
-            ContentDialog? UpdatesDialog = new();
-            UpdatesDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            UpdatesDialog.XamlRoot = XamlRoot;
+            ContentDialog? UpdatesDialog = new()
+            {
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                XamlRoot = XamlRoot
+            };
             UpdatesDialog.Resources["ContentDialogMaxWidth"] = 1200;
             UpdatesDialog.Resources["ContentDialogMaxHeight"] = 1000;
             UpdatesDialog.SecondaryButtonText = CoreTools.Translate("Close");
@@ -224,18 +249,21 @@ namespace UniGetUI.Interface
         }
 
         public async Task<ContentDialogResult> ShowOperationFailedDialog(
-            IEnumerable<string> processOutput, 
-            string dialogTitle, 
+            IEnumerable<string> processOutput,
+            string dialogTitle,
             string shortDescription)
         {
-            ContentDialog dialog = new();
-            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.XamlRoot = XamlRoot;
+            ContentDialog dialog = new()
+            {
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                XamlRoot = XamlRoot
+            };
             dialog.Resources["ContentDialogMaxWidth"] = 850;
             dialog.Resources["ContentDialogMaxHeight"] = 800;
             dialog.Title = dialogTitle;
 
-            Grid grid = new() { 
+            Grid grid = new()
+            {
                 RowSpacing = 16,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
@@ -251,33 +279,38 @@ namespace UniGetUI.Interface
                         + CoreTools.Translate("Please see the Command-line Output or refer to the Operation History for further information about the issue.")
             };
 
-            StackPanel HeaderPanel = new() { 
-                Orientation = Orientation.Horizontal, 
-                Spacing = 8 
+            StackPanel HeaderPanel = new()
+            {
+                Orientation = Orientation.Horizontal,
+                Spacing = 8
             };
-            
-            HeaderPanel.Children.Add(new LocalIcon("console") { 
-                VerticalAlignment = VerticalAlignment.Center, 
-                Height = 24, 
-                Width = 24, 
-                HorizontalAlignment = HorizontalAlignment.Left 
+
+            HeaderPanel.Children.Add(new LocalIcon("console")
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+                Height = 24,
+                Width = 24,
+                HorizontalAlignment = HorizontalAlignment.Left
             });
-            
-            HeaderPanel.Children.Add(new TextBlock { 
-                Text = CoreTools.Translate("Command-line Output"), 
-                HorizontalAlignment = HorizontalAlignment.Center, 
-                VerticalAlignment = VerticalAlignment.Center 
+
+            HeaderPanel.Children.Add(new TextBlock
+            {
+                Text = CoreTools.Translate("Command-line Output"),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
             });
 
 
-            RichTextBlock CommandLineOutput = new() { 
-                FontFamily = new FontFamily("Consolas"), 
+            RichTextBlock CommandLineOutput = new()
+            {
+                FontFamily = new FontFamily("Consolas"),
                 TextWrapping = TextWrapping.Wrap,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
-            ScrollViewer ScrollView = new() {
+            ScrollViewer ScrollView = new()
+            {
                 BorderBrush = new SolidColorBrush(),
                 Content = CommandLineOutput,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -302,9 +335,12 @@ namespace UniGetUI.Interface
 
             Paragraph par = new();
             foreach (string line in processOutput)
+            {
                 par.Inlines.Add(new Run { Text = line + "\x0a" });
+            }
+
             CommandLineOutput.Blocks.Add(par);
-            
+
             grid.Children.Add(headerContent);
             grid.Children.Add(expander);
             Grid.SetRow(headerContent, 0);
@@ -317,11 +353,13 @@ namespace UniGetUI.Interface
 
             return await MainApp.Instance.MainWindow.ShowDialogAsync(dialog);
         }
-        
+
         public async void WarnAboutAdminRights()
         {
-            ContentDialog AdminDialog = new();
-            AdminDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            ContentDialog AdminDialog = new()
+            {
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
+            };
 
             while (XamlRoot == null)
             {
@@ -341,19 +379,30 @@ namespace UniGetUI.Interface
         {
             InstallOptionsPage OptionsPage = new(package, Operation);
 
-            ContentDialog? OptionsDialog = new();
-            OptionsDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            OptionsDialog.XamlRoot = XamlRoot;
+            ContentDialog? OptionsDialog = new()
+            {
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                XamlRoot = XamlRoot
+            };
             OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
             if (Operation == OperationType.Install)
+            {
                 OptionsDialog.SecondaryButtonText = CoreTools.Translate("Install");
+            }
             else if (Operation == OperationType.Update)
+            {
                 OptionsDialog.SecondaryButtonText = CoreTools.Translate("Update");
+            }
             else if (Operation == OperationType.Uninstall)
+            {
                 OptionsDialog.SecondaryButtonText = CoreTools.Translate("Uninstall");
+            }
             else
+            {
                 OptionsDialog.SecondaryButtonText = "";
+            }
+
             OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
             OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
@@ -374,9 +423,11 @@ namespace UniGetUI.Interface
         {
             InstallOptionsPage OptionsPage = new(package, options);
 
-            ContentDialog? OptionsDialog = new();
-            OptionsDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            OptionsDialog.XamlRoot = XamlRoot;
+            ContentDialog? OptionsDialog = new()
+            {
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                XamlRoot = XamlRoot
+            };
             OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
             OptionsDialog.SecondaryButtonText = "";
@@ -407,25 +458,32 @@ namespace UniGetUI.Interface
             foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
             {
 
-                button.ToggleButton.IsChecked = (button == PageButtonReference[TargetPage]);
+                button.ToggleButton.IsChecked = button == PageButtonReference[TargetPage];
             }
 
             foreach (Page page in PageButtonReference.Keys)
+            {
                 page.Visibility = (page == TargetPage) ? Visibility.Visible : Visibility.Collapsed;
+            }
 
             OldPage = CurrentPage;
             CurrentPage = TargetPage;
 
             (CurrentPage as AbstractPackagesPage)?.FocusPackageList();
-            if (CurrentPage == BundlesPage) BundlesPage.PackageList.Focus(FocusState.Programmatic);
+            if (CurrentPage == BundlesPage)
+            {
+                BundlesPage.PackageList.Focus(FocusState.Programmatic);
+            }
         }
 
         private async void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
         {
 
-            ContentDialog? NotesDialog = new();
-            NotesDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            NotesDialog.XamlRoot = XamlRoot;
+            ContentDialog? NotesDialog = new()
+            {
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                XamlRoot = XamlRoot
+            };
             NotesDialog.Resources["ContentDialogMaxWidth"] = 12000;
             NotesDialog.Resources["ContentDialogMaxHeight"] = 10000;
             NotesDialog.CloseButtonText = CoreTools.Translate("Close");
@@ -449,9 +507,11 @@ namespace UniGetUI.Interface
         {
             PackageDetailsPage? DetailsPage = new(package, ActionOperation);
 
-            ContentDialog? DetailsDialog = new();
-            DetailsDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            DetailsDialog.XamlRoot = XamlRoot;
+            ContentDialog? DetailsDialog = new()
+            {
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                XamlRoot = XamlRoot
+            };
             DetailsDialog.Resources["ContentDialogMaxWidth"] = 8000;
             DetailsDialog.Resources["ContentDialogMaxHeight"] = 4000;
             DetailsDialog.Content = DetailsPage;
@@ -475,45 +535,54 @@ namespace UniGetUI.Interface
 
         public async Task<bool> ConfirmUninstallation(Package package)
         {
-            ContentDialog dialog = new();
-
-            dialog.XamlRoot = XamlRoot;
-            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.Title = CoreTools.Translate("Are you sure?");
-            dialog.PrimaryButtonText = CoreTools.Translate("No");
-            dialog.SecondaryButtonText = CoreTools.Translate("Yes");
-            dialog.DefaultButton = ContentDialogButton.Primary;
-            dialog.Content = CoreTools.Translate("Do you really want to uninstall {0}?", package.Name);
+            ContentDialog dialog = new()
+            {
+                XamlRoot = XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                Title = CoreTools.Translate("Are you sure?"),
+                PrimaryButtonText = CoreTools.Translate("No"),
+                SecondaryButtonText = CoreTools.Translate("Yes"),
+                DefaultButton = ContentDialogButton.Primary,
+                Content = CoreTools.Translate("Do you really want to uninstall {0}?", package.Name)
+            };
 
             return await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary;
         }
 
         public async Task<bool> ConfirmUninstallation(IEnumerable<Package> packages)
         {
-            if (packages.Count() == 0) return false;
+            if (packages.Count() == 0)
+            {
+                return false;
+            }
+
             if (packages.Count() == 1)
             {
                 return await ConfirmUninstallation(packages.First());
             }
 
-            ContentDialog dialog = new();
-
-            dialog.XamlRoot = XamlRoot;
-            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-            dialog.Title = CoreTools.Translate("Are you sure?");
-            dialog.PrimaryButtonText = CoreTools.Translate("No");
-            dialog.SecondaryButtonText = CoreTools.Translate("Yes");
-            dialog.DefaultButton = ContentDialogButton.Primary;
+            ContentDialog dialog = new()
+            {
+                XamlRoot = XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                Title = CoreTools.Translate("Are you sure?"),
+                PrimaryButtonText = CoreTools.Translate("No"),
+                SecondaryButtonText = CoreTools.Translate("Yes"),
+                DefaultButton = ContentDialogButton.Primary
+            };
 
             StackPanel p = new();
-            p.Children.Add(new TextBlock { 
-                Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?", packages.Count()), 
-                Margin = new Thickness(0, 0, 0, 5) 
+            p.Children.Add(new TextBlock
+            {
+                Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?", packages.Count()),
+                Margin = new Thickness(0, 0, 0, 5)
             });
 
             string pkgList = "";
             foreach (Package package in packages)
+            {
                 pkgList += " ● " + package.Name + "\x0a";
+            }
 
             TextBlock PackageListTextBlock = new() { FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Consolas"), Text = pkgList };
             p.Children.Add(new ScrollView { Content = PackageListTextBlock, MaxHeight = 200 });
@@ -525,17 +594,17 @@ namespace UniGetUI.Interface
 
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
         {
-            NavigateToPage(new Logger_LogPage(Logger_LogType.OperationHistory));
+            NavigateToPage(new OperationHistoryPage());
         }
 
         private void ManagerLogsMenu_Click(object sender, RoutedEventArgs e)
         {
-            NavigateToPage(new Logger_LogPage(Logger_LogType.ManagerLogs));
+            NavigateToPage(new ManagerLogsPage());
         }
 
         public void UniGetUILogs_Click(object sender, RoutedEventArgs e)
         {
-            NavigateToPage(new Logger_LogPage(Logger_LogType.UniGetUILog));
+            NavigateToPage(new AppLogPage());
         }
 
         private void HelpMenu_Click(object sender, RoutedEventArgs e)
@@ -545,7 +614,10 @@ namespace UniGetUI.Interface
         public void ShowHelp()
         {
             if (HelpPage == null)
+            {
                 HelpPage = new HelpDialog();
+            }
+
             NavigateToPage(HelpPage);
         }
 

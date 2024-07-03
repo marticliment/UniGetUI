@@ -14,21 +14,23 @@ namespace UniGetUI.PackageEngine.Classes
     public class SerializableBundle_v1
     {
         public double export_version { get; set; } = 2.0;
-        public List<SerializableValidPackage_v1> packages { get; set; } = new();
+        public List<SerializableValidPackage_v1> packages { get; set; } = [];
         public string incompatible_packages_info { get; set; } = "Incompatible packages cannot be installed from WingetUI, but they have been listed here for logging purposes.";
-        public List<SerializableIncompatiblePackage_v1> incompatible_packages { get; set; } = new();
+        public List<SerializableIncompatiblePackage_v1> incompatible_packages { get; set; } = [];
 
     }
-    
+
     public class SerializableUpdatesOptions_v1
     {
         public bool UpdatesIgnored { get; set; } = false;
         public string IgnoredVersion { get; set; } = "";
         public static async Task<SerializableUpdatesOptions_v1> FromPackageAsync(Package package)
         {
-            SerializableUpdatesOptions_v1 Serializable = new();
-            Serializable.UpdatesIgnored = await package.HasUpdatesIgnoredAsync();
-            Serializable.IgnoredVersion = await package.GetIgnoredUpdatesVersionAsync();
+            SerializableUpdatesOptions_v1 Serializable = new()
+            {
+                UpdatesIgnored = await package.HasUpdatesIgnoredAsync(),
+                IgnoredVersion = await package.GetIgnoredUpdatesVersionAsync()
+            };
             return Serializable;
         }
     }
@@ -44,7 +46,7 @@ namespace UniGetUI.PackageEngine.Classes
         public SerializableUpdatesOptions_v1 Updates { get; set; } = new();
     }
 
-    
+
 
     public class SerializableIncompatiblePackage_v1
     {
@@ -56,7 +58,7 @@ namespace UniGetUI.PackageEngine.Classes
 
 
 
-    
+
 
     public class BundledPackage : INotifyPropertyChanged, IIndexableListItem
     {
@@ -95,9 +97,13 @@ namespace UniGetUI.PackageEngine.Classes
             get
             {
                 if (UpdateOptions == null || !UpdateOptions.UpdatesIgnored)
+                {
                     return CoreTools.Translate("Latest");
+                }
                 else
+                {
                     return Package.Version;
+                }
             }
         }
 
@@ -153,24 +159,28 @@ namespace UniGetUI.PackageEngine.Classes
 
         public virtual SerializableValidPackage_v1 AsSerializable()
         {
-            SerializableValidPackage_v1 Serializable = new();
-            Serializable.Id = Id;
-            Serializable.Name = Name;
-            Serializable.Version = Package.Version;
-            Serializable.Source = Package.Source.Name;
-            Serializable.ManagerName = Package.Manager.Name;
-            Serializable.InstallationOptions = InstallOptions.AsSerializable();
-            Serializable.Updates = UpdateOptions;
+            SerializableValidPackage_v1 Serializable = new()
+            {
+                Id = Id,
+                Name = Name,
+                Version = Package.Version,
+                Source = Package.Source.Name,
+                ManagerName = Package.Manager.Name,
+                InstallationOptions = InstallOptions.AsSerializable(),
+                Updates = UpdateOptions
+            };
             return Serializable;
         }
 
         public virtual SerializableIncompatiblePackage_v1 AsSerializable_Incompatible()
         {
-            SerializableIncompatiblePackage_v1 Serializable = new();
-            Serializable.Id = Id;
-            Serializable.Name = Name;
-            Serializable.Version = version;
-            Serializable.Source = SourceAsString;
+            SerializableIncompatiblePackage_v1 Serializable = new()
+            {
+                Id = Id,
+                Name = Name,
+                Version = version,
+                Source = SourceAsString
+            };
             return Serializable;
         }
 
@@ -220,7 +230,10 @@ namespace UniGetUI.PackageEngine.Classes
             get
             {
                 if (__source == "")
+                {
                     return __manager;
+                }
+
                 return __manager + ": " + __source;
             }
         }
@@ -278,11 +291,13 @@ namespace UniGetUI.PackageEngine.Classes
         }
         public override SerializableIncompatiblePackage_v1 AsSerializable_Incompatible()
         {
-            SerializableIncompatiblePackage_v1 Serializable = new();
-            Serializable.Id = Id;
-            Serializable.Name = Name;
-            Serializable.Version = version;
-            Serializable.Source = SourceAsString;
+            SerializableIncompatiblePackage_v1 Serializable = new()
+            {
+                Id = Id,
+                Name = Name,
+                Version = version,
+                Source = SourceAsString
+            };
             return Serializable;
         }
 

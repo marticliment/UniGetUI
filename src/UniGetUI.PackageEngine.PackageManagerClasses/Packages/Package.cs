@@ -25,14 +25,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         private PackageDetails? __details = null;
         public PackageDetails Details
-        { 
+        {
             get => __details ??= new PackageDetails(this);
         }
 
         public PackageTag Tag
         {
-            get  => __tag;
-            set {
+            get => __tag;
+            set
+            {
                 __tag = value;
                 OnPropertyChanged(nameof(Tag));
             }
@@ -77,7 +78,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             NewVersion = "";
             Tag = PackageTag.Default;
             SourceAsString = source.ToString();
-            AutomationName = CoreTools.Translate("Package {name} from {manager}", new Dictionary<string, object?> { {"name", Name },{ "manager", SourceAsString } });
+            AutomationName = CoreTools.Translate("Package {name} from {manager}", new Dictionary<string, object?> { { "name", Name }, { "manager", SourceAsString } });
             __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id);
             __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version);
             IsUpgradable = false;
@@ -156,7 +157,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <param name="other">A package</param>
         /// <returns>Wether the two instances refer to the same instance</returns>
         public bool IsEquivalentTo(Package? other)
-        { 
+        {
             return __hash == other?.__hash;
         }
 
@@ -166,13 +167,20 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns>a string with the package's normalized icon id</returns>
         public string GetIconId()
         {
-            string iconId = Id.ToLower(); 
+            string iconId = Id.ToLower();
             if (Manager.Name == "Winget")
+            {
                 iconId = string.Join('.', iconId.Split(".")[1..]);
+            }
             else if (Manager.Name == "Chocolatey")
+            {
                 iconId = iconId.Replace(".install", "").Replace(".portable", "");
+            }
             else if (Manager.Name == "Scoop")
+            {
                 iconId = iconId.Replace(".app", "");
+            }
+
             return iconId;
         }
 
@@ -192,9 +200,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 Uri Icon;
                 if (path == "")
+                {
                     Icon = new Uri("ms-appx:///Assets/Images/package_color.png");
+                }
                 else
+                {
                     Icon = new Uri("file:///" + path);
+                }
 
                 Logger.Debug($"Icon for package {Id} was loaded from {Icon}");
                 return Icon;
@@ -228,13 +240,17 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
-                if (IgnoredUpdatesJson == null)
+                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
+                {
                     throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                }
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
+                {
                     IgnoredUpdatesJson.Remove(IgnoredId);
+                }
+
                 IgnoredUpdatesJson.Add(IgnoredId, version);
                 await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
                 GetInstalledPackage()?.SetTag(PackageTag.Pinned);
@@ -254,12 +270,12 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             try
             {
-
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
-                if (IgnoredUpdatesJson == null)
+                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
+                {
                     throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                }
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
                 {
@@ -289,15 +305,20 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
-                if (IgnoredUpdatesJson == null)
+                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
+                {
                     throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                }
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId) && (IgnoredUpdatesJson[IgnoredId]?.ToString() == "*" || IgnoredUpdatesJson[IgnoredId]?.ToString() == Version))
+                {
                     return true;
+                }
                 else
+                {
                     return false;
+                }
             }
             catch (Exception ex)
             {
@@ -319,15 +340,20 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
-                if (IgnoredUpdatesJson == null)
+                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
+                {
                     throw new Exception("The IgnoredUpdates database seems to be invalid!");
-                
+                }
+
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
+                {
                     return IgnoredUpdatesJson[IgnoredId]?.ToString() ?? "";
+                }
                 else
+                {
                     return "";
+                }
             }
             catch (Exception ex)
             {
@@ -385,7 +411,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public bool NewerVersionIsInstalled()
         {
-            if(!IsUpgradable) return false;
+            if (!IsUpgradable)
+            {
+                return false;
+            }
+
             return PackageCacher.NewerVersionIsInstalled(this);
         }
 

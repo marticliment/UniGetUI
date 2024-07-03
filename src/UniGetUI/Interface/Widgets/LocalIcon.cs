@@ -9,7 +9,7 @@ namespace UniGetUI.Interface.Widgets
         private bool __registered_theme_event = false;
         public DependencyProperty IconNameProperty;
 
-        private static readonly Dictionary<string, BitmapImage> bitmap_cache = new();
+        private static readonly Dictionary<string, BitmapImage> bitmap_cache = [];
 
         public string IconName
         {
@@ -56,14 +56,16 @@ namespace UniGetUI.Interface.Widgets
             }
 
             string image_file = $"{IconName}_{theme}.png";
-            if(bitmap_cache.TryGetValue(image_file, out BitmapImage? recycled_image) && recycled_image != null)
+            if (bitmap_cache.TryGetValue(image_file, out BitmapImage? recycled_image) && recycled_image != null)
             {
                 Source = recycled_image;
             }
             else
             {
-                BitmapImage image = new();
-                image.UriSource = new Uri($"ms-appx:///Assets/Images/{image_file}");
+                BitmapImage image = new()
+                {
+                    UriSource = new Uri($"ms-appx:///Assets/Images/{image_file}")
+                };
                 bitmap_cache.Add(image_file, image);
                 Source = image;
             }

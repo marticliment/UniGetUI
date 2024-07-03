@@ -20,10 +20,14 @@ namespace UniGetUI.PackageEngine.PackageLoader
         protected override async Task<bool> IsPackageValid(Package package)
         {
             if (await package.HasUpdatesIgnoredAsync(package.NewVersion))
+            {
                 return false;
+            }
 
             if (package.IsUpgradable && package.NewerVersionIsInstalled())
+            {
                 return false;
+            }
 
             return true;
         }
@@ -61,9 +65,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
                     UpdatesTimer.Dispose();
                 }
 
-                UpdatesTimer = new System.Timers.Timer(waitTime * 1000);
-                UpdatesTimer.Enabled = false;
-                UpdatesTimer.AutoReset = false;
+                UpdatesTimer = new System.Timers.Timer(waitTime * 1000)
+                {
+                    Enabled = false,
+                    AutoReset = false
+                };
                 UpdatesTimer.Elapsed += (s, e) => _ = ReloadPackages();
                 UpdatesTimer.Start();
             }

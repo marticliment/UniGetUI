@@ -43,11 +43,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
         private int LoadOperationIdentifier = 0;
         protected IEnumerable<PackageManager> Managers { get; private set; }
 
-        public AbstractPackageLoader(IEnumerable<PackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false) 
+        public AbstractPackageLoader(IEnumerable<PackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false)
         {
             Managers = managers;
-            Packages = new ObservableCollection<Package>();
-            PackageReference = new Dictionary<long, Package>();
+            Packages = [];
+            PackageReference = [];
             IsLoaded = false;
             IsLoading = false;
             LOADER_IDENTIFIER = identifier;
@@ -56,12 +56,15 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <summary>
         /// Stops the current loading process
         /// </summary>
-        public void StopLoading()
+        public void StopLoading(bool emitFinishSignal = true) 
         {
             LoadOperationIdentifier = -1;
             IsLoaded = false;
             IsLoading = false;
-            FinishedLoading?.Invoke(this, EventArgs.Empty);
+            if (emitFinishSignal)
+            {
+                FinishedLoading?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -70,13 +73,13 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <returns></returns>
         public virtual async Task ReloadPackages()
         {
-            ClearPackages();
+            ClearPackages(emitFinishSignal: false);
             LoadOperationIdentifier = new Random().Next();
             int current_identifier = LoadOperationIdentifier;
             IsLoading = true;
             StartedLoading?.Invoke(this, new EventArgs());
 
-            List<Task<Package[]>> tasks = new();
+            List<Task<Package[]>> tasks = [];
 
             foreach (PackageManager manager in Managers)
             {
@@ -92,7 +95,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 foreach (Task<Package[]> task in tasks.ToArray())
                 {
                     if (!task.IsCompleted)
+                    {
                         await Task.Delay(100);
+                    }
 
                     if (task.IsCompleted)
                     {
@@ -102,7 +107,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
                             foreach (Package package in task.Result)
                             {
                                 if (Contains(package) || !await IsPackageValid(package))
+                                {
                                     continue;
+                                }
 
                                 AddPackage(package);
                                 await WhenAddingPackage(package);
@@ -126,9 +133,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <summary>
         /// Resets the packages available on the loader
         /// </summary>
-        public void ClearPackages()
+        public void ClearPackages(bool emitFinishSignal = true)
         {
-            StopLoading();
+            StopLoading(emitFinishSignal);
             Packages.Clear();
             PackageReference.Clear();
             IsLoaded = false;
@@ -179,7 +186,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         protected void AddPackage(Package package)
         {
-            if(Contains(package))
+            if (Contains(package))
             {
                 Logger.Error($"ABORTED (Package loader {LOADER_IDENTIFIER}): Internally trying to add package {package.Id} was already found in PackageHash!");
                 return;
@@ -195,8 +202,16 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <param name="package">The package to add</param>
         public void AddForeign(Package? package)
         {
-            if(package == null) return;
-            if(Contains(package)) return;
+            if (package == null)
+            {
+                return;
+            }
+
+            if (Contains(package))
+            {
+                return;
+            }
+
             AddPackage(package);
             PackagesChanged?.Invoke(this, new EventArgs());
         }
@@ -207,8 +222,16 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <param name="package"></param>
         public void Remove(Package? package)
         {
-            if (package == null) return;
-            if (!Contains(package)) return;
+            if (package == null)
+            {
+                return;
+            }
+
+            if (!Contains(package))
+            {
+                return;
+            }
+
             Packages.Remove(package);
             PackageReference.Remove(HashPackage(package));
             PackagesChanged?.Invoke(this, new EventArgs());
@@ -222,8 +245,16 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <returns>A Package? object</returns>
         public Package? GetEquivalentPackage(Package? package)
         {
-            if(package == null) return null;
-            if(!Contains(package)) return null;
+            if (package == null)
+            {
+                return null;
+            }
+
+            if (!Contains(package))
+            {
+                return null;
+            }
+
             return PackageReference[HashPackage(package)];
         }
 
@@ -235,8 +266,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <returns>A IEnumerable<Package> object</returns>
         public IEnumerable<Package> GetEquivalentPackages(Package? package)
         {
-            if (package == null) return [];
-            List<Package> result = new();
+            if (package == null)
+            {
+                return [];
+            }
+
+            List<Package> result = [];
             long hash_to_match = package.GetHash();
             foreach (Package local_package in Packages)
             {
@@ -251,8 +286,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public Package? GetPackageForId(string id, string? sourceName = null)
         {
             foreach (Package package in Packages)
+            {
                 if (package.Id == id && (sourceName == null || package.Source.Name == sourceName))
+                {
                     return package;
+                }
+            }
 
             return null;
         }
