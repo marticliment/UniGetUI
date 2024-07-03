@@ -234,7 +234,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
 
                 Get-WinGetPackage | Print-WinGetPackage
-                
+
 
                 exit
 
@@ -391,7 +391,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             parameters.Add("--accept-source-agreements");
-                
+
             parameters.AddRange(options.InstallationScope switch
                 {
                     PackageScope.Local => ["--scope", "user"],
@@ -399,7 +399,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     _ => []
                 }
             );
-            
+
             if (options.Version != "")
             {
                 parameters.AddRange(["--version", $"\"{options.Version}\"", "--force"]);
@@ -493,7 +493,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             };
             process.Start();
-            status.Version = "Naive WinGet CLI Version: " + (await process.StandardOutput.ReadToEndAsync()).Trim();
+            status.Version = "Native WinGet CLI Version: " + (await process.StandardOutput.ReadToEndAsync()).Trim();
             string error = await process.StandardError.ReadToEndAsync();
             if (error != "")
             {
