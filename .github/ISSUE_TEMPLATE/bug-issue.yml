@@ -25,14 +25,14 @@ body:
       required: true
   - type: input
     attributes:
-      label: Windows version, edition and architecture
+      label: Windows version, edition, and architecture
       placeholder: Windows 11 Pro 10.0.22000.0 x64
     validations:
       required: true
   - type: textarea
     attributes:
       label: Describe your issue
-      placeholder: Explain the issue you are experiencing, providing as many details as possible about it.
+      placeholder: Explain the issue you are experiencing, providing as many details as possible.
     validations:
       required: true
   - type: textarea
