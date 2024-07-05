@@ -14,7 +14,8 @@ Check out the [Supported Package Managers Table](#supported-package-managers) fo
 **Disclaimer:** This project has no connection with any supported package managers — it's completely unofficial. Be aware that I, the developer of UniGetUI, am NOT responsible for the downloaded software. Proceed with caution
 
 ![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fmarticliment.com%2Fresources%2Fbadges%2Fdev-status.json)
- 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/marticliment/WingetUI/dotnet-test.yml?branch=main&style=for-the-badge&label=Tests)
+
 ## Table of contents
  - **[UniGetUI Homepage](https://www.marticliment.com/unigetui/)**
  - [Table of contents](#table-of-contents)
