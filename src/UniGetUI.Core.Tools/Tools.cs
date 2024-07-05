@@ -90,8 +90,8 @@ namespace UniGetUI.Core.Tools
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(437),
-                    StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(437),
+                    StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
+                    StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
                 }
             };
             process.Start();
