@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
@@ -126,7 +127,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
                     StandardOutputEncoding = System.Text.Encoding.UTF8,
-                    StandardInputEncoding = System.Text.Encoding.UTF8,
+                    StandardInputEncoding = new UTF8Encoding(false),
                     StandardErrorEncoding = System.Text.Encoding.UTF8,
                 }
             };
@@ -208,8 +209,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
                     StandardOutputEncoding = System.Text.Encoding.UTF8,
-                    StandardInputEncoding = System.Text.Encoding.UTF8,
                     StandardErrorEncoding = System.Text.Encoding.UTF8,
+                    StandardInputEncoding = new UTF8Encoding(false),
                 }
             };
 
