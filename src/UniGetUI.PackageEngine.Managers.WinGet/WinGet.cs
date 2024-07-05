@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
@@ -24,9 +25,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         private LocalWingetSource GOGSource { get; set; }
         private LocalWingetSource MicrosoftStoreSource { get; set; }
 
-        private readonly string PowerShellPath;
-        private readonly string PowerShellPromptArgs;
-        private readonly string PowerShellInlineArgs;
+        public readonly string PowerShellPath;
+        public readonly string PowerShellPromptArgs;
+        public readonly string PowerShellInlineArgs;
 
         public WinGet() : base()
         {
@@ -114,21 +115,21 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             List<Package> Packages = [];
-
+            
             Process p = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName = PowerShellPath,
-                    Arguments = PowerShellPromptArgs,
+                    FileName = "cmd.exe",
+                    Arguments = "/C " + PowerShellPath + " " + PowerShellPromptArgs,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
                     StandardInputEncoding = new UTF8Encoding(false),
-                    StandardErrorEncoding = System.Text.Encoding.UTF8,
+                    StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
                 }
             };
 
@@ -196,21 +197,20 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
-
             Process p = new()
             {
                 StartInfo = new ProcessStartInfo()
-                {
-                    FileName = PowerShellPath,
-                    Arguments = PowerShellPromptArgs,
+                {                    
+                    FileName = "cmd.exe",
+                    Arguments = "/C " + PowerShellPath + " " + PowerShellPromptArgs,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8,
-                    StandardErrorEncoding = System.Text.Encoding.UTF8,
+                    StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
                     StandardInputEncoding = new UTF8Encoding(false),
+                    StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
                 }
             };
 
