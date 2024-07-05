@@ -119,16 +119,16 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName = PowerShellPath,
-                    Arguments = PowerShellPromptArgs,
+                    FileName = "cmd.exe",
+                    Arguments = "/C " + PowerShellPath + " " + PowerShellPromptArgs,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(437),
                     StandardInputEncoding = new UTF8Encoding(false),
-                    StandardErrorEncoding = System.Text.Encoding.UTF8,
+                    StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(437),
                 }
             };
 
@@ -196,21 +196,20 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
-
             Process p = new()
             {
                 StartInfo = new ProcessStartInfo()
-                {
-                    FileName = PowerShellPath,
-                    Arguments = PowerShellPromptArgs,
+                {                    
+                    FileName = "cmd.exe",
+                    Arguments = "/C " + PowerShellPath + " " + PowerShellPromptArgs,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8,
-                    StandardErrorEncoding = System.Text.Encoding.UTF8,
+                    StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(437),
                     StandardInputEncoding = new UTF8Encoding(false),
+                    StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(437),
                 }
             };
 
