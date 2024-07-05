@@ -7,7 +7,7 @@ namespace UniGetUI.Core.Data
 {
     public static class CoreData
     {
-        private static int? __code_page = null;
+        private static int? __code_page;
         public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
         
         private static int GetCodePage()
