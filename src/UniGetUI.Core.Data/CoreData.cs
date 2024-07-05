@@ -6,6 +6,8 @@ namespace UniGetUI.Core.Data
 {
     public static class CoreData
     {
+        public const int CODE_PAGE = 0;
+        
         public const string VersionName =  "3.1.0"; // Do not modify this line, use file scripts/apply_versions.py
         public const double VersionNumber =  3.1; // Do not modify this line, use file scripts/apply_versions.py
 
