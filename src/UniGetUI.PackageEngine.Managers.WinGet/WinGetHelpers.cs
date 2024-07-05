@@ -1,5 +1,6 @@
 ﻿using Microsoft.Management.Deployment;
 using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
@@ -428,13 +429,16 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName = "powershell.exe",
+                    FileName = "cmd.exe",
+                    Arguments = "/C " + ManagerInstance.PowerShellPath + " " + ManagerInstance.PowerShellPromptArgs,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                    StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
+                    StandardInputEncoding = new UTF8Encoding(false),
+                    StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
                 }
             };
 
@@ -443,7 +447,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             ManagerClasses.Classes.ProcessTaskLogger logger = ManagerInstance.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
             string command = """
-                Set-ExecutionPolicy Bypass -Scope Process -Force
+                Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
+                Import-Module Microsoft.WinGet.Client
                 function Print-WinGetPackage {
                     param (
                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,

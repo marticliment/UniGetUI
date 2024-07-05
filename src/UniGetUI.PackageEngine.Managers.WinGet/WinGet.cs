@@ -122,21 +122,21 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return await BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(this);
             
             List<Package> Packages = [];
-
+            
             Process p = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName = PowerShellPath,
-                    Arguments = PowerShellPromptArgs,
+                    FileName = "cmd.exe",
+                    Arguments = "/C " + PowerShellPath + " " + PowerShellPromptArgs,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
                     StandardInputEncoding = new UTF8Encoding(false),
-                    StandardErrorEncoding = System.Text.Encoding.UTF8,
+                    StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
                 }
             };
 
@@ -215,21 +215,20 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return await BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(this);
             
             List<Package> Packages = [];
-
             Process p = new()
             {
                 StartInfo = new ProcessStartInfo()
-                {
-                    FileName = PowerShellPath,
-                    Arguments = PowerShellPromptArgs,
+                {                    
+                    FileName = "cmd.exe",
+                    Arguments = "/C " + PowerShellPath + " " + PowerShellPromptArgs,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8,
-                    StandardErrorEncoding = System.Text.Encoding.UTF8,
+                    StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
                     StandardInputEncoding = new UTF8Encoding(false),
+                    StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
                 }
             };
 
