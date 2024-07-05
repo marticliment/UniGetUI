@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
@@ -343,7 +344,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             List<string> output = [];
             ProcessStartInfo startInfo = new()
             {
-                FileName = Path.Join(CoreData.UniGetUIExecutableDirectory, "winget-cli_x64", "winget.exe"),
+                FileName = ManagerInstance.WinGetBundledPath,
                 Arguments = ManagerInstance.Properties.ExecutableCallArgs + " show --id " + details.Package.Id + " --exact --disable-interactivity --accept-source-agreements --source " + details.Package.Source.Name,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -411,14 +412,16 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
     internal class BundledWinGetHelper : IWinGetPackageHelper
     {
 
-        private readonly string WinGetBundledPath;
         public BundledWinGetHelper()
         {
-            WinGetBundledPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "PackageEngine", "Managers", "winget-cli_x64", "winget.exe");
+            
         }
 
         public async Task<Package[]> FindPackages_UnSafe(WinGet ManagerInstance, string query)
         {
+            if (Settings.Get("ForceLegacyBundledWinGet"))
+                return await BundledWinGetLegacyMethods.FindPackages_UnSafe(ManagerInstance, query);
+            
             List<Package> Packages = [];
 
             Process p = new()
@@ -487,8 +490,16 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
             logger.Close(p.ExitCode);
-
-            return Packages.ToArray();
+            
+            if (Packages.Count() > 0)
+            {
+                return Packages.ToArray();
+            }
+            else
+            {
+                Logger.Warn("WinGet package fetching returned zero packages, attempting legacy..."); 
+                return await BundledWinGetLegacyMethods.FindPackages_UnSafe(ManagerInstance, query);
+            }
 
         }
 
@@ -515,7 +526,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             bool LocaleFound = true;
             ProcessStartInfo startInfo = new()
             {
-                FileName = WinGetBundledPath,
+                FileName = ManagerInstance.WinGetBundledPath,
                 Arguments = ManagerInstance.Properties.ExecutableCallArgs + " show " + packageIdentifier + " --disable-interactivity --accept-source-agreements --locale " + System.Globalization.CultureInfo.CurrentCulture.ToString(),
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -550,7 +561,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 LocaleFound = true;
                 startInfo = new()
                 {
-                    FileName = WinGetBundledPath,
+                    FileName = ManagerInstance.WinGetBundledPath,
                     Arguments = ManagerInstance.Properties.ExecutableCallArgs + " show " + packageIdentifier + " --disable-interactivity --accept-source-agreements --locale en-US",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -585,7 +596,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 process = new Process();
                 startInfo = new()
                 {
-                    FileName = WinGetBundledPath,
+                    FileName = ManagerInstance.WinGetBundledPath,
                     Arguments = ManagerInstance.Properties.ExecutableCallArgs + " show " + packageIdentifier + " --disable-interactivity --accept-source-agreements",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -722,7 +733,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName = WinGetBundledPath,
+                    FileName = ManagerInstance.WinGetBundledPath,
                     Arguments = ManagerInstance.Properties.ExecutableCallArgs + " show --id " + package.Id + " --exact --versions --accept-source-agreements",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,

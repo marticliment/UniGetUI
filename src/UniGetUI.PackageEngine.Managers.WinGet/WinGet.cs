@@ -1,7 +1,9 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
@@ -17,16 +19,17 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         new public static string[] FALSE_PACKAGE_NAMES = new string[] { "", "e(s)", "have", "the", "Id" };
         new public static string[] FALSE_PACKAGE_IDS = new string[] { "", "e(s)", "have", "an", "'winget", "pin'", "have", "an", "Version" };
         new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "have", "an", "'winget", "pin'", "have", "an", "Version" };
-        private LocalWingetSource LocalPcSource { get; set; }
-        private LocalWingetSource AndroidSubsystemSource { get; set; }
-        private LocalWingetSource SteamSource { get; set; }
-        private LocalWingetSource UbisoftConnectSource { get; set; }
-        private LocalWingetSource GOGSource { get; set; }
-        private LocalWingetSource MicrosoftStoreSource { get; set; }
+        public LocalWingetSource LocalPcSource { get; set; }
+        public LocalWingetSource AndroidSubsystemSource { get; set; }
+        public LocalWingetSource SteamSource { get; set; }
+        public LocalWingetSource UbisoftConnectSource { get; set; }
+        public LocalWingetSource GOGSource { get; set; }
+        public LocalWingetSource MicrosoftStoreSource { get; set; }
 
-        private readonly string PowerShellPath;
-        private readonly string PowerShellPromptArgs;
-        private readonly string PowerShellInlineArgs;
+        public readonly string PowerShellPath;
+        public readonly string PowerShellPromptArgs;
+        public readonly string PowerShellInlineArgs;
+        public string WinGetBundledPath;
 
         public WinGet() : base()
         {
@@ -34,6 +37,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             PowerShellPromptArgs = "-ExecutionPolicy Bypass -NoLogo -NoProfile";
             PowerShellInlineArgs = "-ExecutionPolicy Bypass -NoLogo -NoProfile -NonInteractive";
 
+            WinGetBundledPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "winget-cli_x64", "winget.exe");
+            
             Dependencies = [
                 new ManagerDependency(
                     "WinGet PowerShell Module",
@@ -113,6 +118,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
+            if (Settings.Get("ForceLegacyBundledWinGet"))
+                return await BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(this);
+            
             List<Package> Packages = [];
 
             Process p = new()
@@ -190,11 +198,22 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             await p.WaitForExitAsync();
             logger.Close(p.ExitCode);
 
-            return Packages.ToArray();
+            if (Packages.Count() > 0)
+            {
+                return Packages.ToArray();
+            }
+            else
+            {
+                Logger.Warn("WinGet updates returned zero packages, attempting legacy..."); 
+                return await BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(this);
+            }
         }
 
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
+            if (Settings.Get("ForceLegacyBundledWinGet"))
+                return await BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(this);
+            
             List<Package> Packages = [];
 
             Process p = new()
@@ -277,8 +296,16 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
             logger.Close(p.ExitCode);
-
-            return Packages.ToArray();
+            
+            if (Packages.Count() > 0)
+            {
+                return Packages.ToArray();
+            }
+            else
+            {
+                Logger.Warn("WinGet installed packages returned zero packages, attempting legacy..."); 
+                return await BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(this);
+            }
         }
 
         private ManagerSource GetLocalSource(string id)
@@ -567,7 +594,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
     }
 
-    internal class LocalWingetSource : ManagerSource
+    public class LocalWingetSource : ManagerSource
     {
         private readonly string name;
         private readonly string __icon_id;
