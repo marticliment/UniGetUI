@@ -320,10 +320,10 @@ namespace UniGetUI
 
                 foreach (ManagerDependency dependency in manager.Dependencies)
                 {
-                    bool present = true;
+                    bool isInstalled = true;
                     try
                     {
-                        present = await dependency.IsInstalled();
+                        isInstalled = await dependency.IsInstalled();
                     }
                     catch (Exception ex)
                     {
@@ -332,7 +332,7 @@ namespace UniGetUI
                         Logger.Error(ex);
                     }
 
-                    if (!present)
+                    if (!isInstalled)
                     {
                         if (Settings.Get($"SkippedInstalling{dependency.Name}"))
                         {
