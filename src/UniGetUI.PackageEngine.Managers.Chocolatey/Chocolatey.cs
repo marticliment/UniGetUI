@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
@@ -216,7 +217,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             parameters[0] = Properties.InstallVerb;
             parameters.Add("--no-progress");
 
-            if (options.Architecture == System.Runtime.InteropServices.Architecture.X86)
+            if (options.Architecture == Architecture.X86)
             {
                 parameters.Add("--forcex86");
             }
@@ -228,12 +229,12 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             if (options.SkipHashCheck)
             {
-                parameters.AddRange(new string[] { "--ignore-checksums", "--force" });
+                parameters.AddRange(["--ignore-checksums", "--force"]);
             }
 
             if (options.Version != "")
             {
-                parameters.AddRange(new string[] { "--version=" + options.Version, "--allow-downgrade" });
+                parameters.AddRange([$"--version={options.Version}", "--allow-downgrade"]);
             }
 
             return parameters.ToArray();
@@ -249,7 +250,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         {
             List<string> parameters = [Properties.UninstallVerb, package.Id, "-y"];
 
-            if (options.CustomParameters != null)
+            if (options.CustomParameters is not null)
             {
                 parameters.AddRange(options.CustomParameters);
             }
@@ -386,7 +387,14 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                     Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.User);
                 }
             }
-            Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.Process);
+
+            // Trick chocolatey into using the wanted installation
+            var choco_dir = Path.GetDirectoryName(status.ExecutablePath)?.Replace('/', '\\').Trim('\\') ?? "";
+            if (choco_dir.EndsWith("bin"))
+            {
+                choco_dir = choco_dir[..^3].Trim('\\');
+            }
+            Environment.SetEnvironmentVariable("chocolateyinstall", choco_dir, EnvironmentVariableTarget.Process);
 
             return status;
         }
