@@ -82,8 +82,8 @@ Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 #include "InstallerExtras\CustomMessages.iss"
 
 [InstallDelete]
-Type: filesandordirs; Name: "{app}\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
-Type: filesandordirs; Name: "{app}\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+Type: filesandordirs; Name: "{app}\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');  
+Type: filesandordirs; Name: "{app}\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');  
 Type: filesandordirs; Name: "{app}\wingetui\*";                                                                          
 Type: filesandordirs; Name: "{app}\toasts_winrt\*";
 Type: filesandordirs; Name: "{app}\shiboken6\*";
@@ -103,10 +103,10 @@ Type: filesandordirs; Name: "{app}\winget-cli\*";
 Type: filesandordirs; Name: "{app}\:\*";     
 
 [UninstallDelete]
-Type: filesandordirs; Name: "{userpf}\WingetUI\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');   
-Type: filesandordirs; Name: "{app}\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
-Type: filesandordirs; Name: "{app}\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
-Type: filesandordirs; Name: "{app}\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');  
+Type: filesandordirs; Name: "{userpf}\WingetUI\*"; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');   
+Type: filesandordirs; Name: "{app}\*"; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');
+Type: filesandordirs; Name: "{app}\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');  
+Type: filesandordirs; Name: "{app}\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');  
 Type: filesandordirs; Name: "{app}\wingetui\*";                                                                          
 Type: filesandordirs; Name: "{app}\toasts_winrt\*";
 Type: filesandordirs; Name: "{app}\shiboken6\*";
@@ -205,7 +205,7 @@ begin
     Result := False;
     MsgBox('There is an invalid character in the selected install location. ' +
       'Install location cannot contain special characters. ' +
-      'Please input a valid path to continue, such as '+ExpandConstant('{commonpf64}')+'\WingetUI', mbError, MB_OK);
+      'Please input a valid path to continue, such as '+ExpandConstant('{commonpf64}')+'\UniGetUI', mbError, MB_OK);
   end;
 end;
 
@@ -228,7 +228,7 @@ Name: "regularinstall\chocoinstall"; Description: "{cm:ChocoInstall}"; GroupDesc
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue; Tasks: regularinstall
 
 [Files]
-Source: "unigetui_bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'winget.exe', 'choco.exe');
+Source: "unigetui_bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');
 Source: "unigetui_bin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
 Source: "src\UniGetUI.PackageEngine.Managers.Chocolatey\choco-cli\*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall\chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
 Source: "InstallerExtras\EnsureWinGet.ps1"; DestDir: "{tmp}"; Flags: deleteafterinstall
