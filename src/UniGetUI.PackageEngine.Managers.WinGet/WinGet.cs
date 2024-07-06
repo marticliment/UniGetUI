@@ -16,9 +16,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
     public class WinGet : PackageManager
     {
-        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "", "e(s)", "have", "the", "Id" };
-        new public static string[] FALSE_PACKAGE_IDS = new string[] { "", "e(s)", "have", "an", "'winget", "pin'", "have", "an", "Version" };
-        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "have", "an", "'winget", "pin'", "have", "an", "Version" };
+        new public static string[] FALSE_PACKAGE_NAMES = ["", "e(s)", "have", "the", "Id"];
+        new public static string[] FALSE_PACKAGE_IDS = ["", "e(s)", "have", "an", "'winget", "pin'", "have", "an", "Version"];
+        new public static string[] FALSE_PACKAGE_VERSIONS = ["", "have", "an", "'winget", "pin'", "have", "an", "Version"];
         public LocalWingetSource LocalPcSource { get; set; }
         public LocalWingetSource AndroidSubsystemSource { get; set; }
         public LocalWingetSource SteamSource { get; set; }
@@ -446,7 +446,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
             else
             {
-                parameters.AddRange(new string[] { "--silent", "--disable-interactivity" });
+                parameters.AddRange(["--silent", "--disable-interactivity"]);
             }
 
             parameters.AddRange(options.CustomParameters);

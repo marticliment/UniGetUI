@@ -478,7 +478,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         private async void RunCleanup()
         {
             Logger.Info("Starting scoop cleanup...");
-            foreach (string command in new string[] { " cache rm *", " cleanup --all --cache", " cleanup --all --global --cache" })
+            foreach (string command in new []{" cache rm *", " cleanup --all --cache", " cleanup --all --global --cache"})
             {
                 Process p = new()
                 {

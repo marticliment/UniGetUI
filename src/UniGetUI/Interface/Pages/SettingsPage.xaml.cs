@@ -364,7 +364,7 @@ namespace UniGetUI.Interface
                 {
                     MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
 
-                    string[] IgnoredSettings = new string[] { "OperationHistory", "CurrentSessionToken", "OldWindowGeometry" };
+                    string[] IgnoredSettings = ["OperationHistory", "CurrentSessionToken", "OldWindowGeometry"];
 
                     Dictionary<string, string> settings = [];
                     foreach (string path in Directory.EnumerateFiles(CoreData.UniGetUIDataDirectory))

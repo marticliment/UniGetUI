@@ -161,7 +161,7 @@ namespace UniGetUI
 
                 foreach (string path in BasePaths)
                 {
-                    foreach (string old_wingetui_icon in new string[] { "WingetUI.lnk", "WingetUI .lnk", "UniGetUI (formerly WingetUI) .lnk" })
+                    foreach (string old_wingetui_icon in new []{ "WingetUI.lnk", "WingetUI .lnk", "UniGetUI (formerly WingetUI) .lnk" })
                     {
                         try
                         {
