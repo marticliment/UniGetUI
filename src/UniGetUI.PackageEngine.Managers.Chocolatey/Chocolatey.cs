@@ -131,7 +131,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             };
 
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
             p.Start();
 
             string? line;

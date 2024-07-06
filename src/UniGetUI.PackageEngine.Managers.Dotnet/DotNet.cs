@@ -162,7 +162,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     }
                 };
 
-                ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+                ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
                 p.Start();
 
                 string? line;

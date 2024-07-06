@@ -155,7 +155,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 }
             };
 
-            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
 
             p.Start();
             string? line;

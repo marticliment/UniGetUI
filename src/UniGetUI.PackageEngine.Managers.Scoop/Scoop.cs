@@ -258,7 +258,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
             p.Start();
 
             string? line;

@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
@@ -10,18 +12,23 @@ internal static partial class BundledWinGetLegacyMethods
     public static async Task<Package[]> FindPackages_UnSafe(WinGet Manager, string query)
         {
             List<Package> Packages = new();
-            Process p = new();
-            ProcessStartInfo startInfo = new()
+            Process p = new()
             {
-                FileName = Manager.WinGetBundledPath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " search \"" + query + "\"  --accept-source-agreements",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new()
+                {
+                    FileName = Manager.WinGetBundledPath,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " search \"" + query +
+                                "\"  --accept-source-agreements",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
-            p.StartInfo = startInfo;
+            
+            ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+            
             p.Start();
 
             string OldLine = "";
@@ -30,10 +37,9 @@ internal static partial class BundledWinGetLegacyMethods
             int SourceIndex = -1;
             bool DashesPassed = false;
             string line;
-            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
-                output += line + "\n";
+                logger.AddToStdOut(line);
                 if (!DashesPassed && line.Contains("---"))
                 {
                     string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
@@ -63,108 +69,118 @@ internal static partial class BundledWinGetLegacyMethods
                 OldLine = line;
             }
 
-            output += await p.StandardError.ReadToEndAsync();
-            await Task.Run(p.WaitForExit);
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
 
             return Packages.ToArray();
 
         }
 
-        public static async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
+    public static async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
+    {
+        List<Package> Packages = new();
+        Process p = new()
         {
-            List<Package> Packages = new();
-            Process p = new();
-            ProcessStartInfo startInfo = new()
+            StartInfo = new()
             {
                 FileName = Manager.WinGetBundledPath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " update --include-unknown  --accept-source-agreements",
+                Arguments = Manager.Properties.ExecutableCallArgs +
+                            " update --include-unknown  --accept-source-agreements",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 StandardOutputEncoding = System.Text.Encoding.UTF8
-            };
-            p.StartInfo = startInfo;
-            p.Start();
-
-            string OldLine = "";
-            int IdIndex = -1;
-            int VersionIndex = -1;
-            int NewVersionIndex = -1;
-            int SourceIndex = -1;
-            bool DashesPassed = false;
-            string line;
-            string output = "";
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                output += line + "\n";
-
-                if (line.Contains("have pins"))
-                    continue;
-                
-                if (!DashesPassed && line.Contains("---"))
-                {
-                    string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
-                    string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
-                    IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
-                    VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
-                    NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix);
-                    SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
-                    DashesPassed = true;
-                }
-                else if (line.Trim() == "")
-                {
-                    DashesPassed = false;
-                }
-                else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && NewVersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < NewVersionIndex && NewVersionIndex < line.Length)
-                {
-                    int offset = 0; // Account for non-unicode character length
-                    while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
-                        offset++;
-                    string name = line[..(IdIndex - offset)].Trim();
-                    string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
-                    string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
-                    string newVersion;
-                    if (SourceIndex != -1)
-                        newVersion = line[(NewVersionIndex - offset)..(SourceIndex - offset)].Trim();
-                    else
-                        newVersion = line[(NewVersionIndex - offset)..].Trim().Split(' ')[0];
-
-                    ManagerSource source;
-                    if (SourceIndex == -1 || SourceIndex >= line.Length)
-                        source = Manager.DefaultSource;
-                    else
-                    {
-                        string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
-                        source = Manager.SourceProvider.SourceFactory.GetSourceOrDefault(sourceName);
-                    }
-
-                    Packages.Add(new Package(name, id, version, newVersion, source, Manager));
-                }
-                OldLine = line;
             }
+        };
 
-            output += await p.StandardError.ReadToEndAsync();
-            await Task.Run(p.WaitForExit);
+        ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+            
+        p.Start();
 
-            return Packages.ToArray();
+        string OldLine = "";
+        int IdIndex = -1;
+        int VersionIndex = -1;
+        int NewVersionIndex = -1;
+        int SourceIndex = -1;
+        bool DashesPassed = false;
+        string line;
+        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+        {
+            logger.AddToStdOut(line);
+
+            if (line.Contains("have pins"))
+                continue;
+            
+            if (!DashesPassed && line.Contains("---"))
+            {
+                string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
+                string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
+                IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
+                VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
+                NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix);
+                SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
+                DashesPassed = true;
+            }
+            else if (line.Trim() == "")
+            {
+                DashesPassed = false;
+            }
+            else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && NewVersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < NewVersionIndex && NewVersionIndex < line.Length)
+            {
+                int offset = 0; // Account for non-unicode character length
+                while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
+                    offset++;
+                string name = line[..(IdIndex - offset)].Trim();
+                string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
+                string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
+                string newVersion;
+                if (SourceIndex != -1)
+                    newVersion = line[(NewVersionIndex - offset)..(SourceIndex - offset)].Trim();
+                else
+                    newVersion = line[(NewVersionIndex - offset)..].Trim().Split(' ')[0];
+
+                ManagerSource source;
+                if (SourceIndex == -1 || SourceIndex >= line.Length)
+                    source = Manager.DefaultSource;
+                else
+                {
+                    string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
+                    source = Manager.SourceProvider.SourceFactory.GetSourceOrDefault(sourceName);
+                }
+
+                Packages.Add(new Package(name, id, version, newVersion, source, Manager));
+            }
+            OldLine = line;
+        }
+
+        logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+        await p.WaitForExitAsync();
+        logger.Close(p.ExitCode);
+
+        return Packages.ToArray();
         }
 
         public static async Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager)
         {
             List<Package> Packages = new();
-            Process p = new();
-            ProcessStartInfo startInfo = new()
+            Process p = new()
             {
-                FileName = Manager.WinGetBundledPath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " list  --accept-source-agreements",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new()
+                {
+                    FileName = Manager.WinGetBundledPath,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " list  --accept-source-agreements",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
-            p.StartInfo = startInfo;
+            
+            ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+            
             p.Start();
 
             string OldLine = "";
@@ -174,12 +190,11 @@ internal static partial class BundledWinGetLegacyMethods
             int NewVersionIndex = -1;
             bool DashesPassed = false;
             string line;
-            string output = "";
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 try
                 {
-                    output += line + "\n";
+                    logger.AddToStdOut(line);
                     if (!DashesPassed && line.Contains("---"))
                     {
                         string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
@@ -220,9 +235,10 @@ internal static partial class BundledWinGetLegacyMethods
                     Logger.Error(e);
                 }
             }
-
-            output += await p.StandardError.ReadToEndAsync();
-            await Task.Run(p.WaitForExit);
+            
+            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            await p.WaitForExitAsync();
+            logger.Close(p.ExitCode);
 
             return Packages.ToArray();
         }

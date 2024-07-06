@@ -211,7 +211,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             };
 
-            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
 
             p.Start();
 
