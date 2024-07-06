@@ -320,7 +320,18 @@ namespace UniGetUI
 
                 foreach (ManagerDependency dependency in manager.Dependencies)
                 {
-                    bool present = await dependency.IsInstalled();
+                    bool present = true;
+                    try
+                    {
+                        present = await dependency.IsInstalled();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(
+                            $"An error occurred while checking if dependency {dependency.Name} was installed:");
+                        Logger.Error(ex);
+                    }
+
                     if (!present)
                     {
                         if (Settings.Get($"SkippedInstalling{dependency.Name}"))
