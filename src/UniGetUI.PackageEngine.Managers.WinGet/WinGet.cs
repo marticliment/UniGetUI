@@ -113,17 +113,17 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            return await WinGetHelper.Instance.FindPackages_UnSafe(this, query);
+            return await Task.Run(() => WinGetHelper.Instance.FindPackages_UnSafe(this, query).GetAwaiter().GetResult());
         }
         
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            return await WinGetHelper.Instance.GetAvailableUpdates_UnSafe(this);
+            return await Task.Run(() => WinGetHelper.Instance.GetAvailableUpdates_UnSafe(this).GetAwaiter().GetResult());
         }
         
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            return await WinGetHelper.Instance.GetInstalledPackages_UnSafe(this);
+            return await Task.Run(() => WinGetHelper.Instance.GetInstalledPackages_UnSafe(this).GetAwaiter().GetResult());
         }
         
         public ManagerSource GetLocalSource(string id)

@@ -136,9 +136,8 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages);
         List<Package> packages = new();
-        foreach (var match in await GetLocalWinGetPackages(logger))
+        foreach (var nativePackage in await Task.Run(() => GetLocalWinGetPackages(logger)))
         {
-            var nativePackage = match.CatalogPackage;
             if (nativePackage.IsUpdateAvailable)
             {
                 ManagerSource source;
@@ -148,6 +147,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
             }
         }
 
+        logger.Close(0);
         return packages.ToArray();
 
     }
@@ -156,10 +156,8 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages);
         List<Package> packages = new();
-        foreach (var match in await GetLocalWinGetPackages(logger))
+        foreach (var nativePackage in await Task.Run(() => GetLocalWinGetPackages(logger)))
         {
-            var nativePackage = match.CatalogPackage;
-
             ManagerSource source;
             if (nativePackage.DefaultInstallVersion != null)
             {
@@ -172,23 +170,23 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
             logger.Log($"Found package {nativePackage.Name} {nativePackage.Id} on source {source.Name}");
             packages.Add(new Package(nativePackage.Name, nativePackage.Id, nativePackage.InstalledVersion.Version, source, Manager));
         }
-
+        logger.Close(0);
         return packages.ToArray();
     }
 
-    private async Task<IEnumerable<MatchResult>> GetLocalWinGetPackages(NativeTaskLogger logger)
+    private IEnumerable<CatalogPackage> GetLocalWinGetPackages(NativeTaskLogger logger)
     {
         PackageCatalogReference installedSearchCatalogRef; 
         CreateCompositePackageCatalogOptions createCompositePackageCatalogOptions = Factory.CreateCreateCompositePackageCatalogOptions();
         foreach(var catalogRef in WinGetManager.GetPackageCatalogs().ToArray())
         {
-            Logger.Info($"Adding catalog {catalogRef.Info.Name} to composite catalog");
+            logger.Log($"Adding catalog {catalogRef.Info.Name} to composite catalog");
             createCompositePackageCatalogOptions.Catalogs.Add(catalogRef);
         }
         createCompositePackageCatalogOptions.CompositeSearchBehavior = CompositeSearchBehavior.LocalCatalogs;
         installedSearchCatalogRef = WinGetManager.CreateCompositePackageCatalog(createCompositePackageCatalogOptions);
         
-        var ConnectResult = await Task.Run(() => installedSearchCatalogRef.Connect());
+        var ConnectResult = installedSearchCatalogRef.Connect();
         if (ConnectResult.Status != ConnectResultStatus.Ok)
         {
             logger.Error("Failed to connect to installedSearchCatalogRef. Aborting.");
@@ -203,9 +201,11 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
         filter.Value = "";
         findPackagesOptions.Filters.Add(filter);
 
-        var TaskResult = await Task.Run(() => ConnectResult.PackageCatalog.FindPackages(findPackagesOptions));
-
-        return TaskResult.Matches.ToArray();
+        var TaskResult = ConnectResult.PackageCatalog.FindPackages(findPackagesOptions);
+        List<CatalogPackage> foundPackages = new();
+        foreach(var match in TaskResult.Matches.ToArray())
+            foundPackages.Add(match.CatalogPackage);
+        return foundPackages;
     }
     
     public async Task<ManagerSource[]> GetSources_UnSafe(WinGet Manager)
