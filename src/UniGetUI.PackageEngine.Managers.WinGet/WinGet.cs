@@ -113,201 +113,20 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            return await WinGetHelper.Instance.FindPackages_UnSafe(this, query);
+            return await Task.Run(() => WinGetHelper.Instance.FindPackages_UnSafe(this, query).GetAwaiter().GetResult());
         }
-
+        
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            if (Settings.Get("ForceLegacyBundledWinGet"))
-                return await BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(this);
-            
-            List<Package> Packages = [];
-            
-            Process p = new()
-            {
-                StartInfo = new ProcessStartInfo()
-                {
-                    FileName = "cmd.exe",
-                    Arguments = "/C " + PowerShellPath + " " + PowerShellPromptArgs,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
-                    StandardInputEncoding = new UTF8Encoding(false),
-                    StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
-                }
-            };
-
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
-
-            p.Start();
-
-            string command = """
-                 Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
-                 Import-Module Microsoft.WinGet.Client
-                 function Print-WinGetPackage {
-                     param (
-                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
-                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
-                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
-                         [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
-                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
-                         [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
-                     )
-                     process {
-                         if($IsUpdateAvailable)
-                         {
-                             Write-Output("#" + $Name + "`t" + $Id + "`t" + $InstalledVersion + "`t" + $AvailableVersions[0] + "`t" + $Source)
-                         }
-                     }
-                 }
-
-                 Get-WinGetPackage | Print-WinGetPackage
-
-                 exit
-
-                 """;
-
-            await p.StandardInput.WriteAsync(command);
-            p.StandardInput.Close();
-            logger.AddToStdIn(command);
-
-            string? line;
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                logger.AddToStdOut(line);
-                if (!line.StartsWith("#"))
-                {
-                    continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
-                }
-
-                string[] elements = line.Split('\t');
-                if (elements.Length < 5)
-                {
-                    continue;
-                }
-
-                ManagerSource source = GetSourceOrDefault(elements[4]);
-
-                Packages.Add(new Package(elements[0][1..], elements[1], elements[2], elements[3], source, this));
-            }
-
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
-            logger.Close(p.ExitCode);
-
-            if (Packages.Count() > 0)
-            {
-                return Packages.ToArray();
-            }
-            else
-            {
-                Logger.Warn("WinGet updates returned zero packages, attempting legacy..."); 
-                return await BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(this);
-            }
+            return await Task.Run(() => WinGetHelper.Instance.GetAvailableUpdates_UnSafe(this).GetAwaiter().GetResult());
         }
-
+        
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            if (Settings.Get("ForceLegacyBundledWinGet"))
-                return await BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(this);
-            
-            List<Package> Packages = [];
-            Process p = new()
-            {
-                StartInfo = new ProcessStartInfo()
-                {                    
-                    FileName = "cmd.exe",
-                    Arguments = "/C " + PowerShellPath + " " + PowerShellPromptArgs,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
-                    StandardInputEncoding = new UTF8Encoding(false),
-                    StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
-                }
-            };
-
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
-            p.Start();
-
-            string command = """
-                Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
-                Import-Module Microsoft.WinGet.Client
-                function Print-WinGetPackage {
-                    param (
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
-                        [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
-                        [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
-                    )
-                    process {
-                        Write-Output("#" + $Name + "`t" + $Id + "`t" + $InstalledVersion + "`t" + $Source)
-                    }
-                }
-
-                Get-WinGetPackage | Print-WinGetPackage
-
-
-                exit
-
-                """;
-
-            await p.StandardInput.WriteAsync(command);
-            p.StandardInput.Close();
-            logger.AddToStdIn(command);
-
-
-            string? line;
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                logger.AddToStdOut(line);
-                if (!line.StartsWith("#"))
-                {
-                    continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
-                }
-
-                string[] elements = line.Split('\t');
-                if (elements.Length < 4)
-                {
-                    continue;
-                }
-
-                ManagerSource source;
-                if (elements[3] != "")
-                {
-                    source = GetSourceOrDefault(elements[3]);
-                }
-                else
-                {
-                    source = GetLocalSource(elements[1]);
-                }
-
-                Packages.Add(new Package(elements[0][1..], elements[1], elements[2], source, this));
-            }
-
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
-            logger.Close(p.ExitCode);
-            
-            if (Packages.Count() > 0)
-            {
-                return Packages.ToArray();
-            }
-            else
-            {
-                Logger.Warn("WinGet installed packages returned zero packages, attempting legacy..."); 
-                return await BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(this);
-            }
+            return await Task.Run(() => WinGetHelper.Instance.GetInstalledPackages_UnSafe(this).GetAwaiter().GetResult());
         }
-
-        private ManagerSource GetLocalSource(string id)
+        
+        public ManagerSource GetLocalSource(string id)
         {
             try
             {
@@ -361,6 +180,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return LocalPcSource;
             }
         }
+        
 
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {

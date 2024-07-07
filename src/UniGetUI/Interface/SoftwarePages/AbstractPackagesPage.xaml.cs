@@ -566,7 +566,7 @@ namespace UniGetUI.Interface
             FilteredPackages.BlockSorting = true;
             foreach (Package match in MatchingList)
             {
-                if (VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
+                if (VisibleSources.Contains(match.Source) || (!match.Manager.Capabilities.SupportsCustomSources && VisibleManagers.Contains(match.Manager)))
                 {
                     FilteredPackages.Add(match);
                 }

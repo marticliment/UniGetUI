@@ -202,7 +202,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             Microsoft.Management.Deployment.PackageManager WinGetManager = ((NativeWinGetHelper)WinGetHelper.Instance).WinGetManager;
-            WindowsPackageManager.Interop.WindowsPackageManagerStandardFactory Factory = ((NativeWinGetHelper)WinGetHelper.Instance).Factory;
+            WindowsPackageManager.Interop.WindowsPackageManagerFactory Factory = ((NativeWinGetHelper)WinGetHelper.Instance).Factory;
 
             // Find the native package for the given Package object
             PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
