@@ -4,6 +4,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
 using WindowsPackageManager.Interop;
 
@@ -133,13 +134,29 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
 
     public async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
-        return [];
+        var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages);
+        List<Package> packages = new();
+        foreach (var match in await GetLocalWinGetPackages(logger))
+        {
+            var nativePackage = match.CatalogPackage;
+            if (nativePackage.IsUpdateAvailable)
+            {
+                ManagerSource source;
+                source = Manager.GetSourceOrDefault(nativePackage.DefaultInstallVersion.PackageCatalog.Info.Name);
+                packages.Add(new Package(nativePackage.Name, nativePackage.Id, nativePackage.InstalledVersion.Version, nativePackage.DefaultInstallVersion.Version, source, Manager));
+                logger.Log($"Found package {nativePackage.Name} {nativePackage.Id} on source {source.Name}, from version {nativePackage.InstalledVersion.Version} to version {nativePackage.DefaultInstallVersion.Version}");
+            }
+        }
+
+        return packages.ToArray();
+
     }
     
     public async Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager)
     {
+        var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages);
         List<Package> packages = new();
-        foreach (var match in await GetLocalWinGetPackages())
+        foreach (var match in await GetLocalWinGetPackages(logger))
         {
             var nativePackage = match.CatalogPackage;
 
@@ -152,19 +169,20 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
             {
                 source = Manager.GetLocalSource(nativePackage.Id);
             }
+            logger.Log($"Found package {nativePackage.Name} {nativePackage.Id} on source {source.Name}");
             packages.Add(new Package(nativePackage.Name, nativePackage.Id, nativePackage.InstalledVersion.Version, source, Manager));
         }
 
         return packages.ToArray();
     }
 
-    private async Task<IEnumerable<MatchResult>> GetLocalWinGetPackages()
+    private async Task<IEnumerable<MatchResult>> GetLocalWinGetPackages(NativeTaskLogger logger)
     {
         PackageCatalogReference installedSearchCatalogRef; 
         CreateCompositePackageCatalogOptions createCompositePackageCatalogOptions = Factory.CreateCreateCompositePackageCatalogOptions();
         foreach(var catalogRef in WinGetManager.GetPackageCatalogs().ToArray())
         {
-            Console.WriteLine($"Searching on package catalog {catalogRef.Info.Name} ");
+            Logger.Info($"Adding catalog {catalogRef.Info.Name} to composite catalog");
             createCompositePackageCatalogOptions.Catalogs.Add(catalogRef);
         }
         createCompositePackageCatalogOptions.CompositeSearchBehavior = CompositeSearchBehavior.LocalCatalogs;
@@ -173,7 +191,9 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
         var ConnectResult = await Task.Run(() => installedSearchCatalogRef.Connect());
         if (ConnectResult.Status != ConnectResultStatus.Ok)
         {
-            throw new Exception("WinGet: Failed to connect to local catalog.");
+            logger.Error("Failed to connect to installedSearchCatalogRef. Aborting.");
+            logger.Close(1);
+            throw new Exception("WinGet: Failed to connect to composite catalog.");
         }
 
         FindPackagesOptions findPackagesOptions = Factory.CreateFindPackagesOptions();
@@ -213,8 +233,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
 
     public async Task<string[]> GetPackageVersions_Unsafe(WinGet Manager, Package package)
     {
-        ManagerClasses.Classes.NativeTaskLogger logger =
-            Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions);
+        NativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions);
 
         // Find the native package for the given Package object
         PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
