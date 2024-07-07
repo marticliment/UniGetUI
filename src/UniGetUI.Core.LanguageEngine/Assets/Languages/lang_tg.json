@@ -535,6 +535,7 @@
   "Updates preferences" : null,
   "Updating WingetUI" : null,
   "Url" : null,
+  "Use Legacy bundled WinGet instead of PowerShell CMDLets" : null,
   "Use a custom icon and screenshot database URL" : null,
   "Use installed GSudo instead of the bundled one" : null,
   "Use system Chocolatey" : null,

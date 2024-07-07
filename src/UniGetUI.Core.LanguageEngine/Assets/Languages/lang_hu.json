@@ -535,6 +535,7 @@
   "Updates preferences" : null,
   "Updating WingetUI" : "A WingetUI frissítése",
   "Url" : "Url",
+  "Use Legacy bundled WinGet instead of PowerShell CMDLets" : null,
   "Use a custom icon and screenshot database URL" : "Egyéni ikon és képernyőkép adatbázis URL használata",
   "Use installed GSudo instead of the bundled one" : "A telepített GSudo használata a kötegben lévő helyett (az alkalmazás újraindítása szükséges)",
   "Use system Chocolatey" : "Használja a rendszerbeli Chocolatey-t",

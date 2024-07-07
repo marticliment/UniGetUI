@@ -535,6 +535,7 @@
   "Updates preferences" : null,
   "Updating WingetUI" : "WingetUI оновлюється",
   "Url" : null,
+  "Use Legacy bundled WinGet instead of PowerShell CMDLets" : null,
   "Use a custom icon and screenshot database URL" : null,
   "Use installed GSudo instead of the bundled one" : "Використовувати встановлений GSudo замість комплектного (потребує перезапуску програми)",
   "Use system Chocolatey" : null,

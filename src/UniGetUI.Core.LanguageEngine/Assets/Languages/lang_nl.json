@@ -535,6 +535,7 @@
   "Updates preferences" : "Voorkeuren bijwerken",
   "Updating WingetUI" : "WingetUI bijwerken",
   "Url" : "URL",
+  "Use Legacy bundled WinGet instead of PowerShell CMDLets" : null,
   "Use a custom icon and screenshot database URL" : "Aangepast pictogram en schermopname database-URL gebruiken",
   "Use installed GSudo instead of the bundled one" : "GSudo (extra geïnstalleerd) gebruiken i.p.v. de gebundelde ",
   "Use system Chocolatey" : "Systeem-Chocolatey gebruiken",
