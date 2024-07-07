@@ -535,6 +535,7 @@
   "Updates preferences" : "Preferencias de las actualizaciones",
   "Updating WingetUI" : "Actualizando WingetUI",
   "Url" : "URL",
+  "Use Legacy bundled WinGet instead of PowerShell CMDLets" : "Usar el WinGet incorporado (legado) en vez de los CMDLets de PowerShell",
   "Use a custom icon and screenshot database URL" : "Usar una URL personalizada de base de datos de íconos y capturas de pantalla",
   "Use installed GSudo instead of the bundled one" : "Utilizar el GSudo instalado en lugar del incluido",
   "Use system Chocolatey" : "Usar el Chocolatey del sistema",

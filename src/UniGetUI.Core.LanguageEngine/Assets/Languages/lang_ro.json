@@ -535,6 +535,7 @@
   "Updates preferences" : "Preferințe actualizări",
   "Updating WingetUI" : "Actualizează WingetUI",
   "Url" : "URL",
+  "Use Legacy bundled WinGet instead of PowerShell CMDLets" : null,
   "Use a custom icon and screenshot database URL" : "Utilizați o pictogramă personalizată și o captură de ecran la URL-ul bazei de date",
   "Use installed GSudo instead of the bundled one" : "Utilizați GSudo instalat în loc de cel inclus (necesită repornirea aplicației)",
   "Use system Chocolatey" : "Folosește Chocolatey de sistem",

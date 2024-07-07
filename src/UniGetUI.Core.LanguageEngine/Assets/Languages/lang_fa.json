@@ -535,6 +535,7 @@
   "Updates preferences" : null,
   "Updating WingetUI" : "بروزرسانی WingetUI",
   "Url" : "آدرس",
+  "Use Legacy bundled WinGet instead of PowerShell CMDLets" : null,
   "Use a custom icon and screenshot database URL" : null,
   "Use installed GSudo instead of the bundled one" : "استفاده از GSudo نصب شده به جای نمونه همراه با نرم افزار ( نیاز به بازنشانی نرم افزار )",
   "Use system Chocolatey" : null,
