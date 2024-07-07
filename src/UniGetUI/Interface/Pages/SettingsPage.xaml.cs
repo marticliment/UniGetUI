@@ -122,14 +122,22 @@ namespace UniGetUI.Interface
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), CoreTools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
             };
 
+            CheckboxCard Winget_DisableCOM = new()
+            {
+                Text = CoreTools.Translate("Use the WinGet COM API to fetch packages"),
+                SettingName = "DisableWinGetCOMApi",
+            };
+            Winget_DisableCOM.StateChanged += (s, e) => PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
+
             CheckboxCard Winget_UseBundled = new()
             {
-                Text = CoreTools.Translate("Use legacy bundled WinGet instead of PowerShell CMDlets"),
+                Text = CoreTools.Translate("Use bundled WinGet instead of PowerShell CMDlets"),
                 SettingName = "ForceLegacyBundledWinGet"
             };
 
-            ExtraSettingsCards[PEInterface.WinGet].Add(Winget_ResetSources);
+            ExtraSettingsCards[PEInterface.WinGet].Add(Winget_DisableCOM);
             ExtraSettingsCards[PEInterface.WinGet].Add(Winget_UseBundled);
+            ExtraSettingsCards[PEInterface.WinGet].Add(Winget_ResetSources);
 
             ButtonCard Scoop_Install = new() { Text = CoreTools.AutoTranslated("Install Scoop"), ButtonText = CoreTools.AutoTranslated("Install") };
             Scoop_Install.Click += (s, e) =>

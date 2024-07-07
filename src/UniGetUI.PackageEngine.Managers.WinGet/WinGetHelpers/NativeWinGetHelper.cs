@@ -1,6 +1,8 @@
 using System.Diagnostics;
+using System.Diagnostics.Tracing;
 using Microsoft.Management.Deployment;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
@@ -17,6 +19,8 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
 
     public NativeWinGetHelper()
     {
+        if (Settings.Get("DisableWinGetCOMApi"))
+            throw new Exception("User requested to disable the WinGet COM API, crashing...");
         if (CoreTools.IsAdministrator())
         {
             Logger.Info("Running elevated, WinGet class registration is likely to fail");
