@@ -89,7 +89,7 @@ namespace UniGetUI.Core.Tools.Tests
                 Assert.NotEqual(string1, string3);
             }
 
-            foreach (string s in [string1, string2, string3])
+            foreach (string s in new []{string1, string2, string3})
             {
                 foreach (char c in s)
                 {
