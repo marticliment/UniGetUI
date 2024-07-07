@@ -12,7 +12,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
 internal class NativeWinGetHelper : IWinGetManagerHelper
 {
-    public WindowsPackageManagerStandardFactory Factory;
+    public WindowsPackageManagerFactory Factory;
     public PackageManager WinGetManager;
 
     public NativeWinGetHelper()
