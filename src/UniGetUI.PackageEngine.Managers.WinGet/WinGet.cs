@@ -1,6 +1,9 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
@@ -13,19 +16,20 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
     public class WinGet : PackageManager
     {
-        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "", "e(s)", "have", "the", "Id" };
-        new public static string[] FALSE_PACKAGE_IDS = new string[] { "", "e(s)", "have", "an", "'winget", "pin'", "have", "an", "Version" };
-        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "have", "an", "'winget", "pin'", "have", "an", "Version" };
-        private LocalWingetSource LocalPcSource { get; set; }
-        private LocalWingetSource AndroidSubsystemSource { get; set; }
-        private LocalWingetSource SteamSource { get; set; }
-        private LocalWingetSource UbisoftConnectSource { get; set; }
-        private LocalWingetSource GOGSource { get; set; }
-        private LocalWingetSource MicrosoftStoreSource { get; set; }
+        new public static string[] FALSE_PACKAGE_NAMES = ["", "e(s)", "have", "the", "Id"];
+        new public static string[] FALSE_PACKAGE_IDS = ["", "e(s)", "have", "an", "'winget", "pin'", "have", "an", "Version"];
+        new public static string[] FALSE_PACKAGE_VERSIONS = ["", "have", "an", "'winget", "pin'", "have", "an", "Version"];
+        public LocalWingetSource LocalPcSource { get; set; }
+        public LocalWingetSource AndroidSubsystemSource { get; set; }
+        public LocalWingetSource SteamSource { get; set; }
+        public LocalWingetSource UbisoftConnectSource { get; set; }
+        public LocalWingetSource GOGSource { get; set; }
+        public LocalWingetSource MicrosoftStoreSource { get; set; }
 
-        private readonly string PowerShellPath;
-        private readonly string PowerShellPromptArgs;
-        private readonly string PowerShellInlineArgs;
+        public readonly string PowerShellPath;
+        public readonly string PowerShellPromptArgs;
+        public readonly string PowerShellInlineArgs;
+        public string WinGetBundledPath;
 
         public WinGet() : base()
         {
@@ -33,6 +37,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             PowerShellPromptArgs = "-ExecutionPolicy Bypass -NoLogo -NoProfile";
             PowerShellInlineArgs = "-ExecutionPolicy Bypass -NoLogo -NoProfile -NonInteractive";
 
+            WinGetBundledPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "winget-cli_x64", "winget.exe");
+            
             Dependencies = [
                 new ManagerDependency(
                     "WinGet PowerShell Module",
@@ -107,180 +113,20 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            return await WinGetHelper.Instance.FindPackages_UnSafe(this, query);
+            return await Task.Run(() => WinGetHelper.Instance.FindPackages_UnSafe(this, query).GetAwaiter().GetResult());
         }
-
+        
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
-            List<Package> Packages = [];
-
-            Process p = new()
-            {
-                StartInfo = new ProcessStartInfo()
-                {
-                    FileName = PowerShellPath,
-                    Arguments = PowerShellPromptArgs,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8,
-                    StandardInputEncoding = System.Text.Encoding.UTF8,
-                    StandardErrorEncoding = System.Text.Encoding.UTF8,
-                }
-            };
-
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
-
-            p.Start();
-
-            string command = """
-                 Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
-                 Import-Module Microsoft.WinGet.Client
-                 function Print-WinGetPackage {
-                     param (
-                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
-                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
-                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
-                         [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
-                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
-                         [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
-                     )
-                     process {
-                         if($IsUpdateAvailable)
-                         {
-                             Write-Output("#" + $Name + "`t" + $Id + "`t" + $InstalledVersion + "`t" + $AvailableVersions[0] + "`t" + $Source)
-                         }
-                     }
-                 }
-
-                 Get-WinGetPackage | Print-WinGetPackage
-
-                 exit
-
-                 """;
-
-            await p.StandardInput.WriteAsync(command);
-            p.StandardInput.Close();
-            logger.AddToStdIn(command);
-
-            string? line;
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                logger.AddToStdOut(line);
-                if (!line.StartsWith("#"))
-                {
-                    continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
-                }
-
-                string[] elements = line.Split('\t');
-                if (elements.Length < 5)
-                {
-                    continue;
-                }
-
-                ManagerSource source = GetSourceOrDefault(elements[4]);
-
-                Packages.Add(new Package(elements[0][1..], elements[1], elements[2], elements[3], source, this));
-            }
-
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
-            logger.Close(p.ExitCode);
-
-            return Packages.ToArray();
+            return await Task.Run(() => WinGetHelper.Instance.GetAvailableUpdates_UnSafe(this).GetAwaiter().GetResult());
         }
-
+        
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
-            List<Package> Packages = [];
-
-            Process p = new()
-            {
-                StartInfo = new ProcessStartInfo()
-                {
-                    FileName = PowerShellPath,
-                    Arguments = PowerShellPromptArgs,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8,
-                    StandardInputEncoding = System.Text.Encoding.UTF8,
-                    StandardErrorEncoding = System.Text.Encoding.UTF8,
-                }
-            };
-
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
-            p.Start();
-
-            string command = """
-                Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
-                Import-Module Microsoft.WinGet.Client
-                function Print-WinGetPackage {
-                    param (
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
-                        [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
-                        [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
-                    )
-                    process {
-                        Write-Output("#" + $Name + "`t" + $Id + "`t" + $InstalledVersion + "`t" + $Source)
-                    }
-                }
-
-                Get-WinGetPackage | Print-WinGetPackage
-
-
-                exit
-
-                """;
-
-            await p.StandardInput.WriteAsync(command);
-            p.StandardInput.Close();
-            logger.AddToStdIn(command);
-
-
-            string? line;
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
-            {
-                logger.AddToStdOut(line);
-                if (!line.StartsWith("#"))
-                {
-                    continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
-                }
-
-                string[] elements = line.Split('\t');
-                if (elements.Length < 4)
-                {
-                    continue;
-                }
-
-                ManagerSource source;
-                if (elements[3] != "")
-                {
-                    source = GetSourceOrDefault(elements[3]);
-                }
-                else
-                {
-                    source = GetLocalSource(elements[1]);
-                }
-
-                Packages.Add(new Package(elements[0][1..], elements[1], elements[2], source, this));
-            }
-
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
-            logger.Close(p.ExitCode);
-
-            return Packages.ToArray();
+            return await Task.Run(() => WinGetHelper.Instance.GetInstalledPackages_UnSafe(this).GetAwaiter().GetResult());
         }
-
-        private ManagerSource GetLocalSource(string id)
+        
+        public ManagerSource GetLocalSource(string id)
         {
             try
             {
@@ -334,6 +180,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return LocalPcSource;
             }
         }
+        
 
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
@@ -419,7 +266,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
             else
             {
-                parameters.AddRange(new string[] { "--silent", "--disable-interactivity" });
+                parameters.AddRange(["--silent", "--disable-interactivity"]);
             }
 
             parameters.AddRange(options.CustomParameters);
@@ -566,7 +413,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
     }
 
-    internal class LocalWingetSource : ManagerSource
+    public class LocalWingetSource : ManagerSource
     {
         private readonly string name;
         private readonly string __icon_id;

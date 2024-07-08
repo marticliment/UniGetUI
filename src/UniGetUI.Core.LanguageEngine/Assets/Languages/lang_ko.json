@@ -535,6 +535,7 @@
   "Updates preferences" : null,
   "Updating WingetUI" : "WingetUI 업데이트",
   "Url" : "Url",
+  "Use Legacy bundled WinGet instead of PowerShell CMDLets" : null,
   "Use a custom icon and screenshot database URL" : "사용자 지정 아이콘 및 스크린샷 데이터베이스 URL 사용",
   "Use installed GSudo instead of the bundled one" : "설치된 GSudo 사용(앱 다시 시작 필요)",
   "Use system Chocolatey" : null,

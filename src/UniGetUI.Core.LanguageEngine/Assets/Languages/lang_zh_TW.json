@@ -535,6 +535,7 @@
   "Updates preferences" : null,
   "Updating WingetUI" : "正在更新 WingetUI",
   "Url" : "網址",
+  "Use Legacy bundled WinGet instead of PowerShell CMDLets" : null,
   "Use a custom icon and screenshot database URL" : "使用自訂的圖示與截圖資料庫的網址",
   "Use installed GSudo instead of the bundled one" : "以安裝的 GSudo 來取代內建的版本 (需要重新啟動應用程式)",
   "Use system Chocolatey" : "使用系統內的 Chocolatey",

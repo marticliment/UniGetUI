@@ -4,7 +4,7 @@
         "done": 5101,
         "packages_with_icon": 5101,
         "packages_with_screenshot": 579,
-        "total_screenshots": 1809
+        "total_screenshots": 1811
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -46951,31 +46951,33 @@
             "images": []
         },
         "wingetui": {
-            "icon": "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/icon.png",
+            "icon": "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/icon.png",
             "images": [
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_1.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_2.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_3.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_4.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_5.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_6.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_7.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_8.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_9.png"
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_1.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_2.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_3.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_4.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_5.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_6.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_7.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_8.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_9.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_10.png"
             ]
         },
         "wingetuistore": {
-            "icon": "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/icon.png",
+            "icon": "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/icon.png",
             "images": [
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_1.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_2.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_3.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_4.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_5.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_6.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_7.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_8.png",
-                "https://raw.githubusercontent.com/marticliment/WingetUI/main/media/winget_9.png"
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_1.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_2.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_3.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_4.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_5.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_6.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_7.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_8.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_9.png",
+                "https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/UniGetUI_10.png"
             ]
         },
         "wingide": {

@@ -11,12 +11,12 @@
 		<SdkVersion>8.0.204</SdkVersion>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<PublishSelfContained>true</PublishSelfContained>
-<FileVersion>3.1.0.0</FileVersion>
-<InformationalVersion>3.1.0</InformationalVersion>
+<FileVersion>3.1.1.0</FileVersion>
+<InformationalVersion>3.1.1-beta1</InformationalVersion>
 		<Product>UniGetUI</Product>
 		<Authors>Martí Climent and the contributors</Authors>
 		<PublisherName>Martí Climent</PublisherName>
-<ApplicationVersion>3.1.0</ApplicationVersion>
+<ApplicationVersion>3.1.1-beta1</ApplicationVersion>
 		<Copyright>2024, Martí Climent</Copyright>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
@@ -32,11 +32,14 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
 		<PackageReference Include="xunit" Version="2.8.0" />
 		<PackageReference Include="xunit.abstractions" Version="2.0.3" />
-		<PackageReference Include="xunit.analyzers" Version="1.13.0" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.0">
+		<PackageReference Include="xunit.analyzers" Version="1.14.0">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>

@@ -11,6 +11,9 @@ using UniGetUI.PackageEngine.PackageLoader;
 
 namespace UniGetUI.PackageEngine
 {
+    /// <summary>
+    /// The interface/entry point for the UniGetUI Package Engine
+    /// </summary>
     public static class PEInterface
     {
         private const int ManagerLoadTimeout = 10000; // 10 seconds timeout for Package Manager initialization

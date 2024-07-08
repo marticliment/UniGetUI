@@ -11,9 +11,9 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 {
     public class Pip : PackageManager
     {
-        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "", "WARNING:", "[notice]", "Package", "DEPRECATION:" };
-        new public static string[] FALSE_PACKAGE_IDS = new string[] { "", "WARNING:", "[notice]", "Package", "DEPRECATION:" };
-        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "Ignoring", "invalid" };
+        new public static string[] FALSE_PACKAGE_NAMES = ["", "WARNING:", "[notice]", "Package", "DEPRECATION:"];
+        new public static string[] FALSE_PACKAGE_IDS = ["", "WARNING:", "[notice]", "Package", "DEPRECATION:"];
+        new public static string[] FALSE_PACKAGE_VERSIONS = ["", "Ignoring", "invalid"];
 
         public Pip() : base()
         {
@@ -211,7 +211,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             };
 
-            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
 
             p.Start();
 

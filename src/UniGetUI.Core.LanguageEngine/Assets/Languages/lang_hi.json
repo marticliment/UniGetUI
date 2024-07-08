@@ -535,6 +535,7 @@
   "Updates preferences" : null,
   "Updating WingetUI" : "WingetUI  को अपडेट कर रहा है",
   "Url" : null,
+  "Use Legacy bundled WinGet instead of PowerShell CMDLets" : null,
   "Use a custom icon and screenshot database URL" : null,
   "Use installed GSudo instead of the bundled one" : "बंडल किए गए जीसूडो के बजाय इंस्टॉल किए गए जीसूडो का उपयोग करें (ऐप पुनरारंभ करने की आवश्यकता है)",
   "Use system Chocolatey" : null,

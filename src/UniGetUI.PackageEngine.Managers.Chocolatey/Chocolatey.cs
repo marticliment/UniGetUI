@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
@@ -15,9 +16,9 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 {
     public class Chocolatey : BaseNuGet
     {
-        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
-        new public static string[] FALSE_PACKAGE_IDS = new string[] { "Directory", "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid" };
-        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no" };
+        new public static string[] FALSE_PACKAGE_NAMES = [""];
+        new public static string[] FALSE_PACKAGE_IDS = ["Directory", "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"];
+        new public static string[] FALSE_PACKAGE_VERSIONS = ["", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"];
 
         public Chocolatey() : base()
         {
@@ -130,7 +131,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             };
 
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
             p.Start();
 
             string? line;
@@ -216,7 +217,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             parameters[0] = Properties.InstallVerb;
             parameters.Add("--no-progress");
 
-            if (options.Architecture == System.Runtime.InteropServices.Architecture.X86)
+            if (options.Architecture == Architecture.X86)
             {
                 parameters.Add("--forcex86");
             }
@@ -228,12 +229,12 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             if (options.SkipHashCheck)
             {
-                parameters.AddRange(new string[] { "--ignore-checksums", "--force" });
+                parameters.AddRange(["--ignore-checksums", "--force"]);
             }
 
             if (options.Version != "")
             {
-                parameters.AddRange(new string[] { "--version=" + options.Version, "--allow-downgrade" });
+                parameters.AddRange([$"--version={options.Version}", "--allow-downgrade"]);
             }
 
             return parameters.ToArray();
@@ -249,7 +250,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         {
             List<string> parameters = [Properties.UninstallVerb, package.Id, "-y"];
 
-            if (options.CustomParameters != null)
+            if (options.CustomParameters is not null)
             {
                 parameters.AddRange(options.CustomParameters);
             }
@@ -386,7 +387,14 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                     Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.User);
                 }
             }
-            Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.Process);
+
+            // Trick chocolatey into using the wanted installation
+            var choco_dir = Path.GetDirectoryName(status.ExecutablePath)?.Replace('/', '\\').Trim('\\') ?? "";
+            if (choco_dir.EndsWith("bin"))
+            {
+                choco_dir = choco_dir[..^3].Trim('\\');
+            }
+            Environment.SetEnvironmentVariable("chocolateyinstall", choco_dir, EnvironmentVariableTarget.Process);
 
             return status;
         }
