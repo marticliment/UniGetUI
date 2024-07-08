@@ -19,7 +19,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         public override string[] GetAddSourceParameters(ManagerSource source)
         {
-            return new string[] { "bucket", "add", source.Name, source.Url.ToString() };
+            return ["bucket", "add", source.Name, source.Url.ToString()];
         }
 
         public override OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
@@ -29,7 +29,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         public override string[] GetRemoveSourceParameters(ManagerSource source)
         {
-            return new string[] { "bucket", "rm", source.Name };
+            return ["bucket", "rm", source.Name];
         }
 
         protected override async Task<ManagerSource[]> GetSources_UnSafe()

@@ -14,7 +14,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             List<string> args = ["source", "add", "--name", source.Name, "--arg", source.Url.ToString(), "--accept-source-agreements", "--disable-interactivity"];
             if (source.Name != "winget")
             {
-                args.AddRange(new string[] { "--type", "Microsoft.Rest" });
+                args.AddRange(["--type", "Microsoft.Rest"]);
             }
 
             return args.ToArray();
@@ -22,7 +22,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public override string[] GetRemoveSourceParameters(ManagerSource source)
         {
-            return new string[] { "source", "remove", "--name", source.Name, "--disable-interactivity" };
+            return ["source", "remove", "--name", source.Name, "--disable-interactivity"];
         }
 
         public override OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)

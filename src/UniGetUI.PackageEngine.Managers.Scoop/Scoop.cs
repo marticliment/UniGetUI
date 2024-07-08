@@ -258,7 +258,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
             p.Start();
 
             string? line;
@@ -478,7 +478,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         private async void RunCleanup()
         {
             Logger.Info("Starting scoop cleanup...");
-            foreach (string command in new string[] { " cache rm *", " cleanup --all --cache", " cleanup --all --global --cache" })
+            foreach (string command in new []{" cache rm *", " cleanup --all --cache", " cleanup --all --global --cache"})
             {
                 Process p = new()
                 {

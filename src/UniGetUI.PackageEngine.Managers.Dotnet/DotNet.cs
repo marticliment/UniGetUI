@@ -13,9 +13,9 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 {
     public class DotNet : BaseNuGet
     {
-        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
-        new public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
-        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
+        new public static string[] FALSE_PACKAGE_NAMES = [""];
+        new public static string[] FALSE_PACKAGE_IDS = [""];
+        new public static string[] FALSE_PACKAGE_VERSIONS = [""];
 
         public DotNet() : base()
         {
@@ -162,7 +162,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     }
                 };
 
-                ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+                ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
                 p.Start();
 
                 string? line;
@@ -233,19 +233,19 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
             if (options.Architecture == Architecture.X86)
             {
-                parameters.AddRange(new string[] { "--arch", "x86" });
+                parameters.AddRange(["--arch", "x86"]);
             }
             else if (options.Architecture == Architecture.X64)
             {
-                parameters.AddRange(new string[] { "--arch", "x64" });
+                parameters.AddRange(["--arch", "x64"]);
             }
             else if (options.Architecture == Architecture.Arm)
             {
-                parameters.AddRange(new string[] { "--arch", "arm32" });
+                parameters.AddRange(["--arch", "arm32"]);
             }
             else if (options.Architecture == Architecture.Arm64)
             {
-                parameters.AddRange(new string[] { "--arch", "arm64" });
+                parameters.AddRange(["--arch", "arm64"]);
             }
 
             return parameters.ToArray();
@@ -262,7 +262,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
             if (options.CustomInstallLocation != "")
             {
-                parameters.AddRange(new string[] { "--tool-path", "\"" + options.CustomInstallLocation + "\"" });
+                parameters.AddRange(["--tool-path", "\"" + options.CustomInstallLocation + "\""]);
             }
             else if (package.Scope == PackageScope.Global)
             {

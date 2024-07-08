@@ -122,6 +122,21 @@ namespace UniGetUI.Interface
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), CoreTools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
             };
 
+            CheckboxCard Winget_DisableCOM = new()
+            {
+                Text = CoreTools.Translate("Use the WinGet COM API to fetch packages"),
+                SettingName = "DisableWinGetCOMApi",
+            };
+            Winget_DisableCOM.StateChanged += (s, e) => PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
+
+            CheckboxCard Winget_UseBundled = new()
+            {
+                Text = CoreTools.Translate("Use bundled WinGet instead of PowerShell CMDlets"),
+                SettingName = "ForceLegacyBundledWinGet"
+            };
+
+            ExtraSettingsCards[PEInterface.WinGet].Add(Winget_DisableCOM);
+            ExtraSettingsCards[PEInterface.WinGet].Add(Winget_UseBundled);
             ExtraSettingsCards[PEInterface.WinGet].Add(Winget_ResetSources);
 
             ButtonCard Scoop_Install = new() { Text = CoreTools.AutoTranslated("Install Scoop"), ButtonText = CoreTools.AutoTranslated("Install") };
@@ -357,7 +372,7 @@ namespace UniGetUI.Interface
                 {
                     MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
 
-                    string[] IgnoredSettings = new string[] { "OperationHistory", "CurrentSessionToken", "OldWindowGeometry" };
+                    string[] IgnoredSettings = ["OperationHistory", "CurrentSessionToken", "OldWindowGeometry"];
 
                     Dictionary<string, string> settings = [];
                     foreach (string path in Directory.EnumerateFiles(CoreData.UniGetUIDataDirectory))

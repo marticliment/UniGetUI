@@ -45,14 +45,14 @@
     - Feed the $(TargetDir)\WINMD path to CsWinRT in order to generate the projected classes
     NOTE: Suppressing the warning only is not enough as this will cause CoreClrInitFailure (0x80008089) error.
     -->
-    <PackageReference Include="Microsoft.WindowsPackageManager.ComInterop" Version="1.8.1133-preview">
+    <PackageReference Include="Microsoft.WindowsPackageManager.ComInterop" Version="1.8.1791">
       <NoWarn>NU1701</NoWarn>
       <GeneratePathProperty>true</GeneratePathProperty>
       <IncludeAssets>none</IncludeAssets>
       <WindowsAppSdkUndockedRegFreeWinRTInitialize>false</WindowsAppSdkUndockedRegFreeWinRTInitialize>
     </PackageReference>
 
-	  <PackageReference Include="Microsoft.WindowsPackageManager.InProcCom" Version="1.8.1133-preview">
+	  <PackageReference Include="Microsoft.WindowsPackageManager.InProcCom" Version="1.8.1791">
 		  <NoWarn>NU1701</NoWarn>
 		  <GeneratePathProperty>true</GeneratePathProperty>
 		  <IncludeAssets>none</IncludeAssets>

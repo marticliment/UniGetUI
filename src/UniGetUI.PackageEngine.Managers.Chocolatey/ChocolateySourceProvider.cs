@@ -12,12 +12,12 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
         public override string[] GetAddSourceParameters(ManagerSource source)
         {
-            return new string[] { "source", "add", "--name", source.Name, "--source", source.Url.ToString(), "-y" };
+            return ["source", "add", "--name", source.Name, "--source", source.Url.ToString(), "-y"];
         }
 
         public override string[] GetRemoveSourceParameters(ManagerSource source)
         {
-            return new string[] { "source", "remove", "--name", source.Name, "-y" };
+            return ["source", "remove", "--name", source.Name, "-y"];
         }
 
         public override OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)

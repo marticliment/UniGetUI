@@ -24,9 +24,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public ManagerStatus Status { get; set; } = new() { Found = false };
         public string Name { get; set; } = "Unset";
         public ManagerSource DefaultSource { get; set; }
-        public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
-        public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
-        public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
+        public static string[] FALSE_PACKAGE_NAMES = [""];
+        public static string[] FALSE_PACKAGE_IDS = [""];
+        public static string[] FALSE_PACKAGE_VERSIONS = [""];
         public bool ManagerReady { get; set; } = false;
         public ManagerLogger TaskLogger;
         public IEnumerable<ManagerDependency> Dependencies { get; protected set; } = [];

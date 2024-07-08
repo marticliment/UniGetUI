@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
@@ -11,9 +12,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
     public class PowerShell : BaseNuGet
     {
-        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
-        new public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
-        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
+        new public static string[] FALSE_PACKAGE_NAMES = [""];
+        new public static string[] FALSE_PACKAGE_IDS = [""];
+        new public static string[] FALSE_PACKAGE_VERSIONS = [""];
 
         public PowerShell() : base()
         {
@@ -64,7 +65,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     RedirectStandardInput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardInputEncoding = new UTF8Encoding(false),
                 }
             };
 
@@ -153,7 +155,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 }
             };
 
-            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
 
             p.Start();
             string? line;
@@ -220,19 +222,19 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             List<string> parameters = GetUpdateParameters(package, options).ToList();
             parameters[0] = Properties.InstallVerb;
 
-            parameters.AddRange(new string[] { "-AllowClobber" });
+            parameters.AddRange(["-AllowClobber"]);
             if (package.Scope == PackageScope.Global)
             {
-                parameters.AddRange(new string[] { "-Scope", "AllUsers" });
+                parameters.AddRange(["-Scope", "AllUsers"]);
             }
             else
             {
-                parameters.AddRange(new string[] { "-Scope", "CurrentUser" });
+                parameters.AddRange(["-Scope", "CurrentUser"]);
             }
 
             if (options.Version != "")
             {
-                parameters.AddRange(new string[] { "-RequiredVersion", options.Version });
+                parameters.AddRange(["-RequiredVersion", options.Version]);
             }
 
             return parameters.ToArray();
