@@ -610,8 +610,8 @@
   "You will be prompted only once, and every future installation will be elevated automatically." : null,
   "[RAN AS ADMINISTRATOR]" : null,
   "buy me a coffee" : "tarjoa minulle kupillinen kahvia",
-  "extracted" : null,
-  "formerly WingetUI" : null,
+  "extracted" : "purettu",
+  "formerly WingetUI" : "entinen WingetUI",
   "homepage" : "kotisivu",
   "install" : "asenna",
   "installation" : "asennus",
@@ -666,9 +666,9 @@
   "{pm} could not be found" : null,
   "{pm} found: {state}" : null,
   "{pm} is disabled" : null,
-  "{pm} is enabled and ready to go" : null,
-  "{pm} package manager specific preferences" : null,
-  "{pm} preferences" : null,
-  "{pm} version:" : null,
-  "{pm} was not found!" : null
+  "{pm} is enabled and ready to go" : "{pm} on käytössä ja valmis käyttöön",
+  "{pm} package manager specific preferences" : "{pm} paketinhallinnan erityiset asetukset",
+  "{pm} preferences" : "{pm} asetukset",
+  "{pm} version:" : "{pm} versio:",
+  "{pm} was not found!" : "{pm} ei löytynyt!"
 }
