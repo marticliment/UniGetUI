@@ -512,7 +512,16 @@
       "link": ""
     }
   ],
-  "ur": [],
+  "ur": [
+    {
+      "name": "digitio",
+      "link": "https://github.com/digitio"
+    },
+    {
+      "name": "digitpk",
+      "link": "https://github.com/digitpk"
+    }
+  ],
   "vi": [
     {
       "name": "legendsjoon",
