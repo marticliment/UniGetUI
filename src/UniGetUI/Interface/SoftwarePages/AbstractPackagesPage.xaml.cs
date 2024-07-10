@@ -196,17 +196,16 @@ namespace UniGetUI.Interface
                     FilterPackages();
                 }
 
-                if (!MEGA_QUERY_BOX_ENABLED || QueryBlock.Text.Trim() != "")
+                if (MEGA_QUERY_BOX_ENABLED && QueryBlock.Text.Trim() == "")
                 {
-                    return;
+                    MegaQueryBlockGrid.Visibility = Visibility.Visible;
+                    Loader.StopLoading();
+                    BackgroundText.Visibility = Visibility.Collapsed;
+                    ClearPackageList();
+                    UpdatePackageCount();
+                    MegaQueryBlock.Focus(FocusState.Programmatic);
+                    MegaQueryBlock.Text = "";
                 }
-
-                MegaQueryBlockGrid.Visibility = Visibility.Visible;
-                BackgroundText.Visibility = Visibility.Collapsed;
-                ClearPackageList();
-                UpdatePackageCount();
-                MegaQueryBlock.Focus(FocusState.Programmatic);
-                MegaQueryBlock.Text = "";
             };
 
             // Handle the Enter Pressed event on the MegaQueryBlock
@@ -567,7 +566,7 @@ namespace UniGetUI.Interface
             FilteredPackages.BlockSorting = true;
             foreach (Package match in MatchingList)
             {
-                if (VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
+                if (VisibleSources.Contains(match.Source) || (!match.Manager.Capabilities.SupportsCustomSources && VisibleManagers.Contains(match.Manager)))
                 {
                     FilteredPackages.Add(match);
                 }

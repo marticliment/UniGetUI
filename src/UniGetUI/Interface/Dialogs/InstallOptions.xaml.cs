@@ -57,7 +57,16 @@ namespace UniGetUI.Interface.Dialogs
 
             VersionComboBox.IsEnabled = (Operation == OperationType.Install || Operation == OperationType.None) && (Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease);
             VersionComboBox.SelectionChanged += (s, e) =>
-              { IgnoreUpdatesCheckbox.IsChecked = !new string[] { CoreTools.Translate("Latest"), CoreTools.Translate("PreRelease"), "" }.Contains(VersionComboBox.SelectedValue.ToString()); };
+            {
+                IgnoreUpdatesCheckbox.IsChecked =
+                    !(new []
+                    {
+                        CoreTools.Translate("Latest"), 
+                        CoreTools.Translate("PreRelease"), 
+                        ""
+                    }.Contains(VersionComboBox.SelectedValue.ToString()));
+            };
+            
             VersionComboBox.Items.Add(CoreTools.Translate("Latest"));
             VersionComboBox.SelectedIndex = 0;
             if (package.Manager.Capabilities.SupportsPreRelease)

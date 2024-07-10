@@ -1,13 +1,42 @@
 ﻿using System.Diagnostics;
 using System.Net;
+using System.Runtime.InteropServices;
 using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Data
 {
     public static class CoreData
     {
-        public const string VersionName =  "3.1.0"; // Do not modify this line, use file scripts/apply_versions.py
-        public const double VersionNumber =  3.1; // Do not modify this line, use file scripts/apply_versions.py
+        private static int? __code_page;
+        public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
+        
+        private static int GetCodePage()
+        {
+            try
+            {
+                Process p = new Process()
+                {
+                    StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = "chcp.com",
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                    }
+                };
+                p.Start();
+                string contents = p.StandardOutput.ReadToEnd();
+                return int.Parse(contents.Split(':')[^1].Trim());
+            } 
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                return 0;
+            }
+        }
+
+        public const string VersionName =  "3.1.1-beta1"; // Do not modify this line, use file scripts/apply_versions.py
+        public const double VersionNumber =  3.1091; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
         public static HttpClientHandler GenericHttpClientParameters

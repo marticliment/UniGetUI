@@ -68,7 +68,7 @@
         /// <summary>
         /// Lists the installed packages
         /// </summary>
-        ListPackages,
+        ListInstalledPackages,
         /// <summary>
         /// Refreshes the package indexes
         /// </summary>

@@ -47,17 +47,19 @@ namespace UniGetUI
         {
             try
             {
-                string textart = @"
-   __  __      _ ______     __  __  ______
-  / / / /___  (_) ____/__  / /_/ / / /  _/
- / / / / __ \/ / / __/ _ \/ __/ / / // /  
-/ /_/ / / / / / /_/ /  __/ /_/ /_/ // /   
-\____/_/ /_/_/\____/\___/\__/\____/___/   
-    Welcome to UniGetUI Version " + CoreData.VersionName;
+                string textart = $"""
+                     __  __      _ ______     __  __  ______
+                    / / / /___  (_) ____/__  / /_/ / / /  _/
+                   / / / / __ \/ / / __/ _ \/ __/ / / // /  
+                  / /_/ / / / / / /_/ /  __/ /_/ /_/ // /   
+                  \____/_/ /_/_/\____/\___/\__/\____/___/   
+                      Welcome to UniGetUI Version {CoreData.VersionName}
+                  """;
 
                 Logger.ImportantInfo(textart);
                 Logger.ImportantInfo("  ");
-                Logger.ImportantInfo("Version Code:  " + CoreData.VersionNumber.ToString());
+                Logger.ImportantInfo($"Version Code:  {CoreData.VersionNumber}");
+                Logger.ImportantInfo($"Encoding Code Page set to {CoreData.CODE_PAGE}");
 
                 // WinRT single-instance fancy stuff
                 WinRT.ComWrappersSupport.InitializeComWrappers();
@@ -159,7 +161,7 @@ namespace UniGetUI
 
                 foreach (string path in BasePaths)
                 {
-                    foreach (string old_wingetui_icon in new string[] { "WingetUI.lnk", "WingetUI .lnk", "UniGetUI (formerly WingetUI) .lnk" })
+                    foreach (string old_wingetui_icon in new []{ "WingetUI.lnk", "WingetUI .lnk", "UniGetUI (formerly WingetUI) .lnk" })
                     {
                         try
                         {
