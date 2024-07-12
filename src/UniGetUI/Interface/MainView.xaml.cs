@@ -5,14 +5,15 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Data;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.SoftwarePages;
+using UniGetUI.Interface.SoftwarePages.UniGetUI.Interface.SoftwarePages;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using Windows.UI.Core;
 
@@ -24,17 +25,17 @@ namespace UniGetUI.Interface
     public sealed partial class MainView : UserControl
     {
         public SettingsInterface SettingsPage;
-        public NewDiscoverSoftwarePage DiscoverPage;
-        public NewSoftwareUpdatesPage UpdatesPage;
-        public NewInstalledPackagesPage InstalledPage;
+        public DiscoverSoftwarePage DiscoverPage;
+        public SoftwareUpdatesPage UpdatesPage;
+        public InstalledPackagesPage InstalledPage;
         public HelpDialog? HelpPage;
-        public PackageBundlePage BundlesPage;
+        public NewPackageBundlesPage BundlesPage;
         public Page? OldPage;
         public Page? CurrentPage;
         public InfoBadge UpdatesBadge;
         public InfoBadge BundleBadge;
         public StackPanel OperationStackPanel;
-        private Dictionary<Page, NavButton> PageButtonReference = new();
+        private readonly Dictionary<Page, NavButton> PageButtonReference = new();
 
         public MainView()
         {
@@ -42,11 +43,11 @@ namespace UniGetUI.Interface
             UpdatesBadge = __updates_count_badge;
             BundleBadge = __bundle_count_badge;
             OperationStackPanel = __operations_list_stackpanel;
-            DiscoverPage = new NewDiscoverSoftwarePage();
-            UpdatesPage = new NewSoftwareUpdatesPage();
+            DiscoverPage = new DiscoverSoftwarePage();
+            UpdatesPage = new SoftwareUpdatesPage();
             UpdatesPage.ExternalCountBadge = UpdatesBadge;
-            InstalledPage = new NewInstalledPackagesPage();
-            BundlesPage = new PackageBundlePage();
+            InstalledPage = new InstalledPackagesPage();
+            BundlesPage = new NewPackageBundlesPage();
             SettingsPage = new SettingsInterface();
 
             int i = 0;
@@ -120,20 +121,17 @@ namespace UniGetUI.Interface
                 {
                     MainApp.Instance.MainWindow.Close();
                 }
-                else if(CurrentPage is IPageWithKeyboardShortcuts)
+                else if (e.Key == Windows.System.VirtualKey.F5 || (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.R))
                 {
-                    if (e.Key == Windows.System.VirtualKey.F5 || (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.R))
-                    {
-                        (CurrentPage as IPageWithKeyboardShortcuts)?.ReloadTriggered();
-                    }
-                    else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.F)
-                    {
-                        (CurrentPage as IPageWithKeyboardShortcuts)?.SearchTriggered();
-                    }
-                    else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.A)
-                    {
-                        (CurrentPage as IPageWithKeyboardShortcuts)?.SelectAllTriggered();
-                    }
+                    (CurrentPage as IPageWithKeyboardShortcuts)?.ReloadTriggered();
+                }
+                else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.F)
+                {
+                    (CurrentPage as IPageWithKeyboardShortcuts)?.SearchTriggered();
+                }
+                else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.A)
+                {
+                    (CurrentPage as IPageWithKeyboardShortcuts)?.SelectAllTriggered();
                 }
             };
         }
@@ -339,7 +337,7 @@ namespace UniGetUI.Interface
             await MainApp.Instance.MainWindow.ShowDialogAsync(AdminDialog);
         }
 
-        public async Task<bool> ShowInstallationSettingsForPackageAndContinue(Package package, OperationType Operation)
+        public async Task<bool> ShowInstallationSettingsForPackageAndContinue(IPackage package, OperationType Operation)
         {
             InstallOptionsPage OptionsPage = new(package, Operation);
 
@@ -372,7 +370,7 @@ namespace UniGetUI.Interface
 
         }
 
-        public async Task<InstallationOptions> UpdateInstallationSettings(Package package, InstallationOptions options)
+        public async Task<IInstallationOptions> UpdateInstallationSettings(IPackage package, IInstallationOptions options)
         {
             InstallOptionsPage OptionsPage = new(package, options);
 
@@ -399,9 +397,6 @@ namespace UniGetUI.Interface
 
         private void NavigateToPage(Page TargetPage)
         {
-            foreach (Page page in PageButtonReference.Keys)
-                if (page.Visibility == Visibility.Visible)
-                    OldPage = page;
             if (!PageButtonReference.ContainsKey(TargetPage))
             {
                 PageButtonReference.Add(TargetPage, MoreNavButton);
@@ -418,13 +413,8 @@ namespace UniGetUI.Interface
             foreach (Page page in PageButtonReference.Keys)
                 page.Visibility = (page == TargetPage) ? Visibility.Visible : Visibility.Collapsed;
 
+            OldPage = CurrentPage;
             CurrentPage = TargetPage;
-
-
-            if (CurrentPage is AbstractPackagesPage)
-                (CurrentPage as AbstractPackagesPage)?.FocusPackageList();
-            else if (CurrentPage == BundlesPage)
-                BundlesPage.PackageList.Focus(FocusState.Programmatic);
         }
 
         private async void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
@@ -452,7 +442,7 @@ namespace UniGetUI.Interface
             NotesDialog = null;
         }
 
-        public async Task ShowPackageDetails(Package package, OperationType ActionOperation)
+        public async Task ShowPackageDetails(IPackage package, OperationType ActionOperation)
         {
             PackageDetailsPage? DetailsPage = new(package, ActionOperation);
 
@@ -479,6 +469,58 @@ namespace UniGetUI.Interface
             DetailsDialog = null;
 
         }
+
+        public async Task<bool> ConfirmUninstallation(IPackage package)
+        {
+            ContentDialog dialog = new();
+
+            dialog.XamlRoot = XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = CoreTools.Translate("Are you sure?");
+            dialog.PrimaryButtonText = CoreTools.Translate("No");
+            dialog.SecondaryButtonText = CoreTools.Translate("Yes");
+            dialog.DefaultButton = ContentDialogButton.Primary;
+            dialog.Content = CoreTools.Translate("Do you really want to uninstall {0}?", package.Name);
+
+            return await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary;
+        }
+
+        public async Task<bool> ConfirmUninstallation(IEnumerable<IPackage> packages)
+        {
+            if (packages.Count() == 0) return false;
+            if (packages.Count() == 1)
+            {
+                return await ConfirmUninstallation(packages.First());
+            }
+
+            ContentDialog dialog = new();
+
+            dialog.XamlRoot = XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = CoreTools.Translate("Are you sure?");
+            dialog.PrimaryButtonText = CoreTools.Translate("No");
+            dialog.SecondaryButtonText = CoreTools.Translate("Yes");
+            dialog.DefaultButton = ContentDialogButton.Primary;
+
+            StackPanel p = new();
+            p.Children.Add(new TextBlock { 
+                Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?", packages.Count()), 
+                Margin = new Thickness(0, 0, 0, 5) 
+            });
+
+            string pkgList = "";
+            foreach (Package package in packages)
+                pkgList += " ● " + package.Name + "\x0a";
+
+            TextBlock PackageListTextBlock = new() { FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Consolas"), Text = pkgList };
+            p.Children.Add(new ScrollView { Content = PackageListTextBlock, MaxHeight = 200 });
+
+            dialog.Content = p;
+
+            return await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary;
+        }
+
+
 
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
         {

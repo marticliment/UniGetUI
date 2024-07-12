@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUIManagers = UniGetUI.PackageEngine.ManagerClasses.Manager;
 
@@ -12,7 +13,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
     internal class WinGetPackageDetailsProvider : BasePackageDetailsProvider<UniGetUIManagers.PackageManager>
     {
-        private static readonly Dictionary<string, string> __msstore_package_manifests = [];
+        private static readonly Dictionary<string, string> __msstore_package_manifests = new();
 
         struct MicrosoftStoreProductType
         {
@@ -20,42 +21,36 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
 
         public WinGetPackageDetailsProvider(WinGet manager) : base(manager) { }
-
-        protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
+        
+        protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
         {
             return await WinGetHelper.Instance.GetPackageVersions_Unsafe((WinGet)Manager, package);
         }
 
-        protected override async Task GetPackageDetails_Unsafe(PackageDetails details)
+        protected override async Task GetPackageDetails_Unsafe(IPackageDetails details)
         {
             await WinGetHelper.Instance.GetPackageDetails_UnSafe((WinGet)Manager, details);
         }
 
-        protected override async Task<CacheableIcon?> GetPackageIcon_Unsafe(Package package)
+        protected override async Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package)
         {
-
-            if (package.Source.Name == "msstore")
-            {
+            
+            if(package.Source.Name == "msstore")
                 return await GetMicrosoftStorePackageIcon(package);
-            }
 
-            Logger.Warn("Non-MSStore WinGet Native Icons have been forcefully disabled on code");
-            return null;
+            // Logger.Warn("Non-MSStore WinGet Native Icons have been forcefully disabled on code");
+            // return null;
             return await GetWinGetPackageIcon(package);
         }
 
-        protected override async Task<Uri[]> GetPackageScreenshots_Unsafe(Package package)
+        protected override async Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
         {
             if (package.Source.Name != "msstore")
-            {
                 return [];
-            }
 
             string? ResponseContent = await GetMicrosoftStorePackageManifest(package);
             if (ResponseContent == null)
-            {
                 return [];
-            }
 
             Match IconArray = Regex.Match(ResponseContent, "(?:\"|')Images(?:\"|'): ?\\[([^\\]]+)\\]");
             if (!IconArray.Success)
@@ -64,27 +59,21 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return [];
             }
 
-            List<Uri> FoundIcons = [];
+            List<Uri> FoundIcons = new();
 
             foreach (Match ImageEntry in Regex.Matches(IconArray.Groups[1].Value, "{([^}]+)}"))
             {
 
                 if (!ImageEntry.Success)
-                {
                     continue;
-                }
 
                 Match ImagePurpose = Regex.Match(ImageEntry.Groups[1].Value, "(?:\"|')ImagePurpose(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
                 if (!ImagePurpose.Success || ImagePurpose.Groups[1].Value != "Screenshot")
-                {
                     continue;
-                }
 
                 Match ImageUrl = Regex.Match(ImageEntry.Groups[1].Value, "(?:\"|')Uri(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
-                if (!ImageUrl.Success)
-                {
+                if (!ImageUrl.Success) 
                     continue;
-                }
 
                 FoundIcons.Add(new Uri("https:" + ImageUrl.Groups[1].Value));
             }
@@ -93,12 +82,10 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
 
 
-        private async Task<string?> GetMicrosoftStorePackageManifest(Package package)
+        private async Task<string?> GetMicrosoftStorePackageManifest(IPackage package)
         {
-            if (__msstore_package_manifests.ContainsKey(package.Id))
-            {
+            if(__msstore_package_manifests.ContainsKey(package.Id))
                 return __msstore_package_manifests[package.Id];
-            }
 
             string CountryCode = CultureInfo.CurrentCulture.Name.Split("-")[^1];
             string Locale = CultureInfo.CurrentCulture.Name;
@@ -127,21 +114,15 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             Logger.Debug("Microsoft Store API call status code: " + httpResponse.StatusCode);
 
-            if (result != "" && httpResponse.StatusCode == HttpStatusCode.OK)
-            {
-                __msstore_package_manifests[package.Id] = result;
-            }
-
+            if(result != "" && httpResponse.StatusCode == HttpStatusCode.OK) __msstore_package_manifests[package.Id] = result;
             return result;
         }
 
-        private async Task<CacheableIcon?> GetMicrosoftStorePackageIcon(Package package)
+        private async Task<CacheableIcon?> GetMicrosoftStorePackageIcon(IPackage package)
         {
             string? ResponseContent = await GetMicrosoftStorePackageManifest(package);
             if (ResponseContent == null)
-            {
                 return null;
-            }
 
             Match IconArray = Regex.Match(ResponseContent, "(?:\"|')Images(?:\"|'): ?\\[([^\\]]+)\\]");
             if (!IconArray.Success)
@@ -150,30 +131,24 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return null;
             }
 
-            Dictionary<int, string> FoundIcons = [];
+            Dictionary<int, string> FoundIcons = new();
 
             foreach (Match ImageEntry in Regex.Matches(IconArray.Groups[1].Value, "{([^}]+)}"))
             {
                 string CurrentImage = ImageEntry.Groups[1].Value;
 
                 if (!ImageEntry.Success)
-                {
                     continue;
-                }
 
                 Match ImagePurpose = Regex.Match(CurrentImage, "(?:\"|')ImagePurpose(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
                 if (!ImagePurpose.Success || ImagePurpose.Groups[1].Value != "Tile")
-                {
                     continue;
-                }
 
                 Match ImageUrl = Regex.Match(CurrentImage, "(?:\"|')Uri(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
                 Match ImageSize = Regex.Match(CurrentImage, "(?:\"|')Height(?:\"|'): ?([^,]+)");
 
                 if (!ImageUrl.Success || !ImageSize.Success)
-                {
                     continue;
-                }
 
                 FoundIcons[int.Parse(ImageSize.Groups[1].Value)] = ImageUrl.Groups[1].Value;
             }
@@ -192,7 +167,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
 
 
-        private async Task<CacheableIcon?> GetWinGetPackageIcon(Package package)
+        private async Task<CacheableIcon?> GetWinGetPackageIcon(IPackage package)
         { // TODO: Need to work on retrieving WinGet icons
 
             if (WinGetHelper.Instance is not NativeWinGetHelper)
@@ -202,7 +177,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             Microsoft.Management.Deployment.PackageManager WinGetManager = ((NativeWinGetHelper)WinGetHelper.Instance).WinGetManager;
-            WindowsPackageManager.Interop.WindowsPackageManagerFactory Factory = ((NativeWinGetHelper)WinGetHelper.Instance).Factory;
+            WindowsPackageManager.Interop.WindowsPackageManagerStandardFactory Factory = ((NativeWinGetHelper)WinGetHelper.Instance).Factory;
 
             // Find the native package for the given Package object
             PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);

@@ -9,13 +9,13 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
 using Windows.UI.Text;
-using UniGetUI.PackageEngine.Managers.PowerShellManager;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,12 +27,12 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class PackageDetailsPage : Page
     {
-        public Package Package;
+        public IPackage Package;
         private readonly InstallOptionsPage InstallOptionsPage;
         public event EventHandler? Close;
         readonly OperationType OperationRole;
         bool PackageHasScreenshots = false;
-        public ObservableCollection<TextBlock> ShowableTags = [];
+        public ObservableCollection<TextBlock> ShowableTags = new();
         readonly Uri InvalidUri = new("about:blank");
 
         private enum LayoutMode
@@ -44,7 +44,7 @@ namespace UniGetUI.Interface.Dialogs
 
 
         private LayoutMode __layout_mode = LayoutMode.Unloaded;
-        public PackageDetailsPage(Package package, OperationType operationRole)
+        public PackageDetailsPage(IPackage package, OperationType operationRole)
         {
             OperationRole = operationRole;
             Package = package;
@@ -57,9 +57,7 @@ namespace UniGetUI.Interface.Dialogs
             SizeChanged += PackageDetailsPage_SizeChanged;
 
             if (operationRole == OperationType.None)
-            {
                 operationRole = OperationType.Install;
-            }
 
             switch (operationRole)
             {
@@ -135,11 +133,8 @@ namespace UniGetUI.Interface.Dialogs
 
             string NotFound = CoreTools.Translate("Not available");
 
-            PackageDetails details = Package.Details;
-            if (!details.IsPopulated)
-            {
-                await details.Load();
-            }
+            IPackageDetails details = Package.Details;
+            if (!details.IsPopulated) await details.Load();
 
             string command = "";
 
@@ -191,18 +186,13 @@ namespace UniGetUI.Interface.Dialogs
             // Extended details section
             SetTextToItem(ManifestUrl_Content, details.ManifestUrl);
             if (Package.Manager == PEInterface.Chocolatey)
-            {
                 SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA512") + ": ");
-            }
             else
-            {
                 SetTextToItem(InstallerHash_Label, CoreTools.Translate("Installer SHA256") + ": ");
-            }
-
             SetTextToItem(InstallerHash_Content, details.InstallerHash);
             if (details.InstallerUrl != null)
             {
-                SetTextToItem(InstallerSize_Content, details.InstallerSize > 0 ? $" ({details.InstallerSize} MB)" : $" ({CoreTools.Translate("Unknown size")})");
+                SetTextToItem(InstallerSize_Content, details.InstallerSize > 0? $" ({details.InstallerSize} MB)": $" ({CoreTools.Translate("Unknown size")})");
                 SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Download installer"));
             }
             else
@@ -218,14 +208,11 @@ namespace UniGetUI.Interface.Dialogs
 
             ShowableTags.Clear();
             foreach (string tag in details.Tags)
-            {
-                ShowableTags.Add(new TextBlock()
-                {
-                    Text = tag,
+                ShowableTags.Add(new TextBlock() { 
+                    Text = tag, 
                     VerticalAlignment = VerticalAlignment.Center,
                     TextLineBounds = TextLineBounds.Tight
                 });
-            }
         }
 
         public void SetTextToItem(Run r, string? s)
@@ -264,14 +251,14 @@ namespace UniGetUI.Interface.Dialogs
         }
         public void SetTextToItem(Hyperlink h, string s)
         {
-            h.Inlines.Clear();
-            h.Inlines.Add(new Run() { Text = s });
-            h.NavigateUri = new Uri("about:blank");
+                h.Inlines.Clear();
+                h.Inlines.Add(new Run() { Text = s });
+                h.NavigateUri = new Uri("about:blank");
         }
 
         public async void LoadIcon()
         {
-            PackageIcon.Source = new BitmapImage { UriSource = await Package.GetIconUrl() };
+            PackageIcon.Source = new BitmapImage { UriSource = (await Package.GetIconUrl()) };
         }
 
         public async void LoadScreenshots()
@@ -284,9 +271,7 @@ namespace UniGetUI.Interface.Dialogs
                 IconsExtraBanner.Visibility = Visibility.Visible;
                 ScreenshotsCarroussel.Items.Clear();
                 foreach (Uri image in screenshots)
-                {
                     ScreenshotsCarroussel.Items.Add(new Image { Source = new BitmapImage(image) });
-                }
             }
 
             __layout_mode = LayoutMode.Unloaded;
@@ -303,15 +288,12 @@ namespace UniGetUI.Interface.Dialogs
                 case OperationType.Install:
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(Package, InstallOptionsPage.Options));
                     break;
-
+                
                 case OperationType.Uninstall:
-                    if (await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(Package))
-                    {
-                        MainApp.Instance.AddOperationToList(new UninstallPackageOperation(Package, InstallOptionsPage.Options));
-                    }
-
+                    if(await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(Package))
+                        MainApp.Instance.AddOperationToList(new UninstallPackageOperation(Package, InstallOptionsPage.Options));    
                     break;
-
+                
                 case OperationType.Update:
                     MainApp.Instance.AddOperationToList(new UpdatePackageOperation(Package, InstallOptionsPage.Options));
                     break;
@@ -329,27 +311,19 @@ namespace UniGetUI.Interface.Dialogs
             try
             {
                 if (Package.Details?.InstallerUrl == null)
-                {
                     return;
-                }
-
+                
                 FileSavePicker savePicker = new();
                 MainWindow window = MainApp.Instance.MainWindow;
                 IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
-                string extension = Package.Manager is BaseNuGet
-                    ? "nupkg"
-                    : Package.Details.InstallerUrl.ToString().Split('.')[^1];
-                savePicker.SuggestedFileName = Package.Id + " installer." + extension;
-
+                savePicker.SuggestedFileName = Package.Id + " installer." + Package.Details.InstallerUrl.ToString().Split('.')[^1];
+                
                 if (Package.Details.InstallerUrl.ToString().Split('.')[^1] == "nupkg")
-                {
-                    savePicker.FileTypeChoices.Add("Compressed Manifest File", [".zip"]);
-                }
-
-                savePicker.FileTypeChoices.Add("Default", [$".{extension}"]);
-
+                    savePicker.FileTypeChoices.Add("Compressed Manifest File", new System.Collections.Generic.List<string>() { ".zip" });
+                savePicker.FileTypeChoices.Add("Default", new System.Collections.Generic.List<string>() { "." + Package.Details.InstallerUrl.ToString().Split('.')[^1] });
+                
                 StorageFile file = await savePicker.PickSaveFileAsync();
                 if (file != null)
                 {
@@ -367,14 +341,14 @@ namespace UniGetUI.Interface.Dialogs
                         while (running)
                         {
                             DownloadInstaller_Button.Inlines.Clear();
-                            DownloadInstaller_Button.Inlines.Add(new Run() { Text = baseString + " " + texts[i++ % 6] });
+                            DownloadInstaller_Button.Inlines.Add(new Run() { Text = baseString + " " + texts[(i++) % 6] });
                             await Task.Delay(500);
                         }
                     };
                     _ = loader();
-
+                    
                     Logger.Debug($"Downloading installer ${file.Path.ToString()}");
-
+                    
                     using HttpClient httpClient = new(CoreData.GenericHttpClientParameters);
                     httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     await using Stream s = await httpClient.GetStreamAsync(Package.Details.InstallerUrl);
