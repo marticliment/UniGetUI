@@ -39,7 +39,7 @@ Check out the [Supported Package Managers Table](#supported-package-managers) fo
 
 **Install UniGetUI through Winget:**    
 ```cmd
-winget install --exact wingetui --source winget
+winget install --exact --id SomePythonThings.WingetUIStore --source winget
 ```
 
 **Install UniGetUI through Scoop:**
