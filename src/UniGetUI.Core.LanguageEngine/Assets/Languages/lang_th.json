@@ -409,7 +409,7 @@
   "Set custom backup file name" : "ตั้งชื่อไฟล์สำรองข้อมูลเอง",
   "Settings" : "การตั้งค่า",
   "Share" : "แชร์",
-  "Share WingetUI" : "แชร์ WingetUI",
+  "Share WingetUI" : "แบ่งปัน WingetUI",
   "Share this package" : "แชร์แพ็กเกจนี้",
   "Show UniGetUI on the system tray" : "แสดง UniGetUI ในถาดระบบ",
   "Show WingetUI" : "แสดง WingetUI",
