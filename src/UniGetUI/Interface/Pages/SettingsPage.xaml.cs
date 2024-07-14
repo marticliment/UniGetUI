@@ -96,12 +96,6 @@ namespace UniGetUI.Interface
 
             OpenBackupDirectory.Content = CoreTools.Translate("Open");
 
-            // Admin Settings Section
-            int index = 2;
-            foreach (PackageManager manager in PEInterface.Managers)
-            {
-            }
-
             // Experimental Settings Section
             ExperimentalSettingsExpander.HideRestartRequiredBanner();
 
@@ -124,19 +118,25 @@ namespace UniGetUI.Interface
 
             CheckboxCard Winget_DisableCOM = new()
             {
-                Text = CoreTools.Translate("Use the WinGet COM API to fetch packages"),
-                SettingName = "DisableWinGetCOMApi",
+                Text = CoreTools.Translate("Use the WinGet PowerShell Module instead of the WinGet COM API"),
+                SettingName = "ForceUsePowerShellModules",
             };
             Winget_DisableCOM.StateChanged += (s, e) => PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
-
+            Winget_DisableCOM.IsEnabled = !Settings.Get("ForceLegacyBundledWinGet");
+            
             CheckboxCard Winget_UseBundled = new()
             {
-                Text = CoreTools.Translate("Use bundled WinGet instead of PowerShell CMDlets"),
+                Text = CoreTools.Translate("Use bundled WinGet instead of system WinGet"),
                 SettingName = "ForceLegacyBundledWinGet"
             };
+            Winget_UseBundled.StateChanged += (s, e) =>
+            {
+                PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
+                Winget_DisableCOM.IsEnabled = !Settings.Get("ForceLegacyBundledWinGet");
+            };
 
-            ExtraSettingsCards[PEInterface.WinGet].Add(Winget_DisableCOM);
             ExtraSettingsCards[PEInterface.WinGet].Add(Winget_UseBundled);
+            ExtraSettingsCards[PEInterface.WinGet].Add(Winget_DisableCOM);
             ExtraSettingsCards[PEInterface.WinGet].Add(Winget_ResetSources);
 
             ButtonCard Scoop_Install = new() { Text = CoreTools.AutoTranslated("Install Scoop"), ButtonText = CoreTools.AutoTranslated("Install") };
@@ -273,10 +273,8 @@ namespace UniGetUI.Interface
                         }
                     }
                 }
-
-
-                index = 0;
-
+                
+                int index = 0;
                 SettingsCard ManagerPath = new()
                 {
                     Description = Manager.Status.ExecutablePath + " " + Manager.Properties.ExecutableCallArgs,

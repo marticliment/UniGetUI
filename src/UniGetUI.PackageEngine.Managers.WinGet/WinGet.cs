@@ -316,9 +316,23 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             ManagerStatus status = new();
 
+            bool FORCE_BUNDLED = Settings.Get("ForceLegacyBundledWinGet");
+            
             Tuple<bool, string> which_res = await CoreTools.Which("winget.exe");
             status.ExecutablePath = which_res.Item2;
             status.Found = which_res.Item1;
+
+            if (!status.Found)
+            {
+                Logger.Error("User does not have WinGet installed");
+                FORCE_BUNDLED = true;
+            }
+
+            if (FORCE_BUNDLED)
+            {
+                status.ExecutablePath = WinGetBundledPath;
+                status.Found = File.Exists(WinGetBundledPath);
+            }
 
             if (!status.Found)
             {
@@ -335,12 +349,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8,
-                    StandardErrorEncoding = System.Text.Encoding.UTF8
+                    StandardOutputEncoding = Encoding.UTF8,
+                    StandardErrorEncoding = Encoding.UTF8
                 }
             };
             process.Start();
-            status.Version = "Native WinGet CLI Version: " + (await process.StandardOutput.ReadToEndAsync()).Trim();
+            status.Version = $"{(FORCE_BUNDLED? "Bundled" : "System")} WinGet CLI Version: {(await process.StandardOutput.ReadToEndAsync()).Trim()}";
             string error = await process.StandardError.ReadToEndAsync();
             if (error != "")
             {
@@ -362,21 +376,23 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             };
             process.Start();
-            status.Version += "\nMicrosoft.WinGet.Client PSModule version: " + (await process.StandardOutput.ReadToEndAsync()).Trim();
+            status.Version += $"\nMicrosoft.WinGet.Client PSModule version: \"{(await process.StandardOutput.ReadToEndAsync()).Trim()}\"";
             error = await process.StandardError.ReadToEndAsync();
             if (error != "")
             {
                 Logger.Error("WinGet STDERR not empty: " + error);
             }
-
+            
             try
             {
+                if (FORCE_BUNDLED) throw new Exception("Bundled WinGet was forced by the user!");
                 await Task.Run(() => WinGetHelper.Instance = new NativeWinGetHelper());
                 status.Version += "\nUsing Native WinGet helper (COM Api)";
             }
             catch (Exception ex)
             {
-                Logger.Warn("Cannot create native WinGet instance due to error: " + ex.ToString());
+                Logger.Warn($"Cannot create native WinGet instance due to error: {ex.Message}");
+                Logger.Warn(ex);
                 Logger.Warn("WinGet will resort to using BundledWinGetHelper()");
                 WinGetHelper.Instance = new BundledWinGetHelper();
                 status.Version += "\nUsing bundled WinGet helper (CLI parsing)";
