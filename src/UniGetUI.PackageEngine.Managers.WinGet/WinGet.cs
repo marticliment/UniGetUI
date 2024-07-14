@@ -46,6 +46,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     PowerShellPromptArgs + " -Command \"& {Install-Module -Name Microsoft.WinGet.Client -Force -Confirm:$false -Scope CurrentUser; if($error.count -ne 0){pause}}\"",
                     async () =>
                     {
+                        if (!Settings.Get("ForceUsePowerShellModules") || Settings.Get("ForceLegacyBundledWinGet"))
+                        {
+                            Logger.ImportantInfo("Microsoft.Powershell.Client detection has been forcefully skipped as the module is not required on the current context");
+                            return true;
+                        }
+
                         Process p = new()
                         {
                             StartInfo = new ProcessStartInfo() {
