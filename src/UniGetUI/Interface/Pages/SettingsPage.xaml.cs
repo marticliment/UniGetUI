@@ -126,7 +126,7 @@ namespace UniGetUI.Interface
             
             CheckboxCard Winget_UseBundled = new()
             {
-                Text = CoreTools.Translate("Use bundled WinGet instead of system WinGet"),
+                Text = $"{CoreTools.Translate("Use bundled WinGet instead of system WinGet")} ({CoreTools.Translate("This may help if WinGet packages are not shown")})",
                 SettingName = "ForceLegacyBundledWinGet"
             };
             Winget_UseBundled.StateChanged += (s, e) =>
