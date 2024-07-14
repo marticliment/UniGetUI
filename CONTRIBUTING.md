@@ -1,9 +1,9 @@
 -------------------------------------------------------------
-This repository **respects** people, despite their race, gender, religion, height, or culture. Any user who posts offensive or disrespectful content regarding race, gender, religion, height or culture **will be immediately banned from this repository**. No exception will be made.
+This repository **respects** people, despite their race, gender, religion, height, or culture. Any user who posts offensive or disrespectful content regarding race, gender, religion, height, or culture **will be immediately banned from this repository**. No exception will be made.
 
 -------------------------------------------------------------
 
-### DO NOT publish garbage PRs to farm Crypto AirDrops. Any user suspected of this action will get banned. Submitting broken code wastes the contributors' time, who have to spend their free time reviewing, fixing, and testing code that does not even compile does not break other functionality or does not introduce any changes at all.  
+### DO NOT publish garbage PRs to farm Crypto AirDrops. Any user suspected of this action will get banned. Submitting broken code wastes the contributors' time, who have to spend their free time reviewing, fixing, and testing code that does not even compile does not break other functionality, or does not introduce any changes at all.  
 
 ---------------------------------
 
@@ -51,4 +51,3 @@ Before reading: All of the rules below are guidelines, which means that they sho
  - Commits must include only changes on one feature or section of the code. Let's say, you have fixed an issue regarding localization and added a new entry in the settings section to change update frequency, those two changes must be committed separately.
  - The code in each commit should be executable. Please do not leave work unfinished across commits, or, if it is needed, let the code be executed without errors.
  - Commit names must be self-explanatory, and, if applicable, must reference the corresponding issue.
-
