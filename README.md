@@ -153,7 +153,7 @@ To translate UniGetUI to other languages or to update an old translation, please
 | <img src='https://flagcdn.com/ph.svg' width=20> &nbsp; Tagalog - Tagalog | 14% | lasersPew |
 | <img src='https://flagcdn.com/th.svg' width=20> &nbsp; Thai - ภาษาไทย | 99% | [apaeisara](https://github.com/apaeisara), [dulapahv](https://github.com/dulapahv), [rikoprushka](https://github.com/rikoprushka) |
 | <img src='https://flagcdn.com/tr.svg' width=20> &nbsp; Turkish - Türkçe | 99% | [ahmetozmtn](https://github.com/ahmetozmtn), [dogancanyr](https://github.com/dogancanyr), [gokberkgs](https://github.com/gokberkgs) |
-| <img src='https://flagcdn.com/ua.svg' width=20> &nbsp; Ukranian - Yкраї́нська | 56% | Artem Moldovanenko, Operator404 |
+| <img src='https://flagcdn.com/ua.svg' width=20> &nbsp; Ukrainian - Yкраї́нська | 56% | Artem Moldovanenko, Operator404 |
 | <img src='https://flagcdn.com/ur.svg' width=20> &nbsp; Urdu - اردو | 55% | [digitio](https://github.com/digitio), [digitpk](https://github.com/digitpk) |
 | <img src='https://flagcdn.com/vn.svg' width=20> &nbsp; Vietnamese - Tiếng Việt | 95% | [legendsjoon](https://github.com/legendsjoon), [txavlog](https://github.com/txavlog) |
 | <img src='https://flagcdn.com/cn.svg' width=20> &nbsp; Simplified Chinese (China) | 99% | Aaron Liu, adfnekc, [arthurfsy2](https://github.com/arthurfsy2), [bai0012](https://github.com/bai0012), BUGP Association, ciaran, CnYeSheng, Cololi, [FloatStream](https://github.com/FloatStream), [SpaceTimee](https://github.com/SpaceTimee), Yisme |
@@ -209,7 +209,7 @@ If this doesn't work, consider asking for help at [Winget's project page](https:
 
 A: This is a known limitation of Winget. 
 
-See more details on issue https://github.com/microsoft/winget-cli/issues/2603.<br>
+See more details on the issue https://github.com/microsoft/winget-cli/issues/2603.<br>
 
 #
 
@@ -217,17 +217,17 @@ See more details on issue https://github.com/microsoft/winget-cli/issues/2603.<b
 
 A: A common reason apps (i.e., executables) get blocked and/or detected as a virus — even when there's nothing malicious about them, like in the case of UniGetUI — is because they're not being used by a relatively large amount of people.
 
-Combine that with the fact that you might be downloading something recently released, and simply blocking unknown apps is in many cases a good precaution to take to prevent actual malware.
+Combine that with the fact that you might be downloading something recently released, and blocking unknown apps is in many cases a good precaution to take to prevent actual malware.
 
-Since UniGetUI is open source and safe to use, simply whitelist the app in the settings of your antivirus/browser.<br>
+Since UniGetUI is open source and safe to use, whitelist the app in the settings of your antivirus/browser.<br>
 
 #
 
 **Q: Are Winget/Scoop packages safe?**<br>
 
-A: UniGetUI, Microsoft and Scoop aren't responsible for the packages available for download, which are provided by third parties and can theoretically be compromised.
+A: UniGetUI, Microsoft, and Scoop aren't responsible for the packages available for download, which are provided by third parties and can theoretically be compromised.
 
-To mitigate the risks of downloading malware, Microsoft has implemented a few checks for the software available on Winget. Even so, It's recommended to only download software from publishers that you trust. 
+Microsoft has implemented a few checks for the software available on Winget to mitigate the risks of downloading malware. Even so, It's recommended to only download software from publishers that you trust. 
 
 <br><p align="center"><i>Check out the <a href="https://github.com/marticliment/UniGetUI/wiki">Wiki</a> for more information!</i></p>
 
