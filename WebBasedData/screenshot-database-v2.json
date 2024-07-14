@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11707,
-        "done": 5101,
-        "packages_with_icon": 5101,
+        "done": 5104,
+        "packages_with_icon": 5104,
         "packages_with_screenshot": 579,
         "total_screenshots": 1811
     },
@@ -16317,7 +16317,7 @@
             "images": []
         },
         "gitkraken": {
-            "icon": "https://community.chocolatey.org/content/packageimages/gitkraken.9.1.1.png",
+            "icon": "https://dashboard.snapcraft.io/site_media/appmedia/2018/01/1.png",
             "images": []
         },
         "gitkube": {
@@ -18694,7 +18694,7 @@
             "images": []
         },
         "hwinfo": {
-            "icon": "https://community.chocolatey.org/content/packageimages/hwinfo.portable.7.40.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/hwinfo.install.8.0.0.png",
             "images": [
                 "https://www.sqlskills.com/blogs/glenn/wp-content/uploads/2016/12/image_thumb.png"
             ]
@@ -27478,11 +27478,11 @@
             "images": []
         },
         "nodejs": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/nodejs/nodejs.org/main/apps/site/public/static/images/favicons/android-chrome-192x192.png",
             "images": []
         },
         "nodejs-lts": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/nodejs/nodejs.org/main/apps/site/public/static/images/favicons/android-chrome-192x192.png",
             "images": []
         },
         "nodejs-nightly": {
@@ -31894,7 +31894,7 @@
             "icon": "",
             "images": []
         },
-        "privateinter\u2026": {
+        "privateinternetaccess": {
             "icon": "https://www.droidviews.com/wp-content/uploads/2021/05/Private-Internet-Access.png",
             "images": [
                 "https://i.pcmag.com/imagery/reviews/01gzf2i73u7uAk08rsioA8v-43.fit_lim.size_1050x.jpg"
@@ -33984,7 +33984,7 @@
             "images": []
         },
         "recuva": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/Recuva.1.54.120.png",
             "images": []
         },
         "recycle": {
@@ -47425,7 +47425,7 @@
             "images": []
         },
         "wiztree": {
-            "icon": "https://community.chocolatey.org/content/packageimages/wiztree.4.12.png",
+            "icon": "https://antibodysoftware-17031.kxcdn.com/images/wiztree445x.png",
             "images": []
         },
         "wkhtmltopdf": {
