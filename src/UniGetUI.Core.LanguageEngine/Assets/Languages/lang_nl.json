@@ -152,7 +152,7 @@
   "Downloading package metadata..." : "Pakketmetagegevens downloaden…",
   "Enable Scoop cleanup on launch" : "Scoop opschonen inschakelen bij de start",
   "Enable WingetUI notifications" : "Meldingen van WingetUI inschakelen",
-  "Enable background api (WingetUI Widgets and Sharing, port 7058)" : "Achtergrond-API inschakelen (WingetUI Widgets and Sharing, poort 7058)",
+  "Enable background api (WingetUI Widgets and Sharing, port 7058)" : "Achtergrond-API inschakelen (WingetUI Widgets en Delen, poort 7058)",
   "Enable it to install packages from {pm}." : "Schakel het in om pakketten van {pm} te installeren.",
   "Enable {pm}" : "{pm} inschakelen",
   "Error" : "Fout",
