@@ -12,16 +12,12 @@
 		<SdkVersion>8.0.204</SdkVersion>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<PublishSelfContained>true</PublishSelfContained>
-<FileVersion>3.1.1.0</FileVersion>
-<InformationalVersion>3.1.1-beta1</InformationalVersion>
-		<Product>UniGetUI</Product>
 		<Authors>Martí Climent and the contributors</Authors>
 		<PublisherName>Martí Climent</PublisherName>
-<ApplicationVersion>3.1.1-beta1</ApplicationVersion>
-		<Copyright>2024, Martí Climent</Copyright>
 		<Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	</PropertyGroup>
-	
+
 	<PropertyGroup>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
@@ -38,4 +34,7 @@
     <ProjectReference Include="..\UniGetUI.PackageEngine.PackageManagerClasses\UniGetUI.PackageEngine.Classes.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+  </ItemGroup>
 </Project>
