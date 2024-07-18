@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11707,
-        "done": 5104,
-        "packages_with_icon": 5104,
-        "packages_with_screenshot": 579,
-        "total_screenshots": 1811
+        "done": 5105,
+        "packages_with_icon": 5105,
+        "packages_with_screenshot": 580,
+        "total_screenshots": 1812
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -36409,8 +36409,10 @@
             "images": []
         },
         "servicebusexplorer": {
-            "icon": "",
-            "images": []
+            "icon": "https://community.chocolatey.org/content/packageimages/ServiceBusExplorer.6.0.3.png",
+            "images": [
+                "https://github.com/paolosalvatori/ServiceBusExplorer/raw/main/media/service-bus-explorer.png"
+            ]
         },
         "servicebusmqmanager": {
             "icon": "",
