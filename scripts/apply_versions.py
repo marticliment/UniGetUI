@@ -35,22 +35,12 @@ try:
         "        public const double VersionNumber = ": f" {versionCode}; // Do not modify this line, use file scripts/apply_versions.py\n",
     }, encoding="utf-8-sig")
 
-    # Get a list of files in the current directory
-    files = list(glob.iglob(glob.escape(".") + '/**/*', recursive=True))
-
-    # Filter the list to only include .csproj files
-    csproj_files = [file for file in files if file.endswith(".csproj")]
-
-    # Iterate over each .csproj file
-    for csproj_file in csproj_files:
-        # Perform your desired operations on each .csproj file
-        # For example, you can call the `fileReplaceLinesWith` function here
-        fileReplaceLinesWith(csproj_file, {
-            "<FileVersion>": f"{versionISS}</FileVersion>\n",
-            "<InformationalVersion>": f"{versionName}</InformationalVersion>\n",
-            "<ApplicationVersion>": f"{versionName}</ApplicationVersion>\n",
-            # Your replacement dictionary here
-        }, encoding="utf-8-sig")
+    fileReplaceLinesWith("src/SharedAssemblyInfo.cs", {
+        "[assembly: AssemblyVersion(\"": f"{versionISS}\")]\n",
+        "[assembly: AssemblyFileVersion(\"": f"{versionISS}\")]\n",
+        "[assembly: AssemblyInformationalVersion(\"": f"{versionName}\")]\n",
+        # Your replacement dictionary here
+    }, encoding="utf-8-sig")
 
     fileReplaceLinesWith("WingetUI.iss", {
         "#define MyAppVersion": f" \"{versionName}\"\n",
