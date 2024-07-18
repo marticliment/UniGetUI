@@ -1,13 +1,8 @@
 using ExternalLibraries.Clipboard;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Media;
 using System.Diagnostics;
-using UniGetUI.Core.Logging;
-using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;

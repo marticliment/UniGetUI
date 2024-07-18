@@ -1,9 +1,4 @@
 ﻿using Microsoft.UI.Xaml.Documents;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI.Interface.Pages.LogPage
