@@ -16,7 +16,7 @@ namespace UniGetUI.PackageEngine
     /// </summary>
     public static class PEInterface
     {
-        private const int ManagerLoadTimeout = 10000; // 10 seconds timeout for Package Manager initialization
+        private const int ManagerLoadTimeout = 60; // 60 seconds timeout for Package Manager initialization (in seconds)
 
         public static readonly WinGet WinGet = new();
         public static readonly Scoop Scoop = new();
@@ -44,7 +44,7 @@ namespace UniGetUI.PackageEngine
             Task ManagersMetaTask = Task.WhenAll(initializeTasks);
             try
             {
-                await ManagersMetaTask.WaitAsync(TimeSpan.FromMilliseconds(ManagerLoadTimeout));
+                await ManagersMetaTask.WaitAsync(TimeSpan.FromSeconds(ManagerLoadTimeout));
             }
             catch (Exception e)
             {

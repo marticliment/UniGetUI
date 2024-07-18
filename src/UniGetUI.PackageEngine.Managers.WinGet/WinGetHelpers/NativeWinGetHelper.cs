@@ -19,7 +19,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
 
     public NativeWinGetHelper()
     {
-        if (Settings.Get("DisableWinGetCOMApi"))
+        if (Settings.Get("ForceUsePowerShellModules"))
             throw new Exception("User requested to disable the WinGet COM API, crashing...");
         if (CoreTools.IsAdministrator())
         {
@@ -138,7 +138,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
 
     public async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
-        var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages);
+        var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates);
         List<Package> packages = new();
         foreach (var nativePackage in await Task.Run(() => GetLocalWinGetPackages(logger)))
         {
