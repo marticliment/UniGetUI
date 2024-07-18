@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Net;
-using System.Runtime.InteropServices;
 using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Data
