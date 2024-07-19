@@ -32,7 +32,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 CanRunAsAdmin = true,
                 SupportsCustomScopes = true,
                 SupportsCustomArchitectures = true,
-                SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64, Architecture.Arm },
+                SupportedCustomArchitectures = [Architecture.X86, Architecture.X64, Architecture.Arm64, Architecture.Arm],
                 SupportsPreRelease = true,
                 SupportsCustomLocations = true,
                 SupportsCustomPackageIcons = true,

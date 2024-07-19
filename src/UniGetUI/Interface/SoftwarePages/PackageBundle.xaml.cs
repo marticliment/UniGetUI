@@ -393,11 +393,11 @@ namespace UniGetUI.Interface
             FilteredPackages.BlockSorting = false;
             FilteredPackages.Sort();
 
-            if (MatchingList.Count() == 0)
+            if (MatchingList.Length == 0)
             {
                 if (!StillLoading)
                 {
-                    if (Packages.Count() == 0)
+                    if (Packages.Count == 0)
                     {
                         BackgroundText.Text = SourcesPlaceholderText.Text = CoreTools.AutoTranslated("We couldn't find any package");
                         SourcesPlaceholderText.Text = CoreTools.AutoTranslated("No packages found");
@@ -830,10 +830,10 @@ namespace UniGetUI.Interface
             // Load individual packages
             Dictionary<DeserializedPackageStatus, List<string>> InvalidPackages = new()
             {
-                {DeserializedPackageStatus.ManagerNotFound, new List<string>() },
-                {DeserializedPackageStatus.ManagerNotEnabled, new List<string>() },
-                {DeserializedPackageStatus.ManagerNotReady, new List<string>() },
-                {DeserializedPackageStatus.SourceNotFound, new List<string>() },
+                {DeserializedPackageStatus.ManagerNotFound, [] },
+                {DeserializedPackageStatus.ManagerNotEnabled, [] },
+                {DeserializedPackageStatus.ManagerNotReady, [] },
+                {DeserializedPackageStatus.SourceNotFound, [] },
             };
 
             // Get a list of all managers

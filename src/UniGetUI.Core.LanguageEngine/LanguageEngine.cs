@@ -152,7 +152,8 @@ namespace UniGetUI.Core.Language
 
                 return "UniGetUI (formerly WingetUI)";
             }
-            else if (key == "Formerly known as WingetUI")
+
+            if (key == "Formerly known as WingetUI")
             {
                 if (MainLangDict.ContainsKey(key))
                 {
@@ -166,14 +167,13 @@ namespace UniGetUI.Core.Language
             {
                 return "";
             }
-            else if (MainLangDict.ContainsKey(key) && MainLangDict[key] != "")
+
+            if (MainLangDict.ContainsKey(key) && MainLangDict[key] != "")
             {
                 return MainLangDict[key].Replace("WingetUI", "UniGetUI");
             }
-            else
-            {
-                return key.Replace("WingetUI", "UniGetUI");
-            }
+
+            return key.Replace("WingetUI", "UniGetUI");
         }
 
         public string Translate(string key, Dictionary<string, object?> dict)

@@ -101,11 +101,11 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override string[] GenerateProcessLogHeader()
         {
-            return new string[]
-            {
+            return
+            [
                 "Starting package install operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name,
-                "Given installation options are " + Options.ToString()
-            };
+                "Given installation options are " + Options.ToString(),
+            ];
         }
 
         protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
@@ -147,10 +147,8 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 return AfterFinshAction.Retry;
             }
-            else
-            {
-                return AfterFinshAction.ManualClose;
-            }
+
+            return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
@@ -220,11 +218,11 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override string[] GenerateProcessLogHeader()
         {
-            return new string[]
-            {
+            return
+            [
                 "Starting package update operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name,
-                "Given installation options are " + Options.ToString()
-            };
+                "Given installation options are " + Options.ToString(),
+            ];
         }
 
         protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
@@ -266,10 +264,8 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 return AfterFinshAction.Retry;
             }
-            else
-            {
-                return AfterFinshAction.ManualClose;
-            }
+
+            return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
@@ -351,11 +347,11 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override string[] GenerateProcessLogHeader()
         {
-            return new string[]
-            {
+            return
+            [
                 "Starting package uninstall operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name,
-                "Given installation options are " + Options.ToString()
-            };
+                "Given installation options are " + Options.ToString(),
+            ];
         }
 
         protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
@@ -397,10 +393,8 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 return AfterFinshAction.Retry;
             }
-            else
-            {
-                return AfterFinshAction.ManualClose;
-            }
+
+            return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()

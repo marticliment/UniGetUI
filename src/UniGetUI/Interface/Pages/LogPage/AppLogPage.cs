@@ -40,15 +40,18 @@ namespace UniGetUI.Interface.Pages.LogPage
                 {
                     continue;
                 }
-                else if (LOG_LEVEL == 2 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info || log_entry.Severity == LogEntry.SeverityLevel.Success))
+
+                if (LOG_LEVEL == 2 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info || log_entry.Severity == LogEntry.SeverityLevel.Success))
                 {
                     continue;
                 }
-                else if (LOG_LEVEL == 3 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info))
+
+                if (LOG_LEVEL == 3 && (log_entry.Severity == LogEntry.SeverityLevel.Debug || log_entry.Severity == LogEntry.SeverityLevel.Info))
                 {
                     continue;
                 }
-                else if (LOG_LEVEL == 4 && (log_entry.Severity == LogEntry.SeverityLevel.Debug))
+
+                if (LOG_LEVEL == 4 && (log_entry.Severity == LogEntry.SeverityLevel.Debug))
                 {
                     continue;
                 }

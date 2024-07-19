@@ -17,7 +17,7 @@ namespace UniGetUI.Core.IconEngine
     public readonly struct CacheableIcon
     {
         public readonly Uri Url;
-        public readonly byte[] Sha256 = { };
+        public readonly byte[] Sha256 = [];
         public readonly string Version = "";
         public readonly long Size = -1;
         public readonly CachedIconVerificationMethod VerificationMethod;

@@ -55,15 +55,18 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             {
                 throw new Exception($"The Manager {Properties.Name} has not called the base constructor.");
             }
-            else if (Capabilities.IsDummy)
+
+            if (Capabilities.IsDummy)
             {
                 throw new Exception($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Capabilities object");
             }
-            else if (Properties.IsDummy)
+
+            if (Properties.IsDummy)
             {
                 throw new Exception($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Properties object");
             }
-            else if (Capabilities.SupportsCustomSources && SourceProvider == null)
+
+            if (Capabilities.SupportsCustomSources && SourceProvider == null)
             {
                 throw new Exception($"Manager {Name} has been declared as SupportsCustomSources but has no helper associated with it");
             }
@@ -149,7 +152,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         }
 
         /// <summary>
-        /// Returns an array of Package objects that the manager lists for the given query. Depending on the manager, the list may 
+        /// Returns an array of Package objects that the manager lists for the given query. Depending on the manager, the list may
         /// also include similar results. This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
         /// <param name="query"></param>
@@ -176,7 +179,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         }
 
         /// <summary>
-        /// Returns an array of UpgradablePackage objects that represent the available updates reported by the manager. 
+        /// Returns an array of UpgradablePackage objects that represent the available updates reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
         /// <param name="query"></param>
@@ -205,7 +208,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         }
 
         /// <summary>
-        /// Returns an array of Package objects that represent the installed reported by the manager. 
+        /// Returns an array of Package objects that represent the installed reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
         /// <returns></returns>
@@ -342,7 +345,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             {
                 throw new Exception($"Manager {Name} does not support custom sources but yet {MethodName} method was called.\n {Environment.StackTrace}");
             }
-            else if (SourceProvider == null)
+
+            if (SourceProvider == null)
             {
                 throw new Exception($"Manager {Name} does support custom sources but yet the source helper is null");
             }
@@ -447,10 +451,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 {
                     return await PackageDetailsProvider.GetPackageVersions(package);
                 }
-                else
-                {
-                    return [];
-                }
+
+                return [];
             }
             catch (Exception e)
             {

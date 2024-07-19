@@ -264,15 +264,13 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             {
                 return OperationVeredict.Succeeded;
             }
-            else if (output_string.Contains("--user") && package.Scope == PackageScope.Global)
+
+            if (output_string.Contains("--user") && package.Scope == PackageScope.Global)
             {
                 package.Scope = PackageScope.User;
                 return OperationVeredict.AutoRetry;
             }
-            else
-            {
-                return OperationVeredict.Failed;
-            }
+            return OperationVeredict.Failed;
         }
 
         public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)

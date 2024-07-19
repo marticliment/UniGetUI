@@ -11,7 +11,7 @@ internal static partial class BundledWinGetLegacyMethods
 {
     public static async Task<Package[]> FindPackages_UnSafe(WinGet Manager, string query)
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             Process p = new()
             {
                 StartInfo = new()
@@ -26,9 +26,9 @@ internal static partial class BundledWinGetLegacyMethods
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
-            
+
             ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
-            
+
             p.Start();
 
             string OldLine = "";
@@ -79,7 +79,7 @@ internal static partial class BundledWinGetLegacyMethods
 
     public static async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
-        List<Package> Packages = new();
+        List<Package> Packages = [];
         Process p = new()
         {
             StartInfo = new()
@@ -96,7 +96,7 @@ internal static partial class BundledWinGetLegacyMethods
         };
 
         ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
-            
+
         p.Start();
 
         string OldLine = "";
@@ -112,7 +112,7 @@ internal static partial class BundledWinGetLegacyMethods
 
             if (line.Contains("have pins"))
                 continue;
-            
+
             if (!DashesPassed && line.Contains("---"))
             {
                 string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
@@ -164,7 +164,7 @@ internal static partial class BundledWinGetLegacyMethods
 
         public static async Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager)
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             Process p = new()
             {
                 StartInfo = new()
@@ -178,9 +178,9 @@ internal static partial class BundledWinGetLegacyMethods
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
-            
+
             ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
-            
+
             p.Start();
 
             string OldLine = "";
@@ -235,7 +235,7 @@ internal static partial class BundledWinGetLegacyMethods
                     Logger.Error(e);
                 }
             }
-            
+
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
             logger.Close(p.ExitCode);
@@ -259,11 +259,11 @@ internal static partial class BundledWinGetLegacyMethods
                     return Manager.AndroidSubsystemSource;
 
                 // Check if source is Steama
-                if ((id == "Steam" || id.Contains("Steam App ")) && id.Split("Steam App").Count() >= 2 && id.Split("Steam App")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
+                if ((id == "Steam" || id.Contains("Steam App ")) && id.Split("Steam App").Length >= 2 && id.Split("Steam App")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
                     return Manager.SteamSource;
 
                 // Check if source is Ubisoft Connect
-                if (id == "Uplay" || id.Contains("Uplay Install ") && id.Split("Uplay Install").Count() >= 2 && id.Split("Uplay Install")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
+                if (id == "Uplay" || id.Contains("Uplay Install ") && id.Split("Uplay Install").Length >= 2 && id.Split("Uplay Install")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
                     return Manager.UbisoftConnectSource;
 
                 // Check if source is GOG

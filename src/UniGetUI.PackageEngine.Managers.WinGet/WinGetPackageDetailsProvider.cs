@@ -232,7 +232,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             packageMatchFilter.ResultLimit = 1;
             Task<FindPackagesResult> SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
 
-            if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
+            if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count == 0)
             {
                 Logger.Error("[WINGET COM] Failed to find package " + package.Id + " in catalog " + package.Source.Name);
                 return null;
