@@ -9,7 +9,6 @@ Any user suspected of farming GitHub activity with crypto purposes will get bann
 
 -----
 <!-- insert below the issue number (if applicable) -->
-
 Closes #XXXX
 <!-- or -->
 Relates to #XXXX
