@@ -393,11 +393,11 @@ namespace UniGetUI.Interface
             FilteredPackages.BlockSorting = false;
             FilteredPackages.Sort();
 
-            if (MatchingList.Count() == 0)
+            if (MatchingList.Length == 0)
             {
                 if (!StillLoading)
                 {
-                    if (Packages.Count() == 0)
+                    if (Packages.Count == 0)
                     {
                         BackgroundText.Text = SourcesPlaceholderText.Text = CoreTools.AutoTranslated("We couldn't find any package");
                         SourcesPlaceholderText.Text = CoreTools.AutoTranslated("No packages found");

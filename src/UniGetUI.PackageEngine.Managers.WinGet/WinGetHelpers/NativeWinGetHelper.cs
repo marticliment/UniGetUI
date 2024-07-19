@@ -269,7 +269,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
             Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
 
         if (SearchResult.Result == null || SearchResult.Result.Matches == null ||
-            SearchResult.Result.Matches.Count() == 0)
+            SearchResult.Result.Matches.Count == 0)
         {
             logger.Error("Failed to find package " + package.Id + " in catalog " + package.Source.Name);
             logger.Close(1);
@@ -340,7 +340,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
             Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
 
         if (SearchResult.Result == null || SearchResult.Result.Matches == null ||
-            SearchResult.Result.Matches.Count() == 0)
+            SearchResult.Result.Matches.Count == 0)
         {
             logger.Error("WinGet: Failed to find package " + details.Package.Id + " in catalog " +
                          details.Package.Source.Name);

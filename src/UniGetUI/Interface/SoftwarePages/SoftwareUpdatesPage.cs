@@ -298,7 +298,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             try
             {
-                MainApp.Instance.TooltipStatus.AvailableUpdates = Loader.Packages.Count();
+                MainApp.Instance.TooltipStatus.AvailableUpdates = Loader.Packages.Count;
             }
             catch (Exception)
             { }

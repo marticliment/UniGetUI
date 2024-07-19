@@ -99,7 +99,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
         await p.WaitForExitAsync();
         logger.Close(p.ExitCode);
 
-        if (Packages.Count() > 0)
+        if (Packages.Count > 0)
         {
             return Packages.ToArray();
         }
@@ -196,7 +196,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
         await p.WaitForExitAsync();
         logger.Close(p.ExitCode);
 
-        if (Packages.Count() > 0)
+        if (Packages.Count > 0)
         {
             return Packages.ToArray();
         }
@@ -285,7 +285,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
         await p.WaitForExitAsync();
         logger.Close(p.ExitCode);
 
-        if (Packages.Count() > 0)
+        if (Packages.Count > 0)
         {
             return Packages.ToArray();
         }

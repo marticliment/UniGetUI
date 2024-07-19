@@ -277,7 +277,7 @@ namespace UniGetUI.Interface.Dialogs
         public async void LoadScreenshots()
         {
             Uri[] screenshots = await Package.GetPackageScreenshots();
-            PackageHasScreenshots = screenshots.Count() > 0;
+            PackageHasScreenshots = screenshots.Length > 0;
             if (PackageHasScreenshots)
             {
                 PackageHasScreenshots = true;
