@@ -253,15 +253,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             );
 
-            if (options.Version != "")
+            if (!package.IsUpgradable && options.Version != "")
             {
                 parameters.AddRange(["--version", $"\"{options.Version}\"", "--force"]);
             }
-            else if (package.IsUpgradable && package.NewVersion != "")
-            {
-                parameters.AddRange(["--version", $"\"{package.NewVersion}\""]);
-            }
-            else if (package.Version != "Unknown")
+            else if (!package.IsUpgradable && package.Version != "Unknown")
             {
                 parameters.AddRange(["--version", $"\"{package.Version}\""]);
             }
