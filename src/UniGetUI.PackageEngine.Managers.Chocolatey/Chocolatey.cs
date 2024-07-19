@@ -275,13 +275,21 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             string old_choco_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs\\WingetUI\\choco-cli");
             string new_choco_path = Path.Join(CoreData.UniGetUIDataDirectory, "Chocolatey");
 
-            if (Directory.Exists(old_choco_path))
+            if(!Directory.Exists(old_choco_path))
+                Logger.Debug("Old chocolatey path does not exist, not migrating Chocolatey");
+            else if (CoreTools.IsSymbolicLinkDir(old_choco_path))
+                Logger.ImportantInfo("Old chocolatey path is a symbolic link, not migrating Chocolatey...");
+            else if (Settings.Get("ChocolateySymbolicLinkCreated"))
+                Logger.Warn("The Choco path symbolic link has already been set to created!");
+            else
             {
                 try
                 {
                     Logger.Info("Moving Bundled Chocolatey from old path to new path...");
 
-                    if(Path.GetRelativePath(Environment.GetEnvironmentVariable("chocolateyinstall", EnvironmentVariableTarget.User) ?? "", old_choco_path) == ".")
+                    string current_env_var =
+                        Environment.GetEnvironmentVariable("chocolateyinstall", EnvironmentVariableTarget.User) ?? "";
+                    if(current_env_var != "" && Path.GetRelativePath(current_env_var, old_choco_path) == ".")
                     {
                         Logger.ImportantInfo("Migrating ChocolateyInstall environment variable to new location");
                         Environment.SetEnvironmentVariable("chocolateyinstall", new_choco_path, EnvironmentVariableTarget.User);
@@ -335,7 +343,10 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                         Logger.Info("Deleting old Chocolatey directory " + old_choco_path);
                         Directory.Delete(old_choco_path);
                     }
-
+                    
+                    await CoreTools.CreateSymbolicLinkDir(old_choco_path, new_choco_path);
+                    Settings.Set("ChocolateySymbolicLinkCreated", true);
+                    Logger.Info($"Symbolic link created successfully from {old_choco_path} to {new_choco_path}.");
 
                 }
                 catch (Exception e)
