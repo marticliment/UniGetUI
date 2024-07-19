@@ -215,7 +215,7 @@ namespace UniGetUI.Interface.Dialogs
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            Close?.Invoke(this, new EventArgs());
+            Close?.Invoke(this, EventArgs.Empty);
         }
     }
 }

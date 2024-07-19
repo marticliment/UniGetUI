@@ -296,7 +296,7 @@ namespace UniGetUI.Interface.Dialogs
 
         public async void ActionButton_Click(object sender, RoutedEventArgs e)
         {
-            Close?.Invoke(this, new EventArgs());
+            Close?.Invoke(this, EventArgs.Empty);
             InstallOptionsPage.SaveToDisk();
             switch (OperationRole)
             {
@@ -403,7 +403,7 @@ namespace UniGetUI.Interface.Dialogs
         }
         public void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            Close?.Invoke(this, new EventArgs());
+            Close?.Invoke(this, EventArgs.Empty);
         }
 
         public void PackageDetailsPage_SizeChanged(object? sender = null, SizeChangedEventArgs? e = null)
