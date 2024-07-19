@@ -138,7 +138,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
     public async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates);
-        List<Package> packages = new();
+        List<Package> packages = [];
         foreach (var nativePackage in await Task.Run(() => GetLocalWinGetPackages(logger)))
         {
             if (nativePackage.IsUpdateAvailable)
@@ -158,7 +158,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
     public async Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager)
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages);
-        List<Package> packages = new();
+        List<Package> packages = [];
         foreach (var nativePackage in await Task.Run(() => GetLocalWinGetPackages(logger)))
         {
             ManagerSource source;
@@ -205,7 +205,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
         findPackagesOptions.Filters.Add(filter);
 
         var TaskResult = ConnectResult.PackageCatalog.FindPackages(findPackagesOptions);
-        List<CatalogPackage> foundPackages = new();
+        List<CatalogPackage> foundPackages = [];
         foreach(var match in TaskResult.Matches.ToArray())
             foundPackages.Add(match.CatalogPackage);
         return foundPackages;

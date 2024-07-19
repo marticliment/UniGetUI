@@ -522,7 +522,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
                 }
                 else if (line.Contains("Tags"))
                 {
-                    details.Tags = new string[0];
+                    details.Tags = [];
                     IsLoadingTags = true;
                 }
             }

@@ -145,7 +145,7 @@ namespace UniGetUI
             try
             {
                 string[] BasePaths =
-                {
+                [
                     // User desktop icon
                     Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
                     
@@ -157,7 +157,7 @@ namespace UniGetUI
                     
                     // User start menu icon
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu),
-                };
+                ];
 
                 foreach (string path in BasePaths)
                 {

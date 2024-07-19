@@ -12,7 +12,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public bool CanRemoveDataOnUninstall = false;
         public bool SupportsCustomVersions = false;
         public bool SupportsCustomArchitectures = false;
-        public Architecture[] SupportedCustomArchitectures = new Architecture[0];
+        public Architecture[] SupportedCustomArchitectures = [];
         public bool SupportsCustomScopes = false;
         public bool SupportsPreRelease = false;
         public bool SupportsCustomLocations = false;

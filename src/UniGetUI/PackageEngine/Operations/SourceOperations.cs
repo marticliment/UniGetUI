@@ -52,10 +52,10 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override string[] GenerateProcessLogHeader()
         {
-            return new string[]
-            {
+            return
+            [
                 "Starting adding source operation for source name=" + Source.Name + "with Manager name=" + Source.Manager.Name,
-            };
+            ];
         }
 
         protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
@@ -165,10 +165,10 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override string[] GenerateProcessLogHeader()
         {
-            return new string[]
-            {
+            return
+            [
                 "Starting remove source operation for source name=" + Source.Name + "with Manager name=" + Source.Manager.Name,
-            };
+            ];
         }
 
         protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)

@@ -11,7 +11,7 @@ internal static partial class BundledWinGetLegacyMethods
 {
     public static async Task<Package[]> FindPackages_UnSafe(WinGet Manager, string query)
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             Process p = new()
             {
                 StartInfo = new()
@@ -79,7 +79,7 @@ internal static partial class BundledWinGetLegacyMethods
 
     public static async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
-        List<Package> Packages = new();
+        List<Package> Packages = [];
         Process p = new()
         {
             StartInfo = new()
@@ -164,7 +164,7 @@ internal static partial class BundledWinGetLegacyMethods
 
         public static async Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager)
         {
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             Process p = new()
             {
                 StartInfo = new()

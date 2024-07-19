@@ -830,10 +830,10 @@ namespace UniGetUI.Interface
             // Load individual packages
             Dictionary<DeserializedPackageStatus, List<string>> InvalidPackages = new()
             {
-                {DeserializedPackageStatus.ManagerNotFound, new List<string>() },
-                {DeserializedPackageStatus.ManagerNotEnabled, new List<string>() },
-                {DeserializedPackageStatus.ManagerNotReady, new List<string>() },
-                {DeserializedPackageStatus.SourceNotFound, new List<string>() },
+                {DeserializedPackageStatus.ManagerNotFound, [] },
+                {DeserializedPackageStatus.ManagerNotEnabled, [] },
+                {DeserializedPackageStatus.ManagerNotReady, [] },
+                {DeserializedPackageStatus.SourceNotFound, [] },
             };
 
             // Get a list of all managers
