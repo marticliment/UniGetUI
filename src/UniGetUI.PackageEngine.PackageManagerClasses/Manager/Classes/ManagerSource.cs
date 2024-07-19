@@ -41,10 +41,8 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
             {
                 return Manager.Name + ": " + Name;
             }
-            else
-            {
-                return Manager.Name;
-            }
+
+            return Manager.Name;
         }
 
         /// <summary>

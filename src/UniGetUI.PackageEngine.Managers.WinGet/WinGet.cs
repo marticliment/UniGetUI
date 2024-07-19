@@ -288,7 +288,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 return OperationVeredict.Succeeded; // TODO: Needs restart
             }
-            else if (ReturnCode == -1978335215)
+
+            if (ReturnCode == -1978335215)
             {
                 return OperationVeredict.Failed; // TODO: Needs skip checksum
             }

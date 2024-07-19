@@ -100,10 +100,8 @@ namespace UniGetUI.PackageEngine.Classes
                 {
                     return CoreTools.Translate("Latest");
                 }
-                else
-                {
-                    return Package.Version;
-                }
+
+                return Package.Version;
             }
         }
 

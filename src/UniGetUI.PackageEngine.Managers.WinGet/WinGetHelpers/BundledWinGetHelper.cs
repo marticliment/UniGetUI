@@ -103,11 +103,9 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
         {
             return Packages.ToArray();
         }
-        else
-        {
-            Logger.Warn("WinGet updates returned zero packages, attempting legacy...");
-            return await BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(Manager);
-        }
+
+        Logger.Warn("WinGet updates returned zero packages, attempting legacy...");
+        return await BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(Manager);
     }
 
     public async Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager)
@@ -202,11 +200,9 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
         {
             return Packages.ToArray();
         }
-        else
-        {
-            Logger.Warn("WinGet installed packages returned zero packages, attempting legacy...");
-            return await BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(Manager);
-        }
+
+        Logger.Warn("WinGet installed packages returned zero packages, attempting legacy...");
+        return await BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(Manager);
     }
 
 
@@ -293,11 +289,9 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
         {
             return Packages.ToArray();
         }
-        else
-        {
-            Logger.Warn("WinGet package fetching returned zero packages, attempting legacy...");
-            return await BundledWinGetLegacyMethods.FindPackages_UnSafe(Manager, query);
-        }
+
+        Logger.Warn("WinGet package fetching returned zero packages, attempting legacy...");
+        return await BundledWinGetLegacyMethods.FindPackages_UnSafe(Manager, query);
 
     }
 

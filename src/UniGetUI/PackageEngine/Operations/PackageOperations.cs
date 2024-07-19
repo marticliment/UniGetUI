@@ -147,10 +147,8 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 return AfterFinshAction.Retry;
             }
-            else
-            {
-                return AfterFinshAction.ManualClose;
-            }
+
+            return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
@@ -266,10 +264,8 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 return AfterFinshAction.Retry;
             }
-            else
-            {
-                return AfterFinshAction.ManualClose;
-            }
+
+            return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
@@ -397,10 +393,8 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 return AfterFinshAction.Retry;
             }
-            else
-            {
-                return AfterFinshAction.ManualClose;
-            }
+
+            return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()

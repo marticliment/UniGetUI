@@ -28,11 +28,9 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                 Logger.Debug($"Found {result.Length} versions for package Id={package.Id} on manager {Manager.Name}");
                 return result;
             }
-            else
-            {
-                Logger.Warn($"Manager {Manager.Name} does not support version retrieving, this method should have not been called");
-                return [];
-            }
+
+            Logger.Warn($"Manager {Manager.Name} does not support version retrieving, this method should have not been called");
+            return [];
         }
 
         public async Task<CacheableIcon?> GetPackageIconUrl(Package package)
@@ -65,10 +63,8 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                 Logger.Warn($"Icon for package {package.Id} was not found, returning default icon");
                 return null;
             }
-            else
-            {
-                Logger.Info($"Loaded icon with URL={Icon.ToString()} for package Id={package.Id}");
-            }
+
+            Logger.Info($"Loaded icon with URL={Icon.ToString()} for package Id={package.Id}");
             return Icon;
         }
 
