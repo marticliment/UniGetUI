@@ -221,8 +221,11 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
             try
             {
                 logger.Log($"Found source {catalog.Info.Name} with argument {catalog.Info.Argument}");
-                sources.Add(new ManagerSource(Manager, catalog.Info.Name, new Uri(catalog.Info.Argument),
-                    updateDate: catalog.Info.LastUpdateTime.ToString()));
+                sources.Add(new ManagerSource(
+                    Manager, 
+                    catalog.Info.Name, 
+                    new Uri(catalog.Info.Argument),
+                    updateDate: (catalog.Info.LastUpdateTime.Second != 0? catalog.Info.LastUpdateTime: DateTime.Now).ToString()));
             }
             catch (Exception e)
             {
