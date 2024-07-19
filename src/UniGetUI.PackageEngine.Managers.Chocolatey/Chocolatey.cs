@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
@@ -29,7 +28,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 CanRunInteractively = true,
                 SupportsCustomVersions = true,
                 SupportsCustomArchitectures = true,
-                SupportedCustomArchitectures = new Architecture[] { Architecture.X86 },
+                SupportedCustomArchitectures = [Architecture.X86],
                 SupportsPreRelease = true,
                 SupportsCustomSources = true,
                 SupportsCustomPackageIcons = true,
@@ -175,15 +174,18 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             {
                 return OperationVeredict.Succeeded;
             }
-            else if (ReturnCode == 3010)
+
+            if (ReturnCode == 3010)
             {
                 return OperationVeredict.Succeeded; // TODO: Restart required
             }
-            else if ((output_string.Contains("Run as administrator") || output_string.Contains("The requested operation requires elevation") || output_string.Contains("ERROR: Exception calling \"CreateDirectory\" with \"1\" argument(s): \"Access to the path")) && !options.RunAsAdministrator)
+
+            if ((output_string.Contains("Run as administrator") || output_string.Contains("The requested operation requires elevation") || output_string.Contains("ERROR: Exception calling \"CreateDirectory\" with \"1\" argument(s): \"Access to the path")) && !options.RunAsAdministrator)
             {
                 options.RunAsAdministrator = true;
                 return OperationVeredict.AutoRetry;
             }
+
             return OperationVeredict.Failed;
         }
 
@@ -200,15 +202,18 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             {
                 return OperationVeredict.Succeeded;
             }
-            else if (ReturnCode == 3010)
+
+            if (ReturnCode == 3010)
             {
                 return OperationVeredict.Succeeded; // TODO: Restart required
             }
-            else if ((output_string.Contains("Run as administrator") || output_string.Contains("The requested operation requires elevation")) && !options.RunAsAdministrator)
+
+            if ((output_string.Contains("Run as administrator") || output_string.Contains("The requested operation requires elevation")) && !options.RunAsAdministrator)
             {
                 options.RunAsAdministrator = true;
                 return OperationVeredict.AutoRetry;
             }
+
             return OperationVeredict.Failed;
         }
         public override string[] GetInstallParameters(Package package, InstallationOptions options)

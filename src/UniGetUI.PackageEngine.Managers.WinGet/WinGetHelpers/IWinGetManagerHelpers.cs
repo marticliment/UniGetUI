@@ -1,15 +1,5 @@
-﻿using Microsoft.Management.Deployment;
-using System.Diagnostics;
-using System.Text;
-using System.Text.RegularExpressions;
-using UniGetUI.Core.Data;
-using UniGetUI.Core.Logging;
-using UniGetUI.Core.SettingsEngine;
-using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
-using UniGetUI.PackageEngine.Enums;
+﻿using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.PackageClasses;
-using WindowsPackageManager.Interop;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {

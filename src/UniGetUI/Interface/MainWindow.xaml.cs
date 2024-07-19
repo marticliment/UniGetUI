@@ -797,10 +797,8 @@ namespace UniGetUI.Interface
             {
                 return false;
             }
-            else
-            {
-                return true;
-            }
+
+            return true;
         }
     }
 }

@@ -1,6 +1,5 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json.Nodes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
@@ -78,7 +77,7 @@ namespace UniGetUI.Interface
 
         private void CloseButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            Close?.Invoke(this, new EventArgs());
+            Close?.Invoke(this, EventArgs.Empty);
         }
     }
 

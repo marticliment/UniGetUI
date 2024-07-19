@@ -41,10 +41,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 return await WinGetHelper.Instance.GetSources_UnSafe(manager);
             }
-            else
-            {
-                throw new Exception("WinGetSourceProvider.GetSources_UnSafe: Manager is supposed to be WinGet");
-            }
+
+            throw new Exception("WinGetSourceProvider.GetSources_UnSafe: Manager is supposed to be WinGet");
         }
     }
 }

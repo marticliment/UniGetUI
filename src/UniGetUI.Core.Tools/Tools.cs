@@ -112,11 +112,9 @@ namespace UniGetUI.Core.Tools
                 Logger.ImportantInfo($"Command {command} was not found on the system");
                 return new Tuple<bool, string>(false, "");
             }
-            else
-            {
-                Logger.Debug($"Command {command} was found on {output}");
-                return new Tuple<bool, string>(File.Exists(output), output);
-            }
+
+            Logger.Debug($"Command {command} was found on {output}");
+            return new Tuple<bool, string>(File.Exists(output), output);
         }
 
         /// <summary>

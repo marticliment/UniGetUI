@@ -315,10 +315,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
             catch (Exception ex)
             {
@@ -350,10 +348,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 {
                     return IgnoredUpdatesJson[IgnoredId]?.ToString() ?? "";
                 }
-                else
-                {
-                    return "";
-                }
+
+                return "";
             }
             catch (Exception ex)
             {

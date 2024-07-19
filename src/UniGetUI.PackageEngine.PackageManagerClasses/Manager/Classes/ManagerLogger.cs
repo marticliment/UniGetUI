@@ -182,7 +182,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             {
                 return CachedMessage;
             }
-            else if (verbose && CachedVerboseMessage != null && isComplete)
+
+            if (verbose && CachedVerboseMessage != null && isComplete)
             {
                 return CachedVerboseMessage;
             }
@@ -263,10 +264,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             {
                 return CachedVerboseMessage = result;
             }
-            else
-            {
-                return CachedMessage = result;
-            }
+
+            return CachedMessage = result;
         }
     }
 
@@ -346,7 +345,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             {
                 return CachedMessage;
             }
-            else if (verbose && CachedVerboseMessage != null && isComplete)
+
+            if (verbose && CachedVerboseMessage != null && isComplete)
             {
                 return CachedVerboseMessage;
             }
@@ -409,10 +409,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             {
                 return CachedVerboseMessage = result;
             }
-            else
-            {
-                return CachedMessage = result;
-            }
+
+            return CachedMessage = result;
         }
     }
 }

@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Diagnostics.Tracing;
 using Microsoft.Management.Deployment;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -139,7 +138,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
     public async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates);
-        List<Package> packages = new();
+        List<Package> packages = [];
         foreach (var nativePackage in await Task.Run(() => GetLocalWinGetPackages(logger)))
         {
             if (nativePackage.IsUpdateAvailable)
@@ -159,7 +158,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
     public async Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager)
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages);
-        List<Package> packages = new();
+        List<Package> packages = [];
         foreach (var nativePackage in await Task.Run(() => GetLocalWinGetPackages(logger)))
         {
             ManagerSource source;
@@ -206,7 +205,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
         findPackagesOptions.Filters.Add(filter);
 
         var TaskResult = ConnectResult.PackageCatalog.FindPackages(findPackagesOptions);
-        List<CatalogPackage> foundPackages = new();
+        List<CatalogPackage> foundPackages = [];
         foreach(var match in TaskResult.Matches.ToArray())
             foundPackages.Add(match.CatalogPackage);
         return foundPackages;
@@ -270,7 +269,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
             Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
 
         if (SearchResult.Result == null || SearchResult.Result.Matches == null ||
-            SearchResult.Result.Matches.Count() == 0)
+            SearchResult.Result.Matches.Count == 0)
         {
             logger.Error("Failed to find package " + package.Id + " in catalog " + package.Source.Name);
             logger.Close(1);
@@ -341,7 +340,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
             Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
 
         if (SearchResult.Result == null || SearchResult.Result.Matches == null ||
-            SearchResult.Result.Matches.Count() == 0)
+            SearchResult.Result.Matches.Count == 0)
         {
             logger.Error("WinGet: Failed to find package " + details.Package.Id + " in catalog " +
                          details.Package.Source.Name);

@@ -2,8 +2,6 @@
 // Licensed under the MIT License.
 
 using Microsoft.Management.Deployment;
-using System;
-using System.Collections.Generic;
 
 namespace WindowsPackageManager.Interop;
 

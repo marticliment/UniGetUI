@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Net;
-using System.Runtime.InteropServices;
 using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Data
@@ -9,7 +8,7 @@ namespace UniGetUI.Core.Data
     {
         private static int? __code_page;
         public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
-        
+
         private static int GetCodePage()
         {
             try
@@ -27,7 +26,7 @@ namespace UniGetUI.Core.Data
                 p.Start();
                 string contents = p.StandardOutput.ReadToEnd();
                 return int.Parse(contents.Split(':')[^1].Trim());
-            } 
+            }
             catch (Exception e)
             {
                 Logger.Error(e);
@@ -185,10 +184,8 @@ namespace UniGetUI.Core.Data
                 {
                     return dir;
                 }
-                else
-                {
-                    Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
-                }
+
+                Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
 
                 return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UiGetUI");
             }
@@ -206,10 +203,8 @@ namespace UniGetUI.Core.Data
                 {
                     return filename.Replace(".dll", ".exe");
                 }
-                else
-                {
-                    Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
-                }
+
+                Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
 
                 return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UniGetUI", "UniGetUI.exe");
             }
@@ -233,7 +228,8 @@ namespace UniGetUI.Core.Data
             {
                 return new_path;
             }
-            else if (Directory.Exists(new_path) && Directory.Exists(old_path))
+
+            if (Directory.Exists(new_path) && Directory.Exists(old_path))
             {
                 try
                 {
@@ -288,7 +284,8 @@ namespace UniGetUI.Core.Data
                     return new_path;
                 }
             }
-            else if (/*Directory.Exists(new_path)*/Directory.Exists(old_path))
+
+            if (/*Directory.Exists(new_path)*/Directory.Exists(old_path))
             {
                 try
                 {
@@ -303,20 +300,18 @@ namespace UniGetUI.Core.Data
                     return old_path;
                 }
             }
-            else
+
+            try
             {
-                try
-                {
-                    Logger.Debug("Creating non-existing data directory at: " + new_path);
-                    Directory.CreateDirectory(new_path);
-                    return new_path;
-                }
-                catch (Exception e)
-                {
-                    Logger.Error("Could not create new directory. You may perhaps need to disable Controlled Folder Access from Windows Settings or make an exception for UniGetUI.");
-                    Logger.Error(e);
-                    return new_path;
-                }
+                Logger.Debug("Creating non-existing data directory at: " + new_path);
+                Directory.CreateDirectory(new_path);
+                return new_path;
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Could not create new directory. You may perhaps need to disable Controlled Folder Access from Windows Settings or make an exception for UniGetUI.");
+                Logger.Error(e);
+                return new_path;
             }
         }
 

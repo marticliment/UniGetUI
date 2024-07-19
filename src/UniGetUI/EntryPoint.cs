@@ -145,7 +145,7 @@ namespace UniGetUI
             try
             {
                 string[] BasePaths =
-                {
+                [
                     // User desktop icon
                     Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
                     
@@ -157,7 +157,7 @@ namespace UniGetUI
                     
                     // User start menu icon
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu),
-                };
+                ];
 
                 foreach (string path in BasePaths)
                 {
@@ -171,7 +171,8 @@ namespace UniGetUI
                             {
                                 continue;
                             }
-                            else if (File.Exists(old_file) && File.Exists(new_file))
+
+                            if (File.Exists(old_file) && File.Exists(new_file))
                             {
                                 Logger.Info("Deleting shortcut " + old_file + " since new shortcut already exists");
                                 File.Delete(old_file);

@@ -76,7 +76,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 CanRunInteractively = true,
                 SupportsCustomVersions = true,
                 SupportsCustomArchitectures = true,
-                SupportedCustomArchitectures = new Architecture[] { Architecture.X86, Architecture.X64, Architecture.Arm64 },
+                SupportedCustomArchitectures = [Architecture.X86, Architecture.X64, Architecture.Arm64],
                 SupportsCustomScopes = true,
                 SupportsCustomLocations = true,
                 SupportsCustomSources = true,
@@ -153,13 +153,13 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
 
                 // Check if source is Steam
-                if ((id == "Steam" || id.Contains("Steam App ")) && id.Split("Steam App").Count() >= 2 && id.Split("Steam App")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
+                if ((id == "Steam" || id.Contains("Steam App ")) && id.Split("Steam App").Length >= 2 && id.Split("Steam App")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
                 {
                     return SteamSource;
                 }
 
                 // Check if source is Ubisoft Connect
-                if (id == "Uplay" || (id.Contains("Uplay Install ") && id.Split("Uplay Install").Count() >= 2 && id.Split("Uplay Install")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0))
+                if (id == "Uplay" || (id.Contains("Uplay Install ") && id.Split("Uplay Install").Length >= 2 && id.Split("Uplay Install")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0))
                 {
                     return UbisoftConnectSource;
                 }
@@ -288,7 +288,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 return OperationVeredict.Succeeded; // TODO: Needs restart
             }
-            else if (ReturnCode == -1978335215)
+
+            if (ReturnCode == -1978335215)
             {
                 return OperationVeredict.Failed; // TODO: Needs skip checksum
             }

@@ -25,10 +25,8 @@ namespace UniGetUI.PackageEngine.PackageLoader
             {
                 return;
             }
-            else
-            {
-                await base.ReloadPackages();
-            }
+
+            await base.ReloadPackages();
         }
 
 #pragma warning disable
@@ -46,10 +44,8 @@ namespace UniGetUI.PackageEngine.PackageLoader
             {
                 return new Task<Package[]>(() => { return []; });
             }
-            else
-            {
-                return manager.FindPackages(text);
-            }
+
+            return manager.FindPackages(text);
         }
 
 #pragma warning disable

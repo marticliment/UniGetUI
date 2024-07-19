@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
-
 namespace WindowsPackageManager.Interop;
 
 public class WinGetConfigurationException : Exception

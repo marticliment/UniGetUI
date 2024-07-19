@@ -52,10 +52,10 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override string[] GenerateProcessLogHeader()
         {
-            return new string[]
-            {
+            return
+            [
                 "Starting adding source operation for source name=" + Source.Name + "with Manager name=" + Source.Manager.Name,
-            };
+            ];
         }
 
         protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
@@ -94,15 +94,13 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 return AfterFinshAction.Retry;
             }
-            else
-            {
-                return AfterFinshAction.ManualClose;
-            }
+
+            return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
-            OperationSucceeded?.Invoke(this, new EventArgs());
+            OperationSucceeded?.Invoke(this, EventArgs.Empty);
             LineInfoText = CoreTools.Translate("The source {source} was added to {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
             if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
             {
@@ -165,10 +163,10 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override string[] GenerateProcessLogHeader()
         {
-            return new string[]
-            {
+            return
+            [
                 "Starting remove source operation for source name=" + Source.Name + "with Manager name=" + Source.Manager.Name,
-            };
+            ];
         }
 
         protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
@@ -198,15 +196,13 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 return AfterFinshAction.Retry;
             }
-            else
-            {
-                return AfterFinshAction.ManualClose;
-            }
+
+            return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
-            OperationSucceeded?.Invoke(this, new EventArgs());
+            OperationSucceeded?.Invoke(this, EventArgs.Empty);
             LineInfoText = CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
             if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
             {
