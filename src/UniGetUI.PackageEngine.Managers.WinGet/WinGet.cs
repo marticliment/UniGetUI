@@ -237,7 +237,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            List<string> parameters = [Properties.UninstallVerb, "--id", package.Id, "--exact"];
+            List<string> parameters = [Properties.UninstallVerb, "--id", $"\"{package.Id}\"", "--exact"];
             if (!package.Source.IsVirtualManager)
             {
                 parameters.AddRange(["--source", package.Source.Name]);
