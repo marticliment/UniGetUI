@@ -431,6 +431,52 @@ Crash Traceback:
             byte[] bytes = MD5.HashData(Encoding.UTF8.GetBytes(inputString));
             return BitConverter.ToInt64(bytes, 0);
         }
+        
+        /// <summary>
+        /// Creates a symbolic link between directories
+        /// </summary>
+        /// <param name="linkPath">The location of the link to be created</param>
+        /// <param name="targetPath">The location of the real folder where to point</param>
+        /// <returns></returns>
+        public static async Task CreateSymbolicLinkDir(string linkPath, string targetPath)
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "cmd.exe",
+                Arguments = $"/c mklink /D \"{linkPath}\" \"{targetPath}\"",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+
+            using (var process = Process.Start(psi))
+            {
+                await process.WaitForExitAsync();
+                if (process.ExitCode != 0)
+                {
+                    throw new Exception(
+                        $"The operation did not complete successfully: \n{await process.StandardOutput.ReadToEndAsync()}\n{await process.StandardError.ReadToEndAsync()}\n");
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Will check wether the given folder is a symbolic link
+        /// </summary>
+        /// <param name="path">The folder to check</param>
+        /// <returns></returns>
+        /// <exception cref="FileNotFoundException"></exception>
+        public static bool IsSymbolicLinkDir(string path)
+        {
+            if (!Directory.Exists(path) && !File.Exists(path))
+            {
+                throw new FileNotFoundException("The specified path does not exist.", path);
+            }
+
+            var attributes = File.GetAttributes(path);
+            return (attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint;
+        }
     }
 }
 

@@ -80,7 +80,6 @@ namespace UniGetUI.Interface
 
         public readonly int NewVersionLabelWidth;
         public readonly int NewVersionIconWidth;
-        private readonly bool AllSelected = true;
 
         protected abstract void WhenPackagesLoaded(ReloadReason reason);
         protected abstract void WhenPackageCountUpdated();
@@ -368,13 +367,18 @@ namespace UniGetUI.Interface
         }
         public void SelectAllTriggered()
         {
-            if (AllSelected)
+            if (QueryBlock.FocusState == FocusState.Unfocused)
             {
-                FilteredPackages.SelectAll();
-            }
-            else
-            {
-                FilteredPackages.ClearSelection();
+                if (!SelectAllCheckBox.IsChecked ?? false)
+                {
+                    SelectAllCheckBox.IsChecked = true;
+                    FilteredPackages.SelectAll();
+                }
+                else
+                {
+                    SelectAllCheckBox.IsChecked = false;
+                    FilteredPackages.ClearSelection();
+                }
             }
         }
         protected void AddPackageToSourcesList(Package package)

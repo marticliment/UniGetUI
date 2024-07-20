@@ -237,7 +237,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public override string[] GetUninstallParameters(Package package, InstallationOptions options)
         {
-            List<string> parameters = [Properties.UninstallVerb, "--id", package.Id, "--exact"];
+            List<string> parameters = [Properties.UninstallVerb, "--id", $"\"{package.Id}\"", "--exact"];
             if (!package.Source.IsVirtualManager)
             {
                 parameters.AddRange(["--source", package.Source.Name]);
@@ -253,15 +253,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             );
 
-            if (options.Version != "")
+            if (!package.IsUpgradable && options.Version != "")
             {
                 parameters.AddRange(["--version", $"\"{options.Version}\"", "--force"]);
             }
-            else if (package.IsUpgradable && package.NewVersion != "")
-            {
-                parameters.AddRange(["--version", $"\"{package.NewVersion}\""]);
-            }
-            else if (package.Version != "Unknown")
+            else if (!package.IsUpgradable && package.Version != "Unknown")
             {
                 parameters.AddRange(["--version", $"\"{package.Version}\""]);
             }
