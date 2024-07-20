@@ -19,6 +19,7 @@ using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
+using Microsoft.UI.Xaml.Media;
 
 namespace UniGetUI.Interface
 {
@@ -515,11 +516,11 @@ namespace UniGetUI.Interface
             int total = dependencies.Count();
             foreach (ManagerDependency dependency in dependencies)
             {
-                await ShowMissingDependencyQuery(dependency.Name, dependency.InstallFileName, dependency.InstallArguments, current++, total);
+                await ShowMissingDependencyQuery(dependency.Name, dependency.InstallFileName, dependency.InstallArguments,  dependency.FancyInstallCommand, current++, total);
             }
         }
 
-        public async Task ShowMissingDependencyQuery(string dep_name, string exe_name, string exe_args, int current, int total)
+        public async Task ShowMissingDependencyQuery(string dep_name, string exe_name, string exe_args, string fancy_command,  int current, int total)
         {
             ContentDialog dialog = new();
 
@@ -563,6 +564,27 @@ namespace UniGetUI.Interface
                 FontStyle = Windows.UI.Text.FontStyle.Italic,
             };
             p.Children.Add(infotext);
+            
+            TextBlock commandInfo = new()
+            {
+                Text = CoreTools.Translate("Alternatively, you can also install {0} by running the following command in a Windows PowerShell prompt:", dep_name),
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 4),
+                Opacity = .7F,
+            };
+            p.Children.Add(commandInfo);
+
+            TextBlock manualInstallCommand = new()
+            {
+                Text = fancy_command,
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 4),
+                Opacity = .7F,
+                IsTextSelectionEnabled = true,
+                FontFamily = new FontFamily("Consolas"),
+            };
+            p.Children.Add(manualInstallCommand);
+
 
             CheckBox c = new();
             if (NotFirstTime)
@@ -573,7 +595,8 @@ namespace UniGetUI.Interface
                 c.Unchecked += (s, e) => Settings.Set(DEP_SKIPPED_PREF, false);
                 p.Children.Add(c);
             }
-
+            
+            
             ProgressBar progress = new()
             {
                 IsIndeterminate = false,

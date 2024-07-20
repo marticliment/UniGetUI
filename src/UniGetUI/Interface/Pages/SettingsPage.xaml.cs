@@ -175,7 +175,7 @@ namespace UniGetUI.Interface
 
                 SettingsEntry ManagerExpander = new()
                 {
-                    Text = Manager.Name,
+                    Text = Manager.DisplayName,
                     Description = Manager.Properties.Description.Replace("<br>", "\n").Replace("<b>", "").Replace("</b>", "")
                 };
                 PackageManagerExpanders.Add(Manager, ManagerExpander);
@@ -292,7 +292,7 @@ namespace UniGetUI.Interface
                     Text = CoreTools.AutoTranslated("Always run {pm} operations with administrator rights"),
                     SettingName = "AlwaysElevate" + Manager.Name,
                 };
-                AdminCard._checkbox.Content = (AdminCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.Name);
+                AdminCard._checkbox.Content = (AdminCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
                 ExtraSettingsCards[Manager].Insert(index++, AdminCard);
 
                 CheckboxCard ParallelCard = new()
@@ -300,7 +300,7 @@ namespace UniGetUI.Interface
                     Text = CoreTools.AutoTranslated("Allow {pm} operations to be performed in parallel"),
                     SettingName = "AllowParallelInstallsForManager" + Manager.Name,
                 };
-                ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.Name);
+                ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
                 ExtraSettingsCards[Manager].Insert(index++, ParallelCard);
 
 

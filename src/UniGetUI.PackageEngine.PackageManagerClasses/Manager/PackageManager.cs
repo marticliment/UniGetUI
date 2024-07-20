@@ -23,6 +23,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public ManagerCapabilities Capabilities { get; set; } = new(IsDummy: true);
         public ManagerStatus Status { get; set; } = new() { Found = false };
         public string Name { get; set; } = "Unset";
+        public string DisplayName { get => Properties.DisplayName ?? Name; }
         public ManagerSource DefaultSource { get; set; }
         public static string[] FALSE_PACKAGE_NAMES = [""];
         public static string[] FALSE_PACKAGE_IDS = [""];

@@ -171,7 +171,7 @@
   "Finish" : "Hoàn thành",
   "Follow system color scheme" : "Theo dõi bảng màu hệ thống",
   "Force ARM compiled winget version (ONLY FOR ARM64 SYSTEMS)" : "Sử dụng phiên bản winget do ARM biên dịch (CHỈ DÀNH CHO HỆ THỐNG ARM64)",
-  "Formerly known as WingetUI" : null,
+  "Formerly known as WingetUI" : "Trước đây là WingetUI",
   "Found" : "Đã tìm thấy",
   "Found packages: " : "Các gói được tìm thấy:",
   "Found packages: {0}" : "Gói tìm thấy:  {0} ",

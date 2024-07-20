@@ -19,12 +19,12 @@ namespace UniGetUI.Interface.Pages.LogPage
             bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains("(") ?? false;
             foreach (PackageEngine.ManagerClasses.Manager.PackageManager manager in PEInterface.Managers)
             {
-                if (manager.Name.Contains(LogLevelCombo.SelectedValue?.ToString()?.Split(' ')[0] ?? "uncontained_word"))
+                if (manager.DisplayName.Contains(LogLevelCombo.SelectedValue?.ToString()?.Split(' ')[0] ?? "uncontained_word"))
                 {
                     PackageEngine.ManagerClasses.Classes.ManagerLogger TaskLogger = manager.TaskLogger;
                     LogTextBox.Blocks.Clear();
                     Paragraph versionParagraph = new();
-                    versionParagraph.Inlines.Add(new Run() { Text = $"Manager {manager.Name} with version:\n" });
+                    versionParagraph.Inlines.Add(new Run() { Text = $"Manager {manager.DisplayName} with version:\n" });
                     versionParagraph.Inlines.Add(new Run() { Text = manager.Status.Version });
                     versionParagraph.Inlines.Add(new Run() { Text = $"\n\n——————————————————————————————————————————\n\n" });
                     LogTextBox.Blocks.Add(versionParagraph);
@@ -61,8 +61,8 @@ namespace UniGetUI.Interface.Pages.LogPage
             LogLevelCombo.Items.Clear();
             foreach (PackageEngine.ManagerClasses.Manager.PackageManager manager in PEInterface.Managers)
             {
-                LogLevelCombo.Items.Add(manager.Name);
-                LogLevelCombo.Items.Add($"{manager.Name} ({CoreTools.Translate("Verbose")})");
+                LogLevelCombo.Items.Add(manager.DisplayName);
+                LogLevelCombo.Items.Add($"{manager.DisplayName} ({CoreTools.Translate("Verbose")})");
             }
             LogLevelCombo.SelectedIndex = 0;
         }

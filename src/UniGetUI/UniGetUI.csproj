@@ -29,7 +29,6 @@
     <StartupObject>UniGetUI.EntryPoint</StartupObject>
     <SignAssembly>False</SignAssembly>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <AssemblyName>WingetUI</AssemblyName>
 	<Nullable>enable</Nullable>
 
   </PropertyGroup>

@@ -62,7 +62,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                     break;
 
                 case Sorter.Source:
-                    SortingSelector = x => x.Package.SourceAsString;
+                    SortingSelector = x => x.Package.Source.AsString_DisplayName;
                     break;
             }
         }

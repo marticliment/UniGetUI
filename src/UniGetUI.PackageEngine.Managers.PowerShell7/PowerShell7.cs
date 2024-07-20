@@ -6,17 +6,18 @@ using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.PackageClasses;
 
-namespace UniGetUI.PackageEngine.Managers.PowerShellManager
+namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 {
-    public class PowerShell : BaseNuGet
+    public class PowerShell7 : BaseNuGet
     {
         new public static string[] FALSE_PACKAGE_NAMES = [""];
         new public static string[] FALSE_PACKAGE_IDS = [""];
         new public static string[] FALSE_PACKAGE_VERSIONS = [""];
 
-        public PowerShell() : base()
+        public PowerShell7() : base()
         {
             Capabilities = new ManagerCapabilities()
             {
@@ -36,12 +37,12 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             Properties = new ManagerProperties()
             {
-                Name = "PowerShell",
-                DisplayName = "PowerShell 5.x",
+                Name = "PowerShell7",
+                DisplayName = "PowerShell 7.x (beta)",
                 Description = CoreTools.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
                 IconId = "powershell",
                 ColorIconId = "powershell_color",
-                ExecutableFriendlyName = "powershell.exe",
+                ExecutableFriendlyName = "pwsh.exe",
                 InstallVerb = "Install-Module",
                 UninstallVerb = "Uninstall-Module",
                 UpdateVerb = "Update-Module",
@@ -51,7 +52,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
             };
 
-            SourceProvider = new PowerShellSourceProvider(this);
+            SourceProvider = new PowerShell7SourceProvider(this);
         }
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
@@ -86,8 +87,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     process {
                         $URLs = @{}
                         @(Get-PSRepository).ForEach({$URLs[$_.Name] = $_.SourceLocation})
-                        $page = Invoke-WebRequest -Uri ($URLs[$Repository] + "/package/$Name") -UseBasicParsing -Maximum 0 -ea Ignore
-                        [version]$latest = Split-Path -Path ($page.Headers.Location -replace "$Name." -replace ".nupkg") -Leaf
+                        $page = Invoke-WebRequest -Uri ($URLs[$Repository] + "/package/$Name") -UseBasicParsing -ea Ignore
+                        [version]$latest = Split-Path -Path ($page.BaseResponse.RequestMessage.RequestUri -replace "$Name." -replace ".nupkg") -Leaf
                         $needsupdate = $Latest -gt $Version
                         if ($needsupdate) {
                                 Write-Output($Name + "|" + $Version.ToString() + "|" + $Latest.ToString() + "|" + $Repository)
@@ -273,11 +274,13 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         protected override async Task<ManagerStatus> LoadManager()
         {
+            var result = await CoreTools.Which("pwsh.exe");
+
             ManagerStatus status = new()
             {
-                ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe")
+                ExecutablePath = result.Item2,
+                Found = result.Item1,
             };
-            status.Found = File.Exists(status.ExecutablePath);
 
             if (!status.Found)
             {
@@ -289,7 +292,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 StartInfo = new ProcessStartInfo()
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " \"echo $PSVersionTable\"",
+                    Arguments = " -Version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

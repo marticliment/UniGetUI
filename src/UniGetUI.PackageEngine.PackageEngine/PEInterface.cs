@@ -4,6 +4,7 @@ using UniGetUI.PackageEngine.Managers.ChocolateyManager;
 using UniGetUI.PackageEngine.Managers.DotNetManager;
 using UniGetUI.PackageEngine.Managers.NpmManager;
 using UniGetUI.PackageEngine.Managers.PipManager;
+using UniGetUI.PackageEngine.Managers.PowerShell7Manager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.Managers.ScoopManager;
 using UniGetUI.PackageEngine.Managers.WingetManager;
@@ -25,8 +26,9 @@ namespace UniGetUI.PackageEngine
         public static readonly Pip Pip = new();
         public static readonly DotNet DotNet = new();
         public static readonly PowerShell PowerShell = new();
+        public static readonly PowerShell7 PowerShell7 = new();
 
-        public static readonly PackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, DotNet, PowerShell];
+        public static readonly PackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, DotNet, PowerShell, PowerShell7];
 
         public static readonly DiscoverablePackagesLoader DiscoveredPackagesLoader = new(Managers);
         public static readonly UpgradablePackagesLoader UpgradablePackagesLoader = new(Managers);

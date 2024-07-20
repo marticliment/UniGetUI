@@ -585,8 +585,8 @@
                     <TextBlock 
                     Grid.Column="10" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind Package.Source.ToString()}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Package.Source.ToString()}"
+                    Text="{x:Bind Package.Source.AsString_DisplayName}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                    ToolTipService.ToolTip="{x:Bind Package.Source.AsString_DisplayName}"
                     />
                 </Grid>
             </widgets:PackageItemContainer>
