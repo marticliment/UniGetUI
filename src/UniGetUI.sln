@@ -88,6 +88,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WingetUIToUniGetUIRedirector", "WingetUIToUniGetUIRedirector\WingetUIToUniGetUIRedirector.vcxproj", "{AB6CDB55-F018-409D-8562-2FACFD6F7521}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -360,6 +362,14 @@ Global
 		{CC400751-216E-4BB2-8103-495B4E273477}.Release|Any CPU.Build.0 = Release|x64
 		{CC400751-216E-4BB2-8103-495B4E273477}.Release|x64.ActiveCfg = Release|x64
 		{CC400751-216E-4BB2-8103-495B4E273477}.Release|x64.Build.0 = Release|x64
+		{AB6CDB55-F018-409D-8562-2FACFD6F7521}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{AB6CDB55-F018-409D-8562-2FACFD6F7521}.Debug|Any CPU.Build.0 = Debug|Win32
+		{AB6CDB55-F018-409D-8562-2FACFD6F7521}.Debug|x64.ActiveCfg = Debug|x64
+		{AB6CDB55-F018-409D-8562-2FACFD6F7521}.Debug|x64.Build.0 = Debug|x64
+		{AB6CDB55-F018-409D-8562-2FACFD6F7521}.Release|Any CPU.ActiveCfg = Release|Win32
+		{AB6CDB55-F018-409D-8562-2FACFD6F7521}.Release|Any CPU.Build.0 = Release|Win32
+		{AB6CDB55-F018-409D-8562-2FACFD6F7521}.Release|x64.ActiveCfg = Release|x64
+		{AB6CDB55-F018-409D-8562-2FACFD6F7521}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -400,6 +410,7 @@ Global
 		{27E0B288-7DFF-468D-9360-035E8CE123CB} = {7940E867-EEBA-4AFD-9904-1536F003239C}
 		{20F43119-EA00-440D-B3B5-44F96592F4C8} = {7940E867-EEBA-4AFD-9904-1536F003239C}
 		{CC400751-216E-4BB2-8103-495B4E273477} = {8CF74C87-534F-4017-A4ED-F2918025E31A}
+		{AB6CDB55-F018-409D-8562-2FACFD6F7521} = {E05D1183-D360-4AFE-8968-314A34FAD3B2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D044BB14-0B37-47E5-A579-8B30FCBA1F9F}
