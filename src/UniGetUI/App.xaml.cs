@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.WinUI.Helpers;
+using CommunityToolkit.WinUI.Helpers;
 using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -22,13 +22,13 @@ namespace UniGetUI
     {
         public class __tooltip_options
         {
-            private int _errors_occurred = 0;
+            private int _errors_occurred;
             public int ErrorsOccurred { get { return _errors_occurred; } set { _errors_occurred = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
-            private bool _restart_required = false;
+            private bool _restart_required;
             public bool RestartRequired { get { return _restart_required; } set { _restart_required = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
-            private int _operations_in_progress = 0;
+            private int _operations_in_progress;
             public int OperationsInProgress { get { return _operations_in_progress; } set { _operations_in_progress = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
-            private int _available_updates = 0;
+            private int _available_updates;
             public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
         }
 

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Logging;
@@ -19,7 +19,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         new public static string[] FALSE_PACKAGE_IDS = ["No"];
         new public static string[] FALSE_PACKAGE_VERSIONS = ["Matches"];
 
-        private long LastScoopSourceUpdateTime = 0;
+        private long LastScoopSourceUpdateTime;
 
         public Scoop() : base()
         {

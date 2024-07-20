@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Nodes;
 using UniGetUI.Core.Data;
@@ -16,14 +16,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
     public class Package : INotifyPropertyChanged
     {
         // Internal properties
-        private bool __is_checked = false;
+        private bool __is_checked;
         public event PropertyChangedEventHandler? PropertyChanged;
         private PackageTag __tag;
 
         private readonly long __hash;
         private readonly long __versioned_hash;
 
-        private PackageDetails? __details = null;
+        private PackageDetails? __details;
         public PackageDetails Details
         {
             get => __details ??= new PackageDetails(this);

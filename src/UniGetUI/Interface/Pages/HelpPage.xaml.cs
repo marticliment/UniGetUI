@@ -12,7 +12,7 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class HelpDialog : Page
     {
-        private bool Initialized = false;
+        private bool Initialized;
         public HelpDialog()
         {
             InitializeComponent();

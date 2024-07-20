@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using UniGetUI.Core.Classes;
@@ -22,7 +22,7 @@ namespace UniGetUI.PackageEngine.Classes
 
     public class SerializableUpdatesOptions_v1
     {
-        public bool UpdatesIgnored { get; set; } = false;
+        public bool UpdatesIgnored { get; set; }
         public string IgnoredVersion { get; set; } = "";
         public static async Task<SerializableUpdatesOptions_v1> FromPackageAsync(Package package)
         {

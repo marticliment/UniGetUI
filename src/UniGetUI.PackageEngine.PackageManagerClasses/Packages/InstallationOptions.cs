@@ -16,15 +16,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
     {
         private static readonly Dictionary<long, InstallationOptions?> OptionsCache = [];
 
-        public bool SkipHashCheck { get; set; } = false;
-        public bool InteractiveInstallation { get; set; } = false;
-        public bool RunAsAdministrator { get; set; } = false;
+        public bool SkipHashCheck { get; set; }
+        public bool InteractiveInstallation { get; set; }
+        public bool RunAsAdministrator { get; set; }
         public string Version { get; set; } = "";
-        public Architecture? Architecture { get; set; } = null;
-        public PackageScope? InstallationScope { get; set; } = null;
+        public Architecture? Architecture { get; set; }
+        public PackageScope? InstallationScope { get; set; }
         public List<string> CustomParameters { get; set; } = [];
-        public bool RemoveDataOnUninstall { get; set; } = false;
-        public bool PreRelease { get; set; } = false;
+        public bool RemoveDataOnUninstall { get; set; }
+        public bool PreRelease { get; set; }
         public string CustomInstallLocation { get; set; } = "";
 
         public Package Package { get; }

@@ -1,4 +1,4 @@
-﻿using UniGetUI.Core.Logging;
+using UniGetUI.Core.Logging;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
@@ -16,7 +16,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// Wether this PackageDetails instance has valid data or not.
         /// To load valid data, make use of the `Load()` method
         /// </summary>
-        public bool IsPopulated { get; private set; } = false;
+        public bool IsPopulated { get; private set; }
 
         /// <summary>
         /// The description of the package

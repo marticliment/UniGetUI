@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
@@ -28,13 +28,13 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public static string[] FALSE_PACKAGE_NAMES = [""];
         public static string[] FALSE_PACKAGE_IDS = [""];
         public static string[] FALSE_PACKAGE_VERSIONS = [""];
-        public bool ManagerReady { get; set; } = false;
+        public bool ManagerReady { get; set; }
         public ManagerLogger TaskLogger;
         public IEnumerable<ManagerDependency> Dependencies { get; protected set; } = [];
 
         public BaseSourceProvider<PackageManager>? SourceProvider;
         public BasePackageDetailsProvider<PackageManager>? PackageDetailsProvider;
-        private readonly bool __base_constructor_called = false;
+        private readonly bool __base_constructor_called;
 
         public PackageManager()
         {

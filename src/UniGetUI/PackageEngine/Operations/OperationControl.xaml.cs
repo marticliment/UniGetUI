@@ -38,9 +38,9 @@ namespace UniGetUI.PackageEngine.Operations
         private string __line_info_text = "Please wait...";
         private Uri __icon_source = new("ms-appx:///Assets/Images/package_color.png");
         private string __operation_description = "$Package Install";
-        private SolidColorBrush? __progressbar_color = null;
+        private SolidColorBrush? __progressbar_color;
         private OperationStatus __status = OperationStatus.Pending;
-        private bool IsDialogOpen = false;
+        private bool IsDialogOpen;
 
         private WidgetLayout __layout_mode;
         private WidgetLayout LayoutMode
@@ -202,7 +202,7 @@ namespace UniGetUI.PackageEngine.Operations
                 }
             }
         }
-        protected bool IGNORE_PARALLEL_OPERATION_SETTINGS = false;
+        protected bool IGNORE_PARALLEL_OPERATION_SETTINGS;
         public AbstractOperation(bool IgnoreParallelInstalls = false)
         {
             IGNORE_PARALLEL_OPERATION_SETTINGS = IgnoreParallelInstalls;

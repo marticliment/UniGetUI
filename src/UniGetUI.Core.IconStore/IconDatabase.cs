@@ -15,7 +15,7 @@ namespace UniGetUI.Core.IconEngine
             public IconCount() { }
         }
 
-        private static IconDatabase? __instance = null;
+        private static IconDatabase? __instance;
 
         public static IconDatabase Instance
         {

@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -40,7 +40,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         private readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS = false;
         protected string LOADER_IDENTIFIER;
-        private int LoadOperationIdentifier = 0;
+        private int LoadOperationIdentifier;
         protected IEnumerable<PackageManager> Managers { get; private set; }
 
         public AbstractPackageLoader(IEnumerable<PackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false)

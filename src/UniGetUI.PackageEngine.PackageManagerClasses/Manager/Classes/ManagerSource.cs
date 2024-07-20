@@ -1,11 +1,11 @@
-﻿using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
 {
     public class ManagerSource
     {
         public virtual string IconId { get { return Manager.Properties.IconId; } }
-        public readonly bool IsVirtualManager = false;
+        public readonly bool IsVirtualManager;
         public struct Capabilities
         {
             public bool KnowsUpdateDate { get; set; } = false;

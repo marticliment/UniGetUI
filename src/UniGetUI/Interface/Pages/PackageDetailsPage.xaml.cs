@@ -31,7 +31,7 @@ namespace UniGetUI.Interface.Dialogs
         private readonly InstallOptionsPage InstallOptionsPage;
         public event EventHandler? Close;
         private readonly OperationType OperationRole;
-        private bool PackageHasScreenshots = false;
+        private bool PackageHasScreenshots;
         public ObservableCollection<TextBlock> ShowableTags = [];
         private readonly Uri InvalidUri = new("about:blank");
 

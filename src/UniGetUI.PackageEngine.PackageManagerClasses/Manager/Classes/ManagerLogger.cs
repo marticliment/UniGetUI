@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
@@ -38,10 +38,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
     {
         protected DateTime StartTime;
         protected DateTime? EndTime;
-        protected bool isComplete = false;
-        protected bool isOpen = false;
-        protected IEnumerable<string>? CachedMessage = null;
-        protected IEnumerable<string>? CachedVerboseMessage = null;
+        protected bool isComplete;
+        protected bool isOpen;
+        protected IEnumerable<string>? CachedMessage;
+        protected IEnumerable<string>? CachedVerboseMessage;
 
         private const int RETURNCODE_UNSET = -200;
         private const int RETURNCODE_SUCCESS = 0;

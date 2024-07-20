@@ -67,14 +67,14 @@ namespace UniGetUI.Interface
         /* END INTEROP STUFF */
 
         private TaskbarIcon? TrayIcon;
-        private bool HasLoadedLastGeometry = false;
+        private bool HasLoadedLastGeometry;
 
         public MainView NavigationPage;
         public Grid ContentRoot;
         public bool BlockLoading = false;
         private readonly ContentDialog LoadingSthDalog;
 
-        private int LoadingDialogCount = 0;
+        private int LoadingDialogCount;
 
         public List<ContentDialog> DialogQueue = [];
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
@@ -15,7 +15,7 @@ namespace UniGetUI.Interface.SoftwarePages
 {
     public class InstalledPackagesPage : AbstractPackagesPage
     {
-        private bool HasDoneBackup = false;
+        private bool HasDoneBackup;
 
         private BetterMenuItem? MenuAsAdmin;
         private BetterMenuItem? MenuInteractive;
