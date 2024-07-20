@@ -440,7 +440,7 @@ Crash Traceback:
         /// <returns></returns>
         public static async Task CreateSymbolicLinkDir(string linkPath, string targetPath)
         {
-            var psi = new ProcessStartInfo
+            var startInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
                 Arguments = $"/c mklink /D \"{linkPath}\" \"{targetPath}\"",
@@ -450,14 +450,13 @@ Crash Traceback:
                 RedirectStandardError = true
             };
 
-            using (var process = Process.Start(psi))
+            Process p = Process.Start(startInfo);
+            if (p is not null)
+            {await p.WaitForExitAsync();}
+            if (p is null || p.ExitCode != 0)
             {
-                await process.WaitForExitAsync();
-                if (process.ExitCode != 0)
-                {
-                    throw new Exception(
-                        $"The operation did not complete successfully: \n{await process.StandardOutput.ReadToEndAsync()}\n{await process.StandardError.ReadToEndAsync()}\n");
-                }
+                throw new Exception(
+                    $"The operation did not complete successfully: \n{await p.StandardOutput.ReadToEndAsync()}\n{await p.StandardError.ReadToEndAsync()}\n");
             }
         }
         

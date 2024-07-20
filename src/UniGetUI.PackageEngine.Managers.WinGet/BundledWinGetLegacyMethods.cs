@@ -36,7 +36,7 @@ internal static partial class BundledWinGetLegacyMethods
             int VersionIndex = -1;
             int SourceIndex = -1;
             bool DashesPassed = false;
-            string line;
+            string? line;
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 logger.AddToStdOut(line);
@@ -62,7 +62,7 @@ internal static partial class BundledWinGetLegacyMethods
                     else
                     {
                         string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
-                        source = Manager.SourceProvider.SourceFactory.GetSourceOrDefault(sourceName);
+                        source = Manager.GetSourceOrDefault(sourceName);
                     }
                     Packages.Add(new Package(name, id, version, source, Manager));
                 }
@@ -105,7 +105,7 @@ internal static partial class BundledWinGetLegacyMethods
         int NewVersionIndex = -1;
         int SourceIndex = -1;
         bool DashesPassed = false;
-        string line;
+        string? line;
         while ((line = await p.StandardOutput.ReadLineAsync()) != null)
         {
             logger.AddToStdOut(line);
@@ -147,7 +147,7 @@ internal static partial class BundledWinGetLegacyMethods
                 else
                 {
                     string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
-                    source = Manager.SourceProvider.SourceFactory.GetSourceOrDefault(sourceName);
+                    source = Manager.GetSourceOrDefault(sourceName);
                 }
 
                 Packages.Add(new Package(name, id, version, newVersion, source, Manager));
@@ -189,7 +189,7 @@ internal static partial class BundledWinGetLegacyMethods
             int SourceIndex = -1;
             int NewVersionIndex = -1;
             bool DashesPassed = false;
-            string line;
+            string? line;
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 try
@@ -224,7 +224,7 @@ internal static partial class BundledWinGetLegacyMethods
                         else
                         {
                             string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();
-                            source = Manager.SourceProvider.SourceFactory.GetSourceOrDefault(sourceName);
+                            source = Manager.GetSourceOrDefault(sourceName);
                         }
                         Packages.Add(new Package(name, id, version, source, Manager));
                     }
