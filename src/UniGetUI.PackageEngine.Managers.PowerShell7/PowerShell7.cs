@@ -37,8 +37,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 
             Properties = new ManagerProperties()
             {
-                Name = "PowerShellCore",
-                DisplayName = "PowerShell 7.x",
+                Name = "PowerShell7",
+                DisplayName = "PowerShell 7.x (beta)",
                 Description = CoreTools.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
                 IconId = "powershell",
                 ColorIconId = "powershell_color",
