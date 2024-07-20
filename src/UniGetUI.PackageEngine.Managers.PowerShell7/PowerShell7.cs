@@ -87,8 +87,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                     process {
                         $URLs = @{}
                         @(Get-PSRepository).ForEach({$URLs[$_.Name] = $_.SourceLocation})
-                        $page = Invoke-WebRequest -Uri ($URLs[$Repository] + "/package/$Name") -UseBasicParsing -Maximum 0 -ea Ignore
-                        [version]$latest = Split-Path -Path ($page.Headers.Location -replace "$Name." -replace ".nupkg") -Leaf
+                        $page = Invoke-WebRequest -Uri ($URLs[$Repository] + "/package/$Name") -UseBasicParsing -ea Ignore
+                        [version]$latest = Split-Path -Path ($page.BaseResponse.RequestMessage.RequestUri -replace "$Name." -replace ".nupkg") -Leaf
                         $needsupdate = $Latest -gt $Version
                         if ($needsupdate) {
                                 Write-Output($Name + "|" + $Version.ToString() + "|" + $Latest.ToString() + "|" + $Repository)
