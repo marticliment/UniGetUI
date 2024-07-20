@@ -1,6 +1,6 @@
 ﻿### From: https://github.com/dotnet/aspnetcore/blob/main/.editorconfig
 ### Last sync: ca1f641
-### Disabled: CA1305, CA2007, IDE0073, IDE0161
+### Disabled: CA1305, IDE0073, IDE0161
 ; EditorConfig to support per-solution formatting.
 ; Use the EditorConfig VS add-in to make this work.
 ; http://editorconfig.org/
@@ -234,7 +234,7 @@ dotnet_diagnostic.CA1857.severity = warning
 dotnet_diagnostic.CA1858.severity = warning
 
 # CA2007: Consider calling ConfigureAwait on the awaited task
-#dotnet_diagnostic.CA2007.severity = warning
+dotnet_diagnostic.CA2007.severity = warning
 
 # CA2008: Do not create tasks without passing a TaskScheduler
 dotnet_diagnostic.CA2008.severity = warning
