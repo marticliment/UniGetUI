@@ -94,6 +94,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             Properties = new ManagerProperties()
             {
                 Name = "Winget",
+                DisplayName = "WinGet",
                 Description = CoreTools.Translate("Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>"),
                 IconId = "winget",
                 ColorIconId = "winget_color",

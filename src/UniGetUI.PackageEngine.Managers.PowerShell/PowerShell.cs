@@ -37,6 +37,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             Properties = new ManagerProperties()
             {
                 Name = "PowerShell",
+                DisplayName = "PowerShell 5.x",
                 Description = CoreTools.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
                 IconId = "powershell",
                 ColorIconId = "powershell_color",

@@ -45,6 +45,13 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
             return Manager.Name;
         }
 
+        public string ToString_DisplayName()
+        {
+            if (Manager.Capabilities.SupportsCustomScopes && Manager.Properties.DisplayName is not null)
+                return Manager.DisplayName + ": " + Name;
+            return ToString();
+        }
+
         /// <summary>
         /// Replaces the current URL with the new one. Must be used only when a placeholder URL is used.
         /// </summary>

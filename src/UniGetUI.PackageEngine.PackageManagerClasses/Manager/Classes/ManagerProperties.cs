@@ -6,6 +6,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
     {
         public bool IsDummy = false;
         public string Name { get; set; } = "Unset";
+        public string? DisplayName { get; set; }
         public string Description { get; set; } = "Unset";
         public string IconId { get; set; } = "Unset";
         public string ColorIconId { get; set; } = "Unset";

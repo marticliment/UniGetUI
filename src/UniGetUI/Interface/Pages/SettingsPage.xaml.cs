@@ -175,7 +175,7 @@ namespace UniGetUI.Interface
 
                 SettingsEntry ManagerExpander = new()
                 {
-                    Text = Manager.Name,
+                    Text = Manager.DisplayName,
                     Description = Manager.Properties.Description.Replace("<br>", "\n").Replace("<b>", "").Replace("</b>", "")
                 };
                 PackageManagerExpanders.Add(Manager, ManagerExpander);
