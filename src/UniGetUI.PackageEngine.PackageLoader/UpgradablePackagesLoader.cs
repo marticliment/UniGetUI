@@ -8,8 +8,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 {
     public class UpgradablePackagesLoader : AbstractPackageLoader
     {
-
-        System.Timers.Timer? UpdatesTimer;
+        private System.Timers.Timer? UpdatesTimer;
 
         public UpgradablePackagesLoader(IEnumerable<PackageManager> managers)
         : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false)

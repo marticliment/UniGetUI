@@ -32,9 +32,9 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(TextProperty, value);
         }
 
-        readonly DependencyProperty TextProperty;
+        private readonly DependencyProperty TextProperty;
 
-        readonly DependencyProperty ButtonProperty = DependencyProperty.Register(
+        private readonly DependencyProperty ButtonProperty = DependencyProperty.Register(
         nameof(ButtonText),
         typeof(string),
         typeof(ButtonCard),

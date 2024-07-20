@@ -15,11 +15,11 @@ namespace UniGetUI.Interface.SoftwarePages
 {
     public class InstalledPackagesPage : AbstractPackagesPage
     {
-        bool HasDoneBackup = false;
+        private bool HasDoneBackup = false;
 
-        BetterMenuItem? MenuAsAdmin;
-        BetterMenuItem? MenuInteractive;
-        BetterMenuItem? MenuRemoveData;
+        private BetterMenuItem? MenuAsAdmin;
+        private BetterMenuItem? MenuInteractive;
+        private BetterMenuItem? MenuRemoveData;
 
         public InstalledPackagesPage()
         : base(new PackagesPageData()

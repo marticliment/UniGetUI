@@ -17,21 +17,24 @@ namespace UniGetUI.Interface.Widgets
             get => (string)GetValue(TextProperty);
             set => SetValue(TextProperty, value);
         }
-        readonly DependencyProperty TextProperty;
+
+        private readonly DependencyProperty TextProperty;
 
         public string UnderText
         {
             get => (string)GetValue(UnderTextProperty);
             set => SetValue(UnderTextProperty, value);
         }
-        readonly DependencyProperty UnderTextProperty;
+
+        private readonly DependencyProperty UnderTextProperty;
 
         public string Icon
         {
             get => (string)GetValue(IconProperty);
             set => SetValue(IconProperty, value);
         }
-        readonly DependencyProperty IconProperty;
+
+        private readonly DependencyProperty IconProperty;
 
 
         public SettingsEntry()

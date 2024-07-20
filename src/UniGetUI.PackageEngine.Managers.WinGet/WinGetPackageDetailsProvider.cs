@@ -14,7 +14,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
     {
         private static readonly Dictionary<string, string> __msstore_package_manifests = [];
 
-        struct MicrosoftStoreProductType
+        private struct MicrosoftStoreProductType
         {
             public string productIds { get; set; }
         }

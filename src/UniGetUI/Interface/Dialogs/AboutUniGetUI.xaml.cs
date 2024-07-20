@@ -16,7 +16,7 @@ namespace UniGetUI.Interface
     {
 
         public event EventHandler? Close;
-        int previousSelectedIndex = 0;
+        private int previousSelectedIndex = 0;
         public AboutUniGetUI()
         {
             InitializeComponent();

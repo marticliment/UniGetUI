@@ -14,9 +14,9 @@ namespace UniGetUI.Interface.SoftwarePages
 {
     public class DiscoverSoftwarePage : AbstractPackagesPage
     {
-        BetterMenuItem? MenuAsAdmin;
-        BetterMenuItem? MenuInteractive;
-        BetterMenuItem? MenuSkipHash;
+        private BetterMenuItem? MenuAsAdmin;
+        private BetterMenuItem? MenuInteractive;
+        private BetterMenuItem? MenuSkipHash;
         public DiscoverSoftwarePage()
         : base(new PackagesPageData()
         {

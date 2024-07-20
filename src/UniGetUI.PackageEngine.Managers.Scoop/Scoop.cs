@@ -19,7 +19,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         new public static string[] FALSE_PACKAGE_IDS = ["No"];
         new public static string[] FALSE_PACKAGE_VERSIONS = ["Matches"];
 
-        long LastScoopSourceUpdateTime = 0;
+        private long LastScoopSourceUpdateTime = 0;
 
         public Scoop() : base()
         {

@@ -2,7 +2,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 {
     public class IconDatabaseTests
     {
-        readonly IconDatabase iconStore = new();
+        private readonly IconDatabase iconStore = new();
 
         [Fact]
         public async Task LoadIconsAndScreenshotsDatabaseTest()

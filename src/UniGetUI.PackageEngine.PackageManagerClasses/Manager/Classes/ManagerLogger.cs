@@ -6,7 +6,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 {
     public class ManagerLogger
     {
-        readonly PackageManager Manager;
+        private readonly PackageManager Manager;
         public List<TaskLogger> Operations = [];
 
         public ManagerLogger(PackageManager manager)
@@ -43,8 +43,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         protected IEnumerable<string>? CachedMessage = null;
         protected IEnumerable<string>? CachedVerboseMessage = null;
 
-        const int RETURNCODE_UNSET = -200;
-        const int RETURNCODE_SUCCESS = 0;
+        private const int RETURNCODE_UNSET = -200;
+        private const int RETURNCODE_SUCCESS = 0;
         protected int ReturnCode = -200;
 
         public TaskLogger()
@@ -87,14 +87,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
     public class ProcessTaskLogger : TaskLogger
     {
-        readonly PackageManager Manager;
-        readonly LoggableTaskType Type;
+        private readonly PackageManager Manager;
+        private readonly LoggableTaskType Type;
 
-        readonly string Executable;
-        readonly string Arguments;
-        readonly List<string> StdIn = [];
-        readonly List<string> StdOut = [];
-        readonly List<string> StdErr = [];
+        private readonly string Executable;
+        private readonly string Arguments;
+        private readonly List<string> StdIn = [];
+        private readonly List<string> StdOut = [];
+        private readonly List<string> StdErr = [];
 
         public ProcessTaskLogger(PackageManager manager, LoggableTaskType type, string executable, string arguments) : base()
         {
@@ -271,11 +271,11 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
     public class NativeTaskLogger : TaskLogger
     {
-        readonly PackageManager Manager;
-        readonly LoggableTaskType Type;
+        private readonly PackageManager Manager;
+        private readonly LoggableTaskType Type;
 
-        readonly List<string> Info = [];
-        readonly List<string> Errors = [];
+        private readonly List<string> Info = [];
+        private readonly List<string> Errors = [];
 
         public NativeTaskLogger(PackageManager manager, LoggableTaskType type) : base()
         {

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Net;
 using UniGetUI.Core.Logging;
 
@@ -38,6 +38,7 @@ namespace UniGetUI.Core.Data
         public const double VersionNumber =  3.1092; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
+
         public static HttpClientHandler GenericHttpClientParameters
         {
             get
@@ -149,7 +150,8 @@ namespace UniGetUI.Core.Data
                 return file_path;
             }
         }
-        public static bool IsDaemon = false;
+
+        public static bool IsDaemon;
 
         public static string ManagerLogs = "";
 
@@ -276,6 +278,7 @@ namespace UniGetUI.Core.Data
                         Logger.Info("Deleting old Chocolatey directory " + old_path);
                         Directory.Delete(old_path);
                     }
+
                     return new_path;
                 }
                 catch (Exception e)
@@ -314,6 +317,5 @@ namespace UniGetUI.Core.Data
                 return new_path;
             }
         }
-
     }
 }

@@ -4,7 +4,7 @@
     /// Any object that can perform any of the following listed actions should 
     /// implement this class, to allow proper keyboard bindings on the interface.
     /// </summary>
-    interface IPageWithKeyboardShortcuts
+    internal interface IPageWithKeyboardShortcuts
     {
         /// <summary>
         /// Handles when a search-like automation was triggered (Ctrl+F, etc.)

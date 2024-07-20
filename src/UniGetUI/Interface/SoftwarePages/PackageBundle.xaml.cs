@@ -43,8 +43,8 @@ namespace UniGetUI.Interface
 
         private readonly bool Initialized = false;
         private bool AllSelected = false;
-        readonly TreeViewNode LocalPackagesNode;
-        int lastSavedWidth = 0;
+        private readonly TreeViewNode LocalPackagesNode;
+        private int lastSavedWidth = 0;
 
         public string InstantSearchSettingString = "DisableInstantSearchInstalledTab";
         public PackageBundlePage()

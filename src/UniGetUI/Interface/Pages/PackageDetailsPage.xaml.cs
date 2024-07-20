@@ -30,10 +30,10 @@ namespace UniGetUI.Interface.Dialogs
         public Package Package;
         private readonly InstallOptionsPage InstallOptionsPage;
         public event EventHandler? Close;
-        readonly OperationType OperationRole;
-        bool PackageHasScreenshots = false;
+        private readonly OperationType OperationRole;
+        private bool PackageHasScreenshots = false;
         public ObservableCollection<TextBlock> ShowableTags = [];
-        readonly Uri InvalidUri = new("about:blank");
+        private readonly Uri InvalidUri = new("about:blank");
 
         private enum LayoutMode
         {

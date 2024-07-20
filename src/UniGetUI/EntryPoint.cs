@@ -10,7 +10,7 @@ namespace UniGetUI
     public static class EntryPoint
     {
         [STAThread]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             // Having an async main method breaks WebView2
             try
@@ -43,7 +43,7 @@ namespace UniGetUI
         /// </summary>
         /// <param name="args">Call arguments</param>
         /// <returns></returns>
-        static async Task AsyncMain(string[] args)
+        private static async Task AsyncMain(string[] args)
         {
             try
             {
