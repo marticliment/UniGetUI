@@ -241,7 +241,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
                 {
-                    throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                    throw new InvalidOperationException("The IgnoredUpdates database seems to be invalid!");
                 }
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
@@ -272,7 +272,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
                 {
-                    throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                    throw new InvalidOperationException("The IgnoredUpdates database seems to be invalid!");
                 }
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
@@ -292,9 +292,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         /// <summary>
         /// Returns true if the package's updates are ignored. If the version parameter
-        /// is passed it will be checked if that version is ignored. Please note that if 
-        /// all updates are ignored, calling this method with a specific version will 
-        /// still return true, although the passed version is not explicitly ignored. 
+        /// is passed it will be checked if that version is ignored. Please note that if
+        /// all updates are ignored, calling this method with a specific version will
+        /// still return true, although the passed version is not explicitly ignored.
         /// </summary>
         /// <param name="Version"></param>
         /// <returns></returns>
@@ -306,7 +306,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
                 {
-                    throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                    throw new InvalidOperationException("The IgnoredUpdates database seems to be invalid!");
                 }
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId) && (IgnoredUpdatesJson[IgnoredId]?.ToString() == "*" || IgnoredUpdatesJson[IgnoredId]?.ToString() == Version))
@@ -326,7 +326,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Returns (as a string) the version for which a package has been ignored. When no versions 
+        /// Returns (as a string) the version for which a package has been ignored. When no versions
         /// are ignored, an empty string will be returned; and when all versions are ignored an asterisk
         /// will be returned.
         /// </summary>
@@ -339,7 +339,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
                 {
-                    throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                    throw new InvalidOperationException("The IgnoredUpdates database seems to be invalid!");
                 }
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))

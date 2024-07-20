@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -25,7 +25,7 @@ namespace UniGetUI.Interface.Widgets
 
         private new readonly DependencyProperty TextProperty;
 
-        new public string Text
+        public new string Text
         {
             get => (string)GetValue(TextProperty);
             set => SetValue(TextProperty, value);
@@ -52,11 +52,8 @@ namespace UniGetUI.Interface.Widgets
                 {
                     (this as MenuFlyoutItem).Text = CoreTools.Translate(e.NewValue as string ?? "");
                 })));
-
         }
-
     }
-
 
     public class MenuForPackage : MenuFlyout
     {

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
@@ -11,9 +11,9 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 {
     public class Pip : PackageManager
     {
-        new public static string[] FALSE_PACKAGE_NAMES = ["", "WARNING:", "[notice]", "Package", "DEPRECATION:"];
-        new public static string[] FALSE_PACKAGE_IDS = ["", "WARNING:", "[notice]", "Package", "DEPRECATION:"];
-        new public static string[] FALSE_PACKAGE_VERSIONS = ["", "Ignoring", "invalid"];
+        public static new string[] FALSE_PACKAGE_NAMES = ["", "WARNING:", "[notice]", "Package", "DEPRECATION:"];
+        public static new string[] FALSE_PACKAGE_IDS = ["", "WARNING:", "[notice]", "Package", "DEPRECATION:"];
+        public static new string[] FALSE_PACKAGE_VERSIONS = ["", "Ignoring", "invalid"];
 
         public Pip() : base()
         {

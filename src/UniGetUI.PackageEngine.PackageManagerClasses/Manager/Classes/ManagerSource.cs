@@ -35,19 +35,23 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
             }
 
             UpdateDate = updateDate;
-            
-            AsString = Manager.Capabilities.SupportsCustomSources? $"{Manager.Name}: {Name}" : Name;
+
+            AsString = Manager.Capabilities.SupportsCustomSources ? $"{Manager.Name}: {Name}" : Name;
             if (Manager.Capabilities.SupportsCustomScopes && Manager.Properties.DisplayName is not null)
+            {
                 AsString_DisplayName = $"{Manager.DisplayName}: {Name}";
+            }
             else
+            {
                 AsString_DisplayName = AsString;
+            }
         }
 
         public override string ToString()
         {
             throw new NotImplementedException("Use the `AsString` attribute instead");
         }
-        
+
         /// <summary>
         /// Replaces the current URL with the new one. Must be used only when a placeholder URL is used.
         /// </summary>

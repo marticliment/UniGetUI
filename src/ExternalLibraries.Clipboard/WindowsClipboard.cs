@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -160,8 +160,6 @@ namespace ExternalLibraries.Clipboard
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool CloseClipboard();
-
-
 
         [DllImport("user32.dll")]
         private static extern bool EmptyClipboard();

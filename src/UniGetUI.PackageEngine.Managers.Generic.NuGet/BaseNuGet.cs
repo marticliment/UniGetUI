@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using System.Web;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
@@ -10,9 +10,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
     public abstract class BaseNuGet : PackageManager
     {
-        new public static string[] FALSE_PACKAGE_NAMES = [""];
-        new public static string[] FALSE_PACKAGE_IDS = [""];
-        new public static string[] FALSE_PACKAGE_VERSIONS = [""];
+        public static new string[] FALSE_PACKAGE_NAMES = [""];
+        public static new string[] FALSE_PACKAGE_IDS = [""];
+        public static new string[] FALSE_PACKAGE_VERSIONS = [""];
 
         public BaseNuGet() : base()
         {
@@ -23,17 +23,17 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         {
             if (PackageDetailsProvider is not BaseNuGetDetailsProvider)
             {
-                throw new Exception("NuGet-based package managers must not reassign the PackageDetailsProvider property");
+                throw new InvalidOperationException("NuGet-based package managers must not reassign the PackageDetailsProvider property");
             }
 
             if (!Capabilities.SupportsCustomVersions)
             {
-                throw new Exception("NuGet-based package managers must support custom versions");
+                throw new InvalidOperationException("NuGet-based package managers must support custom versions");
             }
 
             if (!Capabilities.SupportsCustomPackageIcons)
             {
-                throw new Exception("NuGet-based package managers must support custom versions");
+                throw new InvalidOperationException("NuGet-based package managers must support custom versions");
             }
 
             await base.InitializeAsync();

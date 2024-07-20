@@ -41,7 +41,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             Logger.Warn("Non-MSStore WinGet Native Icons have been forcefully disabled on code");
             return null;
-            return await GetWinGetPackageIcon(package);
+            //return await GetWinGetPackageIcon(package);
         }
 
         protected override async Task<Uri[]> GetPackageScreenshots_Unsafe(Package package)
@@ -93,7 +93,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
 
 
-        private async Task<string?> GetMicrosoftStorePackageManifest(Package package)
+        private static async Task<string?> GetMicrosoftStorePackageManifest(Package package)
         {
             if (__msstore_package_manifests.TryGetValue(package.Id, out var manifest))
             {
@@ -135,7 +135,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return result;
         }
 
-        private async Task<CacheableIcon?> GetMicrosoftStorePackageIcon(Package package)
+        private static async Task<CacheableIcon?> GetMicrosoftStorePackageIcon(Package package)
         {
             string? ResponseContent = await GetMicrosoftStorePackageManifest(package);
             if (ResponseContent == null)
@@ -191,8 +191,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return new CacheableIcon(new Uri(uri));
         }
 
-
-        private async Task<CacheableIcon?> GetWinGetPackageIcon(Package package)
+        private static async Task<CacheableIcon?> GetWinGetPackageIcon(Package package)
         { // TODO: Need to work on retrieving WinGet icons
 
             if (WinGetHelper.Instance is not NativeWinGetHelper)

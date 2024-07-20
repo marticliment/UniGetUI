@@ -146,15 +146,15 @@ namespace UniGetUI.Interface.Dialogs
             switch (OperationRole)
             {
                 case OperationType.Install:
-                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + String.Join(' ', Package.Manager.GetInstallParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
+                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(' ', Package.Manager.GetInstallParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
                     break;
 
                 case OperationType.Uninstall:
-                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + String.Join(' ', Package.Manager.GetUninstallParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
+                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(' ', Package.Manager.GetUninstallParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
                     break;
 
                 case OperationType.Update:
-                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + String.Join(' ', Package.Manager.GetUpdateParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
+                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(' ', Package.Manager.GetUpdateParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
                     break;
             }
             CommandTextBlock.Text = command;

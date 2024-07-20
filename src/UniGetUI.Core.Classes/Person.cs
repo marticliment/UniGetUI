@@ -14,8 +14,8 @@
             this.Name = Name;
             this.ProfilePicture = ProfilePicture;
             this.GitHubUrl = GitHubUrl;
-            this.HasPicture = ProfilePicture is not null;
-            this.HasGitHubProfile = GitHubUrl is not null;
+            HasPicture = ProfilePicture is not null;
+            HasGitHubProfile = GitHubUrl is not null;
             this.Language = Language;
         }
     }

@@ -18,7 +18,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (process.StartInfo == null)
             {
-                throw new Exception("Given process instance did not have a valid StartInfo value");
+                throw new InvalidOperationException("Given process instance did not have a valid StartInfo value");
             }
 
             ProcessTaskLogger operation = new(Manager, type, process.StartInfo.FileName, process.StartInfo.Arguments);
@@ -116,7 +116,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new Exception("Attempted to write log into an already-closed ProcessTaskLogger");
+                throw new InvalidOperationException("Attempted to write log into an already-closed ProcessTaskLogger");
             }
 
             foreach (string line in lines)
@@ -140,7 +140,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new Exception("Attempted to write log into an already-closed ProcessTaskLogger");
+                throw new InvalidOperationException("Attempted to write log into an already-closed ProcessTaskLogger");
             }
 
             foreach (string line in lines)
@@ -164,7 +164,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new Exception("Attempted to write log into an already-closed ProcessTaskLogger");
+                throw new InvalidOperationException("Attempted to write log into an already-closed ProcessTaskLogger");
             }
 
             foreach (string line in lines)
@@ -287,7 +287,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new Exception("Attempted to write log into an already-closed NativeTaskLogger");
+                throw new InvalidOperationException("Attempted to write log into an already-closed NativeTaskLogger");
             }
 
             foreach (string line in lines)
@@ -311,7 +311,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new Exception("Attempted to write log into an already-closed NativeTaskLogger");
+                throw new InvalidOperationException("Attempted to write log into an already-closed NativeTaskLogger");
             }
 
             foreach (string line in lines)

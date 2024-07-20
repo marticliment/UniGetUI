@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text.Json.Nodes;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
@@ -53,7 +53,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             if (JsonObject.Parse(JsonString) is not JsonObject RawInfo)
             {
-                throw new Exception("Deserialized RawInfo was null");
+                throw new InvalidOperationException("Deserialized RawInfo was null");
             }
 
             try

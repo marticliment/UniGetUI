@@ -11,14 +11,13 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
-
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
     public class WinGet : PackageManager
     {
-        new public static string[] FALSE_PACKAGE_NAMES = ["", "e(s)", "have", "the", "Id"];
-        new public static string[] FALSE_PACKAGE_IDS = ["", "e(s)", "have", "an", "'winget", "pin'", "have", "an", "Version"];
-        new public static string[] FALSE_PACKAGE_VERSIONS = ["", "have", "an", "'winget", "pin'", "have", "an", "Version"];
+        public static new string[] FALSE_PACKAGE_NAMES = ["", "e(s)", "have", "the", "Id"];
+        public static new string[] FALSE_PACKAGE_IDS = ["", "e(s)", "have", "an", "'winget", "pin'", "have", "an", "Version"];
+        public static new string[] FALSE_PACKAGE_VERSIONS = ["", "have", "an", "'winget", "pin'", "have", "an", "Version"];
         public LocalWingetSource LocalPcSource { get; set; }
         public LocalWingetSource AndroidSubsystemSource { get; set; }
         public LocalWingetSource SteamSource { get; set; }
@@ -38,7 +37,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             PowerShellInlineArgs = "-ExecutionPolicy Bypass -NoLogo -NoProfile -NonInteractive";
 
             WinGetBundledPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "winget-cli_x64", "winget.exe");
-            
+
             Dependencies = [
                 new ManagerDependency(
                     "WinGet PowerShell Module",
@@ -123,17 +122,17 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             return await Task.Run(() => WinGetHelper.Instance.FindPackages_UnSafe(this, query).GetAwaiter().GetResult());
         }
-        
+
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             return await Task.Run(() => WinGetHelper.Instance.GetAvailableUpdates_UnSafe(this).GetAwaiter().GetResult());
         }
-        
+
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             return await Task.Run(() => WinGetHelper.Instance.GetInstalledPackages_UnSafe(this).GetAwaiter().GetResult());
         }
-        
+
         public ManagerSource GetLocalSource(string id)
         {
             try
@@ -188,7 +187,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return LocalPcSource;
             }
         }
-        
 
         public override string[] GetInstallParameters(Package package, InstallationOptions options)
         {
@@ -322,7 +320,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             ManagerStatus status = new();
 
             bool FORCE_BUNDLED = Settings.Get("ForceLegacyBundledWinGet");
-            
+
             Tuple<bool, string> which_res = await CoreTools.Which("winget.exe");
             status.ExecutablePath = which_res.Item2;
             status.Found = which_res.Item1;
@@ -359,7 +357,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             };
             process.Start();
-            status.Version = $"{(FORCE_BUNDLED? "Bundled" : "System")} WinGet CLI Version: {(await process.StandardOutput.ReadToEndAsync()).Trim()}";
+            status.Version = $"{(FORCE_BUNDLED ? "Bundled" : "System")} WinGet CLI Version: {(await process.StandardOutput.ReadToEndAsync()).Trim()}";
             string error = await process.StandardError.ReadToEndAsync();
             if (error != "")
             {
@@ -387,10 +385,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 Logger.Error("WinGet STDERR not empty: " + error);
             }
-            
+
             try
             {
-                if (FORCE_BUNDLED) throw new Exception("Bundled WinGet was forced by the user!");
+                if (FORCE_BUNDLED)
+                {
+                    throw new InvalidOperationException("Bundled WinGet was forced by the user!");
+                }
+
                 await Task.Run(() => WinGetHelper.Instance = new NativeWinGetHelper());
                 status.Version += "\nUsing Native WinGet helper (COM Api)";
             }
@@ -450,7 +452,3 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
     }
 }
-
-
-
-

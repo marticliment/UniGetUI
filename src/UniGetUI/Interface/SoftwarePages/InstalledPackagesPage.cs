@@ -254,7 +254,9 @@ namespace UniGetUI.Interface.SoftwarePages
             if (!HasDoneBackup)
             {
                 if (Settings.Get("EnablePackageBackup"))
+                {
                     _ = BackupPackages();
+                }
             }
         }
 #pragma warning restore

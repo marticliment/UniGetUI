@@ -215,7 +215,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 if (options == null)
                 {
-                    throw new Exception("Deserialized options cannot be null!");
+                    throw new InvalidOperationException("Deserialized options cannot be null!");
                 }
 
                 FromSerializable(options);

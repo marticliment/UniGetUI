@@ -551,7 +551,7 @@ namespace UniGetUI.PackageEngine.Operations
 
                 List<string> newHistory = [.. ProcessOutput, .. oldHistory];
 
-                Settings.SetValue("OperationHistory", String.Join('\n', newHistory).Replace(" | ", " ║ "));
+                Settings.SetValue("OperationHistory", string.Join('\n', newHistory).Replace(" | ", " ║ "));
             }
             catch (Exception e)
             {

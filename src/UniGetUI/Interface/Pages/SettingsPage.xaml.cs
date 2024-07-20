@@ -366,7 +366,7 @@ namespace UniGetUI.Interface
                 ExternalLibraries.Pickers.FileSavePicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
                 string file = picker.Show(["*.json"], CoreTools.Translate("WingetUI Settings") + ".json");
 
-                if (file != String.Empty)
+                if (file != string.Empty)
                 {
                     MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
 
@@ -441,7 +441,7 @@ namespace UniGetUI.Interface
 
             ExternalLibraries.Pickers.FolderPicker openPicker = new(MainApp.Instance.MainWindow.GetWindowHandle());
             string folder = openPicker.Show();
-            if (folder != String.Empty)
+            if (folder != string.Empty)
             {
                 Settings.SetValue("ChangeBackupOutputDirectory", folder);
                 BackupDirectoryLabel.Text = folder;

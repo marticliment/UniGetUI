@@ -538,7 +538,7 @@ namespace UniGetUI.Interface
             bool NotFirstTime = Settings.Get(PREVIOUSLY_ATTEMPTED_PREF);
             Settings.Set(PREVIOUSLY_ATTEMPTED_PREF, true);
 
-            dialog.XamlRoot = this.MainContentGrid.XamlRoot;
+            dialog.XamlRoot = MainContentGrid.XamlRoot;
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             dialog.Title = CoreTools.Translate("Missing dependency") + (total > 1 ? $" ({current}/{total})" : "");
             dialog.SecondaryButtonText = CoreTools.Translate("Not right now");

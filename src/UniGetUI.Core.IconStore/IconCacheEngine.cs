@@ -32,14 +32,14 @@ namespace UniGetUI.Core.IconEngine
         public CacheableIcon(Uri uri, string version)
         {
             Url = uri;
-            this.Version = version;
+            Version = version;
             VerificationMethod = CachedIconVerificationMethod.PackageVersion;
         }
 
         public CacheableIcon(Uri uri, long size)
         {
             Url = uri;
-            this.Size = size;
+            Size = size;
             VerificationMethod = CachedIconVerificationMethod.FileSize;
         }
 

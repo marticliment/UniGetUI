@@ -1,4 +1,4 @@
-﻿using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -42,7 +42,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return await WinGetHelper.Instance.GetSources_UnSafe(manager);
             }
 
-            throw new Exception("WinGetSourceProvider.GetSources_UnSafe: Manager is supposed to be WinGet");
+            throw new InvalidOperationException("WinGetSourceProvider.GetSources_UnSafe: Manager is supposed to be WinGet");
         }
     }
 }

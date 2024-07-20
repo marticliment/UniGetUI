@@ -1,4 +1,4 @@
-﻿using UniGetUI.Core.Tools;
+using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -52,9 +52,13 @@ namespace UniGetUI.PackageEngine.PackageLoader
         protected override async Task WhenAddingPackage(Package package)
         {
             if (package.GetUpgradablePackage() != null)
+            {
                 package.SetTag(PackageTag.IsUpgradable);
+            }
             else if (package.GetInstalledPackage() != null)
+            {
                 package.SetTag(PackageTag.AlreadyInstalled);
+            }
         }
 #pragma warning restore
     }

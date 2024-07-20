@@ -54,22 +54,22 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             // BEGIN integrity check
             if (!__base_constructor_called)
             {
-                throw new Exception($"The Manager {Properties.Name} has not called the base constructor.");
+                throw new InvalidOperationException($"The Manager {Properties.Name} has not called the base constructor.");
             }
 
             if (Capabilities.IsDummy)
             {
-                throw new Exception($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Capabilities object");
+                throw new InvalidOperationException($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Capabilities object");
             }
 
             if (Properties.IsDummy)
             {
-                throw new Exception($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Properties object");
+                throw new InvalidOperationException($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Properties object");
             }
 
             if (Capabilities.SupportsCustomSources && SourceProvider == null)
             {
-                throw new Exception($"Manager {Name} has been declared as SupportsCustomSources but has no helper associated with it");
+                throw new InvalidOperationException($"Manager {Name} has been declared as SupportsCustomSources but has no helper associated with it");
             }
             // END integrity check
 
@@ -344,12 +344,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         {
             if (!Capabilities.SupportsCustomSources)
             {
-                throw new Exception($"Manager {Name} does not support custom sources but yet {MethodName} method was called.\n {Environment.StackTrace}");
+                throw new InvalidOperationException($"Manager {Name} does not support custom sources but yet {MethodName} method was called.\n {Environment.StackTrace}");
             }
 
             if (SourceProvider == null)
             {
-                throw new Exception($"Manager {Name} does support custom sources but yet the source helper is null");
+                throw new InvalidOperationException($"Manager {Name} does support custom sources but yet the source helper is null");
             }
         }
 #pragma warning disable CS8602
@@ -415,7 +415,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         {
             if (PackageDetailsProvider == null)
             {
-                throw new Exception($"Manager {Name} does not have a valid PackageDetailsProvider helper");
+                throw new InvalidOperationException($"Manager {Name} does not have a valid PackageDetailsProvider helper");
             }
         }
 #pragma warning disable CS8602
@@ -501,7 +501,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         {
             output = Regex.Replace(output, "\n.{0,6}\n", "\n");
             CoreData.ManagerLogs += $"\n▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄";
-            CoreData.ManagerLogs += $"\n█▀▀▀▀▀▀▀▀▀ [{DateTime.Now}] {this.Name} ▀▀▀▀▀▀▀▀▀▀▀";
+            CoreData.ManagerLogs += $"\n█▀▀▀▀▀▀▀▀▀ [{DateTime.Now}] {Name} ▀▀▀▀▀▀▀▀▀▀▀";
             CoreData.ManagerLogs += $"\n█  Executable: {process.StartInfo.FileName}";
             CoreData.ManagerLogs += $"\n█  Arguments: {process.StartInfo.Arguments}";
             CoreData.ManagerLogs += "\n";
@@ -511,6 +511,5 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             CoreData.ManagerLogs += "\n";
             CoreData.ManagerLogs += "\n";
         }
-
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Globalization;
 using System.Net;
 using System.Security.Cryptography;
@@ -179,12 +179,11 @@ Crash Traceback:
 
             Console.WriteLine(Error_String);
 
-
             string ErrorBody = "https://www.marticliment.com/error-report/?appName=UniGetUI^&errorBody=" + Uri.EscapeDataString(Error_String.Replace("\n", "{l}"));
 
             Console.WriteLine(ErrorBody);
 
-            using System.Diagnostics.Process cmd = new();
+            using Process cmd = new();
             cmd.StartInfo.FileName = "cmd.exe";
             cmd.StartInfo.RedirectStandardInput = true;
             cmd.StartInfo.RedirectStandardOutput = true;
@@ -195,7 +194,6 @@ Crash Traceback:
             cmd.StandardInput.WriteLine("exit");
             cmd.WaitForExit();
             Environment.Exit(1);
-
         }
 
         /// <summary>
@@ -377,19 +375,19 @@ Crash Traceback:
         /// </summary>
         public static async Task CacheUACForCurrentProcess()
         {
-            Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
+            Logger.Info("Caching admin rights for process id " + Environment.ProcessId);
             Process p = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
                     FileName = CoreData.GSudoPath,
-                    Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1",
+                    Arguments = "cache on --pid " + Environment.ProcessId + " -d 1",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardOutputEncoding = Encoding.UTF8,
                 }
             };
             p.Start();
@@ -401,19 +399,19 @@ Crash Traceback:
         /// </summary>
         public static async Task ResetUACForCurrentProcess()
         {
-            Logger.Info("Resetting administrator rights cache for process id " + Process.GetCurrentProcess().Id);
+            Logger.Info("Resetting administrator rights cache for process id " + Environment.ProcessId);
             Process p = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
                     FileName = CoreData.GSudoPath,
-                    Arguments = "cache off --pid " + Process.GetCurrentProcess().Id,
+                    Arguments = "cache off --pid " + Environment.ProcessId,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardOutputEncoding = Encoding.UTF8,
                 }
             };
             p.Start();
@@ -431,7 +429,7 @@ Crash Traceback:
             byte[] bytes = MD5.HashData(Encoding.UTF8.GetBytes(inputString));
             return BitConverter.ToInt64(bytes, 0);
         }
-        
+
         /// <summary>
         /// Creates a symbolic link between directories
         /// </summary>
@@ -452,14 +450,17 @@ Crash Traceback:
 
             Process p = Process.Start(startInfo);
             if (p is not null)
-            {await p.WaitForExitAsync();}
+            {
+                await p.WaitForExitAsync();
+            }
+
             if (p is null || p.ExitCode != 0)
             {
-                throw new Exception(
+                throw new InvalidOperationException(
                     $"The operation did not complete successfully: \n{await p.StandardOutput.ReadToEndAsync()}\n{await p.StandardError.ReadToEndAsync()}\n");
             }
         }
-        
+
         /// <summary>
         /// Will check whether the given folder is a symbolic link
         /// </summary>
@@ -478,4 +479,3 @@ Crash Traceback:
         }
     }
 }
-

@@ -1,11 +1,11 @@
-using ExternalLibraries.Pickers;
-using Microsoft.UI.Input;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Xml.Serialization;
+using ExternalLibraries.Pickers;
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -175,12 +175,10 @@ namespace UniGetUI.Interface
             }
             BodyGrid.ColumnDefinitions.ElementAt(0).Width = new GridLength(width);
 
-
             GenerateToolBar();
             LoadInterface();
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
         }
-
 
         public void SearchTriggered()
         {
@@ -202,7 +200,6 @@ namespace UniGetUI.Interface
                 SelectAllItems();
             }
         }
-
 
         protected void AddPackageToSourcesList(Package package)
         {
@@ -272,11 +269,11 @@ namespace UniGetUI.Interface
         }
 
         /*
-         * 
-         * 
+         *
+         *
          *  DO NOT MODIFY THE UPPER PART OF THIS FILE
-         * 
-         * 
+         *
+         *
          */
 
         public void ClearList()
@@ -676,7 +673,6 @@ namespace UniGetUI.Interface
             _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package.Package, OperationType.None);
         }
 
-
         private void SelectAllSourcesButton_Click(object sender, RoutedEventArgs e)
         {
             SourcesTreeView.SelectAll();
@@ -752,7 +748,6 @@ namespace UniGetUI.Interface
             FilterPackages(QueryBlock.Text.Trim());
         }
 
-
         public async void OpenFile()
         {
             try
@@ -760,7 +755,7 @@ namespace UniGetUI.Interface
                 // Select file
                 FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
                 string file = picker.Show(["*.json", "*.yaml", "*.xml"]);
-                if (file == String.Empty)
+                if (file == string.Empty)
                 {
                     return;
                 }
@@ -824,7 +819,7 @@ namespace UniGetUI.Interface
 
             if (DeserializedData == null)
             {
-                throw new Exception($"Deserialized data was null for content {content} and format {format}");
+                throw new InvalidOperationException($"Deserialized data was null for content {content} and format {format}");
             }
 
             // Load individual packages
@@ -890,7 +885,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        public async static Task<string> GetBundleStringFromPackages(BundledPackage[] packages, BundleFormatType formatType = BundleFormatType.JSON)
+        public static async Task<string> GetBundleStringFromPackages(BundledPackage[] packages, BundleFormatType formatType = BundleFormatType.JSON)
         {
             SerializableBundle_v1 exportable = new();
             foreach (BundledPackage package in packages)
@@ -938,10 +933,10 @@ namespace UniGetUI.Interface
         {
             try
             {
-                // Get file 
+                // Get file
                 // Save file
                 string file = new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle()).Show(["*.json", "*.yaml", "*.xml"], CoreTools.Translate("Package bundle") + ".json");
-                if (file != String.Empty)
+                if (file != string.Empty)
                 {
                     // Loading dialog
                     MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Saving packages, please wait..."));
@@ -998,7 +993,5 @@ namespace UniGetUI.Interface
                 control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;
             }
         }
-
-
     }
 }
