@@ -1,4 +1,4 @@
-﻿using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Classes.Packages
 {
@@ -67,11 +67,7 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         /// <returns>The already existing package if any, otherwhise null</returns>
         public static Package? GetAvailablePackageOrNull(Package other)
         {
-            if (__available_pkgs.TryGetValue(other.GetHash(), out Package? equivalent_package))
-            {
-                return equivalent_package;
-            }
-            return null;
+            return __available_pkgs.GetValueOrDefault(other.GetHash());
         }
 
         /// <summary>
@@ -82,11 +78,7 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         /// <returns>The already existing package if any, otherwhise null</returns>
         public static Package? GetUpgradablePackageOrNull(Package other)
         {
-            if (__upgradable_pkgs.TryGetValue(other.GetHash(), out Package? equivalent_package))
-            {
-                return equivalent_package;
-            }
-            return null;
+            return __upgradable_pkgs.GetValueOrDefault(other.GetHash());
         }
 
         /// <summary>
@@ -97,11 +89,7 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         /// <returns>The already existing package if any, otherwhise null</returns>
         public static Package? GetInstalledPackageOrNull(Package other)
         {
-            if (__installed_pkgs.TryGetValue(other.GetVersionedHash(), out Package? equivalent_package))
-            {
-                return equivalent_package;
-            }
-            return null;
+            return __installed_pkgs.GetValueOrDefault(other.GetVersionedHash());
         }
 
         /// <summary>

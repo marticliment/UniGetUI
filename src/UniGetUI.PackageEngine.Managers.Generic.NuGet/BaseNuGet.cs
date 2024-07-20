@@ -94,7 +94,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     double float_version = CoreTools.GetVersionStringAsFloat(version);
                     Match title = Regex.Match(match.Value, "<title[ \\\"\\=A-Za-z0-9]+>([^<>]+)<\\/title>");
 
-                    if (AlreadyProcessedPackages.ContainsKey(id) && AlreadyProcessedPackages[id].version_float >= float_version)
+                    if (AlreadyProcessedPackages.TryGetValue(id, out var value) && value.version_float >= float_version)
                     {
                         continue;
                     }

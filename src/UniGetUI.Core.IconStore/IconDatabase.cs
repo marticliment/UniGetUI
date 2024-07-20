@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -114,12 +114,12 @@ namespace UniGetUI.Core.IconEngine
 
         public string GetIconUrlForId(string id)
         {
-            return IconDatabaseData.ContainsKey(id) ? IconDatabaseData[id].icon : "";
+            return IconDatabaseData.TryGetValue(id, out var value) ? value.icon : "";
         }
 
         public string[] GetScreenshotsUrlForId(string id)
         {
-            return IconDatabaseData.ContainsKey(id) ? IconDatabaseData[id].images.ToArray() : [];
+            return IconDatabaseData.TryGetValue(id, out var value) ? value.images.ToArray() : [];
         }
 
         public IconCount GetIconCount()

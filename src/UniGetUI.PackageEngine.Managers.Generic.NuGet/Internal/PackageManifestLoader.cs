@@ -1,4 +1,4 @@
-﻿using UniGetUI.Core.Data;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -37,10 +37,10 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
         {
             string? PackageManifestContent = "";
             string PackageManifestUrl = GetPackageManifestUrl(package).ToString();
-            if (__manifest_cache.ContainsKey(PackageManifestUrl))
+            if (__manifest_cache.TryGetValue(PackageManifestUrl, out var content))
             {
                 Logger.Debug($"Loading cached NuGet manifest for package {package.Id} on manager {package.Manager.Name}");
-                return __manifest_cache[PackageManifestUrl];
+                return content;
             }
 
             try

@@ -1,4 +1,4 @@
-﻿using Microsoft.Management.Deployment;
+using Microsoft.Management.Deployment;
 using System.Globalization;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -95,9 +95,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         private async Task<string?> GetMicrosoftStorePackageManifest(Package package)
         {
-            if (__msstore_package_manifests.ContainsKey(package.Id))
+            if (__msstore_package_manifests.TryGetValue(package.Id, out var manifest))
             {
-                return __msstore_package_manifests[package.Id];
+                return manifest;
             }
 
             string CountryCode = CultureInfo.CurrentCulture.Name.Split("-")[^1];

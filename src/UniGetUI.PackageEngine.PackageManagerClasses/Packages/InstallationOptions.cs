@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
@@ -118,14 +118,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Version = options.Version;
             PreRelease = options.PreRelease;
 
-            if (options.Architecture != "" && CommonTranslations.InvertedArchNames.ContainsKey(options.Architecture))
+            if (options.Architecture != "" && CommonTranslations.InvertedArchNames.TryGetValue(options.Architecture, out var name))
             {
-                Architecture = CommonTranslations.InvertedArchNames[options.Architecture];
+                Architecture = name;
             }
 
-            if (options.InstallationScope != "" && CommonTranslations.InvertedScopeNames_NonLang.ContainsKey(options.InstallationScope))
+            if (options.InstallationScope != "" && CommonTranslations.InvertedScopeNames_NonLang.TryGetValue(options.InstallationScope, out var value))
             {
-                InstallationScope = CommonTranslations.InvertedScopeNames_NonLang[options.InstallationScope];
+                InstallationScope = value;
             }
 
             CustomParameters = options.CustomParameters;

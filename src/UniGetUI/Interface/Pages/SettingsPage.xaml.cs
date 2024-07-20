@@ -38,9 +38,9 @@ namespace UniGetUI.Interface
 
             foreach (string key in lang_dict.Keys)
             {
-                if (LanguageData.TranslationPercentages.ContainsKey(key) && key != "en")
+                if (key != "en" && LanguageData.TranslationPercentages.TryGetValue(key, out var translationPercentage))
                 {
-                    lang_dict[key] = lang_dict[key] + " (" + LanguageData.TranslationPercentages[key] + ")";
+                    lang_dict[key] = lang_dict[key] + " (" + translationPercentage + ")";
                 }
             }
 
@@ -123,7 +123,7 @@ namespace UniGetUI.Interface
             };
             Winget_DisableCOM.StateChanged += (s, e) => PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
             Winget_DisableCOM.IsEnabled = !Settings.Get("ForceLegacyBundledWinGet");
-            
+
             CheckboxCard Winget_UseBundled = new()
             {
                 Text = $"{CoreTools.Translate("Use bundled WinGet instead of system WinGet")} ({CoreTools.Translate("This may help if WinGet packages are not shown")})",
@@ -258,9 +258,9 @@ namespace UniGetUI.Interface
 
                 void EnableOrDisableEntries()
                 {
-                    if (ExtraSettingsCards.ContainsKey(Manager))
+                    if (ExtraSettingsCards.TryGetValue(Manager, out var settingsCard))
                     {
-                        foreach (SettingsCard card in ExtraSettingsCards[Manager])
+                        foreach (SettingsCard card in settingsCard)
                         {
                             if (ManagerSwitch.IsOn)
                             {
@@ -273,7 +273,7 @@ namespace UniGetUI.Interface
                         }
                     }
                 }
-                
+
                 int index = 0;
                 SettingsCard ManagerPath = new()
                 {
@@ -313,9 +313,9 @@ namespace UniGetUI.Interface
                     ExtraSettingsCards[Manager].Insert(index++, SourceManagerCard);
                 }
 
-                if (ExtraSettingsCards.ContainsKey(Manager))
+                if (ExtraSettingsCards.TryGetValue(Manager, out var extraSettingsCard))
                 {
-                    foreach (SettingsCard card in ExtraSettingsCards[Manager])
+                    foreach (SettingsCard card in extraSettingsCard)
                     {
                         ManagerExpander.Items.Add(card);
                     }

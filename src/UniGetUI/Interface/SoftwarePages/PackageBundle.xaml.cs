@@ -846,12 +846,11 @@ namespace UniGetUI.Interface
             foreach (SerializableValidPackage_v1 DeserializedPackage in DeserializedData.packages)
             {
                 // Check if the manager exists
-                if (!ManagerSourceReference.ContainsKey(DeserializedPackage.ManagerName))
+                if (!ManagerSourceReference.TryGetValue(DeserializedPackage.ManagerName, out var packageManager))
                 {
                     AddPackage(new InvalidBundledPackage(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, DeserializedPackage.Source, DeserializedPackage.ManagerName));
                     continue;
                 }
-                PackageManager PackageManager = ManagerSourceReference[DeserializedPackage.ManagerName];
 
                 // Handle a disabled manager
                 if (!PackageManager.IsEnabled())
