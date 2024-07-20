@@ -109,7 +109,7 @@ namespace UniGetUI.PackageEngine.Classes
         {
             get
             {
-                return Package.SourceAsString;
+                return Package.Source.AsString;
             }
         }
 

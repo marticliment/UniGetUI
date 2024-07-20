@@ -445,6 +445,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             this.name = name;
             __icon_id = iconId;
+            AsString = Name;
+            AsString_DisplayName = Name;
         }
 
         public override string ToString()

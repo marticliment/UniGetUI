@@ -90,7 +90,7 @@ namespace UniGetUI.Interface.Dialogs
             SetTextToItem(License_Content_Text, LoadingString);
             SetTextToItem(License_Content_Uri, "");
             SetTextToItem(Source_Label, CoreTools.Translate("Package Manager") + ": ");
-            SetTextToItem(Source_Content, Package.SourceAsString);
+            SetTextToItem(Source_Content, Package.Source.AsString_DisplayName);
 
             // Extended details section
             SetTextToItem(PackageId_Label, CoreTools.Translate("Package ID") + ": ");

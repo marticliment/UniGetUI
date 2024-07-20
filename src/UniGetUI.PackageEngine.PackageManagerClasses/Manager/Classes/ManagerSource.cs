@@ -20,6 +20,8 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
         public Uri Url { get; private set; }
         public int? PackageCount { get; }
         public string UpdateDate { get; }
+        public string AsString { get; protected set; }
+        public string AsString_DisplayName { get; protected set; }
 
         public ManagerSource(PackageManager manager, string name, Uri url, int? packageCount = 0, string updateDate = "", bool isVirtualManager = false)
         {
@@ -33,25 +35,19 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
             }
 
             UpdateDate = updateDate;
+            
+            AsString = Manager.Capabilities.SupportsCustomSources? $"{Manager.Name}: {Name}" : Name;
+            if (Manager.Capabilities.SupportsCustomScopes && Manager.Properties.DisplayName is not null)
+                AsString_DisplayName = $"{Manager.DisplayName}: {Name}";
+            else
+                AsString_DisplayName = AsString;
         }
 
         public override string ToString()
         {
-            if (Manager.Capabilities.SupportsCustomSources)
-            {
-                return Manager.Name + ": " + Name;
-            }
-
-            return Manager.Name;
+            throw new NotImplementedException("Use the `AsString` attribute instead");
         }
-
-        public string ToString_DisplayName()
-        {
-            if (Manager.Capabilities.SupportsCustomScopes && Manager.Properties.DisplayName is not null)
-                return Manager.DisplayName + ": " + Name;
-            return ToString();
-        }
-
+        
         /// <summary>
         /// Replaces the current URL with the new one. Must be used only when a placeholder URL is used.
         /// </summary>

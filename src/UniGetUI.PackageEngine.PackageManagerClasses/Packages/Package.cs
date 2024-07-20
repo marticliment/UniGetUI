@@ -54,7 +54,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public string NewVersion { get; }
         public virtual bool IsUpgradable { get; }
         public PackageScope Scope { get; set; }
-        public readonly string SourceAsString;
         public readonly string AutomationName;
 
         /// <summary>
@@ -77,8 +76,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Scope = scope;
             NewVersion = "";
             Tag = PackageTag.Default;
-            SourceAsString = source.ToString();
-            AutomationName = CoreTools.Translate("Package {name} from {manager}", new Dictionary<string, object?> { { "name", Name }, { "manager", SourceAsString } });
+            AutomationName = CoreTools.Translate("Package {name} from {manager}", new Dictionary<string, object?> { { "name", Name }, { "manager", Source.AsString_DisplayName } });
             __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id);
             __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version);
             IsUpgradable = false;
