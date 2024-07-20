@@ -71,7 +71,7 @@ namespace UniGetUI.Interface
 
         public MainView NavigationPage;
         public Grid ContentRoot;
-        public bool BlockLoading = false;
+        public bool BlockLoading;
         private readonly ContentDialog LoadingSthDalog;
 
         private int LoadingDialogCount;
