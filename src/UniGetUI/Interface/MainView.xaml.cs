@@ -551,7 +551,7 @@ namespace UniGetUI.Interface
 
         public async Task<bool> ConfirmUninstallation(IEnumerable<Package> packages)
         {
-            if (packages.Count() == 0)
+            if (!packages.Any())
             {
                 return false;
             }

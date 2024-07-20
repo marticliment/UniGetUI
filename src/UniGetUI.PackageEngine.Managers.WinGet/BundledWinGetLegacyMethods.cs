@@ -259,15 +259,15 @@ internal static partial class BundledWinGetLegacyMethods
                     return Manager.AndroidSubsystemSource;
 
                 // Check if source is Steama
-                if ((id == "Steam" || id.Contains("Steam App ")) && id.Split("Steam App").Length >= 2 && id.Split("Steam App")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
+                if ((id == "Steam" || id.Contains("Steam App ")) && id.Split("Steam App").Length >= 2 && !id.Split("Steam App")[1].Trim().Any(x => !"1234567890".Contains(x)))
                     return Manager.SteamSource;
 
                 // Check if source is Ubisoft Connect
-                if (id == "Uplay" || id.Contains("Uplay Install ") && id.Split("Uplay Install").Length >= 2 && id.Split("Uplay Install")[1].Trim().Count(x => !"1234567890".Contains(x)) == 0)
+                if (id == "Uplay" || id.Contains("Uplay Install ") && id.Split("Uplay Install").Length >= 2 && !id.Split("Uplay Install")[1].Trim().Any(x => !"1234567890".Contains(x)))
                     return Manager.UbisoftConnectSource;
 
                 // Check if source is GOG
-                if (id.EndsWith("_is1") && id.Split("_is1")[0].Count(x => !"1234567890".Contains(x)) == 0)
+                if (id.EndsWith("_is1") && !id.Split("_is1")[0].Any(x => !"1234567890".Contains(x)))
                     return Manager.GOGSource;
 
                 // Check if source is Microsoft Store
