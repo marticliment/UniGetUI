@@ -29,12 +29,14 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     "Scoop-Search",
                     Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {scoop install main/scoop-search; if($error.count -ne 0){pause}}\"",
+                    "scoop install main/scoop-search",
                     async () => (await CoreTools.Which("scoop-search.exe")).Item1),
                 // GIT is required for scoop updates to work
                 new ManagerDependency(
                     "Git",
                     Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {scoop install main/git; if($error.count -ne 0){pause}}\"",
+                    "scoop install main/git",
                     async () => (await CoreTools.Which("git.exe")).Item1)
             ];
 

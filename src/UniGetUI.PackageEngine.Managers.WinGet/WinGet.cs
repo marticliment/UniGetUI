@@ -44,6 +44,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     "WinGet PowerShell Module",
                     PowerShellPath,
                     PowerShellPromptArgs + " -Command \"& {Install-Module -Name Microsoft.WinGet.Client -Force -Confirm:$false -Scope CurrentUser; if($error.count -ne 0){pause}}\"",
+                    "Install-Module -Name Microsoft.WinGet.Client -Scope CurrentUser",
                     async () =>
                     {
                         if (!Settings.Get("ForceUsePowerShellModules") || Settings.Get("ForceLegacyBundledWinGet"))
