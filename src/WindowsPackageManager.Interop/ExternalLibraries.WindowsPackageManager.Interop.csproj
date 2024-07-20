@@ -1,10 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
     <Platforms>x64;ARM64</Platforms>
     <SelfContained>true</SelfContained>
     <RootNamespace>WindowsPackageManager.Interop</RootNamespace>

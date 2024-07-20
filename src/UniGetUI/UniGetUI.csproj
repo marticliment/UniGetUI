@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
@@ -7,8 +7,7 @@
 		<RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
 		<Platforms>ARM64;x64</Platforms>
 		<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
-		<SdkVersion>8.0.204</SdkVersion>
+    <SdkVersion>8.0.204</SdkVersion>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<PublishSelfContained>true</PublishSelfContained>
 		<Authors>Martí Climent and the contributors</Authors>
@@ -29,9 +28,9 @@
     <StartupObject>UniGetUI.EntryPoint</StartupObject>
     <SignAssembly>False</SignAssembly>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-	<Nullable>enable</Nullable>
-
+	  <Nullable>enable</Nullable>
   </PropertyGroup>
+
   <ItemGroup>
     <Content Include="icon.ico" />
   </ItemGroup>
@@ -63,7 +62,6 @@
     <None Remove="MainWindow.xaml" />
     <None Remove="PackageEngine\OperationControl.xaml" />
   </ItemGroup>
-
 
 	<ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.0.240109" />
