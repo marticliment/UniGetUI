@@ -40,24 +40,24 @@ echo .
 echo .
 echo You may want to sign now the following executables
 cd
-echo WingetUI.dll
-echo WingetUI.exe
+echo UniGetUI.dll
+echo UniGetUI.exe
 echo .
 echo .
 pause
-cp WingetUI.exe UniGetUI.exe
+copy UniGetUI.exe WingetUI.exe
 popd
 
 
 set INSTALLATOR="%SYSTEMDRIVE%\Program Files (x86)\Inno Setup 6\ISCC.exe"
 if exist %INSTALLATOR% (
-    %INSTALLATOR% "WingetUI.iss"
+    %INSTALLATOR% "UniGetUI.iss"
     echo You may now sign the installer
-    "Y:\- Signing\signtool-x64\signtool.exe" sign /v /debug /fd SHA256 /tr "http://timestamp.acs.microsoft.com" /td SHA256 /dlib "Y:\- Signing\azure.codesigning.client\x64\Azure.CodeSigning.Dlib.dll" /dmdf "Y:\- Signing\metadata.json" "WingetUI Installer.exe"
-    del "UniGetUI Installer.exe"
-    copy "WingetUI Installer.exe" "UniGetUI Installer.exe" 
+    "Y:\- Signing\signtool-x64\signtool.exe" sign /v /debug /fd SHA256 /tr "http://timestamp.acs.microsoft.com" /td SHA256 /dlib "Y:\- Signing\azure.codesigning.client\x64\Azure.CodeSigning.Dlib.dll" /dmdf "Y:\- Signing\metadata.json" "UniGetUI Installer.exe"
+    del "WingetUI Installer.exe"
+    copy "UniGetUI Installer.exe" "WingetUI Installer.exe" 
     pause
-    "WingetUI Installer.exe"
+    "UniGetUI Installer.exe"
 ) else (
     echo "Make installer was skipped, because the installer is missing."
 )

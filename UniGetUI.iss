@@ -4,8 +4,8 @@
 #define MyAppVersion "3.1.1-beta2"
 #define MyAppName "UniGetUI (formerly WingetUI)"
 #define MyAppPublisher "Martí Climent"
-#define MyAppURL "https://github.com/marticliment/WingetUI"
-#define MyAppExeName "WingetUI.exe"
+#define MyAppURL "https://github.com/marticliment/UniGetUI"
+#define MyAppExeName "UniGetUI.exe"
 
 #define public Dependency_Path_NetCoreCheck "InstallerExtras\"
 #include "InstallerExtras\CodeDependencies.iss"
@@ -32,11 +32,11 @@ CloseApplications=no
 ; Remove the following line to run in administrative install mode (install for all users.)
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputBaseFilename=WingetUI Installer
+OutputBaseFilename=UniGetUI Installer
 OutputDir=.     
 MinVersion=10.0
 SetupIconFile=src\UniGetUI\Assets\Images\icon.ico
-UninstallDisplayIcon={app}\WingetUI.exe
+UninstallDisplayIcon={app}\UniGetUI.exe
 Compression=lzma
 SolidCompression=yes
 WizardStyle=classic
@@ -82,48 +82,16 @@ Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 #include "InstallerExtras\CustomMessages.iss"
 
 [InstallDelete]
-Type: filesandordirs; Name: "{app}\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');  
-Type: filesandordirs; Name: "{app}\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');  
-Type: filesandordirs; Name: "{app}\wingetui\*";                                                                          
-Type: filesandordirs; Name: "{app}\toasts_winrt\*";
-Type: filesandordirs; Name: "{app}\shiboken6\*";
-Type: filesandordirs; Name: "{app}\pythonnet\*";
-Type: filesandordirs; Name: "{app}\clr_loader\*";
-Type: filesandordirs; Name: "{app}\markupsafe\*";
-Type: filesandordirs; Name: "{app}\flask*\*";
-Type: filesandordirs; Name: "{app}\yaml\*";
-Type: filesandordirs; Name: "{app}\pip-23.0.dist-info";
-Type: filesandordirs; Name: "{app}\pip-23.1.2.dist-info";
-Type: filesandordirs; Name: "{app}\setuptools-65.5.0.dist-info";   
-Type: filesandordirs; Name: "{app}\*.dll";                          
-Type: filesandordirs; Name: "{app}\*.pyd";            
-Type: filesandordirs; Name: "{app}\*.zip";          
-Type: filesandordirs; Name: "{app}\sudo";
-Type: filesandordirs; Name: "{app}\winget-cli\*";      
-Type: filesandordirs; Name: "{app}\:\*";     
+Type: filesandordirs; Name: "{app}\*.dll";
+Type: filesandordirs; Name: "{app}\*.exe";
+Type: filesandordirs; Name: "{app}\*.winmd";
+Type: filesandordirs; Name: "{app}\Assets\*";
 
 [UninstallDelete]
-Type: filesandordirs; Name: "{userpf}\WingetUI\*"; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');   
-Type: filesandordirs; Name: "{app}\*"; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');
-Type: filesandordirs; Name: "{app}\*.pyc"; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');  
-Type: filesandordirs; Name: "{app}\PySide6\*"; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');  
-Type: filesandordirs; Name: "{app}\wingetui\*";                                                                          
-Type: filesandordirs; Name: "{app}\toasts_winrt\*";
-Type: filesandordirs; Name: "{app}\shiboken6\*";
-Type: filesandordirs; Name: "{app}\pythonnet\*";
-Type: filesandordirs; Name: "{app}\clr_loader\*";
-Type: filesandordirs; Name: "{app}\markupsafe\*";
-Type: filesandordirs; Name: "{app}\flask*\*";
-Type: filesandordirs; Name: "{app}\yaml\*";
-Type: filesandordirs; Name: "{app}\pip-23.0.dist-info";
-Type: filesandordirs; Name: "{app}\pip-23.1.2.dist-info";
-Type: filesandordirs; Name: "{app}\setuptools-65.5.0.dist-info";   
-Type: filesandordirs; Name: "{app}\*.dll";                          
-Type: filesandordirs; Name: "{app}\*.pyd";            
-Type: filesandordirs; Name: "{app}\*.zip";          
-Type: filesandordirs; Name: "{app}\sudo";
-Type: filesandordirs; Name: "{app}\winget-cli\*";      
-Type: filesandordirs; Name: "{app}\:\*"; 
+Type: filesandordirs; Name: "{app}\*.dll";
+Type: filesandordirs; Name: "{app}\*.exe";
+Type: filesandordirs; Name: "{app}\*.winmd";
+Type: filesandordirs; Name: "{app}\Assets\*";
 
 [Code]
 procedure InitializeWizard;
@@ -225,7 +193,7 @@ Name: "regularinstall\desktopicon"; Description: "{cm:RegDesktopIcon}"; GroupDes
 Name: "regularinstall\chocoinstall"; Description: "{cm:ChocoInstall}"; GroupDescription: "{cm:ShCuts}";
 
 [Registry]
-Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\WingetUI.exe"" --daemon"; Flags: uninsdeletevalue; Tasks: regularinstall
+Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\UniGetUI.exe"" --daemon"; Flags: uninsdeletevalue; Tasks: regularinstall
 
 [Files]
 Source: "unigetui_bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');
@@ -250,3 +218,4 @@ Filename: "{app}\{#MyAppExeName}"; Parameters: "--migrate-wingetui-to-unigetui";
 ; Remove WingetUI Notification registries
 Filename: "{app}\{#MyAppExeName}"; Parameters: "--uninstall-unigetui"; Flags: skipifdoesntexist runhidden;
 Filename: {sys}\taskkill.exe; Parameters: "/f /im WingetUI.exe"; Flags: skipifdoesntexist runhidden;
+Filename: {sys}\taskkill.exe; Parameters: "/f /im UniGetUI.exe"; Flags: skipifdoesntexist runhidden;

@@ -461,7 +461,7 @@ Crash Traceback:
         }
         
         /// <summary>
-        /// Will check wether the given folder is a symbolic link
+        /// Will check whether the given folder is a symbolic link
         /// </summary>
         /// <param name="path">The folder to check</param>
         /// <returns></returns>
