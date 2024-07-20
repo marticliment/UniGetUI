@@ -448,11 +448,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             AsString = Name;
             AsString_DisplayName = Name;
         }
-
-        public override string ToString()
-        {
-            return name;
-        }
     }
 }
 

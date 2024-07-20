@@ -88,6 +88,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.PackageEngine.Managers.PowerShell7", "UniGetUI.PackageEngine.Managers.PowerShell7\UniGetUI.PackageEngine.Managers.PowerShell7.csproj", "{F4E7301D-9C8A-4A4A-92D2-35B896642BF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -360,6 +362,14 @@ Global
 		{CC400751-216E-4BB2-8103-495B4E273477}.Release|Any CPU.Build.0 = Release|x64
 		{CC400751-216E-4BB2-8103-495B4E273477}.Release|x64.ActiveCfg = Release|x64
 		{CC400751-216E-4BB2-8103-495B4E273477}.Release|x64.Build.0 = Release|x64
+		{F4E7301D-9C8A-4A4A-92D2-35B896642BF6}.Debug|Any CPU.ActiveCfg = Debug|ARM64
+		{F4E7301D-9C8A-4A4A-92D2-35B896642BF6}.Debug|Any CPU.Build.0 = Debug|ARM64
+		{F4E7301D-9C8A-4A4A-92D2-35B896642BF6}.Debug|x64.ActiveCfg = Debug|x64
+		{F4E7301D-9C8A-4A4A-92D2-35B896642BF6}.Debug|x64.Build.0 = Debug|x64
+		{F4E7301D-9C8A-4A4A-92D2-35B896642BF6}.Release|Any CPU.ActiveCfg = Release|ARM64
+		{F4E7301D-9C8A-4A4A-92D2-35B896642BF6}.Release|Any CPU.Build.0 = Release|ARM64
+		{F4E7301D-9C8A-4A4A-92D2-35B896642BF6}.Release|x64.ActiveCfg = Release|x64
+		{F4E7301D-9C8A-4A4A-92D2-35B896642BF6}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -400,6 +410,7 @@ Global
 		{27E0B288-7DFF-468D-9360-035E8CE123CB} = {7940E867-EEBA-4AFD-9904-1536F003239C}
 		{20F43119-EA00-440D-B3B5-44F96592F4C8} = {7940E867-EEBA-4AFD-9904-1536F003239C}
 		{CC400751-216E-4BB2-8103-495B4E273477} = {8CF74C87-534F-4017-A4ED-F2918025E31A}
+		{F4E7301D-9C8A-4A4A-92D2-35B896642BF6} = {95168D0B-1B2C-4295-B6D4-D5BAF781B9FA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D044BB14-0B37-47E5-A579-8B30FCBA1F9F}
