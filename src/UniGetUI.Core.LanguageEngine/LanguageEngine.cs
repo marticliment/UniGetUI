@@ -72,7 +72,6 @@ namespace UniGetUI.Core.Language
                     }
                 }
 
-
                 Dictionary<string, string>? __LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject)?.ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
 
                 if (__LangDict != null)

@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -185,7 +185,6 @@ namespace UniGetUI.Core.IconEngine
             Logger.Info($"Icon for package {PackageId} stored on {FilePath}");
             return FilePath;
         }
-
 
         private static async Task<byte[]> CalculateFileHashAsync(string filePath)
         {

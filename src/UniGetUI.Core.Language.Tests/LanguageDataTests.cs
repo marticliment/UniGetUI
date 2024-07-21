@@ -19,7 +19,6 @@ namespace UniGetUI.Core.Language.Tests
         public void TranslatorsListTest(Person translator)
             => Assert.NotEmpty(translator.Name);
 
-
         [Fact]
         public void LanguageReferenceNotEmptyTest()
         {
