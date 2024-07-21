@@ -9,5 +9,14 @@
     mc:Ignorable="d"
     x:Name ="_parent">
 
-    <TextBlock x:Name="__textblock" TextWrapping="Wrap" FontSize="{x:Bind _parent.FontSize}" FontFamily="{x:Bind _parent.FontFamily}" FontWeight="{x:Bind _parent.FontWeight}" HorizontalAlignment="{x:Bind _parent.HorizontalAlignment}" VerticalAlignment="{x:Bind _parent.VerticalAlignment}" TextAlignment="Left"></TextBlock>
+    <TextBlock
+        x:Name="__textblock"
+        TextWrapping="Wrap"
+        FontSize="{x:Bind _parent.FontSize}"
+        FontFamily="{x:Bind _parent.FontFamily}"
+        FontWeight="{x:Bind _parent.FontWeight}"
+        HorizontalAlignment="{x:Bind _parent.HorizontalAlignment}"
+        VerticalAlignment="{x:Bind _parent.VerticalAlignment}"
+        TextAlignment="Left">
+    </TextBlock>
 </UserControl>
