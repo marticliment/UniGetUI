@@ -95,9 +95,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a new InstallationOptions object from a given SerializableInstallationOptions_v1 and a package.
         /// </summary>
-        /// <param name="options"></param>
-        /// <param name="package"></param>
-        /// <returns></returns>
         public static InstallationOptions FromSerialized(SerializableInstallationOptions_v1 options, Package package)
         {
             InstallationOptions instance = new(package);
@@ -108,7 +105,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Loads and applies the options from the given SerializableInstallationOptions_v1 object to the current object.
         /// </summary>
-        /// <param name="options"></param>
         public void FromSerializable(SerializableInstallationOptions_v1 options)
         {
             SkipHashCheck = options.SkipHashCheck;
@@ -134,7 +130,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a SerializableInstallationOptions_v1 object containing the options of the current instance.
         /// </summary>
-        /// <returns></returns>
         public SerializableInstallationOptions_v1 AsSerializable()
         {
             SerializableInstallationOptions_v1 options = new()
@@ -236,7 +231,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a string representation of the current options.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             string customparams = CustomParameters != null ? string.Join(",", CustomParameters) : "[]";

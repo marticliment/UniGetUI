@@ -84,7 +84,6 @@ namespace UniGetUI
         /// <summary>
         /// Default WinUI Redirector
         /// </summary>
-        /// <returns></returns>
         private static async Task<bool> DecideRedirection()
         {
             try

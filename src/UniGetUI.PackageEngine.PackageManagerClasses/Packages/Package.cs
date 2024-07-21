@@ -57,14 +57,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public readonly string AutomationName;
 
         /// <summary>
-        /// Constuct a package with a given name, id, version, source and manager, and an optional scope.
+        /// Construct a package with a given name, id, version, source and manager, and an optional scope.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="id"></param>
-        /// <param name="version"></param>
-        /// <param name="source"></param>
-        /// <param name="manager"></param>
-        /// <param name="scope"></param>
         public Package(string name, string id, string version, ManagerSource source, PackageManager manager, PackageScope scope = PackageScope.Local)
         {
             Name = name;
@@ -85,13 +79,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Creates an UpgradablePackage object representing a package that can be upgraded; given its name, id, installed version, new version, source and manager, and an optional scope.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="id"></param>
-        /// <param name="installed_version"></param>
-        /// <param name="new_version"></param>
-        /// <param name="source"></param>
-        /// <param name="manager"></param>
-        /// <param name="scope"></param>
         public Package(string name, string id, string installed_version, string new_version, ManagerSource source, PackageManager manager, PackageScope scope = PackageScope.Local)
             : this(name, id, installed_version, source, manager, scope)
         {
@@ -110,7 +97,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         ///    - Package Identifier
         /// For more specific comparsion use GetVersionedHash()
         /// </summary>
-        /// <returns></returns>
         public long GetHash()
         {
             return __hash;
@@ -124,7 +110,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         ///    - Package version
         ///    - Package new version (if any)
         /// </summary>
-        /// <returns></returns>
         public long GetVersionedHash()
         {
             return __versioned_hash;
@@ -138,8 +123,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         ///    - Package version
         ///    - Package new version (if any)
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
         public override bool Equals(object? other)
         {
             return __versioned_hash == (other as Package)?.__versioned_hash;
@@ -225,7 +208,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Retrieves a list og URIs representing the available screenshots for this package.
         /// </summary>
-        /// <returns></returns>
         public async Task<Uri[]> GetPackageScreenshots()
         {
             return await Manager.GetPackageScreenshotsUrl(this);
@@ -235,8 +217,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// Adds the package to the ignored updates list. If no version is provided, all updates are ignored.
         /// Calling this method will override older ignored updates.
         /// </summary>
-        /// <param name="version"></param>
-        /// <returns></returns>
         public async Task AddToIgnoredUpdatesAsync(string version = "*")
         {
             try
@@ -267,7 +247,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Removes the package from the ignored updates list, either if it is ignored for all updates or for a specific version only.
         /// </summary>
-        /// <returns></returns>
         public async Task RemoveFromIgnoredUpdatesAsync()
         {
             try
@@ -300,8 +279,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// all updates are ignored, calling this method with a specific version will
         /// still return true, although the passed version is not explicitly ignored.
         /// </summary>
-        /// <param name="Version"></param>
-        /// <returns></returns>
         public async Task<bool> HasUpdatesIgnoredAsync(string Version = "*")
         {
             try
@@ -334,7 +311,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// are ignored, an empty string will be returned; and when all versions are ignored an asterisk
         /// will be returned.
         /// </summary>
-        /// <returns></returns>
         public async Task<string> GetIgnoredUpdatesVersionAsync()
         {
             try
@@ -364,7 +340,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Internal method to raise the PropertyChanged event.
         /// </summary>
-        /// <param name="name"></param>
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -401,7 +376,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// Sets the package tag. You may as well use the Tag property.
         /// This function is used for compatibility with the ? operator
         /// </summary>
-        /// <param name="tag"></param>
         public void SetTag(PackageTag tag)
         {
             Tag = tag;

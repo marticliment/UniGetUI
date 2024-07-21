@@ -102,8 +102,6 @@ namespace UniGetUI.Core.Language
         /// Downloads and saves an updated version of the translations for the specified language.
         /// </summary>
         /// <param name="LangKey">The Id of the language to download</param>
-        /// <param name="UseOldUrl">Use the new or the old Url (should not be used manually)</param>
-        /// <returns></returns>
         public async Task DownloadUpdatedLanguageFile(string LangKey)
         {
             try

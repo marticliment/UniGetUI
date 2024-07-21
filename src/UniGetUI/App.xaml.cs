@@ -228,7 +228,6 @@ namespace UniGetUI
         /// <summary>
         /// Background component loader
         /// </summary>
-        /// <returns></returns>
         private async Task LoadComponentsAsync()
         {
             try

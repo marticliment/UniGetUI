@@ -80,7 +80,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         ///   4. Green
         ///   5. Yellow
         /// </summary>
-        /// <returns></returns>
         public abstract IEnumerable<string> AsColoredString(bool verbose = false);
     }
 

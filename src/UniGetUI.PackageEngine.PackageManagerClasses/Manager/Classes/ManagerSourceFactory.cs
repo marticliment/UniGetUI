@@ -39,8 +39,6 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
         /// <summary>
         /// Returns the existing source for the given name, or null if it does not exist.
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
         public ManagerSource? GetSourceIfExists(string name)
         {
             if (__reference.TryGetValue(name, out ManagerSource? source))

@@ -48,7 +48,6 @@ namespace UniGetUI.Core.IconEngine
         /// <summary>
         /// Download the icon and screenshots database to a local file, and load it into memory
         /// </summary>
-        /// <returns></returns>
         public async void LoadIconAndScreenshotsDatabase()
         {
             await LoadIconAndScreenshotsDatabaseAsync();

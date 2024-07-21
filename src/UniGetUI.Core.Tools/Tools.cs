@@ -53,8 +53,6 @@ namespace UniGetUI.Core.Tools
         /// <summary>
         /// Dummy function to capture the strings that need to be translated but the translation is handled by a custom widget
         /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
         public static string AutoTranslated(string text)
         {
             return text;
@@ -434,7 +432,6 @@ Crash Traceback:
         /// </summary>
         /// <param name="linkPath">The location of the link to be created</param>
         /// <param name="targetPath">The location of the real folder where to point</param>
-        /// <returns></returns>
         public static async Task CreateSymbolicLinkDir(string linkPath, string targetPath)
         {
             var startInfo = new ProcessStartInfo
@@ -464,7 +461,6 @@ Crash Traceback:
         /// Will check whether the given folder is a symbolic link
         /// </summary>
         /// <param name="path">The folder to check</param>
-        /// <returns></returns>
         /// <exception cref="FileNotFoundException"></exception>
         public static bool IsSymbolicLinkDir(string path)
         {

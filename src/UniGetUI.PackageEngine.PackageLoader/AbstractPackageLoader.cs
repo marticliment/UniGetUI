@@ -71,7 +71,6 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <summary>
         /// Will trigger a forceful reload of the packages
         /// </summary>
-        /// <returns></returns>
         public virtual async Task ReloadPackages()
         {
             ClearPackages(emitFinishSignal: false);
@@ -162,14 +161,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// A method to post-process packages after they have been added.
         /// </summary>
         /// <param name="package">The package to process</param>
-        /// <returns></returns>
         protected abstract Task WhenAddingPackage(Package package);
 
         /// <summary>
         /// Checks wether a package is contained on the current Loader
         /// </summary>
         /// <param name="package">The package to check against</param>
-        /// <returns></returns>
         public bool Contains(Package package)
         {
             return PackageReference.ContainsKey(HashPackage(package));
@@ -220,7 +217,6 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <summary>
         /// Removes the given package from the list.
         /// </summary>
-        /// <param name="package"></param>
         public void Remove(Package? package)
         {
             if (package == null)
@@ -242,7 +238,6 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// Gets the corresponding package on the current loader.
         /// This method follows the equivalence settings for this loader
         /// </summary>
-        /// <param name="package"></param>
         /// <returns>A Package? object</returns>
         public Package? GetEquivalentPackage(Package? package)
         {

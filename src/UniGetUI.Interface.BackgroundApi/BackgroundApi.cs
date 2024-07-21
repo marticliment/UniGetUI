@@ -45,7 +45,6 @@ namespace UniGetUI.Interface
         /// <summary>
         /// Run the background api and wait for it for being stopped with the Stop() method
         /// </summary>
-        /// <returns></returns>
         public async Task Start()
         {
             try

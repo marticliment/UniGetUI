@@ -463,8 +463,6 @@ namespace UniGetUI.Interface
         /// Reload the packages for this Page
         /// Calling this method will trigger a reload on the associated PackageLoader, unless it is already loading packages.
         /// </summary>
-        /// <param name="reason"></param>
-        /// <returns></returns>
         protected async Task LoadPackages(ReloadReason reason)
         {
             if (!Loader.IsLoading && (!Loader.IsLoaded || reason == ReloadReason.External || reason == ReloadReason.Manual || reason == ReloadReason.Automated))

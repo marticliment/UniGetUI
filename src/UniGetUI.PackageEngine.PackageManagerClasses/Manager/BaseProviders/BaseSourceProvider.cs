@@ -1,4 +1,4 @@
-﻿using UniGetUI.PackageEngine.Classes.Manager.Interfaces;
+using UniGetUI.PackageEngine.Classes.Manager.Interfaces;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -24,7 +24,6 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
         /// <summary>
         /// Loads the sources for the manager. This method SHOULD NOT handle exceptions
         /// </summary>
-        /// <returns></returns>
         protected abstract Task<ManagerSource[]> GetSources_UnSafe();
         public virtual async Task<ManagerSource[]> GetSources()
         {

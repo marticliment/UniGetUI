@@ -25,7 +25,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Add a package to the collection
         /// </summary>
-        /// <param name="p"></param>
         public void Add(Package p)
         {
             base.Add(new PackageWrapper(p));
@@ -81,7 +80,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a list containing the packwges in this collection
         /// </summary>
-        /// <returns></returns>
         public List<Package> GetPackages()
         {
             List<Package> packages = [];
@@ -96,7 +94,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a list containing the checked packages on this collection
         /// </summary>
-        /// <returns></returns>
         public List<Package> GetCheckedPackages()
         {
             List<Package> packages = [];

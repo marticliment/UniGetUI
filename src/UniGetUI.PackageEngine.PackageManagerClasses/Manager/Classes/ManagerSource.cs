@@ -55,7 +55,6 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
         /// <summary>
         /// Replaces the current URL with the new one. Must be used only when a placeholder URL is used.
         /// </summary>
-        /// <param name="newUrl"></param>
         public void ReplaceUrl(Uri newUrl)
         {
             Url = newUrl;

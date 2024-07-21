@@ -47,7 +47,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <summary>
         /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.
         /// </summary>
-        /// <returns></returns>
         public virtual async Task InitializeAsync()
         {
             // BEGIN integrity check
@@ -129,13 +128,11 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <summary>
         /// Returns a ManagerStatus object representing the current status of the package manager. This method runs asynchronously.
         /// </summary>
-        /// <returns></returns>
         protected abstract Task<ManagerStatus> LoadManager();
 
         /// <summary>
         /// Returns true if the manager is enabled, false otherwise
         /// </summary>
-        /// <returns></returns>
         public bool IsEnabled()
         {
             return !Settings.Get("Disable" + Name);
@@ -144,7 +141,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <summary>
         /// Returns true if the manager is enabled and available (the required executable files were found). Returns false otherwise
         /// </summary>
-        /// <returns></returns>
         public bool IsReady()
         {
             return IsEnabled() && Status.Found;
@@ -154,8 +150,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of Package objects that the manager lists for the given query. Depending on the manager, the list may
         /// also include similar results. This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
         public async Task<Package[]> FindPackages(string query)
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet FindPackages was called"); return []; }
@@ -181,8 +175,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of UpgradablePackage objects that represent the available updates reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
         public async Task<Package[]> GetAvailableUpdates()
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetAvailableUpdates was called"); return []; }
@@ -210,7 +202,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of Package objects that represent the installed reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        /// <returns></returns>
         public async Task<Package[]> GetInstalledPackages()
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetInstalledPackages was called"); return []; }
@@ -319,7 +310,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Refreshes the Package Manager sources/indexes
         /// Each manager MUST implement this method.
         /// </summary>
-        /// <returns></returns>
 #pragma warning disable CS1998
         public virtual async Task RefreshPackageIndexes()
         {
@@ -332,8 +322,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <summary>
         /// Will check if the Manager supports custom sources, and throw an exception if not
         /// </summary>
-        /// <param name="MethodName"></param>
-        /// <exception cref="Exception"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         private void AssertSourceCompatibility(string MethodName)
         {
             if (!Capabilities.SupportsCustomSources)

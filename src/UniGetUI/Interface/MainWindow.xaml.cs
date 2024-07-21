@@ -127,8 +127,6 @@ namespace UniGetUI.Interface
         /// <summary>
         /// Handle the window closing event, and divert it when the window must be hidden.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
         public async void HandleClosingEvent(AppWindow sender, AppWindowClosingEventArgs args)
         {
             SaveGeometry(Force: true);

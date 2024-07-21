@@ -104,7 +104,6 @@ internal static class ClassesDefinition
     /// <summary>
     /// Validate that the provided type is defined.
     /// </summary>
-    /// <param name="type">Projected class type</param>
     /// <exception cref="InvalidOperationException">Throws an exception if type is not a project class.</exception>
     private static void ValidateType<TType>()
     {
