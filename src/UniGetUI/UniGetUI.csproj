@@ -1,27 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
-		<RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
-		<Platforms>x64</Platforms>
-		<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
-		<SdkVersion>8.0.204</SdkVersion>
-		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-		<PublishSelfContained>true</PublishSelfContained>
-		<Authors>Martí Climent and the contributors</Authors>
-		<PublisherName>Martí Climent</PublisherName>
-		<Nullable>enable</Nullable>
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
+    <Platforms>ARM64;x64</Platforms>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <SdkVersion>8.0.204</SdkVersion>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <PublishSelfContained>true</PublishSelfContained>
+    <Authors>Martí Climent and the contributors</Authors>
+    <PublisherName>Martí Climent</PublisherName>
+    <Nullable>enable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	</PropertyGroup>
+  </PropertyGroup>
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <RootNamespace>UniGetUI</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x64</Platforms>
+    <Platforms>x64;ARM64</Platforms>
     <UseWinUI>true</UseWinUI>
     <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
@@ -29,9 +28,9 @@
     <StartupObject>UniGetUI.EntryPoint</StartupObject>
     <SignAssembly>False</SignAssembly>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-	<Nullable>enable</Nullable>
-
+    <Nullable>enable</Nullable>
   </PropertyGroup>
+
   <ItemGroup>
     <Content Include="icon.ico" />
   </ItemGroup>
@@ -64,8 +63,7 @@
     <None Remove="PackageEngine\OperationControl.xaml" />
   </ItemGroup>
 
-
-	<ItemGroup>
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
@@ -167,9 +165,9 @@
     <None Update="Assets\Images\*.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-	  <None Update="Assets\Images\*.ico">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
+    <None Update="Assets\Images\*.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Utilities\gsudo.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
