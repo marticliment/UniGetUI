@@ -4,8 +4,8 @@ namespace UniGetUI.Core.Logging
 {
     public static class Logger
     {
-        private static readonly List<LogEntry> LogContents = new();
-        
+        private static readonly List<LogEntry> LogContents = [];
+
         // String parameter log functions
         public static void ImportantInfo(string s)
         {
@@ -15,7 +15,7 @@ namespace UniGetUI.Core.Logging
 
         public static void Debug(string s)
         {
-            Diagnostics.Debug.WriteLine(s); 
+            Diagnostics.Debug.WriteLine(s);
             LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Debug));
         }
 
@@ -42,7 +42,7 @@ namespace UniGetUI.Core.Logging
         public static void ImportantInfo(Exception e)
         {
             Diagnostics.Debug.WriteLine(e.ToString());
-            LogContents.Add(new LogEntry(e.ToString() , LogEntry.SeverityLevel.Success));
+            LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Success));
         }
 
         public static void Debug(Exception e)

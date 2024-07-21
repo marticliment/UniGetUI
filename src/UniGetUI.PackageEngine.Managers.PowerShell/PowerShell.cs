@@ -1,7 +1,9 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -13,9 +15,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
     public class PowerShell : BaseNuGet
     {
-        new public static string[] FALSE_PACKAGE_NAMES = new string[] { "" };
-        new public static string[] FALSE_PACKAGE_IDS = new string[] { "" };
-        new public static string[] FALSE_PACKAGE_VERSIONS = new string[] { "" };
+        public static new string[] FALSE_PACKAGE_NAMES = [""];
+        public static new string[] FALSE_PACKAGE_IDS = [""];
+        public static new string[] FALSE_PACKAGE_VERSIONS = [""];
 
         public PowerShell() : base()
         {
@@ -38,8 +40,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             Properties = new ManagerProperties()
             {
                 Name = "PowerShell",
+                DisplayName = "PowerShell 5.x",
                 Description = CoreTools.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
-                IconId = "powershell",
+                IconId = IconType.PowerShell,
                 ColorIconId = "powershell_color",
                 ExecutableFriendlyName = "powershell.exe",
                 InstallVerb = "Install-Module",
@@ -55,17 +58,20 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         }
         protected override async Task<IPackage[]> GetAvailableUpdates_UnSafe()
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Status.ExecutablePath,
-                Arguments = "",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = "",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardInputEncoding = new UTF8Encoding(false),
+                }
             };
 
             ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
@@ -101,21 +107,30 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             p.StandardInput.Close();
 
             string? line;
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 logger.AddToStdOut(line);
                 if (line.StartsWith(">>"))
+                {
                     continue;
+                }
 
                 string[] elements = line.Split('|');
                 if (elements.Length < 4)
+                {
                     continue;
+                }
 
-                for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+                for (int i = 0; i < elements.Length; i++)
+                {
+                    elements[i] = elements[i].Trim();
+                }
 
                 if (elements[1] + ".0" == elements[2] || elements[1] + ".0.0" == elements[2])
+                {
                     continue;
+                }
 
                 Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], GetSourceOrDefault(elements[3]), this));
             }
@@ -129,24 +144,26 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         protected override async Task<IPackage[]> GetInstalledPackages_UnSafe()
         {
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Process p = new()
             {
-                FileName = Status.ExecutablePath,
-                Arguments = Properties.ExecutableCallArgs + " Get-InstalledModule",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " Get-InstalledModule",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
-            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListPackages, p);
+            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
 
             p.Start();
             string? line;
-            List<Package> Packages = new();
+            List<Package> Packages = [];
             bool DashesPassed = false;
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
@@ -154,15 +171,22 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 if (!DashesPassed)
                 {
                     if (line.Contains("-----"))
+                    {
                         DashesPassed = true;
+                    }
                 }
                 else
                 {
                     string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
                     if (elements.Length < 3)
+                    {
                         continue;
+                    }
 
-                    for (int i = 0; i < elements.Length; i++) elements[i] = elements[i].Trim();
+                    for (int i = 0; i < elements.Length; i++)
+                    {
+                        elements[i] = elements[i].Trim();
+                    }
 
                     Packages.Add(new Package(CoreTools.FormatAsName(elements[1]), elements[1], elements[0], GetSourceOrDefault(elements[2]), this));
                 }
@@ -202,14 +226,20 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             List<string> parameters = GetUpdateParameters(package, options).ToList();
             parameters[0] = Properties.InstallVerb;
 
-            parameters.AddRange(new string[] { "-AllowClobber" });
+            parameters.AddRange(["-AllowClobber"]);
             if (package.Scope == PackageScope.Global)
-                parameters.AddRange(new string[] { "-Scope", "AllUsers" });
+            {
+                parameters.AddRange(["-Scope", "AllUsers"]);
+            }
             else
-                parameters.AddRange(new string[] { "-Scope", "CurrentUser" });
+            {
+                parameters.AddRange(["-Scope", "CurrentUser"]);
+            }
 
             if (options.Version != "")
-                parameters.AddRange(new string[] { "-RequiredVersion", options.Version });
+            {
+                parameters.AddRange(["-RequiredVersion", options.Version]);
+            }
 
             return parameters.ToArray();
 
@@ -220,20 +250,26 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             parameters[0] = Properties.UpdateVerb;
 
             if (options.PreRelease)
+            {
                 parameters.Add("-AllowPrerelease");
+            }
 
             if (options.SkipHashCheck)
+            {
                 parameters.Add("-SkipPublisherCheck");
+            }
 
             return parameters.ToArray();
         }
 
         public override string[] GetUninstallParameters(IPackage package, IInstallationOptions options)
         {
-            List<string> parameters = new() { Properties.UninstallVerb, "-Name", package.Id, "-Confirm:$false", "-Force" };
+            List<string> parameters = [Properties.UninstallVerb, "-Name", package.Id, "-Confirm:$false", "-Force"];
 
             if (options.CustomParameters != null)
+            {
                 parameters.AddRange(options.CustomParameters);
+            }
 
             return parameters.ToArray();
         }
@@ -247,7 +283,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             status.Found = File.Exists(status.ExecutablePath);
 
             if (!status.Found)
+            {
                 return status;
+            }
 
             Process process = new()
             {
@@ -267,7 +305,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             return status;
         }
-        
+
     }
 
 }

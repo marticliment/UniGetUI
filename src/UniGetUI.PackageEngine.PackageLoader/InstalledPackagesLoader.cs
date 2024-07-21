@@ -27,9 +27,13 @@ namespace UniGetUI.PackageEngine.PackageLoader
         protected override async Task WhenAddingPackage(IPackage package)
         {
             if (await package.HasUpdatesIgnoredAsync(Version: "*"))
+            {
                 package.Tag = PackageTag.Pinned;
+            }
             else if (package.GetUpgradablePackage() != null)
+            {
                 package.Tag = PackageTag.IsUpgradable;
+            }
 
             package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
         }

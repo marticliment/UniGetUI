@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -66,7 +66,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                     break;
 
                 case Sorter.Source:
-                    SortingSelector = x => x.Package.SourceAsString;
+                    SortingSelector = x => x.Package.Source.AsString_DisplayName;
                     break;
             }
         }
@@ -76,7 +76,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public new void Clear()
         {
-            foreach(PackageWrapper wrapper in this)
+            foreach (PackageWrapper wrapper in this)
             {
                 wrapper.Dispose();
             }
@@ -92,7 +92,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             List<IPackage> packages = new();
             foreach (PackageWrapper wrapper in this)
-                    packages.Add(wrapper.Package);
+            {
+                packages.Add(wrapper.Package);
+            }
+
             return packages;
         }
 
@@ -102,31 +105,37 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns></returns>
         public List<IPackage> GetCheckedPackages()
         { 
-            List<IPackage> packages = new();
+            List<IPackage> packages = [];
             foreach (PackageWrapper wrapper in this)
             {
                 if (wrapper.Package.IsChecked)
+                {
                     packages.Add(wrapper.Package);
+                }
             }
             return packages;
         }
-        
+
         /// <summary>
         /// Mark all packages as checked
         /// </summary>
         public void SelectAll()
         {
             foreach (PackageWrapper wrapper in this)
+            {
                 wrapper.Package.IsChecked = true;
+            }
         }
-        
+
         /// <summary>
         /// Mark all packages as unchecked
         /// </summary>
         public void ClearSelection()
         {
             foreach (PackageWrapper wrapper in this)
+            {
                 wrapper.Package.IsChecked = false;
+            }
         }
     }
 }

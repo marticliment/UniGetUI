@@ -2,8 +2,6 @@ using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Runtime.Serialization.Formatters;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -57,9 +55,9 @@ namespace UniGetUI.Interface
             External
         }
 
-        protected readonly bool DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = false;
-        protected readonly bool MEGA_QUERY_BOX_ENABLED = false;
-        protected readonly bool SHOW_LAST_CHECKED_TIME = false;
+        protected readonly bool DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START;
+        protected readonly bool MEGA_QUERY_BOX_ENABLED;
+        protected readonly bool SHOW_LAST_CHECKED_TIME;
         public readonly string INSTANT_SEARCH_SETTING_NAME;
         public readonly string SIDEPANEL_WIDTH_SETTING_NAME;
         protected readonly string PAGE_NAME;
@@ -73,17 +71,16 @@ namespace UniGetUI.Interface
         }
 
         protected AbstractPackageLoader Loader;
-        public ObservablePackageCollection FilteredPackages = new();
-        protected List<IPackageManager> UsedManagers = new();
-        protected Dictionary<IPackageManager, List<IManagerSource>> UsedSourcesForManager = new();
-        protected Dictionary<IPackageManager, TreeViewNode> RootNodeForManager = new();
-        protected Dictionary<IManagerSource, TreeViewNode> NodesForSources = new();
+        public ObservablePackageCollection FilteredPackages = [];
+        protected List<IPackageManager> UsedManagers = [];
+        protected Dictionary<IPackageManager, List<IManagerSource>> UsedSourcesForManager = [];
+        protected Dictionary<IPackageManager, TreeViewNode> RootNodeForManager = [];
+        protected Dictionary<IManagerSource, TreeViewNode> NodesForSources = [];
         private readonly TreeViewNode LocalPackagesNode;
         public InfoBadge? ExternalCountBadge;
 
         public readonly int NewVersionLabelWidth;
-        public readonly int NewVersionIconWidth;        
-        private readonly bool AllSelected = true;
+        public readonly int NewVersionIconWidth;
 
         protected abstract void WhenPackagesLoaded(ReloadReason reason);
         protected abstract void WhenPackageCountUpdated();
@@ -92,29 +89,29 @@ namespace UniGetUI.Interface
         public abstract BetterMenu GenerateContextMenu();
 
         protected readonly string NoPackages_BackgroundText;
-        protected readonly string NoPackages_SourcesText; 
+        protected readonly string NoPackages_SourcesText;
         protected readonly string MainSubtitle_StillLoading;
         protected readonly string NoPackages_SubtitleText_Base;
         protected readonly string NoMatches_BackgroundText;
-        
+
         protected Func<int, int, string> FoundPackages_SubtitleText_Base = (a, b) => CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.", a, b);
-        
+
         protected string NoPackages_SubtitleText
         {
-            get => NoPackages_SubtitleText_Base + 
+            get => NoPackages_SubtitleText_Base +
                 (SHOW_LAST_CHECKED_TIME ? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()) : "");
         }
         protected string NoMatches_SubtitleText
         {
-            get => FoundPackages_SubtitleText_Base(Loader.Packages.Count(), FilteredPackages.Count()) +
-               (SHOW_LAST_CHECKED_TIME? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()): "");
+            get => FoundPackages_SubtitleText_Base(Loader.Packages.Count, FilteredPackages.Count) +
+               (SHOW_LAST_CHECKED_TIME ? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()) : "");
         }
         protected string FoundPackages_SubtitleText { get => NoMatches_SubtitleText; }
 
         protected AbstractPackagesPage(PackagesPageData data)
         {
             InitializeComponent();
-            
+
             Loader = data.Loader;
 
             DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = data.DisableAutomaticPackageLoadOnStart;
@@ -163,23 +160,28 @@ namespace UniGetUI.Interface
             }
 
             LastPackageLoadTime = DateTime.Now;
-            LocalPackagesNode = new TreeViewNode { 
-                Content = CoreTools.Translate("Local"), 
-                IsExpanded = false 
+            LocalPackagesNode = new TreeViewNode
+            {
+                Content = CoreTools.Translate("Local"),
+                IsExpanded = false
             };
-            
+
             ReloadButton.Click += async (s, e) => await LoadPackages();
-            
+
             // Handle Find Button click on the Query Block
-            FindButton.Click += (s, e) => { 
+            FindButton.Click += (s, e) =>
+            {
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 FilterPackages();
             };
-            
+
             // Handle Enter pressed on the QueryBlock
             QueryBlock.KeyUp += (s, e) =>
             {
-                if (e.Key != VirtualKey.Enter) return;
+                if (e.Key != VirtualKey.Enter)
+                {
+                    return;
+                }
 
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 FilterPackages();
@@ -189,24 +191,31 @@ namespace UniGetUI.Interface
             // Handle showing the MegaQueryBlock
             QueryBlock.TextChanged += (s, e) =>
             {
-                if (InstantSearchCheckbox.IsChecked == true) FilterPackages();
+                if (InstantSearchCheckbox.IsChecked == true)
+                {
+                    FilterPackages();
+                }
 
-                if (!MEGA_QUERY_BOX_ENABLED || QueryBlock.Text.Trim() != "")
-                    return;
-
-                MegaQueryBlockGrid.Visibility = Visibility.Visible;
-                BackgroundText.Visibility = Visibility.Collapsed;
-                ClearPackageList();
-                UpdatePackageCount();
-                MegaQueryBlock.Focus(FocusState.Programmatic);
-                MegaQueryBlock.Text = "";
+                if (MEGA_QUERY_BOX_ENABLED && QueryBlock.Text.Trim() == "")
+                {
+                    MegaQueryBlockGrid.Visibility = Visibility.Visible;
+                    Loader.StopLoading();
+                    BackgroundText.Visibility = Visibility.Collapsed;
+                    ClearPackageList();
+                    UpdatePackageCount();
+                    MegaQueryBlock.Focus(FocusState.Programmatic);
+                    MegaQueryBlock.Text = "";
+                }
             };
 
             // Handle the Enter Pressed event on the MegaQueryBlock
             MegaQueryBlock.KeyUp += (s, e) =>
             {
                 if (e.Key != VirtualKey.Enter)
+                {
                     return;
+                }
+
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 QueryBlock.Text = MegaQueryBlock.Text.Trim();
                 FilterPackages();
@@ -224,10 +233,20 @@ namespace UniGetUI.Interface
             SourcesTreeView.Tapped += (s, e) =>
             {
                 TreeViewNode? node = (e.OriginalSource as FrameworkElement)?.DataContext as TreeViewNode;
-                if (node == null) return;
+                if (node == null)
+                {
+                    return;
+                }
 
-                if (SourcesTreeView.SelectedNodes.Contains(node)) SourcesTreeView.SelectedNodes.Remove(node);
-                else SourcesTreeView.SelectedNodes.Add(node);
+                if (SourcesTreeView.SelectedNodes.Contains(node))
+                {
+                    SourcesTreeView.SelectedNodes.Remove(node);
+                }
+                else
+                {
+                    SourcesTreeView.SelectedNodes.Add(node);
+                }
+
                 FilterPackages();
             };
 
@@ -235,7 +254,10 @@ namespace UniGetUI.Interface
             SourcesTreeView.RightTapped += (s, e) =>
             {
                 TreeViewNode? node = (e.OriginalSource as FrameworkElement)?.DataContext as TreeViewNode;
-                if (node == null) return;
+                if (node == null)
+                {
+                    return;
+                }
 
                 SourcesTreeView.SelectedNodes.Clear();
                 SourcesTreeView.SelectedNodes.Add(node);
@@ -290,7 +312,7 @@ namespace UniGetUI.Interface
         private void Loader_PackagesChanged(object? sender, EventArgs e)
         {
             // Ensure we are in the UI thread
-            if(Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() == null)
+            if (Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() == null)
             {
                 DispatcherQueue.TryEnqueue(() => Loader_PackagesChanged(sender, e));
                 return;
@@ -303,7 +325,9 @@ namespace UniGetUI.Interface
             else
             {
                 foreach (IPackage package in Loader.Packages)
+                {
                     AddPackageToSourcesList(package);
+                }
             }
             FilterPackages();
         }
@@ -316,7 +340,7 @@ namespace UniGetUI.Interface
                 DispatcherQueue.TryEnqueue(() => Loader_FinishedLoading(sender, e));
                 return;
             }
-            
+
             LoadingProgressBar.Visibility = Visibility.Collapsed;
             LastPackageLoadTime = DateTime.Now;
             WhenPackagesLoaded(ReloadReason.External);
@@ -344,10 +368,19 @@ namespace UniGetUI.Interface
         }
         public void SelectAllTriggered()
         {
-            if (AllSelected)
-                FilteredPackages.SelectAll();
-            else
-                FilteredPackages.ClearSelection();
+            if (QueryBlock.FocusState == FocusState.Unfocused)
+            {
+                if (!SelectAllCheckBox.IsChecked ?? false)
+                {
+                    SelectAllCheckBox.IsChecked = true;
+                    FilteredPackages.SelectAll();
+                }
+                else
+                {
+                    SelectAllCheckBox.IsChecked = false;
+                    FilteredPackages.ClearSelection();
+                }
+            }
         }
         protected void AddPackageToSourcesList(IPackage package)
         {
@@ -356,20 +389,23 @@ namespace UniGetUI.Interface
             {
                 UsedManagers.Add(source.Manager);
                 TreeViewNode Node;
-                Node = new TreeViewNode { Content = source.Manager.Name + "                                                                                    .", IsExpanded = false };
+                Node = new TreeViewNode { Content = source.Manager.DisplayName + "                                                                                    .", IsExpanded = false };
                 SourcesTreeView.RootNodes.Add(Node);
 
                 // Smart way to decide whether to check a source or not.
                 // - Always check a source by default if no sources are present
                 // - Otherwise, Check a source only if half of the sources have already been checked
-                if(SourcesTreeView.RootNodes.Count == 0)
+                if (SourcesTreeView.RootNodes.Count == 0)
+                {
                     SourcesTreeView.SelectedNodes.Add(Node);
-                else if (SourcesTreeView.SelectedNodes.Count >= SourcesTreeView.RootNodes.Count/2)
+                }
+                else if (SourcesTreeView.SelectedNodes.Count >= SourcesTreeView.RootNodes.Count / 2)
+                {
                     SourcesTreeView.SelectedNodes.Add(Node);
-
+                }
 
                 RootNodeForManager.Add(source.Manager, Node);
-                UsedSourcesForManager.Add(source.Manager, new List<IManagerSource>());
+                UsedSourcesForManager.Add(source.Manager, []);
                 SourcesPlaceholderText.Visibility = Visibility.Collapsed;
                 SourcesTreeViewGrid.Visibility = Visibility.Visible;
             }
@@ -390,14 +426,20 @@ namespace UniGetUI.Interface
                     }
                 }
                 else
+                {
                     RootNodeForManager[source.Manager].Children.Add(item);
+                }
             }
         }
 
         private void FilterOptionsChanged(object sender, RoutedEventArgs e)
         {
-            if (QueryBothRadio == null) return; 
-            FilterPackages(); 
+            if (QueryBothRadio == null)
+            {
+                return;
+            }
+
+            FilterPackages();
         }
 
         private void InstantSearchValueChanged(object sender, RoutedEventArgs e)
@@ -426,9 +468,9 @@ namespace UniGetUI.Interface
         /// <returns></returns>
         protected async Task LoadPackages(ReloadReason reason)
         {
-            if(!(Loader.IsLoading) && (!Loader.IsLoaded || reason == ReloadReason.External || reason == ReloadReason.Manual || reason == ReloadReason.Automated))
+            if (!Loader.IsLoading && (!Loader.IsLoaded || reason == ReloadReason.External || reason == ReloadReason.Manual || reason == ReloadReason.Automated))
             {
-                Loader.ClearPackages();
+                Loader.ClearPackages(emitFinishSignal: false);
                 await Loader.ReloadPackages();
             }
             Loader_PackagesChanged(this, EventArgs.Empty);
@@ -442,17 +484,21 @@ namespace UniGetUI.Interface
         {
             FilteredPackages.Clear();
 
-            List<IManagerSource> VisibleSources = new();
-            List<IPackageManager> VisibleManagers = new();
+            List<IManagerSource> VisibleSources = [];
+            List<IPackageManager> VisibleManagers = [];
 
             if (SourcesTreeView.SelectedNodes.Count > 0)
             {
                 foreach (TreeViewNode node in SourcesTreeView.SelectedNodes)
                 {
                     if (NodesForSources.ContainsValue(node))
+                    {
                         VisibleSources.Add(NodesForSources.First(x => x.Value == node).Key);
+                    }
                     else if (RootNodeForManager.ContainsValue(node))
+                    {
                         VisibleManagers.Add(RootNodeForManager.First(x => x.Value == node).Key);
+                    }
                 }
             }
 
@@ -460,12 +506,17 @@ namespace UniGetUI.Interface
 
             Func<string, string> CaseFunc;
             if (UpperLowerCaseCheckbox.IsChecked == true)
+            {
                 CaseFunc = (x) => { return x; };
+            }
             else
+            {
                 CaseFunc = (x) => { return x.ToLower(); };
+            }
 
             Func<string, string> CharsFunc;
             if (IgnoreSpecialCharsCheckbox.IsChecked == true)
+            {
                 CharsFunc = (x) =>
                 {
                     string temp_x = CaseFunc(x).Replace("-", "").Replace("_", "").Replace(" ", "").Replace("@", "").Replace("\t", "").Replace(".", "").Replace(",", "").Replace(":", "");
@@ -482,30 +533,45 @@ namespace UniGetUI.Interface
                         })
                     {
                         foreach (char InvalidChar in entry.Value)
+                        {
                             x = x.Replace(InvalidChar, entry.Key);
+                        }
                     }
                     return temp_x;
                 };
+            }
             else
+            {
                 CharsFunc = (x) => { return CaseFunc(x); };
+            }
 
             string treatedQuery = CharsFunc(QueryBlock.Text.Trim());
 
             if (QueryIdRadio.IsChecked == true)
+            {
                 MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name).Contains(treatedQuery));
+            }
             else if (QueryNameRadio.IsChecked == true)
+            {
                 MatchingList = Loader.Packages.Where(x => CharsFunc(x.Id).Contains(treatedQuery));
+            }
             else if (QueryBothRadio.IsChecked == true)
+            {
                 MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name).Contains(treatedQuery) | CharsFunc(x.Id).Contains(treatedQuery));
+            }
             else if (QueryExactMatch.IsChecked == true)
+            {
                 MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name) == treatedQuery | CharsFunc(x.Id) == treatedQuery);
+            }
             else // QuerySimilarResultsRadio == true
+            {
                 MatchingList = Loader.Packages;
+            }
 
             FilteredPackages.BlockSorting = true;
             foreach (IPackage match in MatchingList)
             {
-                if (VisibleManagers.Contains(match.Manager) || VisibleSources.Contains(match.Source))
+                if (VisibleSources.Contains(match.Source) || (!match.Manager.Capabilities.SupportsCustomSources && VisibleManagers.Contains(match.Manager)))
                 {
                     FilteredPackages.Add(match);
                 }
@@ -521,11 +587,11 @@ namespace UniGetUI.Interface
         /// </summary>
         public void UpdatePackageCount()
         {
-            if (FilteredPackages.Count() == 0)
+            if (FilteredPackages.Count == 0)
             {
-                if(LoadingProgressBar.Visibility == Visibility.Collapsed)
+                if (LoadingProgressBar.Visibility == Visibility.Collapsed)
                 {
-                    if (Loader.Packages.Count() == 0)
+                    if (Loader.Packages.Count == 0)
                     {
                         BackgroundText.Text = NoPackages_BackgroundText;
                         SourcesPlaceholderText.Text = NoPackages_SourcesText;
@@ -552,7 +618,7 @@ namespace UniGetUI.Interface
             else
             {
                 BackgroundText.Text = NoPackages_BackgroundText;
-                BackgroundText.Visibility = Loader.Packages.Count > 0? Visibility.Collapsed: Visibility.Visible;
+                BackgroundText.Visibility = Loader.Packages.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
                 MainSubtitle.Text = FoundPackages_SubtitleText;
             }
 
@@ -563,8 +629,10 @@ namespace UniGetUI.Interface
             }
 
             if (MegaQueryBlockGrid.Visibility == Visibility.Visible)
+            {
                 BackgroundText.Visibility = Visibility.Collapsed;
-            
+            }
+
             WhenPackageCountUpdated();
         }
 
@@ -592,7 +660,10 @@ namespace UniGetUI.Interface
         
         protected async void ShowDetailsForPackage(IPackage? package)
         {
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             Logger.Warn(PAGE_ROLE.ToString());
             await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package, PAGE_ROLE);
@@ -600,23 +671,33 @@ namespace UniGetUI.Interface
         
         protected void SharePackage(IPackage? package)
         {
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             MainApp.Instance.MainWindow.SharePackage(package);
         }
         
         protected async void ShowInstallationOptionsForPackage(IPackage? package)
         {
-            if(package == null)return;
+            if (package == null)
+            {
+                return;
+            }
 
             if (await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(package, PAGE_ROLE))
+            {
                 PerformMainPackageAction(package);
+            }
         }
 
         private void SidepanelWidth_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (e.NewSize.Width == ((int)(e.NewSize.Width / 10)) || e.NewSize.Width == 25)
+            {
                 return;
+            }
 
             Settings.SetValue(SIDEPANEL_WIDTH_SETTING_NAME, ((int)e.NewSize.Width).ToString());
             foreach (UIElement control in SidePanelGrid.Children)
@@ -627,14 +708,23 @@ namespace UniGetUI.Interface
 
         protected void PerformMainPackageAction(IPackage? package)
         {
-            if(package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             if (PAGE_ROLE == OperationType.Install)
+            {
                 MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
+            }
             else if (PAGE_ROLE == OperationType.Update)
+            {
                 MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
+            }
             else // if (PageRole == OperationType.Uninstall)
+            {
                 MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
+            }
         }
 
         public void FocusPackageList()
@@ -642,17 +732,27 @@ namespace UniGetUI.Interface
 
         private void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            PackageItemContainer? container = (sender as PackageItemContainer);
-            if (container is null) return;
-            if (container.Package is null) return;
+            if (sender is not PackageItemContainer container)
+            {
+                return;
+            }
+
+            if (container is null)
+            {
+                return;
+            }
+
             PackageList.Select(container.Wrapper.Index);
             WhenShowingContextMenu(container.Package);
         }
 
         private void PackageItemContainer_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            PackageItemContainer? container = (sender as PackageItemContainer);
-            if (container is null) return;
+            if (sender is not PackageItemContainer container)
+            {
+                return;
+            }
+
             PackageList.Select(container.Wrapper.Index);
             ShowDetailsForPackage(container.Package);
         }
@@ -665,13 +765,22 @@ namespace UniGetUI.Interface
             bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
             bool IS_ALT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftMenu).HasFlag(CoreVirtualKeyStates.Down);
             IS_ALT_PRESSED |= InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.RightMenu).HasFlag(CoreVirtualKeyStates.Down);
-            
+
 
             if (e.Key == VirtualKey.Enter && package is not null)
             {
-                if (IS_ALT_PRESSED) ShowInstallationOptionsForPackage(package);
-                else if (IS_CONTROL_PRESSED) PerformMainPackageAction(package);
-                else ShowDetailsForPackage(package);
+                if (IS_ALT_PRESSED)
+                {
+                    ShowInstallationOptionsForPackage(package);
+                }
+                else if (IS_CONTROL_PRESSED)
+                {
+                    PerformMainPackageAction(package);
+                }
+                else
+                {
+                    ShowDetailsForPackage(package);
+                }
             }
             else if (e.Key == VirtualKey.Space && package is not null)
             {
@@ -681,10 +790,14 @@ namespace UniGetUI.Interface
 
         private void SelectAllCheckBox_ValueChanged(object sender, RoutedEventArgs e)
         {
-            if (SelectAllCheckBox.IsChecked == true) 
+            if (SelectAllCheckBox.IsChecked == true)
+            {
                 FilteredPackages.SelectAll();
-            else 
+            }
+            else
+            {
                 FilteredPackages.ClearSelection();
+            }
         }
     }
 }

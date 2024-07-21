@@ -1,26 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
-		<RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
-		<Platforms>ARM64;x64</Platforms>
-		<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
-		<SdkVersion>8.0.204</SdkVersion>
-		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-		<PublishSelfContained>true</PublishSelfContained>
-<FileVersion>3.1.0.0</FileVersion>
-<InformationalVersion>3.1.0-beta0</InformationalVersion>
-		<Product>UniGetUI</Product>
-		<Authors>Martí Climent and the contributors</Authors>
-		<PublisherName>Martí Climent</PublisherName>
-<ApplicationVersion>3.1.0-beta0</ApplicationVersion>
-		<Copyright>2024, Martí Climent</Copyright>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-	
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
+    <Platforms>ARM64;x64</Platforms>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <SdkVersion>8.0.204</SdkVersion>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <PublishSelfContained>true</PublishSelfContained>
+    <Authors>Martí Climent and the contributors</Authors>
+    <PublisherName>Martí Climent</PublisherName>
+    <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <RootNamespace>UniGetUI</RootNamespace>
@@ -33,10 +28,9 @@
     <StartupObject>UniGetUI.EntryPoint</StartupObject>
     <SignAssembly>False</SignAssembly>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <AssemblyName>WingetUI</AssemblyName>
-	<Nullable>enable</Nullable>
-	
+    <Nullable>enable</Nullable>
   </PropertyGroup>
+
   <ItemGroup>
     <Content Include="icon.ico" />
   </ItemGroup>
@@ -69,20 +63,19 @@
     <None Remove="PackageEngine\OperationControl.xaml" />
   </ItemGroup>
 
-
-	<ItemGroup>
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
-    <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.131" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240607001" />
+    <PackageReference Include="H.NotifyIcon.WinUI" Version="2.1.0" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240627000" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageReference Include="YamlDotNet" Version="15.3.0" />
+    <PackageReference Include="YamlDotNet" Version="16.0.0" />
 
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
@@ -133,9 +126,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <!-- 
-    Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution 
-    Explorer "Package and Publish" context menu entry to be enabled for this project even if 
+  <!--
+    Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
+    Explorer "Package and Publish" context menu entry to be enabled for this project even if
     the Windows App SDK Nuget package has not yet been restored.
   -->
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
@@ -172,9 +165,9 @@
     <None Update="Assets\Images\*.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-	  <None Update="Assets\Images\*.ico">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
+    <None Update="Assets\Images\*.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Utilities\gsudo.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -308,5 +301,9 @@
     <Content Update="Assets\Utilities\uninstall_scoop.cmd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
   </ItemGroup>
 </Project>

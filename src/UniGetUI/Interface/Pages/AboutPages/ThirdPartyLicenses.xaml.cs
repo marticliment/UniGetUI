@@ -23,7 +23,7 @@ namespace UniGetUI.Interface.Pages.AboutPages
 
     public sealed partial class ThirdPartyLicenses : Page
     {
-        public ObservableCollection<LibraryLicense> Licenses = new();
+        public ObservableCollection<LibraryLicense> Licenses = [];
 
         public ThirdPartyLicenses()
         {

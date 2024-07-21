@@ -167,6 +167,12 @@
       "link": "https://github.com/uKER"
     }
   ],
+  "et": [
+    {
+      "name": "artjom3729",
+      "link": "https://github.com/artjom3729"
+    }
+  ],
   "fa": [
     {
       "name": "Imorate",
@@ -310,6 +316,12 @@
       "link": "https://github.com/VenusGirl"
     }
   ],
+  "lt": [
+    {
+      "name": "Džiugas Januševičius",
+      "link": ""
+    }
+  ],
   "mk": [
     {
       "name": "LordDeatHunter",
@@ -326,6 +338,10 @@
     {
       "name": "abbydiode",
       "link": "https://github.com/abbydiode"
+    },
+    {
+      "name": "CateyeNL",
+      "link": "https://github.com/CateyeNL"
     },
     {
       "name": "Stephan-P",
@@ -368,6 +384,10 @@
     {
       "name": "Rodrigo-Matsuura",
       "link": "https://github.com/Rodrigo-Matsuura"
+    },
+    {
+      "name": "thiagojramos",
+      "link": "https://github.com/thiagojramos"
     },
     {
       "name": "wanderleihuttel",
@@ -424,6 +444,10 @@
     {
       "name": "SashikaSandeepa",
       "link": "https://github.com/SashikaSandeepa"
+    },
+    {
+      "name": "ttheek",
+      "link": "https://github.com/ttheek"
     }
   ],
   "sk": [
@@ -474,6 +498,10 @@
     {
       "name": "dulapahv",
       "link": "https://github.com/dulapahv"
+    },
+    {
+      "name": "rikoprushka",
+      "link": "https://github.com/rikoprushka"
     }
   ],
   "tr": [
@@ -500,7 +528,16 @@
       "link": ""
     }
   ],
-  "ur": [],
+  "ur": [
+    {
+      "name": "digitio",
+      "link": "https://github.com/digitio"
+    },
+    {
+      "name": "digitpk",
+      "link": "https://github.com/digitpk"
+    }
+  ],
   "vi": [
     {
       "name": "legendsjoon",

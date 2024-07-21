@@ -28,9 +28,6 @@
     <Page Update="Interface\Pages\AboutPages\AboutUniGetUI.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Interface\Pages\LogPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Interface\Dialogs\ReleaseNotes.xaml">
       <SubType>Designer</SubType>
     </Page>

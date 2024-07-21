@@ -32,7 +32,9 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
             SourceFactory.Reset();
 
             foreach (IManagerSource source in sources)
+            {
                 SourceFactory.AddSource(source);
+            }
 
             return sources;
         }

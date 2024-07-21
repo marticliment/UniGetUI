@@ -1,8 +1,9 @@
+#pragma warning disable CA1852
 namespace UniGetUI.Core.Classes.Tests
 {
     public class SortableObservableCollectionTests
     {
-        class SortableInt : IIndexableListItem
+        private class SortableInt : IIndexableListItem
         {
             public int Value { get; set; }
             public int Index { get; set; }
@@ -14,7 +15,7 @@ namespace UniGetUI.Core.Classes.Tests
         {
             int EventTriggeredCount = 0;
 
-            SortableObservableCollection<SortableInt> SortableCollection = new();
+            SortableObservableCollection<SortableInt> SortableCollection = [];
             SortableCollection.CollectionChanged += (s, e) => { EventTriggeredCount++; };
             SortableCollection.SortingSelector = (s) => { return s.Value; };
             SortableCollection.Add(new(1));
@@ -25,7 +26,6 @@ namespace UniGetUI.Core.Classes.Tests
             SortableCollection.Add(new(5));
             SortableCollection.Add(new(2));
             SortableCollection.BlockSorting = false;
-
 
             SortableCollection.Sort();
 
@@ -38,7 +38,9 @@ namespace UniGetUI.Core.Classes.Tests
             Assert.Equal(5, SortableCollection[4].Value);
 
             for (int i = 0; i < SortableCollection.Count; i++)
+            {
                 Assert.Equal(i, SortableCollection[i].Index);
+            }
         }
     }
 }

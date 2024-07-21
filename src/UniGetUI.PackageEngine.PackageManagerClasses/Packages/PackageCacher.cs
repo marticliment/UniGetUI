@@ -1,13 +1,13 @@
-﻿using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Classes.Packages
 {
     internal static class PackageCacher
     {
-        private static readonly Dictionary<long, IPackage> __available_pkgs = new();
-        private static readonly Dictionary<long, IPackage> __upgradable_pkgs = new();
-        private static readonly Dictionary<long, IPackage> __installed_pkgs = new();
+        private static readonly Dictionary<long, IPackage> __available_pkgs = [];
+        private static readonly Dictionary<long, IPackage> __upgradable_pkgs = [];
+        private static readonly Dictionary<long, IPackage> __installed_pkgs = [];
 
         /// <summary>
         /// Will check if a given Package is already in the cache. If not, it will be added to it
@@ -18,7 +18,11 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         public static IPackage GetAvailablePackage(IPackage p)
         {
             IPackage? new_package = GetAvailablePackageOrNull(p);
-            if (new_package == null) AddPackageToCache(p, __available_pkgs);
+            if (new_package == null)
+            {
+                AddPackageToCache(p, __available_pkgs);
+            }
+
             return new_package ?? p;
         }
 
@@ -31,7 +35,11 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         public static IPackage GetUpgradablePackage(IPackage p)
         {
             IPackage? new_package = GetUpgradablePackageOrNull(p);
-            if (new_package == null) AddPackageToCache(p, __upgradable_pkgs);
+            if (new_package == null)
+            {
+                AddPackageToCache(p, __upgradable_pkgs);
+            }
+
             return new_package ?? p;
         }
 
@@ -44,7 +52,11 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         public static IPackage GetInstalledPackage(IPackage p)
         {
             IPackage? new_package = GetInstalledPackageOrNull(p);
-            if (new_package == null) AddPackageToCache(p, __installed_pkgs);
+            if (new_package == null)
+            {
+                AddPackageToCache(p, __installed_pkgs);
+            }
+
             return new_package ?? p;
         }
 

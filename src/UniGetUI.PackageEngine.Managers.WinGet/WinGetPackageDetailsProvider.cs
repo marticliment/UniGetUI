@@ -1,4 +1,4 @@
-﻿using Microsoft.Management.Deployment;
+using Microsoft.Management.Deployment;
 using System.Globalization;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -11,11 +11,11 @@ using UniGetUIManagers = UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
-    internal class WinGetPackageDetailsProvider : BasePackageDetailsProvider<UniGetUIManagers.PackageManager>
+    internal sealed class WinGetPackageDetailsProvider : BasePackageDetailsProvider<UniGetUIManagers.PackageManager>
     {
-        private static readonly Dictionary<string, string> __msstore_package_manifests = new();
+        private static readonly Dictionary<string, string> __msstore_package_manifests = [];
 
-        struct MicrosoftStoreProductType
+        private struct MicrosoftStoreProductType
         {
             public string productIds { get; set; }
         }
@@ -34,23 +34,29 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override async Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package)
         {
-            
-            if(package.Source.Name == "msstore")
-                return await GetMicrosoftStorePackageIcon(package);
 
-            // Logger.Warn("Non-MSStore WinGet Native Icons have been forcefully disabled on code");
-            // return null;
-            return await GetWinGetPackageIcon(package);
+            if (package.Source.Name == "msstore")
+            {
+                return await GetMicrosoftStorePackageIcon(package);
+            }
+
+            Logger.Warn("Non-MSStore WinGet Native Icons have been forcefully disabled on code");
+            return null;
+            //return await GetWinGetPackageIcon(package);
         }
 
         protected override async Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
         {
             if (package.Source.Name != "msstore")
+            {
                 return [];
+            }
 
             string? ResponseContent = await GetMicrosoftStorePackageManifest(package);
             if (ResponseContent == null)
+            {
                 return [];
+            }
 
             Match IconArray = Regex.Match(ResponseContent, "(?:\"|')Images(?:\"|'): ?\\[([^\\]]+)\\]");
             if (!IconArray.Success)
@@ -59,21 +65,27 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return [];
             }
 
-            List<Uri> FoundIcons = new();
+            List<Uri> FoundIcons = [];
 
             foreach (Match ImageEntry in Regex.Matches(IconArray.Groups[1].Value, "{([^}]+)}"))
             {
 
                 if (!ImageEntry.Success)
+                {
                     continue;
+                }
 
                 Match ImagePurpose = Regex.Match(ImageEntry.Groups[1].Value, "(?:\"|')ImagePurpose(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
                 if (!ImagePurpose.Success || ImagePurpose.Groups[1].Value != "Screenshot")
+                {
                     continue;
+                }
 
                 Match ImageUrl = Regex.Match(ImageEntry.Groups[1].Value, "(?:\"|')Uri(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
-                if (!ImageUrl.Success) 
+                if (!ImageUrl.Success)
+                {
                     continue;
+                }
 
                 FoundIcons.Add(new Uri("https:" + ImageUrl.Groups[1].Value));
             }
@@ -82,10 +94,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
 
 
-        private async Task<string?> GetMicrosoftStorePackageManifest(IPackage package)
+        private static async Task<string?> GetMicrosoftStorePackageManifest(IPackage package)
         {
-            if(__msstore_package_manifests.ContainsKey(package.Id))
-                return __msstore_package_manifests[package.Id];
+            if (__msstore_package_manifests.TryGetValue(package.Id, out var manifest))
+            {
+                return manifest;
+            }
 
             string CountryCode = CultureInfo.CurrentCulture.Name.Split("-")[^1];
             string Locale = CultureInfo.CurrentCulture.Name;
@@ -114,15 +128,21 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             Logger.Debug("Microsoft Store API call status code: " + httpResponse.StatusCode);
 
-            if(result != "" && httpResponse.StatusCode == HttpStatusCode.OK) __msstore_package_manifests[package.Id] = result;
+            if (result != "" && httpResponse.StatusCode == HttpStatusCode.OK)
+            {
+                __msstore_package_manifests[package.Id] = result;
+            }
+
             return result;
         }
 
-        private async Task<CacheableIcon?> GetMicrosoftStorePackageIcon(IPackage package)
+        private static async Task<CacheableIcon?> GetMicrosoftStorePackageIcon(IPackage package)
         {
             string? ResponseContent = await GetMicrosoftStorePackageManifest(package);
             if (ResponseContent == null)
+            {
                 return null;
+            }
 
             Match IconArray = Regex.Match(ResponseContent, "(?:\"|')Images(?:\"|'): ?\\[([^\\]]+)\\]");
             if (!IconArray.Success)
@@ -131,24 +151,30 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return null;
             }
 
-            Dictionary<int, string> FoundIcons = new();
+            Dictionary<int, string> FoundIcons = [];
 
             foreach (Match ImageEntry in Regex.Matches(IconArray.Groups[1].Value, "{([^}]+)}"))
             {
                 string CurrentImage = ImageEntry.Groups[1].Value;
 
                 if (!ImageEntry.Success)
+                {
                     continue;
+                }
 
                 Match ImagePurpose = Regex.Match(CurrentImage, "(?:\"|')ImagePurpose(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
                 if (!ImagePurpose.Success || ImagePurpose.Groups[1].Value != "Tile")
+                {
                     continue;
+                }
 
                 Match ImageUrl = Regex.Match(CurrentImage, "(?:\"|')Uri(?:\"|'): ?(?:\"|')([^'\"]+)(?:\"|')");
                 Match ImageSize = Regex.Match(CurrentImage, "(?:\"|')Height(?:\"|'): ?([^,]+)");
 
                 if (!ImageUrl.Success || !ImageSize.Success)
+                {
                     continue;
+                }
 
                 FoundIcons[int.Parse(ImageSize.Groups[1].Value)] = ImageUrl.Groups[1].Value;
             }
@@ -167,7 +193,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
 
 
-        private async Task<CacheableIcon?> GetWinGetPackageIcon(IPackage package)
+        private static async Task<CacheableIcon?> GetWinGetPackageIcon(IPackage package)
         { // TODO: Need to work on retrieving WinGet icons
 
             if (WinGetHelper.Instance is not NativeWinGetHelper)
@@ -177,7 +203,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             Microsoft.Management.Deployment.PackageManager WinGetManager = ((NativeWinGetHelper)WinGetHelper.Instance).WinGetManager;
-            WindowsPackageManager.Interop.WindowsPackageManagerStandardFactory Factory = ((NativeWinGetHelper)WinGetHelper.Instance).Factory;
+            WindowsPackageManager.Interop.WindowsPackageManagerFactory Factory = ((NativeWinGetHelper)WinGetHelper.Instance).Factory;
 
             // Find the native package for the given Package object
             PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
@@ -207,7 +233,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             packageMatchFilter.ResultLimit = 1;
             Task<FindPackagesResult> SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
 
-            if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count() == 0)
+            if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count == 0)
             {
                 Logger.Error("[WINGET COM] Failed to find package " + package.Id + " in catalog " + package.Source.Name);
                 return null;

@@ -4,6 +4,7 @@ using UniGetUI.PackageEngine.Managers.ChocolateyManager;
 using UniGetUI.PackageEngine.Managers.DotNetManager;
 using UniGetUI.PackageEngine.Managers.NpmManager;
 using UniGetUI.PackageEngine.Managers.PipManager;
+using UniGetUI.PackageEngine.Managers.PowerShell7Manager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.Managers.ScoopManager;
 using UniGetUI.PackageEngine.Managers.WingetManager;
@@ -11,9 +12,12 @@ using UniGetUI.PackageEngine.PackageLoader;
 
 namespace UniGetUI.PackageEngine
 {
+    /// <summary>
+    /// The interface/entry point for the UniGetUI Package Engine
+    /// </summary>
     public static class PEInterface
     {
-        private const int ManagerLoadTimeout = 10000; // 10 seconds timeout for Package Manager initialization
+        private const int ManagerLoadTimeout = 60; // 60 seconds timeout for Package Manager initialization (in seconds)
 
         public static readonly WinGet WinGet = new();
         public static readonly Scoop Scoop = new();
@@ -22,8 +26,9 @@ namespace UniGetUI.PackageEngine
         public static readonly Pip Pip = new();
         public static readonly DotNet DotNet = new();
         public static readonly PowerShell PowerShell = new();
+        public static readonly PowerShell7 PowerShell7 = new();
 
-        public static readonly PackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, DotNet, PowerShell];
+        public static readonly PackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, DotNet, PowerShell, PowerShell7];
 
         public static readonly DiscoverablePackagesLoader DiscoveredPackagesLoader = new(Managers);
         public static readonly UpgradablePackagesLoader UpgradablePackagesLoader = new(Managers);
@@ -32,7 +37,7 @@ namespace UniGetUI.PackageEngine
 
         public static async Task Initialize()
         {
-            List<Task> initializeTasks = new();
+            List<Task> initializeTasks = [];
 
             foreach (PackageManager manager in Managers)
             {
@@ -42,14 +47,16 @@ namespace UniGetUI.PackageEngine
             Task ManagersMetaTask = Task.WhenAll(initializeTasks);
             try
             {
-                await ManagersMetaTask.WaitAsync(TimeSpan.FromMilliseconds(ManagerLoadTimeout));
+                await ManagersMetaTask.WaitAsync(TimeSpan.FromSeconds(ManagerLoadTimeout));
             }
             catch (Exception e)
             {
                 Logger.Error(e);
             }
             if (ManagersMetaTask.IsCompletedSuccessfully == false)
+            {
                 Logger.Warn("Timeout: Not all package managers have finished initializing.");
+            }
 
             _ = UpgradablePackagesLoader.ReloadPackages();
             _ = InstalledPackagesLoader.ReloadPackages();

@@ -16,7 +16,7 @@ namespace UniGetUI.Interface
     {
 
         public event EventHandler? Close;
-        int previousSelectedIndex = 0;
+        private int previousSelectedIndex;
         public AboutUniGetUI()
         {
             InitializeComponent();
@@ -31,27 +31,14 @@ namespace UniGetUI.Interface
         {
             SelectorBarItem selectedItem = sender.SelectedItem;
             int currentSelectedIndex = sender.Items.IndexOf(selectedItem);
-            System.Type pageType;
-
-            switch (currentSelectedIndex)
+            Type pageType = currentSelectedIndex switch
             {
-                case 0:
-                    pageType = typeof(Pages.AboutPages.AboutUniGetUI);
-                    break;
-                case 1:
-                    pageType = typeof(ThirdPartyLicenses);
-                    break;
-                case 2:
-                    pageType = typeof(Contributors);
-                    break;
-                case 3:
-                    pageType = typeof(Translators);
-                    break;
-                default:
-                    pageType = typeof(SupportMe);
-                    break;
-            }
-
+                0 => typeof(Pages.AboutPages.AboutUniGetUI),
+                1 => typeof(ThirdPartyLicenses),
+                2 => typeof(Contributors),
+                3 => typeof(Translators),
+                _ => typeof(SupportMe),
+            };
             SlideNavigationTransitionEffect slideNavigationTransitionEffect = currentSelectedIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
 
             ContentFrame.Navigate(pageType, null, new SlideNavigationTransitionInfo { Effect = slideNavigationTransitionEffect });
@@ -62,7 +49,7 @@ namespace UniGetUI.Interface
 
         private void CloseButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            Close?.Invoke(this, new EventArgs());
+            Close?.Invoke(this, EventArgs.Empty);
         }
     }
 }

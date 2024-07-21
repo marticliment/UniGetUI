@@ -34,12 +34,14 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
             p.Start();
 
             string? line;
-            List<string> versions = new();
+            List<string> versions = [];
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 logger.AddToStdOut(line);
                 if (line.Contains("[Approved]"))
+                {
                     versions.Add(line.Split(' ')[1].Trim());
+                }
             }
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();

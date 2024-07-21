@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -39,9 +38,9 @@ namespace UniGetUI.PackageEngine.Operations
         private string __line_info_text = "Please wait...";
         private Uri __icon_source = new("ms-appx:///Assets/Images/package_color.png");
         private string __operation_description = "$Package Install";
-        private SolidColorBrush? __progressbar_color = null;
+        private SolidColorBrush? __progressbar_color;
         private OperationStatus __status = OperationStatus.Pending;
-        private bool IsDialogOpen = false;
+        private bool IsDialogOpen;
 
         private WidgetLayout __layout_mode;
         private WidgetLayout LayoutMode
@@ -57,7 +56,9 @@ namespace UniGetUI.PackageEngine.Operations
                     Grid.SetColumnSpan(ProgressIndicator, 4);
                     Grid.SetRow(ProgressIndicator, 1);
                     if (MainGrid.RowDefinitions.Count < 2)
+                    {
                         MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                    }
                 }
                 else
                 {
@@ -68,7 +69,9 @@ namespace UniGetUI.PackageEngine.Operations
                     Grid.SetColumnSpan(ProgressIndicator, 1);
                     Grid.SetRow(ProgressIndicator, 0);
                     if (MainGrid.RowDefinitions.Count >= 2)
+                    {
                         MainGrid.RowDefinitions.RemoveAt(1);
+                    }
                 }
                 __layout_mode = value;
             }
@@ -78,27 +81,57 @@ namespace UniGetUI.PackageEngine.Operations
         protected string ButtonText
         {
             get { return __button_text; }
-            set { __button_text = value; if (ActionButton != null) ActionButton.Content = __button_text; }
+            set
+            {
+                __button_text = value; if (ActionButton != null)
+                {
+                    ActionButton.Content = __button_text;
+                }
+            }
         }
         protected string LineInfoText
         {
             get { return __line_info_text; }
-            set { __line_info_text = value; if (OutputViewewBlock != null) OutputViewewBlock.Content = __line_info_text; }
+            set
+            {
+                __line_info_text = value; if (OutputViewewBlock != null)
+                {
+                    OutputViewewBlock.Content = __line_info_text;
+                }
+            }
         }
         protected Uri IconSource
         {
             get { return __icon_source; }
-            set { __icon_source = value; if (PackageIcon != null) PackageIcon.Source = new BitmapImage(__icon_source); }
+            set
+            {
+                __icon_source = value; if (PackageIcon != null)
+                {
+                    PackageIcon.Source = new BitmapImage(__icon_source);
+                }
+            }
         }
         protected string OperationTitle
         {
             get { return __operation_description; }
-            set { __operation_description = value; if (InfoTextBlock != null) InfoTextBlock.Text = __operation_description; }
+            set
+            {
+                __operation_description = value; if (InfoTextBlock != null)
+                {
+                    InfoTextBlock.Text = __operation_description;
+                }
+            }
         }
         protected SolidColorBrush? ProgressBarColor
         {
             get { return __progressbar_color; }
-            set { __progressbar_color = value; if (ProgressIndicator != null) ProgressIndicator.Foreground = (__progressbar_color != null) ? __progressbar_color : null; }
+            set
+            {
+                __progressbar_color = value; if (ProgressIndicator != null)
+                {
+                    ProgressIndicator.Foreground = (__progressbar_color != null) ? __progressbar_color : null;
+                }
+            }
         }
 
 #pragma warning disable CS0067
@@ -106,7 +139,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected event EventHandler<OperationCancelledEventArgs>? CloseRequested;
 #pragma warning restore CS0067
         protected Process Process = new();
-        protected ObservableCollection<string> ProcessOutput = new();
+        protected ObservableCollection<string> ProcessOutput = [];
 
         private readonly ContentDialog OutputDialog = new();
         private readonly ScrollViewer LiveOutputScrollBar = new();
@@ -169,29 +202,35 @@ namespace UniGetUI.PackageEngine.Operations
                 }
             }
         }
-        protected bool IGNORE_PARALLEL_OPERATION_SETTINGS = false;
+        protected bool IGNORE_PARALLEL_OPERATION_SETTINGS;
         public AbstractOperation(bool IgnoreParallelInstalls = false)
         {
             IGNORE_PARALLEL_OPERATION_SETTINGS = IgnoreParallelInstalls;
 
             InitializeComponent();
 
-            OutputDialog = new ContentDialog();
-            OutputDialog.Style = (Style)Application.Current.Resources["DefaultContentDialogStyle"];
-            OutputDialog.XamlRoot = XamlRoot;
+            OutputDialog = new ContentDialog
+            {
+                Style = (Style)Application.Current.Resources["DefaultContentDialogStyle"],
+                XamlRoot = XamlRoot
+            };
             OutputDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OutputDialog.Resources["ContentDialogMaxHeight"] = 1000;
 
-            LiveOutputTextBlock = new RichTextBlock();
-            LiveOutputTextBlock.Margin = new Thickness(8);
-            LiveOutputTextBlock.FontFamily = new FontFamily("Consolas");
+            LiveOutputTextBlock = new RichTextBlock
+            {
+                Margin = new Thickness(8),
+                FontFamily = new FontFamily("Consolas")
+            };
 
-            LiveOutputScrollBar = new ScrollViewer();
-            LiveOutputScrollBar.CornerRadius = new CornerRadius(6);
-            LiveOutputScrollBar.Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"];
-            LiveOutputScrollBar.Height = 400;
-            LiveOutputScrollBar.Width = 600;
-            LiveOutputScrollBar.Content = LiveOutputTextBlock;
+            LiveOutputScrollBar = new ScrollViewer
+            {
+                CornerRadius = new CornerRadius(6),
+                Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"],
+                Height = 400,
+                Width = 600,
+                Content = LiveOutputTextBlock
+            };
 
             OutputDialog.Title = CoreTools.Translate("Live output");
             OutputDialog.CloseButtonText = CoreTools.Translate("Close");
@@ -200,7 +239,9 @@ namespace UniGetUI.PackageEngine.Operations
             OutputDialog.SizeChanged += (s, e) =>
             {
                 if (!IsDialogOpen)
+                {
                     return;
+                }
 
                 LiveOutputScrollBar.MinWidth = MainApp.Instance.MainWindow.NavigationPage.ActualWidth - 400;
                 LiveOutputScrollBar.MinHeight = MainApp.Instance.MainWindow.NavigationPage.ActualHeight - 200;
@@ -211,14 +252,18 @@ namespace UniGetUI.PackageEngine.Operations
             ProcessOutput.CollectionChanged += async (s, e) =>
             {
                 if (!IsDialogOpen)
+                {
                     return;
+                }
 
                 LiveOutputTextBlock.Blocks.Clear();
                 Paragraph p = new();
                 foreach (string line in ProcessOutput)
                 {
                     if (line.Contains("  | "))
+                    {
                         p.Inlines.Add(new Run { Text = line.Replace(" | ", "").Trim() + "\x0a" });
+                    }
                 }
                 LiveOutputTextBlock.Blocks.Add(p);
                 await Task.Delay(100);
@@ -238,14 +283,18 @@ namespace UniGetUI.PackageEngine.Operations
         {
             OutputDialog.XamlRoot = XamlRoot;
             LiveOutputTextBlock.Blocks.Clear();
-            Paragraph p = new();
-            p.LineHeight = 4.8;
+            Paragraph p = new()
+            {
+                LineHeight = 4.8
+            };
             foreach (string line in ProcessOutput)
             {
                 if (Status != OperationStatus.Failed)
                 {
                     if (line.Contains("  | "))
+                    {
                         p.Inlines.Add(new Run { Text = line.Replace(" | ", "").Trim() + "\x0a" });
+                    }
                 }
                 else
                 {
@@ -265,23 +314,29 @@ namespace UniGetUI.PackageEngine.Operations
 
         public void ActionButtonClicked(object sender, RoutedEventArgs args)
         {
-            if (Status == OperationStatus.Pending || Status == OperationStatus.Running)
+            if (Status is OperationStatus.Pending or OperationStatus.Running)
             {
                 CancelButtonClicked(Status);
             }
             else
+            {
                 CloseButtonClicked(Status);
+            }
         }
 
         protected void RemoveFromQueue()
         {
             while (MainApp.Instance.OperationQueue.IndexOf(this) != -1)
+            {
                 MainApp.Instance.OperationQueue.Remove(this);
+            }
         }
         protected void AddToQueue()
         {
             if (!MainApp.Instance.OperationQueue.Contains(this))
+            {
                 MainApp.Instance.OperationQueue.Add(this);
+            }
         }
 
         public void CancelButtonClicked(OperationStatus OldStatus)
@@ -290,8 +345,10 @@ namespace UniGetUI.PackageEngine.Operations
             Status = OperationStatus.Cancelled;
             LineInfoText = CoreTools.Translate("Operation cancelled");
 
-            if (this as PackageOperation != null)
+            if ((this as PackageOperation) != null)
+            {
                 ((PackageOperation)this).Package.Tag = PackageTag.Default;
+            }
 
             if (OldStatus == OperationStatus.Running)
             {
@@ -318,7 +375,9 @@ namespace UniGetUI.PackageEngine.Operations
             while (currentIndex != 0)
             {
                 if (Status == OperationStatus.Cancelled)
+                {
                     return; // If the operation has been cancelled
+                }
 
                 currentIndex = MainApp.Instance.OperationQueue.IndexOf(this);
                 if (currentIndex != oldIndex)
@@ -341,27 +400,33 @@ namespace UniGetUI.PackageEngine.Operations
             {
 
                 if (Status == OperationStatus.Cancelled)
+                {
                     return; // If the operation was cancelled, do nothing.
+                }
 
                 MainApp.Instance.TooltipStatus.OperationsInProgress = MainApp.Instance.TooltipStatus.OperationsInProgress + 1;
 
                 Status = OperationStatus.Running;
                 LineInfoText = CoreTools.Translate("Launching subprocess...");
-                ProcessStartInfo startInfo = new();
-                startInfo.RedirectStandardInput = true;
-                startInfo.RedirectStandardOutput = true;
-                startInfo.RedirectStandardError = true;
-                startInfo.UseShellExecute = false;
-                startInfo.CreateNoWindow = true;
-                startInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
-                startInfo.StandardInputEncoding = System.Text.Encoding.UTF8;
-                startInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
-                startInfo.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                ProcessStartInfo startInfo = new()
+                {
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardInputEncoding = System.Text.Encoding.UTF8,
+                    StandardErrorEncoding = System.Text.Encoding.UTF8,
+                    WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                };
 
                 Process = await BuildProcessInstance(startInfo);
 
                 foreach (string infoLine in GenerateProcessLogHeader())
+                {
                     ProcessOutput.Add(infoLine);
+                }
 
                 ProcessOutput.Add("Process Executable     : " + Process.StartInfo.FileName);
                 ProcessOutput.Add("Process Call Arguments : " + Process.StartInfo.Arguments);
@@ -376,19 +441,29 @@ namespace UniGetUI.PackageEngine.Operations
                     if (line.Trim() != "")
                     {
                         if (line.Contains("For the question below") || line.Contains("Would remove:")) // Mitigate chocolatey timeouts
+                        {
                             Process.StandardInput.WriteLine("");
+                        }
 
                         LineInfoText = line.Trim();
                         if (line.Length > 5 || ProcessOutput.Count == 0)
+                        {
                             ProcessOutput.Add("    | " + line);
+                        }
                         else
+                        {
                             ProcessOutput[^1] = "    | " + line;
+                        }
                     }
                 }
 
                 foreach (string errorLine in (await Process.StandardError.ReadToEndAsync()).Split('\n'))
+                {
                     if (errorLine.Trim() != "")
+                    {
                         ProcessOutput.Add("ERR | " + errorLine);
+                    }
+                }
 
                 await Process.WaitForExitAsync();
 
@@ -430,21 +505,30 @@ namespace UniGetUI.PackageEngine.Operations
                 {
                     case AfterFinshAction.TimeoutClose:
                         if (MainApp.Instance.OperationQueue.Count == 0)
+                        {
                             if (Settings.Get("DoCacheAdminRightsForBatches"))
                             {
                                 await CoreTools.ResetUACForCurrentProcess();
                             }
+                        }
+
                         await Task.Delay(5000);
                         if (!Settings.Get("MaintainSuccessfulInstalls"))
+                        {
                             _ = Close();
+                        }
+
                         break;
 
                     case AfterFinshAction.ManualClose:
                         if (MainApp.Instance.OperationQueue.Count == 0)
+                        {
                             if (Settings.Get("DoCacheAdminRightsForBatches"))
                             {
                                 await CoreTools.ResetUACForCurrentProcess();
                             }
+                        }
+
                         break;
 
                     case AfterFinshAction.Retry:
@@ -465,11 +549,9 @@ namespace UniGetUI.PackageEngine.Operations
                     oldHistory = oldHistory.Take(1000).ToArray();
                 }
 
-                List<string> newHistory = new();
-                newHistory.AddRange(ProcessOutput);
-                newHistory.AddRange(oldHistory);
+                List<string> newHistory = [.. ProcessOutput, .. oldHistory];
 
-                Settings.SetValue("OperationHistory", String.Join('\n', newHistory).Replace(" | ", " ║ "));
+                Settings.SetValue("OperationHistory", string.Join('\n', newHistory).Replace(" | ", " ║ "));
             }
             catch (Exception e)
             {
@@ -486,7 +568,9 @@ namespace UniGetUI.PackageEngine.Operations
         protected async Task Close()
         {
             while (IsDialogOpen)
+            {
                 await Task.Delay(1000);
+            }
 
             RemoveFromQueue();
             if (MainApp.Instance.MainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
@@ -521,12 +605,16 @@ namespace UniGetUI.PackageEngine.Operations
             if (e.NewSize.Width < 500)
             {
                 if (LayoutMode != WidgetLayout.Compact)
+                {
                     LayoutMode = WidgetLayout.Compact;
+                }
             }
             else
             {
                 if (LayoutMode != WidgetLayout.Default)
+                {
                     LayoutMode = WidgetLayout.Default;
+                }
             }
 
         }

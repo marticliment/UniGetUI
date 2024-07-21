@@ -1,14 +1,16 @@
-﻿using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
-    public class ManagerProperties
+    public struct ManagerProperties
     {
         public bool IsDummy = false;
         public string Name { get; set; } = "Unset";
+        public string? DisplayName { get; set; }
         public string Description { get; set; } = "Unset";
-        public string IconId { get; set; } = "Unset";
+        public IconType IconId { get; set; } = IconType.Help;
         public string ColorIconId { get; set; } = "Unset";
         public string ExecutableCallArgs { get; set; } = "Unset";
         public string ExecutableFriendlyName { get; set; } = "Unset";

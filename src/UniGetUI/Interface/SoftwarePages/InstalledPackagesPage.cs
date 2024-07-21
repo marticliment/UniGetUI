@@ -1,10 +1,11 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.SoftwarePages.UniGetUI.Interface.SoftwarePages;
+using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes;
@@ -17,11 +18,11 @@ namespace UniGetUI.Interface.SoftwarePages
 {
     public class InstalledPackagesPage : AbstractPackagesPage
     {
-        bool HasDoneBackup = false;
+        private bool HasDoneBackup;
 
-        BetterMenuItem? MenuAsAdmin;
-        BetterMenuItem? MenuInteractive;
-        BetterMenuItem? MenuRemoveData;
+        private BetterMenuItem? MenuAsAdmin;
+        private BetterMenuItem? MenuInteractive;
+        private BetterMenuItem? MenuRemoveData;
 
         public InstalledPackagesPage()
         : base(new PackagesPageData()
@@ -54,7 +55,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuUninstall = new()
             {
                 Text = "Uninstall",
-                IconName = "trash",
+                IconName = IconType.Delete,
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
             menuUninstall.Click += MenuUninstall_Invoked;
@@ -65,7 +66,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuInstallSettings = new()
             {
                 Text = "Installation options",
-                IconName = "options",
+                IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
             menuInstallSettings.Click += MenuInstallSettings_Invoked;
@@ -76,7 +77,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin = new BetterMenuItem
             {
                 Text = "Uninstall as administrator",
-                IconName = "runasadmin"
+                IconName = IconType.UAC
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
             menu.Items.Add(MenuAsAdmin);
@@ -84,7 +85,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuInteractive = new BetterMenuItem
             {
                 Text = "Interactive uninstall",
-                IconName = "interactive"
+                IconName = IconType.Interactive
             };
             MenuInteractive.Click += MenuInteractive_Invoked;
             menu.Items.Add(MenuInteractive);
@@ -92,7 +93,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuRemoveData = new BetterMenuItem
             {
                 Text = "Uninstall and remove data",
-                IconName = "menu_close"
+                IconName = IconType.Close_Round
             };
             MenuRemoveData.Click += MenuRemoveData_Invoked;
             menu.Items.Add(MenuRemoveData);
@@ -102,7 +103,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuReinstall = new()
             {
                 Text = "Reinstall package",
-                IconName = "newversion"
+                IconName = IconType.Download
             };
             menuReinstall.Click += MenuReinstall_Invoked;
             menu.Items.Add(menuReinstall);
@@ -110,7 +111,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuUninstallThenReinstall = new()
             {
                 Text = "Uninstall package, then reinstall it",
-                IconName = "undelete"
+                IconName = IconType.Undelete
             };
             menuUninstallThenReinstall.Click += MenuUninstallThenReinstall_Invoked;
             menu.Items.Add(menuUninstallThenReinstall);
@@ -120,7 +121,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuIgnorePackage = new()
             {
                 Text = "Ignore updates for this package",
-                IconName = "pin"
+                IconName = IconType.Pin
             };
             menuIgnorePackage.Click += MenuIgnorePackage_Invoked;
             menu.Items.Add(menuIgnorePackage);
@@ -130,7 +131,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuShare = new()
             {
                 Text = "Share this package",
-                IconName = "share"
+                IconName = IconType.Share
             };
             menuShare.Click += MenuShare_Invoked;
             menu.Items.Add(menuShare);
@@ -138,7 +139,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuDetails = new()
             {
                 Text = "Package details",
-                IconName = "info",
+                IconName = IconType.Info_Round,
                 KeyboardAcceleratorTextOverride = "Enter"
             };
             menuDetails.Click += MenuDetails_Invoked;
@@ -198,26 +199,31 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 toolButton.IsCompact = Labels[toolButton][0] == ' ';
                 if (toolButton.IsCompact)
+                {
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
+                }
+
                 toolButton.Label = Labels[toolButton].Trim();
             }
 
-            Dictionary<AppBarButton, string> Icons = new()
+            Dictionary<AppBarButton, IconType> Icons = new()
             {
-                { UninstallSelected,      "trash" },
-                { UninstallAsAdmin,       "runasadmin" },
-                { UninstallInteractive,   "interactive" },
-                { InstallationSettings,   "options" },
-                { PackageDetails,         "info" },
-                { SharePackage,           "share" },
-                { IgnoreSelected,         "pin" },
-                { ManageIgnored,          "clipboard_list" },
-                { ExportSelection,        "add_to" },
-                { HelpButton,             "help" }
+                { UninstallSelected,      IconType.Delete },
+                { UninstallAsAdmin,       IconType.UAC },
+                { UninstallInteractive,   IconType.Interactive },
+                { InstallationSettings,   IconType.Options },
+                { PackageDetails,         IconType.Info_Round },
+                { SharePackage,           IconType.Share },
+                { IgnoreSelected,         IconType.Pin },
+                { ManageIgnored,          IconType.ClipboardList },
+                { ExportSelection,        IconType.AddTo },
+                { HelpButton,             IconType.Help }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)
+            {
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
+            }
 
             PackageDetails.Click += (s, e) => ShowDetailsForPackage(SelectedItem);
 
@@ -237,7 +243,7 @@ namespace UniGetUI.Interface.SoftwarePages
             UninstallSelected.Click += (s, e) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
             UninstallAsAdmin.Click += (s, e) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), elevated: true);
             UninstallInteractive.Click += (s, e) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), interactive: true);
-            SharePackage.Click += (s, e) =>  MainApp.Instance.MainWindow.SharePackage(SelectedItem);
+            SharePackage.Click += (s, e) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
         protected override void WhenPackageCountUpdated()
@@ -251,14 +257,16 @@ namespace UniGetUI.Interface.SoftwarePages
             if (!HasDoneBackup)
             {
                 if (Settings.Get("EnablePackageBackup"))
+                {
                     _ = BackupPackages();
+                }
             }
         }
 #pragma warning restore
 
         protected override void WhenShowingContextMenu(IPackage package)
         {
-            if(MenuAsAdmin == null || MenuInteractive == null || MenuRemoveData == null)
+            if (MenuAsAdmin == null || MenuInteractive == null || MenuRemoveData == null)
             {
                 Logger.Error("Menu items are null on InstalledPackagesTab");
                 return;
@@ -302,21 +310,35 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 // TODO: FIXME
                 Logger.Debug("Starting package backup");
-                string BackupContents = await NewPackageBundlesPage.CreateBundle(Loader.Packages, BundleFormatType.JSON);
+                List<BundledPackage> packagestoExport = [];
+                foreach (Package package in Loader.Packages)
+                {
+                    packagestoExport.Add(await BundledPackage.FromPackageAsync(package));
+                }
+
+                string BackupContents = await PackageBundlePage.GetBundleStringFromPackages(packagestoExport.ToArray(), BundleFormatType.JSON);
 
                 string dirName = Settings.GetValue("ChangeBackupOutputDirectory");
                 if (dirName == "")
+                {
                     dirName = CoreData.UniGetUI_DefaultBackupDirectory;
+                }
 
                 if (!Directory.Exists(dirName))
+                {
                     Directory.CreateDirectory(dirName);
+                }
 
                 string fileName = Settings.GetValue("ChangeBackupFileName");
                 if (fileName == "")
-                    fileName = CoreTools.Translate("{pcName} installed packages", new Dictionary<string, object?>{ { "pcName", Environment.MachineName } });
+                {
+                    fileName = CoreTools.Translate("{pcName} installed packages", new Dictionary<string, object?> { { "pcName", Environment.MachineName } });
+                }
 
                 if (Settings.Get("EnableBackupTimestamping"))
+                {
                     fileName += " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
+                }
 
                 fileName += ".json";
 
@@ -335,7 +357,10 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuUninstall_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package));
         }
@@ -343,14 +368,21 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
+
             ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, elevated: true));
         }
 
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, interactive: true));
         }
@@ -358,7 +390,10 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuRemoveData_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, remove_data: true));
         }
@@ -366,7 +401,10 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuReinstall_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
         }
@@ -374,7 +412,10 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, IgnoreParallelInstalls: true));
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, IgnoreParallelInstalls: true));
@@ -383,7 +424,10 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null) return;
+            if (package == null)
+            {
+                return;
+            }
 
             _ = package.AddToIgnoredUpdatesAsync();
             PEInterface.UpgradablePackagesLoader.Remove(package);
@@ -391,7 +435,11 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)
         {
-            if (PackageList.SelectedItem == null) return;
+            if (PackageList.SelectedItem == null)
+            {
+                return;
+            }
+
             MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
@@ -403,7 +451,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package != null && 
+            if (package != null &&
                 await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(package, OperationType.Uninstall))
             {
                 ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package));

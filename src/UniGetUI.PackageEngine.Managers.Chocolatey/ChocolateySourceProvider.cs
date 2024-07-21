@@ -7,18 +7,18 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 {
-    internal class ChocolateySourceProvider : BaseSourceProvider<PackageManager>
+    internal sealed class ChocolateySourceProvider : BaseSourceProvider<PackageManager>
     {
         public ChocolateySourceProvider(Chocolatey manager) : base(manager) { }
 
         public override string[] GetAddSourceParameters(IManagerSource source)
         {
-            return new string[] { "source", "add", "--name", source.Name, "--source", source.Url.ToString(), "-y" };
+            return ["source", "add", "--name", source.Name, "--source", source.Url.ToString(), "-y"];
         }
 
         public override string[] GetRemoveSourceParameters(IManagerSource source)
         {
-            return new string[] { "source", "remove", "--name", source.Name, "-y" };
+            return ["source", "remove", "--name", source.Name, "-y"];
         }
 
         public override OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
@@ -33,19 +33,21 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
         protected override async Task<IManagerSource[]> GetSources_UnSafe()
         {
-            List<ManagerSource> sources = new();
+            List<ManagerSource> sources = [];
 
-            Process p = new();
-            p.StartInfo = new()
+            Process p = new()
             {
-                FileName = Manager.Status.ExecutablePath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " source list",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StartInfo = new()
+                {
+                    FileName = Manager.Status.ExecutablePath,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " source list",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
             };
 
             ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
@@ -58,15 +60,21 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 try
                 {
                     if (string.IsNullOrEmpty(line))
+                    {
                         continue;
+                    }
 
                     if (line.Contains(" - ") && line.Contains(" | "))
                     {
                         string[] parts = line.Trim().Split('|')[0].Trim().Split(" - ");
                         if (parts[1].Trim() == "https://community.chocolatey.org/api/v2/")
+                        {
                             sources.Add(new ManagerSource(Manager, "community", new Uri("https://community.chocolatey.org/api/v2/")));
+                        }
                         else
+                        {
                             sources.Add(new ManagerSource(Manager, parts[0].Trim(), new Uri(parts[1].Trim())));
+                        }
                     }
                 }
                 catch (Exception e)
@@ -78,7 +86,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
             logger.Close(p.ExitCode);
-            
+
             return sources.ToArray();
         }
     }

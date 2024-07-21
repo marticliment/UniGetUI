@@ -1,4 +1,4 @@
-﻿using UniGetUI.Core.Tools;
+using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -22,8 +22,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         public override async Task ReloadPackages()
         {
-            if (QUERY_TEXT == "") return;
-            else await base.ReloadPackages();
+            if (QUERY_TEXT == "")
+            {
+                return;
+            }
+
+            await base.ReloadPackages();
         }
 
 #pragma warning disable
@@ -38,18 +42,24 @@ namespace UniGetUI.PackageEngine.PackageLoader
             string text = QUERY_TEXT;
             text = CoreTools.EnsureSafeQueryString(text);
             if (text == string.Empty)
+            {
                 return new Task<IPackage[]>(() => { return []; });
-            else
-                return manager.FindPackages(text);
+            }
+
+            return manager.FindPackages(text);
         }
 
 #pragma warning disable
         protected override async Task WhenAddingPackage(IPackage package)
         {
             if (package.GetUpgradablePackage() != null)
+            {
                 package.SetTag(PackageTag.IsUpgradable);
+            }
             else if (package.GetInstalledPackage() != null)
+            {
                 package.SetTag(PackageTag.AlreadyInstalled);
+            }
         }
 #pragma warning restore
     }

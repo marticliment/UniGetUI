@@ -21,15 +21,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
     public class Package : IPackage
     {
         // Internal properties
-        private bool __is_checked = false;
+        private bool __is_checked;
         public event PropertyChangedEventHandler? PropertyChanged;
         private PackageTag __tag;
 
         private readonly long __hash;
         private readonly long __versioned_hash;
 
-        private PackageDetails? __details = null;
-        public IPackageDetails Details
+        private PackageDetails? __details;
+        public PackageDetails Details
         {
             get => __details ??= new PackageDetails(this);
         }
@@ -59,8 +59,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public string NewVersion { get; }
         public virtual bool IsUpgradable { get; }
         public PackageScope Scope { get; set; }
-        public string SourceAsString { get; }
-        public string AutomationName { get; }
+        public readonly string AutomationName;
 
         /// <summary>
         /// Constuct a package with a given name, id, version, source and manager, and an optional scope.
@@ -82,8 +81,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Scope = scope;
             NewVersion = "";
             Tag = PackageTag.Default;
-            SourceAsString = source.ToString();
-            AutomationName = CoreTools.Translate("Package {name} from {manager}", new Dictionary<string, object?> { { "name", Name }, { "manager", SourceAsString } });
+            AutomationName = CoreTools.Translate("Package {name} from {manager}", new Dictionary<string, object?> { { "name", Name }, { "manager", Source.AsString_DisplayName } });
             __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id);
             __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version);
             IsUpgradable = false;
@@ -125,20 +123,41 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return __versioned_hash == (other as IPackage)?.GetHash();
         }
 
-        public bool IsEquivalentTo(IPackage? other)
+        public override int GetHashCode()
         {
-            return __hash == (other as IPackage)?.GetHash();
+            return (int)__versioned_hash;
+        }
+
+        /// <summary>
+        /// Check wether two package instances represent the same package.
+        /// What is taken into account:
+        ///    - Manager and Source
+        ///    - Package Identifier
+        /// For more specific comparsion use package.Equals(object? other)
+        /// </summary>
+        /// <param name="other">A package</param>
+        /// <returns>Wether the two instances refer to the same instance</returns>
+        public bool IsEquivalentTo(Package? other)
+        {
+            return __hash == other?.__hash;
         }
 
         public string GetIconId()
         {
             string iconId = Id.ToLower();
             if (Manager.Name == "Winget")
+            {
                 iconId = string.Join('.', iconId.Split(".")[1..]);
+            }
             else if (Manager.Name == "Chocolatey")
+            {
                 iconId = iconId.Replace(".install", "").Replace(".portable", "");
+            }
             else if (Manager.Name == "Scoop")
+            {
                 iconId = iconId.Replace(".app", "");
+            }
+
             return iconId;
         }
 
@@ -153,9 +172,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 Uri Icon;
                 if (path == "")
+                {
                     Icon = new Uri("ms-appx:///Assets/Images/package_color.png");
+                }
                 else
+                {
                     Icon = new Uri("file:///" + path);
+                }
 
                 Logger.Debug($"Icon for package {Id} was loaded from {Icon}");
                 return Icon;
@@ -178,13 +201,17 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
-                if (IgnoredUpdatesJson == null)
-                    throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
+                {
+                    throw new InvalidOperationException("The IgnoredUpdates database seems to be invalid!");
+                }
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
+                {
                     IgnoredUpdatesJson.Remove(IgnoredId);
+                }
+
                 IgnoredUpdatesJson.Add(IgnoredId, version);
                 await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
                 GetInstalledPackage()?.SetTag(PackageTag.Pinned);
@@ -200,12 +227,12 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             try
             {
-
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
-                if (IgnoredUpdatesJson == null)
-                    throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
+                {
+                    throw new InvalidOperationException("The IgnoredUpdates database seems to be invalid!");
+                }
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
                 {
@@ -222,20 +249,31 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
         }
 
-        public virtual async Task<bool> HasUpdatesIgnoredAsync(string Version = "*")
+        /// <summary>
+        /// Returns true if the package's updates are ignored. If the version parameter
+        /// is passed it will be checked if that version is ignored. Please note that if
+        /// all updates are ignored, calling this method with a specific version will
+        /// still return true, although the passed version is not explicitly ignored.
+        /// </summary>
+        /// <param name="Version"></param>
+        /// <returns></returns>
+        public async Task<bool> HasUpdatesIgnoredAsync(string Version = "*")
         {
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
-                if (IgnoredUpdatesJson == null)
-                    throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
+                {
+                    throw new InvalidOperationException("The IgnoredUpdates database seems to be invalid!");
+                }
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId) && (IgnoredUpdatesJson[IgnoredId]?.ToString() == "*" || IgnoredUpdatesJson[IgnoredId]?.ToString() == Version))
+                {
                     return true;
-                else
-                    return false;
+                }
+
+                return false;
             }
             catch (Exception ex)
             {
@@ -246,20 +284,29 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         }
 
-        public virtual async Task<string> GetIgnoredUpdatesVersionAsync()
+        /// <summary>
+        /// Returns (as a string) the version for which a package has been ignored. When no versions
+        /// are ignored, an empty string will be returned; and when all versions are ignored an asterisk
+        /// will be returned.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> GetIgnoredUpdatesVersionAsync()
         {
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject? IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
 
-                if (IgnoredUpdatesJson == null)
-                    throw new Exception("The IgnoredUpdates database seems to be invalid!");
+                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
+                {
+                    throw new InvalidOperationException("The IgnoredUpdates database seems to be invalid!");
+                }
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
+                {
                     return IgnoredUpdatesJson[IgnoredId]?.ToString() ?? "";
-                else
-                    return "";
+                }
+
+                return "";
             }
             catch (Exception ex)
             {
@@ -296,7 +343,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public virtual bool NewerVersionIsInstalled()
         {
-            if (!IsUpgradable) return false;
+            if (!IsUpgradable)
+            {
+                return false;
+            }
+
             return PackageCacher.NewerVersionIsInstalled(this);
         }
 

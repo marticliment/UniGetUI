@@ -42,20 +42,24 @@ namespace UniGetUI.Interface.Widgets
             InitializeComponent();
 
             if (!Manager.Capabilities.SupportsCustomSources)
-                throw new Exception($"Attempted to create a SourceManager class from Manager {Manager.Name}, which does not support custom sources");
+            {
+                throw new InvalidOperationException($"Attempted to create a SourceManager class from Manager {Manager.Name}, which does not support custom sources");
+            }
 
-            Header.Text = CoreTools.Translate("Manage {0} sources", Manager.Properties.Name);
+            Header.Text = CoreTools.Translate("Manage {0} sources", Manager.DisplayName);
             AddSourceButton.Content = CoreTools.Translate("Add source");
             AddSourceButton.Click += async (sender, e) =>
             {
                 try
                 {
 
-                    ContentDialog d = new();
-                    d.Title = CoreTools.Translate("Add source");
+                    ContentDialog d = new()
+                    {
+                        Title = CoreTools.Translate("Add source")
+                    };
 
                     ComboBox SourcesCombo = new();
-                    Dictionary<string, IManagerSource> NameSourceRef = new();
+                    Dictionary<string, IManagerSource> NameSourceRef = [];
                     foreach (IManagerSource source in Manager.Properties.KnownSources)
                     {
                         SourcesCombo.Items.Add(source.Name);
@@ -63,8 +67,10 @@ namespace UniGetUI.Interface.Widgets
                     }
 
                     d.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-                    StackPanel p = new();
-                    p.Spacing = 8;
+                    StackPanel p = new()
+                    {
+                        Spacing = 8
+                    };
                     p.Children.Add(new TextBlock { Text = CoreTools.Translate("Select the source you want to add:") });
                     p.Children.Add(SourcesCombo);
 
@@ -119,9 +125,14 @@ namespace UniGetUI.Interface.Widgets
                     {
                         AddSourceOperation op;
                         if (CoreTools.Translate("Other") != SourcesCombo.SelectedValue.ToString())
+                        {
                             op = new AddSourceOperation(NameSourceRef[SourcesCombo.SelectedValue.ToString() ?? ""]);
+                        }
                         else
+                        {
                             op = new AddSourceOperation(new ManagerSource(this.Manager, SourceNameTextBox.Text, new Uri(SourceUrlTextBox.Text)));
+                        }
+
                         MainApp.Instance.AddOperationToList(op);
                         op.OperationSucceeded += (sender, e) => { LoadSources(); };
 
@@ -129,11 +140,13 @@ namespace UniGetUI.Interface.Widgets
                 }
                 catch (Exception ex)
                 {
-                    ContentDialog d = new();
-                    d.XamlRoot = XamlRoot;
-                    d.Title = CoreTools.Translate("An error occurred");
-                    d.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-                    d.Content = CoreTools.Translate("An error occurred when adding the source: ") + ex.Message;
+                    ContentDialog d = new()
+                    {
+                        XamlRoot = XamlRoot,
+                        Title = CoreTools.Translate("An error occurred"),
+                        Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                        Content = CoreTools.Translate("An error occurred when adding the source: ") + ex.Message
+                    };
                     _ = MainApp.Instance.MainWindow.ShowDialogAsync(d, HighPriority: true);
                     d.PrimaryButtonText = CoreTools.Translate("Close");
                     Logger.Error("An error occurred when adding the source");
@@ -149,7 +162,9 @@ namespace UniGetUI.Interface.Widgets
         public async void LoadSources()
         {
             if (!Manager.IsReady())
+            {
                 return;
+            }
 
             LoadingBar.Visibility = Visibility.Visible;
             Sources.Clear();
@@ -158,7 +173,9 @@ namespace UniGetUI.Interface.Widgets
                 Sources.Add(new SourceItem(this, source));
             }
             if (Sources.Count > 0)
+            {
                 _datagrid.SelectedIndex = 0;
+            }
 
             LoadingBar.Visibility = Visibility.Collapsed;
         }

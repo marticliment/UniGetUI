@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
@@ -15,17 +15,17 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// </summary>
     public class InstallationOptions: IInstallationOptions
     {
-        private static readonly Dictionary<long, InstallationOptions?> OptionsCache = new();
+        private static readonly Dictionary<long, InstallationOptions?> OptionsCache = [];
 
-        public bool SkipHashCheck { get; set; } = false;
-        public bool InteractiveInstallation { get; set; } = false;
-        public bool RunAsAdministrator { get; set; } = false;
+        public bool SkipHashCheck { get; set; }
+        public bool InteractiveInstallation { get; set; }
+        public bool RunAsAdministrator { get; set; }
         public string Version { get; set; } = "";
-        public Architecture? Architecture { get; set; } = null;
-        public PackageScope? InstallationScope { get; set; } = null;
+        public Architecture? Architecture { get; set; }
+        public PackageScope? InstallationScope { get; set; }
         public List<string> CustomParameters { get; set; } = [];
-        public bool RemoveDataOnUninstall { get; set; } = false;
-        public bool PreRelease { get; set; } = false;
+        public bool RemoveDataOnUninstall { get; set; }
+        public bool PreRelease { get; set; }
         public string CustomInstallLocation { get; set; } = "";
 
         public IPackage Package { get; }
@@ -59,10 +59,25 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 OptionsCache.Add(package.GetHash(), instance);
             }
 
-            if (elevated != null) instance.RunAsAdministrator = (bool)elevated;
-            if (interactive != null) instance.InteractiveInstallation = (bool)interactive;
-            if (no_integrity != null) instance.SkipHashCheck = (bool)no_integrity;
-            if (remove_data != null) instance.RemoveDataOnUninstall = (bool)remove_data;
+            if (elevated != null)
+            {
+                instance.RunAsAdministrator = (bool)elevated;
+            }
+
+            if (interactive != null)
+            {
+                instance.InteractiveInstallation = (bool)interactive;
+            }
+
+            if (no_integrity != null)
+            {
+                instance.SkipHashCheck = (bool)no_integrity;
+            }
+
+            if (remove_data != null)
+            {
+                instance.RemoveDataOnUninstall = (bool)remove_data;
+            }
 
             return instance;
         }
@@ -104,14 +119,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Version = options.Version;
             PreRelease = options.PreRelease;
 
-            if (options.Architecture != "" && CommonTranslations.InvertedArchNames.ContainsKey(options.Architecture))
+            if (options.Architecture != "" && CommonTranslations.InvertedArchNames.TryGetValue(options.Architecture, out var name))
             {
-                Architecture = CommonTranslations.InvertedArchNames[options.Architecture];
+                Architecture = name;
             }
 
-            if (options.InstallationScope != "" && CommonTranslations.InvertedScopeNames_NonLang.ContainsKey(options.InstallationScope))
+            if (options.InstallationScope != "" && CommonTranslations.InvertedScopeNames_NonLang.TryGetValue(options.InstallationScope, out var value))
             {
-                InstallationScope = CommonTranslations.InvertedScopeNames_NonLang[options.InstallationScope];
+                InstallationScope = value;
             }
 
             CustomParameters = options.CustomParameters;
@@ -123,13 +138,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns></returns>
         public SerializableInstallationOptions_v1 AsSerializable()
         {
-            SerializableInstallationOptions_v1 options = new();
-            options.SkipHashCheck = SkipHashCheck;
-            options.InteractiveInstallation = InteractiveInstallation;
-            options.RunAsAdministrator = RunAsAdministrator;
-            options.CustomInstallLocation = CustomInstallLocation;
-            options.PreRelease = PreRelease;
-            options.Version = Version;
+            SerializableInstallationOptions_v1 options = new()
+            {
+                SkipHashCheck = SkipHashCheck,
+                InteractiveInstallation = InteractiveInstallation,
+                RunAsAdministrator = RunAsAdministrator,
+                CustomInstallLocation = CustomInstallLocation,
+                PreRelease = PreRelease,
+                Version = Version
+            };
             if (Architecture != null)
             {
                 options.Architecture = CommonTranslations.ArchNames[Architecture.Value];
@@ -167,7 +184,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 FileInfo optionsFile = GetPackageOptionsFile();
                 if (optionsFile.Directory?.Exists == false)
+                {
                     optionsFile.Directory.Create();
+                }
 
                 string fileContents = JsonSerializer.Serialize(AsSerializable());
                 File.WriteAllText(optionsFile.FullName, fileContents);
@@ -188,15 +207,18 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 if (!optionsFile.Exists)
+                {
                     return;
-
+                }
 
                 using FileStream inputStream = optionsFile.OpenRead();
                 SerializableInstallationOptions_v1? options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(inputStream);
 
                 if (options == null)
-                    throw new Exception("Deserialized options cannot be null!");
-                
+                {
+                    throw new InvalidOperationException("Deserialized options cannot be null!");
+                }
+
                 FromSerializable(options);
                 Logger.Debug($"InstallationOptions loaded successfully from disk for package {Package.Id}");
             }
