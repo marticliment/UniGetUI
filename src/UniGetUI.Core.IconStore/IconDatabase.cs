@@ -5,6 +5,9 @@ using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI.Core.IconEngine
 {
+    /// <summary>
+    /// This class represents the structure of the icon and screenshot database. It is used to deserialize the JSON data.
+    /// </summary>
     public class IconDatabase
     {
         public struct IconCount
@@ -41,11 +44,6 @@ namespace UniGetUI.Core.IconEngine
         /// </summary>
         private Dictionary<string, IconScreenshotDatabase_v2.PackageIconAndScreenshots> IconDatabaseData = [];
         private IconCount __icon_count = new();
-
-        /// <summary>
-        /// Tis class represents the structure of the icon and screenshot database. It is used to deserialize the JSON data.
-        /// </summary>
-
 
         /// <summary>
         /// Download the icon and screenshots database to a local file, and load it into memory
