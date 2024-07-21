@@ -24,9 +24,9 @@ namespace UniGetUI.Interface
     /// </summary>
     public sealed partial class SettingsInterface : Page
     {
-        readonly HyperlinkButton ResetBackupDirectory;
-        readonly HyperlinkButton OpenBackupDirectory;
-        readonly TextBlock BackupDirectoryLabel;
+        private readonly HyperlinkButton ResetBackupDirectory;
+        private readonly HyperlinkButton OpenBackupDirectory;
+        private readonly TextBlock BackupDirectoryLabel;
 
 
         public SettingsInterface()
@@ -38,9 +38,9 @@ namespace UniGetUI.Interface
 
             foreach (string key in lang_dict.Keys)
             {
-                if (LanguageData.TranslationPercentages.ContainsKey(key) && key != "en")
+                if (key != "en" && LanguageData.TranslationPercentages.TryGetValue(key, out var translationPercentage))
                 {
-                    lang_dict[key] = lang_dict[key] + " (" + LanguageData.TranslationPercentages[key] + ")";
+                    lang_dict[key] = lang_dict[key] + " (" + translationPercentage + ")";
                 }
             }
 
@@ -123,7 +123,7 @@ namespace UniGetUI.Interface
             };
             Winget_DisableCOM.StateChanged += (s, e) => PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
             Winget_DisableCOM.IsEnabled = !Settings.Get("ForceLegacyBundledWinGet");
-            
+
             CheckboxCard Winget_UseBundled = new()
             {
                 Text = $"{CoreTools.Translate("Use bundled WinGet instead of system WinGet")} ({CoreTools.Translate("This may help if WinGet packages are not shown")})",
@@ -197,21 +197,21 @@ namespace UniGetUI.Interface
                 LongVersion.Visibility = Visibility.Collapsed;
                 ManagerStatus.Content = LongVersion;
 
-                void SetManagerStatus(PackageManager Manager, bool ShowVersion = false)
+                void SetManagerStatus(PackageManager manager, bool ShowVersion = false)
                 {
                     ShowVersionButton.Visibility = Visibility.Collapsed;
                     LongVersion.Visibility = Visibility.Collapsed;
-                    if (Manager.IsEnabled() && Manager.Status.Found)
+                    if (manager.IsEnabled() && manager.Status.Found)
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Success;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} is enabled and ready to go", new Dictionary<string, object?> { { "pm", Manager.Name } });
-                        if (!Manager.Status.Version.Contains("\n"))
+                        ManagerStatus.Title = CoreTools.Translate("{pm} is enabled and ready to go", new Dictionary<string, object?> { { "pm", manager.Name } });
+                        if (!manager.Status.Version.Contains('\n'))
                         {
-                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?> { { "pm", Manager.Name } }) + " " + Manager.Status.Version;
+                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?> { { "pm", manager.Name } }) + " " + manager.Status.Version;
                         }
                         else if (ShowVersion)
                         {
-                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?> { { "pm", Manager.Name } });
+                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?> { { "pm", manager.Name } });
                             LongVersion.Visibility = Visibility.Visible;
                         }
                         else
@@ -221,17 +221,17 @@ namespace UniGetUI.Interface
                         }
 
                     }
-                    else if (Manager.IsEnabled() && !Manager.Status.Found)
+                    else if (manager.IsEnabled() && !manager.Status.Found)
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Error;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} was not found!", new Dictionary<string, object?> { { "pm", Manager.Name } });
-                        ManagerStatus.Message = CoreTools.Translate("You may need to install {pm} in order to use it with WingetUI.", new Dictionary<string, object?> { { "pm", Manager.Name } });
+                        ManagerStatus.Title = CoreTools.Translate("{pm} was not found!", new Dictionary<string, object?> { { "pm", manager.Name } });
+                        ManagerStatus.Message = CoreTools.Translate("You may need to install {pm} in order to use it with WingetUI.", new Dictionary<string, object?> { { "pm", manager.Name } });
                     }
-                    else if (!Manager.IsEnabled())
+                    else if (!manager.IsEnabled())
                     {
                         ManagerStatus.Severity = InfoBarSeverity.Informational;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} is disabled", new Dictionary<string, object?> { { "pm", Manager.Name } });
-                        ManagerStatus.Message = CoreTools.Translate("Enable it to install packages from {pm}.", new Dictionary<string, object?> { { "pm", Manager.Name } });
+                        ManagerStatus.Title = CoreTools.Translate("{pm} is disabled", new Dictionary<string, object?> { { "pm", manager.Name } });
+                        ManagerStatus.Message = CoreTools.Translate("Enable it to install packages from {pm}.", new Dictionary<string, object?> { { "pm", manager.Name } });
                     }
                 }
 
@@ -258,9 +258,9 @@ namespace UniGetUI.Interface
 
                 void EnableOrDisableEntries()
                 {
-                    if (ExtraSettingsCards.ContainsKey(Manager))
+                    if (ExtraSettingsCards.TryGetValue(Manager, out var settingsCard))
                     {
-                        foreach (SettingsCard card in ExtraSettingsCards[Manager])
+                        foreach (SettingsCard card in settingsCard)
                         {
                             if (ManagerSwitch.IsOn)
                             {
@@ -273,7 +273,7 @@ namespace UniGetUI.Interface
                         }
                     }
                 }
-                
+
                 int index = 0;
                 SettingsCard ManagerPath = new()
                 {
@@ -313,9 +313,9 @@ namespace UniGetUI.Interface
                     ExtraSettingsCards[Manager].Insert(index++, SourceManagerCard);
                 }
 
-                if (ExtraSettingsCards.ContainsKey(Manager))
+                if (ExtraSettingsCards.TryGetValue(Manager, out var extraSettingsCard))
                 {
-                    foreach (SettingsCard card in ExtraSettingsCards[Manager])
+                    foreach (SettingsCard card in extraSettingsCard)
                     {
                         ManagerExpander.Items.Add(card);
                     }
@@ -366,7 +366,7 @@ namespace UniGetUI.Interface
                 ExternalLibraries.Pickers.FileSavePicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
                 string file = picker.Show(["*.json"], CoreTools.Translate("WingetUI Settings") + ".json");
 
-                if (file != String.Empty)
+                if (file != string.Empty)
                 {
                     MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
 
@@ -441,7 +441,7 @@ namespace UniGetUI.Interface
 
             ExternalLibraries.Pickers.FolderPicker openPicker = new(MainApp.Instance.MainWindow.GetWindowHandle());
             string folder = openPicker.Show();
-            if (folder != String.Empty)
+            if (folder != string.Empty)
             {
                 Settings.SetValue("ChangeBackupOutputDirectory", folder);
                 BackupDirectoryLabel.Text = folder;

@@ -54,9 +54,9 @@ namespace UniGetUI.Interface
             External
         }
 
-        protected readonly bool DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = false;
-        protected readonly bool MEGA_QUERY_BOX_ENABLED = false;
-        protected readonly bool SHOW_LAST_CHECKED_TIME = false;
+        protected readonly bool DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START;
+        protected readonly bool MEGA_QUERY_BOX_ENABLED;
+        protected readonly bool SHOW_LAST_CHECKED_TIME;
         public readonly string INSTANT_SEARCH_SETTING_NAME;
         public readonly string SIDEPANEL_WIDTH_SETTING_NAME;
         protected readonly string PAGE_NAME;

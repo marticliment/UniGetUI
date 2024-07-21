@@ -21,13 +21,15 @@ namespace UniGetUI.Interface.Widgets
             get => (string)GetValue(TextProperty);
             set => SetValue(TextProperty, value);
         }
-        readonly DependencyProperty TextProperty;
+
+        private readonly DependencyProperty TextProperty;
         public string Glyph
         {
             get => (string)GetValue(GlyphProperty);
             set => SetValue(GlyphProperty, value);
         }
-        readonly DependencyProperty GlyphProperty;
+
+        private readonly DependencyProperty GlyphProperty;
 
         public event EventHandler<NavButtonEventArgs>? Click;
 

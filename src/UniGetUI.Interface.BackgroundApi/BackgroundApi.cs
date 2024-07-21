@@ -1,4 +1,4 @@
-﻿using Nancy;
+using Nancy;
 using Nancy.Hosting.Self;
 using System.Text;
 using UniGetUI.Core.Data;
@@ -25,7 +25,7 @@ namespace UniGetUI.Interface
         public event EventHandler<string>? OnUpgradeAllForManager;
         public event EventHandler<string>? OnUpgradePackage;
 
-        private bool __running = false;
+        private bool __running;
 
         public BackgroundApiRunner()
         {

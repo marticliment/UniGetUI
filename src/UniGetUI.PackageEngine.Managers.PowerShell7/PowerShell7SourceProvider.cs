@@ -8,7 +8,7 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 {
-    internal class PowerShell7SourceProvider : BaseSourceProvider<PackageManager>
+    internal sealed class PowerShell7SourceProvider : BaseSourceProvider<PackageManager>
     {
         public PowerShell7SourceProvider(PowerShell7 manager) : base(manager) { }
 

@@ -11,7 +11,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
-internal class BundledWinGetHelper : IWinGetManagerHelper
+internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 {
     public BundledWinGetHelper()
     {
@@ -20,7 +20,9 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
     public async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
         if (Settings.Get("ForceLegacyBundledWinGet"))
+        {
             return await BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(Manager);
+        }
 
         List<Package> Packages = [];
 
@@ -58,7 +60,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
                                  [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
                              )
                              process {
-                                 if($IsUpdateAvailable)
+                                 if ($IsUpdateAvailable)
                                  {
                                      Write-Output("#" + $Name + "`t" + $Id + "`t" + $InstalledVersion + "`t" + $AvailableVersions[0] + "`t" + $Source)
                                  }
@@ -111,7 +113,9 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
     public async Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager)
     {
         if (Settings.Get("ForceLegacyBundledWinGet"))
+        {
             return await BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(Manager);
+        }
 
         List<Package> Packages = [];
         Process p = new()
@@ -163,7 +167,6 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
         p.StandardInput.Close();
         logger.AddToStdIn(command);
 
-
         string? line;
         while ((line = await p.StandardOutput.ReadLineAsync()) != null)
         {
@@ -205,11 +208,12 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
         return await BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(Manager);
     }
 
-
     public async Task<Package[]> FindPackages_UnSafe(WinGet Manager, string query)
     {
         if (Settings.Get("ForceLegacyBundledWinGet"))
+        {
             return await BundledWinGetLegacyMethods.FindPackages_UnSafe(Manager, query);
+        }
 
         List<Package> Packages = [];
 
@@ -302,7 +306,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
             details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
                                           + details.Package.Id[0].ToString().ToLower() + "/"
                                           + details.Package.Id.Split('.')[0] + "/"
-                                          + String.Join("/",
+                                          + string.Join("/",
                                               details.Package.Id.Contains('.')
                                                   ? details.Package.Id.Split('.')[1..]
                                                   : details.Package.Id.Split('.'))

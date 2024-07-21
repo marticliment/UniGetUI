@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
@@ -9,9 +9,9 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 {
     public class Npm : PackageManager
     {
-        new public static string[] FALSE_PACKAGE_NAMES = [""];
-        new public static string[] FALSE_PACKAGE_IDS = [""];
-        new public static string[] FALSE_PACKAGE_VERSIONS = [""];
+        public static new string[] FALSE_PACKAGE_NAMES = [""];
+        public static new string[] FALSE_PACKAGE_IDS = [""];
+        public static new string[] FALSE_PACKAGE_VERSIONS = [""];
 
         public Npm() : base()
         {
@@ -297,7 +297,5 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
             return status;
         }
-
-
     }
 }

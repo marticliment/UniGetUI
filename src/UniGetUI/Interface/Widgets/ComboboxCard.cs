@@ -39,7 +39,7 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(SettingProperty, value);
         }
 
-        readonly DependencyProperty SettingProperty = DependencyProperty.Register(
+        private readonly DependencyProperty SettingProperty = DependencyProperty.Register(
         nameof(SettingName),
         typeof(string),
         typeof(CheckboxCard),
@@ -51,7 +51,7 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(TextProperty, value);
         }
 
-        readonly DependencyProperty TextProperty;
+        private readonly DependencyProperty TextProperty;
 
         public event EventHandler<ComboCardEventArgs>? ValueChanged;
 

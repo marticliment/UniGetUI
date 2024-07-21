@@ -1,11 +1,11 @@
-﻿using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
 {
     public class ManagerSource
     {
         public virtual string IconId { get { return Manager.Properties.IconId; } }
-        public readonly bool IsVirtualManager = false;
+        public readonly bool IsVirtualManager;
         public struct Capabilities
         {
             public bool KnowsUpdateDate { get; set; } = false;
@@ -35,19 +35,23 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
             }
 
             UpdateDate = updateDate;
-            
-            AsString = Manager.Capabilities.SupportsCustomSources? $"{Manager.Name}: {Name}" : Name;
+
+            AsString = Manager.Capabilities.SupportsCustomSources ? $"{Manager.Name}: {Name}" : Name;
             if (Manager.Capabilities.SupportsCustomScopes && Manager.Properties.DisplayName is not null)
+            {
                 AsString_DisplayName = $"{Manager.DisplayName}: {Name}";
+            }
             else
+            {
                 AsString_DisplayName = AsString;
+            }
         }
 
         public override string ToString()
         {
             throw new NotImplementedException("Use the `AsString` attribute instead");
         }
-        
+
         /// <summary>
         /// Replaces the current URL with the new one. Must be used only when a placeholder URL is used.
         /// </summary>

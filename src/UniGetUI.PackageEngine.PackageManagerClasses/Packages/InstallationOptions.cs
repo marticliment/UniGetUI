@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
@@ -16,15 +16,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
     {
         private static readonly Dictionary<long, InstallationOptions?> OptionsCache = [];
 
-        public bool SkipHashCheck { get; set; } = false;
-        public bool InteractiveInstallation { get; set; } = false;
-        public bool RunAsAdministrator { get; set; } = false;
+        public bool SkipHashCheck { get; set; }
+        public bool InteractiveInstallation { get; set; }
+        public bool RunAsAdministrator { get; set; }
         public string Version { get; set; } = "";
-        public Architecture? Architecture { get; set; } = null;
-        public PackageScope? InstallationScope { get; set; } = null;
+        public Architecture? Architecture { get; set; }
+        public PackageScope? InstallationScope { get; set; }
         public List<string> CustomParameters { get; set; } = [];
-        public bool RemoveDataOnUninstall { get; set; } = false;
-        public bool PreRelease { get; set; } = false;
+        public bool RemoveDataOnUninstall { get; set; }
+        public bool PreRelease { get; set; }
         public string CustomInstallLocation { get; set; } = "";
 
         public Package Package { get; }
@@ -118,14 +118,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Version = options.Version;
             PreRelease = options.PreRelease;
 
-            if (options.Architecture != "" && CommonTranslations.InvertedArchNames.ContainsKey(options.Architecture))
+            if (options.Architecture != "" && CommonTranslations.InvertedArchNames.TryGetValue(options.Architecture, out var name))
             {
-                Architecture = CommonTranslations.InvertedArchNames[options.Architecture];
+                Architecture = name;
             }
 
-            if (options.InstallationScope != "" && CommonTranslations.InvertedScopeNames_NonLang.ContainsKey(options.InstallationScope))
+            if (options.InstallationScope != "" && CommonTranslations.InvertedScopeNames_NonLang.TryGetValue(options.InstallationScope, out var value))
             {
-                InstallationScope = CommonTranslations.InvertedScopeNames_NonLang[options.InstallationScope];
+                InstallationScope = value;
             }
 
             CustomParameters = options.CustomParameters;
@@ -215,7 +215,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 if (options == null)
                 {
-                    throw new Exception("Deserialized options cannot be null!");
+                    throw new InvalidOperationException("Deserialized options cannot be null!");
                 }
 
                 FromSerializable(options);

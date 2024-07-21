@@ -33,10 +33,10 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(TextWrappingProperty, value);
         }
 
-        readonly DependencyProperty TextProperty;
-        readonly DependencyProperty PrefixProperty;
-        readonly DependencyProperty SuffixProperty;
-        readonly DependencyProperty TextWrappingProperty;
+        private readonly DependencyProperty TextProperty;
+        private readonly DependencyProperty PrefixProperty;
+        private readonly DependencyProperty SuffixProperty;
+        private readonly DependencyProperty TextWrappingProperty;
 
         public TranslatedTextBlock()
         {

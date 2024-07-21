@@ -1,18 +1,18 @@
-﻿namespace UniGetUI.Core.Classes.Tests
+#pragma warning disable CA1852
+namespace UniGetUI.Core.Classes.Tests
 {
     public class SingletonBaseTest
     {
 
         private class InheritedClass1 : SingletonBase<InheritedClass1>
         {
-            public int Attribute1 { get; set; } = 0;
+            public int Attribute1 { get; set; }
         }
 
         private class InheritedClass2 : SingletonBase<InheritedClass2>
         {
-            public int Attribute1 { get; set; } = 0;
+            public int Attribute1 { get; set; }
         }
-
 
         [Fact]
         public void TestSingletonClass()

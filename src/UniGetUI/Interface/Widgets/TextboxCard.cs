@@ -46,13 +46,13 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(HelpUrlProperty, value);
         }
 
-        readonly DependencyProperty PlaceholderProperty;
+        private readonly DependencyProperty PlaceholderProperty;
 
-        readonly DependencyProperty SettingProperty;
+        private readonly DependencyProperty SettingProperty;
 
-        readonly DependencyProperty TextProperty;
+        private readonly DependencyProperty TextProperty;
 
-        readonly DependencyProperty HelpUrlProperty;
+        private readonly DependencyProperty HelpUrlProperty;
 
         public event EventHandler<TextboxEventArgs>? ValueChanged;
 

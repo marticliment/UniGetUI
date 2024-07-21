@@ -12,7 +12,7 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class HelpDialog : Page
     {
-        bool Initialized = false;
+        private bool Initialized;
         public HelpDialog()
         {
             InitializeComponent();
@@ -24,7 +24,7 @@ namespace UniGetUI.Interface.Dialogs
                 if (e.Uri.ToString().Contains("marticliment.com") && !e.Uri.ToString().Contains("isWingetUIIframe"))
                 {
                     e.Cancel = true;
-                    if (e.Uri.ToString().Contains("?"))
+                    if (e.Uri.ToString().Contains('?'))
                     {
                         WebView.Source = new Uri(e.Uri.ToString() + "&isWingetUIIframe");
                     }

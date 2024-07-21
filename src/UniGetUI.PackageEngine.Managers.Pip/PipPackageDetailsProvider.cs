@@ -9,7 +9,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.PipManager
 {
-    internal class PipPackageDetailsProvider : BasePackageDetailsProvider<PackageManager>
+    internal sealed class PipPackageDetailsProvider : BasePackageDetailsProvider<PackageManager>
     {
         public PipPackageDetailsProvider(Pip manager) : base(manager) { }
 

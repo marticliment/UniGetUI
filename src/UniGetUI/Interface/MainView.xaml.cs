@@ -104,9 +104,9 @@ namespace UniGetUI.Interface
                     {
                         if (!IS_SHIFT_PRESSED)
                         {
-                            if (NextPageReference.ContainsKey(CurrentPage))
+                            if (NextPageReference.TryGetValue(CurrentPage, out var nextPage))
                             {
-                                NextPageReference[CurrentPage].ForceClick();
+                                nextPage.ForceClick();
                             }
                             else
                             {
@@ -115,9 +115,9 @@ namespace UniGetUI.Interface
                         }
                         else
                         {
-                            if (PreviousTabReference.ContainsKey(CurrentPage))
+                            if (PreviousTabReference.TryGetValue(CurrentPage, out var prevTab))
                             {
-                                PreviousTabReference[CurrentPage].ForceClick();
+                                prevTab.ForceClick();
                             }
                             else
                             {
@@ -448,7 +448,7 @@ namespace UniGetUI.Interface
 
         private void NavigateToPage(Page TargetPage)
         {
-            if (!PageButtonReference.ContainsKey(TargetPage))
+            if (!PageButtonReference.TryGetValue(TargetPage, out var pageButton))
             {
                 PageButtonReference.Add(TargetPage, MoreNavButton);
                 Grid.SetColumn(TargetPage, 0);
@@ -458,7 +458,7 @@ namespace UniGetUI.Interface
             foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
             {
 
-                button.ToggleButton.IsChecked = button == PageButtonReference[TargetPage];
+                button.ToggleButton.IsChecked = button == pageButton;
             }
 
             foreach (Page page in PageButtonReference.Keys)
@@ -551,7 +551,7 @@ namespace UniGetUI.Interface
 
         public async Task<bool> ConfirmUninstallation(IEnumerable<Package> packages)
         {
-            if (packages.Count() == 0)
+            if (!packages.Any())
             {
                 return false;
             }

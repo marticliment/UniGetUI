@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -9,7 +9,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.NpmManager
 {
-    internal class NpmPackageDetailsProvider : BasePackageDetailsProvider<PackageManager>
+    internal sealed class NpmPackageDetailsProvider : BasePackageDetailsProvider<PackageManager>
     {
         public NpmPackageDetailsProvider(Npm manager) : base(manager) { }
 
@@ -137,7 +137,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 logger.AddToStdOut(line);
-                if (line.Contains("\""))
+                if (line.Contains('"'))
                 {
                     versions.Add(line.Trim().TrimStart('"').TrimEnd(',').TrimEnd('"'));
                 }

@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -38,9 +38,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public event EventHandler<EventArgs>? StartedLoading;
 
-        readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS = false;
-        protected string LOADER_IDENTIFIER;
-        private int LoadOperationIdentifier = 0;
+        protected readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS;
+        protected readonly string LOADER_IDENTIFIER;
+        private int LoadOperationIdentifier;
         protected IEnumerable<PackageManager> Managers { get; private set; }
 
         public AbstractPackageLoader(IEnumerable<PackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false)
@@ -51,12 +51,13 @@ namespace UniGetUI.PackageEngine.PackageLoader
             IsLoaded = false;
             IsLoading = false;
             LOADER_IDENTIFIER = identifier;
+            ALLOW_MULTIPLE_PACKAGE_VERSIONS = AllowMultiplePackageVersions;
         }
 
         /// <summary>
         /// Stops the current loading process
         /// </summary>
-        public void StopLoading(bool emitFinishSignal = true) 
+        public void StopLoading(bool emitFinishSignal = true)
         {
             LoadOperationIdentifier = -1;
             IsLoaded = false;

@@ -8,7 +8,7 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.ScoopManager
 {
-    internal class ScoopSourceProvider : BaseSourceProvider<PackageManager>
+    internal sealed class ScoopSourceProvider : BaseSourceProvider<PackageManager>
     {
         public ScoopSourceProvider(Scoop manager) : base(manager) { }
 

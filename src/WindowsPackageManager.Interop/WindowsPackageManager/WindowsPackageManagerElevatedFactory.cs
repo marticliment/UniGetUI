@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Runtime.InteropServices;
@@ -50,8 +50,8 @@ public class WindowsPackageManagerElevatedFactory : WindowsPackageManagerFactory
         }
     }
 
-    [DllImport("winrtact.dll", ExactSpelling = true)]
-    private static unsafe extern int WinGetServerManualActivation_CreateInstance(
+    [DllImport("winrtact.dll")]
+    private static extern unsafe int WinGetServerManualActivation_CreateInstance(
         in Guid clsid,
         in Guid iid,
         uint flags,

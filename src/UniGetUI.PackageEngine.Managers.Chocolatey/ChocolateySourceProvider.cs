@@ -6,7 +6,7 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 {
-    internal class ChocolateySourceProvider : BaseSourceProvider<PackageManager>
+    internal sealed class ChocolateySourceProvider : BaseSourceProvider<PackageManager>
     {
         public ChocolateySourceProvider(Chocolatey manager) : base(manager) { }
 

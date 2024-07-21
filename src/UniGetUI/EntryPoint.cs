@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.WinUI.Notifications;
+using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
 using UniGetUI.Core.Data;
@@ -10,7 +10,7 @@ namespace UniGetUI
     public static class EntryPoint
     {
         [STAThread]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             // Having an async main method breaks WebView2
             try
@@ -43,16 +43,16 @@ namespace UniGetUI
         /// </summary>
         /// <param name="args">Call arguments</param>
         /// <returns></returns>
-        static async Task AsyncMain(string[] args)
+        private static async Task AsyncMain(string[] args)
         {
             try
             {
                 string textart = $"""
                      __  __      _ ______     __  __  ______
                     / / / /___  (_) ____/__  / /_/ / / /  _/
-                   / / / / __ \/ / / __/ _ \/ __/ / / // /  
-                  / /_/ / / / / / /_/ /  __/ /_/ /_/ // /   
-                  \____/_/ /_/_/\____/\___/\__/\____/___/   
+                   / / / / __ \/ / / __/ _ \/ __/ / / // /
+                  / /_/ / / / / / /_/ /  __/ /_/ /_/ // /
+                  \____/_/ /_/_/\____/\___/\__/\____/___/
                       Welcome to UniGetUI Version {CoreData.VersionName}
                   """;
 
@@ -140,7 +140,7 @@ namespace UniGetUI
         }
 
         // This method shall be ran as administrator
-        static private void WingetUIToUniGetUIMigrator()
+        private static void WingetUIToUniGetUIMigrator()
         {
             try
             {
@@ -148,20 +148,20 @@ namespace UniGetUI
                 [
                     // User desktop icon
                     Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
-                    
+
                     // User start menu icon
                     Environment.GetFolderPath(Environment.SpecialFolder.StartMenu),
-                    
+
                     // Common desktop icon
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory),
-                    
+
                     // User start menu icon
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu),
                 ];
 
                 foreach (string path in BasePaths)
                 {
-                    foreach (string old_wingetui_icon in new []{ "WingetUI.lnk", "WingetUI .lnk", "UniGetUI (formerly WingetUI) .lnk" })
+                    foreach (string old_wingetui_icon in new[] { "WingetUI.lnk", "WingetUI .lnk", "UniGetUI (formerly WingetUI) .lnk" })
                     {
                         try
                         {

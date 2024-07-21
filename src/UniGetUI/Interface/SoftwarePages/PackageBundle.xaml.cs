@@ -1,11 +1,11 @@
-using ExternalLibraries.Pickers;
-using Microsoft.UI.Input;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Xml.Serialization;
+using ExternalLibraries.Pickers;
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -41,10 +41,10 @@ namespace UniGetUI.Interface
         protected ProgressBar LoadingProgressBar;
         protected MenuFlyout? ContextMenu;
 
-        private readonly bool Initialized = false;
-        private bool AllSelected = false;
-        readonly TreeViewNode LocalPackagesNode;
-        int lastSavedWidth = 0;
+        private readonly bool Initialized;
+        private bool AllSelected;
+        private readonly TreeViewNode LocalPackagesNode;
+        private int lastSavedWidth;
 
         public string InstantSearchSettingString = "DisableInstantSearchInstalledTab";
         public PackageBundlePage()
@@ -175,12 +175,10 @@ namespace UniGetUI.Interface
             }
             BodyGrid.ColumnDefinitions.ElementAt(0).Width = new GridLength(width);
 
-
             GenerateToolBar();
             LoadInterface();
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
         }
-
 
         public void SearchTriggered()
         {
@@ -202,7 +200,6 @@ namespace UniGetUI.Interface
                 SelectAllItems();
             }
         }
-
 
         protected void AddPackageToSourcesList(Package package)
         {
@@ -272,11 +269,11 @@ namespace UniGetUI.Interface
         }
 
         /*
-         * 
-         * 
+         *
+         *
          *  DO NOT MODIFY THE UPPER PART OF THIS FILE
-         * 
-         * 
+         *
+         *
          */
 
         public void ClearList()
@@ -676,7 +673,6 @@ namespace UniGetUI.Interface
             _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package.Package, OperationType.None);
         }
 
-
         private void SelectAllSourcesButton_Click(object sender, RoutedEventArgs e)
         {
             SourcesTreeView.SelectAll();
@@ -752,7 +748,6 @@ namespace UniGetUI.Interface
             FilterPackages(QueryBlock.Text.Trim());
         }
 
-
         public async void OpenFile()
         {
             try
@@ -760,7 +755,7 @@ namespace UniGetUI.Interface
                 // Select file
                 FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
                 string file = picker.Show(["*.json", "*.yaml", "*.xml"]);
-                if (file == String.Empty)
+                if (file == string.Empty)
                 {
                     return;
                 }
@@ -824,7 +819,7 @@ namespace UniGetUI.Interface
 
             if (DeserializedData == null)
             {
-                throw new Exception($"Deserialized data was null for content {content} and format {format}");
+                throw new InvalidOperationException($"Deserialized data was null for content {content} and format {format}");
             }
 
             // Load individual packages
@@ -846,33 +841,32 @@ namespace UniGetUI.Interface
             foreach (SerializableValidPackage_v1 DeserializedPackage in DeserializedData.packages)
             {
                 // Check if the manager exists
-                if (!ManagerSourceReference.ContainsKey(DeserializedPackage.ManagerName))
+                if (!ManagerSourceReference.TryGetValue(DeserializedPackage.ManagerName, out var packageManager))
                 {
                     AddPackage(new InvalidBundledPackage(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, DeserializedPackage.Source, DeserializedPackage.ManagerName));
                     continue;
                 }
-                PackageManager PackageManager = ManagerSourceReference[DeserializedPackage.ManagerName];
 
                 // Handle a disabled manager
-                if (!PackageManager.IsEnabled())
+                if (!packageManager.IsEnabled())
                 {
                     AddPackage(new InvalidBundledPackage(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, DeserializedPackage.Source, DeserializedPackage.ManagerName));
                     continue;
                 }
                 // Handle a nonworking manager
-                if (!PackageManager.Status.Found)
+                if (!packageManager.Status.Found)
                 {
                     AddPackage(new InvalidBundledPackage(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, DeserializedPackage.Source, DeserializedPackage.ManagerName));
                     continue;
                 }
 
-                ManagerSource? Source = PackageManager.Properties.DefaultSource;
+                ManagerSource? Source = packageManager.Properties.DefaultSource;
 
-                if (PackageManager.Capabilities.SupportsCustomSources)
+                if (packageManager.Capabilities.SupportsCustomSources)
                 {
                     // Check if the source exists
                     string SourceName = DeserializedPackage.Source.Split(':')[^1].Trim();
-                    Source = PackageManager.GetSourceIfExists(SourceName);
+                    Source = packageManager.GetSourceIfExists(SourceName);
 
                     if (Source == null)
                     {
@@ -881,7 +875,7 @@ namespace UniGetUI.Interface
                     }
                 }
 
-                Package package = new(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, Source, PackageManager);
+                Package package = new(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, Source, packageManager);
 
                 InstallationOptions InstallOptions = InstallationOptions.FromSerialized(DeserializedPackage.InstallationOptions, package);
                 SerializableUpdatesOptions_v1 UpdateOptions = DeserializedPackage.Updates;
@@ -891,7 +885,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        public async static Task<string> GetBundleStringFromPackages(BundledPackage[] packages, BundleFormatType formatType = BundleFormatType.JSON)
+        public static async Task<string> GetBundleStringFromPackages(BundledPackage[] packages, BundleFormatType formatType = BundleFormatType.JSON)
         {
             SerializableBundle_v1 exportable = new();
             foreach (BundledPackage package in packages)
@@ -939,10 +933,10 @@ namespace UniGetUI.Interface
         {
             try
             {
-                // Get file 
+                // Get file
                 // Save file
                 string file = new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle()).Show(["*.json", "*.yaml", "*.xml"], CoreTools.Translate("Package bundle") + ".json");
-                if (file != String.Empty)
+                if (file != string.Empty)
                 {
                     // Loading dialog
                     MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Saving packages, please wait..."));
@@ -999,7 +993,5 @@ namespace UniGetUI.Interface
                 control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;
             }
         }
-
-
     }
 }

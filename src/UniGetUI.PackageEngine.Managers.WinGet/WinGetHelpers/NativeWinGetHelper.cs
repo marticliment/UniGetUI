@@ -11,7 +11,7 @@ using WindowsPackageManager.Interop;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
-internal class NativeWinGetHelper : IWinGetManagerHelper
+internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 {
     public WindowsPackageManagerFactory Factory;
     public PackageManager WinGetManager;
@@ -19,7 +19,10 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
     public NativeWinGetHelper()
     {
         if (Settings.Get("ForceUsePowerShellModules"))
-            throw new Exception("User requested to disable the WinGet COM API, crashing...");
+        {
+            throw new InvalidOperationException("User requested to disable the WinGet COM API, crashing...");
+        }
+
         if (CoreTools.IsAdministrator())
         {
             Logger.Info("Running elevated, WinGet class registration is likely to fail");
@@ -28,7 +31,6 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
         Factory = new WindowsPackageManagerStandardFactory();
         WinGetManager = Factory.CreatePackageManager();
     }
-
 
     public async Task<Package[]> FindPackages_UnSafe(WinGet Manager, string query)
     {
@@ -134,7 +136,6 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
         return Packages.ToArray();
     }
 
-
     public async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates);
@@ -154,7 +155,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
         return packages.ToArray();
 
     }
-    
+
     public async Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager)
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages);
@@ -179,22 +180,22 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
 
     private IEnumerable<CatalogPackage> GetLocalWinGetPackages(NativeTaskLogger logger)
     {
-        PackageCatalogReference installedSearchCatalogRef; 
+        PackageCatalogReference installedSearchCatalogRef;
         CreateCompositePackageCatalogOptions createCompositePackageCatalogOptions = Factory.CreateCreateCompositePackageCatalogOptions();
-        foreach(var catalogRef in WinGetManager.GetPackageCatalogs().ToArray())
+        foreach (var catalogRef in WinGetManager.GetPackageCatalogs().ToArray())
         {
             logger.Log($"Adding catalog {catalogRef.Info.Name} to composite catalog");
             createCompositePackageCatalogOptions.Catalogs.Add(catalogRef);
         }
         createCompositePackageCatalogOptions.CompositeSearchBehavior = CompositeSearchBehavior.LocalCatalogs;
         installedSearchCatalogRef = WinGetManager.CreateCompositePackageCatalog(createCompositePackageCatalogOptions);
-        
+
         var ConnectResult = installedSearchCatalogRef.Connect();
         if (ConnectResult.Status != ConnectResultStatus.Ok)
         {
             logger.Error("Failed to connect to installedSearchCatalogRef. Aborting.");
             logger.Close(1);
-            throw new Exception("WinGet: Failed to connect to composite catalog.");
+            throw new InvalidOperationException("WinGet: Failed to connect to composite catalog.");
         }
 
         FindPackagesOptions findPackagesOptions = Factory.CreateFindPackagesOptions();
@@ -206,11 +207,14 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
 
         var TaskResult = ConnectResult.PackageCatalog.FindPackages(findPackagesOptions);
         List<CatalogPackage> foundPackages = [];
-        foreach(var match in TaskResult.Matches.ToArray())
+        foreach (var match in TaskResult.Matches.ToArray())
+        {
             foundPackages.Add(match.CatalogPackage);
+        }
+
         return foundPackages;
     }
-    
+
     public async Task<ManagerSource[]> GetSources_UnSafe(WinGet Manager)
     {
         List<ManagerSource> sources = [];
@@ -222,10 +226,10 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
             {
                 logger.Log($"Found source {catalog.Info.Name} with argument {catalog.Info.Argument}");
                 sources.Add(new ManagerSource(
-                    Manager, 
-                    catalog.Info.Name, 
+                    Manager,
+                    catalog.Info.Name,
                     new Uri(catalog.Info.Argument),
-                    updateDate: (catalog.Info.LastUpdateTime.Second != 0? catalog.Info.LastUpdateTime: DateTime.Now).ToString()));
+                    updateDate: (catalog.Info.LastUpdateTime.Second != 0 ? catalog.Info.LastUpdateTime : DateTime.Now).ToString()));
             }
             catch (Exception e)
             {
@@ -301,7 +305,7 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
             details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
                                           + details.Package.Id[0].ToString().ToLower() + "/"
                                           + details.Package.Id.Split('.')[0] + "/"
-                                          + String.Join("/",
+                                          + string.Join("/",
                                               details.Package.Id.Contains('.')
                                                   ? details.Package.Id.Split('.')[1..]
                                                   : details.Package.Id.Split('.'))
@@ -403,7 +407,6 @@ internal class NativeWinGetHelper : IWinGetManagerHelper
         {
             details.Tags = NativeDetails.Tags.ToArray();
         }
-
 
         // There is no way yet to retrieve installer URLs right now so this part will be console-parsed.
         // TODO: Replace this code with native code when available on the COM api

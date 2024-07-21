@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 
@@ -6,7 +6,7 @@ namespace UniGetUI.Interface.Widgets
 {
     public class LocalIcon : ImageIcon
     {
-        private bool __registered_theme_event = false;
+        private bool __registered_theme_event;
         public DependencyProperty IconNameProperty;
 
         private static readonly Dictionary<string, BitmapImage> bitmap_cache = [];

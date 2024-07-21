@@ -16,7 +16,7 @@ namespace UniGetUI.Interface.Pages.LogPage
         {
             bool IS_DARK = ActualTheme == Microsoft.UI.Xaml.ElementTheme.Dark;
 
-            bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains("(") ?? false;
+            bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains('(') ?? false;
             foreach (PackageEngine.ManagerClasses.Manager.PackageManager manager in PEInterface.Managers)
             {
                 if (manager.DisplayName.Contains(LogLevelCombo.SelectedValue?.ToString()?.Split(' ')[0] ?? "uncontained_word"))

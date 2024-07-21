@@ -5,7 +5,7 @@ using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Pages.LogPage
 {
-    internal class AppLogPage : BaseLogPage
+    internal sealed class AppLogPage : BaseLogPage
     {
         public AppLogPage() : base(true)
         {

@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
@@ -15,11 +15,11 @@ namespace UniGetUI.Interface.SoftwarePages
 {
     public class InstalledPackagesPage : AbstractPackagesPage
     {
-        bool HasDoneBackup = false;
+        private bool HasDoneBackup;
 
-        BetterMenuItem? MenuAsAdmin;
-        BetterMenuItem? MenuInteractive;
-        BetterMenuItem? MenuRemoveData;
+        private BetterMenuItem? MenuAsAdmin;
+        private BetterMenuItem? MenuInteractive;
+        private BetterMenuItem? MenuRemoveData;
 
         public InstalledPackagesPage()
         : base(new PackagesPageData()
@@ -254,7 +254,9 @@ namespace UniGetUI.Interface.SoftwarePages
             if (!HasDoneBackup)
             {
                 if (Settings.Get("EnablePackageBackup"))
+                {
                     _ = BackupPackages();
+                }
             }
         }
 #pragma warning restore
