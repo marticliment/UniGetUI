@@ -1,0 +1,221 @@
+@font-face {
+  font-family: 'UniGetUI-Symbols';
+  src:
+    url('fonts/UniGetUI-Symbols.ttf?r7zhsp') format('truetype'),
+    url('fonts/UniGetUI-Symbols.woff?r7zhsp') format('woff'),
+    url('fonts/UniGetUI-Symbols.svg?r7zhsp#UniGetUI-Symbols') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'UniGetUI-Symbols' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-add_to:before {
+  content: "\e900";
+}
+.icon-android:before {
+  content: "\e901";
+}
+.icon-backward:before {
+  content: "\e902";
+}
+.icon-bucket:before {
+  content: "\e903";
+}
+.icon-buggy:before {
+  content: "\e904";
+}
+.icon-checksum:before {
+  content: "\e905";
+}
+.icon-choco:before {
+  content: "\e906";
+}
+.icon-clipboard_list:before {
+  content: "\e907";
+}
+.icon-close_round:before {
+  content: "\e908";
+}
+.icon-collapse:before {
+  content: "\e909";
+}
+.icon-console:before {
+  content: "\e90a";
+}
+.icon-copy:before {
+  content: "\e90b";
+}
+.icon-cross:before {
+  content: "\e90c";
+}
+.icon-delete:before {
+  content: "\e90d";
+}
+.icon-disk:before {
+  content: "\e90e";
+}
+.icon-dotnet:before {
+  content: "\e90f";
+}
+.icon-download:before {
+  content: "\e910";
+}
+.icon-empty:before {
+  content: "\e911";
+}
+.icon-expand:before {
+  content: "\e912";
+}
+.icon-experimental:before {
+  content: "\e913";
+}
+.icon-forward:before {
+  content: "\e914";
+}
+.icon-gog:before {
+  content: "\e915";
+}
+.icon-help:before {
+  content: "\e916";
+}
+.icon-history:before {
+  content: "\e917";
+}
+.icon-home:before {
+  content: "\e918";
+}
+.icon-id:before {
+  content: "\e919";
+}
+.icon-info_round:before {
+  content: "\e91a";
+}
+.icon-installed:before {
+  content: "\e91b";
+}
+.icon-installed_filled:before {
+  content: "\e91c";
+}
+.icon-interactive:before {
+  content: "\e91d";
+}
+.icon-launch:before {
+  content: "\e91e";
+}
+.icon-loading:before {
+  content: "\e91f";
+}
+.icon-loading_filled:before {
+  content: "\e920";
+}
+.icon-local_pc:before {
+  content: "\e921";
+}
+.icon-megaphone:before {
+  content: "\e922";
+}
+.icon-ms_store:before {
+  content: "\e923";
+}
+.icon-node:before {
+  content: "\e924";
+}
+.icon-open_folder:before {
+  content: "\e925";
+}
+.icon-options:before {
+  content: "\e926";
+}
+.icon-package:before {
+  content: "\e927";
+}
+.icon-pin:before {
+  content: "\e928";
+}
+.icon-pin_filled:before {
+  content: "\e929";
+}
+.icon-powershell:before {
+  content: "\e92a";
+}
+.icon-python:before {
+  content: "\e92b";
+}
+.icon-reload:before {
+  content: "\e92c";
+}
+.icon-sandclock:before {
+  content: "\e92d";
+}
+.icon-save_as:before {
+  content: "\e92e";
+}
+.icon-scoop:before {
+  content: "\e92f";
+}
+.icon-search:before {
+  content: "\e930";
+}
+.icon-settings:before {
+  content: "\e931";
+}
+.icon-share:before {
+  content: "\e932";
+}
+.icon-skip:before {
+  content: "\e933";
+}
+.icon-steam:before {
+  content: "\e934";
+}
+.icon-sys_tray:before {
+  content: "\e935";
+}
+.icon-uac:before {
+  content: "\e936";
+}
+.icon-undelete:before {
+  content: "\e937";
+}
+.icon-update:before {
+  content: "\e938";
+}
+.icon-upgradable:before {
+  content: "\e939";
+}
+.icon-upgradable_filled:before {
+  content: "\e93a";
+}
+.icon-uplay:before {
+  content: "\e93b";
+}
+.icon-version:before {
+  content: "\e93c";
+}
+.icon-warning:before {
+  content: "\e93d";
+}
+.icon-warning_filled:before {
+  content: "\e93e";
+}
+.icon-warning_round:before {
+  content: "\e93f";
+}
+.icon-winget:before {
+  content: "\e940";
+}
