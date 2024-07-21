@@ -149,27 +149,27 @@ namespace UniGetUI.Interface
             };
         }
 
-        private void DiscoverNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private void DiscoverNavButton_Click(object sender, EventArgs e)
         {
             NavigateToPage(DiscoverPage);
         }
 
-        private void InstalledNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private void InstalledNavButton_Click(object sender, EventArgs e)
         {
             NavigateToPage(InstalledPage);
         }
 
-        private void UpdatesNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private void UpdatesNavButton_Click(object sender, EventArgs e)
         {
             NavigateToPage(UpdatesPage);
         }
 
-        private void BundlesNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private void BundlesNavButton_Click(object sender, EventArgs e)
         {
             NavigateToPage(BundlesPage);
         }
 
-        private void MoreNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private void MoreNavButton_Click(object sender, EventArgs e)
         {
 
             foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
@@ -191,12 +191,12 @@ namespace UniGetUI.Interface
             };
         }
 
-        private void SettingsNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private void SettingsNavButton_Click(object sender, EventArgs e)
         {
             NavigateToPage(SettingsPage);
         }
 
-        private async void AboutNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private async void AboutNavButton_Click(object sender, EventArgs e)
         {
             ContentDialog? AboutDialog = new();
             AboutUniGetUI AboutPage = new();
