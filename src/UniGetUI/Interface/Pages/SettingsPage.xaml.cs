@@ -469,28 +469,28 @@ namespace UniGetUI.Interface
 
         }
 
-        private void DoCacheAdminRights_StateChanged(object sender, CheckBoxEventArgs e)
+        private void DoCacheAdminRights_StateChanged(object sender, EventArgs e)
         {
             _ = CoreTools.ResetUACForCurrentProcess();
         }
 
-        private void UseSystemGSudo_StateChanged(object sender, CheckBoxEventArgs e)
+        private void UseSystemGSudo_StateChanged(object sender, EventArgs e)
         {
             AdminSettingsExpander.ShowRestartRequiredBanner();
         }
 
-        private void DisableWidgetsApi_StateChanged(object sender, CheckBoxEventArgs e)
+        private void DisableWidgetsApi_StateChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
 
-        private void UseSystemWinget_StateChanged(object sender, CheckBoxEventArgs e)
+        private void UseSystemWinget_StateChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
 
-        private void DisableDownloadingNewTranslations_StateChanged(object sender, CheckBoxEventArgs e)
+        private void DisableDownloadingNewTranslations_StateChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
-        private void ForceArmWinget_StateChanged(object sender, CheckBoxEventArgs e)
+        private void ForceArmWinget_StateChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
         private void TextboxCard_ValueChanged(object sender, EventArgs e)
@@ -532,7 +532,7 @@ namespace UniGetUI.Interface
             p.Start();
         }
 
-        private void DisableSystemTray_StateChanged(object sender, CheckBoxEventArgs e)
+        private void DisableSystemTray_StateChanged(object sender, EventArgs e)
         {
             MainApp.Instance.MainWindow.UpdateSystemTrayStatus();
             if (NotificationSettingsEntry is not null)
@@ -541,7 +541,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        private void EnablePackageBackupCheckBox_StateChanged(object sender, CheckBoxEventArgs e)
+        private void EnablePackageBackupCheckBox_StateChanged(object sender, EventArgs e)
         {
             EnablePackageBackupUI(EnablePackageBackupCheckBox.Checked);
         }
@@ -573,7 +573,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        private void UseUserGSudoToggle_StateChanged(object sender, CheckBoxEventArgs e)
+        private void UseUserGSudoToggle_StateChanged(object sender, EventArgs e)
         {
             ExperimentalSettingsExpander.ShowRestartRequiredBanner();
         }

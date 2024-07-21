@@ -3,64 +3,43 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using Windows.UI.ApplicationSettings;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace UniGetUI.Interface.Widgets
 {
-
-    public class CheckBoxEventArgs : EventArgs
-    {
-        public bool IsChecked { get; set; }
-        public CheckBoxEventArgs(bool _checked)
-        {
-            IsChecked = _checked;
-        }
-    }
     public sealed class CheckboxCard : SettingsCard
     {
         public CheckBox _checkbox;
+        private bool IS_INVERTED;
 
+        private string setting_name = "";
         public string SettingName
         {
-            get => (string)GetValue(SettingProperty);
-            set => SetValue(SettingProperty, value);
+            set {
+                setting_name = value;
+                IS_INVERTED = value.StartsWith("Disable");
+                _checkbox.IsChecked = Settings.Get(setting_name) ^ IS_INVERTED;
+            }
         }
 
         public bool Checked
         {
             get => _checkbox.IsChecked ?? false;
         }
-
-        public event EventHandler<CheckBoxEventArgs>? StateChanged;
-
-        private readonly DependencyProperty SettingProperty;
+        public event EventHandler<EventArgs>? StateChanged;
 
         public string Text
         {
-            get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
+            set => _checkbox.Content = CoreTools.Translate(value);
         }
-
-        private readonly DependencyProperty TextProperty;
 
         public CheckboxCard()
         {
             _checkbox = new CheckBox();
-
-            TextProperty = DependencyProperty.Register(
-                nameof(Text),
-                typeof(string),
-                typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.Content = CoreTools.Translate((string)e.NewValue); })));
-
-            SettingProperty = DependencyProperty.Register(
-                nameof(SettingName),
-                typeof(string),
-                typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.IsChecked = Settings.Get((string)e.NewValue) ^ ((string)e.NewValue).StartsWith("Disable"); })));
-
+            IS_INVERTED = false;
 
             ContentAlignment = ContentAlignment.Left;
             HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -68,8 +47,8 @@ namespace UniGetUI.Interface.Widgets
             DefaultStyleKey = typeof(CheckboxCard);
             Content = _checkbox;
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            _checkbox.Checked += (s, e) => { Settings.Set(SettingName, true ^ SettingName.StartsWith("Disable")); StateChanged?.Invoke(this, new CheckBoxEventArgs(true ^ SettingName.StartsWith("Disable"))); };
-            _checkbox.Unchecked += (s, e) => { Settings.Set(SettingName, false ^ SettingName.StartsWith("Disable")); StateChanged?.Invoke(this, new CheckBoxEventArgs(false ^ SettingName.StartsWith("Disable"))); };
+            _checkbox.Checked += (s, e) => { Settings.Set(setting_name, true ^ IS_INVERTED); StateChanged?.Invoke(this, EventArgs.Empty); };
+            _checkbox.Unchecked += (s, e) => { Settings.Set(setting_name, false ^ IS_INVERTED); StateChanged?.Invoke(this, EventArgs.Empty); };
         }
     }
 }
