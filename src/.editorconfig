@@ -1,6 +1,7 @@
 ﻿### From: https://github.com/dotnet/aspnetcore/blob/main/.editorconfig
 ### Last sync: ca1f641
-### Disabled: CA1305, IDE0073, IDE0161
+### Disabled: CA1305, CA2007, IDE0073, IDE0161, SYSLIB1054, csharp_prefer_braces, csharp_style_var_*
+### Changed indent_size for XML and JSON
 ; EditorConfig to support per-solution formatting.
 ; Use the EditorConfig VS add-in to make this work.
 ; http://editorconfig.org/
