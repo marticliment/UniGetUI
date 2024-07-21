@@ -10,9 +10,6 @@ namespace UniGetUI.Interface.Widgets
 {
     public class ButtonCardEventArgs : EventArgs
     {
-        public ButtonCardEventArgs()
-        {
-        }
     }
 
     public sealed class ButtonCard : SettingsCard

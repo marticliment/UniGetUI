@@ -14,10 +14,6 @@ namespace UniGetUI.Interface.Widgets
 {
     public class ComboCardEventArgs : EventArgs
     {
-
-        public ComboCardEventArgs()
-        {
-        }
     }
 
     public sealed class ComboboxCard : SettingsCard

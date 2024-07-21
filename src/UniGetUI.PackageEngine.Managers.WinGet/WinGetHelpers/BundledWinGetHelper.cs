@@ -13,10 +13,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
 internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 {
-    public BundledWinGetHelper()
-    {
-    }
-
     public async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
         if (Settings.Get("ForceLegacyBundledWinGet"))

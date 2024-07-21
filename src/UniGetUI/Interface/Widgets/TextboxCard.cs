@@ -11,10 +11,6 @@ namespace UniGetUI.Interface.Widgets
 {
     public class TextboxEventArgs : EventArgs
     {
-
-        public TextboxEventArgs()
-        {
-        }
     }
 
     public sealed class TextboxCard : SettingsCard

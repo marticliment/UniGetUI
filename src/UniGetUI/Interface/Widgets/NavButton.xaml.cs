@@ -12,9 +12,6 @@ namespace UniGetUI.Interface.Widgets
 
         public class NavButtonEventArgs : EventArgs
         {
-            public NavButtonEventArgs()
-            {
-            }
         }
         public string Text
         {
