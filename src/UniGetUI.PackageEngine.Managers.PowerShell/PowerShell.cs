@@ -16,7 +16,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         public static new string[] FALSE_PACKAGE_IDS = [""];
         public static new string[] FALSE_PACKAGE_VERSIONS = [""];
 
-        public PowerShell() : base()
+        public PowerShell()
         {
             Capabilities = new ManagerCapabilities()
             {

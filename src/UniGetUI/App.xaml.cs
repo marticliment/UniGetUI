@@ -46,7 +46,7 @@ namespace UniGetUI
         public static MainApp Instance;
         public __tooltip_options TooltipStatus = new();
 
-        public MainApp() : base()
+        public MainApp()
         {
 #pragma warning restore CS8618
             try

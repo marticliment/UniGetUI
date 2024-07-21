@@ -15,7 +15,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         public static new string[] FALSE_PACKAGE_IDS = ["", "WARNING:", "[notice]", "Package", "DEPRECATION:"];
         public static new string[] FALSE_PACKAGE_VERSIONS = ["", "Ignoring", "invalid"];
 
-        public Pip() : base()
+        public Pip()
         {
             Capabilities = new ManagerCapabilities()
             {

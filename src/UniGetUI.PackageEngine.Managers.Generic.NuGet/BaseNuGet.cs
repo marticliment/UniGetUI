@@ -14,7 +14,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         public static new string[] FALSE_PACKAGE_IDS = [""];
         public static new string[] FALSE_PACKAGE_VERSIONS = [""];
 
-        public BaseNuGet() : base()
+        public BaseNuGet()
         {
             PackageDetailsProvider = new BaseNuGetDetailsProvider(this);
         }

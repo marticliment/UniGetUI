@@ -1,4 +1,4 @@
-﻿using UniGetUI.Core.Classes;
+using UniGetUI.Core.Classes;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
@@ -18,7 +18,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         public ObservablePackageCollection()
-            : base()
         {
             SortingSelector = x => x.Package.Name;
         }

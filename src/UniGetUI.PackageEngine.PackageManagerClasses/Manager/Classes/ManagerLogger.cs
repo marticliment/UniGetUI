@@ -95,7 +95,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         private readonly List<string> StdOut = [];
         private readonly List<string> StdErr = [];
 
-        public ProcessTaskLogger(PackageManager manager, LoggableTaskType type, string executable, string arguments) : base()
+        public ProcessTaskLogger(PackageManager manager, LoggableTaskType type, string executable, string arguments)
         {
             Type = type;
             Manager = manager;
@@ -276,7 +276,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         private readonly List<string> Info = [];
         private readonly List<string> Errors = [];
 
-        public NativeTaskLogger(PackageManager manager, LoggableTaskType type) : base()
+        public NativeTaskLogger(PackageManager manager, LoggableTaskType type)
         {
             Type = type;
             Manager = manager;

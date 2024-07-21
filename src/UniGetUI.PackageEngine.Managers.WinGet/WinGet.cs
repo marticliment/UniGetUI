@@ -30,7 +30,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         public readonly string PowerShellInlineArgs;
         public string WinGetBundledPath;
 
-        public WinGet() : base()
+        public WinGet()
         {
             PowerShellPath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
             PowerShellPromptArgs = "-ExecutionPolicy Bypass -NoLogo -NoProfile";

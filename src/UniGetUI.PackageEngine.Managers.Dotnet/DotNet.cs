@@ -17,7 +17,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
         public static new string[] FALSE_PACKAGE_IDS = [""];
         public static new string[] FALSE_PACKAGE_VERSIONS = [""];
 
-        public DotNet() : base()
+        public DotNet()
         {
             Dependencies = [
                 new ManagerDependency(

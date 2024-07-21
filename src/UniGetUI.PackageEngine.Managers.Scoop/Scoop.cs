@@ -21,7 +21,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         private long LastScoopSourceUpdateTime;
 
-        public Scoop() : base()
+        public Scoop()
         {
             Dependencies = [
                 // Scoop-Search is required for search to work

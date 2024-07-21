@@ -13,7 +13,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         public static new string[] FALSE_PACKAGE_IDS = [""];
         public static new string[] FALSE_PACKAGE_VERSIONS = [""];
 
-        public Npm() : base()
+        public Npm()
         {
             Capabilities = new ManagerCapabilities()
             {

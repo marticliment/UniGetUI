@@ -7,7 +7,7 @@ namespace UniGetUI.Interface.Widgets
 {
     public class BetterMenu : MenuFlyout
     {
-        public BetterMenu() : base()
+        public BetterMenu()
         {
             MenuFlyoutPresenterStyle = (Style)Application.Current.Resources["BetterContextMenu"];
         }
@@ -31,7 +31,7 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(TextProperty, value);
         }
 
-        public BetterMenuItem() : base()
+        public BetterMenuItem()
         {
             Style = (Style)Application.Current.Resources["BetterMenuItem"];
 
@@ -60,7 +60,7 @@ namespace UniGetUI.Interface.Widgets
         public event EventHandler<Package>? AboutToShow;
         private readonly DependencyProperty PackageProperty;
 
-        public MenuForPackage() : base()
+        public MenuForPackage()
         {
             MenuFlyoutPresenterStyle = (Style)Application.Current.Resources["BetterContextMenu"];
             PackageProperty = DependencyProperty.Register(
@@ -98,7 +98,7 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(IconNameProperty, value);
         }
 
-        public MenuItemForPackage() : base()
+        public MenuItemForPackage()
         {
             Style = (Style)Application.Current.Resources["BetterMenuItem"];
             PackageProperty = DependencyProperty.Register(
