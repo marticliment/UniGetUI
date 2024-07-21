@@ -337,11 +337,11 @@ namespace UniGetUI.Interface
             return (int)WinRT.Interop.WindowNative.GetWindowHandle(GetWindow());
         }
 
-        private void OpenWelcomeWizard(object sender, Interface.Widgets.ButtonCardEventArgs e)
+        private void OpenWelcomeWizard(object sender, EventArgs e)
         {
         }
 
-        private void ImportSettings(object sender, Interface.Widgets.ButtonCardEventArgs e)
+        private void ImportSettings(object sender, EventArgs e)
         {
             ExternalLibraries.Pickers.FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
             string file = picker.Show(["*.json"]);
@@ -359,7 +359,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        private async void ExportSettings(object sender, Interface.Widgets.ButtonCardEventArgs e)
+        private async void ExportSettings(object sender, EventArgs e)
         {
             try
             {
@@ -397,7 +397,7 @@ namespace UniGetUI.Interface
 
         }
 
-        private void ResetWingetUI(object sender, Interface.Widgets.ButtonCardEventArgs e)
+        private void ResetWingetUI(object sender, EventArgs e)
         {
             try
             {
@@ -429,14 +429,14 @@ namespace UniGetUI.Interface
             ((MainApp)Application.Current).MainWindow.ApplyTheme();
         }
 
-        private void ResetBackupPath_Click(object sender, dynamic e)
+        private void ResetBackupPath_Click(object sender, RoutedEventArgs e)
         {
             BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
             Settings.Set("ChangeBackupOutputDirectory", false);
             ResetBackupDirectory.IsEnabled = false;
         }
 
-        private void ChangeBackupDirectory_Click(object sender, dynamic e)
+        private void ChangeBackupDirectory_Click(object sender, EventArgs e)
         {
 
             ExternalLibraries.Pickers.FolderPicker openPicker = new(MainApp.Instance.MainWindow.GetWindowHandle());
@@ -496,7 +496,7 @@ namespace UniGetUI.Interface
         private void TextboxCard_ValueChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
-        private void ResetIconCache_Click(object sender, ButtonCardEventArgs e)
+        private void ResetIconCache_Click(object sender, EventArgs e)
         {
             try
             {
@@ -510,21 +510,20 @@ namespace UniGetUI.Interface
             ExperimentalSettingsExpander.ShowRestartRequiredBanner();
         }
 
-        private async void DoBackup_Click(object sender, ButtonCardEventArgs e)
+        private async void DoBackup_Click(object sender, EventArgs e)
         {
             MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
             await MainApp.Instance.MainWindow.NavigationPage.InstalledPage.BackupPackages();
             MainApp.Instance.MainWindow.HideLoadingDialog();
         }
 
-        private void EditAutostartSettings_Click(object sender, ButtonCardEventArgs e)
+        private void EditAutostartSettings_Click(object sender, EventArgs e)
         {
             Process p = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName = "cmd.exe",
-                    Arguments = "/c start ms-settings:startupapps",
+                    FileName = "ms-settings:startupapps",
                     UseShellExecute = true,
                     CreateNoWindow = true
                 }
