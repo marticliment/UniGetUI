@@ -13,7 +13,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public Package Package { get; }
 
         /// <summary>
-        /// Wether this PackageDetails instance has valid data or not.
+        /// Whether this PackageDetails instance has valid data or not.
         /// To load valid data, make use of the `Load()` method
         /// </summary>
         public bool IsPopulated { get; private set; }

@@ -73,7 +73,7 @@ namespace UniGetUI.Core.Tools
         /// Finds an executable in path and returns its location
         /// </summary>
         /// <param name="command">The executable alias to find</param>
-        /// <returns>A tuple containing: a boolean hat represents wether the path was found or not; the path to the file if found.</returns>
+        /// <returns>A tuple containing: a boolean hat represents whether the path was found or not; the path to the file if found.</returns>
         public static async Task<Tuple<bool, string>> Which(string command)
         {
             command = command.Replace(";", "").Replace("&", "").Trim();
@@ -353,7 +353,7 @@ Crash Traceback:
         }
 
         /// <summary>
-        /// Returns a new Uri if the string is not empty. Returns null otherwhise
+        /// Returns a new Uri if the string is not empty. Returns null otherwise
         /// </summary>
         /// <param name="url">The null, empty or valid string</param>
         /// <returns>an Uri? instance</returns>
@@ -420,7 +420,7 @@ Crash Traceback:
         /// The long integer is built with the first half of the MD5 sum of the given string
         /// </summary>
         /// <param name="inputString">A non-empty string</param>
-        /// <returns>A long integer containing the first half of the bytes resultng from MD5suming inputString</returns>
+        /// <returns>A long integer containing the first half of the bytes resulting from MD5suming inputString</returns>
         public static long HashStringAsLong(string inputString)
         {
             byte[] bytes = MD5.HashData(Encoding.UTF8.GetBytes(inputString));

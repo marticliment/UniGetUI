@@ -78,7 +78,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Returns a list containing the packwges in this collection
+        /// Returns a list containing the packages in this collection
         /// </summary>
         public List<Package> GetPackages()
         {

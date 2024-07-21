@@ -178,7 +178,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     return MicrosoftStoreSource;
                 }
 
-                // Otherwise, Source is localpc
+                // Otherwise, Source is Local PC
                 return LocalPcSource;
             }
             catch (Exception ex)

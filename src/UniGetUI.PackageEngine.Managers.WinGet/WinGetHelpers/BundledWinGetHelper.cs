@@ -461,7 +461,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                     IsLoadingTags = false;
                 }
 
-                // Check for singleline fields
+                // Check for single-line fields
                 if (line.Contains("Publisher:"))
                 {
                     details.Publisher = line.Split(":")[1].Trim();

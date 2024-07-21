@@ -88,7 +88,7 @@ namespace UniGetUI
         {
             try
             {
-                // Idk how does this work, I copied it from the MS Docs
+                // IDK how does this work, I copied it from the MS Docs
                 // example on single-instance apps using unpackaged AppSdk + WinUI3
                 bool isRedirect = false;
                 AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();

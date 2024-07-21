@@ -154,7 +154,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// Checks whether the package is valid or must be skipped
         /// </summary>
         /// <param name="package">The package to check</param>
-        /// <returns>True if the package can be added, false otherwhise</returns>
+        /// <returns>True if the package can be added, false otherwise</returns>
         protected abstract Task<bool> IsPackageValid(Package package);
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         protected abstract Task WhenAddingPackage(Package package);
 
         /// <summary>
-        /// Checks wether a package is contained on the current Loader
+        /// Checks whether a package is contained on the current Loader
         /// </summary>
         /// <param name="package">The package to check against</param>
         public bool Contains(Package package)
@@ -173,9 +173,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
         }
 
         /// <summary>
-        /// Returns the appropiate hash of the package, according to the current loader configuration
+        /// Returns the appropriate hash of the package, according to the current loader configuration
         /// </summary>
-        /// <param name="package">The pakage to hash</param>
+        /// <param name="package">The package to hash</param>
         /// <returns>A long int containing the hash</returns>
         protected long HashPackage(Package package)
         {

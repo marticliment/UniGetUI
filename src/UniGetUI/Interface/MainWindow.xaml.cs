@@ -645,7 +645,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        // If an error occurrs
+                        // If an error occurs
                         Logger.Error(ex);
                         dialog.IsPrimaryButtonEnabled = true;
                         dialog.IsSecondaryButtonEnabled = true;

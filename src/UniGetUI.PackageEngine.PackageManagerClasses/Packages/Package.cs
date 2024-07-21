@@ -91,11 +91,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Returns an identifier that can be used to compare different packahe instances that refer to the same package.
+        /// Returns an identifier that can be used to compare different package instances that refer to the same package.
         /// What is taken into account:
         ///    - Manager and Source
         ///    - Package Identifier
-        /// For more specific comparsion use GetVersionedHash()
+        /// For more specific comparison use GetVersionedHash()
         /// </summary>
         public long GetHash()
         {
@@ -103,7 +103,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Returns an identifier that can be used to compare different packahe instances that refer to the same package.
+        /// Returns an identifier that can be used to compare different package instances that refer to the same package.
         /// What is taken into account:
         ///    - Manager and Source
         ///    - Package Identifier
@@ -116,7 +116,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Check wether two packages are **REALLY** the same package.
+        /// Check whether two packages are **REALLY** the same package.
         /// What is taken into account:
         ///    - Manager and Source
         ///    - Package Identifier
@@ -134,14 +134,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Check wether two package instances represent the same package.
+        /// Check whether two package instances represent the same package.
         /// What is taken into account:
         ///    - Manager and Source
         ///    - Package Identifier
-        /// For more specific comparsion use package.Equals(object? other)
+        /// For more specific comparison use package.Equals(object? other)
         /// </summary>
         /// <param name="other">A package</param>
-        /// <returns>Wether the two instances refer to the same instance</returns>
+        /// <returns>whether the two instances refer to the same instance</returns>
         public bool IsEquivalentTo(Package? other)
         {
             return __hash == other?.__hash;

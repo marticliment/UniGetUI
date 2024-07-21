@@ -72,7 +72,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         }
 
         /// <summary>
-        /// Returns the output with a preceeding digit representing the color of the line:
+        /// Returns the output with a preceding digit representing the color of the line:
         ///   0. White
         ///   1. Grey
         ///   2. Red
