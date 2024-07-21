@@ -231,7 +231,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return await Manager.GetPackageScreenshotsUrl(this);
         }
 
-
         /// <summary>
         /// Adds the package to the ignored updates list. If no version is provided, all updates are ignored.
         /// Calling this method will override older ignored updates.

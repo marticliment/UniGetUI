@@ -1,4 +1,3 @@
-using Microsoft.Management.Deployment;
 using System.Globalization;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -91,7 +90,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             return FoundIcons.ToArray();
         }
-
 
         private static async Task<string?> GetMicrosoftStorePackageManifest(Package package)
         {
@@ -191,9 +189,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return new CacheableIcon(new Uri(uri));
         }
 
-        private static async Task<CacheableIcon?> GetWinGetPackageIcon(Package package)
-        { // TODO: Need to work on retrieving WinGet icons
-
+        // TODO: Need to work on retrieving WinGet icons
+        /*private static async Task<CacheableIcon?> GetWinGetPackageIcon(Package package)
+        {
             if (WinGetHelper.Instance is not NativeWinGetHelper)
             {
                 Logger.Warn("WinGet will not attempt to load icon since the helper is using bundled WinGet");
@@ -252,7 +250,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             return Icon;
-        }
-
+        }*/
     }
 }

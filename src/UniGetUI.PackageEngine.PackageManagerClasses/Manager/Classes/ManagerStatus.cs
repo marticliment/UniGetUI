@@ -1,4 +1,4 @@
-﻿namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
+namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
 {
     public struct ManagerStatus
     {
@@ -7,6 +7,5 @@
         public string ExecutablePath = "";
         public ManagerStatus()
         { }
-
     }
 }

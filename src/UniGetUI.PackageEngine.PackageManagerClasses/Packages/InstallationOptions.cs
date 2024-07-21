@@ -171,7 +171,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public async Task SaveToDiskAsync()
         {
-            await Task.Run(() => SaveToDisk());
+            await Task.Run(SaveToDisk);
         }
 
         /// <summary>

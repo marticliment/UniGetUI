@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
@@ -45,20 +45,20 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                         Logger.Warn($"Failed to parse NuGet Installer URL on package Id={details.Package.Id} for value={match.Groups[1].Value}: " + ex.Message);
                     }
                 }
-                
+
                 foreach (Match match in Regex.Matches(PackageManifestContents, @"<(d\:)?PackageSize (m\:type=""[^""]+"")?>([0-9]+)<\/"))
                 {
                     try
                     {
-                        details.InstallerSize = long.Parse(match.Groups[3].Value)/1000000.0;
+                        details.InstallerSize = long.Parse(match.Groups[3].Value) / 1000000.0;
                         break;
                     }
                     catch (Exception ex)
                     {
                         Logger.Warn($"Failed to parse NuGet Installer Size on package Id={details.Package.Id} for value={match.Groups[1].Value}: " + ex.Message);
-                    } 
+                    }
                 }
-                
+
                 foreach (Match match in Regex.Matches(PackageManifestContents, @"<name>[^<>]+<\/name>"))
                 {
                     details.Author = match.Value.Replace("<name>", "").Replace("</name>", "");

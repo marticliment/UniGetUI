@@ -1,4 +1,4 @@
-﻿namespace UniGetUI.PackageEngine.Classes.Manager.Classes
+namespace UniGetUI.PackageEngine.Classes.Manager.Classes
 {
     public readonly struct ManagerDependency
     {
@@ -20,7 +20,6 @@
             InstallArguments = installArguments;
             IsInstalled = isInstalled;
             FancyInstallCommand = fancyInstallCommand;
-
         }
     }
 }
