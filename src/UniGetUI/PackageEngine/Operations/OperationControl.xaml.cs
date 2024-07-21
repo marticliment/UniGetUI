@@ -127,7 +127,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 __progressbar_color = value; if (ProgressIndicator != null)
                 {
-                    ProgressIndicator.Foreground = (__progressbar_color != null) ? __progressbar_color : null;
+                    ProgressIndicator.Foreground = __progressbar_color ?? null;
                 }
             }
         }

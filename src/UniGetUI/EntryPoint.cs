@@ -29,7 +29,7 @@ namespace UniGetUI
                 else
                 {
                     // Otherwise, run UniGetUI as normal
-                    _ = AsyncMain(args);
+                    _ = AsyncMain();
                 }
             }
             catch (Exception e)
@@ -41,9 +41,7 @@ namespace UniGetUI
         /// <summary>
         /// UniGetUI app main entry point
         /// </summary>
-        /// <param name="args">Call arguments</param>
-        /// <returns></returns>
-        private static async Task AsyncMain(string[] args)
+        private static async Task AsyncMain()
         {
             try
             {

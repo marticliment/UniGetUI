@@ -394,7 +394,6 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             output.Clear();
             Logger.Info("Winget could not found culture data for package Id=" + details.Package.Id +
                         " and Culture=en-US. Loading default");
-            LocaleFound = true;
             process = new Process();
             startInfo = new()
             {

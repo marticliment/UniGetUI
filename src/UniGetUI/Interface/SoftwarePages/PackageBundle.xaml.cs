@@ -822,15 +822,6 @@ namespace UniGetUI.Interface
                 throw new InvalidOperationException($"Deserialized data was null for content {content} and format {format}");
             }
 
-            // Load individual packages
-            Dictionary<DeserializedPackageStatus, List<string>> InvalidPackages = new()
-            {
-                {DeserializedPackageStatus.ManagerNotFound, [] },
-                {DeserializedPackageStatus.ManagerNotEnabled, [] },
-                {DeserializedPackageStatus.ManagerNotReady, [] },
-                {DeserializedPackageStatus.SourceNotFound, [] },
-            };
-
             // Get a list of all managers
             Dictionary<string, PackageManager> ManagerSourceReference = [];
             foreach (PackageManager manager in PEInterface.Managers)
