@@ -44,7 +44,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         protected IEnumerable<string>? CachedVerboseMessage;
 
         private const int RETURNCODE_UNSET = -200;
-        private const int RETURNCODE_SUCCESS = 0;
         protected int ReturnCode = -200;
 
         public TaskLogger()
