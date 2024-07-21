@@ -411,11 +411,11 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
 
         // BEGIN PACKAGEDEAILS-RELATED METHODS
-        private void AssertPackageDetailsCompatibility(string MethodName)
+        private void AssertPackageDetailsCompatibility(string methodName)
         {
             if (PackageDetailsProvider == null)
             {
-                throw new InvalidOperationException($"Manager {Name} does not have a valid PackageDetailsProvider helper");
+                throw new InvalidOperationException($"Manager {Name} does not have a valid PackageDetailsProvider helper. Method name: {methodName}");
             }
         }
 #pragma warning disable CS8602
