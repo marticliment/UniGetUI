@@ -257,8 +257,7 @@ Crash Traceback:
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
                 req.Method = "HEAD";
                 WebResponse resp = await req.GetResponseAsync();
-                long ContentLength;
-                if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
+                if (long.TryParse(resp.Headers.Get("Content-Length"), out long ContentLength))
                 {
                     return ContentLength;
                 }

@@ -1,4 +1,4 @@
-﻿using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
 {
@@ -26,8 +26,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
         /// <returns>A valid ManagerSource</returns>
         public ManagerSource GetSourceOrDefault(string name)
         {
-            ManagerSource? source;
-            if (__reference.TryGetValue(name, out source) && source != null)
+            if (__reference.TryGetValue(name, out ManagerSource? source) && source != null)
             {
                 return source;
             }
@@ -44,8 +43,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
         /// <returns></returns>
         public ManagerSource? GetSourceIfExists(string name)
         {
-            ManagerSource? source;
-            if (__reference.TryGetValue(name, out source))
+            if (__reference.TryGetValue(name, out ManagerSource? source))
             {
                 return source;
             }
