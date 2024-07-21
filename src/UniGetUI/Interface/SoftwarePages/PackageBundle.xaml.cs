@@ -10,6 +10,7 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
@@ -538,18 +539,18 @@ namespace UniGetUI.Interface
                 toolButton.Label = Labels[toolButton].Trim();
             }
 
-            Dictionary<AppBarButton, string> Icons = new()
+            Dictionary<AppBarButton, IconType> Icons = new()
             {
-                { NewBundle,              "add_to" },
-                { InstallPackages,        "download" },
-                { OpenBundle,             "open_folder" },
-                { RemoveSelected,         "delete" },
-                { ExportBundle,           "save_as" },
-                { PackageDetails,         "info_round" },
-                { SharePackage,           "share" },
-                { SelectAll,              "selectall" },
-                { SelectNone,             "selectnone" },
-                { HelpButton,             "help" }
+                { NewBundle,              IconType.AddTo },
+                { InstallPackages,        IconType.Download },
+                { OpenBundle,             IconType.OpenFolder },
+                { RemoveSelected,         IconType.Delete },
+                { ExportBundle,           IconType.SaveAs },
+                { PackageDetails,         IconType.Info_Round },
+                { SharePackage,           IconType.Share },
+                { SelectAll,              IconType.Empty },
+                { SelectNone,             IconType.Empty },
+                { HelpButton,             IconType.Help }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)

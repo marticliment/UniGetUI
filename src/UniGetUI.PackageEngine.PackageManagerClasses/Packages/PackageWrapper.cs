@@ -16,10 +16,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
             set => Package.IsChecked = value;
         }
 
-        public string ListedComplementaryIconId = "";
-        public string ListedIconId = "";
+        public IconType ListedComplementaryIconId = IconType.Empty;
+        public IconType ListedIconId = IconType.Package;
         public string ListedNameTooltip = "";
-        public float ListedOpacity;
+        public float ListedOpacity = 1.0f;
 
         public int NewVersionLabelWidth { get => Package.IsUpgradable ? 125 : 0; }
         public int NewVersionIconWidth { get => Package.IsUpgradable ? 24 : 0; }
@@ -69,26 +69,26 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
 #pragma warning disable CS8524
 
-            ListedComplementaryIconId = Package.Tag switch
-            {
-                PackageTag.Default => "empty",
-                PackageTag.AlreadyInstalled => "installed_filled",
-                PackageTag.IsUpgradable => "upgradable_filled",
-                PackageTag.Pinned => "pin_filled",
-                PackageTag.OnQueue => "empty",
-                PackageTag.BeingProcessed => "loading_filled",
-                PackageTag.Failed => "warning_filled",
-            };
-
             ListedIconId = Package.Tag switch
             {
-                PackageTag.Default => "package",
-                PackageTag.AlreadyInstalled => "installed",
-                PackageTag.IsUpgradable => "upgradable",
-                PackageTag.Pinned => "pin",
-                PackageTag.OnQueue => "sandclock",
-                PackageTag.BeingProcessed => "loading",
-                PackageTag.Failed => "warning",
+                PackageTag.Default => IconType.Package,
+                PackageTag.AlreadyInstalled => IconType.Installed,
+                PackageTag.IsUpgradable => IconType.Upgradable,
+                PackageTag.Pinned => IconType.Pin,
+                PackageTag.OnQueue => IconType.SandClock,
+                PackageTag.BeingProcessed => IconType.Loading,
+                PackageTag.Failed => IconType.Warning,
+            };
+
+            ListedComplementaryIconId = Package.Tag switch
+            {
+                PackageTag.Default => IconType.Empty,
+                PackageTag.AlreadyInstalled => IconType.Installed_Filled,
+                PackageTag.IsUpgradable => IconType.Upgradable_Filled,
+                PackageTag.Pinned => IconType.Pin_Filled,
+                PackageTag.OnQueue => IconType.Empty,
+                PackageTag.BeingProcessed => IconType.Loading_Filled,
+                PackageTag.Failed => IconType.Warning_Filled,
             };
 
             ListedNameTooltip = Package.Tag switch

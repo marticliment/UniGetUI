@@ -5,6 +5,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
@@ -95,7 +96,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 Name = "Winget",
                 DisplayName = "WinGet",
                 Description = CoreTools.Translate("Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>"),
-                IconId = "winget",
+                IconId = IconType.WinGet,
                 ColorIconId = "winget_color",
                 ExecutableFriendlyName = "winget.exe",
                 InstallVerb = "install",
@@ -110,12 +111,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             SourceProvider = new WinGetSourceProvider(this);
             PackageDetailsProvider = new WinGetPackageDetailsProvider(this);
 
-            LocalPcSource = new LocalWingetSource(this, CoreTools.Translate("Local PC"), "local_pc");
-            AndroidSubsystemSource = new(this, CoreTools.Translate("Android Subsystem"), "android");
-            SteamSource = new(this, "Steam", "steam");
-            UbisoftConnectSource = new(this, "Ubisoft Connect", "uplay");
-            GOGSource = new(this, "GOG", "gog");
-            MicrosoftStoreSource = new(this, "Microsoft Store", "ms_store");
+            LocalPcSource = new LocalWingetSource(this, CoreTools.Translate("Local PC"), IconType.LocalPc);
+            AndroidSubsystemSource = new(this, CoreTools.Translate("Android Subsystem"), IconType.Android);
+            SteamSource = new(this, "Steam", IconType.Steam);
+            UbisoftConnectSource = new(this, "Ubisoft Connect", IconType.UPlay);
+            GOGSource = new(this, "GOG", IconType.GOG);
+            MicrosoftStoreSource = new(this, "Microsoft Store", IconType.MsStore);
         }
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
@@ -439,10 +440,10 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
     public class LocalWingetSource : ManagerSource
     {
         private readonly string name;
-        private readonly string __icon_id;
-        public override string IconId { get { return __icon_id; } }
+        private readonly IconType __icon_id;
+        public override IconType IconId { get => __icon_id; }
 
-        public LocalWingetSource(WinGet manager, string name, string iconId)
+        public LocalWingetSource(WinGet manager, string name, IconType iconId)
             : base(manager, name, new Uri("https://microsoft.com/local-pc-source"), isVirtualManager: true)
         {
             this.name = name;

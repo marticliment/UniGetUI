@@ -26,11 +26,11 @@
                                     <ColumnDefinition Width="*" MaxWidth="80"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <widgets:LocalIcon IconName="package" Grid.Column="0" Height="24" Width="24"/>
+                                <widgets:LocalIcon Icon="package" Grid.Column="0" Height="24" Width="24"/>
                                 <TextBlock Text="{x:Bind Id}" Grid.Column="1" VerticalAlignment="Center"/>
-                                <widgets:LocalIcon IconName="version" Grid.Column="2" Height="24" Width="24"/>
+                                <widgets:LocalIcon Icon="version" Grid.Column="2" Height="24" Width="24"/>
                                 <TextBlock Text="{x:Bind Version}" Grid.Column="3" VerticalAlignment="Center"/>
-                                <widgets:LocalIcon IconName="{x:Bind Manager.Properties.IconId}" Grid.Column="4" Height="24" Width="24"/>
+                                <widgets:LocalIcon Icon="{x:Bind Manager.Properties.IconId}" Grid.Column="4" Height="24" Width="24"/>
                                 <TextBlock Text="{x:Bind Manager.Name}" Grid.Column="5" VerticalAlignment="Center"/>
                                 <Button Click="{x:Bind RemoveFromIgnoredUpdates}" Height="32" Width="32" Padding="0" Grid.Column="6">
                                     <FontIcon Glyph="&#xE74D;" FontSize="16"/>
@@ -50,7 +50,7 @@
                 <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="Red"/>
                 <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="DarkRed"/>
             </Button.Resources>
-            <widgets:LocalIcon IconName="close" Height="16" Opacity="1"/>
+            <widgets:LocalIcon Icon="Close_Round" Height="16" Opacity="1"/>
         </Button>
     </Grid>
 </Page>

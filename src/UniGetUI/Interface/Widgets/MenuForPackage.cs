@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Interface.Widgets
 {
@@ -17,7 +18,7 @@ namespace UniGetUI.Interface.Widgets
     {
         private readonly Style menuyStyle = (Style)Application.Current.Resources["BetterMenuItem"];
 
-        public string IconName
+        public IconType IconName
         {
             set
             {

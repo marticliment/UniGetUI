@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
@@ -57,7 +58,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuInstall = new()
             {
                 Text = "Install",
-                IconName = "download",
+                IconName = IconType.Download,
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
             menuInstall.Click += MenuInstall_Invoked;
@@ -68,7 +69,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuInstallSettings = new()
             {
                 Text = "Installation options",
-                IconName = "options",
+                IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
             menuInstallSettings.Click += MenuInstallSettings_Invoked;
@@ -79,7 +80,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin = new BetterMenuItem
             {
                 Text = "Install as administrator",
-                IconName = "uac"
+                IconName = IconType.UAC
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
             menu.Items.Add(MenuAsAdmin);
@@ -87,7 +88,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuInteractive = new BetterMenuItem
             {
                 Text = "Interactive installation",
-                IconName = "interactive"
+                IconName = IconType.Interactive
             };
             MenuInteractive.Click += MenuInteractive_Invoked;
             menu.Items.Add(MenuInteractive);
@@ -95,7 +96,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuSkipHash = new BetterMenuItem
             {
                 Text = "Skip hash check",
-                IconName = "checksum"
+                IconName = IconType.Checksum
             };
             MenuSkipHash.Click += MenuSkipHash_Invoked;
             menu.Items.Add(MenuSkipHash);
@@ -105,7 +106,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuShare = new()
             {
                 Text = "Share this package",
-                IconName = "share"
+                IconName = IconType.Share
             };
             menuShare.Click += MenuShare_Invoked;
             menu.Items.Add(menuShare);
@@ -113,7 +114,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuDetails = new()
             {
                 Text = "Package details",
-                IconName = "info_round",
+                IconName = IconType.Info_Round,
                 KeyboardAcceleratorTextOverride = "Enter"
             };
             menuDetails.Click += MenuDetails_Invoked;
@@ -177,17 +178,17 @@ namespace UniGetUI.Interface.SoftwarePages
                 toolButton.Label = Labels[toolButton].Trim();
             }
 
-            Dictionary<AppBarButton, string> Icons = new()
+            Dictionary<AppBarButton, IconType> Icons = new()
             {
-                { InstallSelected,      "download" },
-                { InstallAsAdmin,       "uac" },
-                { InstallSkipHash,      "checksum" },
-                { InstallInteractive,   "interactive" },
-                { InstallationSettings, "options" },
-                { PackageDetails,       "info_round" },
-                { SharePackage,         "share" },
-                { ExportSelection,      "add_to" },
-                { HelpButton,           "help" }
+                { InstallSelected,      IconType.Download },
+                { InstallAsAdmin,       IconType.UAC },
+                { InstallSkipHash,      IconType.Checksum },
+                { InstallInteractive,   IconType.Interactive },
+                { InstallationSettings, IconType.Options },
+                { PackageDetails,       IconType.Info_Round },
+                { SharePackage,         IconType.Share },
+                { ExportSelection,      IconType.AddTo },
+                { HelpButton,           IconType.Help }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)

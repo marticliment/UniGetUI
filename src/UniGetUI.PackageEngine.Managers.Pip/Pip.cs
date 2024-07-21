@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
@@ -29,7 +30,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             {
                 Name = "Pip",
                 Description = CoreTools.Translate("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"),
-                IconId = "python",
+                IconId = IconType.Python,
                 ColorIconId = "pip_color",
                 ExecutableFriendlyName = "pip",
                 InstallVerb = "install",

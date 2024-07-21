@@ -527,12 +527,12 @@
                     IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
                     />
                     <widgets:LocalIcon
-                        IconName="{x:Bind ListedComplementaryIconId}" FontWeight="ExtraLight" FontSize="24"
+                        Icon="{x:Bind ListedComplementaryIconId}" FontWeight="ExtraLight" FontSize="24"
                         Grid.Column="1" Grid.Row="0" Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
                         VerticalAlignment="Center"
                         />
                     <widgets:LocalIcon
-                        IconName="{x:Bind ListedIconId}" FontWeight="ExtraLight" FontSize="24"
+                        Icon="{x:Bind ListedIconId}" FontWeight="ExtraLight" FontSize="24"
                         Grid.Column="1" Grid.Row="0"
                         VerticalAlignment="Center"
                         />
@@ -543,7 +543,7 @@
                     ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                     />
                     <widgets:LocalIcon
-                    IconName="id" FontWeight="ExtraLight" FontSize="24"
+                    Icon="id" FontWeight="ExtraLight" FontSize="24"
                     Grid.Column="3" Grid.Row="0"
                     VerticalAlignment="Center"
                     />
@@ -554,7 +554,7 @@
                     ToolTipService.ToolTip="{x:Bind Package.Id}"
                     />
                     <widgets:LocalIcon
-                    IconName="version" FontWeight="ExtraLight" FontSize="24"
+                    Icon="version" FontWeight="ExtraLight" FontSize="24"
                     Grid.Column="5" Grid.Row="0"
                     VerticalAlignment="Center"
                     />
@@ -566,7 +566,7 @@
                     />
                     <widgets:LocalIcon
                         FontWeight="ExtraLight" FontSize="24"
-                        IconName="download" Visibility="{x:Bind Package.IsUpgradable}"
+                        Icon="download" Visibility="{x:Bind Package.IsUpgradable}"
                         Grid.Column="7" Grid.Row="0"
                         VerticalAlignment="Center"
                     />
@@ -579,7 +579,7 @@
                     <widgets:LocalIcon
                     Grid.Column="9" Grid.Row="0" FontWeight="ExtraLight" FontSize="24"
                     VerticalAlignment="Center"
-                    IconName="{x:Bind Package.Source.IconId}"
+                    Icon="{x:Bind Package.Source.IconId}"
                     />
                     <TextBlock
                     Grid.Column="10" Grid.Row="0"

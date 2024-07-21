@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -27,7 +28,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             {
                 Name = "Npm",
                 Description = CoreTools.Translate("Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>"),
-                IconId = "node",
+                IconId = IconType.Node,
                 ColorIconId = "node_color",
                 ExecutableFriendlyName = "npm",
                 InstallVerb = "install",

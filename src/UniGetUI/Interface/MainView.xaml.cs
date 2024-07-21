@@ -285,7 +285,7 @@ namespace UniGetUI.Interface
                 Spacing = 8
             };
 
-            HeaderPanel.Children.Add(new LocalIcon("console")
+            HeaderPanel.Children.Add(new LocalIcon(Enums.IconType.Console)
             {
                 VerticalAlignment = VerticalAlignment.Center,
                 Height = 24,
