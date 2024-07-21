@@ -21,7 +21,7 @@
             <widgets:BetterMenuItem Text="Package Manager logs" IconName="console" Name="ManagerLogsMenu" Click="ManagerLogsMenu_Click" />
             <widgets:BetterMenuItem Text="Operation history" IconName="history" Name="OperationHistoryMenu" Click="OperationHistoryMenu_Click" />
             <MenuFlyoutSeparator Height="5"/>
-            <widgets:BetterMenuItem x:Name="VersionMenuItem" IconName="info" IsEnabled="False" />
+            <widgets:BetterMenuItem x:Name="VersionMenuItem" IconName="info_round" IsEnabled="False" />
             <widgets:BetterMenuItem Text="Release notes" IconName="megaphone" Name="ReleaseNotesMenu" Click="ReleaseNotesMenu_Click" />
             <MenuFlyoutSeparator Height="5"/>
             <widgets:BetterMenuItem Text="Quit WingetUI" IconName="close_round" Name="QuitWingetUI" Click="QuitUniGetUI_Click" />
