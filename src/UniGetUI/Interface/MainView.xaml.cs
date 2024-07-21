@@ -74,7 +74,6 @@ namespace UniGetUI.Interface
                 WarnAboutAdminRights();
             }
 
-
             Dictionary<Page, NavButton> NextPageReference = new()
             {
                 { DiscoverPage, UpdatesNavButton },
@@ -299,7 +298,6 @@ namespace UniGetUI.Interface
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             });
-
 
             RichTextBlock CommandLineOutput = new()
             {

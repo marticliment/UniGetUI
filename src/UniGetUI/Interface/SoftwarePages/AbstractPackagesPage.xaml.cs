@@ -765,7 +765,6 @@ namespace UniGetUI.Interface
             bool IS_ALT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftMenu).HasFlag(CoreVirtualKeyStates.Down);
             IS_ALT_PRESSED |= InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.RightMenu).HasFlag(CoreVirtualKeyStates.Down);
 
-
             if (e.Key == VirtualKey.Enter && package is not null)
             {
                 if (IS_ALT_PRESSED)

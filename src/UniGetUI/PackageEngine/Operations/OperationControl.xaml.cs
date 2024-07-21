@@ -12,7 +12,6 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Enums;
 
-
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -32,7 +31,6 @@ namespace UniGetUI.PackageEngine.Operations
             Default,
             Compact,
         }
-
 
         private string __button_text = "";
         private string __line_info_text = "Please wait...";
@@ -156,8 +154,8 @@ namespace UniGetUI.PackageEngine.Operations
                 {
 
                     /*
-                     * 
-                     * 
+                     *
+                     *
         <SolidColorBrush x:Key="ProgressWaiting" Color="{ThemeResource SystemFillColorNeutralBrush}"/>
         <SolidColorBrush x:Key="ProgressRunning" Color="{ThemeResource SystemFillColorAttentionBrush}"/>
         <SolidColorBrush x:Key="ProgressSucceeded" Color="{ThemeResource SystemFillColorSuccessBrush}"/>
@@ -234,7 +232,6 @@ namespace UniGetUI.PackageEngine.Operations
 
             OutputDialog.Title = CoreTools.Translate("Live output");
             OutputDialog.CloseButtonText = CoreTools.Translate("Close");
-
 
             OutputDialog.SizeChanged += (s, e) =>
             {
@@ -470,8 +467,6 @@ namespace UniGetUI.PackageEngine.Operations
                 ProcessOutput.Add("Process Exit Code      : " + Process.ExitCode.ToString());
                 ProcessOutput.Add("Process End Time       : " + DateTime.Now.ToString());
 
-
-
                 AfterFinshAction postAction = AfterFinshAction.ManualClose;
 
                 OperationVeredict OperationVeredict = GetProcessVeredict(Process.ExitCode, ProcessOutput.ToArray());
@@ -562,8 +557,6 @@ namespace UniGetUI.PackageEngine.Operations
                 try { Status = OperationStatus.Failed; } catch { }
             }
             MainApp.Instance.TooltipStatus.OperationsInProgress = MainApp.Instance.TooltipStatus.OperationsInProgress - 1;
-
-
         }
         protected async Task Close()
         {

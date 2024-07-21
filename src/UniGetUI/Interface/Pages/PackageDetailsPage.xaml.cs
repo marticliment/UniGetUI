@@ -42,7 +42,6 @@ namespace UniGetUI.Interface.Dialogs
             Unloaded
         }
 
-
         private LayoutMode __layout_mode = LayoutMode.Unloaded;
         public PackageDetailsPage(Package package, OperationType operationRole)
         {
@@ -398,8 +397,6 @@ namespace UniGetUI.Interface.Dialogs
                 DownloadInstaller_Button.Inlines.Clear();
                 DownloadInstaller_Button.Inlines.Add(new Run() { Text = CoreTools.Translate("An error occurred") + ": " + ex.Message });
             }
-
-
         }
         public void CloseButton_Click(object sender, RoutedEventArgs e)
         {

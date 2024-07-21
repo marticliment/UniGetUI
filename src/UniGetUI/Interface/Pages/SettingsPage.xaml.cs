@@ -28,7 +28,6 @@ namespace UniGetUI.Interface
         private readonly HyperlinkButton OpenBackupDirectory;
         private readonly TextBlock BackupDirectoryLabel;
 
-
         public SettingsInterface()
         {
             InitializeComponent();
@@ -99,7 +98,6 @@ namespace UniGetUI.Interface
             // Experimental Settings Section
             ExperimentalSettingsExpander.HideRestartRequiredBanner();
 
-
             // Package Manager banners;
             Dictionary<PackageManager, SettingsEntry> PackageManagerExpanders = [];
             Dictionary<PackageManager, List<SettingsCard>> ExtraSettingsCards = [];
@@ -108,7 +106,6 @@ namespace UniGetUI.Interface
             {
                 ExtraSettingsCards.Add(Manager, []);
             }
-
 
             ButtonCard Winget_ResetSources = new() { Text = CoreTools.AutoTranslated("Reset Winget sources (might help if no packages are listed)"), ButtonText = CoreTools.AutoTranslated("Reset") };
             Winget_ResetSources.Click += (s, e) =>
@@ -168,7 +165,6 @@ namespace UniGetUI.Interface
             };
 
             ExtraSettingsCards[PEInterface.Chocolatey].Add(Chocolatey_SystemChoco);
-
 
             foreach (PackageManager Manager in PEInterface.Managers)
             {
@@ -302,7 +298,6 @@ namespace UniGetUI.Interface
                 };
                 ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
                 ExtraSettingsCards[Manager].Insert(index++, ParallelCard);
-
 
                 if (Manager.Capabilities.SupportsCustomSources)
                 {
@@ -482,10 +477,8 @@ namespace UniGetUI.Interface
         private void DisableWidgetsApi_StateChanged(object sender, CheckBoxEventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
-
         private void UseSystemWinget_StateChanged(object sender, CheckBoxEventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
-
 
         private void DisableDownloadingNewTranslations_StateChanged(object sender, CheckBoxEventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }

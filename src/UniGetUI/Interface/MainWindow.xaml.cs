@@ -124,7 +124,6 @@ namespace UniGetUI.Interface
             Logger.Debug("Notification activated: " + args.ToString() + " " + input.ToString());
         }
 
-
         /// <summary>
         /// Handle the window closing event, and divert it when the window must be hidden.
         /// </summary>
@@ -253,7 +252,6 @@ namespace UniGetUI.Interface
             TrayMenu.Items.Add(new MenuFlyoutSeparator());
             TrayMenu.Items.Add(new MenuFlyoutItem { Command = ShowUniGetUI });
             TrayMenu.Items.Add(new MenuFlyoutItem { Command = QuitUniGetUI });
-
 
             TrayMenu.AreOpenCloseAnimationsEnabled = false;
 
@@ -587,7 +585,6 @@ namespace UniGetUI.Interface
             };
             p.Children.Add(manualInstallCommand);
 
-
             CheckBox c = new();
             if (NotFirstTime)
             {
@@ -597,7 +594,6 @@ namespace UniGetUI.Interface
                 c.Unchecked += (s, e) => Settings.Set(DEP_SKIPPED_PREF, false);
                 p.Children.Add(c);
             }
-
 
             ProgressBar progress = new()
             {
@@ -766,8 +762,6 @@ namespace UniGetUI.Interface
             {
                 Logger.Warn("Restored geometry was outside of desktop bounds");
             }
-
-
         }
         private static bool IsRectangleFullyVisible(int x, int y, int width, int height)
         {

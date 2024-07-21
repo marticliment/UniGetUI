@@ -42,7 +42,6 @@ namespace UniGetUI.Interface.Dialogs
             ArchitectureComboBox.Items.Add(CoreTools.Translate("Default"));
             ArchitectureComboBox.SelectedIndex = 0;
 
-
             if (Package.Manager.Capabilities.SupportsCustomArchitectures)
             {
                 foreach (Architecture arch in Package.Manager.Capabilities.SupportedCustomArchitectures)
@@ -104,7 +103,6 @@ namespace UniGetUI.Interface.Dialogs
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
                 }
             }
-
 
             ResetDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
             SelectDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;

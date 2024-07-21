@@ -61,7 +61,6 @@ namespace UniGetUI.Interface.Widgets
                 typeof(CheckboxCard),
                 new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _checkbox.IsChecked = Settings.Get((string)e.NewValue) ^ ((string)e.NewValue).StartsWith("Disable"); })));
 
-
             ContentAlignment = ContentAlignment.Left;
             HorizontalAlignment = HorizontalAlignment.Stretch;
 

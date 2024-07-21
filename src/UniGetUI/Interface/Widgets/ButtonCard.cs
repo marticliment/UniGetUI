@@ -15,7 +15,6 @@ namespace UniGetUI.Interface.Widgets
         }
     }
 
-
     public sealed class ButtonCard : SettingsCard
     {
         private static Button _button = new();

@@ -36,7 +36,6 @@ namespace UniGetUI.Interface.Widgets
 
         private readonly DependencyProperty IconProperty;
 
-
         public SettingsEntry()
         {
             TextProperty = DependencyProperty.Register(
@@ -59,7 +58,6 @@ namespace UniGetUI.Interface.Widgets
             {
                 HeaderIcon = new LocalIcon((string)e.NewValue);
             })));
-
 
             CornerRadius = new CornerRadius(8);
             HorizontalAlignment = HorizontalAlignment.Stretch;

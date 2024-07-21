@@ -15,7 +15,7 @@ namespace UniGetUI.Interface.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    /// 
+    ///
 
     public abstract partial class BaseLogPage : Page, IPageWithKeyboardShortcuts
     {
@@ -25,7 +25,6 @@ namespace UniGetUI.Interface.Pages
         protected abstract void LoadLogLevels();
         public abstract void LoadLog();
 
-
         public BaseLogPage(bool log_level_enabled)
         {
             LogLevelEnabled = log_level_enabled;
@@ -33,7 +32,7 @@ namespace UniGetUI.Interface.Pages
             if (LogLevelEnabled)
             {
                 LoadLogLevels();
-            } 
+            }
             else
             {
                 LogLevelPane.Visibility = Visibility.Collapsed;

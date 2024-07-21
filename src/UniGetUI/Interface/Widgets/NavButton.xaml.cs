@@ -39,7 +39,6 @@ namespace UniGetUI.Interface.Widgets
 
             DefaultStyleKey = typeof(NavButton);
 
-
             TextProperty = DependencyProperty.Register(
                 nameof(Text),
                 typeof(string),
@@ -74,9 +73,3 @@ namespace UniGetUI.Interface.Widgets
         }
     }
 }
-
-
-/*
-
-
-*/

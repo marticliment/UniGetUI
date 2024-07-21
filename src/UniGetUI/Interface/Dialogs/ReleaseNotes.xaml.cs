@@ -31,7 +31,5 @@ namespace UniGetUI.Interface.Dialogs
         {
             WebView.Close();
         }
-
-
     }
 }
