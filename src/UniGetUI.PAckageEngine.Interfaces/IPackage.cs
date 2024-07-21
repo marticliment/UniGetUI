@@ -7,7 +7,7 @@ using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Interfaces
 {
-    public interface IPackage : INotifyPropertyChanged
+    public interface IPackage : INotifyPropertyChanged, IEquatable<IPackage>
     {
         public IPackageDetails Details { get; }
         public PackageTag Tag { get; set; }

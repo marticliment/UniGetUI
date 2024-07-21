@@ -79,6 +79,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 PackageTag.OnQueue => IconType.SandClock,
                 PackageTag.BeingProcessed => IconType.Loading,
                 PackageTag.Failed => IconType.Warning,
+                PackageTag.Unavailable => IconType.Help
             };
 
             ListedComplementaryIconId = Package.Tag switch
@@ -90,6 +91,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 PackageTag.OnQueue => IconType.Empty,
                 PackageTag.BeingProcessed => IconType.Loading_Filled,
                 PackageTag.Failed => IconType.Warning_Filled,
+                PackageTag.Unavailable => IconType.Empty
             };
 
             ListedNameTooltip = Package.Tag switch

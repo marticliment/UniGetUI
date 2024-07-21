@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +19,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// Wether this PackageDetails instance has valid data or not.
         /// To load valid data, make use of the `Load()` method
         /// </summary>
-        public bool IsPopulated { get; protected set; }
+        public bool IsPopulated { get; }
 
         /// <summary>
         /// The description of the package

@@ -49,7 +49,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         protected sealed override async Task<IPackage[]> FindPackages_UnSafe(string query)
         {
-            List<Package> Packages = [];
+            List<IPackage> Packages = [];
 
             ManagerClasses.Classes.NativeTaskLogger logger = TaskLogger.CreateNew(Enums.LoggableTaskType.FindPackages);
 

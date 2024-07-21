@@ -1,20 +1,24 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.PackageEngine.Interfaces
 {
     public interface IManagerSource
     {
-        public string IconId { get; }
+        public IconType IconId { get; }
         public bool IsVirtualManager { get; }
         public IPackageManager Manager { get; }
         public string Name { get; }
         public Uri Url { get; protected set; }
         public int? PackageCount { get; }
         public string? UpdateDate { get; }
+
+        public string AsString { get; }
+        public string AsString_DisplayName { get; }
 
         /// <summary>
         /// Returns a human-readable string representing the source name

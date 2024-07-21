@@ -2,6 +2,9 @@ using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.Serialization.Formatters;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -14,6 +17,7 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
+using Windows.ApplicationModel;
 using Windows.System;
 using Windows.UI.Core;
 
@@ -103,7 +107,7 @@ namespace UniGetUI.Interface
         }
         protected string NoMatches_SubtitleText
         {
-            get => FoundPackages_SubtitleText_Base(Loader.Packages.Count, FilteredPackages.Count) +
+            get => FoundPackages_SubtitleText_Base(Loader.Packages.Count(), FilteredPackages.Count) +
                (SHOW_LAST_CHECKED_TIME ? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()) : "");
         }
         protected string FoundPackages_SubtitleText { get => NoMatches_SubtitleText; }
@@ -318,7 +322,7 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            if (Loader.Packages.Count == 0)
+            if (Loader.Count() == 0)
             {
                 ClearPackageList();
             }
@@ -591,7 +595,7 @@ namespace UniGetUI.Interface
             {
                 if (LoadingProgressBar.Visibility == Visibility.Collapsed)
                 {
-                    if (Loader.Packages.Count == 0)
+                    if (Loader.Packages.Count() == 0)
                     {
                         BackgroundText.Text = NoPackages_BackgroundText;
                         SourcesPlaceholderText.Text = NoPackages_SourcesText;
@@ -610,7 +614,7 @@ namespace UniGetUI.Interface
                 {
                     BackgroundText.Visibility = FilteredPackages.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
                     BackgroundText.Text = MainSubtitle_StillLoading;
-                    SourcesPlaceholderText.Visibility = Loader.Packages.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+                    SourcesPlaceholderText.Visibility = Loader.Count() > 0 ? Visibility.Collapsed : Visibility.Visible;
                     SourcesPlaceholderText.Text = MainSubtitle_StillLoading;
                     MainSubtitle.Text = MainSubtitle_StillLoading;
                 }
@@ -618,14 +622,14 @@ namespace UniGetUI.Interface
             else
             {
                 BackgroundText.Text = NoPackages_BackgroundText;
-                BackgroundText.Visibility = Loader.Packages.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+                BackgroundText.Visibility = Loader.Packages.Count() > 0 ? Visibility.Collapsed : Visibility.Visible;
                 MainSubtitle.Text = FoundPackages_SubtitleText;
             }
 
             if (ExternalCountBadge != null)
             {
-                ExternalCountBadge.Visibility = Loader.Packages.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
-                ExternalCountBadge.Value = Loader.Packages.Count;
+                ExternalCountBadge.Visibility = Loader.Count() == 0 ? Visibility.Collapsed : Visibility.Visible;
+                ExternalCountBadge.Value = Loader.Count();
             }
 
             if (MegaQueryBlockGrid.Visibility == Visibility.Visible)

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Nodes;
@@ -20,14 +20,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
 {
     public class InvalidPackage : IPackage, INotifyPropertyChanged
     {
-        public IPackageDetails Details => throw new NotImplementedException();
+        public IPackageDetails Details { get; }
 
         public PackageTag Tag { get => PackageTag.Unavailable; set { } }
 
-        private bool is_checked = false;
-        public bool IsChecked {
-            get => is_checked;
-            set { is_checked = value; }
+        private bool __is_checked = false;
+        public bool IsChecked
+        {
+            get { return __is_checked; }
+            set { __is_checked = value; OnPropertyChanged(nameof(IsChecked)); }
         }
 
         private long __hash;
@@ -45,7 +46,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public IManagerSource Source { get; }
 
-        public IPackageManager Manager => throw new NotImplementedException();
+        public IPackageManager Manager { get; }
 
         public string NewVersion { get => ""; }
 
@@ -59,20 +60,22 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public InvalidPackage(SerializableIncompatiblePackage_v1 data)
+        public InvalidPackage(SerializableIncompatiblePackage_v1 data, IManagerSource source)
         {
             Name = data.Name;
-            Id = data.Id;
+            Id = data.Id.Split('\\')[^1];
             Version = data.Version;
             VersionAsFloat = CoreTools.GetVersionStringAsFloat(data.Version);
             SourceAsString = data.Source;
             AutomationName = data.Name;
-            Source = new NullSource(data.Source);
+            Manager = source.Manager;
+            Source = source;
+            Details = new PackageDetails(this);
 
             __hash = CoreTools.HashStringAsLong(data.Name + data.Id);
             __extended_hash = CoreTools.HashStringAsLong(data.Name + data.Id + data.Version);
         }
-
+#pragma warning disable CS1998
         public async Task AddToIgnoredUpdatesAsync(string version = "*")
         {
             return;
@@ -92,6 +95,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Version = Version,
                 Source = SourceAsString,
             };
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         public IPackage? GetAvailablePackage()
@@ -144,9 +152,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return false;
         }
 
+        public bool Equals(IPackage? other)
+        {
+            return __hash == other?.GetVersionedHash();
+        }
+
         public bool IsEquivalentTo(IPackage? other)
         {
-            return __hash == (other as IPackage)?.GetHash();
+            return __hash == other?.GetHash();
         }
 
         public bool NewerVersionIsInstalled()
@@ -163,11 +176,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             return;
         }
+
+#pragma warning restore CS1998
     }
 
     public class NullSource: IManagerSource
     {
-        public string IconId { get; }
+        public static NullSource Instance = new(CoreTools.Translate("Unknown"));
+        public IconType IconId { get; }
         public bool IsVirtualManager { get; }
         public IPackageManager Manager { get; }
         public string Name { get; }
@@ -175,12 +191,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public int? PackageCount { get; }
         public string? UpdateDate { get; }
 
+        public string AsString { get => Name; }
+        public string AsString_DisplayName { get => Name; }
+
         public NullSource(string name)
         {
             Name = name;
             Url = new Uri("about:blank");
             IsVirtualManager = true;
-            IconId = "question";
+            IconId = IconType.Help;
             Manager = NullPackageManager.Instance;
         }
 

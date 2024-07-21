@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
@@ -28,8 +28,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         private readonly long __hash;
         private readonly long __versioned_hash;
 
-        private PackageDetails? __details;
-        public PackageDetails Details
+        private IPackageDetails? __details;
+        public IPackageDetails Details
         {
             get => __details ??= new PackageDetails(this);
         }
@@ -43,6 +43,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 OnPropertyChanged(nameof(Tag));
             }
         }
+
         public bool IsChecked
         {
             get { return __is_checked; }
@@ -50,16 +51,18 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         public string Name { get; }
+        public string AutomationName { get; }
         public string Id { get; }
         public string Version { get; }
         public double VersionAsFloat { get; }
         public double NewVersionAsFloat { get; }
+        public bool IsPopulated { get; set; }
         public IManagerSource Source { get; }
         public IPackageManager Manager { get; }
         public string NewVersion { get; }
         public virtual bool IsUpgradable { get; }
         public PackageScope Scope { get; set; }
-        public readonly string AutomationName;
+        public string SourceAsString { get => Source.AsString; }
 
         /// <summary>
         /// Constuct a package with a given name, id, version, source and manager, and an optional scope.
@@ -118,9 +121,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return __versioned_hash;
         }
 
-        public override bool Equals(object? other)
+        public bool Equals(IPackage? other)
         {
-            return __versioned_hash == (other as IPackage)?.GetHash();
+            return __versioned_hash == other?.GetHash();
         }
 
         public override int GetHashCode()
@@ -137,9 +140,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         /// <param name="other">A package</param>
         /// <returns>Wether the two instances refer to the same instance</returns>
-        public bool IsEquivalentTo(Package? other)
+        public bool IsEquivalentTo(IPackage? other)
         {
-            return __hash == other?.__hash;
+            return __hash == other?.GetHash();
         }
 
         public string GetIconId()

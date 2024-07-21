@@ -4,7 +4,6 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface.SoftwarePages.UniGetUI.Interface.SoftwarePages;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
@@ -308,15 +307,14 @@ namespace UniGetUI.Interface.SoftwarePages
 
             try
             {
-                // TODO: FIXME
                 Logger.Debug("Starting package backup");
-                List<BundledPackage> packagestoExport = [];
+                List<IPackage> packagestoExport = [];
                 foreach (Package package in Loader.Packages)
                 {
-                    packagestoExport.Add(await BundledPackage.FromPackageAsync(package));
+                    packagestoExport.Add(package);
                 }
 
-                string BackupContents = await PackageBundlePage.GetBundleStringFromPackages(packagestoExport.ToArray(), BundleFormatType.JSON);
+                string BackupContents = await NewPackageBundlesPage.CreateBundle(packagestoExport.ToArray(), BundleFormatType.JSON);
 
                 string dirName = Settings.GetValue("ChangeBackupOutputDirectory");
                 if (dirName == "")

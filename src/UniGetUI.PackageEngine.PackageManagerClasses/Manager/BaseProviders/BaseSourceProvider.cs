@@ -1,11 +1,10 @@
-﻿using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Classes.Manager.Providers
 {
-    public abstract class BaseSourceProvider<T> : ISourceProvider where T : PackageManager
+    public abstract class BaseSourceProvider<T> : ISourceProvider where T : IPackageManager
     {
         public ISourceFactory SourceFactory { get; }
         protected T Manager;

@@ -1,4 +1,4 @@
-﻿using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.Interface.Enums;
 
@@ -7,15 +7,6 @@ namespace UniGetUI.PackageEngine.Classes.Manager
     public class ManagerSource : IManagerSource
     {
         public virtual IconType IconId { get { return Manager.Properties.IconId; } }
-        public readonly bool IsVirtualManager;
-        public struct Capabilities
-        {
-            public bool KnowsUpdateDate { get; set; } = false;
-            public bool KnowsPackageCount { get; set; } = false;
-            public bool MustBeInstalledAsAdmin { get; set; } = false;
-            public Capabilities()
-            { }
-        }
 
         public IPackageManager Manager { get; }
         public string Name { get; }
@@ -24,6 +15,8 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         public string UpdateDate { get; }
         public string AsString { get; protected set; }
         public string AsString_DisplayName { get; protected set; }
+
+        public bool IsVirtualManager { get; }
 
         public ManagerSource(IPackageManager manager, string name, Uri url, int? packageCount = 0, string updateDate = "", bool isVirtualManager = false)
         {

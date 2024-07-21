@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -6,6 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.IconEngine;
+using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -17,37 +20,55 @@ using Windows.Devices.Bluetooth.Advertisement;
 
 namespace UniGetUI.PackageEngine.Classes.Manager
 {
-    public class NullPackageManager : SingletonBase<NullPackageManager>, IPackageManager
+    public class NullPackageManager : IPackageManager
     {
+        public static NullPackageManager Instance = new();
         public ManagerProperties Properties { get; set; }
         public ManagerCapabilities Capabilities { get; set; }
         public ManagerStatus Status { get; set; }
-        public string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public IManagerSource DefaultSource { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool ManagerReady { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Name { get => Properties.Name; set { } }
+        public string DisplayName { get => Properties.DisplayName ?? Properties.Name; set { } }
+        public IManagerSource DefaultSource { get => Properties.DefaultSource; set { } }
+        public bool ManagerReady { get => true; set { } }
 
-        public ManagerLogger TaskLogger => throw new NotImplementedException();
+        public ManagerLogger TaskLogger { get; set; }
 
-        public ISourceProvider? SourceProvider => throw new NotImplementedException();
+        public ISourceProvider? SourceProvider { get; set; }
 
-        public IPackageDetailsProvider? PackageDetailsProvider => throw new NotImplementedException();
+        public IPackageDetailsProvider? PackageDetailsProvider { get; set; }
 
-        public ISourceFactory SourceFactory => throw new NotImplementedException();
+        public ISourceFactory SourceFactory { get; set; }
 
-        private NullPackageManager()
+        public NullPackageManager()
         {
+            TaskLogger = new ManagerLogger(this);
+            var nullsource = NullSource.Instance;
+            SourceProvider = new NullSourceProvider(this);
+            PackageDetailsProvider = new NullPackageDetailsProvider(this);
+            SourceFactory = new SourceFactory(this);
             Properties = new ManagerProperties()
             {
-
+                IsDummy = true,
+                Name = CoreTools.Translate("Unknown"),
+                Description = "Unset",
+                IconId = IconType.Help,
+                ColorIconId = "Unset",
+                ExecutableCallArgs = "Unset",
+                ExecutableFriendlyName = "Unset",
+                InstallVerb = "Unset",
+                UpdateVerb = "Unset",
+                UninstallVerb = "Unset",
+                KnownSources = [nullsource],
+                DefaultSource = nullsource,
             };
 
-            Capabilities = new ManagerCapabilities()
-            {
-
-            };
+            Capabilities = new ManagerCapabilities();
 
             Status = new ManagerStatus()
             {
+                ExecutablePath = "C:/file.exe",
+                Found = false,
+                Version = "0"
             };
         }
 

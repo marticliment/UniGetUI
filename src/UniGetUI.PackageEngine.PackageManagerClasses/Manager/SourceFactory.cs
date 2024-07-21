@@ -9,7 +9,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         private readonly Dictionary<string, IManagerSource> __reference;
         private readonly Uri __default_uri = new("https://marticliment.com/unigetui/");
 
-        public SourceFactory(PackageManager manager)
+        public SourceFactory(IPackageManager manager)
         {
             __reference = [];
             __manager = manager;

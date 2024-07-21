@@ -1,4 +1,6 @@
-﻿using UniGetUI.Interface.Enums;
+﻿using UniGetUI.Core.Logging;
+using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -9,7 +11,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
     public class PackageBundlesLoader : AbstractPackageLoader
     {
         public PackageBundlesLoader(IEnumerable<PackageManager> managers)
-        : base(managers, "PACKAGE_BUNDLES", AllowMultiplePackageVersions: true)
+        : base(managers, "PACKAGE_BUNDLES", AllowMultiplePackageVersions: true, DisableReload: true)
         {
         }
 
@@ -35,32 +37,28 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         public void AddPackages(IEnumerable<IPackage> packages)
         {
-            foreach (var package in packages)
+            foreach (IPackage pkg in packages)
             {
+                IPackage package;
+                if (pkg is Package && pkg is not ImportedPackage && pkg.Source.IsVirtualManager)
+                    package = new InvalidPackage(pkg.AsSerializable_Incompatible(), NullSource.Instance);
+                else
+                    package = pkg;
+
                 if(!Contains(package)) AddPackage(package);
             }
-            RaisePackagesChangedEvent();
+            InvokePackagesChangedEvent();
         }
 
-        /*public void AddPackages(IEnumerable<SerializablePackage_v1> packages_data)
+        public void RemoveRange(IEnumerable<IPackage> packages)
         {
-            foreach (var package_data in packages_data)
-            { 
-                IPackage? package = Package.FromSerializable(package_data);
-                if (!Contains(package)) AddPackage(package);
-            }
-            RaisePackagesChangedEvent();
-        }
-
-        public void AddPackages(IEnumerable<SerializableIncompatiblePackage_v1> packages_data)
-        {
-            foreach (var package_data in packages_data)
+            foreach(IPackage package in packages)
             {
-                InvalidImportedPackage package = Package.FromSerializable(package_data);
-                if (!Contains(package)) AddPackage(package);
+                if (!Contains(package)) continue;
+                //Packages.Remove(package);
+                PackageReference.Remove(HashPackage(package));
             }
-            RaisePackagesChangedEvent();
+            InvokePackagesChangedEvent();
         }
-        */
     }
 }

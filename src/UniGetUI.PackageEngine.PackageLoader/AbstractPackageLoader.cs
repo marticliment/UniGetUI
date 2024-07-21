@@ -21,8 +21,8 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <summary>
         /// The collection of currently available packages
         /// </summary>
-        public ObservableCollection<IPackage> Packages { get; private set; }
-        private readonly Dictionary<long, IPackage> PackageReference;
+        public IEnumerable<IPackage> Packages { get => PackageReference.Values; }
+        protected readonly Dictionary<long, IPackage> PackageReference;
 
         /// <summary>
         /// Fires when a block of packages (one package or more) is added or removed to the loader
@@ -39,18 +39,21 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public event EventHandler<EventArgs>? StartedLoading;
 
-        protected readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS;
-        protected readonly string LOADER_IDENTIFIER;
-        private int LoadOperationIdentifier;
+        readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS = false;
+        readonly bool DISABLE_RELOAD = false;
+        protected string LOADER_IDENTIFIER;
+        private int LoadOperationIdentifier = 0;
         protected IEnumerable<PackageManager> Managers { get; private set; }
 
-        public AbstractPackageLoader(IEnumerable<PackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false)
+        public AbstractPackageLoader(IEnumerable<PackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false, bool DisableReload = false) 
         {
             Managers = managers;
-            Packages = [];
-            PackageReference = [];
+            //Packages = new List<IPackage>();
+            PackageReference = new Dictionary<long, IPackage>();
             IsLoaded = false;
             IsLoading = false;
+            DISABLE_RELOAD = DisableReload;
+            ALLOW_MULTIPLE_PACKAGE_VERSIONS = AllowMultiplePackageVersions;
             LOADER_IDENTIFIER = identifier;
             ALLOW_MULTIPLE_PACKAGE_VERSIONS = AllowMultiplePackageVersions;
         }
@@ -63,15 +66,15 @@ namespace UniGetUI.PackageEngine.PackageLoader
             LoadOperationIdentifier = -1;
             IsLoaded = false;
             IsLoading = false;
-            RaiseFinishedLoadingEvent();
+            InvokeFinishedLoadingEvent();
         }
 
-        protected void RaisePackagesChangedEvent()
+        protected void InvokePackagesChangedEvent()
         {
             PackagesChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        protected void RaiseFinishedLoadingEvent()
+        protected void InvokeFinishedLoadingEvent()
         {
             FinishedLoading?.Invoke(this, EventArgs.Empty);
         }
@@ -82,6 +85,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <returns></returns>
         public virtual async Task ReloadPackages()
         {
+            if(DISABLE_RELOAD)
+            {
+                InvokePackagesChangedEvent();
+                return;
+            }
+
             ClearPackages(emitFinishSignal: false);
             LoadOperationIdentifier = new Random().Next();
             int current_identifier = LoadOperationIdentifier;
@@ -112,7 +121,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                     {
                         if (LoadOperationIdentifier == current_identifier && task.IsCompletedSuccessfully)
                         {
-                            int InitialCount = Packages.Count;
+                            int InitialCount = PackageReference.Count();
                             foreach (IPackage package in task.Result)
                             {
                                 if (Contains(package) || !await IsPackageValid(package))
@@ -123,7 +132,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                                 AddPackage(package);
                                 await WhenAddingPackage(package);
                             }
-                            RaisePackagesChangedEvent();
+                            InvokePackagesChangedEvent();
                         }
                         tasks.Remove(task);
                     }
@@ -132,7 +141,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
             if (LoadOperationIdentifier == current_identifier)
             {
-                RaiseFinishedLoadingEvent();
+                InvokeFinishedLoadingEvent();
                 IsLoaded = true;
             }
             IsLoading = false;
@@ -144,11 +153,10 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public void ClearPackages(bool emitFinishSignal = true)
         {
             StopLoading(emitFinishSignal);
-            Packages.Clear();
             PackageReference.Clear();
             IsLoaded = false;
             IsLoading = false;
-            RaisePackagesChangedEvent();
+            InvokePackagesChangedEvent();
         }
 
         /// <summary>
@@ -200,7 +208,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 return;
             }
 
-            Packages.Add(package);
+            //Packages.Add(package);
             PackageReference.Add(HashPackage(package), package);
         }
 
@@ -221,7 +229,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             }
 
             AddPackage(package);
-            RaisePackagesChangedEvent();
+            InvokePackagesChangedEvent();
         }
 
         /// <summary>
@@ -240,9 +248,8 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 return;
             }
 
-            Packages.Remove(package);
             PackageReference.Remove(HashPackage(package));
-            RaisePackagesChangedEvent();
+            InvokePackagesChangedEvent();
         }
 
         /// <summary>
@@ -302,6 +309,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
             }
 
             return null;
+        }
+
+        public int Count()
+        {
+            return PackageReference.Count;
         }
     }
 }

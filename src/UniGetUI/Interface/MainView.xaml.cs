@@ -11,7 +11,6 @@ using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Pages.LogPage;
 using UniGetUI.Interface.SoftwarePages;
-using UniGetUI.Interface.SoftwarePages.UniGetUI.Interface.SoftwarePages;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;

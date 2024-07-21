@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -19,6 +19,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         public ManagerCapabilities Capabilities { get; set; }
         public ManagerStatus Status { get; set; }
         public string Name { get; set; }
+        public string DisplayName { get; }
         public IManagerSource DefaultSource { get; set; }
         public bool ManagerReady { get; set; }
         public ManagerLogger TaskLogger { get; }

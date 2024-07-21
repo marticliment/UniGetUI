@@ -8,7 +8,6 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
-using UniGetUI.PackageEngine.Classes.Manager.Interfaces;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Classes.Packages;
@@ -522,9 +521,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         }
     }
 
-    internal class NullSourceProvider : BaseSourceProvider<PackageManager>
+    internal class NullSourceProvider : BaseSourceProvider<IPackageManager>
     {
-        public NullSourceProvider(PackageManager manager) : base(manager)
+        public NullSourceProvider(IPackageManager manager) : base(manager)
         {
         }
 
@@ -553,10 +552,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         }
     }
 
-    internal class NullPackageDetailsProvider : BasePackageDetailsProvider<PackageManager>
+    internal class NullPackageDetailsProvider : BasePackageDetailsProvider<IPackageManager>
     {
 #pragma warning disable CS1998
-        public NullPackageDetailsProvider(PackageManager manager) : base(manager)
+        public NullPackageDetailsProvider(IPackageManager manager) : base(manager)
         {
         }
 

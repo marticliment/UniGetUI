@@ -11,7 +11,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// The package to which this details instance corresponds
         /// </summary>
-        public Package Package { get; }
+        public IPackage Package { get; }
 
         /// <summary>
         /// Wether this PackageDetails instance has valid data or not.
