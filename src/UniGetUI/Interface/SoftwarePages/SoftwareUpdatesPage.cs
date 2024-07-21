@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.WinUI.Notifications;
+using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Data;
@@ -343,7 +343,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     else
                     {
                         title = CoreTools.Translate("Updates found!");
-                        body = CoreTools.Translate("{0} packages are being updated", upgradablePackages.Count); ;
+                        body = CoreTools.Translate("{0} packages are being updated", upgradablePackages.Count);
                         foreach (Package package in upgradablePackages)
                         {
                             attribution += package.Name + ", ";
@@ -363,7 +363,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     else
                     {
                         title = CoreTools.Translate("Updates found!");
-                        body = CoreTools.Translate("{0} packages can be updated", upgradablePackages.Count); ;
+                        body = CoreTools.Translate("{0} packages can be updated", upgradablePackages.Count);
                         foreach (Package package in upgradablePackages)
                         {
                             attribution += package.Name + ", ";

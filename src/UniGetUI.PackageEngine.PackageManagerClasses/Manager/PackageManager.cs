@@ -160,7 +160,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <returns></returns>
         public async Task<Package[]> FindPackages(string query)
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet FindPackages was called"); return []; };
+            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet FindPackages was called"); return []; }
             try
             {
                 Package[] packages = await FindPackages_UnSafe(query).WaitAsync(TimeSpan.FromSeconds(60));
@@ -187,7 +187,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <returns></returns>
         public async Task<Package[]> GetAvailableUpdates()
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetAvailableUpdates was called"); return []; };
+            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetAvailableUpdates was called"); return []; }
             try
             {
                 await RefreshPackageIndexes().WaitAsync(TimeSpan.FromSeconds(60));
@@ -215,7 +215,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <returns></returns>
         public async Task<Package[]> GetInstalledPackages()
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetInstalledPackages was called"); return []; };
+            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetInstalledPackages was called"); return []; }
             try
             {
                 Package[] packages = await GetInstalledPackages_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
@@ -385,7 +385,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         }
         public virtual async Task<ManagerSource[]> GetSources()
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetSources was called"); return []; };
+            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetSources was called"); return []; }
             try
             {
                 AssertSourceCompatibility("GetSources");
@@ -428,7 +428,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         public async Task GetPackageDetails(PackageDetails details)
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageDetails was called"); return; };
+            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageDetails was called"); return; }
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageDetails");
@@ -444,7 +444,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         public async Task<string[]> GetPackageVersions(Package package)
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageVersions was called"); return []; };
+            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageVersions was called"); return []; }
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageVersions");

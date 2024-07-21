@@ -65,7 +65,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             foreach (ManagerSource source in sources)
             {
                 Uri SearchUrl = new($"{source.Url}/Search()?searchTerm=%27{HttpUtility.UrlEncode(query)}%27&targetFramework=%27%27&includePrerelease=false");
-                logger.Log($"Begin package search with url={SearchUrl} on manager {Name}"); ;
+                logger.Log($"Begin package search with url={SearchUrl} on manager {Name}");
 
                 using HttpClient client = new(CoreData.GenericHttpClientParameters);
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
