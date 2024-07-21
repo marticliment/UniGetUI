@@ -22,7 +22,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
             SortingSelector = x => x.Package.Name;
         }
 
-
         /// <summary>
         /// Add a package to the collection
         /// </summary>

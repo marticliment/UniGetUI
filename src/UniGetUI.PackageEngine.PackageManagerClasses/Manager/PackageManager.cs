@@ -44,7 +44,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             TaskLogger = new ManagerLogger(this);
         }
 
-
         /// <summary>
         /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.
         /// </summary>
@@ -126,7 +125,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 Logger.Error(e);
             }
         }
-
 
         /// <summary>
         /// Returns a ManagerStatus object representing the current status of the package manager. This method runs asynchronously.
@@ -235,7 +233,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
         }
 
-
         /// <summary>
         /// Returns the available packages to install for the given query.
         /// Each manager MUST implement this method.
@@ -258,7 +255,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <returns>An array of Package objects</returns>
         protected abstract Task<Package[]> GetInstalledPackages_UnSafe();
 
-
         /// <summary>
         /// Returns the command-line parameters to install the given package.
         /// Each manager MUST implement this method.
@@ -267,7 +263,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <param name="options">The options in which it is going to be installed</param>
         /// <returns>An array of strings containing the parameters without the manager executable file</returns>
         public abstract string[] GetInstallParameters(Package package, InstallationOptions options);
-
 
         /// <summary>
         /// Returns the command-line parameters to update the given package.
@@ -297,7 +292,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <param name="Output">the output of the process</param>
         /// <returns>An OperationVeredict value representing the result of the installation</returns>
         public abstract OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output);
-
 
         /// <summary>
         /// Decides and returns the verdict of the update operation.
@@ -403,13 +397,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 #pragma warning restore CS8602
         // END SOURCE-RELATED METHODS
 
-
-
-
-
-
-
-
         // BEGIN PACKAGEDEAILS-RELATED METHODS
         private void AssertPackageDetailsCompatibility(string methodName)
         {
@@ -494,8 +481,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         }
 #pragma warning restore CS8602
         // END PACKAGEDETAILS-RELATED METHODS
-
-
 
         public void LogOperation(Process process, string output)
         {

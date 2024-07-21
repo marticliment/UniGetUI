@@ -40,7 +40,6 @@ namespace UniGetUI
         public MainWindow MainWindow;
         public ThemeListener ThemeListener;
 
-
         private readonly BackgroundApiRunner BackgroundApi = new();
 #pragma warning disable CS8618
         public static MainApp Instance;
@@ -180,7 +179,6 @@ namespace UniGetUI
                 appWindow.Closing += MainWindow.HandleClosingEvent;
             }
         }
-
 
         /// <summary>
         /// Clear the notification history, if possible
@@ -394,7 +392,6 @@ namespace UniGetUI
                     client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     fileContents = await client.GetStringAsync("https://www.marticliment.com/versions/unigetui.ver");
                 }
-
 
                 if (!fileContents.Contains("///"))
                 {

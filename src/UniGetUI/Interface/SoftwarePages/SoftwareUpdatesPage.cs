@@ -103,7 +103,6 @@ namespace UniGetUI.Interface.SoftwarePages
             };
             menuUninstall.Click += MenuUninstall_Invoked;
 
-
             BetterMenuItem menuIgnorePackage = new()
             {
                 Text = "Ignore updates for this package",
