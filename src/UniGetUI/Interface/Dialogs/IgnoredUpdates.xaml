@@ -26,7 +26,7 @@
                                     <ColumnDefinition Width="*" MaxWidth="80"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <widgets:LocalIcon IconName="install" Grid.Column="0" Height="24" Width="24"/>
+                                <widgets:LocalIcon IconName="package" Grid.Column="0" Height="24" Width="24"/>
                                 <TextBlock Text="{x:Bind Id}" Grid.Column="1" VerticalAlignment="Center"/>
                                 <widgets:LocalIcon IconName="version" Grid.Column="2" Height="24" Width="24"/>
                                 <TextBlock Text="{x:Bind Version}" Grid.Column="3" VerticalAlignment="Center"/>

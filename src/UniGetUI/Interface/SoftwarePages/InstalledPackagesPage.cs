@@ -52,7 +52,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuUninstall = new()
             {
                 Text = "Uninstall",
-                IconName = "trash",
+                IconName = "delete",
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
             menuUninstall.Click += MenuUninstall_Invoked;
@@ -74,7 +74,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin = new BetterMenuItem
             {
                 Text = "Uninstall as administrator",
-                IconName = "runasadmin"
+                IconName = "uac"
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
             menu.Items.Add(MenuAsAdmin);
@@ -90,7 +90,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuRemoveData = new BetterMenuItem
             {
                 Text = "Uninstall and remove data",
-                IconName = "menu_close"
+                IconName = "close_round"
             };
             MenuRemoveData.Click += MenuRemoveData_Invoked;
             menu.Items.Add(MenuRemoveData);
@@ -100,7 +100,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuReinstall = new()
             {
                 Text = "Reinstall package",
-                IconName = "newversion"
+                IconName = "download"
             };
             menuReinstall.Click += MenuReinstall_Invoked;
             menu.Items.Add(menuReinstall);
@@ -136,7 +136,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuDetails = new()
             {
                 Text = "Package details",
-                IconName = "info",
+                IconName = "info_round",
                 KeyboardAcceleratorTextOverride = "Enter"
             };
             menuDetails.Click += MenuDetails_Invoked;
@@ -205,11 +205,11 @@ namespace UniGetUI.Interface.SoftwarePages
 
             Dictionary<AppBarButton, string> Icons = new()
             {
-                { UninstallSelected,      "trash" },
-                { UninstallAsAdmin,       "runasadmin" },
+                { UninstallSelected,      "delete" },
+                { UninstallAsAdmin,       "uac" },
                 { UninstallInteractive,   "interactive" },
                 { InstallationSettings,   "options" },
-                { PackageDetails,         "info" },
+                { PackageDetails,         "info_round" },
                 { SharePackage,           "share" },
                 { IgnoreSelected,         "pin" },
                 { ManageIgnored,          "clipboard_list" },

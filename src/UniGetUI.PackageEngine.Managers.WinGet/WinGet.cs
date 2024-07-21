@@ -110,12 +110,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             SourceProvider = new WinGetSourceProvider(this);
             PackageDetailsProvider = new WinGetPackageDetailsProvider(this);
 
-            LocalPcSource = new LocalWingetSource(this, CoreTools.Translate("Local PC"), "localpc");
+            LocalPcSource = new LocalWingetSource(this, CoreTools.Translate("Local PC"), "local_pc");
             AndroidSubsystemSource = new(this, CoreTools.Translate("Android Subsystem"), "android");
             SteamSource = new(this, "Steam", "steam");
             UbisoftConnectSource = new(this, "Ubisoft Connect", "uplay");
             GOGSource = new(this, "GOG", "gog");
-            MicrosoftStoreSource = new(this, "Microsoft Store", "msstore");
+            MicrosoftStoreSource = new(this, "Microsoft Store", "ms_store");
         }
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)

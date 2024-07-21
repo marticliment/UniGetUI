@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -57,7 +57,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuInstall = new()
             {
                 Text = "Install",
-                IconName = "newversion",
+                IconName = "download",
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
             menuInstall.Click += MenuInstall_Invoked;
@@ -79,7 +79,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin = new BetterMenuItem
             {
                 Text = "Install as administrator",
-                IconName = "runasadmin"
+                IconName = "uac"
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
             menu.Items.Add(MenuAsAdmin);
@@ -113,7 +113,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuDetails = new()
             {
                 Text = "Package details",
-                IconName = "info",
+                IconName = "info_round",
                 KeyboardAcceleratorTextOverride = "Enter"
             };
             menuDetails.Click += MenuDetails_Invoked;
@@ -179,12 +179,12 @@ namespace UniGetUI.Interface.SoftwarePages
 
             Dictionary<AppBarButton, string> Icons = new()
             {
-                { InstallSelected,      "install" },
-                { InstallAsAdmin,       "runasadmin" },
+                { InstallSelected,      "download" },
+                { InstallAsAdmin,       "uac" },
                 { InstallSkipHash,      "checksum" },
                 { InstallInteractive,   "interactive" },
                 { InstallationSettings, "options" },
-                { PackageDetails,       "info" },
+                { PackageDetails,       "info_round" },
                 { SharePackage,         "share" },
                 { ExportSelection,      "add_to" },
                 { HelpButton,           "help" }

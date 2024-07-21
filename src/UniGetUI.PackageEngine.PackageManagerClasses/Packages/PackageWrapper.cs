@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -16,7 +16,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             set => Package.IsChecked = value;
         }
 
-        public bool ListIconShowHighlight;
+        public string ListedComplementaryIconId = "";
         public string ListedIconId = "";
         public string ListedNameTooltip = "";
         public float ListedOpacity;
@@ -43,7 +43,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 WhenTagHasChanged();
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedOpacity)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListIconShowHighlight)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedComplementaryIconId)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedIconId)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedNameTooltip)));
             }
@@ -69,26 +69,26 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
 #pragma warning disable CS8524
 
-            ListIconShowHighlight = Package.Tag switch
+            ListedComplementaryIconId = Package.Tag switch
             {
-                PackageTag.Default => false,
-                PackageTag.AlreadyInstalled => true,
-                PackageTag.IsUpgradable => true,
-                PackageTag.Pinned => false,
-                PackageTag.OnQueue => false,
-                PackageTag.BeingProcessed => false,
-                PackageTag.Failed => true,
+                PackageTag.Default => "empty",
+                PackageTag.AlreadyInstalled => "installed_filled",
+                PackageTag.IsUpgradable => "upgradable_filled",
+                PackageTag.Pinned => "pin_filled",
+                PackageTag.OnQueue => "empty",
+                PackageTag.BeingProcessed => "loading_filled",
+                PackageTag.Failed => "warning_filled",
             };
 
             ListedIconId = Package.Tag switch
             {
-                PackageTag.Default => "install",
+                PackageTag.Default => "package",
                 PackageTag.AlreadyInstalled => "installed",
-                PackageTag.IsUpgradable => "update",
-                PackageTag.Pinned => "pin_fill",
+                PackageTag.IsUpgradable => "upgradable",
+                PackageTag.Pinned => "pin",
                 PackageTag.OnQueue => "sandclock",
-                PackageTag.BeingProcessed => "gears",
-                PackageTag.Failed => "stop",
+                PackageTag.BeingProcessed => "loading",
+                PackageTag.Failed => "warning",
             };
 
             ListedNameTooltip = Package.Tag switch

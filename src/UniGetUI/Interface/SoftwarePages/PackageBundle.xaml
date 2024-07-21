@@ -572,7 +572,7 @@
                     <widgets:LocalIcon IconName="options"/>
                 </Button>
                 <Button Grid.Column="10" VerticalAlignment="Stretch" Width="32" Padding="3" x:Name="RemoveButton" Click="{x:Bind RemoveFromList}">
-                    <widgets:LocalIcon IconName="trash"/>
+                    <widgets:LocalIcon IconName="delete"/>
                 </Button>
             </Grid>
         </DataTemplate>
@@ -833,7 +833,7 @@
                             <widgets:BetterMenuItem x:Name="MenuRemoveData" 
                                 Text="Remove from list" 
                                 Click="MenuRemoveFromList_Invoked"
-                                IconName="trash"/>
+                                IconName="delete"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuShare" 
                                 Text="Share this package" 

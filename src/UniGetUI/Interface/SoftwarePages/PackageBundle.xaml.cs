@@ -541,11 +541,11 @@ namespace UniGetUI.Interface
             Dictionary<AppBarButton, string> Icons = new()
             {
                 { NewBundle,              "add_to" },
-                { InstallPackages,        "newversion" },
-                { OpenBundle,             "openfolder" },
-                { RemoveSelected,         "trash" },
-                { ExportBundle,           "save" },
-                { PackageDetails,         "info" },
+                { InstallPackages,        "download" },
+                { OpenBundle,             "open_folder" },
+                { RemoveSelected,         "delete" },
+                { ExportBundle,           "save_as" },
+                { PackageDetails,         "info_round" },
                 { SharePackage,           "share" },
                 { SelectAll,              "selectall" },
                 { SelectNone,             "selectnone" },

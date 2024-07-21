@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.WinUI.Notifications;
+using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Data;
@@ -52,7 +52,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuInstall = new()
             {
                 Text = "Update",
-                IconName = "menu_updates",
+                IconName = "update",
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
             menuInstall.Click += MenuInstall_Invoked;
@@ -71,7 +71,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin = new BetterMenuItem()
             {
                 Text = "Update as administrator",
-                IconName = "runasadmin",
+                IconName = "uac",
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
 
@@ -99,7 +99,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuUninstall = new()
             {
                 Text = "Uninstall package",
-                IconName = "trash",
+                IconName = "delete",
             };
             menuUninstall.Click += MenuUninstall_Invoked;
 
@@ -128,7 +128,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuDetails = new()
             {
                 Text = "Package details",
-                IconName = "info",
+                IconName = "info_round",
                 KeyboardAcceleratorTextOverride = "Enter"
             };
             menuDetails.Click += (o, e) => ShowDetailsForPackage(SelectedItem);
@@ -226,12 +226,12 @@ namespace UniGetUI.Interface.SoftwarePages
 
             Dictionary<AppBarButton, string> Icons = new()
             {
-                { UpdateSelected,       "menu_updates" },
-                { UpdateAsAdmin,        "runasadmin" },
+                { UpdateSelected,       "update" },
+                { UpdateAsAdmin,        "uac" },
                 { UpdateSkipHash,       "checksum" },
                 { UpdateInteractive,    "interactive" },
                 { InstallationSettings, "options" },
-                { PackageDetails,       "info" },
+                { PackageDetails,       "info_round" },
                 { SharePackage,         "share" },
                 { IgnoreSelected,       "pin" },
                 { ManageIgnored,        "clipboard_list" },

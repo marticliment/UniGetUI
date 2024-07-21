@@ -24,7 +24,7 @@
             <widgets:BetterMenuItem x:Name="VersionMenuItem" IconName="info" IsEnabled="False" />
             <widgets:BetterMenuItem Text="Release notes" IconName="megaphone" Name="ReleaseNotesMenu" Click="ReleaseNotesMenu_Click" />
             <MenuFlyoutSeparator Height="5"/>
-            <widgets:BetterMenuItem Text="Quit WingetUI" IconName="menu_close" Name="QuitWingetUI" Click="QuitUniGetUI_Click" />
+            <widgets:BetterMenuItem Text="Quit WingetUI" IconName="close_round" Name="QuitWingetUI" Click="QuitUniGetUI_Click" />
         </widgets:BetterMenu>
     </UserControl.Resources>
 
