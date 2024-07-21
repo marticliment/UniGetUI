@@ -60,7 +60,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             Match IconArray = Regex.Match(ResponseContent, "(?:\"|')Images(?:\"|'): ?\\[([^\\]]+)\\]");
             if (!IconArray.Success)
             {
-                Logger.Warn($"Could not parse Images array from Microsoft Store response");
+                Logger.Warn("Could not parse Images array from Microsoft Store response");
                 return [];
             }
 
@@ -146,7 +146,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             Match IconArray = Regex.Match(ResponseContent, "(?:\"|')Images(?:\"|'): ?\\[([^\\]]+)\\]");
             if (!IconArray.Success)
             {
-                Logger.Warn($"Could not parse Images array from Microsoft Store response");
+                Logger.Warn("Could not parse Images array from Microsoft Store response");
                 return null;
             }
 

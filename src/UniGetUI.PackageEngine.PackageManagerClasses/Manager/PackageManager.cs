@@ -395,7 +395,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
             catch (Exception e)
             {
-                Logger.Error($"Error finding sources for manager " + Name);
+                Logger.Error("Error finding sources for manager " + Name);
                 Logger.Error(e);
                 return [];
             }

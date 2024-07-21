@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine;
@@ -26,7 +26,7 @@ namespace UniGetUI.Interface.Pages.LogPage
                     Paragraph versionParagraph = new();
                     versionParagraph.Inlines.Add(new Run() { Text = $"Manager {manager.DisplayName} with version:\n" });
                     versionParagraph.Inlines.Add(new Run() { Text = manager.Status.Version });
-                    versionParagraph.Inlines.Add(new Run() { Text = $"\n\n——————————————————————————————————————————\n\n" });
+                    versionParagraph.Inlines.Add(new Run() { Text = "\n\n——————————————————————————————————————————\n\n" });
                     LogTextBox.Blocks.Add(versionParagraph);
 
                     foreach (PackageEngine.ManagerClasses.Classes.TaskLogger operation in TaskLogger.Operations)

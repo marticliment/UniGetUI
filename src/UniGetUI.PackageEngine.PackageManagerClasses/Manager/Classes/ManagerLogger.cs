@@ -193,7 +193,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 $"0Subprocess executable: \"{Executable}\"",
                 $"0Command-line arguments: \"{Arguments}\"",
                 $"0Process start time: {StartTime}",
-                EndTime == null ? $"2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
+                EndTime == null ? "2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
             ];
 
             if (StdIn.Count > 0)
@@ -354,7 +354,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             [
                 $"0Logged native task on manager {Manager.Name}. Task type is {Type}",
                 $"0Process start time: {StartTime}",
-                EndTime == null ? $"2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
+                EndTime == null ? "2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
             ];
 
             if (Info.Count > 0)

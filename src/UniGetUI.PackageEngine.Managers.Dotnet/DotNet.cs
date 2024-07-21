@@ -154,7 +154,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     StartInfo = new ProcessStartInfo()
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + $" list" + (scope == PackageScope.Global ? " --global" : ""),
+                        Arguments = Properties.ExecutableCallArgs + " list" + (scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         UseShellExecute = false,

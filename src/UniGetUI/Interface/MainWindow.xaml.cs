@@ -559,7 +559,7 @@ namespace UniGetUI.Interface
 
             TextBlock infotext = new()
             {
-                Text = CoreTools.Translate($"Click on Install to begin the installation process. If you skip the installation, UniGetUI may not work as expected."),
+                Text = CoreTools.Translate("Click on Install to begin the installation process. If you skip the installation, UniGetUI may not work as expected."),
                 TextWrapping = TextWrapping.Wrap,
                 Margin = new Thickness(0, 0, 0, 10),
                 Opacity = .7F,
