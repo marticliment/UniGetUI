@@ -414,17 +414,17 @@ namespace UniGetUI.Interface
             GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
-        private void LanguageSelector_ValueChanged(object sender, Interface.Widgets.ComboCardEventArgs e)
+        private void LanguageSelector_ValueChanged(object sender, EventArgs e)
         {
             GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
-        private void UpdatesCheckIntervalSelector_ValueChanged(object sender, Interface.Widgets.ComboCardEventArgs e)
+        private void UpdatesCheckIntervalSelector_ValueChanged(object sender, EventArgs e)
         {
             GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
-        private void ThemeSelector_ValueChanged(object sender, Interface.Widgets.ComboCardEventArgs e)
+        private void ThemeSelector_ValueChanged(object sender, EventArgs e)
         {
             ((MainApp)Application.Current).MainWindow.ApplyTheme();
         }
