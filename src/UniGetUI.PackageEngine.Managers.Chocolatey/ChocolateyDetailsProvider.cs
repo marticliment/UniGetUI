@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -14,7 +14,7 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     // choco search php --exact --all-versions
                     FileName = Manager.Status.ExecutablePath,

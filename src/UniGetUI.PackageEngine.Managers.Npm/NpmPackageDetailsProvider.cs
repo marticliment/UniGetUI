@@ -22,7 +22,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 details.ReleaseNotesUrl = new Uri($"https://www.npmjs.com/package/{details.Package.Id}?activeTab=versions");
 
                 using Process p = new();
-                p.StartInfo = new ProcessStartInfo()
+                p.StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
                     Arguments = Manager.Properties.ExecutableCallArgs + " info " + details.Package.Id,
@@ -114,7 +114,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
                     Arguments = Manager.Properties.ExecutableCallArgs + " show " + package.Id + " versions --json",

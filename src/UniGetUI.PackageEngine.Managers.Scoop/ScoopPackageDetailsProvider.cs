@@ -31,7 +31,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
                     Arguments = Manager.Properties.ExecutableCallArgs + " cat " + details.Package.Source.Name + "/" + details.Package.Id,

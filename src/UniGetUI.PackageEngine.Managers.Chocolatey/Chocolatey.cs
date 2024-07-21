@@ -21,7 +21,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
         public Chocolatey()
         {
-            Capabilities = new ManagerCapabilities()
+            Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
                 CanSkipIntegrityChecks = true,
@@ -32,14 +32,14 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 SupportsPreRelease = true,
                 SupportsCustomSources = true,
                 SupportsCustomPackageIcons = true,
-                Sources = new ManagerSource.Capabilities()
+                Sources = new ManagerSource.Capabilities
                 {
                     KnowsPackageCount = false,
                     KnowsUpdateDate = false,
                 }
             };
 
-            Properties = new ManagerProperties()
+            Properties = new ManagerProperties
             {
                 Name = "Chocolatey",
                 Description = CoreTools.Translate("The classic package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"),
@@ -63,7 +63,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " outdated",
@@ -117,7 +117,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " list",
@@ -384,7 +384,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             Process process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
                     Arguments = "--version",

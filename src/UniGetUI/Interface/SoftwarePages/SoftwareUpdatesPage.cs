@@ -21,7 +21,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuskipHash;
 
         public SoftwareUpdatesPage()
-        : base(new PackagesPageData()
+        : base(new PackagesPageData
         {
             DisableAutomaticPackageLoadOnStart = false,
             MegaQueryBlockEnabled = false,
@@ -68,21 +68,21 @@ namespace UniGetUI.Interface.SoftwarePages
                 ShowInstallationOptionsForPackage(SelectedItem);
             };
 
-            MenuAsAdmin = new BetterMenuItem()
+            MenuAsAdmin = new BetterMenuItem
             {
                 Text = "Update as administrator",
                 IconName = "runasadmin",
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
 
-            MenuInteractive = new BetterMenuItem()
+            MenuInteractive = new BetterMenuItem
             {
                 Text = "Interactive update",
                 IconName = "interactive",
             };
             MenuInteractive.Click += MenuInteractive_Invoked;
 
-            MenuskipHash = new BetterMenuItem()
+            MenuskipHash = new BetterMenuItem
             {
                 Text = "Skip hash check",
                 IconName = "checksum",

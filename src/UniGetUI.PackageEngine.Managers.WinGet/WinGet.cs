@@ -54,7 +54,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
                         Process p = new()
                         {
-                            StartInfo = new ProcessStartInfo() {
+                            StartInfo = new ProcessStartInfo
+                            {
                                 FileName = PowerShellPath,
                                 Arguments = PowerShellPromptArgs,
                                 RedirectStandardInput = true,
@@ -69,7 +70,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                      })
             ];
 
-            Capabilities = new ManagerCapabilities()
+            Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
                 CanSkipIntegrityChecks = true,
@@ -82,7 +83,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 SupportsCustomSources = true,
                 SupportsCustomPackageIcons = true,
                 SupportsCustomPackageScreenshots = true,
-                Sources = new ManagerSource.Capabilities()
+                Sources = new ManagerSource.Capabilities
                 {
                     KnowsPackageCount = false,
                     KnowsUpdateDate = true,
@@ -90,7 +91,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             };
 
-            Properties = new ManagerProperties()
+            Properties = new ManagerProperties
             {
                 Name = "Winget",
                 DisplayName = "WinGet",
@@ -344,7 +345,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             Process process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " --version",
@@ -366,7 +367,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = PowerShellPath,
                     Arguments = PowerShellInlineArgs + " -Command Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version",
@@ -412,7 +413,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " source update --disable-interactivity",

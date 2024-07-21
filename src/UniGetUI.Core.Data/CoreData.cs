@@ -13,9 +13,9 @@ namespace UniGetUI.Core.Data
         {
             try
             {
-                Process p = new Process()
+                Process p = new Process
                 {
-                    StartInfo = new ProcessStartInfo()
+                    StartInfo = new ProcessStartInfo
                     {
                         FileName = "chcp.com",
                         RedirectStandardOutput = true,

@@ -24,7 +24,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo()
+            StartInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
                 Arguments = "/C " + Manager.PowerShellPath + " " + Manager.PowerShellPromptArgs,
@@ -116,7 +116,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         List<Package> Packages = [];
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo()
+            StartInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
                 Arguments = "/C " + Manager.PowerShellPath + " " + Manager.PowerShellPromptArgs,
@@ -215,7 +215,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo()
+            StartInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
                 Arguments = "/C " + Manager.PowerShellPath + " " + Manager.PowerShellPromptArgs,
@@ -534,7 +534,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
     {
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo()
+            StartInfo = new ProcessStartInfo
             {
                 FileName = Manager.WinGetBundledPath,
                 Arguments = Manager.Properties.ExecutableCallArgs + " show --id " + package.Id +

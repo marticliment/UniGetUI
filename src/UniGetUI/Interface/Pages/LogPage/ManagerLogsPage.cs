@@ -24,9 +24,9 @@ namespace UniGetUI.Interface.Pages.LogPage
                     PackageEngine.ManagerClasses.Classes.ManagerLogger TaskLogger = manager.TaskLogger;
                     LogTextBox.Blocks.Clear();
                     Paragraph versionParagraph = new();
-                    versionParagraph.Inlines.Add(new Run() { Text = $"Manager {manager.DisplayName} with version:\n" });
-                    versionParagraph.Inlines.Add(new Run() { Text = manager.Status.Version });
-                    versionParagraph.Inlines.Add(new Run() { Text = "\n\n——————————————————————————————————————————\n\n" });
+                    versionParagraph.Inlines.Add(new Run { Text = $"Manager {manager.DisplayName} with version:\n" });
+                    versionParagraph.Inlines.Add(new Run { Text = manager.Status.Version });
+                    versionParagraph.Inlines.Add(new Run { Text = "\n\n——————————————————————————————————————————\n\n" });
                     LogTextBox.Blocks.Add(versionParagraph);
 
                     foreach (PackageEngine.ManagerClasses.Classes.TaskLogger operation in TaskLogger.Operations)
@@ -44,7 +44,7 @@ namespace UniGetUI.Interface.Pages.LogPage
                                 '5' => new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW },
                                 _ => new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW },
                             };
-                            p.Inlines.Add(new Run() { Text = line[1..] + "\n", Foreground = color });
+                            p.Inlines.Add(new Run { Text = line[1..] + "\n", Foreground = color });
                         }
                         ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
                         LogTextBox.Blocks.Add(p);

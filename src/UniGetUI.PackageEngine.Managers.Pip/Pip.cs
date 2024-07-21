@@ -17,7 +17,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         public Pip()
         {
-            Capabilities = new ManagerCapabilities()
+            Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
                 SupportsCustomVersions = true,
@@ -25,7 +25,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 SupportsPreRelease = true,
             };
 
-            Properties = new ManagerProperties()
+            Properties = new ManagerProperties
             {
                 Name = "Pip",
                 Description = CoreTools.Translate("Python's library manager. Full of python libraries and other python-related utilities<br>Contains: <b>Python libraries and related utilities</b>"),
@@ -54,7 +54,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             {
                 Process proc = new()
                 {
-                    StartInfo = new ProcessStartInfo()
+                    StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
                         Arguments = Properties.ExecutableCallArgs + " install parse_pip_search",
@@ -77,7 +77,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = path,
                     Arguments = "\"" + query + "\"",
@@ -137,7 +137,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " list --outdated",
@@ -199,7 +199,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " list",
@@ -339,7 +339,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             Process process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " --version",

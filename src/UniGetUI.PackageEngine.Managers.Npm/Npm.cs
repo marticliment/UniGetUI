@@ -15,7 +15,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
         public Npm()
         {
-            Capabilities = new ManagerCapabilities()
+            Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
                 SupportsCustomVersions = true,
@@ -23,7 +23,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 SupportsPreRelease = true,
             };
 
-            Properties = new ManagerProperties()
+            Properties = new ManagerProperties
             {
                 Name = "Npm",
                 Description = CoreTools.Translate("Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>"),
@@ -46,7 +46,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\" --parseable",
@@ -100,7 +100,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             {
                 Process p = new()
                 {
-                    StartInfo = new ProcessStartInfo()
+                    StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
                         Arguments = Properties.ExecutableCallArgs + " outdated --parseable" + (scope == PackageScope.Global ? " --global" : ""),
@@ -152,7 +152,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             {
                 Process p = new()
                 {
-                    StartInfo = new ProcessStartInfo()
+                    StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
                         Arguments = Properties.ExecutableCallArgs + " list" + (scope == PackageScope.Global ? " --global" : ""),
@@ -278,7 +278,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
             Process process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " --version",

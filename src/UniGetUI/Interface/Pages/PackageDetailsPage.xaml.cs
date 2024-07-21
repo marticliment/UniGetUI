@@ -218,7 +218,7 @@ namespace UniGetUI.Interface.Dialogs
             ShowableTags.Clear();
             foreach (string tag in details.Tags)
             {
-                ShowableTags.Add(new TextBlock()
+                ShowableTags.Add(new TextBlock
                 {
                     Text = tag,
                     VerticalAlignment = VerticalAlignment.Center,
@@ -246,7 +246,7 @@ namespace UniGetUI.Interface.Dialogs
             if (u == null)
             {
                 h.Inlines.Clear();
-                h.Inlines.Add(new Run()
+                h.Inlines.Add(new Run
                 {
                     Text = CoreTools.Translate("Not available"),
                     TextDecorations = TextDecorations.None,
@@ -257,14 +257,14 @@ namespace UniGetUI.Interface.Dialogs
             else
             {
                 h.Inlines.Clear();
-                h.Inlines.Add(new Run() { Text = prefix + u.ToString() + suffix });
+                h.Inlines.Add(new Run { Text = prefix + u.ToString() + suffix });
                 h.NavigateUri = u;
             }
         }
         public void SetTextToItem(Hyperlink h, string s)
         {
             h.Inlines.Clear();
-            h.Inlines.Add(new Run() { Text = s });
+            h.Inlines.Add(new Run { Text = s });
             h.NavigateUri = new Uri("about:blank");
         }
 
@@ -366,7 +366,7 @@ namespace UniGetUI.Interface.Dialogs
                         while (running)
                         {
                             DownloadInstaller_Button.Inlines.Clear();
-                            DownloadInstaller_Button.Inlines.Add(new Run() { Text = baseString + " " + texts[i++ % 6] });
+                            DownloadInstaller_Button.Inlines.Add(new Run { Text = baseString + " " + texts[i++ % 6] });
                             await Task.Delay(500);
                         }
                     };
@@ -381,7 +381,7 @@ namespace UniGetUI.Interface.Dialogs
                     await s.CopyToAsync(fs);
                     fs.Dispose();
                     DownloadInstaller_Button.Inlines.Clear();
-                    DownloadInstaller_Button.Inlines.Add(new Run() { Text = CoreTools.Translate("Download installer") });
+                    DownloadInstaller_Button.Inlines.Add(new Run { Text = CoreTools.Translate("Download installer") });
                     running = false;
                     Logger.ImportantInfo($"Installer for {Package.Id} has been downloaded successfully");
                     MainApp.Instance.MainWindow.HideLoadingDialog();
@@ -395,7 +395,7 @@ namespace UniGetUI.Interface.Dialogs
                 Logger.Error(ex);
 
                 DownloadInstaller_Button.Inlines.Clear();
-                DownloadInstaller_Button.Inlines.Add(new Run() { Text = CoreTools.Translate("An error occurred") + ": " + ex.Message });
+                DownloadInstaller_Button.Inlines.Add(new Run { Text = CoreTools.Translate("An error occurred") + ": " + ex.Message });
             }
         }
         public void CloseButton_Click(object sender, RoutedEventArgs e)

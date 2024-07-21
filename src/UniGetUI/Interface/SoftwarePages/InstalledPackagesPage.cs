@@ -22,7 +22,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuRemoveData;
 
         public InstalledPackagesPage()
-        : base(new PackagesPageData()
+        : base(new PackagesPageData
         {
             DisableAutomaticPackageLoadOnStart = false,
             MegaQueryBlockEnabled = false,

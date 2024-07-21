@@ -317,7 +317,7 @@ namespace UniGetUI.Interface
                 }
 
                 byte[] fileContents = await File.ReadAllBytesAsync(iconPath);
-                return new Response()
+                return new Response
                 {
                     ContentType = $"image/{iconPath.Split('.')[^1]}",
                     Contents = (stream) =>

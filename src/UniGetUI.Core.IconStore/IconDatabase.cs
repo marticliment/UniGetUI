@@ -98,7 +98,7 @@ namespace UniGetUI.Core.IconEngine
                     IconDatabaseData = JsonData.icons_and_screenshots;
                 }
 
-                __icon_count = new IconCount()
+                __icon_count = new IconCount
                 {
                     PackagesWithIconCount = JsonData.package_count.packages_with_icon,
                     PackagesWithScreenshotCount = JsonData.package_count.packages_with_screenshot,

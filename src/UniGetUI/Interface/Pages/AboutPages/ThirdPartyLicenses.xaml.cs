@@ -30,7 +30,7 @@ namespace UniGetUI.Interface.Pages.AboutPages
             InitializeComponent();
             foreach (string license in LicenseData.LicenseNames.Keys)
             {
-                Licenses.Add(new LibraryLicense()
+                Licenses.Add(new LibraryLicense
                 {
                     Name = license,
                     License = LicenseData.LicenseNames[license],

@@ -514,7 +514,7 @@ namespace UniGetUI.Interface
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = "cmd.exe",
                     Arguments = "/c start ms-settings:startupapps",

@@ -620,7 +620,7 @@ namespace UniGetUI.Interface
                         infotext.Text = CoreTools.Translate("Please wait while {0} is being installed. A black window may show up. Please wait until it closes.", dep_name);
                         Process p = new()
                         {
-                            StartInfo = new ProcessStartInfo()
+                            StartInfo = new ProcessStartInfo
                             {
                                 FileName = exe_name,
                                 Arguments = exe_args,

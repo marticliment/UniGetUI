@@ -268,8 +268,8 @@ namespace UniGetUI.Interface
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
-            grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
-            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
 
             TextBlock headerContent = new()
             {
@@ -317,8 +317,8 @@ namespace UniGetUI.Interface
 
             Grid OutputGrid = new();
             OutputGrid.Children.Add(ScrollView);
-            OutputGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            OutputGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+            OutputGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            OutputGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
             Grid.SetColumn(ScrollView, 0);
             Grid.SetRow(ScrollView, 0);
 

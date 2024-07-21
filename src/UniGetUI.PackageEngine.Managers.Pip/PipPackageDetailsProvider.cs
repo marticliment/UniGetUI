@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text.Json.Nodes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
@@ -153,7 +153,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
                     Arguments = Manager.Properties.ExecutableCallArgs + " index versions " + package.Id,

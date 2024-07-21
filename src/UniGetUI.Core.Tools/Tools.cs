@@ -82,7 +82,7 @@ namespace UniGetUI.Core.Tools
             Logger.Debug($"Begin \"which\" search for command {command}");
             Process process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Path.Join(Environment.SystemDirectory, "where.exe"),
                     Arguments = command,
@@ -378,7 +378,7 @@ Crash Traceback:
             Logger.Info("Caching admin rights for process id " + Environment.ProcessId);
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = CoreData.GSudoPath,
                     Arguments = "cache on --pid " + Environment.ProcessId + " -d 1",
@@ -402,7 +402,7 @@ Crash Traceback:
             Logger.Info("Resetting administrator rights cache for process id " + Environment.ProcessId);
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = CoreData.GSudoPath,
                     Arguments = "cache off --pid " + Environment.ProcessId,

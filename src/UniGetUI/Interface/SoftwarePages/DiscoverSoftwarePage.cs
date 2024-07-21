@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -18,7 +18,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuInteractive;
         private BetterMenuItem? MenuSkipHash;
         public DiscoverSoftwarePage()
-        : base(new PackagesPageData()
+        : base(new PackagesPageData
         {
             DisableAutomaticPackageLoadOnStart = true,
             MegaQueryBlockEnabled = true,

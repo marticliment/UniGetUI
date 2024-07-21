@@ -964,7 +964,7 @@ namespace UniGetUI.Interface
                     MainApp.Instance.MainWindow.HideLoadingDialog();
 
                     // Launch file
-                    Process.Start(new ProcessStartInfo()
+                    Process.Start(new ProcessStartInfo
                     {
                         FileName = "explorer.exe",
                         Arguments = @$"/select, ""{file}"""
