@@ -22,7 +22,6 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             JsonString = await client.GetStringAsync($"https://pypi.org/pypi/{details.Package.Id}/json");
 
-
             if (JsonObject.Parse(JsonString) is not JsonObject RawInfo)
             {
                 logger.Error($"Can't load package info on manager {Manager.Name}, JsonObject? RawInfo was null");

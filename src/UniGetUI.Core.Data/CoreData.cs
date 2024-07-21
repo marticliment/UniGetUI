@@ -155,7 +155,6 @@ namespace UniGetUI.Core.Data
 
         public static string ManagerLogs = "";
 
-
         private static int __volatile_notification_id_counter = 1235;
 
         /// <summary>
@@ -213,7 +212,6 @@ namespace UniGetUI.Core.Data
         }
 
         public static string GSudoPath = "";
-
 
         /// <summary>
         /// This method will return the most appropriate data directory.

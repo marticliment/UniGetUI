@@ -83,7 +83,6 @@ namespace UniGetUI.Core.IconEngine
                 Logger.Warn(e);
             }
 
-
             if (!File.Exists(IconsAndScreenshotsFile))
             {
                 Logger.Error("Icon Database file not found");
