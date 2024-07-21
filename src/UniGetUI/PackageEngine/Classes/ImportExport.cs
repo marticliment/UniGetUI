@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -106,7 +108,7 @@ namespace UniGetUI.PackageEngine.Classes
             }
         }
 
-        public virtual string IconId
+        public virtual IconType IconId
         {
             get
             {
@@ -224,11 +226,11 @@ namespace UniGetUI.PackageEngine.Classes
             }
         }
 
-        public override string IconId
+        public override IconType IconId
         {
             get
             {
-                return "help";
+                return IconType.Help;
             }
         }
 

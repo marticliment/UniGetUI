@@ -1,74 +1,27 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Media;
+using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public class LocalIcon : ImageIcon
+    public class LocalIcon : FontIcon
     {
-        private bool __registered_theme_event;
-        public DependencyProperty IconNameProperty;
+        public static FontFamily font = (FontFamily)Application.Current.Resources["SymbolFont"];
 
-        private static readonly Dictionary<string, BitmapImage> bitmap_cache = [];
-
-        public string IconName
+        public IconType Icon
         {
-            get => (string)GetValue(IconNameProperty);
-            set => SetValue(IconNameProperty, value);
+            set => Glyph = $"{(char)value}";
         }
 
         public LocalIcon()
         {
-            IconNameProperty = DependencyProperty.Register(
-            nameof(IconName),
-            typeof(string),
-            typeof(ButtonCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
-            {
-                IconName = (string)e.NewValue;
-                __apply_icon();
-                if (!__registered_theme_event)
-                {
-                    ActualThemeChanged += (s, e) => { __apply_icon(); };
-                    __registered_theme_event = true;
-                }
-            })));
+            FontFamily = font;
         }
 
-        public LocalIcon(string iconName) : this()
+        public LocalIcon(IconType icon) : this()
         {
-            IconName = iconName;
-            __apply_icon();
-
-            if (!__registered_theme_event)
-            {
-                ActualThemeChanged += (s, e) => { __apply_icon(); };
-                __registered_theme_event = true;
-            }
-        }
-
-        public void __apply_icon()
-        {
-            string theme = "white";
-            if (ActualTheme == ElementTheme.Light)
-            {
-                theme = "black";
-            }
-
-            string image_file = $"{IconName}_{theme}.png";
-            if (bitmap_cache.TryGetValue(image_file, out BitmapImage? recycled_image) && recycled_image != null)
-            {
-                Source = recycled_image;
-            }
-            else
-            {
-                BitmapImage image = new()
-                {
-                    UriSource = new Uri($"ms-appx:///Assets/Images/{image_file}")
-                };
-                bitmap_cache.Add(image_file, image);
-                Source = image;
-            }
+            Glyph = $"{(char)icon}";
         }
     }
 }

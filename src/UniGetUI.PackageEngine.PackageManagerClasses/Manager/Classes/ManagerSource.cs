@@ -1,10 +1,11 @@
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
 {
     public class ManagerSource
     {
-        public virtual string IconId { get { return Manager.Properties.IconId; } }
+        public virtual IconType IconId { get { return Manager.Properties.IconId; } }
         public readonly bool IsVirtualManager;
         public struct Capabilities
         {

@@ -9,83 +9,45 @@ using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public class TextboxEventArgs : EventArgs
-    {
-    }
-
     public sealed class TextboxCard : SettingsCard
     {
         private readonly TextBox _textbox = new();
         private readonly HyperlinkButton _helpbutton = new();
 
+        private string setting_name = "";
         public string SettingName
         {
-            get => (string)GetValue(SettingProperty);
-            set => SetValue(SettingProperty, value);
+            set {
+                setting_name = value;
+                _textbox.Text = Settings.GetValue(setting_name);
+                _textbox.TextChanged += (_, _) => SaveValue();
+            }
         }
 
         public string Placeholder
         {
-            get => (string)GetValue(PlaceholderProperty);
-            set => SetValue(PlaceholderProperty, value);
+            set => _textbox.PlaceholderText = CoreTools.Translate(value);
         }
 
         public string Text
         {
-            get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
+            set => Header = CoreTools.Translate(value);
         }
 
         public Uri HelpUrl
         {
-            get => (Uri)GetValue(HelpUrlProperty);
-            set => SetValue(HelpUrlProperty, value);
+            set
+            {
+                _helpbutton.NavigateUri = value;
+                _helpbutton.Visibility = Visibility.Visible;
+                _helpbutton.Content = CoreTools.Translate("More info");
+            }
         }
 
-        private readonly DependencyProperty PlaceholderProperty;
-
-        private readonly DependencyProperty SettingProperty;
-
-        private readonly DependencyProperty TextProperty;
-
-        private readonly DependencyProperty HelpUrlProperty;
-
-        public event EventHandler<TextboxEventArgs>? ValueChanged;
+        public event EventHandler<EventArgs>? ValueChanged;
 
         public TextboxCard()
         {
-            TextProperty = DependencyProperty.Register(
-            nameof(Text),
-            typeof(string),
-            typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = CoreTools.Translate((string)e.NewValue); })));
-
-            PlaceholderProperty = DependencyProperty.Register(
-            nameof(Placeholder),
-            typeof(string),
-            typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _textbox.PlaceholderText = CoreTools.Translate((string)e.NewValue); })));
-
-            SettingProperty = DependencyProperty.Register(
-            nameof(SettingName),
-            typeof(string),
-            typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
-            {
-                _textbox.Text = Settings.GetValue((string)e.NewValue);
-                _textbox.TextChanged += (sender, e) => { SaveValue(); };
-            })));
-
-            HelpUrlProperty = DependencyProperty.Register(
-            nameof(HelpUrl),
-            typeof(Uri),
-            typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
-            {
-                _helpbutton.NavigateUri = (Uri)e.NewValue;
-                _helpbutton.Visibility = Visibility.Visible;
-                _helpbutton.Content = CoreTools.Translate("More info");
-            })));
 
             _helpbutton = new HyperlinkButton
             {
@@ -113,7 +75,7 @@ namespace UniGetUI.Interface.Widgets
         {
             string SanitizedText = _textbox.Text;
 
-            if (SettingName.Contains("File"))
+            if (setting_name.Contains("File"))
             {
                 foreach (char rem in "#%&{}\\/<>*?$!'\":;@`|~")
                 {
@@ -123,15 +85,14 @@ namespace UniGetUI.Interface.Widgets
 
             if (SanitizedText != "")
             {
-                Settings.SetValue(SettingName, SanitizedText);
+                Settings.SetValue(setting_name, SanitizedText);
             }
             else
             {
-                Settings.Set(SettingName, false);
+                Settings.Set(setting_name, false);
             }
 
-            TextboxEventArgs args = new();
-            ValueChanged?.Invoke(this, args);
+            ValueChanged?.Invoke(this, EventArgs.Empty);
         }
 
     }

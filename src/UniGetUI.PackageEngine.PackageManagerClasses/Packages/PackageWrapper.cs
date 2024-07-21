@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -16,10 +16,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
             set => Package.IsChecked = value;
         }
 
-        public bool ListIconShowHighlight;
-        public string ListedIconId = "";
+        public IconType ListedComplementaryIconId = IconType.Empty;
+        public IconType ListedIconId = IconType.Package;
         public string ListedNameTooltip = "";
-        public float ListedOpacity;
+        public float ListedOpacity = 1.0f;
 
         public int NewVersionLabelWidth { get => Package.IsUpgradable ? 125 : 0; }
         public int NewVersionIconWidth { get => Package.IsUpgradable ? 24 : 0; }
@@ -43,7 +43,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 WhenTagHasChanged();
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedOpacity)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListIconShowHighlight)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedComplementaryIconId)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedIconId)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedNameTooltip)));
             }
@@ -69,26 +69,26 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
 #pragma warning disable CS8524
 
-            ListIconShowHighlight = Package.Tag switch
-            {
-                PackageTag.Default => false,
-                PackageTag.AlreadyInstalled => true,
-                PackageTag.IsUpgradable => true,
-                PackageTag.Pinned => false,
-                PackageTag.OnQueue => false,
-                PackageTag.BeingProcessed => false,
-                PackageTag.Failed => true,
-            };
-
             ListedIconId = Package.Tag switch
             {
-                PackageTag.Default => "install",
-                PackageTag.AlreadyInstalled => "installed",
-                PackageTag.IsUpgradable => "update",
-                PackageTag.Pinned => "pin_fill",
-                PackageTag.OnQueue => "sandclock",
-                PackageTag.BeingProcessed => "gears",
-                PackageTag.Failed => "stop",
+                PackageTag.Default => IconType.Package,
+                PackageTag.AlreadyInstalled => IconType.Installed,
+                PackageTag.IsUpgradable => IconType.Upgradable,
+                PackageTag.Pinned => IconType.Pin,
+                PackageTag.OnQueue => IconType.SandClock,
+                PackageTag.BeingProcessed => IconType.Loading,
+                PackageTag.Failed => IconType.Warning,
+            };
+
+            ListedComplementaryIconId = Package.Tag switch
+            {
+                PackageTag.Default => IconType.Empty,
+                PackageTag.AlreadyInstalled => IconType.Installed_Filled,
+                PackageTag.IsUpgradable => IconType.Upgradable_Filled,
+                PackageTag.Pinned => IconType.Pin_Filled,
+                PackageTag.OnQueue => IconType.Empty,
+                PackageTag.BeingProcessed => IconType.Loading_Filled,
+                PackageTag.Failed => IconType.Warning_Filled,
             };
 
             ListedNameTooltip = Package.Tag switch

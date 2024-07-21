@@ -117,7 +117,7 @@
                 <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="Red"/>
                 <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="DarkRed"/>
             </Button.Resources>
-            <widgets:LocalIcon IconName="close" Height="16" Opacity="1"/>
+            <widgets:LocalIcon Icon="Close_Round" Height="16" Opacity="1"/>
         </Button>
     </Grid>
 </Page>

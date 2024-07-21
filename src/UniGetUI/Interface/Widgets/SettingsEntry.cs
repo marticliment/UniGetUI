@@ -2,6 +2,7 @@ using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -14,51 +15,21 @@ namespace UniGetUI.Interface.Widgets
         private readonly Button RestartButton;
         public string Text
         {
-            get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
+            set => Header = CoreTools.Translate(value);
         }
-
-        private readonly DependencyProperty TextProperty;
 
         public string UnderText
         {
-            get => (string)GetValue(UnderTextProperty);
-            set => SetValue(UnderTextProperty, value);
+            set => Description = CoreTools.Translate(value);
         }
 
-        private readonly DependencyProperty UnderTextProperty;
-
-        public string Icon
+        public IconType Icon
         {
-            get => (string)GetValue(IconProperty);
-            set => SetValue(IconProperty, value);
+            set => HeaderIcon = new LocalIcon(value);
         }
-
-        private readonly DependencyProperty IconProperty;
 
         public SettingsEntry()
         {
-            TextProperty = DependencyProperty.Register(
-            nameof(Text),
-            typeof(string),
-            typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = CoreTools.Translate((string)e.NewValue); })));
-
-            UnderTextProperty = DependencyProperty.Register(
-            nameof(UnderText),
-            typeof(string),
-            typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Description = CoreTools.Translate((string)e.NewValue); })));
-
-            IconProperty = DependencyProperty.Register(
-            nameof(Icon),
-            typeof(string),
-            typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
-            {
-                HeaderIcon = new LocalIcon((string)e.NewValue);
-            })));
-
             CornerRadius = new CornerRadius(8);
             HorizontalAlignment = HorizontalAlignment.Stretch;
 

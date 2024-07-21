@@ -4,6 +4,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes;
@@ -52,7 +53,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuUninstall = new()
             {
                 Text = "Uninstall",
-                IconName = "trash",
+                IconName = IconType.Delete,
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
             menuUninstall.Click += MenuUninstall_Invoked;
@@ -63,7 +64,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuInstallSettings = new()
             {
                 Text = "Installation options",
-                IconName = "options",
+                IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
             menuInstallSettings.Click += MenuInstallSettings_Invoked;
@@ -74,7 +75,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin = new BetterMenuItem
             {
                 Text = "Uninstall as administrator",
-                IconName = "runasadmin"
+                IconName = IconType.UAC
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
             menu.Items.Add(MenuAsAdmin);
@@ -82,7 +83,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuInteractive = new BetterMenuItem
             {
                 Text = "Interactive uninstall",
-                IconName = "interactive"
+                IconName = IconType.Interactive
             };
             MenuInteractive.Click += MenuInteractive_Invoked;
             menu.Items.Add(MenuInteractive);
@@ -90,7 +91,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuRemoveData = new BetterMenuItem
             {
                 Text = "Uninstall and remove data",
-                IconName = "menu_close"
+                IconName = IconType.Close_Round
             };
             MenuRemoveData.Click += MenuRemoveData_Invoked;
             menu.Items.Add(MenuRemoveData);
@@ -100,7 +101,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuReinstall = new()
             {
                 Text = "Reinstall package",
-                IconName = "newversion"
+                IconName = IconType.Download
             };
             menuReinstall.Click += MenuReinstall_Invoked;
             menu.Items.Add(menuReinstall);
@@ -108,7 +109,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuUninstallThenReinstall = new()
             {
                 Text = "Uninstall package, then reinstall it",
-                IconName = "undelete"
+                IconName = IconType.Undelete
             };
             menuUninstallThenReinstall.Click += MenuUninstallThenReinstall_Invoked;
             menu.Items.Add(menuUninstallThenReinstall);
@@ -118,7 +119,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuIgnorePackage = new()
             {
                 Text = "Ignore updates for this package",
-                IconName = "pin"
+                IconName = IconType.Pin
             };
             menuIgnorePackage.Click += MenuIgnorePackage_Invoked;
             menu.Items.Add(menuIgnorePackage);
@@ -128,7 +129,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuShare = new()
             {
                 Text = "Share this package",
-                IconName = "share"
+                IconName = IconType.Share
             };
             menuShare.Click += MenuShare_Invoked;
             menu.Items.Add(menuShare);
@@ -136,7 +137,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuDetails = new()
             {
                 Text = "Package details",
-                IconName = "info",
+                IconName = IconType.Info_Round,
                 KeyboardAcceleratorTextOverride = "Enter"
             };
             menuDetails.Click += MenuDetails_Invoked;
@@ -203,18 +204,18 @@ namespace UniGetUI.Interface.SoftwarePages
                 toolButton.Label = Labels[toolButton].Trim();
             }
 
-            Dictionary<AppBarButton, string> Icons = new()
+            Dictionary<AppBarButton, IconType> Icons = new()
             {
-                { UninstallSelected,      "trash" },
-                { UninstallAsAdmin,       "runasadmin" },
-                { UninstallInteractive,   "interactive" },
-                { InstallationSettings,   "options" },
-                { PackageDetails,         "info" },
-                { SharePackage,           "share" },
-                { IgnoreSelected,         "pin" },
-                { ManageIgnored,          "clipboard_list" },
-                { ExportSelection,        "add_to" },
-                { HelpButton,             "help" }
+                { UninstallSelected,      IconType.Delete },
+                { UninstallAsAdmin,       IconType.UAC },
+                { UninstallInteractive,   IconType.Interactive },
+                { InstallationSettings,   IconType.Options },
+                { PackageDetails,         IconType.Info_Round },
+                { SharePackage,           IconType.Share },
+                { IgnoreSelected,         IconType.Pin },
+                { ManageIgnored,          IconType.ClipboardList },
+                { ExportSelection,        IconType.AddTo },
+                { HelpButton,             IconType.Help }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)

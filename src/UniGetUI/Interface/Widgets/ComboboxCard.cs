@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using System.Collections.ObjectModel;
+using System.Linq.Expressions;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -12,63 +13,33 @@ using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public class ComboCardEventArgs : EventArgs
-    {
-    }
-
     public sealed class ComboboxCard : SettingsCard
     {
-        private readonly ComboBox _combobox;
-        private readonly ObservableCollection<string> _elements;
-        private readonly Dictionary<string, string> _values_ref;
-        private readonly Dictionary<string, string> _inverted_val_ref;
+        private readonly ComboBox _combobox = new();
+        private readonly ObservableCollection<string> _elements = new();
+        private readonly Dictionary<string, string> _values_ref = new();
+        private readonly Dictionary<string, string> _inverted_val_ref = new();
 
+        private string settings_name = "";
         public string SettingName
         {
-            get => (string)GetValue(SettingProperty);
-            set => SetValue(SettingProperty, value);
+            set
+            {
+                settings_name = value;
+            }
         }
-
-        public string Elements
-        {
-            get => (string)GetValue(SettingProperty);
-            set => SetValue(SettingProperty, value);
-        }
-
-        private readonly DependencyProperty SettingProperty = DependencyProperty.Register(
-        nameof(SettingName),
-        typeof(string),
-        typeof(CheckboxCard),
-        new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { })));
 
         public string Text
         {
-            get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
+            set => Header = CoreTools.Translate(value);
         }
 
-        private readonly DependencyProperty TextProperty;
-
-        public event EventHandler<ComboCardEventArgs>? ValueChanged;
+        public event EventHandler<EventArgs>? ValueChanged;
 
         public ComboboxCard()
         {
-            TextProperty = DependencyProperty.Register(
-            nameof(Text),
-            typeof(string),
-            typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = CoreTools.Translate((string)e.NewValue); })));
-
-            _elements = [];
-            _values_ref = [];
-            _inverted_val_ref = [];
-
-            _combobox = new ComboBox
-            {
-                MinWidth = 200
-            };
+            _combobox.MinWidth = 200;
             _combobox.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Source = _elements });
-
             DefaultStyleKey = typeof(CheckboxCard);
             Content = _combobox;
         }
@@ -94,7 +65,7 @@ namespace UniGetUI.Interface.Widgets
         {
             try
             {
-                string savedItem = Settings.GetValue(SettingName);
+                string savedItem = Settings.GetValue(settings_name);
                 _combobox.SelectedIndex = _elements.IndexOf(_inverted_val_ref[savedItem]);
             }
             catch
@@ -105,8 +76,8 @@ namespace UniGetUI.Interface.Widgets
             {
                 try
                 {
-                    Settings.SetValue(SettingName, _values_ref[_combobox.SelectedItem?.ToString() ?? ""]);
-                    ValueChanged?.Invoke(this, new ComboCardEventArgs());
+                    Settings.SetValue(settings_name, _values_ref[_combobox.SelectedItem?.ToString() ?? ""]);
+                    ValueChanged?.Invoke(this, EventArgs.Empty);
                 }
                 catch (Exception ex)
                 {
@@ -114,5 +85,6 @@ namespace UniGetUI.Interface.Widgets
                 }
             };
         }
+
     }
 }

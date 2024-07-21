@@ -4,6 +4,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -43,7 +44,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             {
                 Name = "Chocolatey",
                 Description = CoreTools.Translate("The classic package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"),
-                IconId = "choco",
+                IconId = IconType.Chocolatey,
                 ColorIconId = "choco_color",
                 ExecutableFriendlyName = "choco.exe",
                 InstallVerb = "install",

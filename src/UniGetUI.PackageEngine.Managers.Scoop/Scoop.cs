@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
@@ -60,7 +61,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             {
                 Name = "Scoop",
                 Description = CoreTools.Translate("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"),
-                IconId = "scoop",
+                IconId = IconType.Scoop,
                 ColorIconId = "scoop_color",
                 ExecutableCallArgs = " -NoProfile -ExecutionPolicy Bypass -Command scoop",
                 ExecutableFriendlyName = "scoop",

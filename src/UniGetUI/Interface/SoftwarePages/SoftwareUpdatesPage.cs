@@ -52,7 +52,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuInstall = new()
             {
                 Text = "Update",
-                IconName = "menu_updates",
+                IconName = IconType.Update,
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
             menuInstall.Click += MenuInstall_Invoked;
@@ -60,7 +60,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuInstallSettings = new()
             {
                 Text = "Installation options",
-                IconName = "options",
+                IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
             menuInstallSettings.Click += (s, e) =>
@@ -71,63 +71,63 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin = new BetterMenuItem
             {
                 Text = "Update as administrator",
-                IconName = "runasadmin",
+                IconName = IconType.UAC,
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
 
             MenuInteractive = new BetterMenuItem
             {
                 Text = "Interactive update",
-                IconName = "interactive",
+                IconName = IconType.Interactive,
             };
             MenuInteractive.Click += MenuInteractive_Invoked;
 
             MenuskipHash = new BetterMenuItem
             {
                 Text = "Skip hash check",
-                IconName = "checksum",
+                IconName = IconType.Checksum,
             };
             MenuskipHash.Click += MenuSkipHash_Invoked;
 
             BetterMenuItem menuUpdateAfterUninstall = new()
             {
                 Text = "Uninstall package, then update it",
-                IconName = "undelete",
+                IconName = IconType.Undelete,
             };
             menuUpdateAfterUninstall.Click += MenuUpdateAfterUninstall_Invoked;
 
             BetterMenuItem menuUninstall = new()
             {
                 Text = "Uninstall package",
-                IconName = "trash",
+                IconName = IconType.Delete,
             };
             menuUninstall.Click += MenuUninstall_Invoked;
 
             BetterMenuItem menuIgnorePackage = new()
             {
                 Text = "Ignore updates for this package",
-                IconName = "pin",
+                IconName = IconType.Pin,
             };
             menuIgnorePackage.Click += MenuIgnorePackage_Invoked;
 
             BetterMenuItem menuSkipVersion = new()
             {
                 Text = "Skip this version",
-                IconName = "skip",
+                IconName = IconType.Skip,
             };
             menuSkipVersion.Click += MenuSkipVersion_Invoked;
 
             BetterMenuItem menuShare = new()
             {
                 Text = "Share this package",
-                IconName = "share",
+                IconName = IconType.Share,
             };
             menuShare.Click += (o, e) => SharePackage(SelectedItem);
 
             BetterMenuItem menuDetails = new()
             {
                 Text = "Package details",
-                IconName = "info",
+                IconName = IconType.Info_Round,
                 KeyboardAcceleratorTextOverride = "Enter"
             };
             menuDetails.Click += (o, e) => ShowDetailsForPackage(SelectedItem);
@@ -223,18 +223,18 @@ namespace UniGetUI.Interface.SoftwarePages
                 toolButton.Label = Labels[toolButton].Trim();
             }
 
-            Dictionary<AppBarButton, string> Icons = new()
+            Dictionary<AppBarButton, IconType> Icons = new()
             {
-                { UpdateSelected,       "menu_updates" },
-                { UpdateAsAdmin,        "runasadmin" },
-                { UpdateSkipHash,       "checksum" },
-                { UpdateInteractive,    "interactive" },
-                { InstallationSettings, "options" },
-                { PackageDetails,       "info" },
-                { SharePackage,         "share" },
-                { IgnoreSelected,       "pin" },
-                { ManageIgnored,        "clipboard_list" },
-                { HelpButton,           "help" }
+                { UpdateSelected,       IconType.Update },
+                { UpdateAsAdmin,        IconType.UAC },
+                { UpdateSkipHash,       IconType.Checksum },
+                { UpdateInteractive,    IconType.Interactive },
+                { InstallationSettings, IconType.Options },
+                { PackageDetails,       IconType.Info_Round },
+                { SharePackage,         IconType.Share },
+                { IgnoreSelected,       IconType.Pin },
+                { ManageIgnored,        IconType.ClipboardList },
+                { HelpButton,           IconType.Help }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)

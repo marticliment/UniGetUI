@@ -92,7 +92,7 @@
                     </Grid.RowDefinitions>
                     <Button Grid.Column="0" Name="ShareButton" Click="ShareButton_Click" CornerRadius="8" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Height="40">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="8" HorizontalAlignment="Center">
-                            <widgets:LocalIcon IconName="share" Height="20" Width="20"/>
+                            <widgets:LocalIcon Icon="share" Height="20" Width="20"/>
                             <widgets:TranslatedTextBlock Text="Share this package" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
@@ -135,7 +135,7 @@
                     <Expander HorizontalAlignment="Stretch" CornerRadius="8" Name="InstallOptionsExpander"  VerticalAlignment="Top">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal" Spacing="12">
-                                <widgets:LocalIcon IconName="options" Height="24"/>
+                                <widgets:LocalIcon Icon="options" Height="24"/>
                                 <widgets:TranslatedTextBlock Text="Installation options" VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Expander.Header>
@@ -191,7 +191,7 @@
                 <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="Red"/>
                 <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="DarkRed"/>
             </Button.Resources>
-            <widgets:LocalIcon IconName="close" Height="16" Opacity="1"/>
+            <widgets:LocalIcon Icon="Close_Round" Height="16" Opacity="1"/>
         </Button>
         <ProgressBar Name="LoadingIndicator" Margin="-30,-24,-30,0" IsIndeterminate="True" VerticalAlignment="Top"/>
 
