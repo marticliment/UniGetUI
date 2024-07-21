@@ -174,7 +174,7 @@ namespace UniGetUI.Core.Tools
 
 Crash Message: {e.Message}
 
-Crash Traceback: 
+Crash Traceback:
 {e.StackTrace}";
 
             Console.WriteLine(Error_String);
@@ -448,7 +448,7 @@ Crash Traceback:
                 RedirectStandardError = true
             };
 
-            Process p = Process.Start(startInfo);
+            Process? p = Process.Start(startInfo);
             if (p is not null)
             {
                 await p.WaitForExitAsync();
@@ -457,7 +457,7 @@ Crash Traceback:
             if (p is null || p.ExitCode != 0)
             {
                 throw new InvalidOperationException(
-                    $"The operation did not complete successfully: \n{await p.StandardOutput.ReadToEndAsync()}\n{await p.StandardError.ReadToEndAsync()}\n");
+                    $"The operation did not complete successfully: \n{p?.StandardOutput.ReadToEnd()}\n{p?.StandardError.ReadToEnd()}\n");
             }
         }
 

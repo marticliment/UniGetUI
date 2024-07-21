@@ -10,7 +10,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.ScoopManager
 {
-    internal class ScoopPackageDetailsProvider : BasePackageDetailsProvider<PackageManager>
+    internal sealed class ScoopPackageDetailsProvider : BasePackageDetailsProvider<PackageManager>
     {
         public ScoopPackageDetailsProvider(Scoop manager) : base(manager) { }
 

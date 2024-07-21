@@ -38,8 +38,8 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public event EventHandler<EventArgs>? StartedLoading;
 
-        private readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS;
-        protected string LOADER_IDENTIFIER;
+        protected readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS;
+        protected readonly string LOADER_IDENTIFIER;
         private int LoadOperationIdentifier;
         protected IEnumerable<PackageManager> Managers { get; private set; }
 
@@ -51,12 +51,13 @@ namespace UniGetUI.PackageEngine.PackageLoader
             IsLoaded = false;
             IsLoading = false;
             LOADER_IDENTIFIER = identifier;
+            ALLOW_MULTIPLE_PACKAGE_VERSIONS = AllowMultiplePackageVersions;
         }
 
         /// <summary>
         /// Stops the current loading process
         /// </summary>
-        public void StopLoading(bool emitFinishSignal = true) 
+        public void StopLoading(bool emitFinishSignal = true)
         {
             LoadOperationIdentifier = -1;
             IsLoaded = false;

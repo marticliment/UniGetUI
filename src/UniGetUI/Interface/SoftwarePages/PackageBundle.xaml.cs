@@ -848,25 +848,25 @@ namespace UniGetUI.Interface
                 }
 
                 // Handle a disabled manager
-                if (!PackageManager.IsEnabled())
+                if (!packageManager.IsEnabled())
                 {
                     AddPackage(new InvalidBundledPackage(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, DeserializedPackage.Source, DeserializedPackage.ManagerName));
                     continue;
                 }
                 // Handle a nonworking manager
-                if (!PackageManager.Status.Found)
+                if (!packageManager.Status.Found)
                 {
                     AddPackage(new InvalidBundledPackage(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, DeserializedPackage.Source, DeserializedPackage.ManagerName));
                     continue;
                 }
 
-                ManagerSource? Source = PackageManager.Properties.DefaultSource;
+                ManagerSource? Source = packageManager.Properties.DefaultSource;
 
-                if (PackageManager.Capabilities.SupportsCustomSources)
+                if (packageManager.Capabilities.SupportsCustomSources)
                 {
                     // Check if the source exists
                     string SourceName = DeserializedPackage.Source.Split(':')[^1].Trim();
-                    Source = PackageManager.GetSourceIfExists(SourceName);
+                    Source = packageManager.GetSourceIfExists(SourceName);
 
                     if (Source == null)
                     {
@@ -875,7 +875,7 @@ namespace UniGetUI.Interface
                     }
                 }
 
-                Package package = new(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, Source, PackageManager);
+                Package package = new(DeserializedPackage.Name, DeserializedPackage.Id, DeserializedPackage.Version, Source, packageManager);
 
                 InstallationOptions InstallOptions = InstallationOptions.FromSerialized(DeserializedPackage.InstallationOptions, package);
                 SerializableUpdatesOptions_v1 UpdateOptions = DeserializedPackage.Updates;

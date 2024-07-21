@@ -33,7 +33,7 @@ namespace UniGetUI.Interface.Dialogs
         private readonly OperationType OperationRole;
         private bool PackageHasScreenshots;
         public ObservableCollection<TextBlock> ShowableTags = [];
-        private readonly Uri InvalidUri = new("about:blank");
+        // private readonly Uri InvalidUri = new("about:blank");
 
         private enum LayoutMode
         {

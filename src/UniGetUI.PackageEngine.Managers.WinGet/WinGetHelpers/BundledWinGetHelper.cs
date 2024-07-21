@@ -11,7 +11,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
-internal class BundledWinGetHelper : IWinGetManagerHelper
+internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 {
     public BundledWinGetHelper()
     {

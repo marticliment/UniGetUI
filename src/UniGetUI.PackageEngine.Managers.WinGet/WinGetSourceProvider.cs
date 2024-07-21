@@ -5,7 +5,7 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
-    internal class WinGetSourceProvider : BaseSourceProvider<PackageManager>
+    internal sealed class WinGetSourceProvider : BaseSourceProvider<PackageManager>
     {
         public WinGetSourceProvider(WinGet manager) : base(manager) { }
 

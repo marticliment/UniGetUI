@@ -566,7 +566,7 @@ namespace UniGetUI.Interface
                 FontStyle = Windows.UI.Text.FontStyle.Italic,
             };
             p.Children.Add(infotext);
-            
+
             TextBlock commandInfo = new()
             {
                 Text = CoreTools.Translate("Alternatively, you can also install {0} by running the following command in a Windows PowerShell prompt:", dep_name),
@@ -597,8 +597,8 @@ namespace UniGetUI.Interface
                 c.Unchecked += (s, e) => Settings.Set(DEP_SKIPPED_PREF, false);
                 p.Children.Add(c);
             }
-            
-            
+
+
             ProgressBar progress = new()
             {
                 IsIndeterminate = false,
@@ -769,7 +769,7 @@ namespace UniGetUI.Interface
 
 
         }
-        private bool IsRectangleFullyVisible(int x, int y, int width, int height)
+        private static bool IsRectangleFullyVisible(int x, int y, int width, int height)
         {
             List<MONITORINFO> monitorInfos = [];
 

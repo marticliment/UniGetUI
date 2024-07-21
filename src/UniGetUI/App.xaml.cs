@@ -42,7 +42,6 @@ namespace UniGetUI
 
 
         private readonly BackgroundApiRunner BackgroundApi = new();
-        private const int ManagerLoadTimeout = 10000; // 10 seconds timeout for Package Manager initialization
 #pragma warning disable CS8618
         public static MainApp Instance;
         public __tooltip_options TooltipStatus = new();
@@ -82,7 +81,7 @@ namespace UniGetUI
             }
         }
 
-        private async void LoadGSudo()
+        private static async void LoadGSudo()
         {
             if (Settings.Get("UseUserGSudo"))
             {
@@ -142,7 +141,7 @@ namespace UniGetUI
             };
         }
 
-        private void SetUpWebViewUserDataFolder()
+        private static void SetUpWebViewUserDataFolder()
         {
             try
             {
@@ -186,7 +185,7 @@ namespace UniGetUI
         /// <summary>
         /// Clear the notification history, if possible
         /// </summary>
-        private void ClearNotificationHistory_Safe()
+        private static void ClearNotificationHistory_Safe()
         {
             try
             {
@@ -229,7 +228,7 @@ namespace UniGetUI
         }
 
         /// <summary>
-        /// Background component loader 
+        /// Background component loader
         /// </summary>
         /// <returns></returns>
         private async Task LoadComponentsAsync()

@@ -4,9 +4,9 @@
 		<PropertyGroup>
 		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
 		<RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
-		<Platforms>ARM64;x64</Platforms>
+		<Platforms>x64</Platforms>
 		<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
 		<SdkVersion>8.0.204</SdkVersion>

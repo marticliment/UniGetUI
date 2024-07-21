@@ -9,7 +9,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.NpmManager
 {
-    internal class NpmPackageDetailsProvider : BasePackageDetailsProvider<PackageManager>
+    internal sealed class NpmPackageDetailsProvider : BasePackageDetailsProvider<PackageManager>
     {
         public NpmPackageDetailsProvider(Npm manager) : base(manager) { }
 

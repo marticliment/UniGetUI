@@ -45,12 +45,6 @@ namespace UniGetUI.Interface.Widgets
 
         private readonly DependencyProperty TextProperty;
 
-        private readonly DependencyProperty IsCheckBoxChecked = DependencyProperty.Register(
-        nameof(Checked),
-        typeof(bool),
-        typeof(CheckboxCard),
-        new PropertyMetadata(default(bool), new PropertyChangedCallback((d, e) => { })));
-
         public CheckboxCard()
         {
             _checkbox = new CheckBox();

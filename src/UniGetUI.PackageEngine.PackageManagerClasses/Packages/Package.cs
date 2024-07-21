@@ -145,6 +145,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return __versioned_hash == (other as Package)?.__versioned_hash;
         }
 
+        public override int GetHashCode()
+        {
+            return (int)__versioned_hash;
+        }
+
         /// <summary>
         /// Check wether two package instances represent the same package.
         /// What is taken into account:

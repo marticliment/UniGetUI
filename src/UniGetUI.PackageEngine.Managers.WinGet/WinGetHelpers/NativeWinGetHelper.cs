@@ -11,7 +11,7 @@ using WindowsPackageManager.Interop;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
-internal class NativeWinGetHelper : IWinGetManagerHelper
+internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 {
     public WindowsPackageManagerFactory Factory;
     public PackageManager WinGetManager;

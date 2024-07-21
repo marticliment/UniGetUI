@@ -50,7 +50,7 @@ public class WindowsPackageManagerElevatedFactory : WindowsPackageManagerFactory
         }
     }
 
-    [DllImport("winrtact.dll", ExactSpelling = true)]
+    [DllImport("winrtact.dll")]
     private static extern unsafe int WinGetServerManualActivation_CreateInstance(
         in Guid clsid,
         in Guid iid,
