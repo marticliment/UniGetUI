@@ -493,7 +493,7 @@ namespace UniGetUI.Interface
         private void ForceArmWinget_StateChanged(object sender, CheckBoxEventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
-        private void TextboxCard_ValueChanged(object sender, TextboxEventArgs e)
+        private void TextboxCard_ValueChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
         private void ResetIconCache_Click(object sender, ButtonCardEventArgs e)
