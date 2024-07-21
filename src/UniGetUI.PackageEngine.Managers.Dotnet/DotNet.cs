@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
@@ -44,7 +45,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             {
                 Name = ".NET Tool",
                 Description = CoreTools.Translate("A repository full of tools and executables designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related tools and scripts</b>"),
-                IconId = "dotnet",
+                IconId = IconType.DotNet,
                 ColorIconId = "dotnet_color",
                 ExecutableFriendlyName = "dotnet tool",
                 InstallVerb = "install",

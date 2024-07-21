@@ -525,7 +525,7 @@
                     IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
                     />
                 <widgets:LocalIcon
-                    IconName="install"  Opacity="{x:Bind DrawOpacity}"
+                    Icon="Package"  Opacity="{x:Bind DrawOpacity}"
                     Grid.Column="1" Grid.Row="0"
                     VerticalAlignment="Center"
                     />
@@ -536,7 +536,7 @@
                     ToolTipService.ToolTip="{x:Bind Name}"
                     />
                 <widgets:LocalIcon
-                    IconName="ID"  Opacity="{x:Bind DrawOpacity}"
+                    Icon="ID"  Opacity="{x:Bind DrawOpacity}"
                     Grid.Column="3" Grid.Row="0"
                     VerticalAlignment="Center"
                     />
@@ -547,7 +547,7 @@
                     ToolTipService.ToolTip="{x:Bind Id}"
                     />
                 <widgets:LocalIcon
-                    IconName="version" Opacity="{x:Bind DrawOpacity}"
+                    Icon="version" Opacity="{x:Bind DrawOpacity}"
                     Grid.Column="5" Grid.Row="0"
                     VerticalAlignment="Center"
                     />
@@ -560,7 +560,7 @@
                 <widgets:LocalIcon
                     Grid.Column="7" Grid.Row="0"
                     VerticalAlignment="Center" Opacity="{x:Bind DrawOpacity}"
-                    IconName="{x:Bind IconId}"
+                    Icon="{x:Bind IconId}"
                     />
                 <TextBlock 
                     Grid.Column="8" Grid.Row="0"
@@ -569,10 +569,10 @@
                     ToolTipService.ToolTip="{x:Bind SourceAsString}"
                     />
                 <Button Grid.Column="9" VerticalAlignment="Stretch" Width="32" Padding="3" x:Name="OptionsButton" Click="{x:Bind ShowOptions}" Visibility="{x:Bind IsValid}">
-                    <widgets:LocalIcon IconName="options"/>
+                    <widgets:LocalIcon Icon="options"/>
                 </Button>
                 <Button Grid.Column="10" VerticalAlignment="Stretch" Width="32" Padding="3" x:Name="RemoveButton" Click="{x:Bind RemoveFromList}">
-                    <widgets:LocalIcon IconName="trash"/>
+                    <widgets:LocalIcon Icon="delete"/>
                 </Button>
             </Grid>
         </DataTemplate>
@@ -833,7 +833,7 @@
                             <widgets:BetterMenuItem x:Name="MenuRemoveData" 
                                 Text="Remove from list" 
                                 Click="MenuRemoveFromList_Invoked"
-                                IconName="trash"/>
+                                IconName="delete"/>
                             <MenuFlyoutSeparator Height="5"/>
                             <widgets:BetterMenuItem x:Name="MenuShare" 
                                 Text="Share this package" 
@@ -842,7 +842,7 @@
                             <widgets:BetterMenuItem x:Name="MenuDetails" 
                                 Text="Package details" 
                                 Click="MenuDetails_Invoked" KeyboardAcceleratorTextOverride="Enter"
-                                IconName="info"/>
+                                IconName="Info_Round"/>
 
                         </widgets:BetterMenu>
                     </ListView.ContextFlyout>

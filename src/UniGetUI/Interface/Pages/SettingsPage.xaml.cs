@@ -337,11 +337,11 @@ namespace UniGetUI.Interface
             return (int)WinRT.Interop.WindowNative.GetWindowHandle(GetWindow());
         }
 
-        private void OpenWelcomeWizard(object sender, Interface.Widgets.ButtonCardEventArgs e)
+        private void OpenWelcomeWizard(object sender, EventArgs e)
         {
         }
 
-        private void ImportSettings(object sender, Interface.Widgets.ButtonCardEventArgs e)
+        private void ImportSettings(object sender, EventArgs e)
         {
             ExternalLibraries.Pickers.FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
             string file = picker.Show(["*.json"]);
@@ -359,7 +359,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        private async void ExportSettings(object sender, Interface.Widgets.ButtonCardEventArgs e)
+        private async void ExportSettings(object sender, EventArgs e)
         {
             try
             {
@@ -397,7 +397,7 @@ namespace UniGetUI.Interface
 
         }
 
-        private void ResetWingetUI(object sender, Interface.Widgets.ButtonCardEventArgs e)
+        private void ResetWingetUI(object sender, EventArgs e)
         {
             try
             {
@@ -414,29 +414,29 @@ namespace UniGetUI.Interface
             GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
-        private void LanguageSelector_ValueChanged(object sender, Interface.Widgets.ComboCardEventArgs e)
+        private void LanguageSelector_ValueChanged(object sender, EventArgs e)
         {
             GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
-        private void UpdatesCheckIntervalSelector_ValueChanged(object sender, Interface.Widgets.ComboCardEventArgs e)
+        private void UpdatesCheckIntervalSelector_ValueChanged(object sender, EventArgs e)
         {
             GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
-        private void ThemeSelector_ValueChanged(object sender, Interface.Widgets.ComboCardEventArgs e)
+        private void ThemeSelector_ValueChanged(object sender, EventArgs e)
         {
             ((MainApp)Application.Current).MainWindow.ApplyTheme();
         }
 
-        private void ResetBackupPath_Click(object sender, dynamic e)
+        private void ResetBackupPath_Click(object sender, RoutedEventArgs e)
         {
             BackupDirectoryLabel.Text = CoreData.UniGetUI_DefaultBackupDirectory;
             Settings.Set("ChangeBackupOutputDirectory", false);
             ResetBackupDirectory.IsEnabled = false;
         }
 
-        private void ChangeBackupDirectory_Click(object sender, dynamic e)
+        private void ChangeBackupDirectory_Click(object sender, EventArgs e)
         {
 
             ExternalLibraries.Pickers.FolderPicker openPicker = new(MainApp.Instance.MainWindow.GetWindowHandle());
@@ -469,34 +469,34 @@ namespace UniGetUI.Interface
 
         }
 
-        private void DoCacheAdminRights_StateChanged(object sender, CheckBoxEventArgs e)
+        private void DoCacheAdminRights_StateChanged(object sender, EventArgs e)
         {
             _ = CoreTools.ResetUACForCurrentProcess();
         }
 
-        private void UseSystemGSudo_StateChanged(object sender, CheckBoxEventArgs e)
+        private void UseSystemGSudo_StateChanged(object sender, EventArgs e)
         {
             AdminSettingsExpander.ShowRestartRequiredBanner();
         }
 
-        private void DisableWidgetsApi_StateChanged(object sender, CheckBoxEventArgs e)
+        private void DisableWidgetsApi_StateChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
 
-        private void UseSystemWinget_StateChanged(object sender, CheckBoxEventArgs e)
+        private void UseSystemWinget_StateChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
 
-        private void DisableDownloadingNewTranslations_StateChanged(object sender, CheckBoxEventArgs e)
+        private void DisableDownloadingNewTranslations_StateChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
-        private void ForceArmWinget_StateChanged(object sender, CheckBoxEventArgs e)
+        private void ForceArmWinget_StateChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
-        private void TextboxCard_ValueChanged(object sender, TextboxEventArgs e)
+        private void TextboxCard_ValueChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
-        private void ResetIconCache_Click(object sender, ButtonCardEventArgs e)
+        private void ResetIconCache_Click(object sender, EventArgs e)
         {
             try
             {
@@ -510,21 +510,20 @@ namespace UniGetUI.Interface
             ExperimentalSettingsExpander.ShowRestartRequiredBanner();
         }
 
-        private async void DoBackup_Click(object sender, ButtonCardEventArgs e)
+        private async void DoBackup_Click(object sender, EventArgs e)
         {
             MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
             await MainApp.Instance.MainWindow.NavigationPage.InstalledPage.BackupPackages();
             MainApp.Instance.MainWindow.HideLoadingDialog();
         }
 
-        private void EditAutostartSettings_Click(object sender, ButtonCardEventArgs e)
+        private void EditAutostartSettings_Click(object sender, EventArgs e)
         {
             Process p = new()
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName = "cmd.exe",
-                    Arguments = "/c start ms-settings:startupapps",
+                    FileName = "ms-settings:startupapps",
                     UseShellExecute = true,
                     CreateNoWindow = true
                 }
@@ -532,7 +531,7 @@ namespace UniGetUI.Interface
             p.Start();
         }
 
-        private void DisableSystemTray_StateChanged(object sender, CheckBoxEventArgs e)
+        private void DisableSystemTray_StateChanged(object sender, EventArgs e)
         {
             MainApp.Instance.MainWindow.UpdateSystemTrayStatus();
             if (NotificationSettingsEntry is not null)
@@ -541,7 +540,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        private void EnablePackageBackupCheckBox_StateChanged(object sender, CheckBoxEventArgs e)
+        private void EnablePackageBackupCheckBox_StateChanged(object sender, EventArgs e)
         {
             EnablePackageBackupUI(EnablePackageBackupCheckBox.Checked);
         }
@@ -573,7 +572,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        private void UseUserGSudoToggle_StateChanged(object sender, CheckBoxEventArgs e)
+        private void UseUserGSudoToggle_StateChanged(object sender, EventArgs e)
         {
             ExperimentalSettingsExpander.ShowRestartRequiredBanner();
         }

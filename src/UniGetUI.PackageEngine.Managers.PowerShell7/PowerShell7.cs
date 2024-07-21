@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
@@ -40,7 +41,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 Name = "PowerShell7",
                 DisplayName = "PowerShell 7.x (beta)",
                 Description = CoreTools.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
-                IconId = "powershell",
+                IconId = IconType.PowerShell,
                 ColorIconId = "powershell_color",
                 ExecutableFriendlyName = "pwsh.exe",
                 InstallVerb = "Install-Module",

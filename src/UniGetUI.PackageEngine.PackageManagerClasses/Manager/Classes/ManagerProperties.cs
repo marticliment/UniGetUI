@@ -1,4 +1,5 @@
-﻿using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
@@ -8,7 +9,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public string Name { get; set; } = "Unset";
         public string? DisplayName { get; set; }
         public string Description { get; set; } = "Unset";
-        public string IconId { get; set; } = "Unset";
+        public IconType IconId { get; set; } = IconType.Help;
         public string ColorIconId { get; set; } = "Unset";
         public string ExecutableCallArgs { get; set; } = "Unset";
         public string ExecutableFriendlyName { get; set; } = "Unset";
