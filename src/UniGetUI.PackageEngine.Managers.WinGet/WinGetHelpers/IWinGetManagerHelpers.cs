@@ -1,4 +1,5 @@
-﻿using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
@@ -29,9 +30,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         public Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager);
         public Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager);
         public Task<Package[]> FindPackages_UnSafe(WinGet Manager, string query);
-        public Task<ManagerSource[]> GetSources_UnSafe(WinGet Manager);
-        public Task<string[]> GetPackageVersions_Unsafe(WinGet Manager, Package package);
-        public Task GetPackageDetails_UnSafe(WinGet Manager, PackageDetails details);
+        public Task<IManagerSource[]> GetSources_UnSafe(WinGet Manager);
+        public Task<string[]> GetPackageVersions_Unsafe(WinGet Manager, IPackage package);
+        public Task GetPackageDetails_UnSafe(WinGet Manager, IPackageDetails details);
     }
 }
 

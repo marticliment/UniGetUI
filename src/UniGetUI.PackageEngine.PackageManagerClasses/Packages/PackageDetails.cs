@@ -1,16 +1,17 @@
 using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
     /// <summary>
     /// Holds the details of a Package.
     /// </summary>
-    public class PackageDetails
+    public class PackageDetails: IPackageDetails
     {
         /// <summary>
         /// The package to which this details instance corresponds
         /// </summary>
-        public Package Package { get; }
+        public IPackage Package { get; }
 
         /// <summary>
         /// Wether this PackageDetails instance has valid data or not.
@@ -93,16 +94,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public string[] Tags { get; set; } = [];
 
-        public PackageDetails(Package package)
+        public PackageDetails(IPackage package)
         {
             Package = package;
         }
 
-        /// <summary>
-        /// Loads the available package details. May override existing data.
-        /// If the load succeeds, `IsPopulated` will be set to True.
-        /// </summary>
-        /// <returns>An asynchronous task that can be awaited</returns>
         public async Task Load()
         {
             try

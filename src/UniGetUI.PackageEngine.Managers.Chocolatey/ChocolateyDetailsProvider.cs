@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -10,7 +12,7 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
         public ChocolateyDetailsProvider(BaseNuGet manager) : base(manager)
         { }
 
-        protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
+        protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
         {
             Process p = new()
             {
@@ -28,7 +30,7 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
                 }
             };
 
-            ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
+           IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
 
             p.Start();
 

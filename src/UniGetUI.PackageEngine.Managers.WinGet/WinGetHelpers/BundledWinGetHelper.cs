@@ -5,8 +5,11 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
@@ -43,7 +46,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             }
         };
 
-        ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
         p.Start();
 
@@ -92,7 +95,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 continue;
             }
 
-            ManagerSource source = Manager.GetSourceOrDefault(elements[4]);
+            IManagerSource source = Manager.GetSourceOrDefault(elements[4]);
 
             Packages.Add(new Package(elements[0][1..], elements[1], elements[2], elements[3], source, Manager));
         }
@@ -135,8 +138,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             }
         };
 
-        ManagerClasses.Classes.ProcessTaskLogger logger =
-            Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
         p.Start();
 
         string command = """
@@ -182,7 +184,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 continue;
             }
 
-            ManagerSource source;
+            IManagerSource source;
             if (elements[3] != "")
             {
                 source = Manager.GetSourceOrDefault(elements[3]);
@@ -236,8 +238,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         p.Start();
 
-        ManagerClasses.Classes.ProcessTaskLogger
-            logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
         string command = """
                          Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
@@ -280,7 +281,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 continue;
             }
 
-            ManagerSource source = Manager.GetSourceOrDefault(elements[3]);
+            IManagerSource source = Manager.GetSourceOrDefault(elements[3]);
 
             Packages.Add(new Package(elements[0][1..], elements[1], elements[2], source, Manager));
         }
@@ -299,7 +300,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
     }
 
-    public async Task GetPackageDetails_UnSafe(WinGet Manager, PackageDetails details)
+    public async Task GetPackageDetails_UnSafe(WinGet Manager, IPackageDetails details)
     {
         if (details.Package.Source.Name == "winget")
         {
@@ -534,7 +535,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return;
     }
 
-    public async Task<string[]> GetPackageVersions_Unsafe(WinGet Manager, Package package)
+    public async Task<string[]> GetPackageVersions_Unsafe(WinGet Manager, IPackage package)
     {
         Process p = new()
         {
@@ -552,8 +553,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             }
         };
 
-        ManagerClasses.Classes.ProcessTaskLogger logger =
-            Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
 
         p.Start();
 
@@ -582,9 +582,9 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return versions.ToArray();
     }
 
-    public async Task<ManagerSource[]> GetSources_UnSafe(WinGet Manager)
+    public async Task<IManagerSource[]> GetSources_UnSafe(WinGet Manager)
     {
-        List<ManagerSource> sources = [];
+        List<IManagerSource> sources = [];
 
         Process p = new()
         {
@@ -603,8 +603,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         p.Start();
 
-        ManagerClasses.Classes.ProcessTaskLogger
-            logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
         bool dashesPassed = false;
         string? line;

@@ -9,6 +9,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using Windows.Storage;
@@ -16,6 +17,7 @@ using Windows.Storage.Pickers;
 using Windows.UI;
 using Windows.UI.Text;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
+using Windows.ApplicationModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,7 +29,7 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class PackageDetailsPage : Page
     {
-        public Package Package;
+        public IPackage Package;
         private readonly InstallOptionsPage InstallOptionsPage;
         public event EventHandler? Close;
         private readonly OperationType OperationRole;
@@ -44,14 +46,15 @@ namespace UniGetUI.Interface.Dialogs
 
 
         private LayoutMode __layout_mode = LayoutMode.Unloaded;
-        public PackageDetailsPage(Package package, OperationType operationRole)
+        public PackageDetailsPage(IPackage package, OperationType operationRole)
         {
             OperationRole = operationRole;
             Package = package;
 
             InitializeComponent();
 
-            InstallOptionsPage = new InstallOptionsPage(package, operationRole);
+            var options = InstallationOptions.FromPackage(package).AsSerializable();
+            InstallOptionsPage = new InstallOptionsPage(package, operationRole, options);
             InstallOptionsExpander.Content = InstallOptionsPage;
 
             SizeChanged += PackageDetailsPage_SizeChanged;
@@ -135,7 +138,7 @@ namespace UniGetUI.Interface.Dialogs
 
             string NotFound = CoreTools.Translate("Not available");
 
-            PackageDetails details = Package.Details;
+            IPackageDetails details = Package.Details;
             if (!details.IsPopulated)
             {
                 await details.Load();
@@ -297,23 +300,27 @@ namespace UniGetUI.Interface.Dialogs
         public async void ActionButton_Click(object sender, RoutedEventArgs e)
         {
             Close?.Invoke(this, EventArgs.Empty);
-            InstallOptionsPage.SaveToDisk();
+
+            var newOptions = (await InstallationOptions.FromPackageAsync(Package));
+            newOptions.FromSerializable(await InstallOptionsPage.GetUpdatedOptions());
+            newOptions.SaveToDisk();
+
             switch (OperationRole)
             {
                 case OperationType.Install:
-                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(Package, InstallOptionsPage.Options));
+                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(Package, newOptions));
                     break;
 
                 case OperationType.Uninstall:
                     if (await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(Package))
                     {
-                        MainApp.Instance.AddOperationToList(new UninstallPackageOperation(Package, InstallOptionsPage.Options));
+                        MainApp.Instance.AddOperationToList(new UninstallPackageOperation(Package, newOptions));
                     }
 
                     break;
 
                 case OperationType.Update:
-                    MainApp.Instance.AddOperationToList(new UpdatePackageOperation(Package, InstallOptionsPage.Options));
+                    MainApp.Instance.AddOperationToList(new UpdatePackageOperation(Package, newOptions));
                     break;
             }
         }
