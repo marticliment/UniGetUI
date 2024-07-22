@@ -269,6 +269,9 @@
     <ProjectReference Include="..\UniGetUI.PackageEngine.PackageManagerClasses\UniGetUI.PackageEngine.Classes.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Update="Assets\Symbols\Font\fonts\UniGetUI-Symbols.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Assets\Utilities\delete_winget_databases.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
