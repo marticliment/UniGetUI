@@ -22,7 +22,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         public string DisplayName { get; }
         public IManagerSource DefaultSource { get; set; }
         public bool ManagerReady { get; set; }
-        public ManagerLogger TaskLogger { get; }
+        public IManagerLogger TaskLogger { get; }
 
         public ISourceProvider? SourceProvider { get; }
         public IPackageDetailsProvider? PackageDetailsProvider { get; }

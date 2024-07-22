@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
@@ -6,6 +6,7 @@ using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -18,7 +19,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
         protected override async Task GetPackageDetails_Unsafe(IPackageDetails details)
         {
-            ManagerClasses.Classes.NativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
+            var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
             try
             {
                 details.ManifestUrl = PackageManifestLoader.GetPackageManifestUrl(details.Package);

@@ -13,6 +13,7 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Managers.Chocolatey;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 {
@@ -62,7 +63,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             PackageDetailsProvider = new ChocolateyDetailsProvider(this);
         }
         
-        protected override async Task<IPackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             Process p = new()
             {
@@ -79,7 +80,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             };
 
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
             p.Start();
 
             string? line;
@@ -116,7 +117,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             return Packages.ToArray();
         }
 
-        protected override async Task<IPackage[]> GetInstalledPackages_UnSafe()
+        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             Process p = new()
             {
@@ -133,7 +134,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             };
 
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
             p.Start();
 
             string? line;

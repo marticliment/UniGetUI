@@ -1,21 +1,25 @@
 using System.Diagnostics;
+using System.Net;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 {
-    public class ManagerLogger
+    public class ManagerLogger : IManagerLogger
     {
         readonly IPackageManager Manager;
-        public List<TaskLogger> Operations = [];
+
+        private List<TaskLogger> operations = new();
+        public IEnumerable<ITaskLogger> Operations { get => (IEnumerable<ITaskLogger>)operations; }
 
         public ManagerLogger(IPackageManager manager)
         {
             Manager = manager;
         }
 
-        public ProcessTaskLogger CreateNew(LoggableTaskType type, Process process)
+        public IProcessTaskLogger CreateNew(LoggableTaskType type, Process process)
         {
             if (process.StartInfo == null)
             {
@@ -23,14 +27,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             }
 
             ProcessTaskLogger operation = new(Manager, type, process.StartInfo.FileName, process.StartInfo.Arguments);
-            Operations.Add(operation);
+            operations.Add(operation);
             return operation;
         }
 
-        public NativeTaskLogger CreateNew(LoggableTaskType type)
+        public INativeTaskLogger CreateNew(LoggableTaskType type)
         {
             NativeTaskLogger operation = new(Manager, type);
-            Operations.Add(operation);
+            operations.Add(operation);
             return operation;
         }
     }
@@ -85,7 +89,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         public abstract IEnumerable<string> AsColoredString(bool verbose = false);
     }
 
-    public class ProcessTaskLogger : TaskLogger
+    public class ProcessTaskLogger : TaskLogger, IProcessTaskLogger
     {
         private readonly IPackageManager Manager;
         private readonly LoggableTaskType Type;
@@ -269,7 +273,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         }
     }
 
-    public class NativeTaskLogger : TaskLogger
+    public class NativeTaskLogger : TaskLogger, INativeTaskLogger
     {
         private readonly IPackageManager Manager;
         private readonly LoggableTaskType Type;

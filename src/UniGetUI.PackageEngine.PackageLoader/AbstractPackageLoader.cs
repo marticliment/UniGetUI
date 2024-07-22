@@ -43,12 +43,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
         readonly bool DISABLE_RELOAD = false;
         protected string LOADER_IDENTIFIER;
         private int LoadOperationIdentifier = 0;
-        protected IEnumerable<PackageManager> Managers { get; private set; }
+        protected IEnumerable<IPackageManager> Managers { get; private set; }
 
-        public AbstractPackageLoader(IEnumerable<PackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false, bool DisableReload = false) 
+        public AbstractPackageLoader(IEnumerable<IPackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false, bool DisableReload = false) 
         {
             Managers = managers;
-            //Packages = new List<IPackage>();
             PackageReference = new Dictionary<long, IPackage>();
             IsLoaded = false;
             IsLoading = false;
@@ -99,7 +98,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
             List<Task<IPackage[]>> tasks = new();
 
-            foreach (PackageManager manager in Managers)
+            foreach (IPackageManager manager in Managers)
             {
                 if (manager.IsEnabled() && manager.Status.Found)
                 {

@@ -28,7 +28,7 @@ internal static partial class BundledWinGetLegacyMethods
             }
         };
 
-        ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
         p.Start();
 
@@ -100,7 +100,7 @@ internal static partial class BundledWinGetLegacyMethods
             }
         };
 
-        ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
         p.Start();
 
@@ -195,7 +195,7 @@ internal static partial class BundledWinGetLegacyMethods
             }
         };
 
-        ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
 
         p.Start();
 

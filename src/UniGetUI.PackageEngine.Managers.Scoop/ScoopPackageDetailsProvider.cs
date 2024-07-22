@@ -44,7 +44,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 }
             };
 
-            ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
+            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
 
             p.Start();
             string JsonString = await p.StandardOutput.ReadToEndAsync();

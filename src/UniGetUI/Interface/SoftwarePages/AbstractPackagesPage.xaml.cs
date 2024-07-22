@@ -17,7 +17,6 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
-using Windows.ApplicationModel;
 using Windows.System;
 using Windows.UI.Core;
 
@@ -26,7 +25,7 @@ using Windows.UI.Core;
 
 namespace UniGetUI.Interface
 {
-    public abstract partial class AbstractPackagesPage : Page, IPageWithKeyboardShortcuts
+    public abstract partial class AbstractPackagesPage
     {
 
         protected struct PackagesPageData
@@ -690,7 +689,7 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            if (await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(package, PAGE_ROLE))
+            if (await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsAndContinue(package, PAGE_ROLE))
             {
                 PerformMainPackageAction(package);
             }

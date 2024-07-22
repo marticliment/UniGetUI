@@ -47,7 +47,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             PackageDetailsProvider = new PipPackageDetailsProvider(this);
         }
         
-        protected override async Task<IPackage[]> FindPackages_UnSafe(string query)
+        protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];
 
@@ -67,7 +67,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         CreateNoWindow = true,
                     }
                 };
-                ProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
+                IProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
                 proc.Start();
 
                 aux_logger.AddToStdOut(await proc.StandardOutput.ReadToEndAsync());
@@ -92,7 +92,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             };
 
-            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
             p.Start();
 
@@ -136,7 +136,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return Packages.ToArray();
         }
 
-        protected override async Task<IPackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             Process p = new()
             {
@@ -152,7 +152,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             };
 
-            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
             p.Start();
 
@@ -197,7 +197,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return Packages.ToArray();
         }
 
-        protected override async Task<IPackage[]> GetInstalledPackages_UnSafe()
+        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
 
             Process p = new()
@@ -214,7 +214,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             };
 
-            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
 
             p.Start();
 

@@ -1,6 +1,7 @@
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Classes.Manager
 {
@@ -21,7 +22,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         public ManagerSource(IPackageManager manager, string name, Uri url, int? packageCount = 0, string updateDate = "", bool isVirtualManager = false)
         {
             IsVirtualManager = isVirtualManager;
-            Manager = manager;
+            Manager = manager as IPackageManager;
             Name = name;
             Url = url;
             if (manager.Capabilities.Sources.KnowsPackageCount)

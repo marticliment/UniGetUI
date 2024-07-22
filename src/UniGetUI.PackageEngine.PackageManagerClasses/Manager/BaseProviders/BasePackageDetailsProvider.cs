@@ -2,14 +2,15 @@ using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
 {
-    public abstract class BasePackageDetailsProvider<T> : IPackageDetailsProvider where T : IPackageManager
+    public abstract class BasePackageDetailsProvider<ManagerT> : IPackageDetailsProvider where ManagerT : IPackageManager
     {
-        protected T Manager;
+        protected ManagerT Manager;
 
-        public BasePackageDetailsProvider(T manager)
+        public BasePackageDetailsProvider(ManagerT manager)
         {
             Manager = manager;
         }

@@ -36,7 +36,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 };
 
-                ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
+                IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
                 p.Start();
 
                 string? outLine;
@@ -129,7 +129,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 }
             };
 
-            ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions, p);
+            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions, p);
             p.Start();
 
             string? line;

@@ -1,4 +1,4 @@
-﻿using UniGetUI.Core.Logging;
+using UniGetUI.Core.Logging;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Serializable;
@@ -10,7 +10,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 {
     public class PackageBundlesLoader : AbstractPackageLoader
     {
-        public PackageBundlesLoader(IEnumerable<PackageManager> managers)
+        public PackageBundlesLoader(IEnumerable<IPackageManager> managers)
         : base(managers, "PACKAGE_BUNDLES", AllowMultiplePackageVersions: true, DisableReload: true)
         {
         }
@@ -24,7 +24,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         protected override Task<IPackage[]> LoadPackagesFromManager(IPackageManager manager)
         {
-            return Task.Run(() => new IPackage[0]);
+            return Task.Run(Array.Empty<IPackage>);
         }
 
 #pragma warning disable CS1998
@@ -35,17 +35,40 @@ namespace UniGetUI.PackageEngine.PackageLoader
         }
 #pragma warning restore CS1998
 
-        public void AddPackages(IEnumerable<IPackage> packages)
+        public async Task AddPackagesAsync(IEnumerable<IPackage> foreign_packages)
         {
-            foreach (IPackage pkg in packages)
+            foreach (IPackage foreign in foreign_packages)
             {
-                IPackage package;
-                if (pkg is Package && pkg is not ImportedPackage && pkg.Source.IsVirtualManager)
-                    package = new InvalidPackage(pkg.AsSerializable_Incompatible(), NullSource.Instance);
-                else
-                    package = pkg;
+                IPackage? package = null;
 
-                if(!Contains(package)) AddPackage(package);
+                if (foreign is Package native && native is not null)
+                {
+                    if (native.Source.IsVirtualManager)
+                    {
+                        Logger.Debug($"Adding native package with id={native.Id} to bundle as an INVALID package...");
+                        package = new InvalidImportedPackage(native.AsSerializable_Incompatible(), NullSource.Instance);
+                    }
+                    else
+                    {
+                        Logger.Debug($"Adding native package with id={native.Id} to bundle as a VALID package...");
+                        package = new ImportedPackage(await native.AsSerializable(), native.Manager, native.Source);
+                    }
+                }
+                else if (foreign is ImportedPackage imported && imported is not null)
+                {
+                    Logger.Debug($"Adding loaded imported package with id={imported.Id} to bundle...");
+                    package = imported;
+                }
+                else if (foreign is InvalidImportedPackage invalid && invalid is not null)
+                {
+                    Logger.Debug($"Adding loaded incompatible package with id={invalid.Id} to bundle...");
+                    package = invalid;
+                }
+                else
+                {
+                    Logger.Error($"An IPackage instance id={foreign.Id} did not match the types Package, ImportedPackage or InvalidImportedPackage. This should never be the case");
+                }
+                if(package is not null && !Contains(package)) AddPackage(package);
             }
             InvokePackagesChangedEvent();
         }
@@ -55,7 +78,6 @@ namespace UniGetUI.PackageEngine.PackageLoader
             foreach(IPackage package in packages)
             {
                 if (!Contains(package)) continue;
-                //Packages.Remove(package);
                 PackageReference.Remove(HashPackage(package));
             }
             InvokePackagesChangedEvent();

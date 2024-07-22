@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Nodes;
 using UniGetUI.Core.Data;
@@ -25,8 +25,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <param name="id"></param>
         /// <param name="version"></param>
         /// <param name="source"></param>
-        SerializableUpdatesOptions_v1 updates_options;
-        SerializableInstallationOptions_v1 installation_options;
+        public SerializableUpdatesOptions_v1 updates_options;
+        public SerializableInstallationOptions_v1 installation_options;
 
         public ImportedPackage(SerializablePackage_v1 raw_data, IPackageManager manager, IManagerSource source)
             : base(raw_data.Name, raw_data.Id, raw_data.Version, source, manager)
@@ -35,15 +35,18 @@ namespace UniGetUI.PackageEngine.PackageClasses
             updates_options = raw_data.Updates;
         }
 
-        public async Task RegisterPackage()
+        public async Task<Package> RegisterAndGetPackageAsync()
         {
-            var options = InstallationOptions.FromSerialized(installation_options, this);
+            var options = await InstallationOptions.FromPackageAsync(this);
+            options.FromSerializable(installation_options);
             await options.SaveToDiskAsync();
 
             if (updates_options.UpdatesIgnored)
             {
                 await AddToIgnoredUpdatesAsync(updates_options.IgnoredVersion);
             }
+
+            return new Package(Name, Id, Version, Source, Manager);
         }
     }
 }

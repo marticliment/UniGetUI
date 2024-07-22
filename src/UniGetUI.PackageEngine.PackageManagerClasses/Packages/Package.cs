@@ -58,6 +58,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public double NewVersionAsFloat { get; }
         public bool IsPopulated { get; set; }
         public IManagerSource Source { get; }
+
+        /// <summary>
+        /// IPackageManager is guaranteed to be IPackageManager, but C# doesn't allow covariant attributes 
+        /// </summary>
         public IPackageManager Manager { get; }
         public string NewVersion { get; }
         public virtual bool IsUpgradable { get; }
@@ -80,7 +84,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Version = version;
             VersionAsFloat = CoreTools.GetVersionStringAsFloat(version);
             Source = source;
-            Manager = manager;
+            Manager = (IPackageManager)manager;
             Scope = scope;
             NewVersion = "";
             Tag = PackageTag.Default;

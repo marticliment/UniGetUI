@@ -7,6 +7,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.PackageEngine.Managers.NpmManager
 {
@@ -45,7 +46,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             PackageDetailsProvider = new NpmPackageDetailsProvider(this);
         }
         
-        protected override async Task<IPackage[]> FindPackages_UnSafe(string query)
+        protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             Process p = new()
             {
@@ -63,7 +64,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 }
             };
 
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
             p.Start();
 
             string? line;
@@ -96,7 +97,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return Packages.ToArray();
         }
 
-        protected override async Task<IPackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             List<Package> Packages = [];
             foreach (PackageScope scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
@@ -117,7 +118,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     }
                 };
 
-                ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+                IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
                 p.Start();
 
                 string? line;
@@ -148,7 +149,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return Packages.ToArray();
         }
 
-        protected override async Task<IPackage[]> GetInstalledPackages_UnSafe()
+        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
             foreach (PackageScope scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
@@ -169,7 +170,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     }
                 };
 
-                ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+                IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
                 p.Start();
 
                 string? line;

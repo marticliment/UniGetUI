@@ -31,13 +31,13 @@ using Windows.Media.Devices;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class NewPackageBundlesPage : AbstractPackagesPage
+    public class PackageBundlesPage : AbstractPackagesPage
     {
         BetterMenuItem? MenuAsAdmin;
         BetterMenuItem? MenuInteractive;
         BetterMenuItem? MenuSkipHash;
 
-        public NewPackageBundlesPage()
+        public PackageBundlesPage()
         : base(new PackagesPageData()
         {
             DisableAutomaticPackageLoadOnStart = true,
@@ -58,7 +58,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             PageTitle = CoreTools.Translate("Package Bundles"),
             Glyph = "\uF133"
-        })
+        }) 
         {
         }
 
@@ -258,21 +258,26 @@ namespace UniGetUI.Interface.SoftwarePages
         public async Task ImportAndInstallPackage(IEnumerable<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? skiphash = null)
         {
             MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Preparing packages, please wait..."));
-            foreach (IPackage package in FilteredPackages.GetCheckedPackages())
+            List<Package> packages_to_install = new();
+            foreach (IPackage package in packages)
             {
-                ImportedPackage? imported = package as ImportedPackage;
-                if (imported != null) await imported.RegisterPackage();
+                if(package is ImportedPackage imported)
+                { 
+                    Logger.ImportantInfo($"Registering package {imported.Id} from manager {imported.SourceAsString}");
+                    packages_to_install.Add(await imported.RegisterAndGetPackageAsync());
+                }
+                else
+                {
+                    Logger.Warn($"Attempted to install an invalid/incompatible package with Id={package.Id}");
+                }
             }
 
             MainApp.Instance.MainWindow.HideLoadingDialog();
 
-            foreach (IPackage package in FilteredPackages.GetCheckedPackages())
+            foreach (Package package in packages_to_install)
             {
-                if (package is Package)
-                {
-                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
-                        await InstallationOptions.FromPackageAsync(package, elevated, interactive, skiphash)));
-                }
+               MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
+                    await InstallationOptions.FromPackageAsync(package, elevated, interactive, skiphash)));
             }
         }
 
@@ -346,10 +351,9 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package != null &&
-                await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(package, OperationType.Uninstall))
+            if (package is ImportedPackage imported)
             {
-                await ImportAndInstallPackage([package]);
+                await MainApp.Instance.MainWindow.NavigationPage.ShowInstallOptionsDialog_ImportedPackage(imported);
             }
         }
 
@@ -502,8 +506,10 @@ namespace UniGetUI.Interface.SoftwarePages
                 File.Delete(tempfile);
             }
 
-            if (DeserializedData == null)
-                throw new Exception($"Deserialized data was null for content {content} and format {format}");
+            if (DeserializedData is null)
+            {
+                throw new InvalidDataException($"Deserialized data was null for content {content} and format {format}");
+            }
 
             List<IPackage> packages = new List<IPackage>();
 
@@ -517,13 +523,13 @@ namespace UniGetUI.Interface.SoftwarePages
                 packages.Add(InvalidPackageFromSerializable(DeserializedPackage, NullSource.Instance));
             }
 
-            PEInterface.PackageBundlesLoader.AddPackages(packages);
+            await PEInterface.PackageBundlesLoader.AddPackagesAsync(packages);
         }
 
         public static IPackage PackageFromSerializable(SerializablePackage_v1 raw_package)
         {
             IPackageManager? manager = null;
-            IManagerSource? source = null;
+            IManagerSource? source;
 
             foreach (var possible_manager in PEInterface.Managers)
             {
@@ -551,7 +557,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public static IPackage InvalidPackageFromSerializable(SerializableIncompatiblePackage_v1 raw_package, IManagerSource source)
         {
-            return new InvalidPackage(raw_package, source);
+            return new InvalidImportedPackage(raw_package, source);
         }
     }
 }

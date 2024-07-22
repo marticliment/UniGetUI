@@ -1,5 +1,6 @@
-﻿using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Classes.Manager
 {

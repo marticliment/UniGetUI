@@ -1,10 +1,11 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.ScoopManager
@@ -46,7 +47,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             p.StartInfo.StandardInputEncoding = System.Text.Encoding.UTF8;
             p.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
 
-            ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
+            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
 
             List<ManagerSource> sources = [];
 

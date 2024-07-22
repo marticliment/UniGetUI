@@ -57,7 +57,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 
             SourceProvider = new PowerShell7SourceProvider(this);
         }
-        protected override async Task<IPackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             Process p = new()
             {
@@ -75,7 +75,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 }
             };
 
-            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
             p.Start();
 
@@ -143,7 +143,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             return Packages.ToArray();
         }
 
-        protected override async Task<IPackage[]> GetInstalledPackages_UnSafe()
+        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             Process p = new()
             {
@@ -160,7 +160,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 }
             };
 
-            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
 
             p.Start();
             string? line;

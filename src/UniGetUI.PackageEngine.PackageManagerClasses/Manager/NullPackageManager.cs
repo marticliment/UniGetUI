@@ -16,7 +16,6 @@ using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
-using Windows.Devices.Bluetooth.Advertisement;
 
 namespace UniGetUI.PackageEngine.Classes.Manager
 {
@@ -31,7 +30,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         public IManagerSource DefaultSource { get => Properties.DefaultSource; set { } }
         public bool ManagerReady { get => true; set { } }
 
-        public ManagerLogger TaskLogger { get; set; }
+        public IManagerLogger TaskLogger { get; set; }
 
         public ISourceProvider? SourceProvider { get; set; }
 

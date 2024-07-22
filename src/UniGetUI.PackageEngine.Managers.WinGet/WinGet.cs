@@ -13,6 +13,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
@@ -121,17 +122,17 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             MicrosoftStoreSource = new(this, "Microsoft Store", IconType.MsStore);
         }
 
-        protected override async Task<IPackage[]> FindPackages_UnSafe(string query)
+        protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             return await Task.Run(() => WinGetHelper.Instance.FindPackages_UnSafe(this, query).GetAwaiter().GetResult());
         }
 
-        protected override async Task<IPackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             return await Task.Run(() => WinGetHelper.Instance.GetAvailableUpdates_UnSafe(this).GetAwaiter().GetResult());
         }
 
-        protected override async Task<IPackage[]> GetInstalledPackages_UnSafe()
+        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             return await Task.Run(() => WinGetHelper.Instance.GetInstalledPackages_UnSafe(this).GetAwaiter().GetResult());
         }
@@ -428,7 +429,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             };
 
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
 
             p.Start();
             logger.AddToStdOut(await p.StandardOutput.ReadToEndAsync());

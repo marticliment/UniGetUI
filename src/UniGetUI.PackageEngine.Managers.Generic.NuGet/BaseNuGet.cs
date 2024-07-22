@@ -4,6 +4,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -47,11 +48,11 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             public string id;
         }
 
-        protected sealed override async Task<IPackage[]> FindPackages_UnSafe(string query)
+        protected sealed override async Task<Package[]> FindPackages_UnSafe(string query)
         {
-            List<IPackage> Packages = [];
+            List<Package> Packages = [];
 
-            ManagerClasses.Classes.NativeTaskLogger logger = TaskLogger.CreateNew(Enums.LoggableTaskType.FindPackages);
+            INativeTaskLogger logger = TaskLogger.CreateNew(Enums.LoggableTaskType.FindPackages);
 
             IManagerSource[] sources;
             if (Capabilities.SupportsCustomSources)

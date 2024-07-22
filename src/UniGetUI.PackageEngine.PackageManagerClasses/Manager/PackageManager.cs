@@ -32,7 +32,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public static string[] FALSE_PACKAGE_IDS = [""];
         public static string[] FALSE_PACKAGE_VERSIONS = [""];
         public bool ManagerReady { get; set; } = false;
-        public ManagerLogger TaskLogger { get; }
+        public IManagerLogger TaskLogger { get; }
 
         public ISourceProvider SourceProvider { get; set; }
         public ISourceFactory SourceFactory { get => SourceProvider.SourceFactory; }
@@ -170,7 +170,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet FindPackages was called"); return []; };
             try
             {
-                IPackage[] packages = await FindPackages_UnSafe(query).WaitAsync(TimeSpan.FromSeconds(60));
+                Package[] packages = await FindPackages_UnSafe(query).WaitAsync(TimeSpan.FromSeconds(60));
                 for (int i = 0; i < packages.Length; i++)
                 {
                     packages[i] = PackageCacher.GetAvailablePackage(packages[i]);
@@ -198,7 +198,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             try
             {
                 await RefreshPackageIndexes().WaitAsync(TimeSpan.FromSeconds(60));
-                IPackage[] packages = await GetAvailableUpdates_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
+                Package[] packages = await GetAvailableUpdates_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
                 for (int i = 0; i < packages.Length; i++)
                 {
                     packages[i] = PackageCacher.GetUpgradablePackage(packages[i]);
@@ -225,7 +225,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetInstalledPackages was called"); return []; };
             try
             {
-                IPackage[] packages = await GetInstalledPackages_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
+                Package[] packages = await GetInstalledPackages_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
                 for (int i = 0; i < packages.Length; i++)
                 {
                     packages[i] = PackageCacher.GetInstalledPackage(packages[i]);
@@ -249,21 +249,21 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// </summary>
         /// <param name="query">The query string to search for</param>
         /// <returns>An array of Package objects</returns>
-        protected abstract Task<IPackage[]> FindPackages_UnSafe(string query);
+        protected abstract Task<Package[]> FindPackages_UnSafe(string query);
 
         /// <summary>
         /// Returns the available updates reported by the manager.
         /// Each manager MUST implement this method.
         /// </summary>
         /// <returns>An array of UpgradablePackage objects</returns>
-        protected abstract Task<IPackage[]> GetAvailableUpdates_UnSafe();
+        protected abstract Task<Package[]> GetAvailableUpdates_UnSafe();
 
         /// <summary>
         /// Returns an array of Package objects containing the installed packages reported by the manager.
         /// Each manager MUST implement this method.
         /// </summary>
         /// <returns>An array of Package objects</returns>
-        protected abstract Task<IPackage[]> GetInstalledPackages_UnSafe();
+        protected abstract Task<Package[]> GetInstalledPackages_UnSafe();
 
 
         /// <summary>
@@ -423,7 +423,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         {
             if (PackageDetailsProvider == null)
             {
-                throw new InvalidOperationException($"Manager {Name} does not have a valid PackageDetailsProvider helper");
+                throw new InvalidOperationException($"Manager {Name} does not have a valid PackageDetailsProvider helper, when attemtping to call {MethodName}");
             }
         }
 #pragma warning disable CS8602

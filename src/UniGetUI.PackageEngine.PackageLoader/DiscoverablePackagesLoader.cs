@@ -10,7 +10,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
     {
         private string QUERY_TEXT = string.Empty;
 
-        public DiscoverablePackagesLoader(IEnumerable<PackageManager> managers)
+        public DiscoverablePackagesLoader(IEnumerable<IPackageManager> managers)
         : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false)
         { }
 

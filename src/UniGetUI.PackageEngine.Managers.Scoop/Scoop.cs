@@ -12,6 +12,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.PackageEngine.Managers.ScoopManager
 {
@@ -87,7 +88,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             PackageDetailsProvider = new ScoopPackageDetailsProvider(this);
         }
 
-        protected override async Task<IPackage[]> FindPackages_UnSafe(string query)
+        protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];
 
@@ -107,7 +108,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         CreateNoWindow = true
                     }
                 };
-                ManagerClasses.Classes.ProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
+                IProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
                 proc.Start();
                 aux_logger.AddToStdOut(await proc.StandardOutput.ReadToEndAsync());
                 aux_logger.AddToStdErr(await proc.StandardError.ReadToEndAsync());
@@ -129,7 +130,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
             p.Start();
 
@@ -170,7 +171,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return Packages.ToArray();
         }
 
-        protected override async Task<IPackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             Dictionary<string, Package> InstalledPackages = [];
             foreach (Package InstalledPackage in await GetInstalledPackages())
@@ -196,7 +197,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
             p.Start();
 
@@ -245,7 +246,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return Packages.ToArray();
         }
 
-        protected override async Task<IPackage[]> GetInstalledPackages_UnSafe()
+        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
 
@@ -262,7 +263,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
             p.Start();
 
             string? line;
@@ -437,7 +438,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
             p.StartInfo = StartInfo;
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
             p.Start();
             logger.AddToStdOut(await p.StandardOutput.ReadToEndAsync());
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());

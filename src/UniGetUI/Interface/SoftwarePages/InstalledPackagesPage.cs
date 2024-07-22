@@ -276,10 +276,13 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuRemoveData.IsEnabled = package.Manager.Capabilities.CanRemoveDataOnUninstall;
         }
 
-        private void ExportSelection_Click(object sender, RoutedEventArgs e)
+        private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
-            PEInterface.PackageBundlesLoader.AddPackages(FilteredPackages.GetCheckedPackages());
+            MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+            await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
+            MainApp.Instance.MainWindow.HideLoadingDialog();
+
         }
 
         public async void ConfirmAndUninstall(IPackage package, IInstallationOptions options)
@@ -314,7 +317,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     packagestoExport.Add(package);
                 }
 
-                string BackupContents = await NewPackageBundlesPage.CreateBundle(packagestoExport.ToArray(), BundleFormatType.JSON);
+                string BackupContents = await PackageBundlesPage.CreateBundle(packagestoExport.ToArray(), BundleFormatType.JSON);
 
                 string dirName = Settings.GetValue("ChangeBackupOutputDirectory");
                 if (dirName == "")
@@ -450,7 +453,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             IPackage? package = SelectedItem;
             if (package != null &&
-                await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsForPackageAndContinue(package, OperationType.Uninstall))
+                await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsAndContinue(package, OperationType.Uninstall))
             {
                 ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package));
             }

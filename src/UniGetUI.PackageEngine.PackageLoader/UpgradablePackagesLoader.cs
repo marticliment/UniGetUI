@@ -1,4 +1,4 @@
-﻿using UniGetUI.Core.Logging;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -11,7 +11,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
     {
         private System.Timers.Timer? UpdatesTimer;
 
-        public UpgradablePackagesLoader(IEnumerable<PackageManager> managers)
+        public UpgradablePackagesLoader(IEnumerable<IPackageManager> managers)
         : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false)
         {
             FinishedLoading += (s, e) => StartAutoCheckTimeout();

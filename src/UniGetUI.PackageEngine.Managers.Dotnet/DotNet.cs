@@ -11,6 +11,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.PackageEngine.Managers.DotNetManager
 {
@@ -59,7 +60,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             };
         }
 
-        protected override async Task<IPackage[]> GetAvailableUpdates_UnSafe()
+        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             Tuple<bool, string> which_res = await CoreTools.Which("dotnet-tools-outdated.exe");
             string path = which_res.Item2;
@@ -78,7 +79,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     }
                 };
 
-                ManagerClasses.Classes.ProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
+                IProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
                 proc.Start();
 
                 aux_logger.AddToStdOut(await proc.StandardOutput.ReadToEndAsync());
@@ -103,7 +104,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 }
             };
 
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
             p.Start();
 
             string? line;
@@ -147,7 +148,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             return Packages.ToArray();
         }
 
-        protected override async Task<IPackage[]> GetInstalledPackages_UnSafe()
+        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
             foreach (PackageScope scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
@@ -166,7 +167,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     }
                 };
 
-                ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+                IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
                 p.Start();
 
                 string? line;

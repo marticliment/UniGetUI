@@ -18,7 +18,7 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
-    public class InvalidPackage : IPackage, INotifyPropertyChanged
+    public class InvalidImportedPackage : IPackage, INotifyPropertyChanged
     {
         public IPackageDetails Details { get; }
 
@@ -60,7 +60,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public InvalidPackage(SerializableIncompatiblePackage_v1 data, IManagerSource source)
+        public InvalidImportedPackage(SerializableIncompatiblePackage_v1 data, IManagerSource source)
         {
             Name = data.Name;
             Id = data.Id.Split('\\')[^1];
@@ -200,7 +200,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Url = new Uri("about:blank");
             IsVirtualManager = true;
             IconId = IconType.Help;
-            Manager = NullPackageManager.Instance;
+            Manager = (IPackageManager)NullPackageManager.Instance;
         }
 
         /// <summary>

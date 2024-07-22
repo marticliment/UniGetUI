@@ -285,10 +285,12 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuSkipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
         }
 
-        private void ExportSelection_Click(object sender, RoutedEventArgs e)
+        private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
-            PEInterface.PackageBundlesLoader.AddPackages(FilteredPackages.GetCheckedPackages());
+            MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+            await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
+            MainApp.Instance.MainWindow.HideLoadingDialog();
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs e)

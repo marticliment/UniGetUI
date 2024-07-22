@@ -33,10 +33,10 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         WinGetManager = Factory.CreatePackageManager();
     }
 
-    public async Task<IPackage[]> FindPackages_UnSafe(WinGet Manager, string query)
+    public async Task<Package[]> FindPackages_UnSafe(WinGet Manager, string query)
     {
         List<Package> Packages = [];
-        ManagerClasses.Classes.NativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
+        INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
         foreach (string query_part in query.Replace(".", " ").Split(" "))
         {
             FindPackagesOptions PackageFilters = Factory.CreateFindPackagesOptions();
@@ -137,7 +137,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return Packages.ToArray();
     }
 
-    public async Task<IPackage[]> GetAvailableUpdates_UnSafe(WinGet Manager)
+    public async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates);
         List<Package> packages = [];
@@ -157,7 +157,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
     }
 
-    public async Task<IPackage[]> GetInstalledPackages_UnSafe(WinGet Manager)
+    public async Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager)
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages);
         List<Package> packages = [];
@@ -179,7 +179,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return packages.ToArray();
     }
 
-    private IEnumerable<CatalogPackage> GetLocalWinGetPackages(NativeTaskLogger logger)
+    private IEnumerable<CatalogPackage> GetLocalWinGetPackages(INativeTaskLogger logger)
     {
         PackageCatalogReference installedSearchCatalogRef;
         CreateCompositePackageCatalogOptions createCompositePackageCatalogOptions = Factory.CreateCreateCompositePackageCatalogOptions();
@@ -219,7 +219,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
     public async Task<IManagerSource[]> GetSources_UnSafe(WinGet Manager)
     {
         List<ManagerSource> sources = [];
-        ManagerClasses.Classes.NativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources);
+        INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources);
 
         foreach (PackageCatalogReference catalog in await Task.Run(() => WinGetManager.GetPackageCatalogs().ToArray()))
         {
@@ -244,7 +244,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
     public async Task<string[]> GetPackageVersions_Unsafe(WinGet Manager, IPackage package)
     {
-        NativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions);
+        INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions);
 
         // Find the native package for the given Package object
         PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
@@ -298,8 +298,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
     public async Task GetPackageDetails_UnSafe(WinGet Manager, IPackageDetails details)
     {
-        ManagerClasses.Classes.NativeTaskLogger logger =
-            Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
+        INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
 
         if (details.Package.Source.Name == "winget")
         {
