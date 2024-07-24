@@ -13,7 +13,9 @@ using UniGetUI.Interface.Pages.LogPage;
 using UniGetUI.Interface.SoftwarePages;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Serializable;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -28,7 +30,7 @@ namespace UniGetUI.Interface
         public SoftwareUpdatesPage UpdatesPage;
         public InstalledPackagesPage InstalledPage;
         public HelpDialog? HelpPage;
-        public PackageBundlePage BundlesPage;
+        public PackageBundlesPage BundlesPage;
         public Page? OldPage;
         public Page? CurrentPage;
         public InfoBadge UpdatesBadge;
@@ -48,7 +50,7 @@ namespace UniGetUI.Interface
                 ExternalCountBadge = UpdatesBadge
             };
             InstalledPage = new InstalledPackagesPage();
-            BundlesPage = new PackageBundlePage();
+            BundlesPage = new PackageBundlesPage();
             SettingsPage = new SettingsInterface();
 
             int i = 0;
@@ -373,51 +375,39 @@ namespace UniGetUI.Interface
             await MainApp.Instance.MainWindow.ShowDialogAsync(AdminDialog);
         }
 
-        public async Task<bool> ShowInstallationSettingsForPackageAndContinue(Package package, OperationType Operation)
+        /// <summary>
+        /// Will update the Installation Options for the given Package, and will return wether the user choose to continue
+        /// </summary>
+        /// <param name="package"></param>
+        /// <returns></returns>
+        public async Task<bool> ShowInstallationSettingsAndContinue(IPackage package, OperationType operation)
         {
-            InstallOptionsPage OptionsPage = new(package, Operation);
+            var options = (await InstallationOptions.FromPackageAsync(package)).AsSerializable();
 
-            ContentDialog? OptionsDialog = new()
-            {
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-                XamlRoot = XamlRoot
-            };
-            OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
-            OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
-            if (Operation == OperationType.Install)
-            {
-                OptionsDialog.SecondaryButtonText = CoreTools.Translate("Install");
-            }
-            else if (Operation == OperationType.Update)
-            {
-                OptionsDialog.SecondaryButtonText = CoreTools.Translate("Update");
-            }
-            else if (Operation == OperationType.Uninstall)
-            {
-                OptionsDialog.SecondaryButtonText = CoreTools.Translate("Uninstall");
-            }
-            else
-            {
-                OptionsDialog.SecondaryButtonText = "";
-            }
+            var result = await ShowInstallOptionsDialog(package, operation, options);
+            InstallationOptions newOptions = await InstallationOptions.FromPackageAsync(package);
+            newOptions.FromSerializable(result.Item1);
+            await newOptions.SaveToDiskAsync();
 
-            OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
-            OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
-            OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
-            OptionsDialog.Content = OptionsPage;
-            OptionsPage.Close += (s, e) => { OptionsDialog.Hide(); };
-
-            ContentDialogResult result = await MainApp.Instance.MainWindow.ShowDialogAsync(OptionsDialog);
-            OptionsPage.SaveToDisk();
-
-            OptionsDialog.Content = null;
-            OptionsDialog = null;
-
-            return result == ContentDialogResult.Secondary;
-
+            return result.Item2 == ContentDialogResult.Secondary;
         }
 
-        public async Task<InstallationOptions> UpdateInstallationSettings(Package package, InstallationOptions options)
+        /// <summary>
+        /// Will update the Installation Options for the given imported package
+        /// </summary>
+        /// <param name="importedPackage"></param>
+        /// <returns></returns>
+        public async Task<(SerializableInstallationOptions_v1, ContentDialogResult)> ShowInstallOptionsDialog_ImportedPackage(ImportedPackage importedPackage)
+        {
+            var result = await ShowInstallOptionsDialog(importedPackage, OperationType.None, importedPackage.installation_options);
+            importedPackage.installation_options = result.Item1;
+            return result;
+        }
+
+        private async Task<(SerializableInstallationOptions_v1, ContentDialogResult)> ShowInstallOptionsDialog(
+            IPackage package,
+            OperationType operation,
+            SerializableInstallationOptions_v1 options)
         {
             InstallOptionsPage OptionsPage = new(package, options);
 
@@ -428,20 +418,23 @@ namespace UniGetUI.Interface
             };
             OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
-            OptionsDialog.SecondaryButtonText = "";
+
+            OptionsDialog.SecondaryButtonText = operation switch
+            {
+                OperationType.Install => CoreTools.Translate("Install"),
+                OperationType.Uninstall => CoreTools.Translate("Uninstall"),
+                OperationType.Update => CoreTools.Translate("Update"),
+                _ => ""
+            };
+
             OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
             OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
             OptionsDialog.Content = OptionsPage;
             OptionsPage.Close += (s, e) => { OptionsDialog.Hide(); };
 
-            await MainApp.Instance.MainWindow.ShowDialogAsync(OptionsDialog);
-
-            OptionsDialog.Content = null;
-            OptionsDialog = null;
-
-            return await OptionsPage.GetUpdatedOptions();
-
+            ContentDialogResult result = await MainApp.Instance.MainWindow.ShowDialogAsync(OptionsDialog);
+            return (await OptionsPage.GetUpdatedOptions(), result);
         }
 
         private void NavigateToPage(Page TargetPage)
@@ -468,10 +461,6 @@ namespace UniGetUI.Interface
             CurrentPage = TargetPage;
 
             (CurrentPage as AbstractPackagesPage)?.FocusPackageList();
-            if (CurrentPage == BundlesPage)
-            {
-                BundlesPage.PackageList.Focus(FocusState.Programmatic);
-            }
         }
 
         private async void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
@@ -501,7 +490,7 @@ namespace UniGetUI.Interface
             NotesDialog = null;
         }
 
-        public async Task ShowPackageDetails(Package package, OperationType ActionOperation)
+        public async Task ShowPackageDetails(IPackage package, OperationType ActionOperation)
         {
             PackageDetailsPage? DetailsPage = new(package, ActionOperation);
 
@@ -531,7 +520,7 @@ namespace UniGetUI.Interface
 
         }
 
-        public async Task<bool> ConfirmUninstallation(Package package)
+        public async Task<bool> ConfirmUninstallation(IPackage package)
         {
             ContentDialog dialog = new()
             {
@@ -547,7 +536,7 @@ namespace UniGetUI.Interface
             return await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary;
         }
 
-        public async Task<bool> ConfirmUninstallation(IEnumerable<Package> packages)
+        public async Task<bool> ConfirmUninstallation(IEnumerable<IPackage> packages)
         {
             if (!packages.Any())
             {

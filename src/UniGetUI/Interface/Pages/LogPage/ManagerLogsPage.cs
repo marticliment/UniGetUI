@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.Interface.Pages.LogPage
 {
@@ -21,7 +22,7 @@ namespace UniGetUI.Interface.Pages.LogPage
             {
                 if (manager.DisplayName.Contains(LogLevelCombo.SelectedValue?.ToString()?.Split(' ')[0] ?? "uncontained_word"))
                 {
-                    PackageEngine.ManagerClasses.Classes.ManagerLogger TaskLogger = manager.TaskLogger;
+                    IManagerLogger TaskLogger = manager.TaskLogger;
                     LogTextBox.Blocks.Clear();
                     Paragraph versionParagraph = new();
                     versionParagraph.Inlines.Add(new Run { Text = $"Manager {manager.DisplayName} with version:\n" });
@@ -29,7 +30,7 @@ namespace UniGetUI.Interface.Pages.LogPage
                     versionParagraph.Inlines.Add(new Run { Text = "\n\n——————————————————————————————————————————\n\n" });
                     LogTextBox.Blocks.Add(versionParagraph);
 
-                    foreach (PackageEngine.ManagerClasses.Classes.TaskLogger operation in TaskLogger.Operations)
+                    foreach (ITaskLogger operation in TaskLogger.Operations)
                     {
                         Paragraph p = new();
                         foreach (string line in operation.AsColoredString(verbose))

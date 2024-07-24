@@ -11,7 +11,8 @@ namespace UniGetUI.Interface.Enums
         Pinned,
         OnQueue,
         BeingProcessed,
-        Failed
+        Failed,
+        Unavailable
     }
 
     public enum IconType

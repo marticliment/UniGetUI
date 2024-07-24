@@ -6,6 +6,7 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
@@ -203,7 +204,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             InstallSelected.Click += (s, e) =>
             {
-                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
                 }
@@ -211,7 +212,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             InstallAsAdmin.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, elevated: true);
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
@@ -220,7 +221,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             InstallSkipHash.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, no_integrity: true);
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
@@ -229,7 +230,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             InstallInteractive.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, interactive: true);
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
@@ -271,7 +272,7 @@ namespace UniGetUI.Interface.SoftwarePages
         }
 #pragma warning restore
 
-        protected override void WhenShowingContextMenu(Package package)
+        protected override void WhenShowingContextMenu(IPackage package)
         {
             if (MenuAsAdmin == null || MenuInteractive == null || MenuSkipHash == null)
             {
@@ -287,7 +288,9 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
-            await MainApp.Instance.MainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.GetCheckedPackages());
+            MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+            await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
+            MainApp.Instance.MainWindow.HideLoadingDialog();
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs e)
@@ -307,7 +310,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null)
             {
                 return;
@@ -318,7 +321,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null)
             {
                 return;
@@ -330,7 +333,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null)
             {
                 return;
@@ -342,7 +345,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null)
             {
                 return;
@@ -387,7 +390,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 // Find a package that matches both the Id and the Source
                 string managerName = pSource.Contains(':') ? pSource.Split(':')[0] : pSource;
-                foreach (Package match in FilteredPackages.GetPackages())
+                foreach (IPackage match in FilteredPackages.GetPackages())
                 {
                     if (match.Source.Manager.Name == managerName && match.Id == pId)
                     {
@@ -399,7 +402,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 
                 Logger.Info($"No package was found with Id={pId} and Source={pSource}, checking for Id only.");
                 // Find a package that matches the Id only
-                foreach (Package match in FilteredPackages.GetPackages())
+                foreach (IPackage match in FilteredPackages.GetPackages())
                 {
                     if (match.Id == pId)
                     {

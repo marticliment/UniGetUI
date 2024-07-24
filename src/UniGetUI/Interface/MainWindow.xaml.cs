@@ -15,6 +15,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
 using Windows.ApplicationModel.DataTransfer;
@@ -434,7 +435,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        public void SharePackage(Package? package)
+        public void SharePackage(IPackage? package)
         {
             if (package == null)
             {

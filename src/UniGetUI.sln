@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.Classes", "Un
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.IconEngine", "UniGetUI.Core.IconStore\UniGetUI.Core.IconEngine.csproj", "{990F5AFF-ABF6-4019-865D-604D2B23DE2C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.Enums", "UniGetUI.PackageEngine.Enums\UniGetUI.PackageEngine.Enums.csproj", "{380E9F5A-23DE-4F5A-9644-EFA51AD1D8E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.Structs", "UniGetUI.PackageEngine.Enums\UniGetUI.PackageEngine.Structs.csproj", "{380E9F5A-23DE-4F5A-9644-EFA51AD1D8E8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Interface.Enums", "UniGetUI.Interface.Enums\UniGetUI.Interface.Enums.csproj", "{5A48C2FD-16E4-4B44-BC2C-D793C50E66F2}"
 EndProject
@@ -50,8 +50,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.Core.Logging.Tests", "UniGetUI.Core.Logging.Tests\UniGetUI.Core.Logging.Tests.csproj", "{2979E556-5859-4E88-A1D4-EAB72F82294E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.Classes", "UniGetUI.PackageEngine.PackageManagerClasses\UniGetUI.PackageEngine.Classes.csproj", "{7E098666-DE8C-4ABF-B709-4CE7B1A491B0}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.Serializable", "UniGetUI.PackageEngine.Serializable\UniGetUI.PackageEngine.Serializable.csproj", "{B5E11AAA-B800-455E-9C64-051FFEFD6C0B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Managers", "Managers", "{95168D0B-1B2C-4295-B6D4-D5BAF781B9FA}"
 EndProject
@@ -88,7 +86,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniGetUI.PackageEngine.Managers.PowerShell7", "UniGetUI.PackageEngine.Managers.PowerShell7\UniGetUI.PackageEngine.Managers.PowerShell7.csproj", "{F4E7301D-9C8A-4A4A-92D2-35B896642BF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.Managers.PowerShell7", "UniGetUI.PackageEngine.Managers.PowerShell7\UniGetUI.PackageEngine.Managers.PowerShell7.csproj", "{F4E7301D-9C8A-4A4A-92D2-35B896642BF6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.Serializable", "UniGetUI.PackageEngine.Serializable\UniGetUI.PackageEngine.Serializable.csproj", "{29450002-5F93-4886-922E-30350C9C3442}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniGetUI.PackageEngine.Interfaces", "UniGetUI.PAckageEngine.Interfaces\UniGetUI.PackageEngine.Interfaces.csproj", "{C396E5F6-C6D9-465D-9903-7E33D0841E6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -172,10 +174,6 @@ Global
 		{7E098666-DE8C-4ABF-B709-4CE7B1A491B0}.Debug|x64.Build.0 = Debug|x64
 		{7E098666-DE8C-4ABF-B709-4CE7B1A491B0}.Release|x64.ActiveCfg = Release|x64
 		{7E098666-DE8C-4ABF-B709-4CE7B1A491B0}.Release|x64.Build.0 = Release|x64
-		{B5E11AAA-B800-455E-9C64-051FFEFD6C0B}.Debug|x64.ActiveCfg = Debug|x64
-		{B5E11AAA-B800-455E-9C64-051FFEFD6C0B}.Debug|x64.Build.0 = Debug|x64
-		{B5E11AAA-B800-455E-9C64-051FFEFD6C0B}.Release|x64.ActiveCfg = Release|x64
-		{B5E11AAA-B800-455E-9C64-051FFEFD6C0B}.Release|x64.Build.0 = Release|x64
 		{D47CC16E-466B-4D58-A8FC-ECAE5C9606FC}.Debug|x64.ActiveCfg = Debug|x64
 		{D47CC16E-466B-4D58-A8FC-ECAE5C9606FC}.Debug|x64.Build.0 = Debug|x64
 		{D47CC16E-466B-4D58-A8FC-ECAE5C9606FC}.Release|x64.ActiveCfg = Release|x64
@@ -232,6 +230,14 @@ Global
 		{F4E7301D-9C8A-4A4A-92D2-35B896642BF6}.Debug|x64.Build.0 = Debug|x64
 		{F4E7301D-9C8A-4A4A-92D2-35B896642BF6}.Release|x64.ActiveCfg = Release|x64
 		{F4E7301D-9C8A-4A4A-92D2-35B896642BF6}.Release|x64.Build.0 = Release|x64
+		{29450002-5F93-4886-922E-30350C9C3442}.Debug|x64.ActiveCfg = Debug|x64
+		{29450002-5F93-4886-922E-30350C9C3442}.Debug|x64.Build.0 = Debug|x64
+		{29450002-5F93-4886-922E-30350C9C3442}.Release|x64.ActiveCfg = Release|x64
+		{29450002-5F93-4886-922E-30350C9C3442}.Release|x64.Build.0 = Release|x64
+		{C396E5F6-C6D9-465D-9903-7E33D0841E6A}.Debug|x64.ActiveCfg = Debug|x64
+		{C396E5F6-C6D9-465D-9903-7E33D0841E6A}.Debug|x64.Build.0 = Debug|x64
+		{C396E5F6-C6D9-465D-9903-7E33D0841E6A}.Release|x64.ActiveCfg = Release|x64
+		{C396E5F6-C6D9-465D-9903-7E33D0841E6A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -256,7 +262,6 @@ Global
 		{C55F4BA7-BBDD-42A4-88C1-FD3C411EB234} = {5B9575EA-B4F9-46E4-A75E-59D430779EC7}
 		{2979E556-5859-4E88-A1D4-EAB72F82294E} = {5B9575EA-B4F9-46E4-A75E-59D430779EC7}
 		{7E098666-DE8C-4ABF-B709-4CE7B1A491B0} = {7940E867-EEBA-4AFD-9904-1536F003239C}
-		{B5E11AAA-B800-455E-9C64-051FFEFD6C0B} = {7940E867-EEBA-4AFD-9904-1536F003239C}
 		{95168D0B-1B2C-4295-B6D4-D5BAF781B9FA} = {7940E867-EEBA-4AFD-9904-1536F003239C}
 		{D47CC16E-466B-4D58-A8FC-ECAE5C9606FC} = {95168D0B-1B2C-4295-B6D4-D5BAF781B9FA}
 		{1143176D-B7F0-477C-90BB-72289068D927} = {95168D0B-1B2C-4295-B6D4-D5BAF781B9FA}
@@ -273,6 +278,8 @@ Global
 		{20F43119-EA00-440D-B3B5-44F96592F4C8} = {7940E867-EEBA-4AFD-9904-1536F003239C}
 		{CC400751-216E-4BB2-8103-495B4E273477} = {8CF74C87-534F-4017-A4ED-F2918025E31A}
 		{F4E7301D-9C8A-4A4A-92D2-35B896642BF6} = {95168D0B-1B2C-4295-B6D4-D5BAF781B9FA}
+		{29450002-5F93-4886-922E-30350C9C3442} = {7940E867-EEBA-4AFD-9904-1536F003239C}
+		{C396E5F6-C6D9-465D-9903-7E33D0841E6A} = {7940E867-EEBA-4AFD-9904-1536F003239C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D044BB14-0B37-47E5-A579-8B30FCBA1F9F}

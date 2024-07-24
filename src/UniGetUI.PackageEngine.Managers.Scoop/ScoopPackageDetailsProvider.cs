@@ -4,6 +4,7 @@ using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -14,7 +15,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
     {
         public ScoopPackageDetailsProvider(Scoop manager) : base(manager) { }
 
-        protected override async Task GetPackageDetails_Unsafe(PackageDetails details)
+        protected override async Task GetPackageDetails_Unsafe(IPackageDetails details)
         {
             if (details.Package.Source.Url != null)
             {
@@ -43,7 +44,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 }
             };
 
-            ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
+            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
 
             p.Start();
             string JsonString = await p.StandardOutput.ReadToEndAsync();
@@ -188,18 +189,18 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         }
 
-        protected override Task<CacheableIcon?> GetPackageIcon_Unsafe(Package package)
+        protected override Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package)
         {
             throw new NotImplementedException();
         }
 
-        protected override Task<Uri[]> GetPackageScreenshots_Unsafe(Package package)
+        protected override Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
         {
             throw new NotImplementedException();
         }
 
 #pragma warning disable
-        protected override async Task<string[]> GetPackageVersions_Unsafe(Package package)
+        protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
         {
             throw new Exception("Scoop does not support custom package versions");
         }

@@ -1,4 +1,6 @@
-﻿using UniGetUI.Core.Logging;
+using System.Diagnostics;
+using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Managers.ChocolateyManager;
 using UniGetUI.PackageEngine.Managers.DotNetManager;
@@ -8,6 +10,7 @@ using UniGetUI.PackageEngine.Managers.PowerShell7Manager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.Managers.ScoopManager;
 using UniGetUI.PackageEngine.Managers.WingetManager;
+using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 
 namespace UniGetUI.PackageEngine
@@ -28,17 +31,18 @@ namespace UniGetUI.PackageEngine
         public static readonly PowerShell PowerShell = new();
         public static readonly PowerShell7 PowerShell7 = new();
 
-        public static readonly PackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, DotNet, PowerShell, PowerShell7];
+        public static readonly IPackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, DotNet, PowerShell, PowerShell7];
 
         public static readonly DiscoverablePackagesLoader DiscoveredPackagesLoader = new(Managers);
         public static readonly UpgradablePackagesLoader UpgradablePackagesLoader = new(Managers);
         public static readonly InstalledPackagesLoader InstalledPackagesLoader = new(Managers);
+        public static readonly PackageBundlesLoader PackageBundlesLoader = new(Managers);
 
         public static async Task Initialize()
         {
             List<Task> initializeTasks = [];
 
-            foreach (PackageManager manager in Managers)
+            foreach (IPackageManager manager in Managers)
             {
                 initializeTasks.Add(manager.InitializeAsync());
             }

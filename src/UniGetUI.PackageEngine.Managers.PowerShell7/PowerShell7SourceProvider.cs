@@ -1,9 +1,12 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Logging;
+using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
@@ -12,7 +15,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
     {
         public PowerShell7SourceProvider(PowerShell7 manager) : base(manager) { }
 
-        public override string[] GetAddSourceParameters(ManagerSource source)
+        public override string[] GetAddSourceParameters(IManagerSource source)
         {
             if (source.Url.ToString() == "https://www.powershellgallery.com/api/v2")
             {
@@ -22,24 +25,24 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             return ["Register-PSRepository", "-Name", source.Name, "-SourceLocation", source.Url.ToString()];
         }
 
-        public override string[] GetRemoveSourceParameters(ManagerSource source)
+        public override string[] GetRemoveSourceParameters(IManagerSource source)
         {
             return ["Unregister-PSRepository", "-Name", source.Name];
         }
 
-        public override OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        public override OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
-        public override OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        public override OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
-        protected override async Task<ManagerSource[]> GetSources_UnSafe()
+        protected override async Task<IManagerSource[]> GetSources_UnSafe()
         {
-            List<ManagerSource> sources = [];
+            List<IManagerSource> sources = [];
 
             Process p = new()
             {
@@ -56,7 +59,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 }
             };
 
-            ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
+            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
 
             p.Start();
 

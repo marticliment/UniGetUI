@@ -6,35 +6,40 @@ using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
+using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
-using UniGetUI.PackageEngine.Classes.Manager.Interfaces;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Classes.Manager;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
-    public abstract class PackageManager : SingletonBase<PackageManager>, ISourceProvider, IPackageDetailsProvider
+    public abstract class PackageManager : SingletonBase<PackageManager>, ISourceProvider, IPackageDetailsProvider, IPackageManager
     {
         public ManagerProperties Properties { get; set; } = new(IsDummy: true);
         public ManagerCapabilities Capabilities { get; set; } = new(IsDummy: true);
         public ManagerStatus Status { get; set; } = new() { Found = false };
         public string Name { get; set; } = "Unset";
         public string DisplayName { get => Properties.DisplayName ?? Name; }
-        public ManagerSource DefaultSource { get; set; }
+        public IManagerSource DefaultSource { get; set; }
         public static string[] FALSE_PACKAGE_NAMES = [""];
         public static string[] FALSE_PACKAGE_IDS = [""];
         public static string[] FALSE_PACKAGE_VERSIONS = [""];
-        public bool ManagerReady { get; set; }
-        public ManagerLogger TaskLogger;
+        public bool ManagerReady { get; set; } = false;
+        public IManagerLogger TaskLogger { get; }
+
+        public ISourceProvider SourceProvider { get; set; }
+        public ISourceFactory SourceFactory { get => SourceProvider.SourceFactory; }
         public IEnumerable<ManagerDependency> Dependencies { get; protected set; } = [];
 
-        public BaseSourceProvider<PackageManager>? SourceProvider;
-        public BasePackageDetailsProvider<PackageManager>? PackageDetailsProvider;
-        private readonly bool __base_constructor_called;
+        public IPackageDetailsProvider? PackageDetailsProvider { get; set; }
+        private readonly bool __base_constructor_called = false;
 
         public PackageManager()
         {
@@ -42,6 +47,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             Name = Properties.Name;
             __base_constructor_called = true;
             TaskLogger = new ManagerLogger(this);
+            SourceProvider = new NullSourceProvider(this);
+            PackageDetailsProvider = new NullPackageDetailsProvider(this);
         }
 
         /// <summary>
@@ -79,7 +86,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
                 if (IsReady() && SourceProvider != null)
                 {
-                    Task<ManagerSource[]> SourcesTask = GetSources();
+                    Task<IManagerSource[]> SourcesTask = GetSources();
                     Task winner = await Task.WhenAny(
                         SourcesTask,
                         Task.Delay(10000));
@@ -150,7 +157,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of Package objects that the manager lists for the given query. Depending on the manager, the list may
         /// also include similar results. This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public async Task<Package[]> FindPackages(string query)
+        public async Task<IPackage[]> FindPackages(string query)
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet FindPackages was called"); return []; }
             try
@@ -175,7 +182,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of UpgradablePackage objects that represent the available updates reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public async Task<Package[]> GetAvailableUpdates()
+        public async Task<IPackage[]> GetAvailableUpdates()
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetAvailableUpdates was called"); return []; }
             try
@@ -202,7 +209,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of Package objects that represent the installed reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public async Task<Package[]> GetInstalledPackages()
+        public async Task<IPackage[]> GetInstalledPackages()
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetInstalledPackages was called"); return []; }
             try
@@ -253,7 +260,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <param name="package">The Package going to be installed</param>
         /// <param name="options">The options in which it is going to be installed</param>
         /// <returns>An array of strings containing the parameters without the manager executable file</returns>
-        public abstract string[] GetInstallParameters(Package package, InstallationOptions options);
+        public abstract string[] GetInstallParameters(IPackage package, IInstallationOptions options);
 
         /// <summary>
         /// Returns the command-line parameters to update the given package.
@@ -262,7 +269,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <param name="package">The Package going to be updated</param>
         /// <param name="options">The options in which it is going to be updated</param>
         /// <returns>An array of strings containing the parameters without the manager executable file</returns>
-        public abstract string[] GetUpdateParameters(Package package, InstallationOptions options);
+        public abstract string[] GetUpdateParameters(IPackage package, IInstallationOptions options);
 
         /// <summary>
         /// Returns the command-line parameters to uninstall the given package.
@@ -271,7 +278,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <param name="package">The Package going to be uninstalled</param>
         /// <param name="options">The options in which it is going to be uninstalled</param>
         /// <returns>An array of strings containing the parameters without the manager executable file</returns>
-        public abstract string[] GetUninstallParameters(Package package, InstallationOptions options);
+        public abstract string[] GetUninstallParameters(IPackage package, IInstallationOptions options);
 
         /// <summary>
         /// Decides and returns the verdict of the install operation.
@@ -282,7 +289,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <param name="ReturnCode">The exit code of the process</param>
         /// <param name="Output">the output of the process</param>
         /// <returns>An OperationVeredict value representing the result of the installation</returns>
-        public abstract OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output);
+        public abstract OperationVeredict GetInstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output);
 
         /// <summary>
         /// Decides and returns the verdict of the update operation.
@@ -293,7 +300,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <param name="ReturnCode">The exit code of the process</param>
         /// <param name="Output">the output of the process</param>
         /// <returns>An OperationVeredict value representing the result of the update</returns>
-        public abstract OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output);
+        public abstract OperationVeredict GetUpdateOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output);
 
         /// <summary>
         /// Decides and returns the verdict of the uninstall operation.
@@ -304,7 +311,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <param name="ReturnCode">The exit code of the process</param>
         /// <param name="Output">the output of the process</param>
         /// <returns>An OperationVeredict value representing the result of the uninstall</returns>
-        public abstract OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output);
+        public abstract OperationVeredict GetUninstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output);
 
         /// <summary>
         /// Refreshes the Package Manager sources/indexes
@@ -336,43 +343,44 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
         }
 #pragma warning disable CS8602
-        public ManagerSource GetSourceOrDefault(string SourceName)
+        public IManagerSource GetSourceOrDefault(string SourceName)
         {
             AssertSourceCompatibility("GetSourceFromName");
             return SourceProvider.SourceFactory.GetSourceOrDefault(SourceName);
         }
-        public ManagerSource? GetSourceIfExists(string SourceName)
+        public IManagerSource? GetSourceIfExists(string SourceName)
         {
             AssertSourceCompatibility("GetSourceIfExists");
             return SourceProvider.SourceFactory.GetSourceIfExists(SourceName);
         }
-        public string[] GetAddSourceParameters(ManagerSource source)
+        public string[] GetAddSourceParameters(IManagerSource source)
         {
             AssertSourceCompatibility("GetAddSourceParameters");
             return SourceProvider.GetAddSourceParameters(source);
         }
-        public string[] GetRemoveSourceParameters(ManagerSource source)
+        public string[] GetRemoveSourceParameters(IManagerSource source)
         {
             AssertSourceCompatibility("GetRemoveSourceParameters");
             return SourceProvider.GetRemoveSourceParameters(source);
         }
-        public OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        public OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             AssertSourceCompatibility("GetAddSourceOperationVeredict");
             return SourceProvider.GetAddSourceOperationVeredict(source, ReturnCode, Output);
         }
-        public OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        public OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             AssertSourceCompatibility("GetRemoveSourceOperationVeredict");
             return SourceProvider.GetRemoveSourceOperationVeredict(source, ReturnCode, Output);
         }
-        public virtual async Task<ManagerSource[]> GetSources()
+
+        public virtual async Task<IManagerSource[]> GetSources()
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetSources was called"); return []; }
             try
             {
                 AssertSourceCompatibility("GetSources");
-                ManagerSource[] result = await SourceProvider.GetSources().WaitAsync(TimeSpan.FromSeconds(60));
+                IManagerSource[] result = await SourceProvider.GetSources().WaitAsync(TimeSpan.FromSeconds(60));
                 Logger.Debug($"Loaded {result.Length} sources for manager {Name}");
                 return result;
             }
@@ -391,18 +399,18 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         {
             if (PackageDetailsProvider == null)
             {
-                throw new InvalidOperationException($"Manager {Name} does not have a valid PackageDetailsProvider helper. Method name: {methodName}");
+                throw new InvalidOperationException($"Manager {Name} does not have a valid PackageDetailsProvider helper, when attemtping to call {MethodName}");
             }
         }
 #pragma warning disable CS8602
-        /*public async Task<PackageDetails> GetPackageDetails(Package package)
+        /*public async Task<PackageDetails> GetPackageDetails(IPackage package)
         {
             var details = new PackageDetails(package);
             await GetPackageDetails(details);
             return details;
         }*/
 
-        public async Task GetPackageDetails(PackageDetails details)
+        public async Task GetPackageDetails(IPackageDetails details)
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageDetails was called"); return; }
             try
@@ -418,7 +426,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
         }
 
-        public async Task<string[]> GetPackageVersions(Package package)
+        public async Task<string[]> GetPackageVersions(IPackage package)
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageVersions was called"); return []; }
             try
@@ -439,7 +447,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
         }
 
-        public async Task<CacheableIcon?> GetPackageIconUrl(Package package)
+        public async Task<CacheableIcon?> GetPackageIconUrl(IPackage package)
         {
             try
             {
@@ -454,7 +462,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
         }
 
-        public async Task<Uri[]> GetPackageScreenshotsUrl(Package package)
+        public async Task<Uri[]> GetPackageScreenshotsUrl(IPackage package)
         {
             try
             {
@@ -485,5 +493,65 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             CoreData.ManagerLogs += "\n";
             CoreData.ManagerLogs += "\n";
         }
+    }
+
+    internal class NullSourceProvider : BaseSourceProvider<IPackageManager>
+    {
+        public NullSourceProvider(IPackageManager manager) : base(manager)
+        {
+        }
+
+        public override string[] GetAddSourceParameters(IManagerSource source)
+        {
+            throw new Exception("Package manager does not support adding sources");
+        }
+        public override string[] GetRemoveSourceParameters(IManagerSource source)
+        {
+            throw new Exception("Package manager does not support removing sources");
+        }
+
+        public override OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        {
+            return OperationVeredict.Failed;
+        }
+
+        public override OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        {
+            return OperationVeredict.Failed;
+        }
+
+        protected override async Task<IManagerSource[]> GetSources_UnSafe()
+        {
+            return await Task.Run(() => new IManagerSource[] { Manager.DefaultSource });
+        }
+    }
+
+    internal class NullPackageDetailsProvider : BasePackageDetailsProvider<IPackageManager>
+    {
+#pragma warning disable CS1998
+        public NullPackageDetailsProvider(IPackageManager manager) : base(manager)
+        {
+        }
+
+        protected override async Task GetPackageDetails_Unsafe(IPackageDetails details)
+        {
+            return;
+        }
+
+        protected override async Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package)
+        {
+            return null;
+        }
+
+        protected override async Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
+        {
+            return [];
+        }
+
+        protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
+        {
+            return [];
+        }
+#pragma warning restore CS1998
     }
 }

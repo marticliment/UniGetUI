@@ -2,6 +2,7 @@ using System.Diagnostics;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -27,7 +28,7 @@ internal static partial class BundledWinGetLegacyMethods
             }
         };
 
-        ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
         p.Start();
 
@@ -59,7 +60,7 @@ internal static partial class BundledWinGetLegacyMethods
                 string name = line[..(IdIndex - offset)].Trim();
                 string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
                 string version = line[(VersionIndex - offset)..].Trim().Split(' ')[0];
-                ManagerSource source;
+                IManagerSource source;
                 if (SourceIndex == -1 || SourceIndex >= line.Length)
                 {
                     source = Manager.DefaultSource;
@@ -99,7 +100,7 @@ internal static partial class BundledWinGetLegacyMethods
             }
         };
 
-        ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
         p.Start();
 
@@ -154,7 +155,7 @@ internal static partial class BundledWinGetLegacyMethods
                     newVersion = line[(NewVersionIndex - offset)..].Trim().Split(' ')[0];
                 }
 
-                ManagerSource source;
+                IManagerSource source;
                 if (SourceIndex == -1 || SourceIndex >= line.Length)
                 {
                     source = Manager.DefaultSource;
@@ -194,7 +195,7 @@ internal static partial class BundledWinGetLegacyMethods
             }
         };
 
-        ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
 
         p.Start();
 
@@ -241,7 +242,7 @@ internal static partial class BundledWinGetLegacyMethods
 
                     string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
 
-                    ManagerSource source;
+                    IManagerSource source;
                     if (SourceIndex == -1 || (SourceIndex - offset) >= line.Length)
                     {
                         source = GetLocalSource(Manager, id); // Load Winget Local Sources
@@ -268,7 +269,7 @@ internal static partial class BundledWinGetLegacyMethods
         return Packages.ToArray();
     }
 
-    private static ManagerSource GetLocalSource(WinGet Manager, string id)
+    private static IManagerSource GetLocalSource(WinGet Manager, string id)
     {
         try
         {

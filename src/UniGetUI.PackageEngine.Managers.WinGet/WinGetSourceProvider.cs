@@ -1,6 +1,8 @@
+using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
@@ -9,7 +11,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
     {
         public WinGetSourceProvider(WinGet manager) : base(manager) { }
 
-        public override string[] GetAddSourceParameters(ManagerSource source)
+        public override string[] GetAddSourceParameters(IManagerSource source)
         {
             List<string> args = ["source", "add", "--name", source.Name, "--arg", source.Url.ToString(), "--accept-source-agreements", "--disable-interactivity"];
             if (source.Name != "winget")
@@ -20,22 +22,22 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return args.ToArray();
         }
 
-        public override string[] GetRemoveSourceParameters(ManagerSource source)
+        public override string[] GetRemoveSourceParameters(IManagerSource source)
         {
             return ["source", "remove", "--name", source.Name, "--disable-interactivity"];
         }
 
-        public override OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        public override OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
-        public override OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output)
+        public override OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
-        protected override async Task<ManagerSource[]> GetSources_UnSafe()
+        protected override async Task<IManagerSource[]> GetSources_UnSafe()
         {
             if (Manager is WinGet manager)
             {

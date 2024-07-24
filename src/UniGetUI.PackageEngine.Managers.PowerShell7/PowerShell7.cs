@@ -3,8 +3,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
@@ -29,7 +31,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 SupportsCustomSources = true,
                 SupportsPreRelease = true,
                 SupportsCustomPackageIcons = true,
-                Sources = new ManagerSource.Capabilities
+                Sources = new SourceCapabilities()
                 {
                     KnowsPackageCount = false,
                     KnowsUpdateDate = false,
@@ -48,8 +50,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 UninstallVerb = "Uninstall-Module",
                 UpdateVerb = "Update-Module",
                 ExecutableCallArgs = " -NoProfile -Command",
-                KnownSources = [new(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
-                                new(this, "PoshTestGallery", new Uri("https://www.poshtestgallery.com/api/v2"))],
+                KnownSources = [new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
+                                new ManagerSource(this, "PoshTestGallery", new Uri("https://www.poshtestgallery.com/api/v2"))],
                 DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
             };
 
@@ -73,7 +75,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 }
             };
 
-            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
             p.Start();
 
@@ -158,7 +160,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 }
             };
 
-            ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
 
             p.Start();
             string? line;
@@ -198,17 +200,17 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             return Packages.ToArray();
         }
 
-        public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        public override OperationVeredict GetInstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
         {
             return GetUninstallOperationVeredict(package, options, ReturnCode, Output);
         }
 
-        public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        public override OperationVeredict GetUpdateOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
         {
             return GetUninstallOperationVeredict(package, options, ReturnCode, Output);
         }
 
-        public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        public override OperationVeredict GetUninstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
         {
             string output_string = string.Join("\n", Output);
 
@@ -220,7 +222,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
-        public override string[] GetInstallParameters(Package package, InstallationOptions options)
+        public override string[] GetInstallParameters(IPackage package, IInstallationOptions options)
         {
             List<string> parameters = GetUpdateParameters(package, options).ToList();
             parameters[0] = Properties.InstallVerb;
@@ -243,7 +245,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             return parameters.ToArray();
 
         }
-        public override string[] GetUpdateParameters(Package package, InstallationOptions options)
+        public override string[] GetUpdateParameters(IPackage package, IInstallationOptions options)
         {
             List<string> parameters = GetUninstallParameters(package, options).ToList();
             parameters[0] = Properties.UpdateVerb;
@@ -261,7 +263,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             return parameters.ToArray();
         }
 
-        public override string[] GetUninstallParameters(Package package, InstallationOptions options)
+        public override string[] GetUninstallParameters(IPackage package, IInstallationOptions options)
         {
             List<string> parameters = [Properties.UninstallVerb, "-Name", package.Id, "-Confirm:$false", "-Force"];
 

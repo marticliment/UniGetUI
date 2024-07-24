@@ -1,33 +1,28 @@
-using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.PackageClasses;
 
-namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
+namespace UniGetUI.PackageEngine.Classes.Manager
 {
-    public class ManagerSource
+    public class ManagerSource : IManagerSource
     {
         public virtual IconType IconId { get { return Manager.Properties.IconId; } }
-        public readonly bool IsVirtualManager;
-        public struct Capabilities
-        {
-            public bool KnowsUpdateDate { get; set; } = false;
-            public bool KnowsPackageCount { get; set; } = false;
-            public bool MustBeInstalledAsAdmin { get; set; } = false;
-            public Capabilities()
-            { }
-        }
 
-        public PackageManager Manager { get; }
+        public IPackageManager Manager { get; }
         public string Name { get; }
-        public Uri Url { get; private set; }
+        public Uri Url { get; set; }
         public int? PackageCount { get; }
         public string UpdateDate { get; }
         public string AsString { get; protected set; }
         public string AsString_DisplayName { get; protected set; }
 
-        public ManagerSource(PackageManager manager, string name, Uri url, int? packageCount = 0, string updateDate = "", bool isVirtualManager = false)
+        public bool IsVirtualManager { get; }
+
+        public ManagerSource(IPackageManager manager, string name, Uri url, int? packageCount = 0, string updateDate = "", bool isVirtualManager = false)
         {
             IsVirtualManager = isVirtualManager;
-            Manager = manager;
+            Manager = manager as IPackageManager;
             Name = name;
             Url = url;
             if (manager.Capabilities.Sources.KnowsPackageCount)

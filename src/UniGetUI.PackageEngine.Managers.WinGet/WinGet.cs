@@ -5,12 +5,15 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
@@ -84,7 +87,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 SupportsCustomSources = true,
                 SupportsCustomPackageIcons = true,
                 SupportsCustomPackageScreenshots = true,
-                Sources = new ManagerSource.Capabilities
+                Sources = new SourceCapabilities()
                 {
                     KnowsPackageCount = false,
                     KnowsUpdateDate = true,
@@ -104,9 +107,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 UninstallVerb = "uninstall",
                 UpdateVerb = "update",
                 ExecutableCallArgs = "",
-                KnownSources = [ new(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache")),
-                                 new(this, "msstore", new Uri("https://storeedgefd.dsx.mp.microsoft.com/v9.0")) ],
-                DefaultSource = new(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache"))
+                KnownSources = [ new ManagerSource(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache")),
+                                 new ManagerSource(this, "msstore", new Uri("https://storeedgefd.dsx.mp.microsoft.com/v9.0")) ],
+                DefaultSource = new ManagerSource(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache"))
             };
 
             SourceProvider = new WinGetSourceProvider(this);
@@ -190,7 +193,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
         }
 
-        public override string[] GetInstallParameters(Package package, InstallationOptions options)
+        public override string[] GetInstallParameters(IPackage package, IInstallationOptions options)
         {
             List<string> parameters = GetUninstallParameters(package, options).ToList();
             parameters[0] = Properties.InstallVerb;
@@ -217,7 +220,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             );
             return parameters.ToArray();
         }
-        public override string[] GetUpdateParameters(Package package, InstallationOptions options)
+        public override string[] GetUpdateParameters(IPackage package, IInstallationOptions options)
         {
             if (package.Name.Contains("64-bit") || package.Id.ToLower().Contains("x64"))
             {
@@ -237,7 +240,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return parameters;
         }
 
-        public override string[] GetUninstallParameters(Package package, InstallationOptions options)
+        public override string[] GetUninstallParameters(IPackage package, IInstallationOptions options)
         {
             List<string> parameters = [Properties.UninstallVerb, "--id", $"\"{package.Id}\"", "--exact"];
             if (!package.Source.IsVirtualManager)
@@ -278,7 +281,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return parameters.ToArray();
         }
 
-        public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        public override OperationVeredict GetInstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
         {
             string output_string = string.Join("\n", Output);
 
@@ -299,12 +302,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
-        public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        public override OperationVeredict GetUpdateOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
         {
             return GetInstallOperationVeredict(package, options, ReturnCode, Output);
         }
 
-        public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        public override OperationVeredict GetUninstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
         {
             string output_string = string.Join("\n", Output);
 
@@ -427,7 +430,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             };
 
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
 
             p.Start();
             logger.AddToStdOut(await p.StandardOutput.ReadToEndAsync());

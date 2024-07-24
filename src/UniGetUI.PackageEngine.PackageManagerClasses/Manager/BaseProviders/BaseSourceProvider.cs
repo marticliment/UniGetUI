@@ -1,36 +1,36 @@
-using UniGetUI.PackageEngine.Classes.Manager.Interfaces;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Classes.Manager.Providers
 {
-    public abstract class BaseSourceProvider<T> : ISourceProvider where T : PackageManager
+    public abstract class BaseSourceProvider<ManagerT> : ISourceProvider where ManagerT : IPackageManager
     {
-        public readonly ManagerSourceFactory SourceFactory;
-        protected T Manager;
+        public ISourceFactory SourceFactory { get; }
+        protected ManagerT Manager;
 
-        public BaseSourceProvider(T manager)
+        public BaseSourceProvider(ManagerT manager)
         {
             Manager = manager;
-            SourceFactory = new(manager);
+            SourceFactory = new SourceFactory(manager);
         }
 
-        public abstract string[] GetAddSourceParameters(ManagerSource source);
-        public abstract string[] GetRemoveSourceParameters(ManagerSource source);
-        public abstract OperationVeredict GetAddSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output);
-        public abstract OperationVeredict GetRemoveSourceOperationVeredict(ManagerSource source, int ReturnCode, string[] Output);
+        public abstract string[] GetAddSourceParameters(IManagerSource source);
+        public abstract string[] GetRemoveSourceParameters(IManagerSource source);
+        public abstract OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output);
+        public abstract OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output);
 
         /// <summary>
         /// Loads the sources for the manager. This method SHOULD NOT handle exceptions
         /// </summary>
-        protected abstract Task<ManagerSource[]> GetSources_UnSafe();
-        public virtual async Task<ManagerSource[]> GetSources()
+        protected abstract Task<IManagerSource[]> GetSources_UnSafe();
+        public virtual async Task<IManagerSource[]> GetSources()
         {
-            ManagerSource[] sources = await GetSources_UnSafe();
+            IManagerSource[] sources = await GetSources_UnSafe();
             SourceFactory.Reset();
 
-            foreach (ManagerSource source in sources)
+            foreach (IManagerSource source in sources)
             {
                 SourceFactory.AddSource(source);
             }

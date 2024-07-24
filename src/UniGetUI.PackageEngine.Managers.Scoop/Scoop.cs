@@ -4,12 +4,15 @@ using System.Text.RegularExpressions;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.PackageEngine.Managers.ScoopManager
 {
@@ -50,7 +53,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 SupportedCustomArchitectures = [Architecture.X86, Architecture.X64, Architecture.Arm64],
                 SupportsCustomScopes = true,
                 SupportsCustomSources = true,
-                Sources = new ManagerSource.Capabilities
+                Sources = new SourceCapabilities()
                 {
                     KnowsPackageCount = true,
                     KnowsUpdateDate = true
@@ -68,17 +71,17 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 InstallVerb = "install",
                 UpdateVerb = "update",
                 UninstallVerb = "uninstall",
-                KnownSources = [new(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
-                                new(this, "extras", new Uri("https://github.com/ScoopInstaller/Extras")),
-                                new(this, "versions", new Uri("https://github.com/ScoopInstaller/Versions")),
-                                new(this, "nirsoft", new Uri("https://github.com/kodybrown/scoop-nirsoft")),
-                                new(this, "sysinternals", new Uri("https://github.com/niheaven/scoop-sysinternals")),
-                                new(this, "php", new Uri("https://github.com/ScoopInstaller/PHP")),
-                                new(this, "nerd-fonts", new Uri("https://github.com/matthewjberger/scoop-nerd-fonts")),
-                                new(this, "nonportable", new Uri("https://github.com/ScoopInstaller/Nonportable")),
-                                new(this, "java", new Uri("https://github.com/ScoopInstaller/Java")),
-                                new(this, "games", new Uri("https://github.com/Calinou/scoop-games"))],
-                DefaultSource = new(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
+                KnownSources = [new ManagerSource(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
+                                new ManagerSource(this, "extras", new Uri("https://github.com/ScoopInstaller/Extras")),
+                                new ManagerSource(this, "versions", new Uri("https://github.com/ScoopInstaller/Versions")),
+                                new ManagerSource(this, "nirsoft", new Uri("https://github.com/kodybrown/scoop-nirsoft")),
+                                new ManagerSource(this, "sysinternals", new Uri("https://github.com/niheaven/scoop-sysinternals")),
+                                new ManagerSource(this, "php", new Uri("https://github.com/ScoopInstaller/PHP")),
+                                new ManagerSource(this, "nerd-fonts", new Uri("https://github.com/matthewjberger/scoop-nerd-fonts")),
+                                new ManagerSource(this, "nonportable", new Uri("https://github.com/ScoopInstaller/Nonportable")),
+                                new ManagerSource(this, "java", new Uri("https://github.com/ScoopInstaller/Java")),
+                                new ManagerSource(this, "games", new Uri("https://github.com/Calinou/scoop-games"))],
+                DefaultSource = new ManagerSource(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
             };
 
             SourceProvider = new ScoopSourceProvider(this);
@@ -105,7 +108,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         CreateNoWindow = true
                     }
                 };
-                ManagerClasses.Classes.ProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
+                IProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
                 proc.Start();
                 aux_logger.AddToStdOut(await proc.StandardOutput.ReadToEndAsync());
                 aux_logger.AddToStdErr(await proc.StandardError.ReadToEndAsync());
@@ -127,12 +130,12 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
             p.Start();
 
             string? line;
-            ManagerSource source = Properties.DefaultSource;
+            IManagerSource source = Properties.DefaultSource;
             while ((line = await p.StandardOutput.ReadLineAsync()) != null)
             {
                 logger.AddToStdOut(line);
@@ -194,7 +197,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
             p.Start();
 
@@ -260,7 +263,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 }
             };
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
             p.Start();
 
             string? line;
@@ -308,7 +311,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return Packages.ToArray();
         }
 
-        public override OperationVeredict GetUninstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        
+        public override OperationVeredict GetUninstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
         {
             string output_string = string.Join("\n", Output);
             if (output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local)
@@ -328,7 +332,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             return OperationVeredict.Failed;
         }
-        public override OperationVeredict GetInstallOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        public override OperationVeredict GetInstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
         {
             string output_string = string.Join("\n", Output);
             if (output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local)
@@ -348,12 +352,12 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             return OperationVeredict.Succeeded;
         }
-        public override OperationVeredict GetUpdateOperationVeredict(Package package, InstallationOptions options, int ReturnCode, string[] Output)
+        public override OperationVeredict GetUpdateOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
         {
             return GetInstallOperationVeredict(package, options, ReturnCode, Output);
         }
 
-        public override string[] GetUninstallParameters(Package package, InstallationOptions options)
+        public override string[] GetUninstallParameters(IPackage package, IInstallationOptions options)
         {
             List<string> parameters = [Properties.UninstallVerb, package.Source.Name + "/" + package.Id];
 
@@ -374,13 +378,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             return parameters.ToArray();
         }
-        public override string[] GetInstallParameters(Package package, InstallationOptions options)
+        public override string[] GetInstallParameters(IPackage package, IInstallationOptions options)
         {
             string[] parameters = GetUpdateParameters(package, options);
             parameters[0] = Properties.InstallVerb;
             return parameters;
         }
-        public override string[] GetUpdateParameters(Package package, InstallationOptions options)
+        public override string[] GetUpdateParameters(IPackage package, IInstallationOptions options)
         {
             List<string> parameters = GetUninstallParameters(package, options).ToList();
             parameters[0] = Properties.UpdateVerb;
@@ -434,7 +438,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
             p.StartInfo = StartInfo;
-            ManagerClasses.Classes.ProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
             p.Start();
             logger.AddToStdOut(await p.StandardOutput.ReadToEndAsync());
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());

@@ -42,7 +42,7 @@ try:
         # Your replacement dictionary here
     }, encoding="utf-8-sig")
 
-    fileReplaceLinesWith("WingetUI.iss", {
+    fileReplaceLinesWith("UniGetUI.iss", {
         "#define MyAppVersion": f" \"{versionName}\"\n",
         "VersionInfoVersion=": f"{versionISS}\n",
     }, encoding="utf-8-sig")

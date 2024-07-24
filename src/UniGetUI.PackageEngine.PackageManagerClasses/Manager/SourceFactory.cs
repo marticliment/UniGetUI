@@ -1,14 +1,16 @@
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.PackageClasses;
 
-namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
+namespace UniGetUI.PackageEngine.Classes.Manager
 {
-    public class ManagerSourceFactory
+    public class SourceFactory: ISourceFactory
     {
-        private readonly PackageManager __manager;
-        private readonly Dictionary<string, ManagerSource> __reference;
+        private readonly IPackageManager __manager;
+        private readonly Dictionary<string, IManagerSource> __reference;
         private readonly Uri __default_uri = new("https://marticliment.com/unigetui/");
 
-        public ManagerSourceFactory(PackageManager manager)
+        public SourceFactory(IPackageManager manager)
         {
             __reference = [];
             __manager = manager;
@@ -24,9 +26,10 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
         /// </summary>
         /// <param name="name">The name of the source</param>
         /// <returns>A valid ManagerSource</returns>
-        public ManagerSource GetSourceOrDefault(string name)
+        public IManagerSource GetSourceOrDefault(string name)
         {
-            if (__reference.TryGetValue(name, out ManagerSource? source) && source != null)
+            IManagerSource? source;
+            if (__reference.TryGetValue(name, out source) && source != null)
             {
                 return source;
             }
@@ -39,20 +42,21 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
         /// <summary>
         /// Returns the existing source for the given name, or null if it does not exist.
         /// </summary>
-        public ManagerSource? GetSourceIfExists(string name)
+        public IManagerSource? GetSourceIfExists(string name)
         {
-            if (__reference.TryGetValue(name, out ManagerSource? source))
+            IManagerSource? source;
+            if (__reference.TryGetValue(name, out source))
             {
                 return source;
             }
             return null;
         }
 
-        public void AddSource(ManagerSource source)
+        public void AddSource(IManagerSource source)
         {
             if (!__reference.TryAdd(source.Name, source))
             {
-                ManagerSource existing_source = __reference[source.Name];
+                IManagerSource existing_source = __reference[source.Name];
                 if (existing_source.Url == __default_uri)
                 {
                     existing_source.ReplaceUrl(source.Url);
@@ -60,7 +64,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers
             }
         }
 
-        public ManagerSource[] GetAvailableSources()
+        public IManagerSource[] GetAvailableSources()
         {
             return __reference.Values.ToArray();
         }
