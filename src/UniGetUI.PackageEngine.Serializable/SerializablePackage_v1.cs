@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,10 +48,9 @@ namespace UniGetUI.PackageEngine.Classes.Serializable
         /// Returns an equivalent copy of the current package as an Invalid Serializable Package.
         /// The reverse operation is not possible, since data is lost.
         /// </summary>
-        /// <returns></returns>
         public SerializableIncompatiblePackage_v1 GetInvalidEquivalent()
         {
-            return new SerializableIncompatiblePackage_v1()
+            return new SerializableIncompatiblePackage_v1
             {
                 Id = Id,
                 Name = Name,

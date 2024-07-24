@@ -39,10 +39,10 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public event EventHandler<EventArgs>? StartedLoading;
 
-        readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS = false;
-        readonly bool DISABLE_RELOAD = false;
+        readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS;
+        readonly bool DISABLE_RELOAD;
         protected string LOADER_IDENTIFIER;
-        private int LoadOperationIdentifier = 0;
+        private int LoadOperationIdentifier;
         protected IEnumerable<IPackageManager> Managers { get; private set; }
 
         public AbstractPackageLoader(IEnumerable<IPackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false, bool DisableReload = false) 

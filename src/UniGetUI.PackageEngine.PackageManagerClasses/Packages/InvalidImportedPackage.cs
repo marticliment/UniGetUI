@@ -24,7 +24,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public PackageTag Tag { get => PackageTag.Unavailable; set { } }
 
-        private bool __is_checked = false;
+        private bool __is_checked;
         public bool IsChecked
         {
             get { return __is_checked; }
@@ -88,8 +88,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public SerializableIncompatiblePackage_v1 AsSerializable_Incompatible()
         {
-            return new SerializableIncompatiblePackage_v1()
-            { 
+            return new SerializableIncompatiblePackage_v1
+            {
                 Name = Name,
                 Id = Id,
                 Version = Version,
@@ -180,7 +180,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 #pragma warning restore CS1998
     }
 
-    public class NullSource: IManagerSource
+    public class NullSource : IManagerSource
     {
         public static NullSource Instance = new(CoreTools.Translate("Unknown"));
         public IconType IconId { get; }
@@ -206,7 +206,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a human-readable string representing the source name
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return Name;

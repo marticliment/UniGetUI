@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -31,13 +31,11 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// <summary>
         /// Loads and applies the options from the given SerializableInstallationOptions_v1 object to the current object.
         /// </summary>
-        /// <param name="options"></param>
         public void FromSerializable(SerializableInstallationOptions_v1 options);
 
         /// <summary>
         /// Returns a SerializableInstallationOptions_v1 object containing the options of the current instance.
         /// </summary>
-        /// <returns></returns>
         public SerializableInstallationOptions_v1 AsSerializable();
 
         /// <summary>
@@ -69,7 +67,6 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// <summary>
         /// Returns a string representation of the current options.
         /// </summary>
-        /// <returns></returns>
         public string ToString();
     }
 }

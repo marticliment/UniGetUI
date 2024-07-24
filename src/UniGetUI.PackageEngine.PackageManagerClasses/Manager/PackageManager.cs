@@ -31,7 +31,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public static string[] FALSE_PACKAGE_NAMES = [""];
         public static string[] FALSE_PACKAGE_IDS = [""];
         public static string[] FALSE_PACKAGE_VERSIONS = [""];
-        public bool ManagerReady { get; set; } = false;
+        public bool ManagerReady { get; set; }
         public IManagerLogger TaskLogger { get; }
 
         public ISourceProvider SourceProvider { get; set; }
@@ -39,7 +39,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public IEnumerable<ManagerDependency> Dependencies { get; protected set; } = [];
 
         public IPackageDetailsProvider? PackageDetailsProvider { get; set; }
-        private readonly bool __base_constructor_called = false;
+        private readonly bool __base_constructor_called;
 
         public PackageManager()
         {
@@ -399,7 +399,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         {
             if (PackageDetailsProvider == null)
             {
-                throw new InvalidOperationException($"Manager {Name} does not have a valid PackageDetailsProvider helper, when attemtping to call {MethodName}");
+                throw new InvalidOperationException($"Manager {Name} does not have a valid PackageDetailsProvider helper, when attemtping to call {methodName}");
             }
         }
 #pragma warning disable CS8602

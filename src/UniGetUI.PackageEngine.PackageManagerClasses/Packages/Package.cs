@@ -60,7 +60,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public IManagerSource Source { get; }
 
         /// <summary>
-        /// IPackageManager is guaranteed to be IPackageManager, but C# doesn't allow covariant attributes 
+        /// IPackageManager is guaranteed to be IPackageManager, but C# doesn't allow covariant attributes
         /// </summary>
         public IPackageManager Manager { get; }
         public string NewVersion { get; }
@@ -130,7 +130,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// For more specific comparison use package.Equals(object? other)
         /// </summary>
         /// <param name="other">A package</param>
-        /// <returns>Wether the two instances refer to the same instance</returns>
+        /// <returns>Whether the two instances refer to the same instance</returns>
         public bool IsEquivalentTo(IPackage? other)
         {
             return __hash == other?.GetHash();
@@ -344,7 +344,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public async Task<SerializablePackage_v1> AsSerializable()
         {
-            return new SerializablePackage_v1()
+            return new SerializablePackage_v1
             {
                 Id = Id,
                 Name = Name,
@@ -352,7 +352,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Source = Source.Name,
                 ManagerName = Manager.Name,
                 InstallationOptions = (await InstallationOptions.FromPackageAsync(this)).AsSerializable(),
-                Updates = new SerializableUpdatesOptions_v1()
+                Updates = new SerializableUpdatesOptions_v1
                 {
                     IgnoredVersion = await GetIgnoredUpdatesVersionAsync(),
                     UpdatesIgnored = await HasUpdatesIgnoredAsync(),
@@ -362,7 +362,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public SerializableIncompatiblePackage_v1 AsSerializable_Incompatible()
         {
-            return new SerializableIncompatiblePackage_v1()
+            return new SerializableIncompatiblePackage_v1
             {
                 Id = Id,
                 Name = Name,

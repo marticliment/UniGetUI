@@ -10,7 +10,7 @@ namespace UniGetUI.Interface.Widgets
     public class BetterMenu : MenuFlyout
     {
         private readonly Style menuyStyle = (Style)Application.Current.Resources["BetterContextMenu"];
-        public BetterMenu() : base()
+        public BetterMenu()
         {
             MenuFlyoutPresenterStyle = menuyStyle;
         }
@@ -18,7 +18,7 @@ namespace UniGetUI.Interface.Widgets
 
     public class BetterMenuItem : MenuFlyoutItem
     {
-        private readonly Style menuyStyle = (Style)Application.Current.Resources["BetterMenuItem"];
+        private readonly Style menuStyle = (Style)Application.Current.Resources["BetterMenuItem"];
 
         public IconType IconName
         {
@@ -37,7 +37,7 @@ namespace UniGetUI.Interface.Widgets
 
         public BetterMenuItem()
         {
-            Style = menuyStyle;
+            Style = menuStyle;
         }
     }
 }

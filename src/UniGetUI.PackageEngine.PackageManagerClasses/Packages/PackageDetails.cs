@@ -6,7 +6,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// <summary>
     /// Holds the details of a Package.
     /// </summary>
-    public class PackageDetails: IPackageDetails
+    public class PackageDetails : IPackageDetails
     {
         /// <summary>
         /// The package to which this details instance corresponds
@@ -113,5 +113,4 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
         }
     }
-
 }

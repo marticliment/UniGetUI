@@ -53,7 +53,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 SupportedCustomArchitectures = [Architecture.X86, Architecture.X64, Architecture.Arm64],
                 SupportsCustomScopes = true,
                 SupportsCustomSources = true,
-                Sources = new SourceCapabilities()
+                Sources = new SourceCapabilities
                 {
                     KnowsPackageCount = true,
                     KnowsUpdateDate = true

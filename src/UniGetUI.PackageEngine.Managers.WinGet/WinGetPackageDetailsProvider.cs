@@ -20,7 +20,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
 
         public WinGetPackageDetailsProvider(WinGet manager) : base(manager) { }
-        
+
         protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
         {
             return await WinGetHelper.Instance.GetPackageVersions_Unsafe((WinGet)Manager, package);
@@ -191,7 +191,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
 
         // TODO: Need to work on retrieving WinGet icons
-        private static async Task<CacheableIcon?> GetWinGetPackageIcon(IPackage package)
+        /*private static async Task<CacheableIcon?> GetWinGetPackageIcon(IPackage package)
         {
             if (WinGetHelper.Instance is not NativeWinGetHelper)
             {

@@ -38,7 +38,7 @@ namespace UniGetUI.Interface.SoftwarePages
         BetterMenuItem? MenuSkipHash;
 
         public PackageBundlesPage()
-        : base(new PackagesPageData()
+        : base(new PackagesPageData
         {
             DisableAutomaticPackageLoadOnStart = true,
             MegaQueryBlockEnabled = false,
@@ -371,7 +371,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 // Select file
                 FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
-                string file = picker.Show(new List<string>() { "*.json", "*.yaml", "*.xml" });
+                string file = picker.Show(new List<string> { "*.json", "*.yaml", "*.xml" });
                 if (file == String.Empty)
                     return;
 
@@ -408,7 +408,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 // Get file 
                 // Save file
-                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, CoreTools.Translate("Package bundle") + ".json");
+                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string> { "*.json", "*.yaml", "*.xml" }, CoreTools.Translate("Package bundle") + ".json");
                 if (file != String.Empty)
                 {
                     // Loading dialog
@@ -429,7 +429,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     MainApp.Instance.MainWindow.HideLoadingDialog();
 
                     // Launch file
-                    Process.Start(new ProcessStartInfo()
+                    Process.Start(new ProcessStartInfo
                     {
                         FileName = "explorer.exe",
                         Arguments = @$"/select, ""{file}"""
