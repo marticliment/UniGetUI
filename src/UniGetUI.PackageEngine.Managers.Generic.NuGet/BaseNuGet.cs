@@ -2,7 +2,6 @@ using System.Text.RegularExpressions;
 using System.Web;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;

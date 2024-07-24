@@ -15,8 +15,6 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.Classes.Manager;
-using UniGetUI.Core.Tools;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {

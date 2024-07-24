@@ -1,5 +1,3 @@
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-
 namespace UniGetUI.PackageEngine.Interfaces
 {
     public interface ISourceFactory

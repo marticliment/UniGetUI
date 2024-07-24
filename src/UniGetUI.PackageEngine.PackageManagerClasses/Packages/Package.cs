@@ -1,16 +1,11 @@
-using System;
 using System.ComponentModel;
-using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Nodes;
-using System.Xml.Linq;
-using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
-using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;

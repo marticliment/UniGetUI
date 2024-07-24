@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UniGetUI.Core.Logging;
-using UniGetUI.PackageEngine.Interfaces;
-
 namespace UniGetUI.PackageEngine.Interfaces
 {
     public interface IPackageDetails
