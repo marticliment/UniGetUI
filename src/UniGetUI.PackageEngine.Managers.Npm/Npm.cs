@@ -44,6 +44,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             };
 
             PackageDetailsProvider = new NpmPackageDetailsProvider(this);
+            OperationProvider = new NpmOperationProvider(this);
         }
         
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
@@ -200,71 +201,6 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             }
 
             return Packages.ToArray();
-        }
-
-        public override OperationVeredict GetInstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
-        }
-
-        public override OperationVeredict GetUpdateOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
-        }
-
-        public override OperationVeredict GetUninstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
-        }
-        public override string[] GetInstallParameters(IPackage package, IInstallationOptions options)
-        {
-            List<string> parameters = GetUninstallParameters(package, options).ToList();
-            parameters[0] = Properties.InstallVerb;
-
-            if (options.Version != "")
-            {
-                parameters[1] = package.Id + "@" + package.Version;
-            }
-            else
-            {
-                parameters[1] = package.Id + "@latest";
-            }
-
-            if (options.PreRelease)
-            {
-                parameters.AddRange(["--include", "dev"]);
-            }
-
-            if (options.InstallationScope == PackageScope.Global)
-            {
-                parameters.Add("--global");
-            }
-
-            return parameters.ToArray();
-        }
-        public override string[] GetUpdateParameters(IPackage package, IInstallationOptions options)
-        {
-            string[] parameters = GetInstallParameters(package, options);
-            parameters[0] = Properties.UpdateVerb;
-            parameters[1] = package.Id + "@" + package.NewVersion;
-            return parameters;
-        }
-        public override string[] GetUninstallParameters(IPackage package, IInstallationOptions options)
-        {
-            List<string> parameters = [Properties.UninstallVerb, package.Id];
-
-            if (options.CustomParameters != null)
-            {
-                parameters.AddRange(options.CustomParameters);
-            }
-
-            if (package.Scope == PackageScope.Global)
-            {
-                parameters.Add("--global");
-            }
-
-            return parameters.ToArray();
-
         }
 
         protected override async Task<ManagerStatus> LoadManager()

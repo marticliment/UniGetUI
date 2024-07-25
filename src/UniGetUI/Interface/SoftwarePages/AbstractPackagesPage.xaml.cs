@@ -576,11 +576,11 @@ namespace UniGetUI.Interface
         /// </summary>
         public void UpdatePackageCount()
         {
-            if (FilteredPackages.Count == 0)
+            if (!FilteredPackages.Any())
             {
                 if (LoadingProgressBar.Visibility == Visibility.Collapsed)
                 {
-                    if (Loader.Packages.Count() == 0)
+                    if (!Loader.Packages.Any())
                     {
                         BackgroundText.Text = NoPackages_BackgroundText;
                         SourcesPlaceholderText.Text = NoPackages_SourcesText;
@@ -597,9 +597,9 @@ namespace UniGetUI.Interface
                 }
                 else
                 {
-                    BackgroundText.Visibility = FilteredPackages.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+                    BackgroundText.Visibility = Loader.Packages.Any() ? Visibility.Collapsed : Visibility.Visible;
                     BackgroundText.Text = MainSubtitle_StillLoading;
-                    SourcesPlaceholderText.Visibility = Loader.Count() > 0 ? Visibility.Collapsed : Visibility.Visible;
+                    SourcesPlaceholderText.Visibility = Loader.Packages.Any() ? Visibility.Collapsed : Visibility.Visible;
                     SourcesPlaceholderText.Text = MainSubtitle_StillLoading;
                     MainSubtitle.Text = MainSubtitle_StillLoading;
                 }
@@ -607,13 +607,13 @@ namespace UniGetUI.Interface
             else
             {
                 BackgroundText.Text = NoPackages_BackgroundText;
-                BackgroundText.Visibility = Loader.Packages.Count() > 0 ? Visibility.Collapsed : Visibility.Visible;
+                BackgroundText.Visibility = Loader.Packages.Any() ? Visibility.Collapsed : Visibility.Visible;
                 MainSubtitle.Text = FoundPackages_SubtitleText;
             }
 
             if (ExternalCountBadge != null)
             {
-                ExternalCountBadge.Visibility = Loader.Count() == 0 ? Visibility.Collapsed : Visibility.Visible;
+                ExternalCountBadge.Visibility = !Loader.Packages.Any() ? Visibility.Collapsed : Visibility.Visible;
                 ExternalCountBadge.Value = Loader.Count();
             }
 
@@ -721,29 +721,20 @@ namespace UniGetUI.Interface
 
         private void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            if (sender is not PackageItemContainer container)
+            if (sender is PackageItemContainer container && container.Package is IPackage package)
             {
-                return;
+                PackageList.Select(container.Wrapper.Index);
+                WhenShowingContextMenu(package);
             }
-
-            if (container is null)
-            {
-                return;
-            }
-
-            PackageList.Select(container.Wrapper.Index);
-            WhenShowingContextMenu(container.Package);
         }
 
         private void PackageItemContainer_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            if (sender is not PackageItemContainer container)
+            if (sender is PackageItemContainer container)
             {
-                return;
+                PackageList.Select(container.Wrapper.Index);
+                ShowDetailsForPackage(container.Package);
             }
-
-            PackageList.Select(container.Wrapper.Index);
-            ShowDetailsForPackage(container.Package);
         }
 
         private void PackageItemContainer_KeyUp(object sender, KeyRoutedEventArgs e)

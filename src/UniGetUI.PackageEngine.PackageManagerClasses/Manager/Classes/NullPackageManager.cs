@@ -31,12 +31,15 @@ namespace UniGetUI.PackageEngine.Classes.Manager
 
         public ISourceFactory SourceFactory { get; set; }
 
+        public IOperationProvider? OperationProvider { get; set; }
+
         public NullPackageManager()
         {
             TaskLogger = new ManagerLogger(this);
             var nullsource = NullSource.Instance;
             SourceProvider = new NullSourceProvider(this);
             PackageDetailsProvider = new NullPackageDetailsProvider(this);
+            OperationProvider = new NullOperationProvider(this);
             SourceFactory = new SourceFactory(this);
             Properties = new ManagerProperties
             {
@@ -185,6 +188,16 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         }
 
         public Task RefreshPackageIndexes()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationVeredict GetOperationResult(IPackage package, IInstallationOptions options, OperationType operation, IEnumerable<string> processOutput, int returnCode)
         {
             throw new NotImplementedException();
         }

@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.WinUI.Notifications;
+using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;
 using UniGetUI.Core.Data;
@@ -58,9 +58,9 @@ namespace UniGetUI.PackageEngine.Operations
             ];
         }
 
-        protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
+        protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
-            return Source.Manager.GetAddSourceOperationVeredict(Source, ReturnCode, Output);
+            return Task.Run(() => Source.Manager.GetAddSourceOperationVeredict(Source, ReturnCode, Output));
         }
 
         protected override async Task<AfterFinshAction> HandleFailure()
@@ -169,9 +169,9 @@ namespace UniGetUI.PackageEngine.Operations
             ];
         }
 
-        protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
+        protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
-            return Source.Manager.GetRemoveSourceOperationVeredict(Source, ReturnCode, Output);
+            return Task.Run(() => Source.Manager.GetRemoveSourceOperationVeredict(Source, ReturnCode, Output));
         }
 
         protected override async Task<AfterFinshAction> HandleFailure()

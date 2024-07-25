@@ -140,23 +140,8 @@ namespace UniGetUI.Interface.Dialogs
                 await details.Load();
             }
 
-            string command = "";
-
-            switch (OperationRole)
-            {
-                case OperationType.Install:
-                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(' ', Package.Manager.GetInstallParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
-                    break;
-
-                case OperationType.Uninstall:
-                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(' ', Package.Manager.GetUninstallParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
-                    break;
-
-                case OperationType.Update:
-                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(' ', Package.Manager.GetUpdateParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
-                    break;
-            }
-            CommandTextBlock.Text = command;
+            CommandTextBlock.Text = Package.Manager.Properties.ExecutableFriendlyName + " " +
+                string.Join(' ', Package.Manager.GetOperationParameters(Package, await InstallationOptions.FromPackageAsync(Package), OperationRole));
 
             LoadingIndicator.Visibility = Visibility.Collapsed;
 

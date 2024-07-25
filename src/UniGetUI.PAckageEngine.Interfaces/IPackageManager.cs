@@ -7,7 +7,7 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Interfaces
 {
-    public interface IPackageManager : ISourceProvider, IPackageDetailsProvider
+    public interface IPackageManager : ISourceProvider, IPackageDetailsProvider, IOperationProvider
     {
         public ManagerProperties Properties { get; set; }
         public ManagerCapabilities Capabilities { get; set; }
@@ -20,6 +20,7 @@ namespace UniGetUI.PackageEngine.Interfaces
 
         public ISourceProvider? SourceProvider { get; }
         public IPackageDetailsProvider? PackageDetailsProvider { get; }
+        public IOperationProvider? OperationProvider { get; }
 
 
         /// <summary>
@@ -56,75 +57,12 @@ namespace UniGetUI.PackageEngine.Interfaces
         public Task<IPackage[]> GetInstalledPackages();
 
         /// <summary>
-        /// Returns the command-line parameters to install the given package.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <param name="package">The Package going to be installed</param>
-        /// <param name="options">The options in which it is going to be installed</param>
-        /// <returns>An array of strings containing the parameters without the manager executable file</returns>
-        public abstract string[] GetInstallParameters(IPackage package, IInstallationOptions options);
-
-
-        /// <summary>
-        /// Returns the command-line parameters to update the given package.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <param name="package">The Package going to be updated</param>
-        /// <param name="options">The options in which it is going to be updated</param>
-        /// <returns>An array of strings containing the parameters without the manager executable file</returns>
-        public abstract string[] GetUpdateParameters(IPackage package, IInstallationOptions options);
-
-        /// <summary>
-        /// Returns the command-line parameters to uninstall the given package.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <param name="package">The Package going to be uninstalled</param>
-        /// <param name="options">The options in which it is going to be uninstalled</param>
-        /// <returns>An array of strings containing the parameters without the manager executable file</returns>
-        public abstract string[] GetUninstallParameters(IPackage package, IInstallationOptions options);
-
-        /// <summary>
-        /// Decides and returns the verdict of the install operation.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <param name="package">The package that was installed</param>
-        /// <param name="options">The options with which the package was installed. They may be modified if the returned value is OperationVeredict.AutoRetry</param>
-        /// <param name="ReturnCode">The exit code of the process</param>
-        /// <param name="Output">the output of the process</param>
-        /// <returns>An OperationVeredict value representing the result of the installation</returns>
-        public abstract OperationVeredict GetInstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output);
-
-
-        /// <summary>
-        /// Decides and returns the verdict of the update operation.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <param name="package">The package that was updated</param>
-        /// <param name="options">The options with which the package was updated. They may be modified if the returned value is OperationVeredict.AutoRetry</param>
-        /// <param name="ReturnCode">The exit code of the process</param>
-        /// <param name="Output">the output of the process</param>
-        /// <returns>An OperationVeredict value representing the result of the update</returns>
-        public abstract OperationVeredict GetUpdateOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output);
-
-        /// <summary>
-        /// Decides and returns the verdict of the uninstall operation.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <param name="package">The package that was uninstalled</param>
-        /// <param name="options">The options with which the package was uninstalled. They may be modified if the returned value is OperationVeredict.AutoRetry</param>
-        /// <param name="ReturnCode">The exit code of the process</param>
-        /// <param name="Output">the output of the process</param>
-        /// <returns>An OperationVeredict value representing the result of the uninstall</returns>
-        public abstract OperationVeredict GetUninstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output);
-
-        /// <summary>
         /// Refreshes the Package Manager sources/indexes
         /// Each manager MUST implement this method.
         /// </summary>
         public Task RefreshPackageIndexes();
+
         public IManagerSource GetSourceOrDefault(string SourceName);
         public IManagerSource? GetSourceIfExists(string SourceName);
-
-        public void LogOperation(Process process, string output);
     }
 }
