@@ -1,8 +1,5 @@
-using System.Collections.ObjectModel;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
@@ -39,10 +36,10 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public event EventHandler<EventArgs>? StartedLoading;
 
-        readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS = false;
-        readonly bool DISABLE_RELOAD = false;
+        readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS;
+        readonly bool DISABLE_RELOAD;
         protected string LOADER_IDENTIFIER;
-        private int LoadOperationIdentifier = 0;
+        private int LoadOperationIdentifier;
         protected IEnumerable<IPackageManager> Managers { get; private set; }
 
         public AbstractPackageLoader(IEnumerable<IPackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false, bool DisableReload = false) 
@@ -81,7 +78,6 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <summary>
         /// Will trigger a forceful reload of the packages
         /// </summary>
-        /// <returns></returns>
         public virtual async Task ReloadPackages()
         {
             if(DISABLE_RELOAD)
@@ -169,30 +165,28 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// Checks whether the package is valid or must be skipped
         /// </summary>
         /// <param name="package">The package to check</param>
-        /// <returns>True if the package can be added, false otherwhise</returns>
+        /// <returns>True if the package can be added, false otherwise</returns>
         protected abstract Task<bool> IsPackageValid(IPackage package);
 
         /// <summary>
         /// A method to post-process packages after they have been added.
         /// </summary>
         /// <param name="package">The package to process</param>
-        /// <returns></returns>
         protected abstract Task WhenAddingPackage(IPackage package);
 
         /// <summary>
-        /// Checks wether a package is contained on the current Loader
+        /// Checks whether a package is contained on the current Loader
         /// </summary>
         /// <param name="package">The package to check against</param>
-        /// <returns></returns>
         public bool Contains(IPackage package)
         {
             return PackageReference.ContainsKey(HashPackage(package));
         }
 
         /// <summary>
-        /// Returns the appropiate hash of the package, according to the current loader configuration
+        /// Returns the appropriate hash of the package, according to the current loader configuration
         /// </summary>
-        /// <param name="package">The pakage to hash</param>
+        /// <param name="package">The package to hash</param>
         /// <returns>A long int containing the hash</returns>
         protected long HashPackage(IPackage package)
         {
@@ -234,7 +228,6 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <summary>
         /// Removes the given package from the list.
         /// </summary>
-        /// <param name="package"></param>
         public void Remove(IPackage? package)
         {
             if (package == null)
@@ -255,7 +248,6 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// Gets the corresponding package on the current loader.
         /// This method follows the equivalence settings for this loader
         /// </summary>
-        /// <param name="package"></param>
         /// <returns>A Package? object</returns>
         public IPackage? GetEquivalentPackage(IPackage? package)
         {

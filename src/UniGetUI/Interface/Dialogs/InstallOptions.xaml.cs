@@ -5,7 +5,6 @@ using UniGetUI.Core.Language;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -42,7 +41,6 @@ namespace UniGetUI.Interface.Dialogs
             ArchitectureComboBox.IsEnabled = Operation != OperationType.Uninstall && Package.Manager.Capabilities.SupportsCustomArchitectures;
             ArchitectureComboBox.Items.Add(CoreTools.Translate("Default"));
             ArchitectureComboBox.SelectedIndex = 0;
-
 
             if (Package.Manager.Capabilities.SupportsCustomArchitectures)
             {
@@ -105,7 +103,6 @@ namespace UniGetUI.Interface.Dialogs
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
                 }
             }
-
 
             ResetDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
             SelectDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;

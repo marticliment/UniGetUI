@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.WinUI.Notifications;
+using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;
 using UniGetUI.Core.Data;
@@ -342,7 +342,6 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 StartInfo = startInfo
             };
-
 
             return process;
         }

@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {

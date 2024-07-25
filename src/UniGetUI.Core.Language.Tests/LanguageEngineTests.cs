@@ -1,4 +1,4 @@
-﻿using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.Core.Language.Tests
 {
@@ -38,7 +38,6 @@ namespace UniGetUI.Core.Language.Tests
             Assert.Equal(uniGetUILogTranslation, engine.Translate("WingetUI Log"));
             Assert.Equal(uniGetUITranslation, engine.Translate("WingetUI"));
         }
-
 
         [Fact]
         public void LocalFallbackTest()

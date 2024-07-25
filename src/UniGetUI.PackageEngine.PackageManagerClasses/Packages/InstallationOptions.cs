@@ -13,7 +13,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// <summary>
     /// This class represents the options in which a package must be installed, updated or uninstalled.
     /// </summary>
-    public class InstallationOptions: IInstallationOptions
+    public class InstallationOptions : IInstallationOptions
     {
         private static readonly Dictionary<long, InstallationOptions?> OptionsCache = [];
 
@@ -43,7 +43,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         /// <param name="package">The package from which to load the InstallationOptions</param>
         /// <returns>The package's InstallationOptions instance</returns>
-        public static InstallationOptions FromPackage(IPackage package, bool? elevated = null, bool? 
+        public static InstallationOptions FromPackage(IPackage package, bool? elevated = null, bool?
             interactive = null, bool? no_integrity = null, bool? remove_data = null)
         {
             InstallationOptions instance;
@@ -87,7 +87,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         /// <param name="package">The package from which to load the InstallationOptions</param>
         /// <returns>The package's InstallationOptions instance</returns>
-        public static async Task<InstallationOptions> FromPackageAsync(IPackage package, bool? elevated = null, 
+        public static async Task<InstallationOptions> FromPackageAsync(IPackage package, bool? elevated = null,
             bool? interactive = null, bool? no_integrity = null, bool? remove_data = null)
         {
             return await Task.Run(() => FromPackage(package, elevated, interactive, no_integrity, remove_data));
@@ -96,9 +96,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a new InstallationOptions object from a given SerializableInstallationOptions_v1 and a package.
         /// </summary>
-        /// <param name="options"></param>
-        /// <param name="package"></param>
-        /// <returns></returns>
         public static InstallationOptions FromSerialized(SerializableInstallationOptions_v1 options, IPackage package)
         {
             InstallationOptions instance = new(package);
@@ -109,7 +106,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Loads and applies the options from the given SerializableInstallationOptions_v1 object to the current object.
         /// </summary>
-        /// <param name="options"></param>
         public void FromSerializable(SerializableInstallationOptions_v1 options)
         {
             SkipHashCheck = options.SkipHashCheck;
@@ -135,7 +131,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a SerializableInstallationOptions_v1 object containing the options of the current instance.
         /// </summary>
-        /// <returns></returns>
         public SerializableInstallationOptions_v1 AsSerializable()
         {
             SerializableInstallationOptions_v1 options = new()
@@ -172,7 +167,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public async Task SaveToDiskAsync()
         {
-            await Task.Run(() => SaveToDisk());
+            await Task.Run(SaveToDisk);
         }
 
         /// <summary>
@@ -237,7 +232,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a string representation of the current options.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             string customparams = CustomParameters != null ? string.Join(",", CustomParameters) : "[]";

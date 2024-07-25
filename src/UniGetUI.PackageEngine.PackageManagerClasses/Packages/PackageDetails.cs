@@ -6,7 +6,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// <summary>
     /// Holds the details of a Package.
     /// </summary>
-    public class PackageDetails: IPackageDetails
+    public class PackageDetails : IPackageDetails
     {
         /// <summary>
         /// The package to which this details instance corresponds
@@ -14,7 +14,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public IPackage Package { get; }
 
         /// <summary>
-        /// Wether this PackageDetails instance has valid data or not.
+        /// Whether this PackageDetails instance has valid data or not.
         /// To load valid data, make use of the `Load()` method
         /// </summary>
         public bool IsPopulated { get; private set; }
@@ -113,5 +113,4 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
         }
     }
-
 }

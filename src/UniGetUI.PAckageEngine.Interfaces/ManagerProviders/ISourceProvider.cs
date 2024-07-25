@@ -1,4 +1,4 @@
-﻿using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
 {
@@ -24,7 +24,7 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// Checks the result of attempting to add a source
         /// </summary>
         /// <param name="source">The added (or not) source</param>
-        /// <param name="ReturnCode">The returncode of the operation</param>
+        /// <param name="ReturnCode">The return code of the operation</param>
         /// <param name="Output">the command-line output of the operation</param>
         /// <returns>An OperationVeredict value</returns>
         public abstract OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output);
@@ -33,7 +33,7 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// Checks the result of attempting to remove a source
         /// </summary>
         /// <param name="source">The removed (or not) source</param>
-        /// <param name="ReturnCode">The returncode of the operation</param>
+        /// <param name="ReturnCode">The return code of the operation</param>
         /// <param name="Output">the command-line output of the operation</param>
         /// <returns>An OperationVeredict value</returns>
         public abstract OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output);

@@ -1,33 +1,19 @@
 using ExternalLibraries.Pickers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
-using UniGetUI.PackageEngine.Classes;
-using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.PackageLoader;
-using Windows.Media.Devices;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -38,7 +24,7 @@ namespace UniGetUI.Interface.SoftwarePages
         BetterMenuItem? MenuSkipHash;
 
         public PackageBundlesPage()
-        : base(new PackagesPageData()
+        : base(new PackagesPageData
         {
             DisableAutomaticPackageLoadOnStart = true,
             MegaQueryBlockEnabled = false,
@@ -371,7 +357,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 // Select file
                 FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
-                string file = picker.Show(new List<string>() { "*.json", "*.yaml", "*.xml" });
+                string file = picker.Show(new List<string> { "*.json", "*.yaml", "*.xml" });
                 if (file == String.Empty)
                     return;
 
@@ -408,7 +394,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 // Get file 
                 // Save file
-                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string>() { "*.json", "*.yaml", "*.xml" }, CoreTools.Translate("Package bundle") + ".json");
+                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string> { "*.json", "*.yaml", "*.xml" }, CoreTools.Translate("Package bundle") + ".json");
                 if (file != String.Empty)
                 {
                     // Loading dialog
@@ -429,7 +415,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     MainApp.Instance.MainWindow.HideLoadingDialog();
 
                     // Launch file
-                    Process.Start(new ProcessStartInfo()
+                    Process.Start(new ProcessStartInfo
                     {
                         FileName = "explorer.exe",
                         Arguments = @$"/select, ""{file}"""

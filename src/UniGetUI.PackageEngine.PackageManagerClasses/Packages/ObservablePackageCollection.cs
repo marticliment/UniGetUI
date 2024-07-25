@@ -1,7 +1,4 @@
-using System.ComponentModel;
 using UniGetUI.Core.Classes;
-using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.PackageClasses
@@ -22,16 +19,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         public ObservablePackageCollection()
-            : base()
         {
             SortingSelector = x => x.Package.Name;
         }
 
-
         /// <summary>
         /// Add a package to the collection
         /// </summary>
-        /// <param name="p"></param>
         public void Add(IPackage p)
         {
             base.Add(new PackageWrapper(p));
@@ -85,9 +79,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Returns a list containing the packwges in this collection
+        /// Returns a list containing the packages in this collection
         /// </summary>
-        /// <returns></returns>
         public List<IPackage> GetPackages()
         {
             List<IPackage> packages = new();
@@ -102,7 +95,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a list containing the checked packages on this collection
         /// </summary>
-        /// <returns></returns>
         public List<IPackage> GetCheckedPackages()
         { 
             List<IPackage> packages = [];

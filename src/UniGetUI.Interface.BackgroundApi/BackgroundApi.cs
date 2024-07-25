@@ -46,7 +46,6 @@ namespace UniGetUI.Interface
         /// <summary>
         /// Run the background api and wait for it for being stopped with the Stop() method
         /// </summary>
-        /// <returns></returns>
         public async Task Start()
         {
             try
@@ -151,7 +150,6 @@ namespace UniGetUI.Interface
                 }
             });
 
-
             // Basic entrypoint to know if UniGetUI is running
             Get("/is-running", (parameters) =>
             {
@@ -160,7 +158,7 @@ namespace UniGetUI.Interface
         }
 
         /// <summary>
-        /// Build the endpoints required for the /widgets/v1 endpoint. All of these 
+        /// Build the endpoints required for the /widgets/v1 endpoint. All of these
         /// endpoints are authenticated with MainApp.Instance.AuthenticateToken
         /// </summary>
         public void BuildV1WidgetsApi()
@@ -199,7 +197,7 @@ namespace UniGetUI.Interface
                 {
                     if (package.Tag is PackageTag.OnQueue or PackageTag.BeingProcessed)
                     {
-                        continue; // Do not show already processed packages on queue 
+                        continue; // Do not show already processed packages on queue
                     }
 
                     string icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={package.Id}&packageSource={package.Source.Name}&token={ApiTokenHolder.Token}";
@@ -318,7 +316,7 @@ namespace UniGetUI.Interface
                 }
 
                 byte[] fileContents = await File.ReadAllBytesAsync(iconPath);
-                return new Response()
+                return new Response
                 {
                     ContentType = $"image/{iconPath.Split('.')[^1]}",
                     Contents = (stream) =>

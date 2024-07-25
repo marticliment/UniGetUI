@@ -1,17 +1,5 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text.Json.Nodes;
-using UniGetUI.Core.Data;
-using UniGetUI.Core.IconEngine;
-using UniGetUI.Core.Logging;
-using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Enums;
-using UniGetUI.PackageEngine.Classes.Manager;
-using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Classes.Serializable;
-using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.PackageClasses
@@ -19,12 +7,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
     public class ImportedPackage : Package
     {
         /// <summary>
-        /// Constuct an invalid package with a given name, id, version, source and manager, and an optional scope.
+        /// Construct an invalid package with a given name, id, version, source and manager, and an optional scope.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="id"></param>
-        /// <param name="version"></param>
-        /// <param name="source"></param>
         public SerializableUpdatesOptions_v1 updates_options;
         public SerializableInstallationOptions_v1 installation_options;
 

@@ -1,8 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Interface.Widgets
@@ -10,7 +8,7 @@ namespace UniGetUI.Interface.Widgets
     public class BetterMenu : MenuFlyout
     {
         private readonly Style menuyStyle = (Style)Application.Current.Resources["BetterContextMenu"];
-        public BetterMenu() : base()
+        public BetterMenu()
         {
             MenuFlyoutPresenterStyle = menuyStyle;
         }
@@ -18,7 +16,7 @@ namespace UniGetUI.Interface.Widgets
 
     public class BetterMenuItem : MenuFlyoutItem
     {
-        private readonly Style menuyStyle = (Style)Application.Current.Resources["BetterMenuItem"];
+        private readonly Style menuStyle = (Style)Application.Current.Resources["BetterMenuItem"];
 
         public IconType IconName
         {
@@ -35,9 +33,9 @@ namespace UniGetUI.Interface.Widgets
             set => base.Text = CoreTools.Translate(value);
         }
 
-        public BetterMenuItem() : base()
+        public BetterMenuItem()
         {
-            Style = menuyStyle;
+            Style = menuStyle;
         }
     }
 }

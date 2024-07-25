@@ -53,8 +53,6 @@ namespace UniGetUI.Core.Tools
         /// <summary>
         /// Dummy function to capture the strings that need to be translated but the translation is handled by a custom widget
         /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
         public static string AutoTranslated(string text)
         {
             return text;
@@ -75,14 +73,14 @@ namespace UniGetUI.Core.Tools
         /// Finds an executable in path and returns its location
         /// </summary>
         /// <param name="command">The executable alias to find</param>
-        /// <returns>A tuple containing: a boolean hat represents wether the path was found or not; the path to the file if found.</returns>
+        /// <returns>A tuple containing: a boolean hat represents whether the path was found or not; the path to the file if found.</returns>
         public static async Task<Tuple<bool, string>> Which(string command)
         {
             command = command.Replace(";", "").Replace("&", "").Trim();
             Logger.Debug($"Begin \"which\" search for command {command}");
             Process process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Path.Join(Environment.SystemDirectory, "where.exe"),
                     Arguments = command,
@@ -257,8 +255,7 @@ Crash Traceback:
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
                 req.Method = "HEAD";
                 WebResponse resp = await req.GetResponseAsync();
-                long ContentLength;
-                if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
+                if (long.TryParse(resp.Headers.Get("Content-Length"), out long ContentLength))
                 {
                     return ContentLength;
                 }
@@ -356,7 +353,7 @@ Crash Traceback:
         }
 
         /// <summary>
-        /// Returns a new Uri if the string is not empty. Returns null otherwhise
+        /// Returns a new Uri if the string is not empty. Returns null otherwise
         /// </summary>
         /// <param name="url">The null, empty or valid string</param>
         /// <returns>an Uri? instance</returns>
@@ -378,7 +375,7 @@ Crash Traceback:
             Logger.Info("Caching admin rights for process id " + Environment.ProcessId);
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = CoreData.GSudoPath,
                     Arguments = "cache on --pid " + Environment.ProcessId + " -d 1",
@@ -402,7 +399,7 @@ Crash Traceback:
             Logger.Info("Resetting administrator rights cache for process id " + Environment.ProcessId);
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = CoreData.GSudoPath,
                     Arguments = "cache off --pid " + Environment.ProcessId,
@@ -423,7 +420,7 @@ Crash Traceback:
         /// The long integer is built with the first half of the MD5 sum of the given string
         /// </summary>
         /// <param name="inputString">A non-empty string</param>
-        /// <returns>A long integer containing the first half of the bytes resultng from MD5suming inputString</returns>
+        /// <returns>A long integer containing the first half of the bytes resulting from MD5suming inputString</returns>
         public static long HashStringAsLong(string inputString)
         {
             byte[] bytes = MD5.HashData(Encoding.UTF8.GetBytes(inputString));
@@ -435,7 +432,6 @@ Crash Traceback:
         /// </summary>
         /// <param name="linkPath">The location of the link to be created</param>
         /// <param name="targetPath">The location of the real folder where to point</param>
-        /// <returns></returns>
         public static async Task CreateSymbolicLinkDir(string linkPath, string targetPath)
         {
             var startInfo = new ProcessStartInfo
@@ -465,7 +461,6 @@ Crash Traceback:
         /// Will check whether the given folder is a symbolic link
         /// </summary>
         /// <param name="path">The folder to check</param>
-        /// <returns></returns>
         /// <exception cref="FileNotFoundException"></exception>
         public static bool IsSymbolicLinkDir(string path)
         {

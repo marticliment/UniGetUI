@@ -19,9 +19,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         public static new string[] FALSE_PACKAGE_IDS = [""];
         public static new string[] FALSE_PACKAGE_VERSIONS = [""];
 
-        public PowerShell() : base()
+        public PowerShell()
         {
-            Capabilities = new ManagerCapabilities()
+            Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
                 CanSkipIntegrityChecks = true,
@@ -30,14 +30,14 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 SupportsCustomSources = true,
                 SupportsPreRelease = true,
                 SupportsCustomPackageIcons = true,
-                Sources = new SourceCapabilities()
+                Sources = new SourceCapabilities
                 {
                     KnowsPackageCount = false,
                     KnowsUpdateDate = false,
                 }
             };
 
-            Properties = new ManagerProperties()
+            Properties = new ManagerProperties
             {
                 Name = "PowerShell",
                 DisplayName = "PowerShell 5.x",
@@ -60,7 +60,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = "",
@@ -146,7 +146,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " Get-InstalledModule",
@@ -289,7 +289,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             Process process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " \"echo $PSVersionTable\"",

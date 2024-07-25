@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.PackageEngine.Interfaces
@@ -23,16 +18,14 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// <summary>
         /// Returns a human-readable string representing the source name
         /// </summary>
-        /// <returns></returns>
         public string ToString();
 
         /// <summary>
         /// Replaces the current URL with the new one. Must be used only when a placeholder URL is used.
         /// </summary>
-        /// <param name="newUrl"></param>
-         void ReplaceUrl(Uri newUrl)
-         {
-             Url = newUrl;
-         }
+        void ReplaceUrl(Uri newUrl)
+        {
+            Url = newUrl;
+        }
     }
 }

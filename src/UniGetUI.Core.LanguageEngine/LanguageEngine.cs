@@ -72,7 +72,6 @@ namespace UniGetUI.Core.Language
                     }
                 }
 
-
                 Dictionary<string, string>? __LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject)?.ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
 
                 if (__LangDict != null)
@@ -103,8 +102,6 @@ namespace UniGetUI.Core.Language
         /// Downloads and saves an updated version of the translations for the specified language.
         /// </summary>
         /// <param name="LangKey">The Id of the language to download</param>
-        /// <param name="UseOldUrl">Use the new or the old Url (should not be used manually)</param>
-        /// <returns></returns>
         public async Task DownloadUpdatedLanguageFile(string LangKey)
         {
             try

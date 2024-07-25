@@ -6,7 +6,6 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
@@ -16,10 +15,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
 internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 {
-    public BundledWinGetHelper()
-    {
-    }
-
     public async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
         if (Settings.Get("ForceLegacyBundledWinGet"))
@@ -31,7 +26,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo()
+            StartInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
                 Arguments = "/C " + Manager.PowerShellPath + " " + Manager.PowerShellPromptArgs,
@@ -123,7 +118,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         List<Package> Packages = [];
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo()
+            StartInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
                 Arguments = "/C " + Manager.PowerShellPath + " " + Manager.PowerShellPromptArgs,
@@ -221,7 +216,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo()
+            StartInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
                 Arguments = "/C " + Manager.PowerShellPath + " " + Manager.PowerShellPromptArgs,
@@ -399,7 +394,6 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             output.Clear();
             Logger.Info("Winget could not found culture data for package Id=" + details.Package.Id +
                         " and Culture=en-US. Loading default");
-            LocaleFound = true;
             process = new Process();
             startInfo = new()
             {
@@ -467,7 +461,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                     IsLoadingTags = false;
                 }
 
-                // Check for singleline fields
+                // Check for single-line fields
                 if (line.Contains("Publisher:"))
                 {
                     details.Publisher = line.Split(":")[1].Trim();
@@ -539,7 +533,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
     {
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo()
+            StartInfo = new ProcessStartInfo
             {
                 FileName = Manager.WinGetBundledPath,
                 Arguments = Manager.Properties.ExecutableCallArgs + " show --id " + package.Id +

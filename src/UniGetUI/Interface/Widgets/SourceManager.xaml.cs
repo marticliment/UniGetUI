@@ -5,9 +5,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Operations;
-using UniGetUI.PackageEngine.PackageClasses;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -81,7 +79,6 @@ namespace UniGetUI.Interface.Widgets
                     StackPanel p1 = new() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
                     p1.Children.Add(new TextBlock { Text = CoreTools.Translate("Source name:"), VerticalAlignment = VerticalAlignment.Center });
                     p1.Children.Add(SourceNameTextBox);
-
 
                     StackPanel p2 = new() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
                     p2.Children.Add(new TextBlock { Text = CoreTools.Translate("Source URL:"), VerticalAlignment = VerticalAlignment.Center });

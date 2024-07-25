@@ -20,7 +20,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuInteractive;
         private BetterMenuItem? MenuSkipHash;
         public DiscoverSoftwarePage()
-        : base(new PackagesPageData()
+        : base(new PackagesPageData
         {
             DisableAutomaticPackageLoadOnStart = true,
             MegaQueryBlockEnabled = true,

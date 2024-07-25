@@ -40,13 +40,12 @@ namespace UniGetUI
         public MainWindow MainWindow;
         public ThemeListener ThemeListener;
 
-
         private readonly BackgroundApiRunner BackgroundApi = new();
 #pragma warning disable CS8618
         public static MainApp Instance;
         public __tooltip_options TooltipStatus = new();
 
-        public MainApp() : base()
+        public MainApp()
         {
 #pragma warning restore CS8618
             try
@@ -181,7 +180,6 @@ namespace UniGetUI
             }
         }
 
-
         /// <summary>
         /// Clear the notification history, if possible
         /// </summary>
@@ -230,7 +228,6 @@ namespace UniGetUI
         /// <summary>
         /// Background component loader
         /// </summary>
-        /// <returns></returns>
         private async Task LoadComponentsAsync()
         {
             try
@@ -394,7 +391,6 @@ namespace UniGetUI
                     client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     fileContents = await client.GetStringAsync("https://www.marticliment.com/versions/unigetui.ver");
                 }
-
 
                 if (!fileContents.Contains("///"))
                 {

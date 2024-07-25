@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using UniGetUI.Core.Classes;
@@ -10,9 +10,6 @@ namespace UniGetUI.Core.Language
 {
     public static class LanguageData
     {
-        /// <summary>
-        /// Returns 
-        /// </summary>
         private static Person[]? __translators_list;
 
         public static Person[] TranslatorsList

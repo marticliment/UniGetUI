@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using UniGetUI.Core.Logging;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
@@ -289,7 +288,7 @@ internal static partial class BundledWinGetLegacyMethods
                 return Manager.AndroidSubsystemSource;
             }
 
-            // Check if source is Steama
+            // Check if source is Steam
             if ((id == "Steam" || id.Contains("Steam App ")) && id.Split("Steam App").Length >= 2 && !id.Split("Steam App")[1].Trim().Any(x => !"1234567890".Contains(x)))
             {
                 return Manager.SteamSource;

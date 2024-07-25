@@ -15,8 +15,6 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.Classes.Manager;
-using UniGetUI.Core.Tools;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
@@ -31,7 +29,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public static string[] FALSE_PACKAGE_NAMES = [""];
         public static string[] FALSE_PACKAGE_IDS = [""];
         public static string[] FALSE_PACKAGE_VERSIONS = [""];
-        public bool ManagerReady { get; set; } = false;
+        public bool ManagerReady { get; set; }
         public IManagerLogger TaskLogger { get; }
 
         public ISourceProvider SourceProvider { get; set; }
@@ -39,7 +37,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public IEnumerable<ManagerDependency> Dependencies { get; protected set; } = [];
 
         public IPackageDetailsProvider? PackageDetailsProvider { get; set; }
-        private readonly bool __base_constructor_called = false;
+        private readonly bool __base_constructor_called;
 
         public PackageManager()
         {
@@ -51,11 +49,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             PackageDetailsProvider = new NullPackageDetailsProvider(this);
         }
 
-
         /// <summary>
         /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.
         /// </summary>
-        /// <returns></returns>
         public virtual async Task InitializeAsync()
         {
             // BEGIN integrity check
@@ -134,17 +130,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
         }
 
-
         /// <summary>
         /// Returns a ManagerStatus object representing the current status of the package manager. This method runs asynchronously.
         /// </summary>
-        /// <returns></returns>
         protected abstract Task<ManagerStatus> LoadManager();
 
         /// <summary>
         /// Returns true if the manager is enabled, false otherwise
         /// </summary>
-        /// <returns></returns>
         public bool IsEnabled()
         {
             return !Settings.Get("Disable" + Name);
@@ -153,7 +146,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <summary>
         /// Returns true if the manager is enabled and available (the required executable files were found). Returns false otherwise
         /// </summary>
-        /// <returns></returns>
         public bool IsReady()
         {
             return IsEnabled() && Status.Found;
@@ -163,11 +155,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of Package objects that the manager lists for the given query. Depending on the manager, the list may
         /// also include similar results. This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
         public async Task<IPackage[]> FindPackages(string query)
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet FindPackages was called"); return []; };
+            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet FindPackages was called"); return []; }
             try
             {
                 Package[] packages = await FindPackages_UnSafe(query).WaitAsync(TimeSpan.FromSeconds(60));
@@ -190,11 +180,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of UpgradablePackage objects that represent the available updates reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
         public async Task<IPackage[]> GetAvailableUpdates()
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetAvailableUpdates was called"); return []; };
+            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetAvailableUpdates was called"); return []; }
             try
             {
                 await RefreshPackageIndexes().WaitAsync(TimeSpan.FromSeconds(60));
@@ -219,10 +207,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of Package objects that represent the installed reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        /// <returns></returns>
         public async Task<IPackage[]> GetInstalledPackages()
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetInstalledPackages was called"); return []; };
+            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetInstalledPackages was called"); return []; }
             try
             {
                 Package[] packages = await GetInstalledPackages_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
@@ -241,7 +228,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 return [];
             }
         }
-
 
         /// <summary>
         /// Returns the available packages to install for the given query.
@@ -265,7 +251,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <returns>An array of Package objects</returns>
         protected abstract Task<Package[]> GetInstalledPackages_UnSafe();
 
-
         /// <summary>
         /// Returns the command-line parameters to install the given package.
         /// Each manager MUST implement this method.
@@ -274,7 +259,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <param name="options">The options in which it is going to be installed</param>
         /// <returns>An array of strings containing the parameters without the manager executable file</returns>
         public abstract string[] GetInstallParameters(IPackage package, IInstallationOptions options);
-
 
         /// <summary>
         /// Returns the command-line parameters to update the given package.
@@ -305,7 +289,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <returns>An OperationVeredict value representing the result of the installation</returns>
         public abstract OperationVeredict GetInstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output);
 
-
         /// <summary>
         /// Decides and returns the verdict of the update operation.
         /// Each manager MUST implement this method.
@@ -332,7 +315,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Refreshes the Package Manager sources/indexes
         /// Each manager MUST implement this method.
         /// </summary>
-        /// <returns></returns>
 #pragma warning disable CS1998
         public virtual async Task RefreshPackageIndexes()
         {
@@ -345,8 +327,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <summary>
         /// Will check if the Manager supports custom sources, and throw an exception if not
         /// </summary>
-        /// <param name="MethodName"></param>
-        /// <exception cref="Exception"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         private void AssertSourceCompatibility(string MethodName)
         {
             if (!Capabilities.SupportsCustomSources)
@@ -393,7 +374,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         public virtual async Task<IManagerSource[]> GetSources()
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetSources was called"); return []; };
+            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetSources was called"); return []; }
             try
             {
                 AssertSourceCompatibility("GetSources");
@@ -403,7 +384,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
             catch (Exception e)
             {
-                Logger.Error($"Error finding sources for manager " + Name);
+                Logger.Error("Error finding sources for manager " + Name);
                 Logger.Error(e);
                 return [];
             }
@@ -411,19 +392,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 #pragma warning restore CS8602
         // END SOURCE-RELATED METHODS
 
-
-
-
-
-
-
-
         // BEGIN PACKAGEDEAILS-RELATED METHODS
-        private void AssertPackageDetailsCompatibility(string MethodName)
+        private void AssertPackageDetailsCompatibility(string methodName)
         {
             if (PackageDetailsProvider == null)
             {
-                throw new InvalidOperationException($"Manager {Name} does not have a valid PackageDetailsProvider helper, when attemtping to call {MethodName}");
+                throw new InvalidOperationException($"Manager {Name} does not have a valid PackageDetailsProvider helper, when attemtping to call {methodName}");
             }
         }
 #pragma warning disable CS8602
@@ -436,7 +410,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         public async Task GetPackageDetails(IPackageDetails details)
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageDetails was called"); return; };
+            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageDetails was called"); return; }
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageDetails");
@@ -452,7 +426,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         public async Task<string[]> GetPackageVersions(IPackage package)
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageVersions was called"); return []; };
+            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageVersions was called"); return []; }
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageVersions");
@@ -502,8 +476,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         }
 #pragma warning restore CS8602
         // END PACKAGEDETAILS-RELATED METHODS
-
-
 
         public void LogOperation(Process process, string output)
         {

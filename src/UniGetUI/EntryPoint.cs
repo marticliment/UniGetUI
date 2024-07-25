@@ -29,7 +29,7 @@ namespace UniGetUI
                 else
                 {
                     // Otherwise, run UniGetUI as normal
-                    _ = AsyncMain(args);
+                    _ = AsyncMain();
                 }
             }
             catch (Exception e)
@@ -41,9 +41,7 @@ namespace UniGetUI
         /// <summary>
         /// UniGetUI app main entry point
         /// </summary>
-        /// <param name="args">Call arguments</param>
-        /// <returns></returns>
-        private static async Task AsyncMain(string[] args)
+        private static async Task AsyncMain()
         {
             try
             {
@@ -86,12 +84,11 @@ namespace UniGetUI
         /// <summary>
         /// Default WinUI Redirector
         /// </summary>
-        /// <returns></returns>
         private static async Task<bool> DecideRedirection()
         {
             try
             {
-                // Idk how does this work, I copied it from the MS Docs
+                // IDK how does this work, I copied it from the MS Docs
                 // example on single-instance apps using unpackaged AppSdk + WinUI3
                 bool isRedirect = false;
                 AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();

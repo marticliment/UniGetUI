@@ -1,4 +1,3 @@
-using Microsoft.Management.Deployment;
 using System.Globalization;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -6,7 +5,6 @@ using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUIManagers = UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
@@ -21,7 +19,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
 
         public WinGetPackageDetailsProvider(WinGet manager) : base(manager) { }
-        
+
         protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
         {
             return await WinGetHelper.Instance.GetPackageVersions_Unsafe((WinGet)Manager, package);
@@ -61,7 +59,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             Match IconArray = Regex.Match(ResponseContent, "(?:\"|')Images(?:\"|'): ?\\[([^\\]]+)\\]");
             if (!IconArray.Success)
             {
-                Logger.Warn($"Could not parse Images array from Microsoft Store response");
+                Logger.Warn("Could not parse Images array from Microsoft Store response");
                 return [];
             }
 
@@ -92,7 +90,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             return FoundIcons.ToArray();
         }
-
 
         private static async Task<string?> GetMicrosoftStorePackageManifest(IPackage package)
         {
@@ -147,7 +144,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             Match IconArray = Regex.Match(ResponseContent, "(?:\"|')Images(?:\"|'): ?\\[([^\\]]+)\\]");
             if (!IconArray.Success)
             {
-                Logger.Warn($"Could not parse Images array from Microsoft Store response");
+                Logger.Warn("Could not parse Images array from Microsoft Store response");
                 return null;
             }
 
@@ -192,10 +189,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return new CacheableIcon(new Uri(uri));
         }
 
-
-        private static async Task<CacheableIcon?> GetWinGetPackageIcon(IPackage package)
-        { // TODO: Need to work on retrieving WinGet icons
-
+        // TODO: Need to work on retrieving WinGet icons
+        /*private static async Task<CacheableIcon?> GetWinGetPackageIcon(IPackage package)
+        {
             if (WinGetHelper.Instance is not NativeWinGetHelper)
             {
                 Logger.Warn("WinGet will not attempt to load icon since the helper is using bundled WinGet");
@@ -254,7 +250,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             return Icon;
-        }
-
+        }*/
     }
 }

@@ -1,16 +1,11 @@
-using System;
 using System.ComponentModel;
-using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Nodes;
-using System.Xml.Linq;
-using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
-using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;
@@ -60,7 +55,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public IManagerSource Source { get; }
 
         /// <summary>
-        /// IPackageManager is guaranteed to be IPackageManager, but C# doesn't allow covariant attributes 
+        /// IPackageManager is guaranteed to be IPackageManager, but C# doesn't allow covariant attributes
         /// </summary>
         public IPackageManager Manager { get; }
         public string NewVersion { get; }
@@ -69,14 +64,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public string SourceAsString { get => Source.AsString; }
 
         /// <summary>
-        /// Constuct a package with a given name, id, version, source and manager, and an optional scope.
+        /// Construct a package with a given name, id, version, source and manager, and an optional scope.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="id"></param>
-        /// <param name="version"></param>
-        /// <param name="source"></param>
-        /// <param name="manager"></param>
-        /// <param name="scope"></param>
         public Package(string name, string id, string version, IManagerSource source, IPackageManager manager, PackageScope scope = PackageScope.Local)
         {
             Name = name;
@@ -97,13 +86,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Creates an UpgradablePackage object representing a package that can be upgraded; given its name, id, installed version, new version, source and manager, and an optional scope.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="id"></param>
-        /// <param name="installed_version"></param>
-        /// <param name="new_version"></param>
-        /// <param name="source"></param>
-        /// <param name="manager"></param>
-        /// <param name="scope"></param>
         public Package(string name, string id, string installed_version, string new_version, IManagerSource source, IPackageManager manager, PackageScope scope = PackageScope.Local)
             : this(name, id, installed_version, source, manager, scope)
         {
@@ -136,14 +118,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Check wether two package instances represent the same package.
+        /// Check whether two package instances represent the same package.
         /// What is taken into account:
         ///    - Manager and Source
         ///    - Package Identifier
-        /// For more specific comparsion use package.Equals(object? other)
+        /// For more specific comparison use package.Equals(object? other)
         /// </summary>
         /// <param name="other">A package</param>
-        /// <returns>Wether the two instances refer to the same instance</returns>
+        /// <returns>Whether the two instances refer to the same instance</returns>
         public bool IsEquivalentTo(IPackage? other)
         {
             return __hash == other?.GetHash();
@@ -262,8 +244,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// all updates are ignored, calling this method with a specific version will
         /// still return true, although the passed version is not explicitly ignored.
         /// </summary>
-        /// <param name="Version"></param>
-        /// <returns></returns>
         public async Task<bool> HasUpdatesIgnoredAsync(string Version = "*")
         {
             try
@@ -296,7 +276,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// are ignored, an empty string will be returned; and when all versions are ignored an asterisk
         /// will be returned.
         /// </summary>
-        /// <returns></returns>
         public async Task<string> GetIgnoredUpdatesVersionAsync()
         {
             try
@@ -360,7 +339,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public async Task<SerializablePackage_v1> AsSerializable()
         {
-            return new SerializablePackage_v1()
+            return new SerializablePackage_v1
             {
                 Id = Id,
                 Name = Name,
@@ -368,7 +347,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Source = Source.Name,
                 ManagerName = Manager.Name,
                 InstallationOptions = (await InstallationOptions.FromPackageAsync(this)).AsSerializable(),
-                Updates = new SerializableUpdatesOptions_v1()
+                Updates = new SerializableUpdatesOptions_v1
                 {
                     IgnoredVersion = await GetIgnoredUpdatesVersionAsync(),
                     UpdatesIgnored = await HasUpdatesIgnoredAsync(),
@@ -378,7 +357,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public SerializableIncompatiblePackage_v1 AsSerializable_Incompatible()
         {
-            return new SerializableIncompatiblePackage_v1()
+            return new SerializableIncompatiblePackage_v1
             {
                 Id = Id,
                 Name = Name,

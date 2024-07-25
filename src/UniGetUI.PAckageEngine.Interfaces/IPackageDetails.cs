@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UniGetUI.Core.Logging;
-using UniGetUI.PackageEngine.Interfaces;
-
 namespace UniGetUI.PackageEngine.Interfaces
 {
     public interface IPackageDetails
@@ -16,7 +8,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         public IPackage Package { get; }
 
         /// <summary>
-        /// Wether this PackageDetails instance has valid data or not.
+        /// Whether this PackageDetails instance has valid data or not.
         /// To load valid data, make use of the `Load()` method
         /// </summary>
         public bool IsPopulated { get; }

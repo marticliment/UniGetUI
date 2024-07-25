@@ -2,7 +2,6 @@ using System.Text.RegularExpressions;
 using System.Web;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -16,7 +15,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         public static new string[] FALSE_PACKAGE_IDS = [""];
         public static new string[] FALSE_PACKAGE_VERSIONS = [""];
 
-        public BaseNuGet() : base()
+        public BaseNuGet()
         {
             PackageDetailsProvider = new BaseNuGetDetailsProvider(this);
         }
@@ -67,7 +66,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             foreach(IManagerSource source in sources)
             {
                 Uri SearchUrl = new($"{source.Url}/Search()?searchTerm=%27{HttpUtility.UrlEncode(query)}%27&targetFramework=%27%27&includePrerelease=false");
-                logger.Log($"Begin package search with url={SearchUrl} on manager {Name}"); ;
+                logger.Log($"Begin package search with url={SearchUrl} on manager {Name}");
 
                 using HttpClient client = new(CoreData.GenericHttpClientParameters);
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);

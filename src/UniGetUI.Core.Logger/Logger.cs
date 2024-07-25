@@ -1,4 +1,4 @@
-﻿using Diagnostics = System.Diagnostics;
+using Diagnostics = System.Diagnostics;
 
 namespace UniGetUI.Core.Logging
 {
@@ -37,7 +37,6 @@ namespace UniGetUI.Core.Logging
             LogContents.Add(new LogEntry(s, LogEntry.SeverityLevel.Error));
         }
 
-
         // Exception parameter log functions
         public static void ImportantInfo(Exception e)
         {
@@ -68,7 +67,6 @@ namespace UniGetUI.Core.Logging
             Diagnostics.Debug.WriteLine(e.ToString());
             LogContents.Add(new LogEntry(e.ToString(), LogEntry.SeverityLevel.Error));
         }
-
 
         public static LogEntry[] GetLogs()
         {

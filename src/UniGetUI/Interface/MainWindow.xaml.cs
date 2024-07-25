@@ -17,7 +17,6 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
-using UniGetUI.PackageEngine.PackageClasses;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml.Media;
@@ -125,12 +124,9 @@ namespace UniGetUI.Interface
             Logger.Debug("Notification activated: " + args.ToString() + " " + input.ToString());
         }
 
-
         /// <summary>
         /// Handle the window closing event, and divert it when the window must be hidden.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
         public async void HandleClosingEvent(AppWindow sender, AppWindowClosingEventArgs args)
         {
             SaveGeometry(Force: true);
@@ -254,7 +250,6 @@ namespace UniGetUI.Interface
             TrayMenu.Items.Add(new MenuFlyoutSeparator());
             TrayMenu.Items.Add(new MenuFlyoutItem { Command = ShowUniGetUI });
             TrayMenu.Items.Add(new MenuFlyoutItem { Command = QuitUniGetUI });
-
 
             TrayMenu.AreOpenCloseAnimationsEnabled = false;
 
@@ -560,7 +555,7 @@ namespace UniGetUI.Interface
 
             TextBlock infotext = new()
             {
-                Text = CoreTools.Translate($"Click on Install to begin the installation process. If you skip the installation, UniGetUI may not work as expected."),
+                Text = CoreTools.Translate("Click on Install to begin the installation process. If you skip the installation, UniGetUI may not work as expected."),
                 TextWrapping = TextWrapping.Wrap,
                 Margin = new Thickness(0, 0, 0, 10),
                 Opacity = .7F,
@@ -588,7 +583,6 @@ namespace UniGetUI.Interface
             };
             p.Children.Add(manualInstallCommand);
 
-
             CheckBox c = new();
             if (NotFirstTime)
             {
@@ -598,7 +592,6 @@ namespace UniGetUI.Interface
                 c.Unchecked += (s, e) => Settings.Set(DEP_SKIPPED_PREF, false);
                 p.Children.Add(c);
             }
-
 
             ProgressBar progress = new()
             {
@@ -625,7 +618,7 @@ namespace UniGetUI.Interface
                         infotext.Text = CoreTools.Translate("Please wait while {0} is being installed. A black window may show up. Please wait until it closes.", dep_name);
                         Process p = new()
                         {
-                            StartInfo = new ProcessStartInfo()
+                            StartInfo = new ProcessStartInfo
                             {
                                 FileName = exe_name,
                                 Arguments = exe_args,
@@ -652,7 +645,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        // If an error occurrs
+                        // If an error occurs
                         Logger.Error(ex);
                         dialog.IsPrimaryButtonEnabled = true;
                         dialog.IsSecondaryButtonEnabled = true;
@@ -767,8 +760,6 @@ namespace UniGetUI.Interface
             {
                 Logger.Warn("Restored geometry was outside of desktop bounds");
             }
-
-
         }
         private static bool IsRectangleFullyVisible(int x, int y, int width, int height)
         {

@@ -20,9 +20,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
         public static new string[] FALSE_PACKAGE_IDS = [""];
         public static new string[] FALSE_PACKAGE_VERSIONS = [""];
 
-        public PowerShell7() : base()
+        public PowerShell7()
         {
-            Capabilities = new ManagerCapabilities()
+            Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
                 CanSkipIntegrityChecks = true,
@@ -31,14 +31,14 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 SupportsCustomSources = true,
                 SupportsPreRelease = true,
                 SupportsCustomPackageIcons = true,
-                Sources = new SourceCapabilities()
+                Sources = new SourceCapabilities
                 {
                     KnowsPackageCount = false,
                     KnowsUpdateDate = false,
                 }
             };
 
-            Properties = new ManagerProperties()
+            Properties = new ManagerProperties
             {
                 Name = "PowerShell7",
                 DisplayName = "PowerShell 7.x (beta)",
@@ -61,7 +61,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = "",
@@ -147,7 +147,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " Get-InstalledModule",
@@ -292,7 +292,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 
             Process process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
                     Arguments = " -Version",

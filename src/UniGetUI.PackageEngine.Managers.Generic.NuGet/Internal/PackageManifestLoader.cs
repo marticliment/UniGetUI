@@ -1,7 +1,6 @@
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
 {

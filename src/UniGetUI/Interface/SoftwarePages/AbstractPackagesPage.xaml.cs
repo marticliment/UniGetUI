@@ -2,18 +2,12 @@ using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Runtime.Serialization.Formatters;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
@@ -467,8 +461,6 @@ namespace UniGetUI.Interface
         /// Reload the packages for this Page
         /// Calling this method will trigger a reload on the associated PackageLoader, unless it is already loading packages.
         /// </summary>
-        /// <param name="reason"></param>
-        /// <returns></returns>
         protected async Task LoadPackages(ReloadReason reason)
         {
             if (!Loader.IsLoading && (!Loader.IsLoaded || reason == ReloadReason.External || reason == ReloadReason.Manual || reason == ReloadReason.Automated))
@@ -480,7 +472,7 @@ namespace UniGetUI.Interface
         }
 
         /// <summary>
-        /// Will filter the packages with the query on QueryBlock.Text and put the 
+        /// Will filter the packages with the query on QueryBlock.Text and put the
         /// resulting packages on the ItemsView
         /// </summary>
         public void FilterPackages()
@@ -765,10 +757,9 @@ namespace UniGetUI.Interface
             IPackage? package = (sender as PackageItemContainer)?.Package;
             
             bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-            bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+            //bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
             bool IS_ALT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftMenu).HasFlag(CoreVirtualKeyStates.Down);
             IS_ALT_PRESSED |= InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.RightMenu).HasFlag(CoreVirtualKeyStates.Down);
-
 
             if (e.Key == VirtualKey.Enter && package is not null)
             {

@@ -1,4 +1,3 @@
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -35,5 +34,3 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         public Task GetPackageDetails_UnSafe(WinGet Manager, IPackageDetails details);
     }
 }
-
-

@@ -25,7 +25,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         private long LastScoopSourceUpdateTime;
 
-        public Scoop() : base()
+        public Scoop()
         {
             Dependencies = [
                 // Scoop-Search is required for search to work
@@ -44,7 +44,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     async () => (await CoreTools.Which("git.exe")).Item1)
             ];
 
-            Capabilities = new ManagerCapabilities()
+            Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
                 CanSkipIntegrityChecks = true,
@@ -53,14 +53,14 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 SupportedCustomArchitectures = [Architecture.X86, Architecture.X64, Architecture.Arm64],
                 SupportsCustomScopes = true,
                 SupportsCustomSources = true,
-                Sources = new SourceCapabilities()
+                Sources = new SourceCapabilities
                 {
                     KnowsPackageCount = true,
                     KnowsUpdateDate = true
                 }
             };
 
-            Properties = new ManagerProperties()
+            Properties = new ManagerProperties
             {
                 Name = "Scoop",
                 Description = CoreTools.Translate("Great repository of unknown but useful utilities and other interesting packages.<br>Contains: <b>Utilities, Command-line programs, General Software (extras bucket required)</b>"),
@@ -98,7 +98,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             {
                 Process proc = new()
                 {
-                    StartInfo = new ProcessStartInfo()
+                    StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
                         Arguments = Properties.ExecutableCallArgs + " install main/scoop-search",
@@ -119,7 +119,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = path,
                     Arguments = query,
@@ -186,7 +186,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " status",
@@ -252,7 +252,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " list",
@@ -455,7 +455,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             Process process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " --version",
@@ -486,7 +486,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             {
                 Process p = new()
                 {
-                    StartInfo = new ProcessStartInfo()
+                    StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
                         Arguments = Properties.ExecutableCallArgs + " " + command,

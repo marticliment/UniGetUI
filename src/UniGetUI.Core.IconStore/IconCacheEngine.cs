@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -55,7 +55,7 @@ namespace UniGetUI.Core.IconEngine
         /// <summary>
         /// Returns the path to the icon file, downloading it if necessary
         /// </summary>
-        /// <param name="icon">a CacheableIcon object representing the object</param>
+        /// <param name="_icon">a CacheableIcon object representing the object</param>
         /// <param name="ManagerName">The name of the PackageManager</param>
         /// <param name="PackageId">the Id of the package</param>
         /// <returns>A path to a local icon file</returns>
@@ -66,7 +66,7 @@ namespace UniGetUI.Core.IconEngine
                 return "";
             }
 
-            CacheableIcon icon = _icon ?? new CacheableIcon();
+            var icon = (CacheableIcon)_icon;
 
             string extension = icon.Url.AbsolutePath[icon.Url.AbsolutePath.LastIndexOf('.')..][1..];
 
@@ -185,7 +185,6 @@ namespace UniGetUI.Core.IconEngine
             Logger.Info($"Icon for package {PackageId} stored on {FilePath}");
             return FilePath;
         }
-
 
         private static async Task<byte[]> CalculateFileHashAsync(string filePath)
         {

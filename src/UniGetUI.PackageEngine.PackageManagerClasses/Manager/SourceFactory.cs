@@ -1,10 +1,8 @@
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Classes.Manager
 {
-    public class SourceFactory: ISourceFactory
+    public class SourceFactory : ISourceFactory
     {
         private readonly IPackageManager __manager;
         private readonly Dictionary<string, IManagerSource> __reference;
@@ -28,8 +26,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         /// <returns>A valid ManagerSource</returns>
         public IManagerSource GetSourceOrDefault(string name)
         {
-            IManagerSource? source;
-            if (__reference.TryGetValue(name, out source) && source != null)
+            if (__reference.TryGetValue(name, out IManagerSource? source) && source != null)
             {
                 return source;
             }
@@ -42,15 +39,13 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         /// <summary>
         /// Returns the existing source for the given name, or null if it does not exist.
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
         public IManagerSource? GetSourceIfExists(string name)
         {
-            IManagerSource? source;
-            if (__reference.TryGetValue(name, out source))
+            if (__reference.TryGetValue(name, out IManagerSource? source))
             {
                 return source;
             }
+
             return null;
         }
 

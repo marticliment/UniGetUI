@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UniGetUI.Core.Classes;
 using UniGetUI.Core.IconEngine;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
@@ -45,7 +38,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             SourceProvider = new NullSourceProvider(this);
             PackageDetailsProvider = new NullPackageDetailsProvider(this);
             SourceFactory = new SourceFactory(this);
-            Properties = new ManagerProperties()
+            Properties = new ManagerProperties
             {
                 IsDummy = true,
                 Name = CoreTools.Translate("Unknown"),
@@ -63,7 +56,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
 
             Capabilities = new ManagerCapabilities();
 
-            Status = new ManagerStatus()
+            Status = new ManagerStatus
             {
                 ExecutablePath = "C:/file.exe",
                 Found = false,

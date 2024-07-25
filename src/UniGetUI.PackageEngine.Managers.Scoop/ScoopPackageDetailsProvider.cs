@@ -7,7 +7,6 @@ using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.ScoopManager
 {
@@ -32,7 +31,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
                     Arguments = Manager.Properties.ExecutableCallArgs + " cat " + details.Package.Source.Name + "/" + details.Package.Id,

@@ -7,7 +7,6 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
-using UniGetUI.PackageEngine.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
@@ -24,7 +23,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuRemoveData;
 
         public InstalledPackagesPage()
-        : base(new PackagesPageData()
+        : base(new PackagesPageData
         {
             DisableAutomaticPackageLoadOnStart = false,
             MegaQueryBlockEnabled = false,

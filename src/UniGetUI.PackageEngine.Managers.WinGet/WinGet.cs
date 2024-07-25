@@ -34,7 +34,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         public readonly string PowerShellInlineArgs;
         public string WinGetBundledPath;
 
-        public WinGet() : base()
+        public WinGet()
         {
             PowerShellPath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
             PowerShellPromptArgs = "-ExecutionPolicy Bypass -NoLogo -NoProfile";
@@ -58,7 +58,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
                         Process p = new()
                         {
-                            StartInfo = new ProcessStartInfo() {
+                            StartInfo = new ProcessStartInfo
+                            {
                                 FileName = PowerShellPath,
                                 Arguments = PowerShellPromptArgs,
                                 RedirectStandardInput = true,
@@ -73,7 +74,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                      })
             ];
 
-            Capabilities = new ManagerCapabilities()
+            Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
                 CanSkipIntegrityChecks = true,
@@ -86,7 +87,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 SupportsCustomSources = true,
                 SupportsCustomPackageIcons = true,
                 SupportsCustomPackageScreenshots = true,
-                Sources = new SourceCapabilities()
+                Sources = new SourceCapabilities
                 {
                     KnowsPackageCount = false,
                     KnowsUpdateDate = true,
@@ -94,7 +95,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             };
 
-            Properties = new ManagerProperties()
+            Properties = new ManagerProperties
             {
                 Name = "Winget",
                 DisplayName = "WinGet",
@@ -181,7 +182,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     return MicrosoftStoreSource;
                 }
 
-                // Otherwise, Source is localpc
+                // Otherwise, Source is Local PC
                 return LocalPcSource;
             }
             catch (Exception ex)
@@ -348,7 +349,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             Process process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " --version",
@@ -370,7 +371,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = PowerShellPath,
                     Arguments = PowerShellInlineArgs + " -Command Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version",
@@ -416,7 +417,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " source update --disable-interactivity",

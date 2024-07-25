@@ -1,9 +1,6 @@
 using System.Diagnostics;
-using System.Net;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 {
@@ -77,7 +74,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         }
 
         /// <summary>
-        /// Returns the output with a preceeding digit representing the color of the line:
+        /// Returns the output with a preceding digit representing the color of the line:
         ///   0. White
         ///   1. Grey
         ///   2. Red
@@ -85,7 +82,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         ///   4. Green
         ///   5. Yellow
         /// </summary>
-        /// <returns></returns>
         public abstract IEnumerable<string> AsColoredString(bool verbose = false);
     }
 
@@ -100,7 +96,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         private readonly List<string> StdOut = [];
         private readonly List<string> StdErr = [];
 
-        public ProcessTaskLogger(IPackageManager manager, LoggableTaskType type, string executable, string arguments) : base()
+        public ProcessTaskLogger(IPackageManager manager, LoggableTaskType type, string executable, string arguments)
         {
             Type = type;
             Manager = manager;
@@ -198,7 +194,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 $"0Subprocess executable: \"{Executable}\"",
                 $"0Command-line arguments: \"{Arguments}\"",
                 $"0Process start time: {StartTime}",
-                EndTime == null ? $"2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
+                EndTime == null ? "2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
             ];
 
             if (StdIn.Count > 0)
@@ -281,7 +277,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         private readonly List<string> Info = [];
         private readonly List<string> Errors = [];
 
-        public NativeTaskLogger(IPackageManager manager, LoggableTaskType type) : base()
+        public NativeTaskLogger(IPackageManager manager, LoggableTaskType type)
         {
             Type = type;
             Manager = manager;
@@ -359,7 +355,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             [
                 $"0Logged native task on manager {Manager.Name}. Task type is {Type}",
                 $"0Process start time: {StartTime}",
-                EndTime == null ? $"2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
+                EndTime == null ? "2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
             ];
 
             if (Info.Count > 0)

@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;
@@ -24,15 +23,13 @@ namespace UniGetUI.PackageEngine.Interfaces
         public string SourceAsString { get; }
         public string AutomationName { get; }
 
-
         /// <summary>
         /// Returns an identifier that can be used to compare different packahe instances that refer to the same package.
         /// What is taken into account:
         ///    - Manager and Source
         ///    - Package Identifier
-        /// For more specific comparsion use GetVersionedHash()
+        /// For more specific comparison use GetVersionedHash()
         /// </summary>
-        /// <returns></returns>
         public long GetHash();
 
         /// <summary>
@@ -43,30 +40,27 @@ namespace UniGetUI.PackageEngine.Interfaces
         ///    - Package version
         ///    - Package new version (if any)
         /// </summary>
-        /// <returns></returns>
         public long GetVersionedHash();
 
         /// <summary>
-        /// Check wether two packages are **REALLY** the same package.
+        /// Check whether two packages are **REALLY** the same package.
         /// What is taken into account:
         ///    - Manager and Source
         ///    - Package Identifier
         ///    - Package version
         ///    - Package new version (if any)
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
         public bool Equals(object? other);
 
         /// <summary>
-        /// Check wether two package instances represent the same package.
+        /// Check whether two package instances represent the same package.
         /// What is taken into account:
         ///    - Manager and Source
         ///    - Package Identifier
-        /// For more specific comparsion use package.Equals(object? other)
+        /// For more specific comparison use package.Equals(object? other)
         /// </summary>
         /// <param name="other">A package</param>
-        /// <returns>Wether the two instances refer to the same instance</returns>
+        /// <returns>Whether the two instances refer to the same instance</returns>
         public bool IsEquivalentTo(IPackage? other);
 
         /// <summary>
@@ -85,7 +79,6 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// <summary>
         /// Retrieves a list og URIs representing the available screenshots for this package.
         /// </summary>
-        /// <returns></returns>
         public Task<Uri[]> GetPackageScreenshots();
 
 
@@ -93,32 +86,26 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// Adds the package to the ignored updates list. If no version is provided, all updates are ignored.
         /// Calling this method will override older ignored updates.
         /// </summary>
-        /// <param name="version"></param>
-        /// <returns></returns>
         public Task AddToIgnoredUpdatesAsync(string version = "*");
 
         /// <summary>
         /// Removes the package from the ignored updates list, either if it is ignored for all updates or for a specific version only.
         /// </summary>
-        /// <returns></returns>
         public Task RemoveFromIgnoredUpdatesAsync();
 
         /// <summary>
         /// Returns true if the package's updates are ignored. If the version parameter
-        /// is passed it will be checked if that version is ignored. Please note that if 
-        /// all updates are ignored, calling this method with a specific version will 
-        /// still return true, although the passed version is not explicitly ignored. 
+        /// is passed it will be checked if that version is ignored. Please note that if
+        /// all updates are ignored, calling this method with a specific version will
+        /// still return true, although the passed version is not explicitly ignored.
         /// </summary>
-        /// <param name="Version"></param>
-        /// <returns></returns>
         public Task<bool> HasUpdatesIgnoredAsync(string Version = "*");
 
         /// <summary>
-        /// Returns (as a string) the version for which a package has been ignored. When no versions 
+        /// Returns (as a string) the version for which a package has been ignored. When no versions
         /// are ignored, an empty string will be returned; and when all versions are ignored an asterisk
         /// will be returned.
         /// </summary>
-        /// <returns></returns>
         public Task<string> GetIgnoredUpdatesVersionAsync();
 
         /// <summary>
@@ -143,13 +130,11 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// Sets the package tag. You may as well use the Tag property.
         /// This function is used for compatibility with the ? operator
         /// </summary>
-        /// <param name="tag"></param>
         public void SetTag(PackageTag tag);
 
         /// <summary>
-        /// Checks wether a new version of this package is installed
+        /// Checks whether a new version of this package is installed
         /// </summary>
-        /// <returns></returns>
         public bool NewerVersionIsInstalled();
 
         public Task<SerializablePackage_v1> AsSerializable();

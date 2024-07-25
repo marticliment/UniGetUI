@@ -76,7 +76,6 @@ namespace UniGetUI.Interface
                 WarnAboutAdminRights();
             }
 
-
             Dictionary<Page, NavButton> NextPageReference = new()
             {
                 { DiscoverPage, UpdatesNavButton },
@@ -271,8 +270,8 @@ namespace UniGetUI.Interface
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
-            grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
-            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
 
             TextBlock headerContent = new()
             {
@@ -302,7 +301,6 @@ namespace UniGetUI.Interface
                 VerticalAlignment = VerticalAlignment.Center
             });
 
-
             RichTextBlock CommandLineOutput = new()
             {
                 FontFamily = new FontFamily("Consolas"),
@@ -321,8 +319,8 @@ namespace UniGetUI.Interface
 
             Grid OutputGrid = new();
             OutputGrid.Children.Add(ScrollView);
-            OutputGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            OutputGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+            OutputGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            OutputGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
             Grid.SetColumn(ScrollView, 0);
             Grid.SetRow(ScrollView, 0);
 
@@ -378,10 +376,8 @@ namespace UniGetUI.Interface
         }
 
         /// <summary>
-        /// Will update the Installation Options for the given Package, and will return wether the user choose to continue
+        /// Will update the Installation Options for the given Package, and will return whether the user choose to continue
         /// </summary>
-        /// <param name="package"></param>
-        /// <returns></returns>
         public async Task<bool> ShowInstallationSettingsAndContinue(IPackage package, OperationType operation)
         {
             var options = (await InstallationOptions.FromPackageAsync(package)).AsSerializable();
@@ -397,8 +393,6 @@ namespace UniGetUI.Interface
         /// <summary>
         /// Will update the Installation Options for the given imported package
         /// </summary>
-        /// <param name="importedPackage"></param>
-        /// <returns></returns>
         public async Task<(SerializableInstallationOptions_v1, ContentDialogResult)> ShowInstallOptionsDialog_ImportedPackage(ImportedPackage importedPackage)
         {
             var result = await ShowInstallOptionsDialog(importedPackage, OperationType.None, importedPackage.installation_options);

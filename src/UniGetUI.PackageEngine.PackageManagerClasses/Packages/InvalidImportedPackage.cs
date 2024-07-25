@@ -1,20 +1,11 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
-using System.Text.Json.Nodes;
-using UniGetUI.Core.Classes;
-using UniGetUI.Core.Data;
-using UniGetUI.Core.IconEngine;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
-using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
@@ -24,7 +15,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public PackageTag Tag { get => PackageTag.Unavailable; set { } }
 
-        private bool __is_checked = false;
+        private bool __is_checked;
         public bool IsChecked
         {
             get { return __is_checked; }
@@ -88,8 +79,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public SerializableIncompatiblePackage_v1 AsSerializable_Incompatible()
         {
-            return new SerializableIncompatiblePackage_v1()
-            { 
+            return new SerializableIncompatiblePackage_v1
+            {
                 Name = Name,
                 Id = Id,
                 Version = Version,
@@ -180,7 +171,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 #pragma warning restore CS1998
     }
 
-    public class NullSource: IManagerSource
+    public class NullSource : IManagerSource
     {
         public static NullSource Instance = new(CoreTools.Translate("Unknown"));
         public IconType IconId { get; }
@@ -206,7 +197,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a human-readable string representing the source name
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return Name;

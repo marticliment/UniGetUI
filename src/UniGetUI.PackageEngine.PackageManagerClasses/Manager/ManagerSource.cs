@@ -1,7 +1,5 @@
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.Interface.Enums;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Classes.Manager
 {
@@ -51,7 +49,6 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         /// <summary>
         /// Replaces the current URL with the new one. Must be used only when a placeholder URL is used.
         /// </summary>
-        /// <param name="newUrl"></param>
         public void ReplaceUrl(Uri newUrl)
         {
             Url = newUrl;

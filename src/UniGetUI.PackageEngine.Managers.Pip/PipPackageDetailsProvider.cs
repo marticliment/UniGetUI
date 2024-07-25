@@ -7,7 +7,6 @@ using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.PipManager
 {
@@ -23,7 +22,6 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             HttpClient client = new(CoreData.GenericHttpClientParameters);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             JsonString = await client.GetStringAsync($"https://pypi.org/pypi/{details.Package.Id}/json");
-
 
             if (JsonObject.Parse(JsonString) is not JsonObject RawInfo)
             {
@@ -155,7 +153,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
                     Arguments = Manager.Properties.ExecutableCallArgs + " index versions " + package.Id,

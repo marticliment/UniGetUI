@@ -23,9 +23,9 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         public static new string[] FALSE_PACKAGE_IDS = ["Directory", "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"];
         public static new string[] FALSE_PACKAGE_VERSIONS = ["", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"];
 
-        public Chocolatey() : base()
+        public Chocolatey()
         {
-            Capabilities = new ManagerCapabilities()
+            Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
                 CanSkipIntegrityChecks = true,
@@ -36,14 +36,14 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 SupportsPreRelease = true,
                 SupportsCustomSources = true,
                 SupportsCustomPackageIcons = true,
-                Sources = new SourceCapabilities()
+                Sources = new SourceCapabilities
                 {
                     KnowsPackageCount = false,
                     KnowsUpdateDate = false,
                 }
             };
 
-            Properties = new ManagerProperties()
+            Properties = new ManagerProperties
             {
                 Name = "Chocolatey",
                 Description = CoreTools.Translate("The classic package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"),
@@ -67,7 +67,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " outdated",
@@ -121,7 +121,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         {
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " list",
@@ -388,7 +388,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             Process process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
                     Arguments = "--version",

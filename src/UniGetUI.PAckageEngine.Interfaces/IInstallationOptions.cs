@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using UniGetUI.Core.Data;
-using UniGetUI.Core.Language;
-using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Serializable;
-using Windows.ApplicationModel;
 
 namespace UniGetUI.PackageEngine.Interfaces
 {
@@ -31,13 +21,11 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// <summary>
         /// Loads and applies the options from the given SerializableInstallationOptions_v1 object to the current object.
         /// </summary>
-        /// <param name="options"></param>
         public void FromSerializable(SerializableInstallationOptions_v1 options);
 
         /// <summary>
         /// Returns a SerializableInstallationOptions_v1 object containing the options of the current instance.
         /// </summary>
-        /// <returns></returns>
         public SerializableInstallationOptions_v1 AsSerializable();
 
         /// <summary>
@@ -69,7 +57,6 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// <summary>
         /// Returns a string representation of the current options.
         /// </summary>
-        /// <returns></returns>
         public string ToString();
     }
 }

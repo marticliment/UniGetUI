@@ -21,7 +21,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
         public static new string[] FALSE_PACKAGE_IDS = [""];
         public static new string[] FALSE_PACKAGE_VERSIONS = [""];
 
-        public DotNet() : base()
+        public DotNet()
         {
             Dependencies = [
                 new ManagerDependency(
@@ -32,7 +32,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     async () => (await CoreTools.Which("dotnet-tools-outdated.exe")).Item1)
             ];
 
-            Capabilities = new ManagerCapabilities()
+            Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
                 SupportsCustomScopes = true,
@@ -44,7 +44,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 SupportsCustomVersions = true,
             };
 
-            Properties = new ManagerProperties()
+            Properties = new ManagerProperties
             {
                 Name = ".NET Tool",
                 Description = CoreTools.Translate("A repository full of tools and executables designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related tools and scripts</b>"),
@@ -68,7 +68,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             {
                 Process proc = new()
                 {
-                    StartInfo = new ProcessStartInfo()
+                    StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
                         Arguments = Properties.ExecutableCallArgs + " install --global dotnet-tools-outdated",
@@ -92,7 +92,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
             Process p = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = path,
                     Arguments = "",
@@ -155,10 +155,10 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             {
                 Process p = new()
                 {
-                    StartInfo = new ProcessStartInfo()
+                    StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + $" list" + (scope == PackageScope.Global ? " --global" : ""),
+                        Arguments = Properties.ExecutableCallArgs + " list" + (scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         UseShellExecute = false,
@@ -292,7 +292,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
             Process process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
                     Arguments = "tool -h",
@@ -313,7 +313,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
             process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
                     Arguments = "--version",

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Runtime.InteropServices;
@@ -28,7 +28,6 @@ public class WindowsPackageManagerStandardFactory : WindowsPackageManagerFactory
             // system. It can be safely ignored if any of the conditions
             // above are met.
             Marshal.ThrowExceptionForHR(hr);
-
 
             pUnknown = Marshal.GetIUnknownForObject(result);
             return MarshalGeneric<T>.FromAbi(pUnknown);
