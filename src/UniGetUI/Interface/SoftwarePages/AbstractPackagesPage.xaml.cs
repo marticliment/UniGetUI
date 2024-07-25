@@ -261,12 +261,6 @@ namespace UniGetUI.Interface
                 FilterPackages();
             };
 
-            // Handle when a key is pressed on the package list
-            PackageList.KeyUp += (s, e) =>
-            {
-                // TODO: Check if needed
-            };
-
             if (MEGA_QUERY_BOX_ENABLED)
             {
                 MegaQueryBlockGrid.Visibility = Visibility.Visible;
@@ -573,7 +567,7 @@ namespace UniGetUI.Interface
             }
             FilteredPackages.BlockSorting = false;
             FilteredPackages.Sort();
-
+            PackageList.InvalidateArrange();
             UpdatePackageCount();
         }
 
