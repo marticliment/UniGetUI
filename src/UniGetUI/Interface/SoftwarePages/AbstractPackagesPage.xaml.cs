@@ -385,23 +385,22 @@ namespace UniGetUI.Interface
             if (!UsedManagers.Contains(source.Manager))
             {
                 UsedManagers.Add(source.Manager);
-                TreeViewNode Node;
-                Node = new TreeViewNode { Content = source.Manager.DisplayName + "                                                                                    .", IsExpanded = false };
-                SourcesTreeView.RootNodes.Add(Node);
+                var node = new TreeViewNode { Content = source.Manager.DisplayName + "                                                                                    .", IsExpanded = false };
+                SourcesTreeView.RootNodes.Add(node);
 
                 // Smart way to decide whether to check a source or not.
                 // - Always check a source by default if no sources are present
                 // - Otherwise, Check a source only if half of the sources have already been checked
                 if (SourcesTreeView.RootNodes.Count == 0)
                 {
-                    SourcesTreeView.SelectedNodes.Add(Node);
+                    SourcesTreeView.SelectedNodes.Add(node);
                 }
                 else if (SourcesTreeView.SelectedNodes.Count >= SourcesTreeView.RootNodes.Count / 2)
                 {
-                    SourcesTreeView.SelectedNodes.Add(Node);
+                    SourcesTreeView.SelectedNodes.Add(node);
                 }
 
-                RootNodeForManager.Add(source.Manager, Node);
+                RootNodeForManager.Add(source.Manager, node);
                 UsedSourcesForManager.Add(source.Manager, []);
                 SourcesPlaceholderText.Visibility = Visibility.Collapsed;
                 SourcesTreeViewGrid.Visibility = Visibility.Visible;
@@ -455,6 +454,7 @@ namespace UniGetUI.Interface
             UsedSourcesForManager.Clear();
             RootNodeForManager.Clear();
             NodesForSources.Clear();
+            LocalPackagesNode.Children.Clear();
         }
 
         /// <summary>
@@ -652,7 +652,7 @@ namespace UniGetUI.Interface
             SourcesTreeView.SelectedItems.Clear();
             FilterPackages();
         }
-        
+
         protected async void ShowDetailsForPackage(IPackage? package)
         {
             if (package == null)
@@ -663,7 +663,7 @@ namespace UniGetUI.Interface
             Logger.Warn(PAGE_ROLE.ToString());
             await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package, PAGE_ROLE);
         }
-        
+
         protected void SharePackage(IPackage? package)
         {
             if (package == null)
@@ -673,7 +673,7 @@ namespace UniGetUI.Interface
 
             MainApp.Instance.MainWindow.SharePackage(package);
         }
-        
+
         protected async void ShowInstallationOptionsForPackage(IPackage? package)
         {
             if (package == null)
@@ -755,7 +755,7 @@ namespace UniGetUI.Interface
         private void PackageItemContainer_KeyUp(object sender, KeyRoutedEventArgs e)
         {
             IPackage? package = (sender as PackageItemContainer)?.Package;
-            
+
             bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
             //bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
             bool IS_ALT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftMenu).HasFlag(CoreVirtualKeyStates.Down);
