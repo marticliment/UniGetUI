@@ -68,7 +68,7 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
                 parameters.Add("--ignore-security-hash");
 
             if (options.CustomInstallLocation != "")
-                parameters.Add("--location"); parameters.Add($"\"{options.CustomInstallLocation}\"");
+                parameters.AddRange(["--location", $"\"{options.CustomInstallLocation}\""]);
 
             parameters.AddRange(options.Architecture switch
             {
