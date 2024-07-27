@@ -24,9 +24,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public ManagerProperties Properties { get; set; } = new(IsDummy: true);
         public ManagerCapabilities Capabilities { get; set; } = new(IsDummy: true);
         public ManagerStatus Status { get; set; } = new() { Found = false };
-        public string Name { get; set; } = "Unset";
+        public string Name { get => Properties.Name ?? "Unset"; }
         public string DisplayName { get => Properties.DisplayName ?? Name; }
-        public IManagerSource DefaultSource { get; set; }
+        public IManagerSource DefaultSource { get => Properties.DefaultSource; }
+
         public static string[] FALSE_PACKAGE_NAMES = [""];
         public static string[] FALSE_PACKAGE_IDS = [""];
         public static string[] FALSE_PACKAGE_VERSIONS = [""];
@@ -44,8 +45,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         public PackageManager()
         {
-            DefaultSource = Properties.DefaultSource;
-            Name = Properties.Name;
             __base_constructor_called = true;
             TaskLogger = new ManagerLogger(this);
             SourceProvider = new NullSourceProvider(this);
@@ -79,14 +78,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 throw new InvalidOperationException($"Manager {Name} has been declared as SupportsCustomSources but has no helper associated with it");
             }
 
-            DefaultSource = Properties.DefaultSource;
-            Name = Properties.Name;
-
             if (OperationProvider is NullOperationProvider)
             {
                 throw new InvalidOperationException($"Manager {Name} does not have an OperationProvider");
             }
             // END integrity check
+
+            Properties.DefaultSource.RefreshSourceNames();
+            foreach(var source in Properties.KnownSources) source.RefreshSourceNames();
 
             try
             {
@@ -117,7 +116,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                                (IsEnabled() ?
                                "\n█ Found: " + Status.Found.ToString() +
                                (Status.Found ?
-                               "\n█ Fancye exe name: " + Properties.ExecutableFriendlyName +
+                               "\n█ Fancy exe name: " + Properties.ExecutableFriendlyName +
                                "\n█ Executable path: " + Status.ExecutablePath +
                                "\n█ Call arguments: " + Properties.ExecutableCallArgs +
                                "\n█ Version: \n" + "█   " + Status.Version.Replace("\n", "\n█   ")

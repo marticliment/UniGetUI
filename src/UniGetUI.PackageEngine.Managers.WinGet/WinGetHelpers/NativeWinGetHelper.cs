@@ -37,40 +37,34 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
     {
         List<Package> Packages = [];
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
-        foreach (string query_part in query.Replace(".", " ").Split(" "))
+        Dictionary<(PackageCatalogReference, PackageMatchField), Task<FindPackagesResult>> FindPackageTasks = [];
+        
+        // Load catalogs
+        logger.Log("Loading available catalogs...");
+        IReadOnlyList<PackageCatalogReference> AvailableCatalogs = WinGetManager.GetPackageCatalogs();
+
+        // Spawn Tasks to find packages on catalogs
+        logger.Log("Spawning catalog fetching tasks...");
+        foreach (PackageCatalogReference CatalogReference in AvailableCatalogs.ToArray())
         {
-            FindPackagesOptions PackageFilters = Factory.CreateFindPackagesOptions();
-
-            logger.Log("Generating filters...");
-            // Name filter
-            PackageMatchFilter FilterName = Factory.CreatePackageMatchFilter();
-            FilterName.Field = PackageMatchField.Name;
-            FilterName.Value = query_part;
-            FilterName.Option = PackageFieldMatchOption.ContainsCaseInsensitive;
-            PackageFilters.Filters.Add(FilterName);
-
-            // Id filter
-            PackageMatchFilter FilterId = Factory.CreatePackageMatchFilter();
-            FilterId.Field = PackageMatchField.Id;
-            FilterId.Value = query_part;
-            FilterId.Option = PackageFieldMatchOption.ContainsCaseInsensitive;
-            PackageFilters.Filters.Add(FilterId);
-
-            // Load catalogs
-            logger.Log("Loading available catalogs...");
-            IReadOnlyList<PackageCatalogReference> AvailableCatalogs = WinGetManager.GetPackageCatalogs();
-            Dictionary<PackageCatalogReference, Task<FindPackagesResult>> FindPackageTasks = [];
-
-            // Spawn Tasks to find packages on catalogs
-            logger.Log("Spawning catalog fetching tasks...");
-            foreach (PackageCatalogReference CatalogReference in AvailableCatalogs.ToArray())
+            logger.Log($"Begin search on catalog {CatalogReference.Info.Name}");
+            // Connect to catalog
+            CatalogReference.AcceptSourceAgreements = true;
+            ConnectResult result = await CatalogReference.ConnectAsync();
+            if (result.Status == ConnectResultStatus.Ok)
             {
-                logger.Log($"Begin search on catalog {CatalogReference.Info.Name}");
-                // Connect to catalog
-                CatalogReference.AcceptSourceAgreements = true;
-                ConnectResult result = await CatalogReference.ConnectAsync();
-                if (result.Status == ConnectResultStatus.Ok)
+                foreach (var filter_type in new PackageMatchField[] { PackageMatchField.Name, PackageMatchField.Id, PackageMatchField.Moniker })
                 {
+                    FindPackagesOptions PackageFilters = Factory.CreateFindPackagesOptions();
+
+                    logger.Log("Generating filters...");
+                    // Name filter
+                    PackageMatchFilter FilterName = Factory.CreatePackageMatchFilter();
+                    FilterName.Field = filter_type;
+                    FilterName.Value = query;
+                    FilterName.Option = PackageFieldMatchOption.ContainsCaseInsensitive;
+                    PackageFilters.Filters.Add(FilterName);
+
                     try
                     {
                         // Create task and spawn it
@@ -79,57 +73,56 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
                         // Add task to list
                         FindPackageTasks.Add(
-                            CatalogReference,
+                            (CatalogReference, filter_type),
                             task
                         );
                     }
                     catch (Exception e)
                     {
                         logger.Error("WinGet: Catalog " + CatalogReference.Info.Name +
-                                     " failed to spawn FindPackages task.");
+                                        " failed to spawn FindPackages task.");
                         logger.Error(e);
                     }
                 }
-                else
+            }
+            else
+            {
+                logger.Error("WinGet: Catalog " + CatalogReference.Info.Name + " failed to connect.");
+            }
+        }
+
+        // Wait for tasks completion
+        await Task.WhenAll(FindPackageTasks.Values.ToArray());
+        logger.Log($"All catalogs fetched. Fetching results for query piece {query}");
+
+        foreach (var CatalogTaskPair in FindPackageTasks)
+        {
+            try
+            {
+                // Get the source for the catalog
+                IManagerSource source = Manager.GetSourceOrDefault(CatalogTaskPair.Key.Item1.Info.Name);
+
+                FindPackagesResult FoundPackages = CatalogTaskPair.Value.Result;
+                foreach (MatchResult package in FoundPackages.Matches.ToArray())
                 {
-                    logger.Error("WinGet: Catalog " + CatalogReference.Info.Name + " failed to connect.");
+                    CatalogPackage catPkg = package.CatalogPackage;
+                    // Create the Package item and add it to the list
+                    logger.Log(
+                        $"Found package: {catPkg.Name}|{catPkg.Id}|{catPkg.DefaultInstallVersion.Version} on catalog {source.Name}");
+                    Packages.Add(new Package(
+                        catPkg.Name,
+                        catPkg.Id,
+                        catPkg.DefaultInstallVersion.Version,
+                        source,
+                        Manager
+                    ));
                 }
             }
-
-            // Wait for tasks completion
-            await Task.WhenAll(FindPackageTasks.Values.ToArray());
-            logger.Log($"All catalogs fetched. Fetching results for query piece {query_part}");
-
-            foreach (KeyValuePair<PackageCatalogReference, Task<FindPackagesResult>> CatalogTaskPair in
-                     FindPackageTasks)
+            catch (Exception e)
             {
-                try
-                {
-                    // Get the source for the catalog
-                    IManagerSource source = Manager.GetSourceOrDefault(CatalogTaskPair.Key.Info.Name);
-
-                    FindPackagesResult FoundPackages = CatalogTaskPair.Value.Result;
-                    foreach (MatchResult package in FoundPackages.Matches.ToArray())
-                    {
-                        CatalogPackage catPkg = package.CatalogPackage;
-                        // Create the Package item and add it to the list
-                        logger.Log(
-                            $"Found package: {catPkg.Name}|{catPkg.Id}|{catPkg.DefaultInstallVersion.Version} on catalog {source.Name}");
-                        Packages.Add(new Package(
-                            catPkg.Name,
-                            catPkg.Id,
-                            catPkg.DefaultInstallVersion.Version,
-                            source,
-                            Manager
-                        ));
-                    }
-                }
-                catch (Exception e)
-                {
-                    logger.Error("WinGet: Catalog " + CatalogTaskPair.Key.Info.Name +
-                                 " failed to get available packages.");
-                    logger.Error(e);
-                }
+                logger.Error("WinGet: Catalog " + CatalogTaskPair.Key.Item1.Info.Name +
+                                " failed to get available packages.");
+                logger.Error(e);
             }
         }
 

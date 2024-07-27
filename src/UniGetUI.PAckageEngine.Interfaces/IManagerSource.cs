@@ -27,5 +27,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         {
             Url = newUrl;
         }
+
+        void RefreshSourceNames();
     }
 }
