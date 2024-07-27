@@ -472,11 +472,12 @@ namespace UniGetUI.Interface
             NotesDialog.CloseButtonText = CoreTools.Translate("Close");
             NotesDialog.Title = CoreTools.Translate("Release notes");
             ReleaseNotes? notes = new();
+            notes.Close += (s, e) => NotesDialog.Hide(); 
             NotesDialog.Content = notes;
             NotesDialog.SizeChanged += (s, e) =>
             {
-                notes.MinWidth = ActualWidth - 300;
-                notes.MinHeight = ActualHeight - 200;
+                notes.MinWidth = Math.Abs(ActualWidth - 300);
+                notes.MinHeight = Math.Abs(ActualHeight - 200);
             };
 
             await MainApp.Instance.MainWindow.ShowDialogAsync(NotesDialog);
@@ -501,10 +502,10 @@ namespace UniGetUI.Interface
             DetailsDialog.SizeChanged += (s, e) =>
             {
                 int hOffset = (ActualWidth < 1300) ? 100 : 300;
-                DetailsPage.MinWidth = ActualWidth - hOffset;
-                DetailsPage.MinHeight = ActualHeight - 100;
-                DetailsPage.MaxWidth = ActualWidth - hOffset;
-                DetailsPage.MaxHeight = ActualHeight - 100;
+                DetailsPage.MinWidth = Math.Abs(ActualWidth - hOffset);
+                DetailsPage.MinHeight = Math.Abs(ActualHeight - 100);
+                DetailsPage.MaxWidth = Math.Abs(ActualWidth - hOffset);
+                DetailsPage.MaxHeight = Math.Abs(ActualHeight - 100);
             };
 
             DetailsPage.Close += (s, e) => { DetailsDialog.Hide(); };
