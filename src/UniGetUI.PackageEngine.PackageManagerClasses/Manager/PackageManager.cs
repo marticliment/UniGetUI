@@ -82,7 +82,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             {
                 Status = await LoadManager();
 
-                if (IsReady() && SourceProvider != null)
+                if (IsReady() && Capabilities.SupportsCustomSources)
                 {
                     Task<IManagerSource[]> SourcesTask = GetSources();
                     Task winner = await Task.WhenAny(
