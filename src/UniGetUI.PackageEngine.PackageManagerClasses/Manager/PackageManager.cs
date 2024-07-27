@@ -107,7 +107,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                                (IsEnabled() ?
                                "\n█ Found: " + Status.Found.ToString() +
                                (Status.Found ?
-                               "\n█ Fancye exe name: " + Properties.ExecutableFriendlyName +
+                               "\n█ Fancy exe name: " + Properties.ExecutableFriendlyName +
                                "\n█ Executable path: " + Status.ExecutablePath +
                                "\n█ Call arguments: " + Properties.ExecutableCallArgs +
                                "\n█ Version: \n" + "█   " + Status.Version.Replace("\n", "\n█   ")
