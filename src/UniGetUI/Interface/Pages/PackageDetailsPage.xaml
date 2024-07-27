@@ -29,14 +29,14 @@
                             Height="128" Width="128" CornerRadius="24">
                         <Image Name="PackageIcon" Height="80" Width="80" Margin="8"/>
                     </Border>
-                    
+
                     <TextBlock Grid.Column="1" Name="PackageName" 
                         HorizontalAlignment="Left" VerticalAlignment="Center" 
                         FontFamily="Segoe UI Variable Display" 
                         FontWeight="Bold" FontSize="50"
                         TextWrapping="Wrap"/>
                 </Grid>
-                
+
                 <!-- Tags + Description -->
                 <StackPanel Name="DescriptionPanel" Orientation="Vertical" VerticalAlignment="Top">
                     <xaml:ItemsRepeater Name="TagGridView" ItemsSource="{x:Bind ShowableTags}">
@@ -61,16 +61,16 @@
                         <Run x:Name="DescriptionContent"/>
                         <LineBreak/>
                         <LineBreak/>
-                        <Run x:Name="HomepageUrl_Label" FontWeight="Bold">HOMEPAGE_LABEL: </Run>
+                        <Run x:Name="HomepageUrl_Label" FontWeight="Bold">HOMEPAGE_LABEL:</Run>
                         <Hyperlink x:Name="HomepageUrl_Content" NavigateUri="about:blank">Helo</Hyperlink>
                         <LineBreak/>
-                        <Run x:Name="Publisher_Label" FontWeight="Bold">PUBLISHER_LABEL: </Run>
+                        <Run x:Name="Publisher_Label" FontWeight="Bold">PUBLISHER_LABEL:</Run>
                         <Run x:Name="Publisher_Content">Helo</Run>
                         <LineBreak/>
-                        <Run x:Name="Author_Label" FontWeight="Bold">AUTHOR_LABEL: </Run>
+                        <Run x:Name="Author_Label" FontWeight="Bold">AUTHOR_LABEL:</Run>
                         <Run x:Name="Author_Content">Helo</Run>
                         <LineBreak/>
-                        <Run x:Name="License_Label" FontWeight="Bold">LICENSE_LABEL: </Run>
+                        <Run x:Name="License_Label" FontWeight="Bold">LICENSE_LABEL:</Run>
                         <Run x:Name="License_Content_Text">Helo</Run>
                         <Hyperlink x:Name="License_Content_Uri" NavigateUri="about:blank">(Helo)</Hyperlink>
                         <LineBreak/>
@@ -181,19 +181,7 @@
 
             </Grid>
         </ScrollViewer>
-        
-        <!-- Close Button -->
-        <Button HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="0,0,0,0" 
-                BorderThickness="0" Margin="0,-25,-25,0" Width="46" Height="31"
-                Click="CloseButton_Click"
-                Padding="0" Background="Transparent">
-            <Button.Resources>
-                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="Red"/>
-                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="DarkRed"/>
-            </Button.Resources>
-            <widgets:LocalIcon Icon="Close_Round" Height="16" Opacity="1"/>
-        </Button>
+        <widgets:DialogCloseButton Margin="0,-24,-24,0" Click="CloseButton_Click"/>
         <ProgressBar Name="LoadingIndicator" Margin="-30,-24,-30,0" IsIndeterminate="True" VerticalAlignment="Top"/>
-
     </Grid>
 </Page>

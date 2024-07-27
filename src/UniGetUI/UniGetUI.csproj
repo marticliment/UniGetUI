@@ -59,6 +59,7 @@
     <None Remove="Interface\Pages\PackageBundle.xaml" />
     <None Remove="Interface\SoftwarePages\AbstractPackagesPage.xaml" />
     <None Remove="Interface\SoftwareUpdates.xaml" />
+    <None Remove="Interface\Widgets\DialogCloseButton.xaml" />
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
     <None Remove="PackageEngine\OperationControl.xaml" />
@@ -297,5 +298,13 @@
 
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <CustomAdditionalCompileInputs Remove="Interface\Widgets\DialogCloseButton.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Remove="Interface\Widgets\DialogCloseButton.xaml" />
   </ItemGroup>
 </Project>
