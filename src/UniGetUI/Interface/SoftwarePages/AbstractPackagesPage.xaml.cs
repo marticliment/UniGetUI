@@ -721,18 +721,11 @@ namespace UniGetUI.Interface
 
         private void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            if (sender is not PackageItemContainer container)
+            if (sender is PackageItemContainer container && container.Package is IPackage package)
             {
-                return;
+                PackageList.Select(container.Wrapper.Index);
+                WhenShowingContextMenu(container.Package);
             }
-
-            if (container is null)
-            {
-                return;
-            }
-
-            PackageList.Select(container.Wrapper.Index);
-            WhenShowingContextMenu(container.Package);
         }
 
         private void PackageItemContainer_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
