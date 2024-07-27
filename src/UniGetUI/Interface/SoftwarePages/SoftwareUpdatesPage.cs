@@ -520,7 +520,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed)
                 {
-                    if (package.Manager.Name == manager)
+                    if (package.Manager.Name == manager || package.Manager.DisplayName == manager)
                     {
                         MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
                     }
