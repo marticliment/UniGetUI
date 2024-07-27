@@ -724,7 +724,7 @@ namespace UniGetUI.Interface
             if (sender is PackageItemContainer container && container.Package is IPackage package)
             {
                 PackageList.Select(container.Wrapper.Index);
-                WhenShowingContextMenu(container.Package);
+                WhenShowingContextMenu(package);
             }
         }
 

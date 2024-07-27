@@ -201,5 +201,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             return Name;
         }
+
+        public void RefreshSourceNames()
+        { }
+
     }
 }

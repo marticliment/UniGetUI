@@ -9,18 +9,17 @@ namespace UniGetUI.PackageEngine.Interfaces
 {
     public interface IPackageManager : ISourceProvider, IPackageDetailsProvider
     {
-        public ManagerProperties Properties { get; set; }
-        public ManagerCapabilities Capabilities { get; set; }
-        public ManagerStatus Status { get; set; }
-        public string Name { get; set; }
+        public ManagerProperties Properties { get; }
+        public ManagerCapabilities Capabilities { get; }
+        public ManagerStatus Status { get; }
+        public string Name { get; }
         public string DisplayName { get; }
-        public IManagerSource DefaultSource { get; set; }
-        public bool ManagerReady { get; set; }
+        public IManagerSource DefaultSource { get; }
+        public bool ManagerReady { get; }
         public IManagerLogger TaskLogger { get; }
 
         public ISourceProvider? SourceProvider { get; }
         public IPackageDetailsProvider? PackageDetailsProvider { get; }
-
 
         /// <summary>
         /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.

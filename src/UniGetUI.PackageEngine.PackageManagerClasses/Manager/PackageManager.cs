@@ -23,9 +23,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public ManagerProperties Properties { get; set; } = new(IsDummy: true);
         public ManagerCapabilities Capabilities { get; set; } = new(IsDummy: true);
         public ManagerStatus Status { get; set; } = new() { Found = false };
-        public string Name { get; set; } = "Unset";
+        public string Name { get => Properties.Name ?? "Unset"; }
         public string DisplayName { get => Properties.DisplayName ?? Name; }
-        public IManagerSource DefaultSource { get; set; }
+        public IManagerSource DefaultSource { get => Properties.DefaultSource; }
+
         public static string[] FALSE_PACKAGE_NAMES = [""];
         public static string[] FALSE_PACKAGE_IDS = [""];
         public static string[] FALSE_PACKAGE_VERSIONS = [""];
@@ -41,8 +42,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         public PackageManager()
         {
-            DefaultSource = Properties.DefaultSource;
-            Name = Properties.Name;
             __base_constructor_called = true;
             TaskLogger = new ManagerLogger(this);
             SourceProvider = new NullSourceProvider(this);
@@ -76,8 +75,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
             // END integrity check
 
-            DefaultSource = Properties.DefaultSource;
-            Name = Properties.Name;
+            Properties.DefaultSource.RefreshSourceNames();
+            foreach(var source in Properties.KnownSources) source.RefreshSourceNames();
+
             try
             {
                 Status = await LoadManager();
