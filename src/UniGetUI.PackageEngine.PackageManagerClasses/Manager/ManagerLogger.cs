@@ -36,7 +36,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         }
     }
 
-    public abstract class TaskLogger
+    public abstract class TaskLogger : ITaskLogger
     {
         protected DateTime StartTime;
         protected DateTime? EndTime;
