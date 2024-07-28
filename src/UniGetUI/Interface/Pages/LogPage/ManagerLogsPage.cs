@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.Interface.Pages.LogPage
 {
@@ -18,9 +19,9 @@ namespace UniGetUI.Interface.Pages.LogPage
             bool IS_DARK = ActualTheme == Microsoft.UI.Xaml.ElementTheme.Dark;
 
             bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains('(') ?? false;
-            foreach (PackageEngine.ManagerClasses.Manager.PackageManager manager in PEInterface.Managers)
+            foreach (PackageManager manager in PEInterface.Managers)
             {
-                if (manager.DisplayName.Contains(LogLevelCombo.SelectedValue?.ToString()?.Split(' ')[0] ?? "uncontained_word"))
+                if (manager.DisplayName.Contains(LogLevelCombo.SelectedValue?.ToString()?.Split('(')[0] ?? "uncontained_word"))
                 {
                     IManagerLogger TaskLogger = manager.TaskLogger;
                     LogTextBox.Blocks.Clear();
