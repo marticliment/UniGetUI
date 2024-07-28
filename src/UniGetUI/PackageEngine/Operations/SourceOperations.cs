@@ -66,7 +66,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleFailure()
         {
             LineInfoText = CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
-            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
+            if (!Settings.Get("DisableErrorNotifications") && !Settings.AreNotificationsDisabled())
             {
                 try
                 {
@@ -102,7 +102,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             OperationSucceeded?.Invoke(this, EventArgs.Empty);
             LineInfoText = CoreTools.Translate("The source {source} was added to {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
             {
                 try
                 {
@@ -177,7 +177,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleFailure()
         {
             LineInfoText = CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
-            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
+            if (!Settings.Get("DisableErrorNotifications") && !Settings.AreNotificationsDisabled())
             {
                 new ToastContentBuilder()
                     .AddArgument("action", "OpenUniGetUI")
@@ -204,7 +204,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             OperationSucceeded?.Invoke(this, EventArgs.Empty);
             LineInfoText = CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
             {
                 try
                 {
