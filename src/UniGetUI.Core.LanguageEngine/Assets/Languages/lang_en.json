@@ -456,7 +456,7 @@
   "The backup will be performed after login." : null,
   "The backup will include the complete list of the installed packages and their installation options. Ignored updates and skipped versions will also be saved." : null,
   "The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check." : null,
-  "The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>" : "The classical package manager for Windows. You'll find everything there. <br>Contains: <b>General Software</b>",
+  "The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>" : "The classic package manager for Windows. You'll find everything there. <br>Contains: <b>General Software</b>",
   "The following packages are going to be exported to a JSON file. No user data or binaries are going to be saved." : null,
   "The following packages are going to be installed on your system." : null,
   "The following settings will be applied each time this package is installed, updated or removed." : null,
