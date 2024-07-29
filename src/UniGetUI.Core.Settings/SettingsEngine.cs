@@ -1,10 +1,15 @@
-﻿using UniGetUI.Core.Data;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.SettingsEngine
 {
     public static class Settings
     {
+        public static bool AreNotificationsDisabled()
+        {
+            return Get("DisableSystemTray") || Get("DisableNotifications");
+        }
+
         public static bool Get(string setting, bool invert = false)
         {
             return File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)) ^ invert;

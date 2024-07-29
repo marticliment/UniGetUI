@@ -46,7 +46,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             Properties = new ManagerProperties
             {
                 Name = "Chocolatey",
-                Description = CoreTools.Translate("The classic package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"),
+                Description = CoreTools.Translate("The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>"),
                 IconId = IconType.Chocolatey,
                 ColorIconId = "choco_color",
                 ExecutableFriendlyName = "choco.exe",

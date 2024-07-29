@@ -144,7 +144,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             Package.SetTag(PackageTag.Failed);
 
-            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
+            if (!(Settings.Get("DisableErrorNotifications") || Settings.AreNotificationsDisabled()))
             {
                 try
                 {
@@ -183,7 +183,7 @@ namespace UniGetUI.PackageEngine.Operations
             Package.SetTag(PackageTag.AlreadyInstalled);
             PEInterface.InstalledPackagesLoader.AddForeign(Package);
 
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
             {
                 try
                 {
@@ -241,7 +241,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             Package.SetTag(PackageTag.Failed);
 
-            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
+            if (!Settings.Get("DisableErrorNotifications") && !Settings.AreNotificationsDisabled())
             {
                 try
                 {
@@ -287,7 +287,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             PEInterface.UpgradablePackagesLoader.Remove(Package);
 
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
             {
                 try
                 {
@@ -348,7 +348,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             Package.SetTag(PackageTag.Failed);
 
-            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
+            if (!Settings.Get("DisableErrorNotifications") && !Settings.AreNotificationsDisabled())
             {
                 try
                 {
@@ -388,7 +388,7 @@ namespace UniGetUI.PackageEngine.Operations
             PEInterface.UpgradablePackagesLoader.Remove(Package);
             PEInterface.InstalledPackagesLoader.Remove(Package);
 
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
             {
                 try
                 {
