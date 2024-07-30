@@ -1,9 +1,9 @@
-using ExternalLibraries.Pickers;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Xml.Serialization;
+using ExternalLibraries.Pickers;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
