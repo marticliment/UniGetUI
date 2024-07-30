@@ -456,7 +456,7 @@
   "The backup will be performed after login." : "备份将在登录后执行",
   "The backup will include the complete list of the installed packages and their installation options. Ignored updates and skipped versions will also be saved." : "备份将包含已安装软件包及其安装选项的完整列表。已忽略更新和跳过版本也将被保存。",
   "The checksum of the installer does not coincide with the expected value, and the authenticity of the installer can't be verified. If you trust the publisher, {0} the package again skipping the hash check." : "安装程序的校验和与预期不一致，无法验证安装程序的真实性。如果您信任发布者，再次{0}软件包将会跳过哈希校验。",
-  "The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>" : "Windows 的经典包管理器。您可以在这里找到所有东西。<br>包括：<b>通用软件</b>",
+  "The classical package manager for windows. You'll find everything there. <br>Contains: <b>General Software</b>" : "Windows 的经典包管理器。您可以在其中找到所有需要的东西。<br>包括：<b>通用软件</b>",
   "The following packages are going to be exported to a JSON file. No user data or binaries are going to be saved." : "以下软件包将会导出到 JSON 文件中。不会保存任何用户数据或二进制文件。",
   "The following packages are going to be installed on your system." : "以下软件包会安装在您的系统上。",
   "The following settings will be applied each time this package is installed, updated or removed." : "每次安装、更新或移除此软件包时都会应用以下设置。",
