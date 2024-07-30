@@ -61,6 +61,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             SourceProvider = new ChocolateySourceProvider(this);
             PackageDetailsProvider = new ChocolateyDetailsProvider(this);
+            OperationProvider = new ChocolateyOperationProvider(this);
         }
         
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
@@ -169,107 +170,6 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             logger.Close(p.ExitCode);
 
             return Packages.ToArray();
-        }
-        public override OperationVeredict GetInstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            string output_string = string.Join("\n", Output);
-
-            if (ReturnCode is 1641 or 0)
-            {
-                return OperationVeredict.Succeeded;
-            }
-
-            if (ReturnCode == 3010)
-            {
-                return OperationVeredict.Succeeded; // TODO: Restart required
-            }
-
-            if ((output_string.Contains("Run as administrator") || output_string.Contains("The requested operation requires elevation") || output_string.Contains("ERROR: Exception calling \"CreateDirectory\" with \"1\" argument(s): \"Access to the path")) && !options.RunAsAdministrator)
-            {
-                options.RunAsAdministrator = true;
-                return OperationVeredict.AutoRetry;
-            }
-
-            return OperationVeredict.Failed;
-        }
-
-        public override OperationVeredict GetUpdateOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            return GetInstallOperationVeredict(package, options, ReturnCode, Output);
-        }
-
-        public override OperationVeredict GetUninstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            string output_string = string.Join("\n", Output);
-
-            if (ReturnCode is 1641 or 1614 or 1605 or 0)
-            {
-                return OperationVeredict.Succeeded;
-            }
-
-            if (ReturnCode == 3010)
-            {
-                return OperationVeredict.Succeeded; // TODO: Restart required
-            }
-
-            if ((output_string.Contains("Run as administrator") || output_string.Contains("The requested operation requires elevation")) && !options.RunAsAdministrator)
-            {
-                options.RunAsAdministrator = true;
-                return OperationVeredict.AutoRetry;
-            }
-
-            return OperationVeredict.Failed;
-        }
-        public override string[] GetInstallParameters(IPackage package, IInstallationOptions options)
-        {
-            List<string> parameters = GetUninstallParameters(package, options).ToList();
-            parameters[0] = Properties.InstallVerb;
-            parameters.Add("--no-progress");
-
-            if (options.Architecture == Architecture.X86)
-            {
-                parameters.Add("--forcex86");
-            }
-
-            if (options.PreRelease)
-            {
-                parameters.Add("--prerelease");
-            }
-
-            if (options.SkipHashCheck)
-            {
-                parameters.AddRange(["--ignore-checksums", "--force"]);
-            }
-
-            if (options.Version != "")
-            {
-                parameters.AddRange([$"--version={options.Version}", "--allow-downgrade"]);
-            }
-
-            return parameters.ToArray();
-        }
-        public override string[] GetUpdateParameters(IPackage package, IInstallationOptions options)
-        {
-            string[] parameters = GetInstallParameters(package, options);
-            parameters[0] = Properties.UpdateVerb;
-            return parameters;
-        }
-
-        public override string[] GetUninstallParameters(IPackage package, IInstallationOptions options)
-        {
-            List<string> parameters = [Properties.UninstallVerb, package.Id, "-y"];
-
-            if (options.CustomParameters is not null)
-            {
-                parameters.AddRange(options.CustomParameters);
-            }
-
-            if (options.InteractiveInstallation)
-            {
-                parameters.Add("--notsilent");
-            }
-
-            return parameters.ToArray();
         }
 
         protected override async Task<ManagerStatus> LoadManager()

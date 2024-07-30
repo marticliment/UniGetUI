@@ -45,6 +45,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             };
 
             PackageDetailsProvider = new PipPackageDetailsProvider(this);
+            OperationProvider = new PipOperationProvider(this);
         }
         
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
@@ -257,74 +258,6 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             logger.Close(p.ExitCode);
 
             return Packages.ToArray();
-        }
-
-        public override OperationVeredict GetInstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            string output_string = string.Join("\n", Output);
-
-            if (ReturnCode == 0)
-            {
-                return OperationVeredict.Succeeded;
-            }
-
-            if (output_string.Contains("--user") && package.Scope == PackageScope.Global)
-            {
-                package.Scope = PackageScope.User;
-                return OperationVeredict.AutoRetry;
-            }
-            return OperationVeredict.Failed;
-        }
-
-        public override OperationVeredict GetUpdateOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            return GetInstallOperationVeredict(package, options, ReturnCode, Output);
-        }
-
-        public override OperationVeredict GetUninstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            return GetInstallOperationVeredict(package, options, ReturnCode, Output);
-        }
-        public override string[] GetInstallParameters(IPackage package, IInstallationOptions options)
-        {
-            string[] parameters = GetUpdateParameters(package, options);
-            parameters[0] = Properties.InstallVerb;
-            return parameters;
-        }
-        public override string[] GetUpdateParameters(IPackage package, IInstallationOptions options)
-        {
-            List<string> parameters = GetUninstallParameters(package, options).ToList();
-            parameters[0] = Properties.UpdateVerb;
-            parameters.Remove("--yes");
-
-            if (options.PreRelease)
-            {
-                parameters.Add("--pre");
-            }
-
-            if (options.InstallationScope == PackageScope.User)
-            {
-                parameters.Add("--user");
-            }
-
-            if (options.Version != "")
-            {
-                parameters[1] = package.Id + "==" + options.Version;
-            }
-
-            return parameters.ToArray();
-        }
-
-        public override string[] GetUninstallParameters(IPackage package, IInstallationOptions options)
-        {
-            List<string> parameters = [Properties.UninstallVerb, package.Id, "--yes", "--no-input", "--no-color", "--no-python-version-warning", "--no-cache"];
-
-            if (options.CustomParameters != null)
-            {
-                parameters.AddRange(options.CustomParameters);
-            }
-
-            return parameters.ToArray();
         }
 
         protected override async Task<ManagerStatus> LoadManager()

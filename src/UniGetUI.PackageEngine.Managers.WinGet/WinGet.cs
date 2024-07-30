@@ -114,6 +114,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             SourceProvider = new WinGetSourceProvider(this);
             PackageDetailsProvider = new WinGetPackageDetailsProvider(this);
+            OperationProvider = new WinGetOperationProvider(this);
 
             LocalPcSource = new LocalWinGetSource(this, CoreTools.Translate("Local PC"), IconType.LocalPc);
             AndroidSubsystemSource = new(this, CoreTools.Translate("Android Subsystem"), IconType.Android);
@@ -183,133 +184,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 // Otherwise they are Local PC
                 return LocalPcSource;
             }
-        }
-
-        public override string[] GetInstallParameters(IPackage package, IInstallationOptions options)
-        {
-            List<string> parameters = GetUninstallParameters(package, options).ToList();
-            parameters[0] = Properties.InstallVerb;
-
-            parameters.Add("--accept-package-agreements");
-
-            if (options.SkipHashCheck)
-            {
-                parameters.Add("--ignore-security-hash");
-            }
-
-            if (options.CustomInstallLocation != "")
-            {
-                parameters.Add("--location"); parameters.Add($"\"{options.CustomInstallLocation}\"");
-            }
-
-            parameters.AddRange(options.Architecture switch
-                {
-                    Architecture.X86 => ["--architecture", "x86"],
-                    Architecture.X64 => ["--architecture", "x64"],
-                    Architecture.Arm64 => ["--architecture", "arm64"],
-                    _ => []
-                }
-            );
-            return parameters.ToArray();
-        }
-        public override string[] GetUpdateParameters(IPackage package, IInstallationOptions options)
-        {
-            if (package.Name.Contains("64-bit") || package.Id.ToLower().Contains("x64"))
-            {
-                options.Architecture = Architecture.X64;
-            }
-            else if (package.Name.Contains("32-bit") || package.Id.ToLower().Contains("x86"))
-            {
-                options.Architecture = Architecture.X86;
-            }
-
-            string[] parameters = GetInstallParameters(package, options);
-            parameters[0] = Properties.UpdateVerb;
-            List<string> p = parameters.ToList();
-            p.Add("--force");
-            p.Add("--include-unknown");
-            parameters = p.ToArray();
-            return parameters;
-        }
-
-        public override string[] GetUninstallParameters(IPackage package, IInstallationOptions options)
-        {
-            List<string> parameters = [Properties.UninstallVerb, "--id", $"\"{package.Id}\"", "--exact"];
-            if (!package.Source.IsVirtualManager)
-            {
-                parameters.AddRange(["--source", package.Source.Name]);
-            }
-
-            parameters.Add("--accept-source-agreements");
-
-            parameters.AddRange(options.InstallationScope switch
-                {
-                    PackageScope.Local => ["--scope", "user"],
-                    PackageScope.Global => ["--scope", "machine"],
-                    _ => []
-                }
-            );
-
-            if (!package.IsUpgradable && options.Version != "")
-            {
-                parameters.AddRange(["--version", $"\"{options.Version}\"", "--force"]);
-            }
-            else if (!package.IsUpgradable && package.Version != "Unknown")
-            {
-                parameters.AddRange(["--version", $"\"{package.Version}\""]);
-            }
-
-            if (options.InteractiveInstallation)
-            {
-                parameters.Add("--interactive");
-            }
-            else
-            {
-                parameters.AddRange(["--silent", "--disable-interactivity"]);
-            }
-
-            parameters.AddRange(options.CustomParameters);
-
-            return parameters.ToArray();
-        }
-
-        public override OperationVeredict GetInstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            string output_string = string.Join("\n", Output);
-
-            if (ReturnCode == -1978334967) // Use https://www.rapidtables.com/convert/number/hex-to-decimal.html for easy UInt(hex) to Int(dec) conversion
-            {
-                return OperationVeredict.Succeeded; // TODO: Needs restart
-            }
-
-            if (ReturnCode == -1978335215)
-            {
-                return OperationVeredict.Failed; // TODO: Needs skip checksum
-            }
-
-            if (output_string.Contains("No applicable upgrade found") || output_string.Contains("No newer package versions are available from the configured sources"))
-            {
-                return OperationVeredict.Succeeded;
-            }
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
-        }
-
-        public override OperationVeredict GetUpdateOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            return GetInstallOperationVeredict(package, options, ReturnCode, Output);
-        }
-
-        public override OperationVeredict GetUninstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            string output_string = string.Join("\n", Output);
-
-            if (output_string.Contains("1603") || output_string.Contains("0x80070005") || output_string.Contains("Access is denied"))
-            {
-                options.RunAsAdministrator = true;
-                return OperationVeredict.AutoRetry;
-            }
-
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
         protected override async Task<ManagerStatus> LoadManager()

@@ -116,7 +116,6 @@ namespace UniGetUI.PackageEngine.PackageLoader
                     {
                         if (LoadOperationIdentifier == current_identifier && task.IsCompletedSuccessfully)
                         {
-                            int InitialCount = PackageReference.Count();
                             foreach (IPackage package in task.Result)
                             {
                                 if (Contains(package) || !await IsPackageValid(package))

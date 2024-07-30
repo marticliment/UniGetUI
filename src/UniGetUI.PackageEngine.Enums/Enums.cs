@@ -31,6 +31,7 @@ namespace UniGetUI.PackageEngine.Enums
     {
         Succeeded,
         Failed,
+        RestartRequired,
         AutoRetry,
     }
     public enum OperationStatus

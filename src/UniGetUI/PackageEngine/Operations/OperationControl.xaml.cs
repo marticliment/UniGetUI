@@ -469,7 +469,7 @@ namespace UniGetUI.PackageEngine.Operations
 
                 AfterFinshAction postAction = AfterFinshAction.ManualClose;
 
-                OperationVeredict OperationVeredict = GetProcessVeredict(Process.ExitCode, ProcessOutput.ToArray());
+                OperationVeredict OperationVeredict = await GetProcessVeredict(Process.ExitCode, ProcessOutput.ToArray());
 
                 if (Status != OperationStatus.Cancelled)
                 {
@@ -574,7 +574,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected abstract void Initialize();
         protected abstract Task<Process> BuildProcessInstance(ProcessStartInfo startInfo);
-        protected abstract OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output);
+        protected abstract Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output);
         protected abstract Task<AfterFinshAction> HandleFailure();
         protected abstract Task<AfterFinshAction> HandleSuccess();
         protected abstract string[] GenerateProcessLogHeader();

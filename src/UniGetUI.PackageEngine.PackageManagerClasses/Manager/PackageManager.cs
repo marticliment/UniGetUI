@@ -15,6 +15,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Classes.Manager;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
@@ -38,6 +39,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public IEnumerable<ManagerDependency> Dependencies { get; protected set; } = [];
 
         public IPackageDetailsProvider? PackageDetailsProvider { get; set; }
+        public IOperationProvider OperationProvider { get; set; }
+
         private readonly bool __base_constructor_called;
 
         public PackageManager()
@@ -46,6 +49,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             TaskLogger = new ManagerLogger(this);
             SourceProvider = new NullSourceProvider(this);
             PackageDetailsProvider = new NullPackageDetailsProvider(this);
+            OperationProvider = new NullOperationProvider(this);
         }
 
         /// <summary>
@@ -69,9 +73,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 throw new InvalidOperationException($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Properties object");
             }
 
-            if (Capabilities.SupportsCustomSources && SourceProvider == null)
+            if (Capabilities.SupportsCustomSources && SourceProvider is NullSourceProvider)
             {
                 throw new InvalidOperationException($"Manager {Name} has been declared as SupportsCustomSources but has no helper associated with it");
+            }
+
+            if (OperationProvider is NullOperationProvider)
+            {
+                throw new InvalidOperationException($"Manager {Name} does not have an OperationProvider");
             }
             // END integrity check
 
@@ -252,66 +261,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         protected abstract Task<Package[]> GetInstalledPackages_UnSafe();
 
         /// <summary>
-        /// Returns the command-line parameters to install the given package.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <param name="package">The Package going to be installed</param>
-        /// <param name="options">The options in which it is going to be installed</param>
-        /// <returns>An array of strings containing the parameters without the manager executable file</returns>
-        public abstract string[] GetInstallParameters(IPackage package, IInstallationOptions options);
-
-        /// <summary>
-        /// Returns the command-line parameters to update the given package.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <param name="package">The Package going to be updated</param>
-        /// <param name="options">The options in which it is going to be updated</param>
-        /// <returns>An array of strings containing the parameters without the manager executable file</returns>
-        public abstract string[] GetUpdateParameters(IPackage package, IInstallationOptions options);
-
-        /// <summary>
-        /// Returns the command-line parameters to uninstall the given package.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <param name="package">The Package going to be uninstalled</param>
-        /// <param name="options">The options in which it is going to be uninstalled</param>
-        /// <returns>An array of strings containing the parameters without the manager executable file</returns>
-        public abstract string[] GetUninstallParameters(IPackage package, IInstallationOptions options);
-
-        /// <summary>
-        /// Decides and returns the verdict of the install operation.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <param name="package">The package that was installed</param>
-        /// <param name="options">The options with which the package was installed. They may be modified if the returned value is OperationVeredict.AutoRetry</param>
-        /// <param name="ReturnCode">The exit code of the process</param>
-        /// <param name="Output">the output of the process</param>
-        /// <returns>An OperationVeredict value representing the result of the installation</returns>
-        public abstract OperationVeredict GetInstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output);
-
-        /// <summary>
-        /// Decides and returns the verdict of the update operation.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <param name="package">The package that was updated</param>
-        /// <param name="options">The options with which the package was updated. They may be modified if the returned value is OperationVeredict.AutoRetry</param>
-        /// <param name="ReturnCode">The exit code of the process</param>
-        /// <param name="Output">the output of the process</param>
-        /// <returns>An OperationVeredict value representing the result of the update</returns>
-        public abstract OperationVeredict GetUpdateOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output);
-
-        /// <summary>
-        /// Decides and returns the verdict of the uninstall operation.
-        /// Each manager MUST implement this method.
-        /// </summary>
-        /// <param name="package">The package that was uninstalled</param>
-        /// <param name="options">The options with which the package was uninstalled. They may be modified if the returned value is OperationVeredict.AutoRetry</param>
-        /// <param name="ReturnCode">The exit code of the process</param>
-        /// <param name="Output">the output of the process</param>
-        /// <returns>An OperationVeredict value representing the result of the uninstall</returns>
-        public abstract OperationVeredict GetUninstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output);
-
-        /// <summary>
         /// Refreshes the Package Manager sources/indexes
         /// Each manager MUST implement this method.
         /// </summary>
@@ -401,12 +350,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
         }
 #pragma warning disable CS8602
-        /*public async Task<PackageDetails> GetPackageDetails(IPackage package)
-        {
-            var details = new PackageDetails(package);
-            await GetPackageDetails(details);
-            return details;
-        }*/
 
         public async Task GetPackageDetails(IPackageDetails details)
         {
@@ -474,26 +417,44 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 return [];
             }
         }
-#pragma warning restore CS8602
         // END PACKAGEDETAILS-RELATED METHODS
 
-        public void LogOperation(Process process, string output)
+
+        // BEGIN OPERATION-RELATED METHODS
+        public IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
         {
-            output = Regex.Replace(output, "\n.{0,6}\n", "\n");
-            CoreData.ManagerLogs += $"\n▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄";
-            CoreData.ManagerLogs += $"\n█▀▀▀▀▀▀▀▀▀ [{DateTime.Now}] {Name} ▀▀▀▀▀▀▀▀▀▀▀";
-            CoreData.ManagerLogs += $"\n█  Executable: {process.StartInfo.FileName}";
-            CoreData.ManagerLogs += $"\n█  Arguments: {process.StartInfo.Arguments}";
-            CoreData.ManagerLogs += "\n";
-            CoreData.ManagerLogs += output;
-            CoreData.ManagerLogs += "\n";
-            CoreData.ManagerLogs += $"[{DateTime.Now}] Exit Code: {process.ExitCode}";
-            CoreData.ManagerLogs += "\n";
-            CoreData.ManagerLogs += "\n";
+            try
+            {
+                var parameters = OperationProvider.GetOperationParameters(package, options, operation);
+                Logger.Info($"Loaded operation parameters for package id={package.Id} on manager {Name} and operation {operation}: " + string.Join(' ', parameters));
+                return parameters;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"A fatal error ocurred while loading operation parameters for package id={package.Id} on manager {Name} and operation {operation}");
+                Logger.Error(ex);
+                return [];
+            }
         }
+
+        public OperationVeredict GetOperationResult(IPackage package, IInstallationOptions options, OperationType operation, IEnumerable<string> processOutput, int returnCode)
+        {
+            try
+            {
+                return OperationProvider.GetOperationResult(package, options, operation, processOutput, returnCode);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"A fatal error ocurred while loading operation parameters for package id={package.Id} on manager {Name} and operation {operation}");
+                Logger.Error(ex);
+                return OperationVeredict.Failed;
+            }
+        }
+        // END OPERATION-RELATED METHODS
+#pragma warning restore CS8602
     }
 
-    internal class NullSourceProvider : BaseSourceProvider<IPackageManager>
+    internal sealed class NullSourceProvider : BaseSourceProvider<IPackageManager>
     {
         public NullSourceProvider(IPackageManager manager) : base(manager)
         {
@@ -501,11 +462,11 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         public override string[] GetAddSourceParameters(IManagerSource source)
         {
-            throw new Exception("Package manager does not support adding sources");
+            throw new InvalidOperationException("Package manager does not support adding sources");
         }
         public override string[] GetRemoveSourceParameters(IManagerSource source)
         {
-            throw new Exception("Package manager does not support removing sources");
+            throw new InvalidOperationException("Package manager does not support removing sources");
         }
 
         public override OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
@@ -524,7 +485,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         }
     }
 
-    internal class NullPackageDetailsProvider : BasePackageDetailsProvider<IPackageManager>
+    internal sealed class NullPackageDetailsProvider : BasePackageDetailsProvider<IPackageManager>
     {
 #pragma warning disable CS1998
         public NullPackageDetailsProvider(IPackageManager manager) : base(manager)
@@ -550,6 +511,23 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         {
             return [];
         }
-#pragma warning restore CS1998
     }
+
+    internal sealed class NullOperationProvider : BaseOperationProvider<IPackageManager>
+    {
+        public NullOperationProvider(IPackageManager manager) : base(manager)
+        {
+        }
+
+        public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+        {
+            return Array.Empty<string>();
+        }
+
+        public override OperationVeredict GetOperationResult(IPackage package, IInstallationOptions options, OperationType operation, IEnumerable<string> processOutput, int returnCode)
+        {
+            return OperationVeredict.Failed;
+        }
+    }
+#pragma warning restore CS1998
 }

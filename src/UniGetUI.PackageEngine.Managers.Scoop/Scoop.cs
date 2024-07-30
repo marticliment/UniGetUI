@@ -86,6 +86,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             SourceProvider = new ScoopSourceProvider(this);
             PackageDetailsProvider = new ScoopPackageDetailsProvider(this);
+            OperationProvider = new ScoopOperationProvider(this);
         }
 
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
@@ -302,119 +303,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         scope = PackageScope.Global;
                     }
 
-                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], GetSourceOrDefault(elements[2]), this, scope));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], GetSourceOrDefault(elements[2]), this, scope));
                 }
             }
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
             await p.WaitForExitAsync();
             logger.Close(p.ExitCode);
             return Packages.ToArray();
-        }
-
-        
-        public override OperationVeredict GetUninstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            string output_string = string.Join("\n", Output);
-            if (output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local)
-            {
-                package.Scope = PackageScope.Global;
-                return OperationVeredict.AutoRetry;
-            }
-            if (output_string.Contains("requires admin rights") || output_string.Contains("requires administrator rights") || output_string.Contains("you need admin rights to install global apps"))
-            {
-                options.RunAsAdministrator = true;
-                return OperationVeredict.AutoRetry;
-            }
-            if (output_string.Contains("was uninstalled"))
-            {
-                return OperationVeredict.Succeeded;
-            }
-
-            return OperationVeredict.Failed;
-        }
-        public override OperationVeredict GetInstallOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            string output_string = string.Join("\n", Output);
-            if (output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local)
-            {
-                package.Scope = PackageScope.Global;
-                return OperationVeredict.AutoRetry;
-            }
-            if (output_string.Contains("requires admin rights") || output_string.Contains("requires administrator rights") || output_string.Contains("you need admin rights to install global apps"))
-            {
-                options.RunAsAdministrator = true;
-                return OperationVeredict.AutoRetry;
-            }
-            if (output_string.Contains("ERROR"))
-            {
-                return OperationVeredict.Failed;
-            }
-
-            return OperationVeredict.Succeeded;
-        }
-        public override OperationVeredict GetUpdateOperationVeredict(IPackage package, IInstallationOptions options, int ReturnCode, string[] Output)
-        {
-            return GetInstallOperationVeredict(package, options, ReturnCode, Output);
-        }
-
-        public override string[] GetUninstallParameters(IPackage package, IInstallationOptions options)
-        {
-            List<string> parameters = [Properties.UninstallVerb, package.Source.Name + "/" + package.Id];
-
-            if (package.Scope == PackageScope.Global)
-            {
-                parameters.Add("--global");
-            }
-
-            if (options.CustomParameters != null)
-            {
-                parameters.AddRange(options.CustomParameters);
-            }
-
-            if (options.RemoveDataOnUninstall)
-            {
-                parameters.Add("--purge");
-            }
-
-            return parameters.ToArray();
-        }
-        public override string[] GetInstallParameters(IPackage package, IInstallationOptions options)
-        {
-            string[] parameters = GetUpdateParameters(package, options);
-            parameters[0] = Properties.InstallVerb;
-            return parameters;
-        }
-        public override string[] GetUpdateParameters(IPackage package, IInstallationOptions options)
-        {
-            List<string> parameters = GetUninstallParameters(package, options).ToList();
-            parameters[0] = Properties.UpdateVerb;
-
-            parameters.Remove("--purge");
-
-            switch (options.Architecture)
-            {
-                case null:
-                    break;
-                case Architecture.X64:
-                    parameters.Add("--arch");
-                    parameters.Add("64bit");
-                    break;
-                case Architecture.X86:
-                    parameters.Add("--arch");
-                    parameters.Add("32bit");
-                    break;
-                case Architecture.Arm64:
-                    parameters.Add("--arch");
-                    parameters.Add("arm64");
-                    break;
-            }
-
-            if (options.SkipHashCheck)
-            {
-                parameters.Add("--skip");
-            }
-
-            return parameters.ToArray();
         }
 
         public override async Task RefreshPackageIndexes()
