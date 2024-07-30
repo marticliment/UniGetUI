@@ -35,7 +35,7 @@ internal sealed class DotNetOperationProvider : BaseOperationProvider<DotNet>
         if (options.CustomInstallLocation != "")
             parameters.AddRange(["--tool-path", "\"" + options.CustomInstallLocation + "\""]);
 
-        if (options.InstallationScope == PackageScope.Global || (options.InstallationScope is null && package.Scope == PackageScope.Global))
+        if(package.OverridenOptions.Scope == PackageScope.Global || (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
             parameters.Add("--global");
 
         if (operation is OperationType.Install or OperationType.Update)

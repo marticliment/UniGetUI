@@ -9,6 +9,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Structs;
 
 namespace UniGetUI.PackageEngine.Managers.PipManager
 {
@@ -127,7 +128,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         continue;
                     }
 
-                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, scope: PackageScope.Global));
+                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, new(PackageScope.Global)));
                 }
             }
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
@@ -188,7 +189,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         continue;
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, scope: PackageScope.Global));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, new(PackageScope.Global)));
                 }
             }
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
@@ -250,7 +251,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         continue;
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, scope: PackageScope.Global));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, new(PackageScope.Global)));
                 }
             }
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());

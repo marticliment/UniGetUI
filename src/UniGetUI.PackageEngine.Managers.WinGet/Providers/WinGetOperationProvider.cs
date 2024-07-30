@@ -46,7 +46,6 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
         parameters.Add(options.InteractiveInstallation ? "--interactive" : "--silent");
         parameters.AddRange(options.CustomParameters);
 
-
         if(operation is OperationType.Update)
         {
             if (package.Name.Contains("64-bit") || package.Id.ToLower().Contains("x64"))

@@ -249,7 +249,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 if(package is ImportedPackage imported)
                 { 
-                    Logger.ImportantInfo($"Registering package {imported.Id} from manager {imported.SourceAsString}");
+                    Logger.ImportantInfo($"Registering package {imported.Id} from manager {imported.Source.AsString}");
                     packages_to_install.Add(await imported.RegisterAndGetPackageAsync());
                 }
                 else

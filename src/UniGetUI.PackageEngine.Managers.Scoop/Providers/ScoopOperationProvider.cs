@@ -24,8 +24,8 @@ internal sealed class ScoopOperationProvider : BaseOperationProvider<Scoop>
         }];
         parameters.Add($"{package.Source.Name}/{package.Id}");
 
-        if (options.InstallationScope == PackageScope.Global ||
-            (options.InstallationScope is null && package.Scope == PackageScope.Global))
+
+        if (package.OverridenOptions.Scope == PackageScope.Global || (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
         {
             parameters.Add("--global");
         }
@@ -58,9 +58,9 @@ internal sealed class ScoopOperationProvider : BaseOperationProvider<Scoop>
     public override OperationVeredict GetOperationResult(IPackage package, IInstallationOptions options, OperationType operation, IEnumerable<string> processOutput, int returnCode)
     {
         string output_string = string.Join("\n", processOutput);
-        if (output_string.Contains("Try again with the --global (or -g) flag instead") && package.Scope == PackageScope.Local)
+        if (output_string.Contains("Try again with the --global (or -g) flag instead") && package.OverridenOptions.Scope != PackageScope.Global)
         {
-            package.Scope = PackageScope.Global;
+            package.OverridenOptions.Scope = PackageScope.Global;
             return OperationVeredict.AutoRetry;
         }
         if (output_string.Contains("requires admin rights") || output_string.Contains("requires administrator rights") || output_string.Contains("you need admin rights to install global apps"))

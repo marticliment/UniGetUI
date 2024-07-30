@@ -49,6 +49,8 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected sealed override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
         {
+            string operation_args = string.Join(" ", Package.Manager.GetOperationParameters(Package, Options, Role));
+
             if (Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
@@ -56,19 +58,18 @@ namespace UniGetUI.PackageEngine.Operations
                     await CoreTools.CacheUACForCurrentProcess();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetOperationParameters(Package, Options, Role));
+                startInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
             else
             {
                 startInfo.FileName = Package.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetOperationParameters(Package, Options, Role));
+                startInfo.Arguments = $"{Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
-            Process process = new()
+
+            return new Process()
             {
                 StartInfo = startInfo
             };
-
-            return process;
         }
 
 #pragma warning disable CS1998

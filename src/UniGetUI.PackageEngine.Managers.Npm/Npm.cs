@@ -8,6 +8,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
+using UniGetUI.PackageEngine.Structs;
 
 namespace UniGetUI.PackageEngine.Managers.NpmManager
 {
@@ -101,14 +102,14 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             List<Package> Packages = [];
-            foreach (PackageScope scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
+            foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })
             {
                 Process p = new()
                 {
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " outdated --parseable" + (scope == PackageScope.Global ? " --global" : ""),
+                        Arguments = Properties.ExecutableCallArgs + " outdated --parseable" + (options.Scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         RedirectStandardInput = true,
@@ -139,7 +140,15 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                             elements[3] = "%" + elements[3][1..];
                         }
 
-                        Packages.Add(new Package(CoreTools.FormatAsName(elements[2].Split('@')[0]).Replace('%', '@'), elements[2].Split('@')[0].Replace('%', '@'), elements[3].Split('@')[^1].Replace('%', '@'), elements[2].Split('@')[^1].Replace('%', '@'), DefaultSource, this, scope));
+                        Packages.Add(new Package(
+                            CoreTools.FormatAsName(elements[2].Split('@')[0]).Replace('%', '@'),
+                            elements[2].Split('@')[0].Replace('%', '@'),
+                            elements[3].Split('@')[^1].Replace('%', '@'),
+                            elements[2].Split('@')[^1].Replace('%', '@'),
+                            DefaultSource,
+                            this,
+                            options
+                        ));
                     }
                 }
 
@@ -153,14 +162,14 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         protected override async Task<Package[]> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
-            foreach (PackageScope scope in new PackageScope[] { PackageScope.Local, PackageScope.Global })
+            foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })
             {
                 Process p = new()
                 {
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " list" + (scope == PackageScope.Global ? " --global" : ""),
+                        Arguments = Properties.ExecutableCallArgs + " list" + (options.Scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         RedirectStandardInput = true,
@@ -191,7 +200,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                                     elements[1] = elements[2];
                                 }
                             }
-                            Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, scope));
+                            Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, options));
                         }
                     }
                 }
