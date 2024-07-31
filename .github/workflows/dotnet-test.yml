@@ -1,9 +1,14 @@
-name: Tests
+name: .NET Tests
 on:
   push:
-    branches: [ "main" ]
+    paths:
+      - '**.cs'
+      - '**.csproj'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - '**.cs'
+      - '**.csproj'
   workflow_dispatch:
 
 jobs:

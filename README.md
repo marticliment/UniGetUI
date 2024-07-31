@@ -121,7 +121,7 @@ To translate UniGetUI to other languages or to update an old translation, please
 | <img src='https://flagcdn.com/dk.svg' width=20> &nbsp; Danish - Dansk | 75% | [AAUCrisp](https://github.com/AAUCrisp), [mikkolukas](https://github.com/mikkolukas), [yrjarv](https://github.com/yrjarv) |
 | <img src='https://flagcdn.com/de.svg' width=20> &nbsp; German - Deutsch | 100% | [1270o1](https://github.com/1270o1), [alxhu-dev](https://github.com/alxhu-dev), [CanePlayz](https://github.com/CanePlayz), [Datacra5H](https://github.com/Datacra5H), [ebnater](https://github.com/ebnater), [michaelmairegger](https://github.com/michaelmairegger), [Seeloewen](https://github.com/Seeloewen), [yrjarv](https://github.com/yrjarv) |
 | <img src='https://flagcdn.com/gr.svg' width=20> &nbsp; Greek - Ελληνικά | 99% | [antwnhsx](https://github.com/antwnhsx), [thunderstrike116](https://github.com/thunderstrike116), [wobblerrrgg](https://github.com/wobblerrrgg) |
-| <img src='https://flagcdn.com/ee.svg' width=20> &nbsp; Estonian - Eesti | 10% | [artjom3729](https://github.com/artjom3729) |
+| <img src='https://flagcdn.com/ee.svg' width=20> &nbsp; Estonian - Eesti | 11% | [artjom3729](https://github.com/artjom3729) |
 | <img src='https://flagcdn.com/gb.svg' width=20> &nbsp; English - English | 100% | [marticliment](https://github.com/marticliment), [ppvnf](https://github.com/ppvnf) |
 | <img src='https://flagcdn.com/es.svg' width=20> &nbsp; Spanish - Castellano | 100% | [apazga](https://github.com/apazga), [dalbitresb12](https://github.com/dalbitresb12), [evaneliasyoung](https://github.com/evaneliasyoung), [guplem](https://github.com/guplem), [JMoreno97](https://github.com/JMoreno97), [marticliment](https://github.com/marticliment), [rubnium](https://github.com/rubnium), [uKER](https://github.com/uKER) |
 | <img src='https://flagcdn.com/ir.svg' width=20> &nbsp; Persian - فارسی‎ | 63% | [Imorate](https://github.com/Imorate), [itsarian](https://github.com/itsarian), [Mahdi-Hazrati](https://github.com/Mahdi-Hazrati), [smsi2001](https://github.com/smsi2001) |
@@ -130,7 +130,7 @@ To translate UniGetUI to other languages or to update an old translation, please
 | <img src='https://flagcdn.com/gu.svg' width=20> &nbsp; Gujarati - ગુજરાતી | 10% |  |
 | <img src='https://flagcdn.com/in.svg' width=20> &nbsp; Hindi - हिंदी | 54% | [atharva_xoxo](https://github.com/atharva_xoxo), [satanarious](https://github.com/satanarious) |
 | <img src='https://flagcdn.com/hr.svg' width=20> &nbsp; Croatian - Hrvatski | 57% | Stjepan Treger |
-| <img src='https://flagcdn.com/il.svg' width=20> &nbsp; Hebrew - עִבְרִית‎ | 48% | Oryan |
+| <img src='https://flagcdn.com/il.svg' width=20> &nbsp; Hebrew - עִבְרִית‎ | 100% | [maximunited](https://github.com/maximunited), Oryan |
 | <img src='https://flagcdn.com/hu.svg' width=20> &nbsp; Hungarian - Magyar | 100% | [gidano](https://github.com/gidano) |
 | <img src='https://flagcdn.com/it.svg' width=20> &nbsp; Italian - Italiano | 100% | David Senoner, [giacobot](https://github.com/giacobot), [maicol07](https://github.com/maicol07), [mapi68](https://github.com/mapi68), [mrfranza](https://github.com/mrfranza), Rosario Di Mauro |
 | <img src='https://flagcdn.com/id.svg' width=20> &nbsp; Indonesian - Bahasa Indonesia | 83% | [arthackrc](https://github.com/arthackrc), [joenior](https://github.com/joenior) |
@@ -143,7 +143,7 @@ To translate UniGetUI to other languages or to update an old translation, please
 | <img src='https://flagcdn.com/nl.svg' width=20> &nbsp; Dutch - Nederlands | 100% | [abbydiode](https://github.com/abbydiode), [CateyeNL](https://github.com/CateyeNL), [Stephan-P](https://github.com/Stephan-P) |
 | <img src='https://flagcdn.com/pl.svg' width=20> &nbsp; Polish - Polski | 100% | [KamilZielinski](https://github.com/KamilZielinski), [kwiateusz](https://github.com/kwiateusz), [RegularGvy13](https://github.com/RegularGvy13), [ThePhaseless](https://github.com/ThePhaseless) |
 | <img src='https://flagcdn.com/br.svg' width=20> &nbsp; Portuguese (Brazil) | 100% | [maisondasilva](https://github.com/maisondasilva), [ppvnf](https://github.com/ppvnf), [Rodrigo-Matsuura](https://github.com/Rodrigo-Matsuura), [thiagojramos](https://github.com/thiagojramos), [wanderleihuttel](https://github.com/wanderleihuttel) |
-| <img src='https://flagcdn.com/pt.svg' width=20> &nbsp; Portuguese (Portugal) | 95% | [PoetaGA](https://github.com/PoetaGA), [Tiago_Ferreira](https://github.com/Tiago_Ferreira) |
+| <img src='https://flagcdn.com/pt.svg' width=20> &nbsp; Portuguese (Portugal) | 96% | [PoetaGA](https://github.com/PoetaGA), [Tiago_Ferreira](https://github.com/Tiago_Ferreira) |
 | <img src='https://flagcdn.com/ro.svg' width=20> &nbsp; Romanian - Română | 100% | [SilverGreen93](https://github.com/SilverGreen93), TZACANEL |
 | <img src='https://flagcdn.com/ru.svg' width=20> &nbsp; Russian - Русский | 99% | [bropines](https://github.com/bropines), [DvladikD](https://github.com/DvladikD), [flatron4eg](https://github.com/flatron4eg), [katrovsky](https://github.com/katrovsky), Sergey, sklart |
 | <img src='https://flagcdn.com/sk.svg' width=20> &nbsp; Slovak - Slovenčina | 12% | [Luk164](https://github.com/Luk164) |
@@ -161,7 +161,7 @@ To translate UniGetUI to other languages or to update an old translation, please
 | <img src='https://flagcdn.com/cn.svg' width=20> &nbsp; Simplified Chinese (China) | 100% | Aaron Liu, adfnekc, [arthurfsy2](https://github.com/arthurfsy2), [bai0012](https://github.com/bai0012), BUGP Association, ciaran, CnYeSheng, Cololi, [dongfengweixiao](https://github.com/dongfengweixiao), [FloatStream](https://github.com/FloatStream), [seanyu0](https://github.com/seanyu0), [Sigechaishijie(Albert Peng)](https://github.com/Sigechaishijie(Albert Peng)), [SpaceTimee](https://github.com/SpaceTimee), Yisme |
 | <img src='https://flagcdn.com/tw.svg' width=20> &nbsp; Traditional Chinese (Taiwan) | 95% | Aaron Liu, CnYeSheng, Cololi, [Henryliu880922](https://github.com/Henryliu880922), [yrctw](https://github.com/yrctw) |
 
-Last updated: Tue Jul 30 00:11:59 2024
+Last updated: Wed Jul 31 16:42:05 2024
 <!-- END Autogenerated translations -->
 
 

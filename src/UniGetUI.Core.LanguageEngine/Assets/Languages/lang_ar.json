@@ -404,7 +404,7 @@
   "Select package file" : "تحديد ملف الحزم",
   "Select the source you want to add:" : "قم تحديد المصدر المُراد إضافته:",
   "Select which <b>package managers</b> to use ({0}), configure how packages are installed, manage how administrator rights are handled, etc." : "حدد <b> مديري الحزم </ b> لاستخدام ({0}) ، وتهيئة كيفية تثبيت الحزم ، وإدارة كيفية التعامل مع صلاحيات المسؤول ، وما إلى ذلك.",
-  "Sent handshake. Waiting for instance listener's answer... ({0}%)" : "تم إرسال المصافحة. يتم انتظار رد مستمعة العمليات",
+  "Sent handshake. Waiting for instance listener's answer... ({0}%)" : "تم إرسال المصافحة. يتم انتظار رد مستمعة العمليات ({0}%)",
   "Set a custom backup file name" : null,
   "Set custom backup file name" : "تعيين اسم لملف النسخة الإحتياطية المخصصة",
   "Settings" : "الإعدادات",
