@@ -1,4 +1,4 @@
-name: Auto approve
+name: Auto approve Tolgee PRs
 
 on: pull_request_target
 
@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-    if: contains(github.event.pull_request.labels.*.name, 'tolgee-ci')
+    if: contains(github.event.pull_request.labels.*.name, 'tolgee-ci') && github.actor == 'martinet101'
     steps:
       - uses: hmarr/auto-approve-action@v4
         with:
