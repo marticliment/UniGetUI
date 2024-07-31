@@ -9,6 +9,7 @@ jobs:
     runs-on: windows-latest
     env:
         TOLGEE_KEY: "${{ secrets.TOLGEE_TOKEN }}"
+        GITHUB_TOKEN: ${{ secrets.REPO_SCOPED_TOKEN }}  
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,12 +19,12 @@ jobs:
           python download_translations.py --autocommit
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
-        env:
-          GITHUB_TOKEN: ${{ secrets.REPO_SCOPED_TOKEN }}  
         with:
           delete-branch: true
           base: main
-          title: "Update translations from Tolgee"
+          labels: tolgee-ci
+          title: "Load translations from Tolgee"
+          body: ""
           reviewers: "${{ github.repository_owner }}"
           author: "Tolgee Bot <tolgee-bot@users.noreply.github.com>"
           commit-message: "Update translations from Tolgee"
