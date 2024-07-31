@@ -7,6 +7,8 @@ This repository **respects** people, despite their race, gender, religion, heigh
 
 ---------------------------------
 
+
+
 # Contributing guidelines:
 
 Before reading: All of the rules below are guidelines, which means that they should be followed when possible. Please do not take them literally.
