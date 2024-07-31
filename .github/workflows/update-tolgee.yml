@@ -28,7 +28,6 @@ jobs:
           labels: tolgee-ci
           title: "Load translations from Tolgee"
           body: ""
-          reviewers: "${{ github.repository_owner }}"
           author: "Martí Climent <marticlilop@gmail.com>"
           commit-message: "Load updated translations from Tolgee"
           branch: pull-request/update-translation
