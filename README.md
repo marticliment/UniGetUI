@@ -16,6 +16,13 @@ Check out the [Supported Package Managers Table](#supported-package-managers) fo
 ![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fmarticliment.com%2Fresources%2Fbadges%2Fdev-status.json)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/marticliment/WingetUI/dotnet-test.yml?branch=main&style=for-the-badge&label=Tests)
 
+
+## Support the developer
+
+It really does make a big difference, and is very much appreciated. Thanks :)
+
+<a href='https://ko-fi.com/martinet101' target='_blank'><img style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+
 ## Table of contents
  - **[UniGetUI Homepage](https://www.marticliment.com/unigetui/)**
  - [Table of contents](#table-of-contents)
@@ -59,13 +66,6 @@ choco install wingetui
 ## Update UniGetUI
 
 UniGetUI has a built-in autoupdater. However, it can also be updated like any other package within UniGetUI (since UniGetUI is available through Winget and Scoop).
-
-
-## Support the developer
-
-It really does make a big difference, and is very much appreciated. Thanks :)
-
-<a href='https://ko-fi.com/martinet101' target='_blank'><img style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 
 ## Features
