@@ -655,7 +655,7 @@
   "{package} could not be installed" : "No s'ha pogut instal·lar el {package}",
   "{package} could not be uninstalled" : "No s'ha pogut desinstal·lar el {package}",
   "{package} could not be updated" : "No s'ha pogut actuailtzar el {package}",
-  "{package} installation failed" : "La instal·lació del {0} ha fallat",
+  "{package} installation failed" : "La instal·lació del {package} ha fallat",
   "{package} uninstall failed" : "La desinstal·lació del {package} ha fallat",
   "{package} update failed" : "L'actuailtzació del {package} ha fallat",
   "{package} update failed. Click here for more details." : "L'actualització del {package} ha fallat. Cliqueu aquí per a més detalls.",
