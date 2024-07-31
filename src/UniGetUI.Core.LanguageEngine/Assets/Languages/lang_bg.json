@@ -403,7 +403,7 @@
   "Select only <b>if you know what you are doing</b>." : "Изберете, <b<само ако знаете какво правите</b>.",
   "Select package file" : "Избиране на пакетен файл",
   "Select the source you want to add:" : null,
-  "Select which <b>package managers</b> to use ({0}), configure how packages are installed, manage how administrator rights are handled, etc." : "Изберете кои <b>мениджъри на пакети</b> да се използват, конфигурирайте как да се инсталират пакетите, управлявайте използването на администраторските права и т.н.",
+  "Select which <b>package managers</b> to use ({0}), configure how packages are installed, manage how administrator rights are handled, etc." : "Изберете кои <b>мениджъри на пакети</b> да се използват ({0}), конфигурирайте как да се инсталират пакетите, управлявайте използването на администраторските права и т.н.",
   "Sent handshake. Waiting for instance listener's answer... ({0}%)" : "Изпратен е handshake сигнал. Изчаква се отговор... ({0}%)",
   "Set a custom backup file name" : null,
   "Set custom backup file name" : "Персонализирано име на архивния файл",
