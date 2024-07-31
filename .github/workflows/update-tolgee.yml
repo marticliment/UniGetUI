@@ -1,4 +1,4 @@
-name: Retrieve latest translations from Tolgee
+name: Tolgee CI
 
 on:
   schedule:
