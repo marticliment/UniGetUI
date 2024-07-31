@@ -1,26 +1,25 @@
-﻿using UniGetUI.Core.IconEngine;
+using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
-using UniGetUI.PackageEngine.Classes.Manager.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
 
 namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
 {
-    public abstract class BasePackageDetailsProvider<T> : IPackageDetailsProvider where T : PackageManager
+    public abstract class BasePackageDetailsProvider<ManagerT> : IPackageDetailsProvider where ManagerT : IPackageManager
     {
-        protected T Manager;
+        protected ManagerT Manager;
 
-        public BasePackageDetailsProvider(T manager)
+        public BasePackageDetailsProvider(ManagerT manager)
         {
             Manager = manager;
         }
 
-        public async Task GetPackageDetails(PackageDetails details)
+        public async Task GetPackageDetails(IPackageDetails details)
         {
             await GetPackageDetails_Unsafe(details);
         }
 
-        public async Task<string[]> GetPackageVersions(Package package)
+        public async Task<string[]> GetPackageVersions(IPackage package)
         {
             if (Manager.Capabilities.SupportsCustomVersions)
             {
@@ -28,14 +27,12 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                 Logger.Debug($"Found {result.Length} versions for package Id={package.Id} on manager {Manager.Name}");
                 return result;
             }
-            else
-            {
-                Logger.Warn($"Manager {Manager.Name} does not support version retrieving, this method should have not been called");
-                return [];
-            }
+
+            Logger.Warn($"Manager {Manager.Name} does not support version retrieving, this method should have not been called");
+            return [];
         }
 
-        public async Task<CacheableIcon?> GetPackageIconUrl(Package package)
+        public async Task<CacheableIcon?> GetPackageIconUrl(IPackage package)
         {
             CacheableIcon? Icon = null;
             if (Manager.Capabilities.SupportsCustomPackageIcons)
@@ -65,14 +62,12 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                 Logger.Warn($"Icon for package {package.Id} was not found, returning default icon");
                 return null;
             }
-            else
-            {
-                Logger.Info($"Loaded icon with URL={Icon.ToString()} for package Id={package.Id}");
-            }
+
+            Logger.Info($"Loaded icon with URL={Icon.ToString()} for package Id={package.Id}");
             return Icon;
         }
 
-        public async Task<Uri[]> GetPackageScreenshotsUrl(Package package)
+        public async Task<Uri[]> GetPackageScreenshotsUrl(IPackage package)
         {
             Uri[] URIs = [];
 
@@ -103,9 +98,9 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
             return URIs;
         }
 
-        protected abstract Task GetPackageDetails_Unsafe(PackageDetails details);
-        protected abstract Task<string[]> GetPackageVersions_Unsafe(Package package);
-        protected abstract Task<CacheableIcon?> GetPackageIcon_Unsafe(Package package);
-        protected abstract Task<Uri[]> GetPackageScreenshots_Unsafe(Package package);
+        protected abstract Task GetPackageDetails_Unsafe(IPackageDetails details);
+        protected abstract Task<string[]> GetPackageVersions_Unsafe(IPackage package);
+        protected abstract Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package);
+        protected abstract Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package);
     }
 }

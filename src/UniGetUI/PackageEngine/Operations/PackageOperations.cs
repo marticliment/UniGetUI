@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.WinUI.Notifications;
+using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;
 using UniGetUI.Core.Data;
@@ -7,6 +7,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Operations
@@ -23,19 +24,65 @@ namespace UniGetUI.PackageEngine.Operations
 
     public abstract class PackageOperation : AbstractOperation
     {
-
-        public Package Package;
-        protected InstallationOptions Options;
-        public PackageOperation(Package package, InstallationOptions options, bool IgnoreParallelInstalls = false) : base(IgnoreParallelInstalls)
+        public IPackage Package;
+        protected IInstallationOptions Options;
+        protected OperationType Role;
+        public PackageOperation(
+            IPackage package,
+            IInstallationOptions options,
+            OperationType role,
+            bool IgnoreParallelInstalls = false)
+        : base(IgnoreParallelInstalls)
         {
             Package = package;
             Options = options;
+            Role = role;
             MainProcedure();
         }
 
+        public PackageOperation(
+            IPackage package,
+            OperationType role,
+            bool IgnoreParallelInstalls = false)
+            : this(package, InstallationOptions.FromPackage(package), role, IgnoreParallelInstalls)
+        { }
+
+        protected sealed override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
+        {
+            if (Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
+            {
+                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
+                {
+                    await CoreTools.CacheUACForCurrentProcess();
+                }
+                startInfo.FileName = CoreData.GSudoPath;
+                startInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetOperationParameters(Package, Options, Role));
+            }
+            else
+            {
+                startInfo.FileName = Package.Manager.Status.ExecutablePath;
+                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetOperationParameters(Package, Options, Role));
+            }
+            Process process = new()
+            {
+                StartInfo = startInfo
+            };
+
+            return process;
+        }
+
+#pragma warning disable CS1998
+        protected sealed override async Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
+        {
+            return Package.Manager.GetOperationResult(Package, Options, Role, Output, ReturnCode);
+        }
+#pragma warning restore CS1998
+
         protected override async Task WaitForAvailability()
         {
-            if (!IGNORE_PARALLEL_OPERATION_SETTINGS && (Settings.Get("AllowParallelInstalls") || Settings.Get($"AllowParallelInstallsForManager{Package.Manager.Name}")))
+            if (!IGNORE_PARALLEL_OPERATION_SETTINGS &&
+                (Settings.Get("AllowParallelInstalls")
+                || Settings.Get($"AllowParallelInstallsForManager{Package.Manager.Name}")))
             {
                 Logger.Debug("Parallel installs are allowed. Skipping queue check");
                 Package.SetTag(PackageTag.BeingProcessed);
@@ -66,51 +113,29 @@ namespace UniGetUI.PackageEngine.Operations
 
         }
 
-        public PackageOperation(Package package, bool IgnoreParallelInstalls = false) : this(package, InstallationOptions.FromPackage(package), IgnoreParallelInstalls) { }
     }
 
     public class InstallPackageOperation : PackageOperation
     {
 
-        public InstallPackageOperation(Package package, InstallationOptions options, bool IgnoreParallelInstalls = false) : base(package, options, IgnoreParallelInstalls) { }
-        public InstallPackageOperation(Package package, bool IgnoreParallelInstalls = false) : base(package, IgnoreParallelInstalls) { }
-        protected override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
-        {
-            if (Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
-            {
-                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
-                {
-                    await CoreTools.CacheUACForCurrentProcess();
-                }
-                startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
+        public InstallPackageOperation(
+            IPackage package,
+            IInstallationOptions options,
+            bool IgnoreParallelInstalls = false)
+            : base(package, options, OperationType.Install, IgnoreParallelInstalls) { }
 
-            }
-            else
-            {
-                startInfo.FileName = Package.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetInstallParameters(Package, Options));
-            }
-            Process process = new()
-            {
-                StartInfo = startInfo
-            };
-
-            return process;
-        }
+        public InstallPackageOperation(
+            IPackage package,
+            bool IgnoreParallelInstalls = false)
+            : base(package, OperationType.Install, IgnoreParallelInstalls) { }
 
         protected override string[] GenerateProcessLogHeader()
         {
-            return new string[]
-            {
+            return
+            [
                 "Starting package install operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name,
-                "Given installation options are " + Options.ToString()
-            };
-        }
-
-        protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
-        {
-            return Package.Manager.GetInstallOperationVeredict(Package, Options, ReturnCode, Output);
+                "Given installation options are " + Options.ToString(),
+            ];
         }
 
         protected override async Task<AfterFinshAction> HandleFailure()
@@ -119,7 +144,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             Package.SetTag(PackageTag.Failed);
 
-            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
+            if (!(Settings.Get("DisableErrorNotifications") || Settings.AreNotificationsDisabled()))
             {
                 try
                 {
@@ -147,10 +172,8 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 return AfterFinshAction.Retry;
             }
-            else
-            {
-                return AfterFinshAction.ManualClose;
-            }
+
+            return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
@@ -160,7 +183,7 @@ namespace UniGetUI.PackageEngine.Operations
             Package.SetTag(PackageTag.AlreadyInstalled);
             PEInterface.InstalledPackagesLoader.AddForeign(Package);
 
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
             {
                 try
                 {
@@ -192,44 +215,24 @@ namespace UniGetUI.PackageEngine.Operations
     public class UpdatePackageOperation : PackageOperation
     {
 
-        public UpdatePackageOperation(Package package, InstallationOptions options, bool IgnoreParallelInstalls = false) : base(package, options, IgnoreParallelInstalls) { }
-        public UpdatePackageOperation(Package package, bool IgnoreParallelInstalls = false) : base(package, IgnoreParallelInstalls) { }
-        protected override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
-        {
-            if (Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
-            {
-                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
-                {
-                    await CoreTools.CacheUACForCurrentProcess();
-                }
-                startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
-            }
-            else
-            {
-                startInfo.FileName = Package.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUpdateParameters(Package, Options));
-            }
-            Process process = new()
-            {
-                StartInfo = startInfo
-            };
-
-            return process;
-        }
+        public UpdatePackageOperation(
+            IPackage package,
+            IInstallationOptions options,
+            bool IgnoreParallelInstalls = false)
+            : base(package, options, OperationType.Update, IgnoreParallelInstalls) { }
+        public UpdatePackageOperation(
+            IPackage package,
+            bool IgnoreParallelInstalls = false)
+            : base(package, OperationType.Update, IgnoreParallelInstalls) { }
+      
 
         protected override string[] GenerateProcessLogHeader()
         {
-            return new string[]
-            {
+            return
+            [
                 "Starting package update operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name,
-                "Given installation options are " + Options.ToString()
-            };
-        }
-
-        protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
-        {
-            return Package.Manager.GetUpdateOperationVeredict(Package, Options, ReturnCode, Output);
+                "Given installation options are " + Options.ToString(),
+            ];
         }
 
         protected override async Task<AfterFinshAction> HandleFailure()
@@ -238,7 +241,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             Package.SetTag(PackageTag.Failed);
 
-            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
+            if (!Settings.Get("DisableErrorNotifications") && !Settings.AreNotificationsDisabled())
             {
                 try
                 {
@@ -266,10 +269,8 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 return AfterFinshAction.Retry;
             }
-            else
-            {
-                return AfterFinshAction.ManualClose;
-            }
+
+            return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
@@ -286,7 +287,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             PEInterface.UpgradablePackagesLoader.Remove(Package);
 
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
             {
                 try
                 {
@@ -322,45 +323,23 @@ namespace UniGetUI.PackageEngine.Operations
     public class UninstallPackageOperation : PackageOperation
     {
 
-        public UninstallPackageOperation(Package package, InstallationOptions options, bool IgnoreParallelInstalls = false) : base(package, options, IgnoreParallelInstalls) { }
-        public UninstallPackageOperation(Package package, bool IgnoreParallelInstalls = false) : base(package, IgnoreParallelInstalls) { }
-        protected override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
-        {
-            if (Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
-            {
-                if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
-                {
-                    await CoreTools.CacheUACForCurrentProcess();
-                }
-                startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUninstallParameters(Package, Options));
-            }
-            else
-            {
-                startInfo.FileName = Package.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetUninstallParameters(Package, Options));
-            }
-            Process process = new()
-            {
-                StartInfo = startInfo
-            };
-
-
-            return process;
-        }
+        public UninstallPackageOperation(
+            IPackage package,
+            IInstallationOptions options,
+            bool IgnoreParallelInstalls = false)
+            : base(package, options, OperationType.Uninstall, IgnoreParallelInstalls) { }
+        public UninstallPackageOperation(
+            IPackage package,
+            bool IgnoreParallelInstalls = false)
+            : base(package, OperationType.Uninstall, IgnoreParallelInstalls) { }
 
         protected override string[] GenerateProcessLogHeader()
         {
-            return new string[]
-            {
+            return
+            [
                 "Starting package uninstall operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name,
-                "Given installation options are " + Options.ToString()
-            };
-        }
-
-        protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
-        {
-            return Package.Manager.GetUninstallOperationVeredict(Package, Options, ReturnCode, Output);
+                "Given installation options are " + Options.ToString(),
+            ];
         }
 
         protected override async Task<AfterFinshAction> HandleFailure()
@@ -369,7 +348,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             Package.SetTag(PackageTag.Failed);
 
-            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
+            if (!Settings.Get("DisableErrorNotifications") && !Settings.AreNotificationsDisabled())
             {
                 try
                 {
@@ -397,10 +376,8 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 return AfterFinshAction.Retry;
             }
-            else
-            {
-                return AfterFinshAction.ManualClose;
-            }
+
+            return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
@@ -411,7 +388,7 @@ namespace UniGetUI.PackageEngine.Operations
             PEInterface.UpgradablePackagesLoader.Remove(Package);
             PEInterface.InstalledPackagesLoader.Remove(Package);
 
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
             {
                 try
                 {

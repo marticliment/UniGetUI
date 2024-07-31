@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.WinUI.Helpers;
+using CommunityToolkit.WinUI.Helpers;
 using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -22,13 +22,13 @@ namespace UniGetUI
     {
         public class __tooltip_options
         {
-            private int _errors_occurred = 0;
+            private int _errors_occurred;
             public int ErrorsOccurred { get { return _errors_occurred; } set { _errors_occurred = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
-            private bool _restart_required = false;
+            private bool _restart_required;
             public bool RestartRequired { get { return _restart_required; } set { _restart_required = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
-            private int _operations_in_progress = 0;
+            private int _operations_in_progress;
             public int OperationsInProgress { get { return _operations_in_progress; } set { _operations_in_progress = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
-            private int _available_updates = 0;
+            private int _available_updates;
             public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
         }
 
@@ -40,14 +40,12 @@ namespace UniGetUI
         public MainWindow MainWindow;
         public ThemeListener ThemeListener;
 
-
         private readonly BackgroundApiRunner BackgroundApi = new();
-        private const int ManagerLoadTimeout = 10000; // 10 seconds timeout for Package Manager initialization
 #pragma warning disable CS8618
         public static MainApp Instance;
         public __tooltip_options TooltipStatus = new();
 
-        public MainApp() : base()
+        public MainApp()
         {
 #pragma warning restore CS8618
             try
@@ -82,7 +80,7 @@ namespace UniGetUI
             }
         }
 
-        private async void LoadGSudo()
+        private static async void LoadGSudo()
         {
             if (Settings.Get("UseUserGSudo"))
             {
@@ -142,7 +140,7 @@ namespace UniGetUI
             };
         }
 
-        private void SetUpWebViewUserDataFolder()
+        private static void SetUpWebViewUserDataFolder()
         {
             try
             {
@@ -182,11 +180,10 @@ namespace UniGetUI
             }
         }
 
-
         /// <summary>
         /// Clear the notification history, if possible
         /// </summary>
-        private void ClearNotificationHistory_Safe()
+        private static void ClearNotificationHistory_Safe()
         {
             try
             {
@@ -229,9 +226,8 @@ namespace UniGetUI
         }
 
         /// <summary>
-        /// Background component loader 
+        /// Background component loader
         /// </summary>
-        /// <returns></returns>
         private async Task LoadComponentsAsync()
         {
             try
@@ -395,7 +391,6 @@ namespace UniGetUI
                     client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     fileContents = await client.GetStringAsync("https://www.marticliment.com/versions/unigetui.ver");
                 }
-
 
                 if (!fileContents.Contains("///"))
                 {

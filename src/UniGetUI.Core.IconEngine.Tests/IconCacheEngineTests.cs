@@ -1,4 +1,4 @@
-﻿using UniGetUI.Core.Data;
+using UniGetUI.Core.Data;
 
 namespace UniGetUI.Core.IconEngine.Tests
 {
@@ -67,7 +67,6 @@ namespace UniGetUI.Core.IconEngine.Tests
             Assert.Equal(expectedFile, path);
             Assert.True(File.Exists(path));
         }
-
 
         [Theory]
         [InlineData("https://marticliment.com/resources/wingetui.png", 47903, "TestManager", "Package3")]

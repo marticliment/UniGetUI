@@ -21,8 +21,7 @@ namespace UniGetUI.Interface.Widgets
             set => SetValue(UrlProperty, value);
         }
 
-        readonly DependencyProperty UrlProperty;
-
+        private readonly DependencyProperty UrlProperty;
 
         private static readonly HttpClient NetClient = new(CoreData.GenericHttpClientParameters);
         public Announcer()

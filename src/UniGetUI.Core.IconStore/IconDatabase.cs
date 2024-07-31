@@ -1,10 +1,13 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI.Core.IconEngine
 {
+    /// <summary>
+    /// This class represents the structure of the icon and screenshot database. It is used to deserialize the JSON data.
+    /// </summary>
     public class IconDatabase
     {
         public struct IconCount
@@ -15,7 +18,7 @@ namespace UniGetUI.Core.IconEngine
             public IconCount() { }
         }
 
-        private static IconDatabase? __instance = null;
+        private static IconDatabase? __instance;
 
         public static IconDatabase Instance
         {
@@ -43,14 +46,8 @@ namespace UniGetUI.Core.IconEngine
         private IconCount __icon_count = new();
 
         /// <summary>
-        /// Tis class represents the structure of the icon and screenshot database. It is used to deserialize the JSON data.
-        /// </summary>
-
-
-        /// <summary>
         /// Download the icon and screenshots database to a local file, and load it into memory
         /// </summary>
-        /// <returns></returns>
         public async void LoadIconAndScreenshotsDatabase()
         {
             await LoadIconAndScreenshotsDatabaseAsync();
@@ -83,7 +80,6 @@ namespace UniGetUI.Core.IconEngine
                 Logger.Warn(e);
             }
 
-
             if (!File.Exists(IconsAndScreenshotsFile))
             {
                 Logger.Error("Icon Database file not found");
@@ -98,7 +94,7 @@ namespace UniGetUI.Core.IconEngine
                     IconDatabaseData = JsonData.icons_and_screenshots;
                 }
 
-                __icon_count = new IconCount()
+                __icon_count = new IconCount
                 {
                     PackagesWithIconCount = JsonData.package_count.packages_with_icon,
                     PackagesWithScreenshotCount = JsonData.package_count.packages_with_screenshot,
@@ -114,12 +110,12 @@ namespace UniGetUI.Core.IconEngine
 
         public string GetIconUrlForId(string id)
         {
-            return IconDatabaseData.ContainsKey(id) ? IconDatabaseData[id].icon : "";
+            return IconDatabaseData.TryGetValue(id, out var value) ? value.icon : "";
         }
 
         public string[] GetScreenshotsUrlForId(string id)
         {
-            return IconDatabaseData.ContainsKey(id) ? IconDatabaseData[id].images.ToArray() : [];
+            return IconDatabaseData.TryGetValue(id, out var value) ? value.images.ToArray() : [];
         }
 
         public IconCount GetIconCount()

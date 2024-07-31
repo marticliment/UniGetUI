@@ -4,7 +4,8 @@ using System.Runtime.InteropServices;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Serializable;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -16,13 +17,12 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class InstallOptionsPage : Page
     {
-        public InstallationOptions Options;
-        public Package Package;
+        public SerializableInstallationOptions_v1 Options;
+        public IPackage Package;
         public event EventHandler? Close;
 
-        public InstallOptionsPage(Package package, OperationType Operation) : this(package, Operation, InstallationOptions.FromPackage(package)) { }
-        public InstallOptionsPage(Package package, InstallationOptions options) : this(package, OperationType.None, options) { }
-        public InstallOptionsPage(Package package, OperationType Operation, InstallationOptions options)
+        public InstallOptionsPage(IPackage package, SerializableInstallationOptions_v1 options) : this(package, OperationType.None, options) { }
+        public InstallOptionsPage(IPackage package, OperationType Operation, SerializableInstallationOptions_v1 options)
         {
             Package = package;
             InitializeComponent();
@@ -42,13 +42,12 @@ namespace UniGetUI.Interface.Dialogs
             ArchitectureComboBox.Items.Add(CoreTools.Translate("Default"));
             ArchitectureComboBox.SelectedIndex = 0;
 
-
             if (Package.Manager.Capabilities.SupportsCustomArchitectures)
             {
                 foreach (Architecture arch in Package.Manager.Capabilities.SupportedCustomArchitectures)
                 {
                     ArchitectureComboBox.Items.Add(CommonTranslations.ArchNames[arch]);
-                    if (Options.Architecture == arch)
+                    if (Options.Architecture == CommonTranslations.ArchNames[arch])
                     {
                         ArchitectureComboBox.SelectedValue = CommonTranslations.ArchNames[arch];
                     }
@@ -93,18 +92,17 @@ namespace UniGetUI.Interface.Dialogs
             if (package.Manager.Capabilities.SupportsCustomScopes)
             {
                 ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
-                if (Options.InstallationScope == PackageScope.Local)
+                if (Options.InstallationScope == CommonTranslations.ScopeNames[PackageScope.Local])
                 {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Local];
                 }
 
                 ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Global]));
-                if (Options.InstallationScope == PackageScope.Global)
+                if (Options.InstallationScope == CommonTranslations.ScopeNames[PackageScope.Global])
                 {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
                 }
             }
-
 
             ResetDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
             SelectDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
@@ -112,7 +110,7 @@ namespace UniGetUI.Interface.Dialogs
 
             if (Options.CustomParameters != null)
             {
-                CustomParameters.Text = String.Join(' ', Options.CustomParameters);
+                CustomParameters.Text = string.Join(' ', Options.CustomParameters);
             }
 
             LoadIgnoredUpdates();
@@ -141,7 +139,7 @@ namespace UniGetUI.Interface.Dialogs
             VersionProgress.Visibility = Visibility.Collapsed;
         }
 
-        public async Task<InstallationOptions> GetUpdatedOptions()
+        public async Task<SerializableInstallationOptions_v1> GetUpdatedOptions()
         {
             Options.RunAsAdministrator = AdminCheckBox?.IsChecked ?? false;
             Options.InteractiveInstallation = InteractiveCheckBox?.IsChecked ?? false;
@@ -149,20 +147,20 @@ namespace UniGetUI.Interface.Dialogs
 
             if (CommonTranslations.InvertedArchNames.ContainsKey(ArchitectureComboBox.SelectedValue.ToString() ?? ""))
             {
-                Options.Architecture = CommonTranslations.InvertedArchNames[ArchitectureComboBox.SelectedValue.ToString() ?? ""];
+                Options.Architecture = ArchitectureComboBox.SelectedValue.ToString() ?? "";
             }
             else
             {
-                Options.Architecture = null;
+                Options.Architecture = "";
             }
 
             if (CommonTranslations.InvertedScopeNames.ContainsKey(ScopeCombo.SelectedValue.ToString() ?? ""))
             {
-                Options.InstallationScope = CommonTranslations.InvertedScopeNames[ScopeCombo.SelectedValue.ToString() ?? ""];
+                Options.InstallationScope = ScopeCombo.SelectedValue.ToString() ?? "";
             }
             else
             {
-                Options.InstallationScope = null;
+                Options.InstallationScope = "";
             }
 
             Options.CustomInstallLocation = CustomInstallLocation.Text;
@@ -192,17 +190,11 @@ namespace UniGetUI.Interface.Dialogs
             return Options;
         }
 
-        public async void SaveToDisk()
-        {
-
-            (await GetUpdatedOptions()).SaveToDisk();
-        }
-
         private void SelectDir_Click(object sender, RoutedEventArgs e)
         {
             ExternalLibraries.Pickers.FolderPicker openPicker = new(MainApp.Instance.MainWindow.GetWindowHandle());
             string folder = openPicker.Show();
-            if (folder != String.Empty)
+            if (folder != string.Empty)
             {
                 CustomInstallLocation.Text = folder;
             }
@@ -215,7 +207,7 @@ namespace UniGetUI.Interface.Dialogs
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            Close?.Invoke(this, new EventArgs());
+            Close?.Invoke(this, EventArgs.Empty);
         }
     }
 }

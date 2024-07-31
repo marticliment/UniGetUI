@@ -3,8 +3,8 @@ using Microsoft.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Classes.Manager;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -15,9 +15,9 @@ namespace UniGetUI.Interface.Widgets
     public class SourceItem
     {
         public SourceManager Parent;
-        public ManagerSource Source;
+        public IManagerSource Source;
 
-        public SourceItem(SourceManager Parent, ManagerSource Source)
+        public SourceItem(SourceManager Parent, IManagerSource Source)
         {
             this.Parent = Parent;
             this.Source = Source;
@@ -31,21 +31,21 @@ namespace UniGetUI.Interface.Widgets
     }
     public sealed partial class SourceManager : UserControl
     {
-        private PackageManager Manager { get; set; }
-        private ObservableCollection<SourceItem> Sources = [];
+        private IPackageManager Manager { get; set; }
+        private ObservableCollection<SourceItem> Sources = new();
 
         private ListView _datagrid { get; set; }
-        public SourceManager(PackageManager Manager)
+        public SourceManager(IPackageManager Manager)
         {
             this.Manager = Manager;
             InitializeComponent();
 
             if (!Manager.Capabilities.SupportsCustomSources)
             {
-                throw new Exception($"Attempted to create a SourceManager class from Manager {Manager.Name}, which does not support custom sources");
+                throw new InvalidOperationException($"Attempted to create a SourceManager class from Manager {Manager.Name}, which does not support custom sources");
             }
 
-            Header.Text = CoreTools.Translate("Manage {0} sources", Manager.Properties.Name);
+            Header.Text = CoreTools.Translate("Manage {0} sources", Manager.DisplayName);
             AddSourceButton.Content = CoreTools.Translate("Add source");
             AddSourceButton.Click += async (sender, e) =>
             {
@@ -58,8 +58,8 @@ namespace UniGetUI.Interface.Widgets
                     };
 
                     ComboBox SourcesCombo = new();
-                    Dictionary<string, ManagerSource> NameSourceRef = [];
-                    foreach (ManagerSource source in Manager.Properties.KnownSources)
+                    Dictionary<string, IManagerSource> NameSourceRef = [];
+                    foreach (IManagerSource source in Manager.Properties.KnownSources)
                     {
                         SourcesCombo.Items.Add(source.Name);
                         NameSourceRef.Add(source.Name, source);
@@ -79,7 +79,6 @@ namespace UniGetUI.Interface.Widgets
                     StackPanel p1 = new() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
                     p1.Children.Add(new TextBlock { Text = CoreTools.Translate("Source name:"), VerticalAlignment = VerticalAlignment.Center });
                     p1.Children.Add(SourceNameTextBox);
-
 
                     StackPanel p2 = new() { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Stretch };
                     p2.Children.Add(new TextBlock { Text = CoreTools.Translate("Source URL:"), VerticalAlignment = VerticalAlignment.Center });
@@ -167,9 +166,9 @@ namespace UniGetUI.Interface.Widgets
 
             LoadingBar.Visibility = Visibility.Visible;
             Sources.Clear();
-            foreach (ManagerSource Source in await Manager.GetSources())
+            foreach (IManagerSource source in await Manager.GetSources())
             {
-                Sources.Add(new SourceItem(this, Source));
+                Sources.Add(new SourceItem(this, source));
             }
             if (Sources.Count > 0)
             {

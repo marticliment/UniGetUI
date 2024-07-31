@@ -12,6 +12,7 @@
     <Window.SystemBackdrop>
         <MicaBackdrop Kind="Base"/>
     </Window.SystemBackdrop>
+    
     <Grid Name="__content_root">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="SplashScreenColumn" Width="*"/>

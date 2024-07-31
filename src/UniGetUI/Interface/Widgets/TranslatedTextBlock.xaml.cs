@@ -9,63 +9,36 @@ namespace UniGetUI.Interface.Widgets
 {
     public sealed partial class TranslatedTextBlock : UserControl
     {
-
+        public string __text = "";
         public string Text
         {
-            get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
+            set { __text = CoreTools.Translate(value); ApplyText(); }
         }
+
+        public string __suffix = "";
         public string Suffix
         {
-            get => (string)GetValue(SuffixProperty);
-            set => SetValue(SuffixProperty, value);
-
+            set { __suffix = value; ApplyText(); }
         }
+        public string __prefix = "";
         public string Prefix
         {
-            get => (string)GetValue(PrefixProperty);
-            set => SetValue(PrefixProperty, value);
+            set { __prefix = value; ApplyText(); }
         }
 
         public TextWrapping WrappingMode
         {
-            get => (TextWrapping)GetValue(TextWrappingProperty);
-            set => SetValue(TextWrappingProperty, value);
+            set => __textblock.TextWrapping = value;
         }
-
-        readonly DependencyProperty TextProperty;
-        readonly DependencyProperty PrefixProperty;
-        readonly DependencyProperty SuffixProperty;
-        readonly DependencyProperty TextWrappingProperty;
 
         public TranslatedTextBlock()
         {
-            TextWrappingProperty = DependencyProperty.Register(
-                nameof(WrappingMode),
-                typeof(TextWrapping),
-                typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { __textblock.TextWrapping = WrappingMode; })));
-
             InitializeComponent();
+        }
 
-            TextProperty = DependencyProperty.Register(
-                nameof(Text),
-                typeof(string),
-                typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { __textblock.Text = Prefix + CoreTools.Translate((string)e.NewValue) + Suffix; })));
-
-            PrefixProperty = DependencyProperty.Register(
-                nameof(Prefix),
-                typeof(string),
-                typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { __textblock.Text = (string)e.NewValue + CoreTools.Translate(Text) + Suffix; })));
-
-            SuffixProperty = DependencyProperty.Register(
-                nameof(Suffix),
-                typeof(string),
-                typeof(CheckboxCard),
-                new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { __textblock.Text = Prefix + CoreTools.Translate(Text) + (string)e.NewValue; })));
-
+        public void ApplyText()
+        {
+            __textblock.Text = __prefix + __text + __suffix;
         }
     }
 }

@@ -174,7 +174,7 @@
                     <widgets:SettingsEntry
                             Text="Updates preferences"
                             UnderText="Change how UniGetUI checks and installs available updates for your packages"
-                            Icon="menu_updates">
+                            Icon="update">
                         <Toolkit:SettingsExpander.Items>
                             <widgets:CheckboxCard
                                 x:Name="DisableAutoCheckForUpdates"
@@ -257,7 +257,7 @@
                             x:Name="AdminSettingsExpander"
                             Text="Administrator privileges preferences"
                             UnderText="Ask once or always for administrator rights, elevate installations by default"
-                            Icon="runasadmin">
+                            Icon="uac">
                         <Toolkit:SettingsExpander.Items>
                             <widgets:CheckboxCard
                                 x:Name="DoCacheAdminRights"
@@ -279,7 +279,7 @@
                         x:Name="ExperimentalSettingsExpander"
                             Text="Experimental settings and developer options"
                             UnderText="Beta features and other options that shouldn't be touched"
-                            Icon="testing">
+                            Icon="experimental">
                         <Toolkit:SettingsExpander.Items>
                             <widgets:CheckboxCard
                                 x:Name="DisableWidgetsApi"

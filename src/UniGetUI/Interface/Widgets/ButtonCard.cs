@@ -1,5 +1,4 @@
 using CommunityToolkit.WinUI.Controls;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Tools;
 
@@ -8,54 +7,26 @@ using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public class ButtonCardEventArgs : EventArgs
-    {
-        public ButtonCardEventArgs()
-        {
-        }
-    }
-
-
     public sealed class ButtonCard : SettingsCard
     {
-        private static Button _button = new();
+        private readonly Button _button = new();
 
         public string ButtonText
         {
-            get => (string)GetValue(ButtonProperty);
-            set => SetValue(ButtonProperty, value);
+            set => _button.Content = CoreTools.Translate(value);
         }
 
         public string Text
         {
-            get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
+            set => Header = CoreTools.Translate(value);
         }
 
-        readonly DependencyProperty TextProperty;
-
-        readonly DependencyProperty ButtonProperty = DependencyProperty.Register(
-        nameof(ButtonText),
-        typeof(string),
-        typeof(ButtonCard),
-        new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _button.Content = CoreTools.Translate((string)e.NewValue); })));
-
-        public new event EventHandler<ButtonCardEventArgs>? Click;
+        public new event EventHandler<EventArgs>? Click;
 
         public ButtonCard()
         {
-            TextProperty = DependencyProperty.Register(
-            nameof(Text),
-            typeof(string),
-            typeof(ButtonCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = CoreTools.Translate((string)e.NewValue); })));
-
-            _button = new Button
-            {
-                MinWidth = 200
-            };
-            _button.Click += (s, e) => { Click?.Invoke(this, new ButtonCardEventArgs()); };
-
+            _button.MinWidth = 200;
+            _button.Click += (s, e) => { Click?.Invoke(this, EventArgs.Empty); };
             DefaultStyleKey = typeof(ButtonCard);
             Content = _button;
         }

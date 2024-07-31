@@ -1,4 +1,4 @@
-﻿using Nancy;
+using Nancy;
 using Nancy.Hosting.Self;
 using System.Text;
 using UniGetUI.Core.Data;
@@ -7,6 +7,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.Interface
@@ -25,7 +26,7 @@ namespace UniGetUI.Interface
         public event EventHandler<string>? OnUpgradeAllForManager;
         public event EventHandler<string>? OnUpgradePackage;
 
-        private bool __running = false;
+        private bool __running;
 
         public BackgroundApiRunner()
         {
@@ -45,7 +46,6 @@ namespace UniGetUI.Interface
         /// <summary>
         /// Run the background api and wait for it for being stopped with the Stop() method
         /// </summary>
-        /// <returns></returns>
         public async Task Start()
         {
             try
@@ -150,7 +150,6 @@ namespace UniGetUI.Interface
                 }
             });
 
-
             // Basic entrypoint to know if UniGetUI is running
             Get("/is-running", (parameters) =>
             {
@@ -159,7 +158,7 @@ namespace UniGetUI.Interface
         }
 
         /// <summary>
-        /// Build the endpoints required for the /widgets/v1 endpoint. All of these 
+        /// Build the endpoints required for the /widgets/v1 endpoint. All of these
         /// endpoints are authenticated with MainApp.Instance.AuthenticateToken
         /// </summary>
         public void BuildV1WidgetsApi()
@@ -198,11 +197,11 @@ namespace UniGetUI.Interface
                 {
                     if (package.Tag is PackageTag.OnQueue or PackageTag.BeingProcessed)
                     {
-                        continue; // Do not show already processed packages on queue 
+                        continue; // Do not show already processed packages on queue
                     }
 
                     string icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={package.Id}&packageSource={package.Source.Name}&token={ApiTokenHolder.Token}";
-                    packages.Append($"{package.Name.Replace('|', '-')}|{package.Id}|{package.Version}|{package.NewVersion}|{package.Source}|{package.Manager.Name}|{icon}&&");
+                    packages.Append($"{package.Name.Replace('|', '-')}|{package.Id}|{package.Version}|{package.NewVersion}|{package.Source.AsString_DisplayName}|{package.Manager.Name}|{icon}&&");
                 }
 
                 string pkgs_ = packages.ToString();
@@ -301,7 +300,7 @@ namespace UniGetUI.Interface
                 }
 
                 string iconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "package_color.png");
-                Package? package = PEInterface.UpgradablePackagesLoader.GetPackageForId(Request.Query.@packageId, Request.Query.@packageSource);
+                IPackage? package = PEInterface.UpgradablePackagesLoader.GetPackageForId(Request.Query.@packageId, Request.Query.@packageSource);
                 if (package != null)
                 {
                     Uri iconUrl = await package.GetIconUrl();
@@ -317,7 +316,7 @@ namespace UniGetUI.Interface
                 }
 
                 byte[] fileContents = await File.ReadAllBytesAsync(iconPath);
-                return new Response()
+                return new Response
                 {
                     ContentType = $"image/{iconPath.Split('.')[^1]}",
                     Contents = (stream) =>

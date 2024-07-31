@@ -1,50 +1,51 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 {
-    public class ManagerLogger
+    public class ManagerLogger : IManagerLogger
     {
-        readonly PackageManager Manager;
-        public List<TaskLogger> Operations = [];
+        readonly IPackageManager Manager;
 
-        public ManagerLogger(PackageManager manager)
+        private List<TaskLogger> operations = new();
+        public IEnumerable<ITaskLogger> Operations { get => (IEnumerable<ITaskLogger>)operations; }
+
+        public ManagerLogger(IPackageManager manager)
         {
             Manager = manager;
         }
 
-        public ProcessTaskLogger CreateNew(LoggableTaskType type, Process process)
+        public IProcessTaskLogger CreateNew(LoggableTaskType type, Process process)
         {
             if (process.StartInfo == null)
             {
-                throw new Exception("Given process instance did not have a valid StartInfo value");
+                throw new InvalidOperationException("Given process instance did not have a valid StartInfo value");
             }
 
             ProcessTaskLogger operation = new(Manager, type, process.StartInfo.FileName, process.StartInfo.Arguments);
-            Operations.Add(operation);
+            operations.Add(operation);
             return operation;
         }
 
-        public NativeTaskLogger CreateNew(LoggableTaskType type)
+        public INativeTaskLogger CreateNew(LoggableTaskType type)
         {
             NativeTaskLogger operation = new(Manager, type);
-            Operations.Add(operation);
+            operations.Add(operation);
             return operation;
         }
     }
 
-    public abstract class TaskLogger
+    public abstract class TaskLogger : ITaskLogger
     {
         protected DateTime StartTime;
         protected DateTime? EndTime;
-        protected bool isComplete = false;
-        protected bool isOpen = false;
-        protected IEnumerable<string>? CachedMessage = null;
-        protected IEnumerable<string>? CachedVerboseMessage = null;
+        protected bool isComplete;
+        protected bool isOpen;
+        protected IEnumerable<string>? CachedMessage;
+        protected IEnumerable<string>? CachedVerboseMessage;
 
-        const int RETURNCODE_UNSET = -200;
-        const int RETURNCODE_SUCCESS = 0;
+        private const int RETURNCODE_UNSET = -200;
         protected int ReturnCode = -200;
 
         public TaskLogger()
@@ -73,7 +74,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         }
 
         /// <summary>
-        /// Returns the output with a preceeding digit representing the color of the line:
+        /// Returns the output with a preceding digit representing the color of the line:
         ///   0. White
         ///   1. Grey
         ///   2. Red
@@ -81,22 +82,21 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         ///   4. Green
         ///   5. Yellow
         /// </summary>
-        /// <returns></returns>
         public abstract IEnumerable<string> AsColoredString(bool verbose = false);
     }
 
-    public class ProcessTaskLogger : TaskLogger
+    public class ProcessTaskLogger : TaskLogger, IProcessTaskLogger
     {
-        readonly PackageManager Manager;
-        readonly LoggableTaskType Type;
+        private readonly IPackageManager Manager;
+        private readonly LoggableTaskType Type;
 
-        readonly string Executable;
-        readonly string Arguments;
-        readonly List<string> StdIn = [];
-        readonly List<string> StdOut = [];
-        readonly List<string> StdErr = [];
+        private readonly string Executable;
+        private readonly string Arguments;
+        private readonly List<string> StdIn = [];
+        private readonly List<string> StdOut = [];
+        private readonly List<string> StdErr = [];
 
-        public ProcessTaskLogger(PackageManager manager, LoggableTaskType type, string executable, string arguments) : base()
+        public ProcessTaskLogger(IPackageManager manager, LoggableTaskType type, string executable, string arguments)
         {
             Type = type;
             Manager = manager;
@@ -116,7 +116,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new Exception("Attempted to write log into an already-closed ProcessTaskLogger");
+                throw new InvalidOperationException("Attempted to write log into an already-closed ProcessTaskLogger");
             }
 
             foreach (string line in lines)
@@ -140,7 +140,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new Exception("Attempted to write log into an already-closed ProcessTaskLogger");
+                throw new InvalidOperationException("Attempted to write log into an already-closed ProcessTaskLogger");
             }
 
             foreach (string line in lines)
@@ -164,7 +164,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new Exception("Attempted to write log into an already-closed ProcessTaskLogger");
+                throw new InvalidOperationException("Attempted to write log into an already-closed ProcessTaskLogger");
             }
 
             foreach (string line in lines)
@@ -182,7 +182,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             {
                 return CachedMessage;
             }
-            else if (verbose && CachedVerboseMessage != null && isComplete)
+
+            if (verbose && CachedVerboseMessage != null && isComplete)
             {
                 return CachedVerboseMessage;
             }
@@ -193,7 +194,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 $"0Subprocess executable: \"{Executable}\"",
                 $"0Command-line arguments: \"{Arguments}\"",
                 $"0Process start time: {StartTime}",
-                EndTime == null ? $"2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
+                EndTime == null ? "2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
             ];
 
             if (StdIn.Count > 0)
@@ -263,22 +264,20 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             {
                 return CachedVerboseMessage = result;
             }
-            else
-            {
-                return CachedMessage = result;
-            }
+
+            return CachedMessage = result;
         }
     }
 
-    public class NativeTaskLogger : TaskLogger
+    public class NativeTaskLogger : TaskLogger, INativeTaskLogger
     {
-        readonly PackageManager Manager;
-        readonly LoggableTaskType Type;
+        private readonly IPackageManager Manager;
+        private readonly LoggableTaskType Type;
 
-        readonly List<string> Info = [];
-        readonly List<string> Errors = [];
+        private readonly List<string> Info = [];
+        private readonly List<string> Errors = [];
 
-        public NativeTaskLogger(PackageManager manager, LoggableTaskType type) : base()
+        public NativeTaskLogger(IPackageManager manager, LoggableTaskType type)
         {
             Type = type;
             Manager = manager;
@@ -288,7 +287,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new Exception("Attempted to write log into an already-closed NativeTaskLogger");
+                throw new InvalidOperationException("Attempted to write log into an already-closed NativeTaskLogger");
             }
 
             foreach (string line in lines)
@@ -312,7 +311,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         {
             if (!isOpen)
             {
-                throw new Exception("Attempted to write log into an already-closed NativeTaskLogger");
+                throw new InvalidOperationException("Attempted to write log into an already-closed NativeTaskLogger");
             }
 
             foreach (string line in lines)
@@ -346,7 +345,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             {
                 return CachedMessage;
             }
-            else if (verbose && CachedVerboseMessage != null && isComplete)
+
+            if (verbose && CachedVerboseMessage != null && isComplete)
             {
                 return CachedVerboseMessage;
             }
@@ -355,7 +355,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             [
                 $"0Logged native task on manager {Manager.Name}. Task type is {Type}",
                 $"0Process start time: {StartTime}",
-                EndTime == null ? $"2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
+                EndTime == null ? "2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
             ];
 
             if (Info.Count > 0)
@@ -409,10 +409,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             {
                 return CachedVerboseMessage = result;
             }
-            else
-            {
-                return CachedMessage = result;
-            }
+
+            return CachedMessage = result;
         }
     }
 }

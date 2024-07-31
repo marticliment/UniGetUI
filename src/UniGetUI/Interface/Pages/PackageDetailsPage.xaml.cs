@@ -9,6 +9,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using Windows.Storage;
@@ -27,13 +28,13 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class PackageDetailsPage : Page
     {
-        public Package Package;
+        public IPackage Package;
         private readonly InstallOptionsPage InstallOptionsPage;
         public event EventHandler? Close;
-        readonly OperationType OperationRole;
-        bool PackageHasScreenshots = false;
+        private readonly OperationType OperationRole;
+        private bool PackageHasScreenshots;
         public ObservableCollection<TextBlock> ShowableTags = [];
-        readonly Uri InvalidUri = new("about:blank");
+        // private readonly Uri InvalidUri = new("about:blank");
 
         private enum LayoutMode
         {
@@ -42,16 +43,16 @@ namespace UniGetUI.Interface.Dialogs
             Unloaded
         }
 
-
         private LayoutMode __layout_mode = LayoutMode.Unloaded;
-        public PackageDetailsPage(Package package, OperationType operationRole)
+        public PackageDetailsPage(IPackage package, OperationType operationRole)
         {
             OperationRole = operationRole;
             Package = package;
 
             InitializeComponent();
 
-            InstallOptionsPage = new InstallOptionsPage(package, operationRole);
+            var options = InstallationOptions.FromPackage(package).AsSerializable();
+            InstallOptionsPage = new InstallOptionsPage(package, operationRole, options);
             InstallOptionsExpander.Content = InstallOptionsPage;
 
             SizeChanged += PackageDetailsPage_SizeChanged;
@@ -90,7 +91,7 @@ namespace UniGetUI.Interface.Dialogs
             SetTextToItem(License_Content_Text, LoadingString);
             SetTextToItem(License_Content_Uri, "");
             SetTextToItem(Source_Label, CoreTools.Translate("Package Manager") + ": ");
-            SetTextToItem(Source_Content, Package.SourceAsString);
+            SetTextToItem(Source_Content, Package.Source.AsString_DisplayName);
 
             // Extended details section
             SetTextToItem(PackageId_Label, CoreTools.Translate("Package ID") + ": ");
@@ -114,7 +115,7 @@ namespace UniGetUI.Interface.Dialogs
             SetTextToItem(InstallerHash_Content, LoadingString);
             SetTextToItem(InstallerUrl_Label, CoreTools.Translate("Installer URL") + ": ");
             SetTextToItem(InstallerUrl_Content, LoadingString);
-            DownloadInstaller_Button.Click += (s, e) => { DownloadInstallerButton_Click(s, e); };
+            DownloadInstaller_Button.Click += DownloadInstallerButton_Click;
             SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Download installer"));
             SetTextToItem(UpdateDate_Label, CoreTools.Translate("Last updated:") + " ");
             SetTextToItem(UpdateDate_Content, LoadingString);
@@ -133,31 +134,14 @@ namespace UniGetUI.Interface.Dialogs
             LoadIcon();
             LoadScreenshots();
 
-            string NotFound = CoreTools.Translate("Not available");
-
-            PackageDetails details = Package.Details;
+            IPackageDetails details = Package.Details;
             if (!details.IsPopulated)
             {
                 await details.Load();
             }
 
-            string command = "";
-
-            switch (OperationRole)
-            {
-                case OperationType.Install:
-                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + String.Join(' ', Package.Manager.GetInstallParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
-                    break;
-
-                case OperationType.Uninstall:
-                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + String.Join(' ', Package.Manager.GetUninstallParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
-                    break;
-
-                case OperationType.Update:
-                    command = Package.Manager.Properties.ExecutableFriendlyName + " " + String.Join(' ', Package.Manager.GetUpdateParameters(Package, await InstallationOptions.FromPackageAsync(Package)));
-                    break;
-            }
-            CommandTextBlock.Text = command;
+            CommandTextBlock.Text = Package.Manager.Properties.ExecutableFriendlyName + " " +
+                string.Join(' ', Package.Manager.GetOperationParameters(Package, await InstallationOptions.FromPackageAsync(Package), OperationRole));
 
             LoadingIndicator.Visibility = Visibility.Collapsed;
 
@@ -219,7 +203,7 @@ namespace UniGetUI.Interface.Dialogs
             ShowableTags.Clear();
             foreach (string tag in details.Tags)
             {
-                ShowableTags.Add(new TextBlock()
+                ShowableTags.Add(new TextBlock
                 {
                     Text = tag,
                     VerticalAlignment = VerticalAlignment.Center,
@@ -247,7 +231,7 @@ namespace UniGetUI.Interface.Dialogs
             if (u == null)
             {
                 h.Inlines.Clear();
-                h.Inlines.Add(new Run()
+                h.Inlines.Add(new Run
                 {
                     Text = CoreTools.Translate("Not available"),
                     TextDecorations = TextDecorations.None,
@@ -258,14 +242,14 @@ namespace UniGetUI.Interface.Dialogs
             else
             {
                 h.Inlines.Clear();
-                h.Inlines.Add(new Run() { Text = prefix + u.ToString() + suffix });
+                h.Inlines.Add(new Run { Text = prefix + u.ToString() + suffix });
                 h.NavigateUri = u;
             }
         }
         public void SetTextToItem(Hyperlink h, string s)
         {
             h.Inlines.Clear();
-            h.Inlines.Add(new Run() { Text = s });
+            h.Inlines.Add(new Run { Text = s });
             h.NavigateUri = new Uri("about:blank");
         }
 
@@ -277,7 +261,7 @@ namespace UniGetUI.Interface.Dialogs
         public async void LoadScreenshots()
         {
             Uri[] screenshots = await Package.GetPackageScreenshots();
-            PackageHasScreenshots = screenshots.Count() > 0;
+            PackageHasScreenshots = screenshots.Length > 0;
             if (PackageHasScreenshots)
             {
                 PackageHasScreenshots = true;
@@ -296,24 +280,28 @@ namespace UniGetUI.Interface.Dialogs
 
         public async void ActionButton_Click(object sender, RoutedEventArgs e)
         {
-            Close?.Invoke(this, new EventArgs());
-            InstallOptionsPage.SaveToDisk();
+            Close?.Invoke(this, EventArgs.Empty);
+
+            var newOptions = (await InstallationOptions.FromPackageAsync(Package));
+            newOptions.FromSerializable(await InstallOptionsPage.GetUpdatedOptions());
+            newOptions.SaveToDisk();
+
             switch (OperationRole)
             {
                 case OperationType.Install:
-                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(Package, InstallOptionsPage.Options));
+                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(Package, newOptions));
                     break;
 
                 case OperationType.Uninstall:
                     if (await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(Package))
                     {
-                        MainApp.Instance.AddOperationToList(new UninstallPackageOperation(Package, InstallOptionsPage.Options));
+                        MainApp.Instance.AddOperationToList(new UninstallPackageOperation(Package, newOptions));
                     }
 
                     break;
 
                 case OperationType.Update:
-                    MainApp.Instance.AddOperationToList(new UpdatePackageOperation(Package, InstallOptionsPage.Options));
+                    MainApp.Instance.AddOperationToList(new UpdatePackageOperation(Package, newOptions));
                     break;
             }
         }
@@ -367,7 +355,7 @@ namespace UniGetUI.Interface.Dialogs
                         while (running)
                         {
                             DownloadInstaller_Button.Inlines.Clear();
-                            DownloadInstaller_Button.Inlines.Add(new Run() { Text = baseString + " " + texts[i++ % 6] });
+                            DownloadInstaller_Button.Inlines.Add(new Run { Text = baseString + " " + texts[i++ % 6] });
                             await Task.Delay(500);
                         }
                     };
@@ -382,7 +370,7 @@ namespace UniGetUI.Interface.Dialogs
                     await s.CopyToAsync(fs);
                     fs.Dispose();
                     DownloadInstaller_Button.Inlines.Clear();
-                    DownloadInstaller_Button.Inlines.Add(new Run() { Text = CoreTools.Translate("Download installer") });
+                    DownloadInstaller_Button.Inlines.Add(new Run { Text = CoreTools.Translate("Download installer") });
                     running = false;
                     Logger.ImportantInfo($"Installer for {Package.Id} has been downloaded successfully");
                     MainApp.Instance.MainWindow.HideLoadingDialog();
@@ -391,19 +379,17 @@ namespace UniGetUI.Interface.Dialogs
             }
             catch (Exception ex)
             {
-                running = false;
                 Logger.Error($"An error occurred while downloading the installer for the package {Package.Id}");
                 Logger.Error(ex);
 
                 DownloadInstaller_Button.Inlines.Clear();
-                DownloadInstaller_Button.Inlines.Add(new Run() { Text = CoreTools.Translate("An error occurred") + ": " + ex.Message });
+                DownloadInstaller_Button.Inlines.Add(new Run { Text = CoreTools.Translate("An error occurred") + ": " + ex.Message });
             }
-
-
         }
+
         public void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            Close?.Invoke(this, new EventArgs());
+            Close?.Invoke(this, EventArgs.Empty);
         }
 
         public void PackageDetailsPage_SizeChanged(object? sender = null, SizeChangedEventArgs? e = null)

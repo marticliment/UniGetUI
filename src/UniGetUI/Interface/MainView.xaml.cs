@@ -13,7 +13,9 @@ using UniGetUI.Interface.Pages.LogPage;
 using UniGetUI.Interface.SoftwarePages;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Serializable;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -28,7 +30,7 @@ namespace UniGetUI.Interface
         public SoftwareUpdatesPage UpdatesPage;
         public InstalledPackagesPage InstalledPage;
         public HelpDialog? HelpPage;
-        public PackageBundlePage BundlesPage;
+        public PackageBundlesPage BundlesPage;
         public Page? OldPage;
         public Page? CurrentPage;
         public InfoBadge UpdatesBadge;
@@ -48,7 +50,7 @@ namespace UniGetUI.Interface
                 ExternalCountBadge = UpdatesBadge
             };
             InstalledPage = new InstalledPackagesPage();
-            BundlesPage = new PackageBundlePage();
+            BundlesPage = new PackageBundlesPage();
             SettingsPage = new SettingsInterface();
 
             int i = 0;
@@ -73,7 +75,6 @@ namespace UniGetUI.Interface
                 Settings.Set("AlreadyWarnedAboutAdmin", true);
                 WarnAboutAdminRights();
             }
-
 
             Dictionary<Page, NavButton> NextPageReference = new()
             {
@@ -104,9 +105,9 @@ namespace UniGetUI.Interface
                     {
                         if (!IS_SHIFT_PRESSED)
                         {
-                            if (NextPageReference.ContainsKey(CurrentPage))
+                            if (NextPageReference.TryGetValue(CurrentPage, out var nextPage))
                             {
-                                NextPageReference[CurrentPage].ForceClick();
+                                nextPage.ForceClick();
                             }
                             else
                             {
@@ -115,9 +116,9 @@ namespace UniGetUI.Interface
                         }
                         else
                         {
-                            if (PreviousTabReference.ContainsKey(CurrentPage))
+                            if (PreviousTabReference.TryGetValue(CurrentPage, out var prevTab))
                             {
-                                PreviousTabReference[CurrentPage].ForceClick();
+                                prevTab.ForceClick();
                             }
                             else
                             {
@@ -149,27 +150,27 @@ namespace UniGetUI.Interface
             };
         }
 
-        private void DiscoverNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private void DiscoverNavButton_Click(object sender, EventArgs e)
         {
             NavigateToPage(DiscoverPage);
         }
 
-        private void InstalledNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private void InstalledNavButton_Click(object sender, EventArgs e)
         {
             NavigateToPage(InstalledPage);
         }
 
-        private void UpdatesNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private void UpdatesNavButton_Click(object sender, EventArgs e)
         {
             NavigateToPage(UpdatesPage);
         }
 
-        private void BundlesNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private void BundlesNavButton_Click(object sender, EventArgs e)
         {
             NavigateToPage(BundlesPage);
         }
 
-        private void MoreNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private void MoreNavButton_Click(object sender, EventArgs e)
         {
 
             foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
@@ -191,12 +192,12 @@ namespace UniGetUI.Interface
             };
         }
 
-        private void SettingsNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private void SettingsNavButton_Click(object sender, EventArgs e)
         {
             NavigateToPage(SettingsPage);
         }
 
-        private async void AboutNavButton_Click(object sender, NavButton.NavButtonEventArgs e)
+        private async void AboutNavButton_Click(object sender, EventArgs e)
         {
             ContentDialog? AboutDialog = new();
             AboutUniGetUI AboutPage = new();
@@ -269,8 +270,8 @@ namespace UniGetUI.Interface
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
-            grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
-            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
 
             TextBlock headerContent = new()
             {
@@ -285,7 +286,7 @@ namespace UniGetUI.Interface
                 Spacing = 8
             };
 
-            HeaderPanel.Children.Add(new LocalIcon("console")
+            HeaderPanel.Children.Add(new LocalIcon(Enums.IconType.Console)
             {
                 VerticalAlignment = VerticalAlignment.Center,
                 Height = 24,
@@ -299,7 +300,6 @@ namespace UniGetUI.Interface
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             });
-
 
             RichTextBlock CommandLineOutput = new()
             {
@@ -319,8 +319,8 @@ namespace UniGetUI.Interface
 
             Grid OutputGrid = new();
             OutputGrid.Children.Add(ScrollView);
-            OutputGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            OutputGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+            OutputGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            OutputGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
             Grid.SetColumn(ScrollView, 0);
             Grid.SetRow(ScrollView, 0);
 
@@ -375,51 +375,35 @@ namespace UniGetUI.Interface
             await MainApp.Instance.MainWindow.ShowDialogAsync(AdminDialog);
         }
 
-        public async Task<bool> ShowInstallationSettingsForPackageAndContinue(Package package, OperationType Operation)
+        /// <summary>
+        /// Will update the Installation Options for the given Package, and will return whether the user choose to continue
+        /// </summary>
+        public async Task<bool> ShowInstallationSettingsAndContinue(IPackage package, OperationType operation)
         {
-            InstallOptionsPage OptionsPage = new(package, Operation);
+            var options = (await InstallationOptions.FromPackageAsync(package)).AsSerializable();
 
-            ContentDialog? OptionsDialog = new()
-            {
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-                XamlRoot = XamlRoot
-            };
-            OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
-            OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
-            if (Operation == OperationType.Install)
-            {
-                OptionsDialog.SecondaryButtonText = CoreTools.Translate("Install");
-            }
-            else if (Operation == OperationType.Update)
-            {
-                OptionsDialog.SecondaryButtonText = CoreTools.Translate("Update");
-            }
-            else if (Operation == OperationType.Uninstall)
-            {
-                OptionsDialog.SecondaryButtonText = CoreTools.Translate("Uninstall");
-            }
-            else
-            {
-                OptionsDialog.SecondaryButtonText = "";
-            }
+            var result = await ShowInstallOptionsDialog(package, operation, options);
+            InstallationOptions newOptions = await InstallationOptions.FromPackageAsync(package);
+            newOptions.FromSerializable(result.Item1);
+            await newOptions.SaveToDiskAsync();
 
-            OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
-            OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
-            OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
-            OptionsDialog.Content = OptionsPage;
-            OptionsPage.Close += (s, e) => { OptionsDialog.Hide(); };
-
-            ContentDialogResult result = await MainApp.Instance.MainWindow.ShowDialogAsync(OptionsDialog);
-            OptionsPage.SaveToDisk();
-
-            OptionsDialog.Content = null;
-            OptionsDialog = null;
-
-            return result == ContentDialogResult.Secondary;
-
+            return result.Item2 == ContentDialogResult.Secondary;
         }
 
-        public async Task<InstallationOptions> UpdateInstallationSettings(Package package, InstallationOptions options)
+        /// <summary>
+        /// Will update the Installation Options for the given imported package
+        /// </summary>
+        public async Task<(SerializableInstallationOptions_v1, ContentDialogResult)> ShowInstallOptionsDialog_ImportedPackage(ImportedPackage importedPackage)
+        {
+            var result = await ShowInstallOptionsDialog(importedPackage, OperationType.None, importedPackage.installation_options);
+            importedPackage.installation_options = result.Item1;
+            return result;
+        }
+
+        private async Task<(SerializableInstallationOptions_v1, ContentDialogResult)> ShowInstallOptionsDialog(
+            IPackage package,
+            OperationType operation,
+            SerializableInstallationOptions_v1 options)
         {
             InstallOptionsPage OptionsPage = new(package, options);
 
@@ -430,25 +414,28 @@ namespace UniGetUI.Interface
             };
             OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
-            OptionsDialog.SecondaryButtonText = "";
+
+            OptionsDialog.SecondaryButtonText = operation switch
+            {
+                OperationType.Install => CoreTools.Translate("Install"),
+                OperationType.Uninstall => CoreTools.Translate("Uninstall"),
+                OperationType.Update => CoreTools.Translate("Update"),
+                _ => ""
+            };
+
             OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
             OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
             OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
             OptionsDialog.Content = OptionsPage;
             OptionsPage.Close += (s, e) => { OptionsDialog.Hide(); };
 
-            await MainApp.Instance.MainWindow.ShowDialogAsync(OptionsDialog);
-
-            OptionsDialog.Content = null;
-            OptionsDialog = null;
-
-            return await OptionsPage.GetUpdatedOptions();
-
+            ContentDialogResult result = await MainApp.Instance.MainWindow.ShowDialogAsync(OptionsDialog);
+            return (await OptionsPage.GetUpdatedOptions(), result);
         }
 
         private void NavigateToPage(Page TargetPage)
         {
-            if (!PageButtonReference.ContainsKey(TargetPage))
+            if (!PageButtonReference.TryGetValue(TargetPage, out var pageButton))
             {
                 PageButtonReference.Add(TargetPage, MoreNavButton);
                 Grid.SetColumn(TargetPage, 0);
@@ -458,7 +445,7 @@ namespace UniGetUI.Interface
             foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
             {
 
-                button.ToggleButton.IsChecked = button == PageButtonReference[TargetPage];
+                button.ToggleButton.IsChecked = button == pageButton;
             }
 
             foreach (Page page in PageButtonReference.Keys)
@@ -470,10 +457,6 @@ namespace UniGetUI.Interface
             CurrentPage = TargetPage;
 
             (CurrentPage as AbstractPackagesPage)?.FocusPackageList();
-            if (CurrentPage == BundlesPage)
-            {
-                BundlesPage.PackageList.Focus(FocusState.Programmatic);
-            }
         }
 
         private async void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
@@ -489,11 +472,12 @@ namespace UniGetUI.Interface
             NotesDialog.CloseButtonText = CoreTools.Translate("Close");
             NotesDialog.Title = CoreTools.Translate("Release notes");
             ReleaseNotes? notes = new();
+            notes.Close += (s, e) => NotesDialog.Hide(); 
             NotesDialog.Content = notes;
             NotesDialog.SizeChanged += (s, e) =>
             {
-                notes.MinWidth = ActualWidth - 300;
-                notes.MinHeight = ActualHeight - 200;
+                notes.MinWidth = Math.Abs(ActualWidth - 300);
+                notes.MinHeight = Math.Abs(ActualHeight - 200);
             };
 
             await MainApp.Instance.MainWindow.ShowDialogAsync(NotesDialog);
@@ -503,7 +487,7 @@ namespace UniGetUI.Interface
             NotesDialog = null;
         }
 
-        public async Task ShowPackageDetails(Package package, OperationType ActionOperation)
+        public async Task ShowPackageDetails(IPackage package, OperationType ActionOperation)
         {
             PackageDetailsPage? DetailsPage = new(package, ActionOperation);
 
@@ -518,10 +502,10 @@ namespace UniGetUI.Interface
             DetailsDialog.SizeChanged += (s, e) =>
             {
                 int hOffset = (ActualWidth < 1300) ? 100 : 300;
-                DetailsPage.MinWidth = ActualWidth - hOffset;
-                DetailsPage.MinHeight = ActualHeight - 100;
-                DetailsPage.MaxWidth = ActualWidth - hOffset;
-                DetailsPage.MaxHeight = ActualHeight - 100;
+                DetailsPage.MinWidth = Math.Abs(ActualWidth - hOffset);
+                DetailsPage.MinHeight = Math.Abs(ActualHeight - 100);
+                DetailsPage.MaxWidth = Math.Abs(ActualWidth - hOffset);
+                DetailsPage.MaxHeight = Math.Abs(ActualHeight - 100);
             };
 
             DetailsPage.Close += (s, e) => { DetailsDialog.Hide(); };
@@ -533,7 +517,7 @@ namespace UniGetUI.Interface
 
         }
 
-        public async Task<bool> ConfirmUninstallation(Package package)
+        public async Task<bool> ConfirmUninstallation(IPackage package)
         {
             ContentDialog dialog = new()
             {
@@ -549,9 +533,9 @@ namespace UniGetUI.Interface
             return await MainApp.Instance.MainWindow.ShowDialogAsync(dialog) == ContentDialogResult.Secondary;
         }
 
-        public async Task<bool> ConfirmUninstallation(IEnumerable<Package> packages)
+        public async Task<bool> ConfirmUninstallation(IEnumerable<IPackage> packages)
         {
-            if (packages.Count() == 0)
+            if (!packages.Any())
             {
                 return false;
             }

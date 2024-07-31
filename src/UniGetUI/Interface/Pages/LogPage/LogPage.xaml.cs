@@ -15,8 +15,6 @@ namespace UniGetUI.Interface.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    /// 
-
     public abstract partial class BaseLogPage : Page, IPageWithKeyboardShortcuts
     {
         protected int LOG_LEVEL = 4;
@@ -25,7 +23,6 @@ namespace UniGetUI.Interface.Pages
         protected abstract void LoadLogLevels();
         public abstract void LoadLog();
 
-
         public BaseLogPage(bool log_level_enabled)
         {
             LogLevelEnabled = log_level_enabled;
@@ -33,7 +30,7 @@ namespace UniGetUI.Interface.Pages
             if (LogLevelEnabled)
             {
                 LoadLogLevels();
-            } 
+            }
             else
             {
                 LogLevelPane.Visibility = Visibility.Collapsed;
@@ -99,7 +96,7 @@ namespace UniGetUI.Interface.Pages
                 LogTextBox.SelectAll();
                 await File.WriteAllTextAsync(file.Path, LogTextBox.SelectedText);
                 LogTextBox.Select(LogTextBox.SelectionStart, LogTextBox.SelectionStart);
-                Process.Start(new ProcessStartInfo()
+                Process.Start(new ProcessStartInfo
                 {
                     FileName = "explorer.exe",
                     Arguments = @$"/select, ""{file.Path}"""

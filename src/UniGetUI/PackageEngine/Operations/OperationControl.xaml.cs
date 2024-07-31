@@ -12,7 +12,6 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Enums;
 
-
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -33,14 +32,13 @@ namespace UniGetUI.PackageEngine.Operations
             Compact,
         }
 
-
         private string __button_text = "";
         private string __line_info_text = "Please wait...";
         private Uri __icon_source = new("ms-appx:///Assets/Images/package_color.png");
         private string __operation_description = "$Package Install";
-        private SolidColorBrush? __progressbar_color = null;
+        private SolidColorBrush? __progressbar_color;
         private OperationStatus __status = OperationStatus.Pending;
-        private bool IsDialogOpen = false;
+        private bool IsDialogOpen;
 
         private WidgetLayout __layout_mode;
         private WidgetLayout LayoutMode
@@ -129,7 +127,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 __progressbar_color = value; if (ProgressIndicator != null)
                 {
-                    ProgressIndicator.Foreground = (__progressbar_color != null) ? __progressbar_color : null;
+                    ProgressIndicator.Foreground = __progressbar_color ?? null;
                 }
             }
         }
@@ -156,8 +154,8 @@ namespace UniGetUI.PackageEngine.Operations
                 {
 
                     /*
-                     * 
-                     * 
+                     *
+                     *
         <SolidColorBrush x:Key="ProgressWaiting" Color="{ThemeResource SystemFillColorNeutralBrush}"/>
         <SolidColorBrush x:Key="ProgressRunning" Color="{ThemeResource SystemFillColorAttentionBrush}"/>
         <SolidColorBrush x:Key="ProgressSucceeded" Color="{ThemeResource SystemFillColorSuccessBrush}"/>
@@ -202,7 +200,7 @@ namespace UniGetUI.PackageEngine.Operations
                 }
             }
         }
-        protected bool IGNORE_PARALLEL_OPERATION_SETTINGS = false;
+        protected bool IGNORE_PARALLEL_OPERATION_SETTINGS;
         public AbstractOperation(bool IgnoreParallelInstalls = false)
         {
             IGNORE_PARALLEL_OPERATION_SETTINGS = IgnoreParallelInstalls;
@@ -234,7 +232,6 @@ namespace UniGetUI.PackageEngine.Operations
 
             OutputDialog.Title = CoreTools.Translate("Live output");
             OutputDialog.CloseButtonText = CoreTools.Translate("Close");
-
 
             OutputDialog.SizeChanged += (s, e) =>
             {
@@ -470,11 +467,9 @@ namespace UniGetUI.PackageEngine.Operations
                 ProcessOutput.Add("Process Exit Code      : " + Process.ExitCode.ToString());
                 ProcessOutput.Add("Process End Time       : " + DateTime.Now.ToString());
 
-
-
                 AfterFinshAction postAction = AfterFinshAction.ManualClose;
 
-                OperationVeredict OperationVeredict = GetProcessVeredict(Process.ExitCode, ProcessOutput.ToArray());
+                OperationVeredict OperationVeredict = await GetProcessVeredict(Process.ExitCode, ProcessOutput.ToArray());
 
                 if (Status != OperationStatus.Cancelled)
                 {
@@ -551,7 +546,7 @@ namespace UniGetUI.PackageEngine.Operations
 
                 List<string> newHistory = [.. ProcessOutput, .. oldHistory];
 
-                Settings.SetValue("OperationHistory", String.Join('\n', newHistory).Replace(" | ", " ║ "));
+                Settings.SetValue("OperationHistory", string.Join('\n', newHistory).Replace(" | ", " ║ "));
             }
             catch (Exception e)
             {
@@ -562,8 +557,6 @@ namespace UniGetUI.PackageEngine.Operations
                 try { Status = OperationStatus.Failed; } catch { }
             }
             MainApp.Instance.TooltipStatus.OperationsInProgress = MainApp.Instance.TooltipStatus.OperationsInProgress - 1;
-
-
         }
         protected async Task Close()
         {
@@ -581,7 +574,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected abstract void Initialize();
         protected abstract Task<Process> BuildProcessInstance(ProcessStartInfo startInfo);
-        protected abstract OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output);
+        protected abstract Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output);
         protected abstract Task<AfterFinshAction> HandleFailure();
         protected abstract Task<AfterFinshAction> HandleSuccess();
         protected abstract string[] GenerateProcessLogHeader();

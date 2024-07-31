@@ -5,28 +5,28 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
-internal class BundledWinGetHelper : IWinGetManagerHelper
+internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 {
-    public BundledWinGetHelper()
-    {
-    }
-
     public async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
         if (Settings.Get("ForceLegacyBundledWinGet"))
+        {
             return await BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(Manager);
+        }
 
         List<Package> Packages = [];
 
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo()
+            StartInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
                 Arguments = "/C " + Manager.PowerShellPath + " " + Manager.PowerShellPromptArgs,
@@ -41,7 +41,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
             }
         };
 
-        ManagerClasses.Classes.ProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
 
         p.Start();
 
@@ -58,7 +58,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
                                  [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
                              )
                              process {
-                                 if($IsUpdateAvailable)
+                                 if ($IsUpdateAvailable)
                                  {
                                      Write-Output("#" + $Name + "`t" + $Id + "`t" + $InstalledVersion + "`t" + $AvailableVersions[0] + "`t" + $Source)
                                  }
@@ -90,7 +90,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
                 continue;
             }
 
-            ManagerSource source = Manager.GetSourceOrDefault(elements[4]);
+            IManagerSource source = Manager.GetSourceOrDefault(elements[4]);
 
             Packages.Add(new Package(elements[0][1..], elements[1], elements[2], elements[3], source, Manager));
         }
@@ -99,26 +99,26 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
         await p.WaitForExitAsync();
         logger.Close(p.ExitCode);
 
-        if (Packages.Count() > 0)
+        if (Packages.Count > 0)
         {
             return Packages.ToArray();
         }
-        else
-        {
-            Logger.Warn("WinGet updates returned zero packages, attempting legacy...");
-            return await BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(Manager);
-        }
+
+        Logger.Warn("WinGet updates returned zero packages, attempting legacy...");
+        return await BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(Manager);
     }
 
     public async Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager)
     {
         if (Settings.Get("ForceLegacyBundledWinGet"))
+        {
             return await BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(Manager);
+        }
 
         List<Package> Packages = [];
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo()
+            StartInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
                 Arguments = "/C " + Manager.PowerShellPath + " " + Manager.PowerShellPromptArgs,
@@ -133,8 +133,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
             }
         };
 
-        ManagerClasses.Classes.ProcessTaskLogger logger =
-            Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
         p.Start();
 
         string command = """
@@ -165,7 +164,6 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
         p.StandardInput.Close();
         logger.AddToStdIn(command);
 
-
         string? line;
         while ((line = await p.StandardOutput.ReadLineAsync()) != null)
         {
@@ -181,7 +179,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
                 continue;
             }
 
-            ManagerSource source;
+            IManagerSource source;
             if (elements[3] != "")
             {
                 source = Manager.GetSourceOrDefault(elements[3]);
@@ -198,28 +196,27 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
         await p.WaitForExitAsync();
         logger.Close(p.ExitCode);
 
-        if (Packages.Count() > 0)
+        if (Packages.Count > 0)
         {
             return Packages.ToArray();
         }
-        else
-        {
-            Logger.Warn("WinGet installed packages returned zero packages, attempting legacy...");
-            return await BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(Manager);
-        }
-    }
 
+        Logger.Warn("WinGet installed packages returned zero packages, attempting legacy...");
+        return await BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(Manager);
+    }
 
     public async Task<Package[]> FindPackages_UnSafe(WinGet Manager, string query)
     {
         if (Settings.Get("ForceLegacyBundledWinGet"))
+        {
             return await BundledWinGetLegacyMethods.FindPackages_UnSafe(Manager, query);
+        }
 
         List<Package> Packages = [];
 
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo()
+            StartInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
                 Arguments = "/C " + Manager.PowerShellPath + " " + Manager.PowerShellPromptArgs,
@@ -236,8 +233,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
 
         p.Start();
 
-        ManagerClasses.Classes.ProcessTaskLogger
-            logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
         string command = """
                          Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
@@ -280,7 +276,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
                 continue;
             }
 
-            ManagerSource source = Manager.GetSourceOrDefault(elements[3]);
+            IManagerSource source = Manager.GetSourceOrDefault(elements[3]);
 
             Packages.Add(new Package(elements[0][1..], elements[1], elements[2], source, Manager));
         }
@@ -289,26 +285,24 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
         await p.WaitForExitAsync();
         logger.Close(p.ExitCode);
 
-        if (Packages.Count() > 0)
+        if (Packages.Count > 0)
         {
             return Packages.ToArray();
         }
-        else
-        {
-            Logger.Warn("WinGet package fetching returned zero packages, attempting legacy...");
-            return await BundledWinGetLegacyMethods.FindPackages_UnSafe(Manager, query);
-        }
+
+        Logger.Warn("WinGet package fetching returned zero packages, attempting legacy...");
+        return await BundledWinGetLegacyMethods.FindPackages_UnSafe(Manager, query);
 
     }
 
-    public async Task GetPackageDetails_UnSafe(WinGet Manager, PackageDetails details)
+    public async Task GetPackageDetails_UnSafe(WinGet Manager, IPackageDetails details)
     {
         if (details.Package.Source.Name == "winget")
         {
             details.ManifestUrl = new Uri("https://github.com/microsoft/winget-pkgs/tree/master/manifests/"
                                           + details.Package.Id[0].ToString().ToLower() + "/"
                                           + details.Package.Id.Split('.')[0] + "/"
-                                          + String.Join("/",
+                                          + string.Join("/",
                                               details.Package.Id.Contains('.')
                                                   ? details.Package.Id.Split('.')[1..]
                                                   : details.Package.Id.Split('.'))
@@ -400,7 +394,6 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
             output.Clear();
             Logger.Info("Winget could not found culture data for package Id=" + details.Package.Id +
                         " and Culture=en-US. Loading default");
-            LocaleFound = true;
             process = new Process();
             startInfo = new()
             {
@@ -468,7 +461,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
                     IsLoadingTags = false;
                 }
 
-                // Check for singleline fields
+                // Check for single-line fields
                 if (line.Contains("Publisher:"))
                 {
                     details.Publisher = line.Split(":")[1].Trim();
@@ -522,7 +515,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
                 }
                 else if (line.Contains("Tags"))
                 {
-                    details.Tags = new string[0];
+                    details.Tags = [];
                     IsLoadingTags = true;
                 }
             }
@@ -536,11 +529,11 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
         return;
     }
 
-    public async Task<string[]> GetPackageVersions_Unsafe(WinGet Manager, Package package)
+    public async Task<string[]> GetPackageVersions_Unsafe(WinGet Manager, IPackage package)
     {
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo()
+            StartInfo = new ProcessStartInfo
             {
                 FileName = Manager.WinGetBundledPath,
                 Arguments = Manager.Properties.ExecutableCallArgs + " show --id " + package.Id +
@@ -554,8 +547,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
             }
         };
 
-        ManagerClasses.Classes.ProcessTaskLogger logger =
-            Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
 
         p.Start();
 
@@ -584,9 +576,9 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
         return versions.ToArray();
     }
 
-    public async Task<ManagerSource[]> GetSources_UnSafe(WinGet Manager)
+    public async Task<IManagerSource[]> GetSources_UnSafe(WinGet Manager)
     {
-        List<ManagerSource> sources = [];
+        List<IManagerSource> sources = [];
 
         Process p = new()
         {
@@ -605,8 +597,7 @@ internal class BundledWinGetHelper : IWinGetManagerHelper
 
         p.Start();
 
-        ManagerClasses.Classes.ProcessTaskLogger
-            logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
         bool dashesPassed = false;
         string? line;

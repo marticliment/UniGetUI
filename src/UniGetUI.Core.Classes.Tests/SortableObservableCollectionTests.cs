@@ -1,8 +1,9 @@
+#pragma warning disable CA1852
 namespace UniGetUI.Core.Classes.Tests
 {
     public class SortableObservableCollectionTests
     {
-        class SortableInt : IIndexableListItem
+        private class SortableInt : IIndexableListItem
         {
             public int Value { get; set; }
             public int Index { get; set; }
@@ -25,7 +26,6 @@ namespace UniGetUI.Core.Classes.Tests
             SortableCollection.Add(new(5));
             SortableCollection.Add(new(2));
             SortableCollection.BlockSorting = false;
-
 
             SortableCollection.Sort();
 

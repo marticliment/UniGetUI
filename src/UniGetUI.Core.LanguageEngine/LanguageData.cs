@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using UniGetUI.Core.Classes;
@@ -10,9 +10,6 @@ namespace UniGetUI.Core.Language
 {
     public static class LanguageData
     {
-        /// <summary>
-        /// Returns 
-        /// </summary>
         private static Person[]? __translators_list;
 
         public static Person[] TranslatorsList
@@ -62,10 +59,8 @@ namespace UniGetUI.Core.Language
             {
                 return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("404%" + x.Key)).ToString()));
             }
-            else
-            {
-                return new(new Dictionary<string, string>());
-            }
+
+            return new(new Dictionary<string, string>());
         }
 
         private static ReadOnlyDictionary<string, string> LoadLanguageReference()
@@ -74,10 +69,8 @@ namespace UniGetUI.Core.Language
             {
                 return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("NoNameLang_" + x.Key)).ToString()));
             }
-            else
-            {
-                return new(new Dictionary<string, string>());
-            }
+
+            return new(new Dictionary<string, string>());
         }
 
         private static Person[] LoadLanguageTranslatorList()

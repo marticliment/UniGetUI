@@ -1,10 +1,12 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
@@ -14,11 +16,11 @@ namespace UniGetUI.Interface.SoftwarePages
 {
     public class DiscoverSoftwarePage : AbstractPackagesPage
     {
-        BetterMenuItem? MenuAsAdmin;
-        BetterMenuItem? MenuInteractive;
-        BetterMenuItem? MenuSkipHash;
+        private BetterMenuItem? MenuAsAdmin;
+        private BetterMenuItem? MenuInteractive;
+        private BetterMenuItem? MenuSkipHash;
         public DiscoverSoftwarePage()
-        : base(new PackagesPageData()
+        : base(new PackagesPageData
         {
             DisableAutomaticPackageLoadOnStart = true,
             MegaQueryBlockEnabled = true,
@@ -57,7 +59,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuInstall = new()
             {
                 Text = "Install",
-                IconName = "newversion",
+                IconName = IconType.Download,
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
             menuInstall.Click += MenuInstall_Invoked;
@@ -68,7 +70,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuInstallSettings = new()
             {
                 Text = "Installation options",
-                IconName = "options",
+                IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
             menuInstallSettings.Click += MenuInstallSettings_Invoked;
@@ -79,7 +81,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin = new BetterMenuItem
             {
                 Text = "Install as administrator",
-                IconName = "runasadmin"
+                IconName = IconType.UAC
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
             menu.Items.Add(MenuAsAdmin);
@@ -87,7 +89,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuInteractive = new BetterMenuItem
             {
                 Text = "Interactive installation",
-                IconName = "interactive"
+                IconName = IconType.Interactive
             };
             MenuInteractive.Click += MenuInteractive_Invoked;
             menu.Items.Add(MenuInteractive);
@@ -95,7 +97,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuSkipHash = new BetterMenuItem
             {
                 Text = "Skip hash check",
-                IconName = "checksum"
+                IconName = IconType.Checksum
             };
             MenuSkipHash.Click += MenuSkipHash_Invoked;
             menu.Items.Add(MenuSkipHash);
@@ -105,7 +107,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuShare = new()
             {
                 Text = "Share this package",
-                IconName = "share"
+                IconName = IconType.Share
             };
             menuShare.Click += MenuShare_Invoked;
             menu.Items.Add(menuShare);
@@ -113,7 +115,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuDetails = new()
             {
                 Text = "Package details",
-                IconName = "info",
+                IconName = IconType.Info_Round,
                 KeyboardAcceleratorTextOverride = "Enter"
             };
             menuDetails.Click += MenuDetails_Invoked;
@@ -177,17 +179,17 @@ namespace UniGetUI.Interface.SoftwarePages
                 toolButton.Label = Labels[toolButton].Trim();
             }
 
-            Dictionary<AppBarButton, string> Icons = new()
+            Dictionary<AppBarButton, IconType> Icons = new()
             {
-                { InstallSelected,      "install" },
-                { InstallAsAdmin,       "runasadmin" },
-                { InstallSkipHash,      "checksum" },
-                { InstallInteractive,   "interactive" },
-                { InstallationSettings, "options" },
-                { PackageDetails,       "info" },
-                { SharePackage,         "share" },
-                { ExportSelection,      "add_to" },
-                { HelpButton,           "help" }
+                { InstallSelected,      IconType.Download },
+                { InstallAsAdmin,       IconType.UAC },
+                { InstallSkipHash,      IconType.Checksum },
+                { InstallInteractive,   IconType.Interactive },
+                { InstallationSettings, IconType.Options },
+                { PackageDetails,       IconType.Info_Round },
+                { SharePackage,         IconType.Share },
+                { ExportSelection,      IconType.AddTo },
+                { HelpButton,           IconType.Help }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)
@@ -202,7 +204,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             InstallSelected.Click += (s, e) =>
             {
-                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
                 }
@@ -210,7 +212,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             InstallAsAdmin.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, elevated: true);
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
@@ -219,7 +221,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             InstallSkipHash.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, no_integrity: true);
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
@@ -228,7 +230,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             InstallInteractive.Click += async (s, e) =>
             {
-                foreach (Package package in FilteredPackages.GetCheckedPackages())
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, interactive: true);
                     MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
@@ -270,7 +272,7 @@ namespace UniGetUI.Interface.SoftwarePages
         }
 #pragma warning restore
 
-        protected override void WhenShowingContextMenu(Package package)
+        protected override void WhenShowingContextMenu(IPackage package)
         {
             if (MenuAsAdmin == null || MenuInteractive == null || MenuSkipHash == null)
             {
@@ -286,7 +288,9 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
-            await MainApp.Instance.MainWindow.NavigationPage.BundlesPage.AddPackages(FilteredPackages.GetCheckedPackages());
+            MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+            await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
+            MainApp.Instance.MainWindow.HideLoadingDialog();
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs e)
@@ -306,7 +310,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null)
             {
                 return;
@@ -317,7 +321,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null)
             {
                 return;
@@ -329,7 +333,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null)
             {
                 return;
@@ -341,7 +345,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = SelectedItem;
+            IPackage? package = SelectedItem;
             if (package == null)
             {
                 return;
@@ -386,7 +390,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 // Find a package that matches both the Id and the Source
                 string managerName = pSource.Contains(':') ? pSource.Split(':')[0] : pSource;
-                foreach (Package match in FilteredPackages.GetPackages())
+                foreach (IPackage match in FilteredPackages.GetPackages())
                 {
                     if (match.Source.Manager.Name == managerName && match.Id == pId)
                     {
@@ -398,7 +402,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 
                 Logger.Info($"No package was found with Id={pId} and Source={pSource}, checking for Id only.");
                 // Find a package that matches the Id only
-                foreach (Package match in FilteredPackages.GetPackages())
+                foreach (IPackage match in FilteredPackages.GetPackages())
                 {
                     if (match.Id == pId)
                     {

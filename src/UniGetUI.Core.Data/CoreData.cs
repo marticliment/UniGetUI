@@ -8,14 +8,14 @@ namespace UniGetUI.Core.Data
     {
         private static int? __code_page;
         public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
-        
+
         private static int GetCodePage()
         {
             try
             {
-                Process p = new Process()
+                Process p = new Process
                 {
-                    StartInfo = new ProcessStartInfo()
+                    StartInfo = new ProcessStartInfo
                     {
                         FileName = "chcp.com",
                         RedirectStandardOutput = true,
@@ -26,7 +26,7 @@ namespace UniGetUI.Core.Data
                 p.Start();
                 string contents = p.StandardOutput.ReadToEnd();
                 return int.Parse(contents.Split(':')[^1].Trim());
-            } 
+            }
             catch (Exception e)
             {
                 Logger.Error(e);
@@ -34,10 +34,11 @@ namespace UniGetUI.Core.Data
             }
         }
 
-        public const string VersionName =  "3.1.1-beta1"; // Do not modify this line, use file scripts/apply_versions.py
-        public const double VersionNumber =  3.1091; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName =  "3.1.1"; // Do not modify this line, use file scripts/apply_versions.py
+        public const double VersionNumber =  3.11; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
+
         public static HttpClientHandler GenericHttpClientParameters
         {
             get
@@ -149,10 +150,10 @@ namespace UniGetUI.Core.Data
                 return file_path;
             }
         }
-        public static bool IsDaemon = false;
+
+        public static bool IsDaemon;
 
         public static string ManagerLogs = "";
-
 
         private static int __volatile_notification_id_counter = 1235;
 
@@ -184,10 +185,8 @@ namespace UniGetUI.Core.Data
                 {
                     return dir;
                 }
-                else
-                {
-                    Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
-                }
+
+                Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
 
                 return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UiGetUI");
             }
@@ -205,17 +204,14 @@ namespace UniGetUI.Core.Data
                 {
                     return filename.Replace(".dll", ".exe");
                 }
-                else
-                {
-                    Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
-                }
+
+                Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
 
                 return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UniGetUI", "UniGetUI.exe");
             }
         }
 
         public static string GSudoPath = "";
-
 
         /// <summary>
         /// This method will return the most appropriate data directory.
@@ -232,7 +228,8 @@ namespace UniGetUI.Core.Data
             {
                 return new_path;
             }
-            else if (Directory.Exists(new_path) && Directory.Exists(old_path))
+
+            if (Directory.Exists(new_path) && Directory.Exists(old_path))
             {
                 try
                 {
@@ -279,6 +276,7 @@ namespace UniGetUI.Core.Data
                         Logger.Info("Deleting old Chocolatey directory " + old_path);
                         Directory.Delete(old_path);
                     }
+
                     return new_path;
                 }
                 catch (Exception e)
@@ -287,7 +285,8 @@ namespace UniGetUI.Core.Data
                     return new_path;
                 }
             }
-            else if (/*Directory.Exists(new_path)*/Directory.Exists(old_path))
+
+            if (/*Directory.Exists(new_path)*/Directory.Exists(old_path))
             {
                 try
                 {
@@ -302,22 +301,19 @@ namespace UniGetUI.Core.Data
                     return old_path;
                 }
             }
-            else
+
+            try
             {
-                try
-                {
-                    Logger.Debug("Creating non-existing data directory at: " + new_path);
-                    Directory.CreateDirectory(new_path);
-                    return new_path;
-                }
-                catch (Exception e)
-                {
-                    Logger.Error("Could not create new directory. You may perhaps need to disable Controlled Folder Access from Windows Settings or make an exception for UniGetUI.");
-                    Logger.Error(e);
-                    return new_path;
-                }
+                Logger.Debug("Creating non-existing data directory at: " + new_path);
+                Directory.CreateDirectory(new_path);
+                return new_path;
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Could not create new directory. You may perhaps need to disable Controlled Folder Access from Windows Settings or make an exception for UniGetUI.");
+                Logger.Error(e);
+                return new_path;
             }
         }
-
     }
 }

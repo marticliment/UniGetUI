@@ -15,10 +15,11 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
-using UniGetUI.PackageEngine.PackageClasses;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
+using Microsoft.UI.Xaml.Media;
 
 namespace UniGetUI.Interface
 {
@@ -26,17 +27,19 @@ namespace UniGetUI.Interface
     {
         /* BEGIN INTEROP STUFF */
         [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)] static extern bool SetForegroundWindow(IntPtr hWnd);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
 
         [ComImport]
         [Guid("3A3DCD6C-3EAB-43DC-BCDE-45671CE800C8")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        interface IDataTransferManagerInterop
+        private interface IDataTransferManagerInterop
         {
             IntPtr GetForWindow([In] IntPtr appWindow, [In] ref Guid riid);
             void ShowShareUIForWindow(IntPtr appWindow);
         }
-        static readonly Guid _dtm_iid = new(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
+
+        private static readonly Guid _dtm_iid = new(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
         public const int MONITORINFOF_PRIMARY = 0x00000001;
 
         [StructLayout(LayoutKind.Sequential)]
@@ -63,15 +66,15 @@ namespace UniGetUI.Interface
         public static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
         /* END INTEROP STUFF */
 
-        TaskbarIcon? TrayIcon;
-        bool HasLoadedLastGeometry = false;
+        private TaskbarIcon? TrayIcon;
+        private bool HasLoadedLastGeometry;
 
         public MainView NavigationPage;
         public Grid ContentRoot;
-        public bool BlockLoading = false;
-        readonly ContentDialog LoadingSthDalog;
+        public bool BlockLoading;
+        private readonly ContentDialog LoadingSthDalog;
 
-        private int LoadingDialogCount = 0;
+        private int LoadingDialogCount;
 
         public List<ContentDialog> DialogQueue = [];
 
@@ -121,12 +124,9 @@ namespace UniGetUI.Interface
             Logger.Debug("Notification activated: " + args.ToString() + " " + input.ToString());
         }
 
-
         /// <summary>
         /// Handle the window closing event, and divert it when the window must be hidden.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
         public async void HandleClosingEvent(AppWindow sender, AppWindowClosingEventArgs args)
         {
             SaveGeometry(Force: true);
@@ -250,7 +250,6 @@ namespace UniGetUI.Interface
             TrayMenu.Items.Add(new MenuFlyoutSeparator());
             TrayMenu.Items.Add(new MenuFlyoutItem { Command = ShowUniGetUI });
             TrayMenu.Items.Add(new MenuFlyoutItem { Command = QuitUniGetUI });
-
 
             TrayMenu.AreOpenCloseAnimationsEnabled = false;
 
@@ -435,7 +434,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        public void SharePackage(Package? package)
+        public void SharePackage(IPackage? package)
         {
             if (package == null)
             {
@@ -455,7 +454,7 @@ namespace UniGetUI.Interface
             dataTransferManager.DataRequested += (sender, args) =>
             {
                 DataRequest dataPackage = args.Request;
-                Uri ShareUrl = new("https://marticliment.com/unigetui/share?pid=" + System.Web.HttpUtility.UrlEncode(package.Id) + "&pname=" + System.Web.HttpUtility.UrlEncode(package.Name) + "&psource=" + System.Web.HttpUtility.UrlEncode(package.Source.ToString()));
+                Uri ShareUrl = new("https://marticliment.com/unigetui/share?pid=" + System.Web.HttpUtility.UrlEncode(package.Id) + "&pname=" + System.Web.HttpUtility.UrlEncode(package.Name) + "&psource=" + System.Web.HttpUtility.UrlEncode(package.Source.AsString));
                 dataPackage.Data.SetWebLink(ShareUrl);
                 dataPackage.Data.Properties.Title = "Sharing " + package.Name;
                 dataPackage.Data.Properties.ApplicationName = "WingetUI";
@@ -515,11 +514,11 @@ namespace UniGetUI.Interface
             int total = dependencies.Count();
             foreach (ManagerDependency dependency in dependencies)
             {
-                await ShowMissingDependencyQuery(dependency.Name, dependency.InstallFileName, dependency.InstallArguments, current++, total);
+                await ShowMissingDependencyQuery(dependency.Name, dependency.InstallFileName, dependency.InstallArguments,  dependency.FancyInstallCommand, current++, total);
             }
         }
 
-        public async Task ShowMissingDependencyQuery(string dep_name, string exe_name, string exe_args, int current, int total)
+        public async Task ShowMissingDependencyQuery(string dep_name, string exe_name, string exe_args, string fancy_command,  int current, int total)
         {
             ContentDialog dialog = new();
 
@@ -535,7 +534,7 @@ namespace UniGetUI.Interface
             bool NotFirstTime = Settings.Get(PREVIOUSLY_ATTEMPTED_PREF);
             Settings.Set(PREVIOUSLY_ATTEMPTED_PREF, true);
 
-            dialog.XamlRoot = this.MainContentGrid.XamlRoot;
+            dialog.XamlRoot = MainContentGrid.XamlRoot;
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             dialog.Title = CoreTools.Translate("Missing dependency") + (total > 1 ? $" ({current}/{total})" : "");
             dialog.SecondaryButtonText = CoreTools.Translate("Not right now");
@@ -556,13 +555,33 @@ namespace UniGetUI.Interface
 
             TextBlock infotext = new()
             {
-                Text = CoreTools.Translate($"Click on Install to begin the installation process. If you skip the installation, UniGetUI may not work as expected."),
+                Text = CoreTools.Translate("Click on Install to begin the installation process. If you skip the installation, UniGetUI may not work as expected."),
                 TextWrapping = TextWrapping.Wrap,
                 Margin = new Thickness(0, 0, 0, 10),
                 Opacity = .7F,
                 FontStyle = Windows.UI.Text.FontStyle.Italic,
             };
             p.Children.Add(infotext);
+
+            TextBlock commandInfo = new()
+            {
+                Text = CoreTools.Translate("Alternatively, you can also install {0} by running the following command in a Windows PowerShell prompt:", dep_name),
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 4),
+                Opacity = .7F,
+            };
+            p.Children.Add(commandInfo);
+
+            TextBlock manualInstallCommand = new()
+            {
+                Text = fancy_command,
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 4),
+                Opacity = .7F,
+                IsTextSelectionEnabled = true,
+                FontFamily = new FontFamily("Consolas"),
+            };
+            p.Children.Add(manualInstallCommand);
 
             CheckBox c = new();
             if (NotFirstTime)
@@ -599,7 +618,7 @@ namespace UniGetUI.Interface
                         infotext.Text = CoreTools.Translate("Please wait while {0} is being installed. A black window may show up. Please wait until it closes.", dep_name);
                         Process p = new()
                         {
-                            StartInfo = new ProcessStartInfo()
+                            StartInfo = new ProcessStartInfo
                             {
                                 FileName = exe_name,
                                 Arguments = exe_args,
@@ -626,7 +645,7 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex)
                     {
-                        // If an error occurrs
+                        // If an error occurs
                         Logger.Error(ex);
                         dialog.IsPrimaryButtonEnabled = true;
                         dialog.IsSecondaryButtonEnabled = true;
@@ -741,10 +760,8 @@ namespace UniGetUI.Interface
             {
                 Logger.Warn("Restored geometry was outside of desktop bounds");
             }
-
-
         }
-        private bool IsRectangleFullyVisible(int x, int y, int width, int height)
+        private static bool IsRectangleFullyVisible(int x, int y, int width, int height)
         {
             List<MONITORINFO> monitorInfos = [];
 
@@ -797,10 +814,8 @@ namespace UniGetUI.Interface
             {
                 return false;
             }
-            else
-            {
-                return true;
-            }
+
+            return true;
         }
     }
 }

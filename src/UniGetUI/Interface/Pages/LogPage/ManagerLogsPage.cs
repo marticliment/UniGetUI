@@ -1,7 +1,9 @@
-﻿using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.Interface.Pages.LogPage
 {
@@ -16,20 +18,20 @@ namespace UniGetUI.Interface.Pages.LogPage
         {
             bool IS_DARK = ActualTheme == Microsoft.UI.Xaml.ElementTheme.Dark;
 
-            bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains("(") ?? false;
-            foreach (PackageEngine.ManagerClasses.Manager.PackageManager manager in PEInterface.Managers)
+            bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains('(') ?? false;
+            foreach (PackageManager manager in PEInterface.Managers)
             {
-                if (manager.Name.Contains(LogLevelCombo.SelectedValue?.ToString()?.Split(' ')[0] ?? "uncontained_word"))
+                if (manager.DisplayName.Contains(LogLevelCombo.SelectedValue?.ToString()?.Split('(')[0] ?? "uncontained_word"))
                 {
-                    PackageEngine.ManagerClasses.Classes.ManagerLogger TaskLogger = manager.TaskLogger;
+                    IManagerLogger TaskLogger = manager.TaskLogger;
                     LogTextBox.Blocks.Clear();
                     Paragraph versionParagraph = new();
-                    versionParagraph.Inlines.Add(new Run() { Text = $"Manager {manager.Name} with version:\n" });
-                    versionParagraph.Inlines.Add(new Run() { Text = manager.Status.Version });
-                    versionParagraph.Inlines.Add(new Run() { Text = $"\n\n——————————————————————————————————————————\n\n" });
+                    versionParagraph.Inlines.Add(new Run { Text = $"Manager {manager.DisplayName} with version:\n" });
+                    versionParagraph.Inlines.Add(new Run { Text = manager.Status.Version });
+                    versionParagraph.Inlines.Add(new Run { Text = "\n\n——————————————————————————————————————————\n\n" });
                     LogTextBox.Blocks.Add(versionParagraph);
 
-                    foreach (PackageEngine.ManagerClasses.Classes.TaskLogger operation in TaskLogger.Operations)
+                    foreach (ITaskLogger operation in TaskLogger.Operations)
                     {
                         Paragraph p = new();
                         foreach (string line in operation.AsColoredString(verbose))
@@ -44,7 +46,7 @@ namespace UniGetUI.Interface.Pages.LogPage
                                 '5' => new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW },
                                 _ => new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW },
                             };
-                            p.Inlines.Add(new Run() { Text = line[1..] + "\n", Foreground = color });
+                            p.Inlines.Add(new Run { Text = line[1..] + "\n", Foreground = color });
                         }
                         ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
                         LogTextBox.Blocks.Add(p);
@@ -61,8 +63,8 @@ namespace UniGetUI.Interface.Pages.LogPage
             LogLevelCombo.Items.Clear();
             foreach (PackageEngine.ManagerClasses.Manager.PackageManager manager in PEInterface.Managers)
             {
-                LogLevelCombo.Items.Add(manager.Name);
-                LogLevelCombo.Items.Add($"{manager.Name} ({CoreTools.Translate("Verbose")})");
+                LogLevelCombo.Items.Add(manager.DisplayName);
+                LogLevelCombo.Items.Add($"{manager.DisplayName} ({CoreTools.Translate("Verbose")})");
             }
             LogLevelCombo.SelectedIndex = 0;
         }

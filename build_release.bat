@@ -12,6 +12,7 @@ popd ..
 
 rem clean old builds
 taskkill /im wingetui.exe /f
+taskkill /im unigetui.exe /f
 
 rem Run tests
 dotnet test src/UniGetUI.sln -v q --nologo
@@ -34,30 +35,30 @@ mkdir unigetui_bin
 robocopy src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish unigetui_bin *.* /MOVE /E
 rem pushd src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish
 pushd unigetui_bin
-"C:\SomePrograms\- Signing\signtool-x64\signtool.exe" sign /v /debug /fd SHA256 /tr "http://timestamp.acs.microsoft.com" /td SHA256 /dlib "C:\SomePrograms\- Signing\azure.codesigning.client\x64\Azure.CodeSigning.Dlib.dll" /dmdf "C:\SomePrograms\- Signing\metadata.json" C:\SomePrograms\WingetUI-Store\unigetui_bin\WingetUI.exe
-"C:\SomePrograms\- Signing\signtool-x64\signtool.exe" sign /v /debug /fd SHA256 /tr "http://timestamp.acs.microsoft.com" /td SHA256 /dlib "C:\SomePrograms\- Signing\azure.codesigning.client\x64\Azure.CodeSigning.Dlib.dll" /dmdf "C:\SomePrograms\- Signing\metadata.json" C:\SomePrograms\WingetUI-Store\unigetui_bin\WingetUI.dll
+signtool.exe sign /v /debug /fd SHA256 /tr "http://timestamp.acs.microsoft.com" /td SHA256 /dlib "Y:\- Signing\azure.codesigning.client\x64\Azure.CodeSigning.Dlib.dll" /dmdf "Y:\- Signing\metadata.json" UniGetUI.exe
+signtool.exe sign /v /debug /fd SHA256 /tr "http://timestamp.acs.microsoft.com" /td SHA256 /dlib "Y:\- Signing\azure.codesigning.client\x64\Azure.CodeSigning.Dlib.dll" /dmdf "Y:\- Signing\metadata.json" UniGetUI.dll
 echo .
 echo .
 echo You may want to sign now the following executables
 cd
-echo WingetUI.dll
-echo WingetUI.exe
+echo UniGetUI.dll
+echo UniGetUI.exe
 echo .
 echo .
 pause
-cp WingetUI.exe UniGetUI.exe
+copy UniGetUI.exe WingetUI.exe
 popd
 
 
 set INSTALLATOR="%SYSTEMDRIVE%\Program Files (x86)\Inno Setup 6\ISCC.exe"
 if exist %INSTALLATOR% (
-    %INSTALLATOR% "WingetUI.iss"
+    %INSTALLATOR% "UniGetUI.iss"
     echo You may now sign the installer
-    "Y:\- Signing\signtool-x64\signtool.exe" sign /v /debug /fd SHA256 /tr "http://timestamp.acs.microsoft.com" /td SHA256 /dlib "Y:\- Signing\azure.codesigning.client\x64\Azure.CodeSigning.Dlib.dll" /dmdf "Y:\- Signing\metadata.json" "WingetUI Installer.exe"
-    del "UniGetUI Installer.exe"
-    copy "WingetUI Installer.exe" "UniGetUI Installer.exe" 
+    signtool.exe sign /v /debug /fd SHA256 /tr "http://timestamp.acs.microsoft.com" /td SHA256 /dlib "Y:\- Signing\azure.codesigning.client\x64\Azure.CodeSigning.Dlib.dll" /dmdf "Y:\- Signing\metadata.json" "UniGetUI Installer.exe"
+    del "WingetUI Installer.exe"
+    copy "UniGetUI Installer.exe" "WingetUI Installer.exe" 
     pause
-    "WingetUI Installer.exe"
+    "UniGetUI Installer.exe"
 ) else (
     echo "Make installer was skipped, because the installer is missing."
 )

@@ -1,6 +1,6 @@
-﻿using UniGetUI.Core.Data;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
-using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
 {
@@ -13,7 +13,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
         /// </summary>
         /// <param name="package">A valid Package object</param>
         /// <returns>A Uri object</returns>
-        public static Uri GetPackageManifestUrl(Package package)
+        public static Uri GetPackageManifestUrl(IPackage package)
         {
             return new Uri($"{package.Source.Url}/Packages(Id='{package.Id}',Version='{package.Version}')");
         }
@@ -23,7 +23,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
         /// </summary>
         /// <param name="package">A valid Package object</param>
         /// <returns>A Uri object</returns>
-        public static Uri GetPackageNuGetPackageUrl(Package package)
+        public static Uri GetPackageNuGetPackageUrl(IPackage package)
         {
             return new Uri($"{package.Source.Url}/package/{package.Id}/{package.Version}");
         }
@@ -33,14 +33,14 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
         /// </summary>
         /// <param name="package">The package for which to obtain the manifest</param>
         /// <returns>A string containing the contents of the manifest</returns>
-        public static async Task<string?> GetPackageManifestContent(Package package)
+        public static async Task<string?> GetPackageManifestContent(IPackage package)
         {
             string? PackageManifestContent = "";
             string PackageManifestUrl = GetPackageManifestUrl(package).ToString();
-            if (__manifest_cache.ContainsKey(PackageManifestUrl))
+            if (__manifest_cache.TryGetValue(PackageManifestUrl, out var content))
             {
                 Logger.Debug($"Loading cached NuGet manifest for package {package.Id} on manager {package.Manager.Name}");
-                return __manifest_cache[PackageManifestUrl];
+                return content;
             }
 
             try
