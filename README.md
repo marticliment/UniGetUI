@@ -19,9 +19,8 @@ Check out the [Supported Package Managers Table](#supported-package-managers) fo
 
 ## Support the developer
 
-It really does make a big difference, and is very much appreciated. Thanks :)
-
-<a href='https://ko-fi.com/martinet101' target='_blank'><img style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+It really does make a big difference, and is very much appreciated. Thanks :)<br>
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P86KKPB)
 
 ## Table of contents
  - **[UniGetUI Homepage](https://www.marticliment.com/unigetui/)**
