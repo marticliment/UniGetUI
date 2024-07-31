@@ -10,19 +10,20 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        
       - name: Download Tolgee translations
         env:
           TOLGEE_KEY: "${{ secrets.TOLGEE_TOKEN }}"
         run: |
           cd scripts
           python download_translations.py --autocommit
+      
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
-        env:
-          GITHUB_TOKEN: "${{ secrets.REPO_SCOPED_TOKEN }}"  
         with:
           delete-branch: true
           base: main
+          token: "${{ secrets.REPO_SCOPED_TOKEN }}"
           labels: tolgee-ci
           title: "Load translations from Tolgee"
           body: ""
