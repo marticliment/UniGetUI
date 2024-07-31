@@ -9,7 +9,6 @@ on:
 jobs:
 
   test-codebase:
-    if: ${{ (github.event_name == 'push' || github.event_name == 'pull_request') && (endsWith(github.event.head_commit.modified, '.cs') || endsWith(github.event.head_commit.modified, '.csproj')) }} || github.event_name == 'workflow_dispatch'
     runs-on: windows-latest  # For a list of available runner types, refer to
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 
