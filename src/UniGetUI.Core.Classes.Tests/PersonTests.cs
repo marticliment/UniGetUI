@@ -11,20 +11,28 @@
         {
 
             //arrange
-            Person actual = new(Name: name, 
-                                ProfilePicture: profilePicture is null ? null : new Uri(profilePicture), 
+            Person actual = new(Name: name,
+                                ProfilePicture: profilePicture is null ? null : new Uri(profilePicture),
                                 GitHubUrl: gitHubUrl is null ? null : new Uri(gitHubUrl));
 
             //Assert
             if (string.IsNullOrEmpty(profilePicture))
+            {
                 Assert.False(actual.HasPicture);
+            }
             else
+            {
                 Assert.True(actual.HasPicture);
+            }
 
             if (string.IsNullOrEmpty(gitHubUrl))
+            {
                 Assert.False(actual.HasGitHubProfile);
+            }
             else
+            {
                 Assert.True(actual.HasGitHubProfile);
+            }
         }
     }
 }

@@ -1,10 +1,15 @@
-﻿using UniGetUI.Core.Data;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.SettingsEngine
 {
     public static class Settings
     {
+        public static bool AreNotificationsDisabled()
+        {
+            return Get("DisableSystemTray") || Get("DisableNotifications");
+        }
+
         public static bool Get(string setting, bool invert = false)
         {
             return File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)) ^ invert;
@@ -17,12 +22,16 @@ namespace UniGetUI.Core.SettingsEngine
                 if (value)
                 {
                     if (!File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+                    {
                         File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), "");
+                    }
                 }
                 else
                 {
                     if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+                    {
                         File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, setting));
+                    }
                 }
             }
             catch (Exception e)
@@ -35,7 +44,10 @@ namespace UniGetUI.Core.SettingsEngine
         public static string GetValue(string setting)
         {
             if (!File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+            {
                 return "";
+            }
+
             return File.ReadAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting));
         }
 
@@ -44,9 +56,13 @@ namespace UniGetUI.Core.SettingsEngine
             try
             {
                 if (value == "")
+                {
                     Set(setting, false);
+                }
                 else
+                {
                     File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), value);
+                }
             }
             catch (Exception e)
             {

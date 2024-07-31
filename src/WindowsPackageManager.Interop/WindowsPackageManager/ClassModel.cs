@@ -1,9 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-
 namespace WindowsPackageManager.Interop;
 
 internal sealed class ClassModel

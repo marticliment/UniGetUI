@@ -1,20 +1,20 @@
-﻿using CommunityToolkit.WinUI.Notifications;
+using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Operations
 {
 
     public abstract class SourceOperation : AbstractOperation
     {
-        protected ManagerSource Source;
-        public SourceOperation(ManagerSource source)
+        protected IManagerSource Source;
+        public SourceOperation(IManagerSource source)
         {
             Source = source;
             MainProcedure();
@@ -25,7 +25,7 @@ namespace UniGetUI.PackageEngine.Operations
     {
 
         public event EventHandler<EventArgs>? OperationSucceeded;
-        public AddSourceOperation(ManagerSource source) : base(source) { }
+        public AddSourceOperation(IManagerSource source) : base(source) { }
         protected override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
@@ -42,29 +42,31 @@ namespace UniGetUI.PackageEngine.Operations
                 startInfo.FileName = Source.Manager.Status.ExecutablePath;
                 startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetAddSourceParameters(Source));
             }
-            Process process = new();
-            process.StartInfo = startInfo;
+            Process process = new()
+            {
+                StartInfo = startInfo
+            };
 
             return process;
         }
 
         protected override string[] GenerateProcessLogHeader()
         {
-            return new string[]
-            {
+            return
+            [
                 "Starting adding source operation for source name=" + Source.Name + "with Manager name=" + Source.Manager.Name,
-            };
+            ];
         }
 
-        protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
+        protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
-            return Source.Manager.GetAddSourceOperationVeredict(Source, ReturnCode, Output);
+            return Task.Run(() => Source.Manager.GetAddSourceOperationVeredict(Source, ReturnCode, Output));
         }
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
-            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
+            LineInfoText = CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            if (!Settings.Get("DisableErrorNotifications") && !Settings.AreNotificationsDisabled())
             {
                 try
                 {
@@ -87,25 +89,28 @@ namespace UniGetUI.PackageEngine.Operations
                 CoreTools.Translate("Source addition failed"),
                 CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
             );
-            
+
             if (result == ContentDialogResult.Primary)
+            {
                 return AfterFinshAction.Retry;
-            else
-                return AfterFinshAction.ManualClose;
+            }
+
+            return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
-            OperationSucceeded?.Invoke(this, new EventArgs());
-            LineInfoText = CoreTools.Translate("The source {source} was added to {manager} successfully", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
-                
-                try{
+            OperationSucceeded?.Invoke(this, EventArgs.Empty);
+            LineInfoText = CoreTools.Translate("The source {source} was added to {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
+            {
+                try
+                {
                     new ToastContentBuilder()
                     .AddArgument("action", "OpenUniGetUI")
                     .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
                     .AddText(CoreTools.Translate("Addition succeeded"))
-                    .AddText(CoreTools.Translate("The source {source} was added to {manager} successfully", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
+                    .AddText(CoreTools.Translate("The source {source} was added to {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -113,13 +118,15 @@ namespace UniGetUI.PackageEngine.Operations
                     Logger.Warn("Failed to show toast notification");
                     Logger.Warn(ex);
                 }
+            }
+
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
 
         protected override void Initialize()
         {
-            OperationTitle = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            OperationTitle = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
             IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
         }
     }
@@ -128,7 +135,7 @@ namespace UniGetUI.PackageEngine.Operations
     {
 
         public event EventHandler<EventArgs>? OperationSucceeded;
-        public RemoveSourceOperation(ManagerSource source) : base(source) { }
+        public RemoveSourceOperation(IManagerSource source) : base(source) { }
         protected override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
@@ -146,29 +153,31 @@ namespace UniGetUI.PackageEngine.Operations
                 startInfo.FileName = Source.Manager.Status.ExecutablePath;
                 startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetRemoveSourceParameters(Source));
             }
-            Process process = new();
-            process.StartInfo = startInfo;
+            Process process = new()
+            {
+                StartInfo = startInfo
+            };
 
             return process;
         }
 
         protected override string[] GenerateProcessLogHeader()
         {
-            return new string[]
-            {
+            return
+            [
                 "Starting remove source operation for source name=" + Source.Name + "with Manager name=" + Source.Manager.Name,
-            };
+            ];
         }
 
-        protected override OperationVeredict GetProcessVeredict(int ReturnCode, string[] Output)
+        protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
-            return Source.Manager.GetRemoveSourceOperationVeredict(Source, ReturnCode, Output);
+            return Task.Run(() => Source.Manager.GetRemoveSourceOperationVeredict(Source, ReturnCode, Output));
         }
 
         protected override async Task<AfterFinshAction> HandleFailure()
         {
-            LineInfoText = CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
-            if (!Settings.Get("DisableErrorNotifications") && !Settings.Get("DisableNotifications"))
+            LineInfoText = CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            if (!Settings.Get("DisableErrorNotifications") && !Settings.AreNotificationsDisabled())
             {
                 new ToastContentBuilder()
                     .AddArgument("action", "OpenUniGetUI")
@@ -184,22 +193,26 @@ namespace UniGetUI.PackageEngine.Operations
             );
 
             if (result == ContentDialogResult.Primary)
+            {
                 return AfterFinshAction.Retry;
-            else
-                return AfterFinshAction.ManualClose;
+            }
+
+            return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
-            OperationSucceeded?.Invoke(this, new EventArgs());
-            LineInfoText = CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.Get("DisableNotifications"))
-                try { 
-                new ToastContentBuilder()
-                    .AddArgument("action", "OpenUniGetUI")
-                    .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                    .AddText(CoreTools.Translate("Removal succeeded"))
-                    .AddText(CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
+            OperationSucceeded?.Invoke(this, EventArgs.Empty);
+            LineInfoText = CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
+            {
+                try
+                {
+                    new ToastContentBuilder()
+                        .AddArgument("action", "OpenUniGetUI")
+                        .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
+                        .AddText(CoreTools.Translate("Removal succeeded"))
+                        .AddText(CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
 
                 }
                 catch (Exception ex)
@@ -207,13 +220,15 @@ namespace UniGetUI.PackageEngine.Operations
                     Logger.Warn("Failed to show toast notification");
                     Logger.Warn(ex);
                 }
+            }
+
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
 
         protected override void Initialize()
         {
-            OperationTitle = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?>{ { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            OperationTitle = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
             IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
         }
     }

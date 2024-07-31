@@ -1,4 +1,4 @@
-﻿namespace UniGetUI.PackageEngine.Enums
+namespace UniGetUI.PackageEngine.Enums
 {
     /// <summary>
     /// Represents the installation scope of a package
@@ -27,11 +27,11 @@
         XML
     }
 
-
     public enum OperationVeredict
     {
         Succeeded,
         Failed,
+        RestartRequired,
         AutoRetry,
     }
     public enum OperationStatus
@@ -68,7 +68,7 @@
         /// <summary>
         /// Lists the installed packages
         /// </summary>
-        ListPackages,
+        ListInstalledPackages,
         /// <summary>
         /// Refreshes the package indexes
         /// </summary>

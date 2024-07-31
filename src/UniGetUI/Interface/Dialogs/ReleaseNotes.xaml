@@ -6,6 +6,7 @@
     xmlns:local="using:UniGetUI.Interface.Dialogs"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets"
     mc:Ignorable="d"
     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -19,5 +20,6 @@
             <controls:WebView2 Name="WebView" Source="https://www.google.com/"/>
         </Border>
         <ProgressBar IsIndeterminate="True" Name="ProgressBar" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Stretch" CornerRadius="4,4,0,0"/>
+        <widgets:DialogCloseButton Margin="0,-63,-24,0" Click="CloseButton_Click"/>
     </Grid>
 </Page>

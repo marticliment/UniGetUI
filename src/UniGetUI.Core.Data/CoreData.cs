@@ -1,22 +1,54 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Data
 {
     public static class CoreData
     {
-        public const string VersionName =  "3.1.0-alpha2"; // Do not modify this line, use file scripts/apply_versions.py
-        public const double VersionNumber =  3.0992; // Do not modify this line, use file scripts/apply_versions.py
+        private static int? __code_page;
+        public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
+
+        private static int GetCodePage()
+        {
+            try
+            {
+                Process p = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "chcp.com",
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                    }
+                };
+                p.Start();
+                string contents = p.StandardOutput.ReadToEnd();
+                return int.Parse(contents.Split(':')[^1].Trim());
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                return 0;
+            }
+        }
+
+        public const string VersionName =  "3.1.1"; // Do not modify this line, use file scripts/apply_versions.py
+        public const double VersionNumber =  3.11; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
-        public static HttpClientHandler GenericHttpClientParameters { 
-            get {
+
+        public static HttpClientHandler GenericHttpClientParameters
+        {
+            get
+            {
                 return new()
                 {
                     AutomaticDecompression = DecompressionMethods.All,
                     AllowAutoRedirect = true,
                 };
-            } 
+            }
         }
 
         /// <summary>
@@ -40,7 +72,11 @@ namespace UniGetUI.Core.Data
             get
             {
                 string path = Path.Join(UniGetUIDataDirectory, "InstallationOptions");
-                if(!Directory.Exists(path)) Directory.CreateDirectory(path);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
                 return path;
             }
         }
@@ -107,14 +143,17 @@ namespace UniGetUI.Core.Data
                 // Calling the UniGetUIDataDirectory will create the directory if it does not exist
                 string file_path = Path.Join(UniGetUIDataDirectory, "IgnoredPackageUpdates.json");
                 if (!File.Exists(file_path))
+                {
                     File.WriteAllText(file_path, "{}");
+                }
+
                 return file_path;
             }
         }
-        public static bool IsDaemon = false;
+
+        public static bool IsDaemon;
 
         public static string ManagerLogs = "";
-
 
         private static int __volatile_notification_id_counter = 1235;
 
@@ -130,7 +169,7 @@ namespace UniGetUI.Core.Data
         /// The ID of the notification that is used to inform the user that updates are available
         /// </summary>
         public static int UpdatesAvailableNotificationId
-        { 
+        {
             get => 1234;
         }
 
@@ -139,12 +178,16 @@ namespace UniGetUI.Core.Data
         /// </summary>
         public static string UniGetUIExecutableDirectory
         {
-            get {
+            get
+            {
                 string? dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 if (dir != null)
+                {
                     return dir;
-                else
-                    Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
+                }
+
+                Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
+
                 return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UiGetUI");
             }
         }
@@ -154,18 +197,21 @@ namespace UniGetUI.Core.Data
         /// </summary>
         public static string UniGetUIExecutableFile
         {
-            get {
-                string? filename = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            get
+            {
+                string? filename = Process.GetCurrentProcess().MainModule?.FileName;
                 if (filename != null)
-                    return filename;
-                else
-                    Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
-                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UiGetUI", "UniGetUI.exe");
+                {
+                    return filename.Replace(".dll", ".exe");
+                }
+
+                Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
+
+                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UniGetUI", "UniGetUI.exe");
             }
         }
 
         public static string GSudoPath = "";
-
 
         /// <summary>
         /// This method will return the most appropriate data directory.
@@ -179,8 +225,11 @@ namespace UniGetUI.Core.Data
         private static string GetNewDataDirectoryOrMoveOld(string old_path, string new_path)
         {
             if (Directory.Exists(new_path) && !Directory.Exists(old_path))
+            {
                 return new_path;
-            else if (Directory.Exists(new_path) && Directory.Exists(old_path))
+            }
+
+            if (Directory.Exists(new_path) && Directory.Exists(old_path))
             {
                 try
                 {
@@ -193,7 +242,9 @@ namespace UniGetUI.Core.Data
                             Directory.CreateDirectory(new_subdir);
                         }
                         else
+                        {
                             Logger.Debug("Directory " + new_subdir + " already exists");
+                        }
                     }
 
                     foreach (string old_file in Directory.GetFiles(old_path, "*", SearchOption.AllDirectories))
@@ -225,6 +276,7 @@ namespace UniGetUI.Core.Data
                         Logger.Info("Deleting old Chocolatey directory " + old_path);
                         Directory.Delete(old_path);
                     }
+
                     return new_path;
                 }
                 catch (Exception e)
@@ -233,7 +285,8 @@ namespace UniGetUI.Core.Data
                     return new_path;
                 }
             }
-            else if (/*Directory.Exists(new_path)*/Directory.Exists(old_path))
+
+            if (/*Directory.Exists(new_path)*/Directory.Exists(old_path))
             {
                 try
                 {
@@ -248,22 +301,19 @@ namespace UniGetUI.Core.Data
                     return old_path;
                 }
             }
-            else
+
+            try
             {
-                try
-                {
-                    Logger.Debug("Creating non-existing data directory at: " + new_path);
-                    Directory.CreateDirectory(new_path);
-                    return new_path;
-                }
-                catch (Exception e)
-                {
-                    Logger.Error("Could not create new directory. You may perhaps need to disable Controlled Folder Access from Windows Settings or make an exception for UniGetUI.");
-                    Logger.Error(e);
-                    return new_path;
-                }
+                Logger.Debug("Creating non-existing data directory at: " + new_path);
+                Directory.CreateDirectory(new_path);
+                return new_path;
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Could not create new directory. You may perhaps need to disable Controlled Folder Access from Windows Settings or make an exception for UniGetUI.");
+                Logger.Error(e);
+                return new_path;
             }
         }
-
     }
 }

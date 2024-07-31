@@ -45,19 +45,19 @@ namespace UniGetUI.Core.SettingsEgine.Tests
         {
             Settings.SetValue(SettingName, st1);
             Assert.Equal(st1, Settings.GetValue(SettingName));
-            Assert.Equal((st1 != ""), File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.Equal(st1 != "", File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
 
             Settings.SetValue(SettingName, st2);
             Assert.Equal(st2, Settings.GetValue(SettingName));
-            Assert.Equal((st2 != ""), File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.Equal(st2 != "", File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
 
             Settings.SetValue(SettingName, st3);
             Assert.Equal(st3, Settings.GetValue(SettingName));
-            Assert.Equal((st3 != ""), File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.Equal(st3 != "", File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
 
             Settings.SetValue(SettingName, st4);
             Assert.Equal(st4, Settings.GetValue(SettingName));
-            Assert.Equal((st4 != ""), File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.Equal(st4 != "", File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
 
             Settings.Set(SettingName, false); // Cleanup
             Assert.False(Settings.Get(SettingName));

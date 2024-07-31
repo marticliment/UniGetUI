@@ -1,4 +1,4 @@
-﻿namespace UniGetUI.Core.Logging
+namespace UniGetUI.Core.Logging
 {
     public readonly struct LogEntry
     {
@@ -12,7 +12,7 @@
         }
 
         public readonly DateTime Time { get; }
-        public readonly String Content { get; }
+        public readonly string Content { get; }
         public readonly SeverityLevel Severity { get; }
 
         public LogEntry(string content, SeverityLevel severity)

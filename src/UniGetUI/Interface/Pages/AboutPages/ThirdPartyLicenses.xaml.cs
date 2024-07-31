@@ -23,14 +23,14 @@ namespace UniGetUI.Interface.Pages.AboutPages
 
     public sealed partial class ThirdPartyLicenses : Page
     {
-        public ObservableCollection<LibraryLicense> Licenses = new();
+        public ObservableCollection<LibraryLicense> Licenses = [];
 
         public ThirdPartyLicenses()
         {
             InitializeComponent();
             foreach (string license in LicenseData.LicenseNames.Keys)
             {
-                Licenses.Add(new LibraryLicense()
+                Licenses.Add(new LibraryLicense
                 {
                     Name = license,
                     License = LicenseData.LicenseNames[license],

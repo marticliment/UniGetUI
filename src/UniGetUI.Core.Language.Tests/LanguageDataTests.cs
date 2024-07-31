@@ -11,14 +11,13 @@ namespace UniGetUI.Core.Language.Tests
             LanguageData.LanguageReference.Select(x => new object[] { x.Key, x.Value }).ToArray();
 
         [Fact]
-        public void TranslatorsListNotEmptyTest() 
+        public void TranslatorsListNotEmptyTest()
             => Assert.NotEmpty(LanguageData.TranslatorsList);
 
         [Theory]
         [MemberData(nameof(Translators))]
-        public void TranslatorsListTest(Person translator) 
+        public void TranslatorsListTest(Person translator)
             => Assert.NotEmpty(translator.Name);
-
 
         [Fact]
         public void LanguageReferenceNotEmptyTest()
