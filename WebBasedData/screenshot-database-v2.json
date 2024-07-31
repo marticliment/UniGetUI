@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11707,
-        "done": 5105,
-        "packages_with_icon": 5105,
-        "packages_with_screenshot": 580,
-        "total_screenshots": 1812
+        "done": 5106,
+        "packages_with_icon": 5106,
+        "packages_with_screenshot": 584,
+        "total_screenshots": 1819
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -23882,7 +23882,9 @@
         },
         "makemeadmin": {
             "icon": "https://community.chocolatey.org/content/packageimages/makemeadmin.2.3.png",
-            "images": []
+            "images": [
+                "https://raw.githubusercontent.com/wiki/pseymour/MakeMeAdmin/images/makemeadminui-230.png"
+            ]
         },
         "makemkv": {
             "icon": "https://community.chocolatey.org/content/packageimages/MakeMKV.1.17.3.png",
@@ -24526,8 +24528,10 @@
             "images": []
         },
         "meld": {
-            "icon": "",
-            "images": []
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Meld_Logo.svg/128px-Meld_Logo.svg.png",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Meld_file1.png/640px-Meld_file1.png"
+            ]
         },
         "mellow": {
             "icon": "",
@@ -36696,7 +36700,11 @@
         },
         "shellcheck": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://miro.medium.com/v2/resize:fit:1400/0*DsAh-A5WQ9zc1ffA.png",
+                "https://www.tecmint.com/wp-content/uploads/2017/04/Shell-Script-Code-Analyzer-Tool.png",
+                "https://www.tecmint.com/wp-content/uploads/2017/04/ShellCheck-Check-Shell-Script.png"
+            ]
         },
         "shellexview": {
             "icon": "",
@@ -38003,7 +38011,10 @@
         },
         "speccy": {
             "icon": "https://community.chocolatey.org/content/packageimages/speccy.1.32.774.png",
-            "images": []
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Speccy-Screenshot.png/240px-Speccy-Screenshot.png",
+                "https://cdn.lo4d.com/t/screenshot/800/speccy-7.png"
+            ]
         },
         "specflow": {
             "icon": "",
