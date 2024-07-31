@@ -22,23 +22,8 @@ jobs:
       id: tests
       run: |
         python scripts/verify_translations.py
-      continue-on-error: true
-
-    - name: Check on failures
-      if: steps.checkout.outcome != 'success' || steps.tests.outcome != 'success'
-      uses: actions/github-script@v6
-      with:
-        script: |
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: 'Tolgee-CI Changes failed verification'
-          })
-          exit 1
 
     - name: Approve PR since checks are Ok
-      if: steps.checkout.outcome == 'success' && steps.tests.outcome == 'success'
       uses: hmarr/auto-approve-action@v4
       with:
         review-message: "Tolgee-CI Changes have been approved since they passed testing"
