@@ -625,7 +625,7 @@
   "update(verb)" : "frissíteni",
   "updated" : "frissítve",
   "updating" : "frissítés",
-  "{0} Uninstallation" : "{} Eltávolítás",
+  "{0} Uninstallation" : "{0} Eltávolítás",
   "{0} aborted" : "{0} megszakítva",
   "{0} can be updated" : "{0} frissíthető",
   "{0} can be updated to version {1}" : "{0} frissíthető {1} verzióra.",
