@@ -7,6 +7,7 @@ on:
 jobs:
   main:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,7 +28,7 @@ jobs:
           labels: tolgee-ci
           title: "Load translations from Tolgee"
           body: ""
-          # reviewers: "${{ github.repository_owner }}"
+          reviewers: "${{ github.repository_owner }}"
           author: "Martí Climent <marticlilop@gmail.com>"
           commit-message: "Load updated translations from Tolgee"
           branch: pull-request/update-translation
