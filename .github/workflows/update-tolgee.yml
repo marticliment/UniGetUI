@@ -1,4 +1,4 @@
-name: Retrieve latest translations from Tolgee
+name: Tolgee CI
 
 on:
   schedule:
@@ -6,25 +6,28 @@ on:
   workflow_dispatch:
 jobs:
   main:
-    runs-on: windows-latest
-    env:
-        TOLGEE_KEY: "${{ secrets.TOLGEE_TOKEN }}"
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        
       - name: Download Tolgee translations
+        env:
+          TOLGEE_KEY: "${{ secrets.TOLGEE_TOKEN }}"
         run: |
           cd scripts
           python download_translations.py --autocommit
+      
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
-        env:
-          GITHUB_TOKEN: ${{ secrets.REPO_SCOPED_TOKEN }}  
         with:
           delete-branch: true
           base: main
-          title: "Update translations from Tolgee"
-          reviewers: "${{ github.repository_owner }}"
-          author: "Tolgee Bot <tolgee-bot@users.noreply.github.com>"
-          commit-message: "Update translations from Tolgee"
+          token: "${{ secrets.REPO_SCOPED_TOKEN }}"
+          labels: tolgee-ci
+          title: "Load translations from Tolgee"
+          body: ""
+          # reviewers: "${{ github.repository_owner }}"
+          author: "Martí Climent <marticlilop@gmail.com>"
+          commit-message: "Load updated translations from Tolgee"
           branch: pull-request/update-translation
