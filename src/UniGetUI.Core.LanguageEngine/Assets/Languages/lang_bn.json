@@ -641,7 +641,7 @@
   "{0} minutes" : "{0} মিনিট",
   "{0} packages are being updated" : "{0}টি প্যাকেজ আপডেট করা হচ্ছে",
   "{0} packages can be updated" : "{0}টি প্যাকেজ আপডেট করা যেতে পারে",
-  "{0} packages found" : "েকেজ পাওয়া গিয়েছে",
+  "{0} packages found" : "{0}কেজ পাওয়া গিয়েছে",
   "{0} packages were found" : "{0}টি প্যাকেজ পাওয়া গেছে",
   "{0} packages were found, {1} of which match the specified filters." : null,
   "{0} succeeded" : "{0} সফল হয়েছে",

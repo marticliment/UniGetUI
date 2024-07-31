@@ -469,7 +469,7 @@
   "The packages listed here won't be taken in account when checking for updates. Double-click them or click the button on their right to stop ignoring their updates." : "Els paquets mostrats aquí no es tindran en compte quan es comprovi si hi ha actualitzacions disponibles. Cliqueu-los dos cops o premeu el botó de la seva dreta per a deixar d'ignorar-ne les actualitzacions.",
   "The selected packages have been blacklisted" : "Les actualitzacions dels paquets seleccionats s'ignoraran a partir d'ara",
   "The size of the backup is estimated to be less than 1MB." : "La mida estimada de la còpia serà de menys d'1 MB.",
-  "The source {source} was added to {manager} successfully" : "La font {source} s'ha afegit al {source} correctament",
+  "The source {source} was added to {manager} successfully" : "La font {source} s'ha afegit al {manager} correctament",
   "The source {source} was removed from {manager} successfully" : "La font {source} s'ha eliminat del {manager} correctament",
   "The update will be installed upon closing WingetUI" : "L'actualització s'instal·larà en tancar el WingetUI",
   "The update will not continue." : "L'actualització no continuarà.",

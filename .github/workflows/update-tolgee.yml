@@ -18,6 +18,8 @@ jobs:
           python download_translations.py --autocommit
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_SCOPED_TOKEN }}  
         with:
           delete-branch: true
           base: main
