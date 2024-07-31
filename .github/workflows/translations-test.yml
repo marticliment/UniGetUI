@@ -3,7 +3,8 @@ on:
   pull_request:
     branches: [ "main" ]
     paths:
-      - '/src/UniGetUI.Core.LanguageEngine/Assets/Languages/lang_*.json'
+      - 'src/UniGetUI.Core.LanguageEngine/Assets/Languages/**'
+
   workflow_dispatch:
 
 jobs:
