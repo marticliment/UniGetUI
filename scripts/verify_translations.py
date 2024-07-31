@@ -24,7 +24,7 @@ try:
                 BASE, COMPARE = results[1],results[2]
                 
                 for find in re.findall(r'{[a-zA-Z0-9]+}', BASE):
-                    if BASE.count(find) != COMPARE.count(find):
+                    if BASE.count(find) > COMPARE.count(find):
                         Correct = False
                         print(f"Faulting line on file {FILE}, missing key is {find} on translation \"{BASE}\", with translation {COMPARE}")
     
