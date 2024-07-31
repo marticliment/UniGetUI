@@ -1,4 +1,4 @@
-name: Tests
+name: Translation integrity
 on:
   pull_request:
     branches: [ "main" ]

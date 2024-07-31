@@ -4,6 +4,7 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 try:
+    sys.stdout.reconfigure(encoding='utf-8')
     Correct = True
     
     os.chdir(os.path.dirname(__file__))
