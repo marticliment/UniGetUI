@@ -396,7 +396,7 @@
   "Searching for packages..." : "\nपैकेज खोजे जा रहे हैं...",
   "Searching for updates..." : "अपडेट खोजे जा रहे हैं...",
   "Select" : null,
-  "Select \"{item}\" to add your custom bucket" : "अपनी कस्टम बकेट जोड़ने के लिए \"{आइटम}\" चुनें",
+  "Select \"{item}\" to add your custom bucket" : "अपनी कस्टम बकेट जोड़ने के लिए \"{item}\" चुनें",
   "Select a folder" : null,
   "Select all" : "सभी चुने",
   "Select all packages" : "सभी पैकेजों का चयन करें",

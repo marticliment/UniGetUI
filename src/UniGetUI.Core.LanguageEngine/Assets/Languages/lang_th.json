@@ -39,7 +39,7 @@
   "All versions" : "เวอร์ชันทั้งหมด",
   "Allow package operations to be performed in parallel" : "อนุญาตให้การดำเนินการ {pm} ดำเนินการพร้อมกัน",
   "Allow parallel installs (NOT RECOMMENDED)" : "อนุญาตให้ติดตั้งพร้อมกัน (ไม่แนะนำ)",
-  "Allow {pm} operations to be performed in parallel" : "อนุญาตให้การดำเนินการแพ็กเกจดำเนินการพร้อมกัน",
+  "Allow {pm} operations to be performed in parallel" : null,
   "Always elevate {pm} installations by default" : "ยกระดับการติดตั้ง {pm} เป็นค่าเริ่มต้นเสมอ",
   "Always run {pm} operations with administrator rights" : "เรียกใช้การดำเนินการ {pm} ด้วยสิทธิ์ผู้ดูแลระบบเสมอ",
   "An error occurred" : "มีข้อผิดพลาดเกิดขึ้น",
