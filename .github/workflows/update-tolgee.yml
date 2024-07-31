@@ -7,18 +7,19 @@ on:
 jobs:
   main:
     runs-on: windows-latest
-    env:
-        TOLGEE_KEY: "${{ secrets.TOLGEE_TOKEN }}"
-        GITHUB_TOKEN: ${{ secrets.REPO_SCOPED_TOKEN }}  
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Download Tolgee translations
+        env:
+          TOLGEE_KEY: "${{ secrets.TOLGEE_TOKEN }}"
         run: |
           cd scripts
           python download_translations.py --autocommit
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
+        env:
+          GITHUB_TOKEN: "${{ secrets.REPO_SCOPED_TOKEN }}"  
         with:
           delete-branch: true
           base: main
