@@ -242,7 +242,7 @@ Since 3.1.0: `--uninstall-unigetui`: Attempts to unregister UniGetUI from the no
 Since 3.1.0: `--migrate-wingetui-to-unigetui`: Attempts to migrate WingetUI data folders and shortcuts to UniGetUI, and silently quits<br>
 
 ### Installer command-line parameters:
-The installer is inno-setup-based and supports regular Inno Setup command-line parameters. Additionally, it also supports the following parameters:
+The installer is inno-setup based. It supports all Inno Setup command-line parameters as well as the following:
 <br>`/NoAutoStart`: Will not launch UniGetUI after installing it.
 <br> `/ALLUSERS`: Install UniGetUI for every user
 <br> `/CURRENTUSER`: Install UniGetUI for the current user only
