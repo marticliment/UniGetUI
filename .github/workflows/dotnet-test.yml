@@ -5,12 +5,14 @@ on:
     paths:
       - '**.cs'
       - '**.csproj'
+      - '**.sln'
 
   pull_request:
     branches: [ "main" ]
     paths:
       - '**.cs'
       - '**.csproj'
+      - '**.sln'
 
   workflow_dispatch:
 
