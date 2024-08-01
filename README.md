@@ -211,7 +211,7 @@ If this doesn't work, consider asking for help at [Winget's project page](https:
 
 A: This is a known limitation of Winget. 
 
-For more details, see the issue: https://github.com/microsoft/winget-cli/issues/2603.<br>
+See more details on the issue https://github.com/microsoft/winget-cli/issues/2603.<br>
 
 #
 
