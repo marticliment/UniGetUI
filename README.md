@@ -234,7 +234,7 @@ Microsoft has implemented a few checks for the software available on Winget to m
 <br><p align="center"><i>Check out the <a href="https://github.com/marticliment/UniGetUI/wiki">Wiki</a> for more information!</i></p>
 
 ## Command-line parameters:
-`--daemon`: Start UniGetUI without spawning a new window. UniGetUI will run as a minimized on the system tray. UniGetUI is called with this parameter when launched at startup. **Autostart UniGetUI in the notifications area** must be enabled for this parameter to work.<br>
+`--daemon`: Start UniGetUI without spawning a new window. UniGetUI will run minimized on the system tray. UniGetUI is called with this parameter when launched at startup. **Autostart UniGetUI in the notifications area** must be enabled for this parameter to work.<br>
 `--welcomewizard` (or simply `--welcome`): Show a window to choose which package managers to use.<br>
 `--updateapps`: Enable automatic installation of available updates.<br>
 Since 3.0.0: `--report-all-errors`: May help debug crashes<br>
