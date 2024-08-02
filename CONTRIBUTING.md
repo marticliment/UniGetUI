@@ -22,7 +22,7 @@ Before reading: All of the rules below are guidelines, which means that they sho
  - Please use the BUG/ISSUE template
  - Please be sure to be clear when describing issues.
  - Please fill out the form and DO NOT send empty issues with the information on the title.
- - Please check for duplicates as said in the BUG/ISSUE template.
+ - Please search for possible duplicates, and only post new content. (As stated in the BIG/ISSUE template).
  - Please make sure to preceed titles with the `[BUG/ISSUE]` string, so they can be easily identified.
 
 #### Feature requests:
