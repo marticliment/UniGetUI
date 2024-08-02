@@ -1,13 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager;
 internal sealed class PowerShellOperationProvider : BaseOperationProvider<PowerShell>
@@ -32,8 +25,7 @@ internal sealed class PowerShellOperationProvider : BaseOperationProvider<PowerS
             if (options.PreRelease)
                 parameters.Add("-AllowPrerelease");
 
-            if (options.InstallationScope == PackageScope.Global ||
-                (options.InstallationScope is null && package.Scope == PackageScope.Global))
+            if (package.OverridenOptions.Scope == PackageScope.Global || (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
                 parameters.AddRange(["-Scope", "AllUsers"]);
             else
                 parameters.AddRange(["-Scope", "CurrentUser"]);

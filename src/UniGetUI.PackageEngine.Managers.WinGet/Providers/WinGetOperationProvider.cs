@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
 internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
@@ -45,7 +39,6 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
 
         parameters.Add(options.InteractiveInstallation ? "--interactive" : "--silent");
         parameters.AddRange(options.CustomParameters);
-
 
         if(operation is OperationType.Update)
         {

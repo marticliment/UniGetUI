@@ -1,14 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Managers.PipManager;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.PipManager;
 internal sealed class PipOperationProvider : BaseOperationProvider<Pip>
@@ -46,7 +38,7 @@ internal sealed class PipOperationProvider : BaseOperationProvider<Pip>
             if (options.PreRelease)
                 parameters.Add("--pre");
 
-            if (options.InstallationScope == PackageScope.User || (options.InstallationScope is null && package.Scope == PackageScope.User))
+            if (package.OverridenOptions.Scope == PackageScope.User || (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.User))
                 parameters.Add("--user");
         }
 
@@ -67,9 +59,9 @@ internal sealed class PipOperationProvider : BaseOperationProvider<Pip>
 
         string output_string = string.Join("\n", processOutput);
 
-        if (output_string.Contains("--user") && package.Scope != PackageScope.User)
+        if (output_string.Contains("--user") && package.OverridenOptions.Scope != PackageScope.User)
         {
-            package.Scope = PackageScope.User;
+            package.OverridenOptions.Scope = PackageScope.User;
             return OperationVeredict.AutoRetry;
         }
         return OperationVeredict.Failed;
