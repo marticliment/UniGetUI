@@ -30,7 +30,7 @@
   "Add packages or open an existing bundle" : "પેકેજોને ઉમેરો અથવા હાલનાં બંડલને ખોલો",
   "Add selection to bundle" : "બંડલમાં પસંદગી ઉમેરો",
   "Add source" : "સ્ત્રોત ઉમેરો",
-  "Adding source {source} to {manager}" : "{વ્યવસ્થાપકમાં} સ્ત્રોત {સ્ત્રોત} ઉમેરી રહ્યા છીએ",
+  "Adding source {source} to {manager}" : null,
   "Addition succeeded" : "ઉમેરો સફળ થયો",
   "Administrator privileges" : "સંચાલક વિશેષાધિકારો",
   "Administrator privileges preferences" : "સંચાલક વિશેષાધિકાર પસંદગીઓ",
