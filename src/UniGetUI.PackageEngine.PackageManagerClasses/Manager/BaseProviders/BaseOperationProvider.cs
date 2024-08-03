@@ -18,7 +18,6 @@ public abstract class BaseOperationProvider<ManagerT> : IOperationProvider where
 
     public abstract OperationVeredict GetOperationResult(
         IPackage package,
-        IInstallationOptions options,
         OperationType operation,
         IEnumerable<string> processOutput,
         int returnCode);
