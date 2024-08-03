@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 jobs:
   load-translations:
+    if: github.repository == ‘marticliment/UniGetUI’
     runs-on: ubuntu-latest
 
     steps:
