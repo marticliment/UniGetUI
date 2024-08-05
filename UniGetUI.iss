@@ -179,9 +179,12 @@ end;
 
 function InitializeSetup: Boolean;
 begin
-  Dependency_AddVC2015To2022;
-  Dependency_AddWebView2;
-  Result := True;
+  try
+    Dependency_AddVC2015To2022;
+    Dependency_AddWebView2;
+    Result := True;
+  except
+  end;
 end;
 
 
