@@ -43,13 +43,17 @@ internal sealed class PowerShellOperationProvider : BaseOperationProvider<PowerS
         return parameters;
     }
 
-    public override OperationVeredict GetOperationResult(IPackage package, IInstallationOptions options, OperationType operation, IEnumerable<string> processOutput, int returnCode)
+    public override OperationVeredict GetOperationResult(
+        IPackage package,
+        OperationType operation,
+        IEnumerable<string> processOutput,
+        int returnCode)
     {
         string output_string = string.Join("\n", processOutput);
 
-        if (output_string.Contains("AdminPrivilegesAreRequired") && !options.RunAsAdministrator)
+        if (!package.OverridenOptions.RunAsAdministrator != true && output_string.Contains("AdminPrivilegesAreRequired"))
         {
-            options.RunAsAdministrator = true;
+            package.OverridenOptions.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;
         }
 

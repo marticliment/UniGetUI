@@ -47,7 +47,6 @@ internal sealed class PipOperationProvider : BaseOperationProvider<Pip>
 
     public override OperationVeredict GetOperationResult(
         IPackage package,
-        IInstallationOptions options,
         OperationType operation,
         IEnumerable<string> processOutput,
         int returnCode)

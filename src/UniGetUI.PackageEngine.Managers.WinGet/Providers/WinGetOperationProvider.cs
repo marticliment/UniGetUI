@@ -75,9 +75,13 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
         return parameters;
     }
 
-    public override OperationVeredict GetOperationResult(IPackage package, IInstallationOptions options, OperationType operation, IEnumerable<string> processOutput, int returnCode)
+    public override OperationVeredict GetOperationResult(
+        IPackage package,
+        OperationType operation,
+        IEnumerable<string> processOutput,
+        int returnCode)
     {
-        // SEE https://github.com/microsoft/winget-cli/blob/master/doc/windows/package-manager/winget/returnCodes.md for reference
+        // See https://github.com/microsoft/winget-cli/blob/master/doc/windows/package-manager/winget/returnCodes.md for reference
         uint uintCode = (uint)returnCode;
 
         if (uintCode == 0x8A150109)
@@ -98,17 +102,17 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
             return OperationVeredict.Succeeded;
         }
 
-        if(uintCode == 0x8A150056 && options.RunAsAdministrator && !CoreTools.IsAdministrator())
+        if(uintCode == 0x8A150056 && package.OverridenOptions.RunAsAdministrator != false && !CoreTools.IsAdministrator())
         {
             // Installer can't run elevated
-            options.RunAsAdministrator = false;
+            package.OverridenOptions.RunAsAdministrator = false;
             return OperationVeredict.AutoRetry;
         }
 
-        if (uintCode == 0x8A150019 && !options.RunAsAdministrator)
+        if (uintCode == 0x8A150019 && package.OverridenOptions.RunAsAdministrator != true)
         {
             // Installer needs to run elevated
-            options.RunAsAdministrator = true;
+            package.OverridenOptions.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;
         }
 

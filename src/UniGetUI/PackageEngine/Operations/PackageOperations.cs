@@ -51,7 +51,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             string operation_args = string.Join(" ", Package.Manager.GetOperationParameters(Package, Options, Role));
 
-            if (Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
+            if (Package.OverridenOptions.RunAsAdministrator == true || Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
@@ -75,7 +75,7 @@ namespace UniGetUI.PackageEngine.Operations
 #pragma warning disable CS1998
         protected sealed override async Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
-            return Package.Manager.GetOperationResult(Package, Options, Role, Output, ReturnCode);
+            return Package.Manager.GetOperationResult(Package, Role, Output, ReturnCode);
         }
 #pragma warning restore CS1998
 

@@ -433,11 +433,11 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
         }
 
-        public OperationVeredict GetOperationResult(IPackage package, IInstallationOptions options, OperationType operation, IEnumerable<string> processOutput, int returnCode)
+        public OperationVeredict GetOperationResult(IPackage package, OperationType operation, IEnumerable<string> processOutput, int returnCode)
         {
             try
             {
-                return OperationProvider.GetOperationResult(package, options, operation, processOutput, returnCode);
+                return OperationProvider.GetOperationResult(package, operation, processOutput, returnCode);
             }
             catch (Exception ex)
             {
@@ -520,7 +520,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             return Array.Empty<string>();
         }
 
-        public override OperationVeredict GetOperationResult(IPackage package, IInstallationOptions options, OperationType operation, IEnumerable<string> processOutput, int returnCode)
+        public override OperationVeredict GetOperationResult(IPackage package, OperationType operation, IEnumerable<string> processOutput, int returnCode)
         {
             return OperationVeredict.Failed;
         }
