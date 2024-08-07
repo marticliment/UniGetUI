@@ -8,7 +8,7 @@ Any user suspected of farming GitHub activity with crypto purposes will get bann
 
 <!-- optionally, explain here about the committed code -->
 -----
-<!-- insert below the issue number (if applicable) -->
+<!-- insert below the issue number (if applicable, do not create a new issue to justify a PR) -->
 Closes #XXXX
 <!-- and/or -->
 Relates to #XXXX
