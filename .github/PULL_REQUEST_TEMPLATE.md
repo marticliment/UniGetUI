@@ -5,8 +5,8 @@
 - [ ] **This PR is not composed of garbage changes used to farm GitHub activity to enter potential Crypto AirDrops.**
 Any user suspected of farming GitHub activity with crypto purposes will get banned. Submitting broken code wastes the contributors' time, who have to spend their free time reviewing, fixing, and testing code that does not even compile breaks other features, or does not introduce any useful changes. Thank you for your understanding.
 -----
-<!-- optionally, explain here about the committed code -->
 
+<!-- optionally, explain here about the committed code -->
 -----
 <!-- insert below the issue number (if applicable) -->
 Closes #XXXX
