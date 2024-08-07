@@ -4,16 +4,15 @@ using System.Text.RegularExpressions;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.Structs;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.PackageEngine.Managers.ScoopManager
 {
@@ -233,15 +232,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         continue;
                     }
 
-                    if (InstalledPackages.TryGetValue(elements[0] + "." + elements[1], out Package? InstalledPackage) && InstalledPackage is not null)
-                    {
-                        OverridenInstallationOptions options = new(InstalledPackage.OverridenOptions.Scope);
-                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackage.Source, this, options));
-                    }
-                    else
+                    if (!InstalledPackages.ContainsKey(elements[0] + "." + elements[1]))
                     {
                         Logger.Warn("Upgradable scoop package not listed on installed packages - id=" + elements[0]);
+                        continue;
                     }
+
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackages[elements[0] + "." + elements[1]].Source, this, InstalledPackages[elements[0] + "." + elements[1]].Scope));
                 }
             }
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
@@ -300,11 +297,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         continue;
                     }
 
-                    OverridenInstallationOptions options = new(
-                        line.Contains("Global install") ? PackageScope.Global : PackageScope.User
-                    );
+                    PackageScope scope = PackageScope.User;
+                    if (line.Contains("Global install"))
+                    {
+                        scope = PackageScope.Global;
+                    }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], GetSourceOrDefault(elements[2]), this, options));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], GetSourceOrDefault(elements[2]), this, scope));
                 }
             }
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());

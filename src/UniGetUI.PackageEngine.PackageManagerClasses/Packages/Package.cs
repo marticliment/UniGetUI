@@ -8,8 +8,8 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Classes.Serializable;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Structs;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
@@ -45,8 +45,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
             set { __is_checked = value; OnPropertyChanged(nameof(IsChecked)); }
         }
 
-        private OverridenInstallationOptions _overriden_options;
-        public ref OverridenInstallationOptions OverridenOptions { get => ref _overriden_options; }
         public string Name { get; }
         public string AutomationName { get; }
         public string Id { get; }
@@ -57,40 +55,29 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public IManagerSource Source { get; }
 
         /// <summary>
-        /// IPackageManager is guaranteed to be PackageManager, but C# doesn't allow covariant attributes
+        /// IPackageManager is guaranteed to be IPackageManager, but C# doesn't allow covariant attributes
         /// </summary>
         public IPackageManager Manager { get; }
         public string NewVersion { get; }
         public virtual bool IsUpgradable { get; }
+        public PackageScope Scope { get; set; }
+        public string SourceAsString { get => Source.AsString; }
 
         /// <summary>
         /// Construct a package with a given name, id, version, source and manager, and an optional scope.
         /// </summary>
-        public Package(
-            string name,
-            string id,
-            string version,
-            IManagerSource source,
-            IPackageManager manager,
-            OverridenInstallationOptions? options = null)
+        public Package(string name, string id, string version, IManagerSource source, IPackageManager manager, PackageScope scope = PackageScope.Local)
         {
             Name = name;
             Id = id;
             Version = version;
             VersionAsFloat = CoreTools.GetVersionStringAsFloat(version);
             Source = source;
-            Manager = manager;
-
-            if (options != null)
-            {
-                _overriden_options = (OverridenInstallationOptions)options;
-            }
-
+            Manager = (IPackageManager)manager;
+            Scope = scope;
             NewVersion = "";
             Tag = PackageTag.Default;
-            AutomationName = CoreTools.Translate("Package {name} from {manager}",
-                new Dictionary<string, object?> { { "name", Name }, { "manager", Source.AsString_DisplayName } });
-
+            AutomationName = CoreTools.Translate("Package {name} from {manager}", new Dictionary<string, object?> { { "name", Name }, { "manager", Source.AsString_DisplayName } });
             __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id);
             __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + Version);
             IsUpgradable = false;
@@ -99,15 +86,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Creates an UpgradablePackage object representing a package that can be upgraded; given its name, id, installed version, new version, source and manager, and an optional scope.
         /// </summary>
-        public Package(
-            string name,
-            string id,
-            string installed_version,
-            string new_version,
-            IManagerSource source,
-            IPackageManager manager,
-            OverridenInstallationOptions? options = null)
-            : this(name, id, installed_version, source, manager, options)
+        public Package(string name, string id, string installed_version, string new_version, IManagerSource source, IPackageManager manager, PackageScope scope = PackageScope.Local)
+            : this(name, id, installed_version, source, manager, scope)
         {
             IsUpgradable = true;
             NewVersion = new_version;

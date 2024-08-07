@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Serializable;
-using UniGetUI.PackageEngine.Structs;
+using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.PackageEngine.Interfaces
 {
@@ -19,7 +19,8 @@ namespace UniGetUI.PackageEngine.Interfaces
         public IPackageManager Manager { get; }
         public string NewVersion { get; }
         public bool IsUpgradable { get; }
-        public ref OverridenInstallationOptions OverridenOptions { get; }
+        public PackageScope Scope { get; set; }
+        public string SourceAsString { get; }
         public string AutomationName { get; }
 
         /// <summary>

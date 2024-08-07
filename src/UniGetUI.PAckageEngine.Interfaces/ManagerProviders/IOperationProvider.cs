@@ -20,6 +20,7 @@ public interface IOperationProvider
     /// </summary>
     public abstract OperationVeredict GetOperationResult(
         IPackage package,
+        IInstallationOptions options,
         OperationType operation,
         IEnumerable<string> processOutput,
         int returnCode

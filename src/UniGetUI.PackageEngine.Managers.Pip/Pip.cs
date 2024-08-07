@@ -1,10 +1,11 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -126,7 +127,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         continue;
                     }
 
-                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, new(PackageScope.Global)));
+                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, scope: PackageScope.Global));
                 }
             }
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
@@ -187,7 +188,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         continue;
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, new(PackageScope.Global)));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, scope: PackageScope.Global));
                 }
             }
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
@@ -249,7 +250,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         continue;
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, new(PackageScope.Global)));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, scope: PackageScope.Global));
                 }
             }
             logger.AddToStdErr(await p.StandardError.ReadToEndAsync());

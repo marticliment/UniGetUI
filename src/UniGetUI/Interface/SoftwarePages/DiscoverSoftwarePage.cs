@@ -1,21 +1,56 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.PackageLoader;
+using Windows.System;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class NewDiscoverSoftwarePage : AbstractPackagesPage
+    public class DiscoverSoftwarePage : AbstractPackagesPage
     {
-        BetterMenuItem? MenuAsAdmin;
-        BetterMenuItem? MenuInteractive;
-        BetterMenuItem? MenuSkipHash;
+        private BetterMenuItem? MenuAsAdmin;
+        private BetterMenuItem? MenuInteractive;
+        private BetterMenuItem? MenuSkipHash;
+        public DiscoverSoftwarePage()
+        : base(new PackagesPageData
+        {
+            DisableAutomaticPackageLoadOnStart = true,
+            MegaQueryBlockEnabled = true,
+            PackagesAreCheckedByDefault = false,
+            ShowLastLoadTime = false,
+            DisableSuggestedResultsRadio = false,
+            PageName = "Discover",
+
+            Loader = PEInterface.DiscoveredPackagesLoader,
+            PageRole = OperationType.Install,
+
+            NoPackages_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
+            NoPackages_SourcesText = CoreTools.Translate("No packages were found"),
+            NoPackages_SubtitleText_Base = CoreTools.Translate("No packages were found"),
+            MainSubtitle_StillLoading = CoreTools.Translate("Loading packages"),
+            NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
+
+            PageTitle = CoreTools.Translate("Discover Packages"),
+            Glyph = "\uF6FA"
+        })
+        {
+            InstantSearchCheckbox.IsEnabled = false;
+            InstantSearchCheckbox.Visibility = Visibility.Collapsed;
+
+            FindButton.Click += Event_SearchPackages;
+            MegaFindButton.Click += Event_SearchPackages;
+
+            QueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) { Event_SearchPackages(s, e); } };
+            MegaQueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) { Event_SearchPackages(s, e); } };
+        }
 
         public override BetterMenu GenerateContextMenu()
         {
@@ -24,7 +59,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuInstall = new()
             {
                 Text = "Install",
-                IconName = "newversion",
+                IconName = IconType.Download,
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
             menuInstall.Click += MenuInstall_Invoked;
@@ -35,7 +70,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuInstallSettings = new()
             {
                 Text = "Installation options",
-                IconName = "options",
+                IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
             menuInstallSettings.Click += MenuInstallSettings_Invoked;
@@ -46,7 +81,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin = new BetterMenuItem
             {
                 Text = "Install as administrator",
-                IconName = "runasadmin"
+                IconName = IconType.UAC
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
             menu.Items.Add(MenuAsAdmin);
@@ -54,7 +89,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuInteractive = new BetterMenuItem
             {
                 Text = "Interactive installation",
-                IconName = "interactive"
+                IconName = IconType.Interactive
             };
             MenuInteractive.Click += MenuInteractive_Invoked;
             menu.Items.Add(MenuInteractive);
@@ -62,7 +97,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuSkipHash = new BetterMenuItem
             {
                 Text = "Skip hash check",
-                IconName = "checksum"
+                IconName = IconType.Checksum
             };
             MenuSkipHash.Click += MenuSkipHash_Invoked;
             menu.Items.Add(MenuSkipHash);
@@ -72,7 +107,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuShare = new()
             {
                 Text = "Share this package",
-                IconName = "share"
+                IconName = IconType.Share
             };
             menuShare.Click += MenuShare_Invoked;
             menu.Items.Add(menuShare);
@@ -80,7 +115,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenuItem menuDetails = new()
             {
                 Text = "Package details",
-                IconName = "info",
+                IconName = IconType.Info_Round,
                 KeyboardAcceleratorTextOverride = "Enter"
             };
             menuDetails.Click += MenuDetails_Invoked;
@@ -91,8 +126,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public override void GenerateToolBar()
         {
-            if (!Initialized)
-                return;
             AppBarButton InstallSelected = new();
             AppBarButton InstallAsAdmin = new();
             AppBarButton InstallSkipHash = new();
@@ -102,9 +135,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             AppBarButton PackageDetails = new();
             AppBarButton SharePackage = new();
-
-            AppBarButton SelectAll = new();
-            AppBarButton SelectNone = new();
 
             AppBarButton ExportSelection = new();
 
@@ -120,9 +150,6 @@ namespace UniGetUI.Interface.SoftwarePages
             ToolBar.PrimaryCommands.Add(PackageDetails);
             ToolBar.PrimaryCommands.Add(SharePackage);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
-            ToolBar.PrimaryCommands.Add(SelectAll);
-            ToolBar.PrimaryCommands.Add(SelectNone);
-            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(ExportSelection);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(HelpButton);
@@ -137,8 +164,6 @@ namespace UniGetUI.Interface.SoftwarePages
                 { InstallationSettings,   CoreTools.Translate("Installation options") },
                 { PackageDetails,         " " + CoreTools.Translate("Package details") },
                 { SharePackage,           " " + CoreTools.Translate("Share") },
-                { SelectAll,              " " + CoreTools.Translate("Select all") },
-                { SelectNone,             " " + CoreTools.Translate("Clear selection") },
                 { ExportSelection,        CoreTools.Translate("Add selection to bundle") },
                 { HelpButton,             CoreTools.Translate("Help") }
             };
@@ -147,145 +172,93 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 toolButton.IsCompact = Labels[toolButton][0] == ' ';
                 if (toolButton.IsCompact)
+                {
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
+                }
+
                 toolButton.Label = Labels[toolButton].Trim();
             }
 
-            Dictionary<AppBarButton, string> Icons = new()
+            Dictionary<AppBarButton, IconType> Icons = new()
             {
-                { InstallSelected,      "install" },
-                { InstallAsAdmin,       "runasadmin" },
-                { InstallSkipHash,      "checksum" },
-                { InstallInteractive,   "interactive" },
-                { InstallationSettings, "options" },
-                { PackageDetails,       "info" },
-                { SharePackage,         "share" },
-                { SelectAll,            "selectall" },
-                { SelectNone,           "selectnone" },
-                { ExportSelection,      "add_to" },
-                { HelpButton,           "help" }
+                { InstallSelected,      IconType.Download },
+                { InstallAsAdmin,       IconType.UAC },
+                { InstallSkipHash,      IconType.Checksum },
+                { InstallInteractive,   IconType.Interactive },
+                { InstallationSettings, IconType.Options },
+                { PackageDetails,       IconType.Info_Round },
+                { SharePackage,         IconType.Share },
+                { ExportSelection,      IconType.AddTo },
+                { HelpButton,           IconType.Help }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)
+            {
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
+            }
 
-            PackageDetails.Click += (s, e) =>
-            {
-                if (PackageList.SelectedItem != null)
-                    ShowDetailsForPackage(PackageList.SelectedItem as Package);
-            };
-
+            PackageDetails.Click += (s, e) => ShowDetailsForPackage(SelectedItem);
             ExportSelection.Click += ExportSelection_Click;
-            HelpButton.Click += (s, e) => { MainApp.Instance.MainWindow.NavigationPage.ShowHelp(); };
-
-            InstallationSettings.Click += (s, e) =>
-            {
-                ShowInstallationOptionsForPackage(PackageList.SelectedItem as Package);
-            };
+            HelpButton.Click += (s, e) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
+            InstallationSettings.Click += (s, e) => ShowInstallationOptionsForPackage(SelectedItem);
 
             InstallSelected.Click += (s, e) =>
             {
-                foreach (Package package in PackageCollection) if (package.IsChecked)
-                        MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
+                {
+                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
+                }
             };
 
             InstallAsAdmin.Click += async (s, e) =>
             {
-                foreach (Package package in PackageCollection) if (package.IsChecked)
-                        MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
-                            await InstallationOptions.FromPackageAsync(package, elevated: true)));
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
+                {
+                    InstallationOptions options = await InstallationOptions.FromPackageAsync(package, elevated: true);
+                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
+                }
             };
 
             InstallSkipHash.Click += async (s, e) =>
             {
-                foreach (Package package in PackageCollection) if (package.IsChecked)
-                        MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
-                            await InstallationOptions.FromPackageAsync(package, no_integrity: true)));
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
+                {
+                    InstallationOptions options = await InstallationOptions.FromPackageAsync(package, no_integrity: true);
+                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
+                }
             };
 
             InstallInteractive.Click += async (s, e) =>
             {
-                foreach (Package package in PackageCollection) if (package.IsChecked)
-                        MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
-                            await InstallationOptions.FromPackageAsync(package, interactive: true)));
+                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
+                {
+                    InstallationOptions options = await InstallationOptions.FromPackageAsync(package, interactive: true);
+                    MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, options));
+                }
             };
 
-            SharePackage.Click += (s, e) =>
-            {
-                MainApp.Instance.MainWindow.SharePackage(PackageList.SelectedItem as Package);
-            };
-
-            SelectAll.Click += (s, e) => { SelectAllItems(); };
-            SelectNone.Click += (s, e) => { ClearItemSelection(); };
+            SharePackage.Click += (s, e) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
         public override async Task LoadPackages()
         {
-            if(QueryBlock.Text.Trim() != "") await LoadPackages(ReloadReason.External);
-        }
-
-        public override void GenerateUIText()
-        {
-            DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = true;
-            MEGA_QUERY_BOX_ENABLED = true;
-            PAGE_NAME = "Discover";
-
-            PageRole = OperationType.Install;
-            InstantSearchCheckbox.IsEnabled = false;
-            InstantSearchCheckbox.Visibility = Visibility.Collapsed;
-
-            FindButton.Click += (s, e) => { if(QueryBlock.Text.Trim() != "") _ = LoadPackages(ReloadReason.Manual); };
-            QueryBlock.KeyUp += (s, e) =>
+            if (QueryBlock.Text.Trim() != "")
             {
-                if (QueryBlock.Text.Trim() != "" && e.Key == Windows.System.VirtualKey.Enter)
-                    _ = LoadPackages(ReloadReason.Manual);
-            };
-
-            MegaFindButton.Click += (s, e) => { if (QueryBlock.Text.Trim() != "") _ = LoadPackages(ReloadReason.Manual); };
-            MegaQueryBlock.KeyUp += (s, e) => { if (QueryBlock.Text.Trim() != "" && e.Key == Windows.System.VirtualKey.Enter) _ = LoadPackages(ReloadReason.Manual); };
-
-
-            NoPackages_BackgroundText = CoreTools.Translate("No results were found matching the input criteria");
-            NoPackages_SourcesText = CoreTools.Translate("No packages were found");
-            NoPackages_SubtitleMainText = NoPackages_SourcesText;
-
-            NoMatches_BackgroundText = NoPackages_BackgroundText;
-            NoMatches_SourcesText = NoPackages_SourcesText;
-
-            MainTitleText = CoreTools.AutoTranslated("Discover Packages");
-            MainTitleGlyph = "\uF6FA";
-
-            QueryOptionsGroup.SelectedIndex = 1;
-            QueryOptionsGroup.SelectedIndex = 2;
-            QueryOptionsGroup.SelectedItem = QueryBothRadio;
+                await LoadPackages(ReloadReason.External);
+            }
         }
 
-#pragma warning disable
-        protected override async Task<bool> IsPackageValid(Package package)
+        private void Event_SearchPackages(object sender, RoutedEventArgs e)
         {
-            return true;
-        }
-#pragma warning restore
-
-        protected override Task<Package[]> LoadPackagesFromManager(PackageManager manager)
-        {
-            string text = QueryBlock.Text;
-            text = CoreTools.EnsureSafeQueryString(text);
-            if (text == string.Empty)
-                return new Task<Package[]>(() => { return []; });
+            if (QueryBlock.Text.Trim() != "")
+            {
+                _ = (Loader as DiscoverablePackagesLoader)?.ReloadPackages(QueryBlock.Text.Trim());
+            }
             else
-                return manager.FindPackages(text);
+            {
+                Loader.StopLoading();
+            }
         }
-
-#pragma warning disable
-        protected override async Task WhenAddingPackage(Package package)
-        {
-            if (package.GetUpgradablePackage() != null)
-                package.SetTag(PackageTag.IsUpgradable);
-            else if (package.GetInstalledPackage() != null)
-                package.SetTag(PackageTag.AlreadyInstalled);
-        }
-#pragma warning restore
 
         protected override void WhenPackageCountUpdated()
         {
@@ -293,13 +266,13 @@ namespace UniGetUI.Interface.SoftwarePages
         }
 
 #pragma warning disable
-        protected override async Task WhenPackagesLoaded(ReloadReason reason)
+        protected override void WhenPackagesLoaded(ReloadReason reason)
         {
             return;
         }
 #pragma warning restore
 
-        protected override void WhenShowingContextMenu(Package package)
+        protected override void WhenShowingContextMenu(IPackage package)
         {
             if (MenuAsAdmin == null || MenuInteractive == null || MenuSkipHash == null)
             {
@@ -315,59 +288,76 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
-            await MainApp.Instance.MainWindow.NavigationPage.BundlesPage.AddPackages(Packages.ToArray().Where(x => x.IsChecked));
+            MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+            await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
+            MainApp.Instance.MainWindow.HideLoadingDialog();
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs e)
         {
-            ShowDetailsForPackage(PackageList.SelectedItem as Package);
+            ShowDetailsForPackage(SelectedItem);
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs e)
         {
-            if (!Initialized || PackageList.SelectedItem == null)
+            if (PackageList.SelectedItem == null)
+            {
                 return;
-            MainApp.Instance.MainWindow.SharePackage(PackageList.SelectedItem as Package);
+            }
+
+            MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = PackageList.SelectedItem as Package;
-            if (!Initialized || package == null)
+            IPackage? package = SelectedItem;
+            if (package == null)
+            {
                 return;
+            }
+
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
         }
 
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = PackageList.SelectedItem as Package;
-            if (!Initialized || package == null)
+            IPackage? package = SelectedItem;
+            if (package == null)
+            {
                 return;
+            }
+
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, no_integrity: true)));
         }
 
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = PackageList.SelectedItem as Package;
-            if (!Initialized || package == null)
+            IPackage? package = SelectedItem;
+            if (package == null)
+            {
                 return;
+            }
+
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, interactive: true)));
         }
 
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
-            Package? package = PackageList.SelectedItem as Package;
-            if (!Initialized || package == null)
+            IPackage? package = SelectedItem;
+            if (package == null)
+            {
                 return;
+            }
+
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, elevated: true)));
         }
 
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            ShowInstallationOptionsForPackage(PackageList.SelectedItem as Package);
+            ShowInstallationOptionsForPackage(SelectedItem);
         }
 
         public void ShowSharedPackage_ThreadSafe(string pId, string pSource)
@@ -377,51 +367,66 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void ShowSharedPackage(string pId, string pSource)
         {
-            if (!Initialized)
-                return;
-
             Logger.Info($"Showing shared package with pId=${pId} and pSource=${pSource}...");
 
             MainApp.Instance.MainWindow.Activate();
 
             MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait...", pId));
+            MainApp.Instance.MainWindow.NavigationPage.DiscoverNavButton.ForceClick();
+            MegaQueryBlock.Visibility = Visibility.Collapsed;
+            MegaFindButton.Visibility = Visibility.Collapsed;
+
             QueryIdRadio.IsChecked = true;
             QueryBlock.Text = pId;
-            await LoadPackages();
+            await PEInterface.DiscoveredPackagesLoader.ReloadPackages(pId);
             QueryBothRadio.IsChecked = true;
             MainApp.Instance.MainWindow.HideLoadingDialog();
-            if (PackageCollection.Count == 1)
+            if (FilteredPackages.Count == 1)
             {
                 Logger.Debug("Only one package was found for pId=" + pId + ", showing it.");
-                Package? package = PackageCollection[0] as Package;
-                if (package is null) throw new Exception("PackageCollection[0] was suppoised to be a valid Package object");
-                await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package, OperationType.Install);
+                ShowDetailsForPackage(FilteredPackages[0].Package);
             }
-            else if (PackageCollection.Count > 1)
+            else if (FilteredPackages.Count > 1)
             {
+                // Find a package that matches both the Id and the Source
                 string managerName = pSource.Contains(':') ? pSource.Split(':')[0] : pSource;
-                foreach (Package match in PackageCollection)
-                    if (match.Source.Manager.Name == managerName)
+                foreach (IPackage match in FilteredPackages.GetPackages())
+                {
+                    if (match.Source.Manager.Name == managerName && match.Id == pId)
                     {
                         Logger.Debug("Equivalent package for pId=" + pId + " and pSource=" + pSource + " found: " + match.ToString());
-                        await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(match, OperationType.Install);
+                        ShowDetailsForPackage(match);
                         return;
                     }
+                }
+                
+                Logger.Info($"No package was found with Id={pId} and Source={pSource}, checking for Id only.");
+                // Find a package that matches the Id only
+                foreach (IPackage match in FilteredPackages.GetPackages())
+                {
+                    if (match.Id == pId)
+                    {
+                        Logger.Debug("Equivalent package for pId=" + pId + " and pSource=" + pSource + " found: " + match.ToString());
+                        ShowDetailsForPackage(match);
+                        return;
+                    }
+                }
+
                 Logger.Debug("No package found with the exact same manager, showing the first one.");
-                Package? package = PackageCollection[0] as Package;
-                if (package is null) throw new Exception("PackageCollection[0] was suppoised to be a valid Package object");
-                await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package, OperationType.Install);
+                ShowDetailsForPackage(FilteredPackages[0].Package);
             }
             else
             {
                 Logger.Error("No packages were found matching the given pId=" + pId);
-                ContentDialog c = new();
-                c.XamlRoot = XamlRoot;
-                c.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-                c.Title = CoreTools.Translate("Package not found");
-                c.Content = CoreTools.Translate("The package {0} from {1} was not found.", pId, pSource);
-                c.PrimaryButtonText = CoreTools.Translate("OK");
-                c.DefaultButton = ContentDialogButton.Primary;
+                ContentDialog c = new()
+                {
+                    XamlRoot = XamlRoot,
+                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                    Title = CoreTools.Translate("Package not found"),
+                    Content = CoreTools.Translate("The package {0} from {1} was not found.", pId, pSource),
+                    PrimaryButtonText = CoreTools.Translate("OK"),
+                    DefaultButton = ContentDialogButton.Primary
+                };
                 await MainApp.Instance.MainWindow.ShowDialogAsync(c);
             }
         }
