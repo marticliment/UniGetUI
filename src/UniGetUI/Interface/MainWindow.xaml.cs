@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using CommunityToolkit.WinUI.Notifications;
 using H.NotifyIcon;
 using Microsoft.UI;
@@ -5,21 +7,19 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
-using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
+using UniGetUI.PackageEngine.Interfaces;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
-using Microsoft.UI.Xaml.Media;
 
 namespace UniGetUI.Interface
 {
@@ -80,23 +80,41 @@ namespace UniGetUI.Interface
 
         public List<NavButton> NavButtonList = [];
 #pragma warning disable CS8618
+
         public MainWindow()
         {
             InitializeComponent();
             LoadTrayMenu();
             ExtendsContentIntoTitleBar = true;
-            SetTitleBar(__content_root);
+            //SetTitleBar(__content_root);
             ContentRoot = __content_root;
             ApplyTheme();
 
             SizeChanged += (s, e) => { SaveGeometry(); };
+            
+            titlebar.Loaded += (sender, args) =>
+            {
+                VisualStateManager.GoToState(titlebar, "SubtitleTextVisible", false);
+                VisualStateManager.GoToState(titlebar, "HeaderVisible", false);
+                VisualStateManager.GoToState(titlebar, "ContentVisible", false);
+                VisualStateManager.GoToState(titlebar, "FooterVisible", false);
 
-            AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
+                // Run layout so we re-calculate the drag regions.
+                titlebar.InvalidateMeasure();
+            };
+
+            //titlebar.IconSource = new BitmapIconSource() { UriSource = new Uri("ms-appx:///Assets/Images/icon.png") };
+            titlebar.Title = "UniGetUI";
+            titlebar.Subtitle = CoreTools.Translate("formerly known as WingetUI");
+            //titlebar.Content = new TextBox();
+            //AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
             if (CoreTools.IsAdministrator())
             {
                 Title = "UniGetUI " + CoreTools.Translate("[RAN AS ADMINISTRATOR]");
-                AppTitle.Text = Title;
+                titlebar.Title = Title;
             }
+            ExtendsContentIntoTitleBar = true;
+            SetTitleBar(titlebar);
 
             LoadingSthDalog = new ContentDialog
             {
@@ -104,6 +122,7 @@ namespace UniGetUI.Interface
                 Title = CoreTools.Translate("Please wait"),
                 Content = new ProgressBar { IsIndeterminate = true, Width = 300 }
             };
+
         }
 #pragma warning restore CS8618
         public void HandleNotificationActivation(ToastArguments args, ValueSet input)
@@ -351,7 +370,7 @@ namespace UniGetUI.Interface
 
         public void SwitchToInterface()
         {
-            SetTitleBar(__app_titlebar);
+            //SetTitleBar(__app_titlebar);
             ContentRoot = __content_root;
 
             NavigationPage = new MainView();
