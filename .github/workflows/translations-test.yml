@@ -2,23 +2,29 @@ name: Translation integrity
 on:
   pull_request:
     branches: [ "main" ]
-    paths:
-      - '**.json'
+
   workflow_dispatch:
 
 jobs:
-
-  test:
-    if: github.event.
+  test-translations-and-approve:
+    if: contains(github.event.pull_request.labels.*.name, 'tolgee-ci')
     runs-on: ubuntu-latest  # For a list of available runner types, refer to
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 
     steps:
     - name: Checkout the repository
+      id: checkout
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
     - name: Test translations
+      id: tests
       run: |
         python scripts/verify_translations.py
+
+    - name: Approve PR since checks are Ok
+      uses: hmarr/auto-approve-action@v4
+      with:
+        review-message: "Tolgee-CI Changes have been approved since they passed testing"
+

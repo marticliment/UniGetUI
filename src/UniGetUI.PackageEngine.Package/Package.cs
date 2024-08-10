@@ -142,7 +142,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         /// <summary>
-        /// Constuct a package with a given name, id, version, source and manager, and an optional scope.
+        /// Construct a package with a given name, id, version, source and manager, and an optional scope.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="id"></param>

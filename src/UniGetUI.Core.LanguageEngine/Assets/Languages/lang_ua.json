@@ -625,7 +625,7 @@
   "update(verb)" : "оновити",
   "updated" : "оновлено",
   "updating" : "оновлення",
-  "{0} Uninstallation" : "{} Видалення",
+  "{0} Uninstallation" : "{0} Видалення",
   "{0} aborted" : "{0} перервано",
   "{0} can be updated" : "{0} Можна оновити",
   "{0} can be updated to version {1}" : null,

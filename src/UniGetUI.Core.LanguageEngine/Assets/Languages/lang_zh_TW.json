@@ -30,7 +30,7 @@
   "Add packages or open an existing bundle" : "新增套件或開啟一個存在的套件組合",
   "Add selection to bundle" : "新增套件組合選取項目",
   "Add source" : "新增來源",
-  "Adding source {source} to {manager}" : "新增來源{來源}到{管理者}",
+  "Adding source {source} to {manager}" : null,
   "Addition succeeded" : "新增成功",
   "Administrator privileges" : "系統管理員權限",
   "Administrator privileges preferences" : "管理員權限偏好設定",

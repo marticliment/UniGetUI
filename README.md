@@ -16,6 +16,12 @@ Check out the [Supported Package Managers Table](#supported-package-managers) fo
 ![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fmarticliment.com%2Fresources%2Fbadges%2Fdev-status.json)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/marticliment/WingetUI/dotnet-test.yml?branch=main&style=for-the-badge&label=Tests)
 
+
+## Support the developer
+
+It really does make a big difference, and is very much appreciated. Thanks :)<br>
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P86KKPB)
+
 ## Table of contents
  - **[UniGetUI Homepage](https://www.marticliment.com/unigetui/)**
  - [Table of contents](#table-of-contents)
@@ -59,13 +65,6 @@ choco install wingetui
 ## Update UniGetUI
 
 UniGetUI has a built-in autoupdater. However, it can also be updated like any other package within UniGetUI (since UniGetUI is available through Winget and Scoop).
-
-
-## Support the developer
-
-It really does make a big difference, and is very much appreciated. Thanks :)
-
-<a href='https://ko-fi.com/martinet101' target='_blank'><img style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 
 ## Features
@@ -136,14 +135,14 @@ To translate UniGetUI to other languages or to update an old translation, please
 | <img src='https://flagcdn.com/id.svg' width=20> &nbsp; Indonesian - Bahasa Indonesia | 83% | [arthackrc](https://github.com/arthackrc), [joenior](https://github.com/joenior) |
 | <img src='https://flagcdn.com/jp.svg' width=20> &nbsp; Japanese - 日本語 | 94% | [nob-swik](https://github.com/nob-swik), sho9029, [tacostea](https://github.com/tacostea), Yuki Takase |
 | <img src='https://flagcdn.com/kr.svg' width=20> &nbsp; Korean - 한국어 | 85% | [minbert](https://github.com/minbert), [shblue21](https://github.com/shblue21), [VenusGirl](https://github.com/VenusGirl) |
-| <img src='https://flagcdn.com/lt.svg' width=20> &nbsp; Lithuanian - Lietuvių | 64% | [dziugas1959](https://github.com/dziugas1959) |
+| <img src='https://flagcdn.com/lt.svg' width=20> &nbsp; Lithuanian - Lietuvių | 74% | [dziugas1959](https://github.com/dziugas1959), Džiugas Januševičius |
 | <img src='https://flagcdn.com/mk.svg' width=20> &nbsp; Macedonian - Македонски | 63% | LordDeatHunter |
 | <img src='https://flagcdn.com/no.svg' width=20> &nbsp; Norwegian (bokmål) | 100% | [yrjarv](https://github.com/yrjarv) |
 | <img src='https://flagcdn.com/no.svg' width=20> &nbsp; Norwegian (nynorsk) | 100% | [yrjarv](https://github.com/yrjarv) |
 | <img src='https://flagcdn.com/nl.svg' width=20> &nbsp; Dutch - Nederlands | 100% | [abbydiode](https://github.com/abbydiode), [CateyeNL](https://github.com/CateyeNL), [Stephan-P](https://github.com/Stephan-P) |
 | <img src='https://flagcdn.com/pl.svg' width=20> &nbsp; Polish - Polski | 100% | [KamilZielinski](https://github.com/KamilZielinski), [kwiateusz](https://github.com/kwiateusz), [RegularGvy13](https://github.com/RegularGvy13), [ThePhaseless](https://github.com/ThePhaseless) |
 | <img src='https://flagcdn.com/br.svg' width=20> &nbsp; Portuguese (Brazil) | 100% | [maisondasilva](https://github.com/maisondasilva), [ppvnf](https://github.com/ppvnf), [Rodrigo-Matsuura](https://github.com/Rodrigo-Matsuura), [thiagojramos](https://github.com/thiagojramos), [wanderleihuttel](https://github.com/wanderleihuttel) |
-| <img src='https://flagcdn.com/pt.svg' width=20> &nbsp; Portuguese (Portugal) | 96% | [PoetaGA](https://github.com/PoetaGA), [Tiago_Ferreira](https://github.com/Tiago_Ferreira) |
+| <img src='https://flagcdn.com/pt.svg' width=20> &nbsp; Portuguese (Portugal) | 100% | [PoetaGA](https://github.com/PoetaGA), [Tiago_Ferreira](https://github.com/Tiago_Ferreira) |
 | <img src='https://flagcdn.com/ro.svg' width=20> &nbsp; Romanian - Română | 100% | [SilverGreen93](https://github.com/SilverGreen93), TZACANEL |
 | <img src='https://flagcdn.com/ru.svg' width=20> &nbsp; Russian - Русский | 99% | [bropines](https://github.com/bropines), [DvladikD](https://github.com/DvladikD), [flatron4eg](https://github.com/flatron4eg), [katrovsky](https://github.com/katrovsky), Sergey, sklart |
 | <img src='https://flagcdn.com/sk.svg' width=20> &nbsp; Slovak - Slovenčina | 12% | [Luk164](https://github.com/Luk164) |
@@ -161,7 +160,7 @@ To translate UniGetUI to other languages or to update an old translation, please
 | <img src='https://flagcdn.com/cn.svg' width=20> &nbsp; Simplified Chinese (China) | 100% | Aaron Liu, adfnekc, [arthurfsy2](https://github.com/arthurfsy2), [bai0012](https://github.com/bai0012), BUGP Association, ciaran, CnYeSheng, Cololi, [dongfengweixiao](https://github.com/dongfengweixiao), [FloatStream](https://github.com/FloatStream), [seanyu0](https://github.com/seanyu0), [Sigechaishijie(Albert Peng)](https://github.com/Sigechaishijie(Albert Peng)), [SpaceTimee](https://github.com/SpaceTimee), Yisme |
 | <img src='https://flagcdn.com/tw.svg' width=20> &nbsp; Traditional Chinese (Taiwan) | 95% | Aaron Liu, CnYeSheng, Cololi, [Henryliu880922](https://github.com/Henryliu880922), [yrctw](https://github.com/yrctw) |
 
-Last updated: Wed Jul 31 16:42:05 2024
+Last updated: Thu Aug  8 00:11:29 2024
 <!-- END Autogenerated translations -->
 
 
@@ -211,7 +210,7 @@ If this doesn't work, consider asking for help at [Winget's project page](https:
 
 A: This is a known limitation of Winget. 
 
-See more details on the issue https://github.com/microsoft/winget-cli/issues/2603.<br>
+For more details, see this issue: https://github.com/microsoft/winget-cli/issues/2603.<br>
 
 #
 
@@ -242,7 +241,7 @@ Since 3.1.0: `--uninstall-unigetui`: Attempts to unregister UniGetUI from the no
 Since 3.1.0: `--migrate-wingetui-to-unigetui`: Attempts to migrate WingetUI data folders and shortcuts to UniGetUI, and silently quits<br>
 
 ### Installer command-line parameters:
-The installer is inno-setup based, so it supports regular Inno Setup command-line parameters. Additionally, it also supports the following parameters:
+The installer is inno-setup based. It supports all Inno Setup command-line parameters as well as the following:
 <br>`/NoAutoStart`: Will not launch UniGetUI after installing it.
 <br> `/ALLUSERS`: Install UniGetUI for every user
 <br> `/CURRENTUSER`: Install UniGetUI for the current user only
