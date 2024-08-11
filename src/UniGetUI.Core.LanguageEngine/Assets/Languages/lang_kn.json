@@ -1,7 +1,7 @@
 {
-  "(Last checked: {0})" : null,
-  "(Number {0} in the queue)" : null,
-  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : null,
+  "(Last checked: {0})" : "(ಕೊನೆಯದಾಗಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ: {0})",
+  "(Number {0} in the queue)" : "(ಸರದಿಯಲ್ಲಿ ಸಂಖ್ಯೆ {0})",
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" : "@skanda890",
   "0 packages found" : null,
   "0 updates found" : null,
   "1 - Errors" : null,
