@@ -40,7 +40,7 @@ internal static class Helper
         }
         finally
         {
-#pragma warning disable CA1416 
+#pragma warning disable CA1416
             Marshal.ReleaseComObject(dialog);
 #pragma warning restore CA1416
         }
@@ -72,11 +72,15 @@ internal static class Helper
 
             dialog.GetResult(out IShellItem item);
             item.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, out string path);
-            return path;
+
+            dialog.GetFileTypeIndex(out uint selection);
+            string fileExtension = typeFilters?[(int)selection - 1] ?? ".json";
+
+            return string.Concat(path, fileExtension.AsSpan(1));
         }
         finally
         {
-#pragma warning disable CA1416 
+#pragma warning disable CA1416
             Marshal.ReleaseComObject(dialog);
 #pragma warning restore CA1416
         }
