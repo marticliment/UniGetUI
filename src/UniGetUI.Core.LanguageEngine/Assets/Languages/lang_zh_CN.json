@@ -281,7 +281,7 @@
   "No sources found" : "未找到源",
   "No sources were found" : "未找到源",
   "No updates are available" : "没有可用更新",
-  "Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>" : "Node JS 的软件包管理器。其中包含大量库和其他实用程序，为 JavaScript 世界增添色彩<br>Contains：<b>Node JavaScript 库和其他相关实用程序</b>。",
+  "Node JS's package manager. Full of libraries and other utilities that orbit the javascript world<br>Contains: <b>Node javascript libraries and other related utilities</b>" : "Node JS 的包管理器。其中包含大量库和其它实用程序，为 JavaScript 世界增添色彩<br>包括：<b>Node JavaScript 库和其他相关实用程序</b>。",
   "Not available" : "无法获取",
   "Not found" : "未找到",
   "Not right now" : "不是现在",
