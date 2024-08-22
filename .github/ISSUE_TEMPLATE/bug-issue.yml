@@ -20,7 +20,7 @@ body:
   - type: input
     attributes:
       label: UniGetUI Version
-      placeholder: 3.0.2
+      placeholder: 'x.y.z (e.g., 3.1.0)'
     validations:
       required: true
   - type: input
