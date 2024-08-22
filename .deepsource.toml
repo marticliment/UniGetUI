@@ -1,0 +1,28 @@
+version = 1
+
+[[analyzers]]
+name = "python"
+
+  [analyzers.meta]
+  runtime_version = "3.x.x"
+
+[[analyzers]]
+name = "csharp"
+
+[[transformers]]
+name = "dotnet-format"
+
+[[transformers]]
+name = "autopep8"
+
+[[transformers]]
+name = "isort"
+
+[[transformers]]
+name = "black"
+
+[[transformers]]
+name = "yapf"
+
+[[transformers]]
+name = "ruff"
