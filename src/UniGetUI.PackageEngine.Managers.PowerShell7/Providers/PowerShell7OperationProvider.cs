@@ -16,7 +16,8 @@ internal sealed class PowerShell7OperationProvider : BaseOperationProvider<Power
 
     public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
-        List<string> parameters = [operation switch {
+        List<string> parameters = [operation switch
+        {
             OperationType.Install => Manager.Properties.InstallVerb,
             OperationType.Update => Manager.Properties.UpdateVerb,
             OperationType.Uninstall => Manager.Properties.UninstallVerb,
@@ -27,7 +28,7 @@ internal sealed class PowerShell7OperationProvider : BaseOperationProvider<Power
         if (options.CustomParameters != null)
             parameters.AddRange(options.CustomParameters);
 
-        if(operation is not OperationType.Uninstall)
+        if (operation is not OperationType.Uninstall)
         {
             if (options.PreRelease)
                 parameters.Add("-AllowPrerelease");
@@ -39,7 +40,7 @@ internal sealed class PowerShell7OperationProvider : BaseOperationProvider<Power
                 parameters.AddRange(["-Scope", "CurrentUser"]);
         }
 
-        if(operation is OperationType.Install)
+        if (operation is OperationType.Install)
         {
             if (options.SkipHashCheck)
                 parameters.Add("-SkipPublisherCheck");

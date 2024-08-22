@@ -17,14 +17,19 @@ except FileNotFoundError:
     pass
 
 with open("screenshot_database.xlsx", "wb") as f:
-    f.write(urlopen("https://docs.google.com/spreadsheets/d/1Zxgzs1BiTZipC7EiwNEb9cIchistIdr5/export?format=xlsx").read())
+    f.write(
+        urlopen(
+            "https://docs.google.com/spreadsheets/d/1Zxgzs1BiTZipC7EiwNEb9cIchistIdr5/export?format=xlsx"
+        ).read()
+    )
 
 try:
-    workbook = xlrd.open_workbook('screenshot_database.xlsx')
+    workbook = xlrd.open_workbook("screenshot_database.xlsx")
 except:
     os.system("python -m pip install xlrd==1.0.0")
     import xlrd
-    workbook = xlrd.open_workbook('screenshot_database.xlsx')
+
+    workbook = xlrd.open_workbook("screenshot_database.xlsx")
 
 worksheet = workbook.sheet_by_index(0)
 
@@ -56,7 +61,10 @@ while not arrivedAtTheEnd:
             packagesWithScreenshot += 1
             j = 2
             while j < len(worksheet.row_values(i)):
-                if worksheet.cell_value(i, j) is None or worksheet.cell_value(i, j) == "":
+                if (
+                    worksheet.cell_value(i, j) is None
+                    or worksheet.cell_value(i, j) == ""
+                ):
                     if j == 2:
                         packagesWithScreenshot -= 1
                     break
@@ -65,19 +73,19 @@ while not arrivedAtTheEnd:
                 j += 1
                 if j > 23:
                     break
-        assert (type(data) == list)
-        assert (len(data) == 3)
+        assert type(data) == list
+        assert len(data) == 3
         try:
-            assert (type(data[0]) == str)
+            assert type(data[0]) == str
         except AssertionError as e:
             if data[0] == 115.0:
                 data[0] = "115"
             else:
                 raise e
-        assert (type(data[1]) == str)
-        assert (type(data[2]) == list)
+        assert type(data[1]) == str
+        assert type(data[2]) == list
         if data[1] != "":
-            if(data[1] in forbidden_string):
+            if data[1] in forbidden_string:
                 data[1] = ""
             else:
                 doneCount += 1
@@ -86,12 +94,20 @@ while not arrivedAtTheEnd:
         if not data[0] in jsoncontent["icons_and_screenshots"].keys():
             jsoncontent["icons_and_screenshots"][data[0]] = {
                 "icon": data[1],
-                "images": data[2]
+                "images": data[2],
             }
         else:
             jsoncontent["icons_and_screenshots"][data[0]] = {
-                "icon": data[1] if jsoncontent["icons_and_screenshots"][data[0]]["icon"] == "" else jsoncontent["icons_and_screenshots"][data[0]]["icon"],
-                "images": data[2] if jsoncontent["icons_and_screenshots"][data[0]]["images"] == [] else jsoncontent["icons_and_screenshots"][data[0]]["images"]
+                "icon": (
+                    data[1]
+                    if jsoncontent["icons_and_screenshots"][data[0]]["icon"] == ""
+                    else jsoncontent["icons_and_screenshots"][data[0]]["icon"]
+                ),
+                "images": (
+                    data[2]
+                    if jsoncontent["icons_and_screenshots"][data[0]]["images"] == []
+                    else jsoncontent["icons_and_screenshots"][data[0]]["images"]
+                ),
             }
         totalCount += 1
         i += 1
@@ -106,7 +122,5 @@ jsoncontent["package_count"]["total_screenshots"] = screenshotCount
 
 with open("screenshot-database-v2.json", "w") as outfile:
     json.dump(jsoncontent, outfile, indent=4)
-
-
 
 os.system("pause")

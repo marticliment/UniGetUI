@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using CommunityToolkit.WinUI.Notifications;
 using H.NotifyIcon;
 using Microsoft.UI;
@@ -5,21 +7,19 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
-using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
+using UniGetUI.PackageEngine.Interfaces;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
-using Microsoft.UI.Xaml.Media;
 
 namespace UniGetUI.Interface
 {
@@ -217,12 +217,12 @@ namespace UniGetUI.Interface
 
             Dictionary<XamlUICommand, string> Icons = new()
             {
-                { DiscoverPackages,  "\uF6FA"},
-                { AvailableUpdates,  "\uE977"},
-                { InstalledPackages,  "\uE895"},
-                { AboutUniGetUI,  "\uE946"},
-                { ShowUniGetUI,  "\uE8A7"},
-                { QuitUniGetUI,  "\uE711"},
+                { DiscoverPackages, "\uF6FA" },
+                { AvailableUpdates, "\uE977" },
+                { InstalledPackages, "\uE895" },
+                { AboutUniGetUI, "\uE946" },
+                { ShowUniGetUI, "\uE8A7" },
+                { QuitUniGetUI, "\uE711" },
             };
 
             foreach (KeyValuePair<XamlUICommand, string> item in Icons)
@@ -514,11 +514,11 @@ namespace UniGetUI.Interface
             int total = dependencies.Count();
             foreach (ManagerDependency dependency in dependencies)
             {
-                await ShowMissingDependencyQuery(dependency.Name, dependency.InstallFileName, dependency.InstallArguments,  dependency.FancyInstallCommand, current++, total);
+                await ShowMissingDependencyQuery(dependency.Name, dependency.InstallFileName, dependency.InstallArguments, dependency.FancyInstallCommand, current++, total);
             }
         }
 
-        public async Task ShowMissingDependencyQuery(string dep_name, string exe_name, string exe_args, string fancy_command,  int current, int total)
+        public async Task ShowMissingDependencyQuery(string dep_name, string exe_name, string exe_args, string fancy_command, int current, int total)
         {
             ContentDialog dialog = new();
 

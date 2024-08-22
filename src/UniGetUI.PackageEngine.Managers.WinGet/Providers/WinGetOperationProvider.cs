@@ -17,7 +17,8 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
 
     public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
-        List<string> parameters = [operation switch {
+        List<string> parameters = [operation switch
+        {
             OperationType.Install => Manager.Properties.InstallVerb,
             OperationType.Update => Manager.Properties.UpdateVerb,
             OperationType.Uninstall => Manager.Properties.UninstallVerb,
@@ -28,7 +29,8 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
         parameters.AddRange(["--accept-source-agreements", "--disable-interactivity"]);
 
         // package.Scope is meaningless in WinGet packages. Default is unspecified, hence the _ => [].
-        parameters.AddRange(options.InstallationScope switch {
+        parameters.AddRange(options.InstallationScope switch
+        {
             PackageScope.User => ["--scope", "user"],
             PackageScope.Machine => ["--scope", "machine"],
             _ => []
@@ -47,7 +49,7 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
         parameters.AddRange(options.CustomParameters);
 
 
-        if(operation is OperationType.Update)
+        if (operation is OperationType.Update)
         {
             if (package.Name.Contains("64-bit") || package.Id.ToLower().Contains("x64"))
             {
@@ -60,7 +62,7 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
             parameters.Add("--include-unknown");
         }
 
-        if(operation is not OperationType.Uninstall)
+        if (operation is not OperationType.Uninstall)
         {
             parameters.AddRange(["--accept-package-agreements", "--force"]);
 
@@ -105,7 +107,7 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
             return OperationVeredict.Succeeded;
         }
 
-        if(uintCode == 0x8A150056 && options.RunAsAdministrator && !CoreTools.IsAdministrator())
+        if (uintCode == 0x8A150056 && options.RunAsAdministrator && !CoreTools.IsAdministrator())
         {
             // Installer can't run elevated
             options.RunAsAdministrator = false;

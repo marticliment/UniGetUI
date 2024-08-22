@@ -1,4 +1,4 @@
-﻿namespace ExternalLibraries.Pickers.Enums;
+namespace ExternalLibraries.Pickers.Enums;
 
 // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/ne-shobjidl_core-sigdn
 internal enum SIGDN : uint

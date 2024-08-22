@@ -153,8 +153,11 @@ namespace UniGetUI.Core.Language
 
         public static readonly Dictionary<PackageScope, string> ScopeNames_NonLang = new()
         {
-            { PackageScope.Global, "mac" +
-                "hine" },
+            {
+                PackageScope.Global,
+                "mac" +
+                "hine"
+            },
             { PackageScope.Local, "user" },
         };
 

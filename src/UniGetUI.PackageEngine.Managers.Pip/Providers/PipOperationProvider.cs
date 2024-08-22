@@ -20,14 +20,15 @@ internal sealed class PipOperationProvider : BaseOperationProvider<Pip>
         IInstallationOptions options,
         OperationType operation)
     {
-        List<string> parameters = [operation switch {
+        List<string> parameters = [operation switch
+        {
             OperationType.Install => Manager.Properties.InstallVerb,
             OperationType.Update => Manager.Properties.UpdateVerb,
             OperationType.Uninstall => Manager.Properties.UninstallVerb,
             _ => throw new InvalidDataException("Invalid package operation")
         }];
         parameters.AddRange([
-            options.Version != string.Empty? $"{package.Id}=={options.Version}" : package.Id,
+            options.Version != string.Empty ? $"{package.Id}=={options.Version}" : package.Id,
             "--no-input",
             "--no-color",
             "--no-python-version-warning",

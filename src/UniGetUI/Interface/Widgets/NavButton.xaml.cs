@@ -11,7 +11,8 @@ namespace UniGetUI.Interface.Widgets
     {
         public string Text
         {
-            set {
+            set
+            {
                 string val = CoreTools.Translate(value);
                 int count = val.Count(x => x == ' ');
                 TextBlock.Text = val.Replace(" ", "\x0a");

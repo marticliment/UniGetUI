@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Net;
 using UniGetUI.Core.Logging;
 
@@ -34,8 +34,8 @@ namespace UniGetUI.Core.Data
             }
         }
 
-        public const string VersionName =  "3.1.1"; // Do not modify this line, use file scripts/apply_versions.py
-        public const double VersionNumber =  3.11; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName = "3.1.1"; // Do not modify this line, use file scripts/apply_versions.py
+        public const double VersionNumber = 3.11; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 

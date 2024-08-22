@@ -1,6 +1,6 @@
+using System.Diagnostics;
 using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml.Controls;
-using System.Diagnostics;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -224,7 +224,7 @@ namespace UniGetUI.PackageEngine.Operations
             IPackage package,
             bool IgnoreParallelInstalls = false)
             : base(package, OperationType.Update, IgnoreParallelInstalls) { }
-      
+
 
         protected override string[] GenerateProcessLogHeader()
         {

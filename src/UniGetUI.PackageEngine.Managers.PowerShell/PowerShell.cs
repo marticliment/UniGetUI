@@ -2,8 +2,8 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -81,24 +81,25 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             string command = """
                 function Test-GalleryModuleUpdate {
-                    param (
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [version] $Version,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Repository,
+                param(
+
+                    [Parameter(Mandatory, ValueFromPipelineByPropertyName)][string] $Name,
+                        [Parameter(Mandatory, ValueFromPipelineByPropertyName)] [version] $Version,
+                        [Parameter(Mandatory, ValueFromPipelineByPropertyName)] [string] $Repository,
                         [switch] $NeedUpdateOnly
                     )
                     process {
-                        $URLs = @{}
-                        @(Get-PSRepository).ForEach({$URLs[$_.Name] = $_.SourceLocation})
-                        $page = Invoke-WebRequest -Uri ($URLs[$Repository] + "/package/$Name") -UseBasicParsing -Maximum 0 -ea Ignore
-                        [version]$latest = Split-Path -Path ($page.Headers.Location -replace "$Name." -replace ".nupkg") -Leaf
-                        $needsupdate = $Latest -gt $Version
+                        $URLs = @{ }
+                        @(Get - PSRepository).ForEach({$URLs[$_.Name] = $_.SourceLocation})
+                        $page = Invoke - WebRequest - Uri($URLs[$Repository] + "/package/$Name") - UseBasicParsing - Maximum 0 - ea Ignore
+                             [version]$latest = Split - Path - Path($page.Headers.Location - replace "$Name." - replace ".nupkg") - Leaf
+                        $needsupdate = $Latest - gt $Version
                         if ($needsupdate) {
-                                Write-Output($Name + "|" + $Version.ToString() + "|" + $Latest.ToString() + "|" + $Repository)
+                        Write - Output($Name + "|" + $Version.ToString() + "|" + $Latest.ToString() + "|" + $Repository)
                         }
-                    }
                 }
-                Get-InstalledModule | Test-GalleryModuleUpdate
+            }
+            Get - InstalledModule | Test - GalleryModuleUpdate
 
 
                 exit

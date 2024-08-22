@@ -1,6 +1,6 @@
+using System.Runtime.InteropServices;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System.Runtime.InteropServices;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
@@ -58,14 +58,14 @@ namespace UniGetUI.Interface.Dialogs
             VersionComboBox.SelectionChanged += (s, e) =>
             {
                 IgnoreUpdatesCheckbox.IsChecked =
-                    !(new []
+                    !(new[]
                     {
-                        CoreTools.Translate("Latest"), 
-                        CoreTools.Translate("PreRelease"), 
+                        CoreTools.Translate("Latest"),
+                        CoreTools.Translate("PreRelease"),
                         ""
                     }.Contains(VersionComboBox.SelectedValue.ToString()));
             };
-            
+
             VersionComboBox.Items.Add(CoreTools.Translate("Latest"));
             VersionComboBox.SelectedIndex = 0;
             if (package.Manager.Capabilities.SupportsPreRelease)

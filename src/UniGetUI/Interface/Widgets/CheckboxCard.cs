@@ -17,7 +17,8 @@ namespace UniGetUI.Interface.Widgets
         private string setting_name = "";
         public string SettingName
         {
-            set {
+            set
+            {
                 setting_name = value;
                 IS_INVERTED = value.StartsWith("Disable");
                 _checkbox.IsChecked = Settings.Get(setting_name) ^ IS_INVERTED;

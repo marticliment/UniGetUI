@@ -157,15 +157,15 @@ namespace UniGetUI.Interface.SoftwarePages
             Dictionary<AppBarButton, string> Labels = new()
             {   // Entries with a trailing space are collapsed
                 // Their texts will be used as the tooltip
-                { InstallSelected,        CoreTools.Translate("Install selected packages") },
-                { InstallAsAdmin,         " " + CoreTools.Translate("Install as administrator") },
-                { InstallSkipHash,        " " + CoreTools.Translate("Skip integrity checks") },
-                { InstallInteractive,     " " + CoreTools.Translate("Interactive installation") },
-                { InstallationSettings,   CoreTools.Translate("Installation options") },
-                { PackageDetails,         " " + CoreTools.Translate("Package details") },
-                { SharePackage,           " " + CoreTools.Translate("Share") },
-                { ExportSelection,        CoreTools.Translate("Add selection to bundle") },
-                { HelpButton,             CoreTools.Translate("Help") }
+                { InstallSelected, CoreTools.Translate("Install selected packages") },
+                { InstallAsAdmin, " " + CoreTools.Translate("Install as administrator") },
+                { InstallSkipHash, " " + CoreTools.Translate("Skip integrity checks") },
+                { InstallInteractive, " " + CoreTools.Translate("Interactive installation") },
+                { InstallationSettings, CoreTools.Translate("Installation options") },
+                { PackageDetails, " " + CoreTools.Translate("Package details") },
+                { SharePackage, " " + CoreTools.Translate("Share") },
+                { ExportSelection, CoreTools.Translate("Add selection to bundle") },
+                { HelpButton, CoreTools.Translate("Help") }
             };
 
             foreach (AppBarButton toolButton in Labels.Keys)
@@ -181,15 +181,15 @@ namespace UniGetUI.Interface.SoftwarePages
 
             Dictionary<AppBarButton, IconType> Icons = new()
             {
-                { InstallSelected,      IconType.Download },
-                { InstallAsAdmin,       IconType.UAC },
-                { InstallSkipHash,      IconType.Checksum },
-                { InstallInteractive,   IconType.Interactive },
+                { InstallSelected, IconType.Download },
+                { InstallAsAdmin, IconType.UAC },
+                { InstallSkipHash, IconType.Checksum },
+                { InstallInteractive, IconType.Interactive },
                 { InstallationSettings, IconType.Options },
-                { PackageDetails,       IconType.Info_Round },
-                { SharePackage,         IconType.Share },
-                { ExportSelection,      IconType.AddTo },
-                { HelpButton,           IconType.Help }
+                { PackageDetails, IconType.Info_Round },
+                { SharePackage, IconType.Share },
+                { ExportSelection, IconType.AddTo },
+                { HelpButton, IconType.Help }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)
@@ -399,7 +399,7 @@ namespace UniGetUI.Interface.SoftwarePages
                         return;
                     }
                 }
-                
+
                 Logger.Info($"No package was found with Id={pId} and Source={pSource}, checking for Id only.");
                 // Find a package that matches the Id only
                 foreach (IPackage match in FilteredPackages.GetPackages())

@@ -1,4 +1,4 @@
-﻿namespace ExternalLibraries.Pickers.Enums;
+namespace ExternalLibraries.Pickers.Enums;
 
 internal enum HRESULT : long
 {

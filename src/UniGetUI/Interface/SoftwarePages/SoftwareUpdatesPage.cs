@@ -201,16 +201,16 @@ namespace UniGetUI.Interface.SoftwarePages
             Dictionary<AppBarButton, string> Labels = new()
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
-                { UpdateSelected,       CoreTools.Translate("Update selected packages") },
-                { UpdateAsAdmin,        " " + CoreTools.Translate("Update as administrator") },
-                { UpdateSkipHash,       " " + CoreTools.Translate("Skip integrity checks") },
-                { UpdateInteractive,    " " + CoreTools.Translate("Interactive update") },
+                { UpdateSelected, CoreTools.Translate("Update selected packages") },
+                { UpdateAsAdmin, " " + CoreTools.Translate("Update as administrator") },
+                { UpdateSkipHash, " " + CoreTools.Translate("Skip integrity checks") },
+                { UpdateInteractive, " " + CoreTools.Translate("Interactive update") },
                 { InstallationSettings, " " + CoreTools.Translate("Installation options") },
-                { PackageDetails,       " " + CoreTools.Translate("Package details") },
-                { SharePackage,         " " + CoreTools.Translate("Share") },
-                { IgnoreSelected,       CoreTools.Translate("Ignore selected packages") },
-                { ManageIgnored,        CoreTools.Translate("Manage ignored updates") },
-                { HelpButton,           CoreTools.Translate("Help") }
+                { PackageDetails, " " + CoreTools.Translate("Package details") },
+                { SharePackage, " " + CoreTools.Translate("Share") },
+                { IgnoreSelected, CoreTools.Translate("Ignore selected packages") },
+                { ManageIgnored, CoreTools.Translate("Manage ignored updates") },
+                { HelpButton, CoreTools.Translate("Help") }
             };
 
             foreach (AppBarButton toolButton in Labels.Keys)
@@ -226,16 +226,16 @@ namespace UniGetUI.Interface.SoftwarePages
 
             Dictionary<AppBarButton, IconType> Icons = new()
             {
-                { UpdateSelected,       IconType.Update },
-                { UpdateAsAdmin,        IconType.UAC },
-                { UpdateSkipHash,       IconType.Checksum },
-                { UpdateInteractive,    IconType.Interactive },
+                { UpdateSelected, IconType.Update },
+                { UpdateAsAdmin, IconType.UAC },
+                { UpdateSkipHash, IconType.Checksum },
+                { UpdateInteractive, IconType.Interactive },
                 { InstallationSettings, IconType.Options },
-                { PackageDetails,       IconType.Info_Round },
-                { SharePackage,         IconType.Share },
-                { IgnoreSelected,       IconType.Pin },
-                { ManageIgnored,        IconType.ClipboardList },
-                { HelpButton,           IconType.Help }
+                { PackageDetails, IconType.Info_Round },
+                { SharePackage, IconType.Share },
+                { IgnoreSelected, IconType.Pin },
+                { ManageIgnored, IconType.ClipboardList },
+                { HelpButton, IconType.Help }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)

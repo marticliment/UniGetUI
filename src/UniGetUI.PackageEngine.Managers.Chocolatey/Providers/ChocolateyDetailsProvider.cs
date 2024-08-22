@@ -29,7 +29,7 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
                 }
             };
 
-           IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
+            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
 
             p.Start();
 

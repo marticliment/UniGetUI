@@ -181,16 +181,16 @@ namespace UniGetUI.Interface.SoftwarePages
             Dictionary<AppBarButton, string> Labels = new()
             { // Entries with a trailing space are collapsed
               // Their texts will be used as the tooltip
-                { UninstallSelected,    CoreTools.Translate("Uninstall selected packages") },
-                { UninstallAsAdmin,     " " + CoreTools.Translate("Uninstall as administrator") },
+                { UninstallSelected, CoreTools.Translate("Uninstall selected packages") },
+                { UninstallAsAdmin, " " + CoreTools.Translate("Uninstall as administrator") },
                 { UninstallInteractive, " " + CoreTools.Translate("Interactive uninstall") },
                 { InstallationSettings, " " + CoreTools.Translate("Installation options") },
-                { PackageDetails,       " " + CoreTools.Translate("Package details") },
-                { SharePackage,         " " + CoreTools.Translate("Share") },
-                { IgnoreSelected,       CoreTools.Translate("Ignore selected packages") },
-                { ManageIgnored,        CoreTools.Translate("Manage ignored updates") },
-                { ExportSelection,      CoreTools.Translate("Add selection to bundle") },
-                { HelpButton,           CoreTools.Translate("Help") }
+                { PackageDetails, " " + CoreTools.Translate("Package details") },
+                { SharePackage, " " + CoreTools.Translate("Share") },
+                { IgnoreSelected, CoreTools.Translate("Ignore selected packages") },
+                { ManageIgnored, CoreTools.Translate("Manage ignored updates") },
+                { ExportSelection, CoreTools.Translate("Add selection to bundle") },
+                { HelpButton, CoreTools.Translate("Help") }
             };
 
             foreach (AppBarButton toolButton in Labels.Keys)
@@ -206,16 +206,16 @@ namespace UniGetUI.Interface.SoftwarePages
 
             Dictionary<AppBarButton, IconType> Icons = new()
             {
-                { UninstallSelected,      IconType.Delete },
-                { UninstallAsAdmin,       IconType.UAC },
-                { UninstallInteractive,   IconType.Interactive },
-                { InstallationSettings,   IconType.Options },
-                { PackageDetails,         IconType.Info_Round },
-                { SharePackage,           IconType.Share },
-                { IgnoreSelected,         IconType.Pin },
-                { ManageIgnored,          IconType.ClipboardList },
-                { ExportSelection,        IconType.AddTo },
-                { HelpButton,             IconType.Help }
+                { UninstallSelected, IconType.Delete },
+                { UninstallAsAdmin, IconType.UAC },
+                { UninstallInteractive, IconType.Interactive },
+                { InstallationSettings, IconType.Options },
+                { PackageDetails, IconType.Info_Round },
+                { SharePackage, IconType.Share },
+                { IgnoreSelected, IconType.Pin },
+                { ManageIgnored, IconType.ClipboardList },
+                { ExportSelection, IconType.AddTo },
+                { HelpButton, IconType.Help }
             };
 
             foreach (AppBarButton toolButton in Icons.Keys)

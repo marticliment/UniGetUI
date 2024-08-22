@@ -20,7 +20,8 @@ internal sealed class ChocolateyOperationProvider : BaseOperationProvider<Chocol
         IInstallationOptions options,
         OperationType operation)
     {
-        List<string> parameters = [operation switch {
+        List<string> parameters = [operation switch
+        {
             OperationType.Install => Manager.Properties.InstallVerb,
             OperationType.Update => Manager.Properties.UpdateVerb,
             OperationType.Uninstall => Manager.Properties.UninstallVerb,
@@ -34,7 +35,7 @@ internal sealed class ChocolateyOperationProvider : BaseOperationProvider<Chocol
         if (options.InteractiveInstallation)
             parameters.Add("--notsilent");
 
-        if(operation is OperationType.Install or OperationType.Update)
+        if (operation is OperationType.Install or OperationType.Update)
         {
             parameters.Add("--no-progress");
 
@@ -61,7 +62,7 @@ internal sealed class ChocolateyOperationProvider : BaseOperationProvider<Chocol
         IEnumerable<string> processOutput,
         int returnCode)
     {
-        if(returnCode is 3010)
+        if (returnCode is 3010)
         {
             return OperationVeredict.RestartRequired;
         }
@@ -76,7 +77,7 @@ internal sealed class ChocolateyOperationProvider : BaseOperationProvider<Chocol
         if (!options.RunAsAdministrator &&
             (output_string.Contains("Run as administrator")
             || output_string.Contains("The requested operation requires elevation")
-            || output_string.Contains("ERROR: Exception calling \"CreateDirectory\" with \"1\" argument(s): \"Access to the path")) )
+            || output_string.Contains("ERROR: Exception calling \"CreateDirectory\" with \"1\" argument(s): \"Access to the path")))
         {
             options.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;

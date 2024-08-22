@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -8,10 +8,10 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.IconEngine;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
-using UniGetUI.Core.Logging;
-using UniGetUI.Core.IconEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
@@ -190,7 +190,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns>a string with the package's normalized icon id</returns>
         public string GetIconId()
         {
-            string iconId = Id.ToLower(); 
+            string iconId = Id.ToLower();
             if (Manager.Name == "Winget")
                 iconId = string.Join('.', iconId.Split(".")[1..]);
             else if (Manager.Name == "Chocolatey")

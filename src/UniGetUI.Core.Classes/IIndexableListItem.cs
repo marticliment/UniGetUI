@@ -1,4 +1,4 @@
-﻿namespace UniGetUI.Core.Classes
+namespace UniGetUI.Core.Classes
 {
     public interface IIndexableListItem
     {
