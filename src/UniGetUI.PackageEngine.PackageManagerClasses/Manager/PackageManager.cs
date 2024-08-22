@@ -5,17 +5,17 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
-using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
+using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Classes.Manager;
 
 namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
@@ -85,7 +85,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             // END integrity check
 
             Properties.DefaultSource.RefreshSourceNames();
-            foreach (var source in Properties.KnownSources) source.RefreshSourceNames();
+            foreach(var source in Properties.KnownSources) source.RefreshSourceNames();
 
             try
             {

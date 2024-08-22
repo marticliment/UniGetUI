@@ -21,8 +21,7 @@ internal sealed class DotNetOperationProvider : BaseOperationProvider<DotNet>
         IInstallationOptions options,
         OperationType operation)
     {
-        List<string> parameters = [operation switch
-        {
+        List<string> parameters = [operation switch {
             OperationType.Install => Manager.Properties.InstallVerb,
             OperationType.Update => Manager.Properties.UpdateVerb,
             OperationType.Uninstall => Manager.Properties.UninstallVerb,

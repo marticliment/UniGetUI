@@ -46,15 +46,13 @@ namespace UniGetUI
             try
             {
                 string textart = $"""
-                     __ __      _ ______     __ __  ______
-                  / / / / ___(_) ____ / __ / / _ / / / / _ /
-
-                / / / / __ \/ / / __ / _ \/ __ / / / // /
-
-                / / _ / / / / / / / _ / / __ / / _ / / _ / // /
-                  \____ / _ / / _ / _ /\____ /\___ /\__ /\____ / ___ /
-                                Welcome to UniGetUI Version { CoreData.VersionName}
-                """;
+                     __  __      _ ______     __  __  ______
+                    / / / /___  (_) ____/__  / /_/ / / /  _/
+                   / / / / __ \/ / / __/ _ \/ __/ / / // /
+                  / /_/ / / / / / /_/ /  __/ /_/ /_/ // /
+                  \____/_/ /_/_/\____/\___/\__/\____/___/
+                      Welcome to UniGetUI Version {CoreData.VersionName}
+                  """;
 
                 Logger.ImportantInfo(textart);
                 Logger.ImportantInfo("  ");

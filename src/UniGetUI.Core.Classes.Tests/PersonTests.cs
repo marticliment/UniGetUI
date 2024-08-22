@@ -1,4 +1,4 @@
-namespace UniGetUI.Core.Classes.Tests
+﻿namespace UniGetUI.Core.Classes.Tests
 {
     public class PersonTests
     {

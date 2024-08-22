@@ -1,9 +1,9 @@
-using System.Diagnostics;
-using System.Text.Json;
-using System.Xml.Serialization;
 using ExternalLibraries.Pickers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Diagnostics;
+using System.Text.Json;
+using System.Xml.Serialization;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -44,7 +44,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             PageTitle = CoreTools.Translate("Package Bundles"),
             Glyph = "\uF133"
-        })
+        }) 
         {
         }
 
@@ -159,20 +159,20 @@ namespace UniGetUI.Interface.SoftwarePages
             ToolBar.PrimaryCommands.Add(HelpButton);
 
             Dictionary<AppBarButton, string> Labels = new()
-            { // Entries with a trailing space are collapsed
-              // Their texts will be used as the tooltip
-                { NewBundle, CoreTools.Translate("New bundle") },
-                { InstallPackages, CoreTools.Translate("Install selection") },
-                { InstallAsAdmin, " " + CoreTools.Translate("Uninstall as administrator") },
-                { InstallInteractive, " " + CoreTools.Translate("Interactive uninstall") },
-                { InstallSkipHash, " " + CoreTools.Translate("Skip integrity checks") },
-                { OpenBundle, CoreTools.Translate("Open existing bundle") },
-                { RemoveSelected, CoreTools.Translate("Remove selection from bundle") },
-                { ExportBundle, CoreTools.Translate("Save bundle as") },
-                { PackageDetails, " " + CoreTools.Translate("Package details") },
-                { SharePackage, " " + CoreTools.Translate("Share") },
-                { HelpButton, CoreTools.Translate("Help") }
-            };
+                { // Entries with a trailing space are collapsed
+                  // Their texts will be used as the tooltip
+                    { NewBundle,              CoreTools.Translate("New bundle") },
+                    { InstallPackages,        CoreTools.Translate("Install selection") },
+                    { InstallAsAdmin,     " " + CoreTools.Translate("Uninstall as administrator") },
+                    { InstallInteractive, " " + CoreTools.Translate("Interactive uninstall") },
+                    { InstallSkipHash, " " + CoreTools.Translate("Skip integrity checks") },
+                    { OpenBundle,             CoreTools.Translate("Open existing bundle") },
+                    { RemoveSelected,         CoreTools.Translate("Remove selection from bundle") },
+                    { ExportBundle,           CoreTools.Translate("Save bundle as") },
+                    { PackageDetails,         " " + CoreTools.Translate("Package details") },
+                    { SharePackage,           " " + CoreTools.Translate("Share") },
+                    { HelpButton,             CoreTools.Translate("Help") }
+                };
 
             foreach (AppBarButton toolButton in Labels.Keys)
             {
@@ -183,19 +183,19 @@ namespace UniGetUI.Interface.SoftwarePages
             }
 
             Dictionary<AppBarButton, IconType> Icons = new()
-            {
-                { NewBundle, IconType.AddTo },
-                { InstallPackages, IconType.Download },
-                { InstallAsAdmin, IconType.UAC },
-                { InstallInteractive, IconType.Interactive },
-                { InstallSkipHash, IconType.Checksum },
-                { OpenBundle, IconType.OpenFolder },
-                { RemoveSelected, IconType.Delete },
-                { ExportBundle, IconType.SaveAs },
-                { PackageDetails, IconType.Info_Round },
-                { SharePackage, IconType.Share },
-                { HelpButton, IconType.Help }
-            };
+                {
+                    { NewBundle,              IconType.AddTo },
+                    { InstallPackages,        IconType.Download },
+                    { InstallAsAdmin,         IconType.UAC },
+                    { InstallInteractive,     IconType.Interactive },
+                    { InstallSkipHash,        IconType.Checksum },
+                    { OpenBundle,             IconType.OpenFolder },
+                    { RemoveSelected,         IconType.Delete},
+                    { ExportBundle,           IconType.SaveAs },
+                    { PackageDetails,         IconType.Info_Round },
+                    { SharePackage,           IconType.Share },
+                    { HelpButton,             IconType.Help }
+                };
 
             foreach (AppBarButton toolButton in Icons.Keys)
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
@@ -247,8 +247,8 @@ namespace UniGetUI.Interface.SoftwarePages
             List<Package> packages_to_install = new();
             foreach (IPackage package in packages)
             {
-                if (package is ImportedPackage imported)
-                {
+                if(package is ImportedPackage imported)
+                { 
                     Logger.ImportantInfo($"Registering package {imported.Id} from manager {imported.SourceAsString}");
                     packages_to_install.Add(await imported.RegisterAndGetPackageAsync());
                 }
@@ -262,8 +262,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
             foreach (Package package in packages_to_install)
             {
-                MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
-                     await InstallationOptions.FromPackageAsync(package, elevated, interactive, skiphash)));
+               MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
+                    await InstallationOptions.FromPackageAsync(package, elevated, interactive, skiphash)));
             }
         }
 

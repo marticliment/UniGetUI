@@ -82,25 +82,24 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 
             string command = """
                 function Test-GalleryModuleUpdate {
-                param(
-
-                    [Parameter(Mandatory, ValueFromPipelineByPropertyName)][string] $Name,
-                        [Parameter(Mandatory, ValueFromPipelineByPropertyName)] [version] $Version,
-                        [Parameter(Mandatory, ValueFromPipelineByPropertyName)] [string] $Repository,
+                    param (
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [version] $Version,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Repository,
                         [switch] $NeedUpdateOnly
                     )
                     process {
-                        $URLs = @{ }
-                        @(Get - PSRepository).ForEach({$URLs[$_.Name] = $_.SourceLocation})
-                        $page = Invoke - WebRequest - Uri($URLs[$Repository] + "/package/$Name") - UseBasicParsing - ea Ignore
-                            [version]$latest = Split - Path - Path($page.BaseResponse.RequestMessage.RequestUri - replace "$Name." - replace ".nupkg") - Leaf
-                        $needsupdate = $Latest - gt $Version
+                        $URLs = @{}
+                        @(Get-PSRepository).ForEach({$URLs[$_.Name] = $_.SourceLocation})
+                        $page = Invoke-WebRequest -Uri ($URLs[$Repository] + "/package/$Name") -UseBasicParsing -ea Ignore
+                        [version]$latest = Split-Path -Path ($page.BaseResponse.RequestMessage.RequestUri -replace "$Name." -replace ".nupkg") -Leaf
+                        $needsupdate = $Latest -gt $Version
                         if ($needsupdate) {
-                        Write - Output($Name + "|" + $Version.ToString() + "|" + $Latest.ToString() + "|" + $Repository)
+                                Write-Output($Name + "|" + $Version.ToString() + "|" + $Latest.ToString() + "|" + $Repository)
                         }
+                    }
                 }
-            }
-            Get - InstalledModule | Test - GalleryModuleUpdate
+                Get-InstalledModule | Test-GalleryModuleUpdate
 
 
                 exit

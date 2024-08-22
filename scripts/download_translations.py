@@ -1,14 +1,14 @@
-import glob
 import json
 import os
 import sys
 import time
-import zipfile
-
 import tolgee_requests
 from Languages.LangData import *
+import glob
+import zipfile
 
 try:
+
     root_dir = os.path.join(os.path.dirname(__file__), "..")
     os.chdir(root_dir)  # move to root project
 
@@ -23,17 +23,13 @@ try:
     isSomeChanges = False
 
     if len(sys.argv) > 1:
-        if sys.argv[1] == "--autocommit":
+        if (sys.argv[1] == "--autocommit"):
             isAutoCommit = True
         else:
             print("nocommit")
             print(sys.argv[1])
 
-    os.chdir(
-        os.path.normpath(
-            os.path.join(root_dir, "src/UniGetUI.Core.LanguageEngine/Assets/Languages")
-        )
-    )
+    os.chdir(os.path.normpath(os.path.join(root_dir, "src/UniGetUI.Core.LanguageEngine/Assets/Languages")))
 
     print()
     print("-------------------------------------------------------")
@@ -41,10 +37,10 @@ try:
     print("  Downloading updated translations...")
 
     response = tolgee_requests.export()
-    if not response.ok:
+    if (not response.ok):
         statusCode = response.status_code
         print(f"  Error {statusCode}: {response.text}")
-        if statusCode == 403:
+        if (statusCode == 403):
             print("  APIKEY is probably wrong!")
         exit(1)
     with open("langs.zip", "wb") as f:
@@ -60,13 +56,12 @@ try:
     downloadedLanguages = []
     zip_file = zipfile.ZipFile(langArchiveName)
 
-    # If the downloaded zip file is valid, delete old language files and extract the new ones
-    for file in glob.glob("lang_*.json"):
+    for file in glob.glob('lang_*.json'):  # If the downloaded zip file is valid, delete old language files and extract the new ones
         os.remove(file)
 
     for name in zip_file.namelist():
         lang = os.path.splitext(name)[0]
-        if lang in languageRemap:
+        if (lang in languageRemap):
             lang = languageRemap[lang]
         newFilename = f"lang_{lang}.json"
         downloadedLanguages.append(lang)
@@ -78,9 +73,7 @@ try:
 
         except KeyError:
             print(type(name))
-            f = input(
-                f"  The file {name} was not expected to be in here. Please write the name for the file. It should follow the following structure: lang_[CODE].json: "
-            )
+            f = input(f"  The file {name} was not expected to be in here. Please write the name for the file. It should follow the following structure: lang_[CODE].json: ")
             zip_file.extract(f, "./")
             os.replace(f, newFilename)
             print(f"  Extracted {f}")
@@ -98,44 +91,33 @@ try:
     langCredits = {}
 
     for lang in downloadedLanguages:
-        with open(f"lang_{lang}.json", "r", encoding="utf-8") as f:
+        with open(f"lang_{lang}.json", "r", encoding='utf-8') as f:
             data = dict(json.load(f))
         c = 0
         a = 0
         for key, value in data.items():
             c += 1
-            if value is not None:
+            if (value is not None):
                 a += 1
         credits = []
         try:
-            if (
-                "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry"
-                in data.keys()
-            ):
-                credits = getTranslatorsFromCredits(
-                    data[
-                        "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry"
-                    ]
-                )
+            if ("0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry" in data.keys()):
+                credits = getTranslatorsFromCredits(data["0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry"])
             else:
-                credits = getTranslatorsFromCredits(
-                    data[
-                        "{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)"
-                    ]
-                )
+                credits = getTranslatorsFromCredits(data["{0} {0} {0} Contributors, please add your names/usernames separated by comas (for credit purposes)"])
         except KeyError as e:
             print(e)
             print("Can't get translator list!")
         langCredits[lang] = credits
         percNum = a / c
         perc = f"{percNum:.0%}"
-        if perc == "100%" and percNum < 1:
+        if (perc == "100%" and percNum < 1):
             perc = "99%"
-        if perc == "100%" or lang == "en":
+        if (perc == "100%" or lang == "en"):
             continue
         langPerc[lang] = perc
 
-    if isAutoCommit:
+    if (isAutoCommit):
         os.system("git add .")
     countOfChanges = len(os.popen("git status -s").readlines()) - countOfChanges
     isSomeChanges = True if countOfChanges > 0 else False
@@ -151,23 +133,10 @@ try:
     # languageCredits = {json.dumps(langCredits, indent=2, ensure_ascii=False)}
     # """
 
-    with open(
-        os.path.join(
-            root_dir, "src/UniGetUI.Core.LanguageEngine/Assets/Data/Translators.json"
-        ),
-        "w",
-        encoding="utf-8",
-    ) as f:
+    with open(os.path.join(root_dir, "src/UniGetUI.Core.LanguageEngine/Assets/Data/Translators.json"), "w", encoding="utf-8") as f:
         f.write(json.dumps(langCredits, indent=2, ensure_ascii=False))
 
-    with open(
-        os.path.join(
-            root_dir,
-            "src/UniGetUI.Core.LanguageEngine/Assets/Data/TranslatedPercentages.json",
-        ),
-        "w",
-        encoding="utf-8",
-    ) as f:
+    with open(os.path.join(root_dir, "src/UniGetUI.Core.LanguageEngine/Assets/Data/TranslatedPercentages.json"), "w", encoding="utf-8") as f:
         f.write(json.dumps(langPerc, indent=2, ensure_ascii=False))
 
     # translations_filepath = os.path.normpath(os.path.join(root_dir, "UniGetUI.Core.LanguageEngine/Core/Data/Translations.py"))
@@ -188,14 +157,14 @@ try:
         data = ""
         for line in f.readlines():
             if "<!-- Autogenerated translations -->" in line:
-                data += f"{line}{getMarkdownSupportLangs()}\nLast updated: {str(time.ctime(time.time()))}\n"
+                data += f'{line}{getMarkdownSupportLangs()}\nLast updated: {str(time.ctime(time.time()))}\n'
                 print("  Text modified")
                 skip = True
             if "<!-- END Autogenerated translations -->" in line:
                 skip = False
-            if not skip:
+            if (not skip):
                 data += line
-        if isSomeChanges:
+        if (isSomeChanges):
             f.seek(0)
             f.write(data)
             f.truncate()
@@ -205,10 +174,10 @@ try:
     print("-------------------------------------------------------")
     print()
 
-    if isAutoCommit:
-        if not isSomeChanges:
+    if (isAutoCommit):
+        if (not isSomeChanges):
             os.system("git reset --hard")  # prevent clean
-
+    
 except Exception as e:
     print(e)
     print(e.__traceback__.tb_lineno)

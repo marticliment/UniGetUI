@@ -1,4 +1,4 @@
-namespace UniGetUI.Core.IconEngine
+﻿namespace UniGetUI.Core.IconEngine
 {
     internal struct IconScreenshotDatabase_v2
     {

@@ -472,7 +472,7 @@ namespace UniGetUI.Interface
             NotesDialog.CloseButtonText = CoreTools.Translate("Close");
             NotesDialog.Title = CoreTools.Translate("Release notes");
             ReleaseNotes? notes = new();
-            notes.Close += (s, e) => NotesDialog.Hide();
+            notes.Close += (s, e) => NotesDialog.Hide(); 
             NotesDialog.Content = notes;
             NotesDialog.SizeChanged += (s, e) =>
             {

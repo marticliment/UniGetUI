@@ -1,4 +1,4 @@
-namespace UniGetUI.PackageEngine.Classes.Serializable
+﻿namespace UniGetUI.PackageEngine.Classes.Serializable
 {
     public class SerializableIncompatiblePackage_v1
     {

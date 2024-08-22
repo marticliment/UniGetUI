@@ -7,11 +7,13 @@ except ImportError:
     os.system("pip install requests")
     import requests
 
-__project_id = 1  # UniGetUI
+
+__project_id = 1 # UniGetUI
 __api_url = f"https://tolgee.marticliment.com/v2/projects/{__project_id}"
 __api_key = ""
 __headers: dict[str, str] = {}
 __all_keys: dict = None
+
 
 try:
     with open("APIKEY.txt", "r") as f:
@@ -26,16 +28,17 @@ except FileNotFoundError:
 __headers["X-API-Key"] = __api_key
 
 
+
 def check_api_key():
     url = f"{__api_url}/activity"
     response = requests.get(url, headers=__headers)
-    if not response.ok:
+    if (not response.ok):
         print("Issue with API key!")
         print("Error", response.status_code, response.json().get("error"))
         exit(1)
 
 
-def export(format="JSON", zip=True, langs: list[str] = []):
+def export(format = "JSON", zip = True, langs: list[str] = []):
     url = f"{__api_url}/export"
     params = {
         "format": format,
@@ -54,7 +57,9 @@ def export(format="JSON", zip=True, langs: list[str] = []):
 
 def create_key(key):
     url = f"{__api_url}/keys/create"
-    json: dict[str, str] = {"name": key}
+    json: dict[str, str] = {
+        "name": key
+    }
     response = requests.post(url, headers=__headers, json=json)
     return response
 
@@ -64,7 +69,9 @@ def get_keys():
     if __all_keys:
         return __all_keys
     url = f"{__api_url}/keys"
-    params = {"size": 1000}
+    params = {
+        "size": 1000
+    }
     response = requests.get(url, headers=__headers, params=params)
     if not response.ok:
         return False

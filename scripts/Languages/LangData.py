@@ -6,50 +6,32 @@ This file contains a list of the available languages and other related informati
 
 """
 
-import json
 import os
+import json
 
 if os.path.exists("../src/UniGetUI.Core.Data/Assets/Data/Contributors.list"):
-    f = open(
-        "../src/UniGetUI.Core.Data/Assets/Data/Contributors.list", "r", encoding="utf-8"
-    )
+    f = open("../src/UniGetUI.Core.Data/Assets/Data/Contributors.list", "r", encoding="utf-8")
     contributors = f.readlines()
 else:
     print("No contributors file!")
     contributors = []
 
 if os.path.exists("../src/UniGetUI.Core.LanguageEngine/Assets/Data/Translators.json"):
-    f = open(
-        "../src/UniGetUI.Core.LanguageEngine/Assets/Data/Translators.json",
-        "r",
-        encoding="utf-8",
-    )
+    f = open("../src/UniGetUI.Core.LanguageEngine/Assets/Data/Translators.json", "r", encoding="utf-8")
     languageCredits = json.load(f)
 else:
     print("No translators file!")
     languageCredits = {}
 
-if os.path.exists(
-    "../src/UniGetUI.Core.LanguageEngine/Assets/Data/TranslatedPercentages.json"
-):
-    f = open(
-        "../src/UniGetUI.Core.LanguageEngine/Assets/Data/TranslatedPercentages.json",
-        "r",
-        encoding="utf-8",
-    )
+if os.path.exists("../src/UniGetUI.Core.LanguageEngine/Assets/Data/TranslatedPercentages.json"):
+    f = open("../src/UniGetUI.Core.LanguageEngine/Assets/Data/TranslatedPercentages.json", "r", encoding="utf-8")
     untranslatedPercentage = json.load(f)
 else:
     print("No translated percent file!")
     untranslatedPercentage = {}
 
-if os.path.exists(
-    "../src/UniGetUI.Core.LanguageEngine/Assets/Data/LanguagesReference.json"
-):
-    f = open(
-        "../src/UniGetUI.Core.LanguageEngine/Assets/Data/LanguagesReference.json",
-        "r",
-        encoding="utf-8",
-    )
+if os.path.exists("../src/UniGetUI.Core.LanguageEngine/Assets/Data/LanguagesReference.json"):
+    f = open("../src/UniGetUI.Core.LanguageEngine/Assets/Data/LanguagesReference.json", "r", encoding="utf-8")
     languageReference = json.load(f)
 else:
     print("No translated percent file!")
@@ -63,6 +45,7 @@ languageRemap = {
     "zh-Hans": "zh_CN",
     "zh-Hant": "zh_TW",
 }
+
 
 # ISO 3166-1
 languageFlagsRemap = {
@@ -93,11 +76,12 @@ languageFlagsRemap = {
     "zh": "cn",
     "bn": "bd",
     "tg": "ph",
-    "sq": "al",
+    "sq": "al"
 }
 
 
 def getMarkdownSupportLangs():
+
     readmeLangs = [
         "| Language | Translated | Translator(s) |",
         "| :-- | :-- | --- |",
@@ -105,25 +89,17 @@ def getMarkdownSupportLangs():
 
     dir = os.path.dirname(__file__)
     for lang, langName in languageReference.items():
-        if not os.path.exists(
-            f"{dir}/../../src/UniGetUI.Core.LanguageEngine/Assets/Languages/lang_{lang}.json"
-        ):
+        if (not os.path.exists(f"{dir}/../../src/UniGetUI.Core.LanguageEngine/Assets/Languages/lang_{lang}.json")):
             continue
 
-        perc = (
-            untranslatedPercentage[lang] if (lang in untranslatedPercentage) else "100%"
-        )
-        if perc == "0%":
+        perc = untranslatedPercentage[lang] if (lang in untranslatedPercentage) else "100%"
+        if (perc == "0%"):
             continue
 
         langName = languageReference[lang] if (lang in languageReference) else lang
         flag = languageFlagsRemap[lang] if (lang in languageFlagsRemap) else lang
-        credits = makeURLFromTranslatorList(
-            languageCredits[lang] if (lang in languageCredits) else ""
-        )
-        readmeLangs.append(
-            f"| <img src='https://flagcdn.com/{flag}.svg' width=20> &nbsp; {langName} | {perc} | {credits} |"
-        )
+        credits = makeURLFromTranslatorList(languageCredits[lang] if (lang in languageCredits) else "")
+        readmeLangs.append(f"| <img src='https://flagcdn.com/{flag}.svg' width=20> &nbsp; {langName} | {perc} | {credits} |")
     readmeLangs.append("")
 
     return "\n".join(readmeLangs)
@@ -137,12 +113,12 @@ def getTranslatorsFromCredits(translators: str) -> list:
     translatorData = {}
     for translator in translators.split(","):
         translatorStriped = translator.strip()
-        if translatorStriped != "":
-            translatorPrefixed = translatorStriped[0] == "@"
-            if translatorPrefixed:
+        if (translatorStriped != ""):
+            translatorPrefixed = (translatorStriped[0] == "@")
+            if (translatorPrefixed):
                 translatorStriped = translatorStriped[1:]
             link = ""
-            if translatorPrefixed or translatorStriped in contributors:
+            if (translatorPrefixed or translatorStriped in contributors):
                 link = f"https://github.com/{translatorStriped}"
             translatorList.append(translatorStriped)
             translatorData[translatorStriped] = {
@@ -162,7 +138,7 @@ def makeURLFromTranslatorList(translators: list) -> str:
     for translator in translators:
         link = translator.get("link")
         name = translator.get("name")
-        if link:
+        if (link):
             credits.append(f"[{name}]({link})")
         else:
             credits.append(name)

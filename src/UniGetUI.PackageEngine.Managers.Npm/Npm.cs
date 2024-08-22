@@ -1,13 +1,13 @@
 using System.Diagnostics;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.PackageEngine.Managers.NpmManager
 {
@@ -46,7 +46,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             PackageDetailsProvider = new NpmPackageDetailsProvider(this);
             OperationProvider = new NpmOperationProvider(this);
         }
-
+        
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             Process p = new()

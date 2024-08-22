@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.Versioning;
 
 [assembly: AssemblyProduct("UniGetUI")]

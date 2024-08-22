@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -47,7 +47,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             PackageDetailsProvider = new PipPackageDetailsProvider(this);
             OperationProvider = new PipOperationProvider(this);
         }
-
+        
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];

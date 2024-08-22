@@ -1,4 +1,4 @@
-namespace UniGetUI.Core.Data.Tests
+﻿namespace UniGetUI.Core.Data.Tests
 {
     public class ContributorsTests
     {

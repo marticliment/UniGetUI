@@ -46,27 +46,26 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         p.Start();
 
         string command = """
-                         Write - Output(Get - Module - Name Microsoft.WinGet.Client).Version
-                         Import - Module Microsoft.WinGet.Client
-                           function Print - WinGetPackage {
-            param(
-
-                [Parameter(Mandatory, ValueFromPipelineByPropertyName)][string] $Name,
-                                 [Parameter(Mandatory, ValueFromPipelineByPropertyName)] [string] $Id,
-                                 [Parameter(Mandatory, ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
+                         Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
+                         Import-Module Microsoft.WinGet.Client
+                         function Print-WinGetPackage {
+                             param (
+                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
+                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
+                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
                                  [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
-                                 [Parameter(Mandatory, ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
+                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
                                  [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
-                                 )
+                             )
                              process {
-                if ($IsUpdateAvailable)
+                                 if ($IsUpdateAvailable)
                                  {
-                    Write - Output("#" + $Name + "`t" + $Id + "`t" + $InstalledVersion + "`t" + $AvailableVersions[0] + "`t" + $Source)
+                                     Write-Output("#" + $Name + "`t" + $Id + "`t" + $InstalledVersion + "`t" + $AvailableVersions[0] + "`t" + $Source)
                                  }
-            }
-        }
+                             }
+                         }
 
-        Get - WinGetPackage | Print - WinGetPackage
+                         Get-WinGetPackage | Print-WinGetPackage
 
                          exit
 
@@ -138,24 +137,23 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         p.Start();
 
         string command = """
-                         Write - Output(Get - Module - Name Microsoft.WinGet.Client).Version
-                         Import - Module Microsoft.WinGet.Client
-                           function Print - WinGetPackage {
-            param(
-
-                [Parameter(Mandatory, ValueFromPipelineByPropertyName)][string] $Name,
-                                 [Parameter(Mandatory, ValueFromPipelineByPropertyName)] [string] $Id,
-                                 [Parameter(Mandatory, ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
+                         Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
+                         Import-Module Microsoft.WinGet.Client
+                         function Print-WinGetPackage {
+                             param (
+                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
+                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
+                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
                                  [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
-                                 [Parameter(Mandatory, ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
+                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
                                  [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
-                                 )
+                             )
                              process {
-                Write - Output("#" + $Name + "`t" + $Id + "`t" + $InstalledVersion + "`t" + $Source)
+                                 Write-Output("#" + $Name + "`t" + $Id + "`t" + $InstalledVersion + "`t" + $Source)
                              }
-        }
+                         }
 
-        Get - WinGetPackage | Print - WinGetPackage
+                         Get-WinGetPackage | Print-WinGetPackage
 
 
                          exit
@@ -238,22 +236,21 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
         string command = """
-                         Write - Output(Get - Module - Name Microsoft.WinGet.Client).Version
-                         Import - Module Microsoft.WinGet.Client
-                           function Print - WinGetPackage {
-            param(
-
-                [Parameter(Mandatory, ValueFromPipelineByPropertyName)][string] $Name,
-                                 [Parameter(Mandatory, ValueFromPipelineByPropertyName)] [string] $Id,
+                         Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
+                         Import-Module Microsoft.WinGet.Client
+                         function Print-WinGetPackage {
+                             param (
+                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
+                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
                                  [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
                                  [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
-                                 )
+                             )
                              process {
-                Write - Output(""#"" + $Name + ""`t"" + $Id + ""`t"" + $AvailableVersions[0] + ""`t"" + $Source)
+                                 Write-Output(""#"" + $Name + ""`t"" + $Id + ""`t"" + $AvailableVersions[0] + ""`t"" + $Source)
                              }
-        }
+                         }
 
-        Find - WinGetPackage - Query { query} | Print - WinGetPackage
+                         Find-WinGetPackage -Query {query} | Print-WinGetPackage
 
                          exit
 

@@ -1,4 +1,4 @@
-namespace UniGetUI.Interface.Pages
+﻿namespace UniGetUI.Interface.Pages
 {
     /// <summary>
     /// Any object that can perform any of the following listed actions should 

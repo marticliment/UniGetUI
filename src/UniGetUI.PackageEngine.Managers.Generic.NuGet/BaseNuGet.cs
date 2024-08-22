@@ -60,10 +60,10 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
             else
             {
-                sources = [Properties.DefaultSource];
+                sources = [ Properties.DefaultSource ];
             }
-
-            foreach (IManagerSource source in sources)
+            
+            foreach(IManagerSource source in sources)
             {
                 Uri SearchUrl = new($"{source.Url}/Search()?searchTerm=%27{HttpUtility.UrlEncode(query)}%27&targetFramework=%27%27&includePrerelease=false");
                 logger.Log($"Begin package search with url={SearchUrl} on manager {Name}");

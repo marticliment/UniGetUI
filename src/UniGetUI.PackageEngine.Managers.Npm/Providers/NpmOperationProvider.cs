@@ -17,9 +17,8 @@ internal sealed class NpmOperationProvider : BaseOperationProvider<Npm>
 
     public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
-        List<string> parameters = operation switch
-        {
-            OperationType.Install => [Manager.Properties.InstallVerb, $"{package.Id}@{(options.Version == string.Empty ? package.Version : options.Version)}"],
+        List<string> parameters = operation switch {
+            OperationType.Install => [Manager.Properties.InstallVerb, $"{package.Id}@{(options.Version == string.Empty? package.Version: options.Version)}"],
             OperationType.Update => [Manager.Properties.UpdateVerb, $"{package.Id}@{package.NewVersion}"],
             OperationType.Uninstall => [Manager.Properties.UninstallVerb, package.Id],
             _ => throw new InvalidDataException("Invalid package operation")

@@ -1,11 +1,11 @@
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using ExternalLibraries.Clipboard;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -544,7 +544,7 @@ namespace UniGetUI.PackageEngine.Operations
                     oldHistory = oldHistory.Take(1000).ToArray();
                 }
 
-                List<string> newHistory = [..ProcessOutput, ..oldHistory];
+                List<string> newHistory = [.. ProcessOutput, .. oldHistory];
 
                 Settings.SetValue("OperationHistory", string.Join('\n', newHistory).Replace(" | ", " ║ "));
             }

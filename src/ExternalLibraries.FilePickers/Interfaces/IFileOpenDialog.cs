@@ -1,7 +1,7 @@
+﻿using ExternalLibraries.Pickers.Guids;
+using ExternalLibraries.Pickers.Structures;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using ExternalLibraries.Pickers.Guids;
-using ExternalLibraries.Pickers.Structures;
 
 namespace ExternalLibraries.Pickers.Interfaces;
 

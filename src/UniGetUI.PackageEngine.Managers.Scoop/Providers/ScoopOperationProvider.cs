@@ -16,8 +16,7 @@ internal sealed class ScoopOperationProvider : BaseOperationProvider<Scoop>
 
     public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
-        List<string> parameters = [operation switch
-        {
+        List<string> parameters = [operation switch {
             OperationType.Install => Manager.Properties.InstallVerb,
             OperationType.Update => Manager.Properties.UpdateVerb,
             OperationType.Uninstall => Manager.Properties.UninstallVerb,
@@ -31,7 +30,7 @@ internal sealed class ScoopOperationProvider : BaseOperationProvider<Scoop>
             parameters.Add("--global");
         }
 
-        if (options.CustomParameters is not null)
+        if(options.CustomParameters is not null)
             parameters.AddRange(options.CustomParameters);
 
         if (operation is OperationType.Uninstall)

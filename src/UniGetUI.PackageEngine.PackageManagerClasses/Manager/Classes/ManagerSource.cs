@@ -1,5 +1,5 @@
-using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.PackageEngine.Classes.Manager
 {

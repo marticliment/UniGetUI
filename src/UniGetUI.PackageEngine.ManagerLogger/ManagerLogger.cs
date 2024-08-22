@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.ManagerLogger
@@ -46,27 +46,27 @@ namespace UniGetUI.PackageEngine.ManagerLogger
             {
                 if (!isOpen) throw new Exception("Attempted to write log into an already-closed OperationLog");
                 if (line != null)
-                    StdOut.Add(line);
+                    StdOut.Add(line); 
             }
 
             public void AddStdoutLines(IEnumerable<string> lines)
             {
-                if (!isOpen) throw new Exception("Attempted to write log into an already-closed OperationLog");
-                foreach (string line in lines)
+                if (!isOpen) throw new Exception("Attempted to write log into an already-closed OperationLog"); 
+                foreach (string line in lines) 
                     StdOut.Add(line);
             }
 
             public void AddStderrLine(string? line)
             {
-                if (!isOpen) throw new Exception("Attempted to write log into an already-closed OperationLog");
-                if (line != null)
-                    StdErr.Add(line);
+                if (!isOpen) throw new Exception("Attempted to write log into an already-closed OperationLog"); 
+                if (line != null) 
+                    StdErr.Add(line); 
             }
 
             public void AddStderrLines(IEnumerable<string> lines)
             {
-                if (!isOpen) throw new Exception("Attempted to write log into an already-closed OperationLog");
-                foreach (string line in lines)
+                if (!isOpen) throw new Exception("Attempted to write log into an already-closed OperationLog"); 
+                foreach (string line in lines) 
                     StdErr.Add(line);
             }
 
@@ -78,7 +78,7 @@ namespace UniGetUI.PackageEngine.ManagerLogger
                 Logger.LoadOperation(this);
             }
         }
-
+        
         PackageManager Manager;
         List<OperationLog> Operations = new();
 
@@ -95,7 +95,7 @@ namespace UniGetUI.PackageEngine.ManagerLogger
 
         public OperationLog CreateOperationLog(OperationType type, Process process)
         {
-            if (process.StartInfo == null)
+            if (process.StartInfo == null) 
                 throw new Exception("Process instance did not have a valid StartInfo value");
 
             return new OperationLog(this, type, process.StartInfo.FileName, process.StartInfo.Arguments);

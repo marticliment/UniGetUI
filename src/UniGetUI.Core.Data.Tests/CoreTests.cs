@@ -1,15 +1,15 @@
-namespace UniGetUI.Core.Data.Tests
+﻿namespace UniGetUI.Core.Data.Tests
 {
     public class CoreTests
     {
         public static object[][] Data =>
             [
                 [CoreData.UniGetUIDataDirectory],
-                [CoreData.UniGetUIInstallationOptionsDirectory],
-                [CoreData.UniGetUICacheDirectory_Data],
-                [CoreData.UniGetUICacheDirectory_Icons],
-                [CoreData.UniGetUICacheDirectory_Lang],
-                [CoreData.UniGetUI_DefaultBackupDirectory]
+                [CoreData.UniGetUIInstallationOptionsDirectory ],
+                [CoreData.UniGetUICacheDirectory_Data ],
+                [CoreData.UniGetUICacheDirectory_Icons ],
+                [CoreData.UniGetUICacheDirectory_Lang ],
+                [CoreData.UniGetUI_DefaultBackupDirectory ]
              ];
 
         [Theory]
