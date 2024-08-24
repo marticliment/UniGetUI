@@ -82,5 +82,6 @@ namespace UniGetUI.Interface.Enums
         Warning_Filled = '\uE93E',
         Warning_Round = '\uE93F',
         WinGet = '\uE940',
+        Rust = '\uE941',
     }
 }
