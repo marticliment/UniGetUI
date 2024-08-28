@@ -41,7 +41,7 @@
                         Url="https://marticliment.com/resources/annoucements/unigetui"
                         />
                     <widgets:TranslatedTextBlock FontSize="40" FontWeight="Bold" WrappingMode="NoWrap" Text="WingetUI Settings" Suffix="                                                          ." HorizontalAlignment="Stretch"/>
-                    
+
                     <!-- General Settings -->
                     <widgets:SettingsEntry
                         x:Name="GeneralSettingsExpander"
@@ -121,7 +121,7 @@
                                 />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
-                    
+
                     <!-- Notifications -->
                     <widgets:SettingsEntry
                             x:Name="NotificationSettingsEntry"
@@ -147,7 +147,7 @@
                                 />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
-                    
+
                     <!-- Startup options -->
                     <widgets:SettingsEntry
                             Text="Startup options"
@@ -169,7 +169,7 @@
                                 />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
-                    
+
                     <!-- Updates Settings -->
                     <widgets:SettingsEntry
                             Text="Updates preferences"
@@ -193,7 +193,7 @@
                                 />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
-                    
+
                     <!-- Backup packages -->
                     <widgets:SettingsEntry
                             Text="Backup installed packages"
@@ -251,7 +251,7 @@
                                 />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
-                    
+
                     <!-- Administrator prefs -->
                     <widgets:SettingsEntry
                             x:Name="AdminSettingsExpander"
@@ -273,7 +273,7 @@
                                 />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
-                    
+
                     <!-- Experimental -->
                     <widgets:SettingsEntry
                         x:Name="ExperimentalSettingsExpander"

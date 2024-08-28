@@ -300,7 +300,7 @@
   "Operation cancelled" : "A művelet törlésre került",
   "Operation history" : "Műveleti előzmények",
   "Operation in progress" : "Folyamatban lévő művelet",
-  "Operation on queue (position {0})..." : "A művelet a várólistán ({0} pozíció)...",
+  "Operation on queue (position {0})..." : "A művelet a várólistán ({0}. pozíció)...",
   "Options saved" : "Mentett opciók",
   "Other" : "Egyéb",
   "Package Bundles" : "Csomag kötegek",
