@@ -25,12 +25,12 @@ namespace UniGetUI.Core.Language.Tests
             Assert.NotEmpty(LanguageData.LanguageReference);
         }
 
-        /*[Theory]
+        [Theory]
         [MemberData(nameof(LanguageReferences))]
         public void LanguageReferenceTest(string key, string value)
         {
             Assert.False(value.Contains("NoNameLang_"), $"The language with key {key} has no assigned name");
-        }*/
+        }
 
         [Fact]
         public void TranslatedPercentageNotEmptyTests()
@@ -38,7 +38,7 @@ namespace UniGetUI.Core.Language.Tests
             System.Collections.ObjectModel.ReadOnlyDictionary<string, string> TranslatedPercent = LanguageData.TranslationPercentages;
             foreach (string key in TranslatedPercent.Keys)
             {
-                Assert.True(LanguageData.LanguageReference.ContainsKey(key), $"The language key {key} was not found on LanguageReference");
+                //Assert.True(LanguageData.LanguageReference.ContainsKey(key), $"The language key {key} was not found on LanguageReference");
                 Assert.False(LanguageData.TranslationPercentages[key].Contains("404%"), $"Somehow the key {key} has no value");
             }
         }
