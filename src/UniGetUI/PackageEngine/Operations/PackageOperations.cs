@@ -13,10 +13,10 @@ using UniGetUI.PackageEngine.PackageClasses;
 namespace UniGetUI.PackageEngine.Operations
 {
 
-    public class OperationCancelledEventArgs : EventArgs
+    public class OperationCanceledEventArgs : EventArgs
     {
         public OperationStatus OldStatus;
-        public OperationCancelledEventArgs(OperationStatus OldStatus)
+        public OperationCanceledEventArgs(OperationStatus OldStatus)
         {
             this.OldStatus = OldStatus;
         }

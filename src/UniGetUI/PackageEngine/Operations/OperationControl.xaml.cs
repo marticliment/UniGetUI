@@ -33,11 +33,6 @@ namespace UniGetUI.PackageEngine.Operations
             Compact,
         }
 
-        private string __button_text = "";
-        private string __line_info_text = "Please wait...";
-        private Uri __icon_source = new("ms-appx:///Assets/Images/package_color.png");
-        private string __operation_description = "$Package Install";
-        private SolidColorBrush? __progressbar_color;
         private OperationStatus __status = OperationStatus.Pending;
         private bool IsDialogOpen;
 
@@ -79,63 +74,24 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected string ButtonText
         {
-            get { return __button_text; }
-            set
-            {
-                __button_text = value; if (ActionButton != null)
-                {
-                    ActionButton.Content = __button_text;
-                }
-            }
+            set => ActionButton.Content = value;
         }
         protected string LineInfoText
         {
-            get { return __line_info_text; }
-            set
-            {
-                __line_info_text = value; if (OutputViewewBlock != null)
-                {
-                    OutputViewewBlock.Content = __line_info_text;
-                }
-            }
+            set => OutputViewewBlock.Content = value;
         }
         protected Uri IconSource
         {
-            get { return __icon_source; }
-            set
-            {
-                __icon_source = value; if (PackageIcon != null)
-                {
-                    PackageIcon.Source = new BitmapImage(__icon_source);
-                }
-            }
+            set => PackageIcon.Source = new BitmapImage(value);
         }
         protected string OperationTitle
         {
-            get { return __operation_description; }
-            set
-            {
-                __operation_description = value; if (InfoTextBlock != null)
-                {
-                    InfoTextBlock.Text = __operation_description;
-                }
-            }
-        }
-        protected SolidColorBrush? ProgressBarColor
-        {
-            get { return __progressbar_color; }
-            set
-            {
-                __progressbar_color = value; if (ProgressIndicator != null)
-                {
-                    ProgressIndicator.Foreground = __progressbar_color ?? null;
-                }
-            }
+            set => InfoTextBlock.Text = value;
         }
 
 #pragma warning disable CS0067
-        protected event EventHandler<OperationCancelledEventArgs>? CancelRequested;
-        protected event EventHandler<OperationCancelledEventArgs>? CloseRequested;
+        protected event EventHandler<OperationCanceledEventArgs>? CancelRequested;
+        protected event EventHandler<OperationCanceledEventArgs>? CloseRequested;
 #pragma warning restore CS0067
         protected Process Process = new();
         protected ObservableCollection<string> ProcessOutput = [];
@@ -146,23 +102,13 @@ namespace UniGetUI.PackageEngine.Operations
 
         public OperationStatus Status
         {
-            get { return __status; }
+            get => __status;
             set
             {
                 MainGrid.RequestedTheme = MainApp.Instance.MainWindow.ContentRoot.RequestedTheme;
                 __status = value;
                 switch (__status)
                 {
-
-                    /*
-                     *
-                     *
-        <SolidColorBrush x:Key="ProgressWaiting" Color="{ThemeResource SystemFillColorNeutralBrush}"/>
-        <SolidColorBrush x:Key="ProgressRunning" Color="{ThemeResource SystemFillColorAttentionBrush}"/>
-        <SolidColorBrush x:Key="ProgressSucceeded" Color="{ThemeResource SystemFillColorSuccessBrush}"/>
-        <SolidColorBrush x:Key="ProgressFailed" Color="{ThemeResource SystemFillColorCriticalBrush}"/>
-        <SolidColorBrush x:Key="ProgressCanceled" Color="{ThemeResource SystemFillColorCautionBrush}"/>
-                     * */
                     case OperationStatus.Pending:
                         ProgressIndicator.IsIndeterminate = false;
                         ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBrush"];
@@ -174,7 +120,6 @@ namespace UniGetUI.PackageEngine.Operations
                         ProgressIndicator.IsIndeterminate = true;
                         ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorAttentionBrush"];
                         MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorAttentionBackgroundBrush"];
-
                         ButtonText = CoreTools.Translate("Cancel");
                         break;
 
@@ -197,6 +142,7 @@ namespace UniGetUI.PackageEngine.Operations
                         ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorCautionBrush"];
                         MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBackgroundBrush"];
                         ButtonText = CoreTools.Translate("Close");
+                        LineInfoText = CoreTools.Translate("Operation canceled by user");
                         break;
                 }
             }
@@ -344,12 +290,10 @@ namespace UniGetUI.PackageEngine.Operations
             if (Status is OperationStatus.Running)
             {
                 Process.Kill();
-                ProcessOutput.Add("Operation was cancelled by the user!");
             }
 
             await HandleCancelation();
             Status = OperationStatus.Canceled;
-            LineInfoText = CoreTools.Translate("Operation cancelled");
         }
 
         public void CloseButtonClicked()
@@ -397,7 +341,7 @@ namespace UniGetUI.PackageEngine.Operations
 
                 if (Status is OperationStatus.Canceled)
                 {
-                    return; // If the operation was cancelled, do nothing.
+                    return; // If the operation was canceled, do nothing.
                 }
 
                 MainApp.Instance.TooltipStatus.OperationsInProgress += 1;
@@ -436,19 +380,24 @@ namespace UniGetUI.PackageEngine.Operations
                 {
                     if (line.Trim() != "")
                     {
-                        if (line.Contains("For the question below") || line.Contains("Would remove:")) // Mitigate chocolatey timeouts
+                        if (line.Contains("For the question below") ||
+                            line.Contains("Would remove:")) // Mitigate chocolatey timeouts
                         {
                             await Process.StandardInput.WriteLineAsync("");
                         }
 
-                        LineInfoText = line.Trim();
-                        if (line.Length > 5 || ProcessOutput.Count == 0)
+                        if (Status is not OperationStatus.Canceled)
                         {
-                            ProcessOutput.Add("    | " + line);
-                        }
-                        else
-                        {
-                            ProcessOutput[^1] = "    | " + line;
+                            LineInfoText = line.Trim();
+
+                            if (line.Length > 5 || ProcessOutput.Count == 0)
+                            {
+                                ProcessOutput.Add("    | " + line);
+                            }
+                            else
+                            {
+                                ProcessOutput[^1] = "    | " + line;
+                            }
                         }
                     }
                 }
