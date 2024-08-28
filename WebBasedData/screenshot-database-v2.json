@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11707,
-        "done": 5106,
-        "packages_with_icon": 5106,
+        "done": 5108,
+        "packages_with_icon": 5108,
         "packages_with_screenshot": 584,
         "total_screenshots": 1819
     },
@@ -29221,7 +29221,7 @@
             "images": []
         },
         "optionsplus": {
-            "icon": "",
+            "icon": "http://www.logitech.com/assets/66208/optionsplusicon.png",
             "images": []
         },
         "optipng": {
@@ -29557,7 +29557,7 @@
             "images": []
         },
         "packetsender": {
-            "icon": "",
+            "icon": "https://packetsender.com/pslogo64.png",
             "images": []
         },
         "packetstream": {
