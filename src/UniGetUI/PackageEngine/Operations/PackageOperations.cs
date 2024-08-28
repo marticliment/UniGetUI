@@ -225,7 +225,7 @@ namespace UniGetUI.PackageEngine.Operations
             IPackage package,
             bool IgnoreParallelInstalls = false)
             : base(package, OperationType.Update, IgnoreParallelInstalls) { }
-      
+
 
         protected override string[] GenerateProcessLogHeader()
         {
@@ -278,6 +278,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             LineInfoText = CoreTools.Translate("{package} was updated successfully", new Dictionary<string, object?> { { "package", Package.Name } });
 
+            Package.SetTag(PackageTag.Default);
             Package.GetInstalledPackage()?.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
 
@@ -385,6 +386,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             LineInfoText = CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?> { { "package", Package.Name } });
 
+            Package.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.Default);
             PEInterface.UpgradablePackagesLoader.Remove(Package);
             PEInterface.InstalledPackagesLoader.Remove(Package);

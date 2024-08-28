@@ -428,7 +428,7 @@ namespace UniGetUI.PackageEngine.Operations
                 ProcessOutput.Add("Process Executable     : " + Process.StartInfo.FileName);
                 ProcessOutput.Add("Process Call Arguments : " + Process.StartInfo.Arguments);
                 ProcessOutput.Add("Working Directory      : " + Process.StartInfo.WorkingDirectory);
-                ProcessOutput.Add("Process Start Time     : " + DateTime.Now.ToString());
+                ProcessOutput.Add("Process Start Time     : " + DateTime.Now);
 
                 Process.Start();
 
@@ -439,7 +439,7 @@ namespace UniGetUI.PackageEngine.Operations
                     {
                         if (line.Contains("For the question below") || line.Contains("Would remove:")) // Mitigate chocolatey timeouts
                         {
-                            Process.StandardInput.WriteLine("");
+                            await Process.StandardInput.WriteLineAsync("");
                         }
 
                         LineInfoText = line.Trim();
@@ -464,8 +464,8 @@ namespace UniGetUI.PackageEngine.Operations
 
                 await Process.WaitForExitAsync();
 
-                ProcessOutput.Add("Process Exit Code      : " + Process.ExitCode.ToString());
-                ProcessOutput.Add("Process End Time       : " + DateTime.Now.ToString());
+                ProcessOutput.Add("Process Exit Code      : " + Process.ExitCode);
+                ProcessOutput.Add("Process End Time       : " + DateTime.Now);
 
                 AfterFinshAction postAction = AfterFinshAction.ManualClose;
 
@@ -475,15 +475,7 @@ namespace UniGetUI.PackageEngine.Operations
                 {
                     switch (OperationVeredict)
                     {
-                        case OperationVeredict.Failed:
-                            Status = OperationStatus.Failed;
-                            RemoveFromQueue();
-                            MainApp.Instance.TooltipStatus.ErrorsOccurred = MainApp.Instance.TooltipStatus.ErrorsOccurred + 1;
-                            postAction = await HandleFailure();
-                            MainApp.Instance.TooltipStatus.ErrorsOccurred = MainApp.Instance.TooltipStatus.ErrorsOccurred - 1;
-                            break;
-
-                        case OperationVeredict.Succeeded:
+                        case OperationVeredict.Succeeded or OperationVeredict.RestartRequired:
                             Status = OperationStatus.Succeeded;
                             postAction = await HandleSuccess();
                             RemoveFromQueue();
@@ -493,6 +485,17 @@ namespace UniGetUI.PackageEngine.Operations
                             Status = OperationStatus.Pending;
                             postAction = AfterFinshAction.Retry;
                             break;
+
+                        case OperationVeredict.Failed:
+                            Status = OperationStatus.Failed;
+                            RemoveFromQueue();
+                            MainApp.Instance.TooltipStatus.ErrorsOccurred += 1;
+                            postAction = await HandleFailure();
+                            MainApp.Instance.TooltipStatus.ErrorsOccurred -= 1;
+                            break;
+
+                        default:
+                            throw new ArgumentException($"Unexpected OperationVeredict {OperationVeredict}");
                     }
                 }
 
