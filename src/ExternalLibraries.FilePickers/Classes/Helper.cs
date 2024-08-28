@@ -74,9 +74,11 @@ internal static class Helper
             item.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, out string path);
 
             dialog.GetFileTypeIndex(out uint selection);
-            string fileExtension = typeFilters?[(int)selection - 1] ?? ".json";
+            string fileExtension = typeFilters?[(int)selection - 1] ?? ".txt";
+            if (fileExtension.Length > 0 && fileExtension[0] == '*')
+                fileExtension = fileExtension.TrimStart('*');
 
-            return string.Concat(path, fileExtension.AsSpan(1));
+            return path.Contains(fileExtension)? path: path + fileExtension;
         }
         finally
         {
