@@ -30,7 +30,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public event EventHandler<EventArgs>? OperationSucceeded;
         public AddSourceOperation(IManagerSource source) : base(source) { }
-        protected override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
+        protected override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
             {
@@ -46,12 +46,8 @@ namespace UniGetUI.PackageEngine.Operations
                 startInfo.FileName = Source.Manager.Status.ExecutablePath;
                 startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetAddSourceParameters(Source));
             }
-            Process process = new()
-            {
-                StartInfo = startInfo
-            };
 
-            return process;
+            return startInfo;
         }
 
         protected override string[] GenerateProcessLogHeader()
@@ -140,7 +136,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         public event EventHandler<EventArgs>? OperationSucceeded;
         public RemoveSourceOperation(IManagerSource source) : base(source) { }
-        protected override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
+        protected override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
             {
@@ -157,12 +153,8 @@ namespace UniGetUI.PackageEngine.Operations
                 startInfo.FileName = Source.Manager.Status.ExecutablePath;
                 startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetRemoveSourceParameters(Source));
             }
-            Process process = new()
-            {
-                StartInfo = startInfo
-            };
 
-            return process;
+            return startInfo;
         }
 
         protected override string[] GenerateProcessLogHeader()

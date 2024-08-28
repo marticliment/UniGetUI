@@ -90,6 +90,11 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
             return OperationVeredict.RestartRequired;
         }
 
+        if (uintCode == 0x8A150077 || uintCode == 0x8A15010C || uintCode == 0x8A150005)
+        {
+            return OperationVeredict.Canceled;
+        }
+
         if (uintCode == 0x8A150011)
         {
             // TODO: Needs skip checksum

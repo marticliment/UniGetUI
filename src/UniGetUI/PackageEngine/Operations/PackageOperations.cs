@@ -47,7 +47,7 @@ namespace UniGetUI.PackageEngine.Operations
             : this(package, InstallationOptions.FromPackage(package), role, IgnoreParallelInstalls)
         { }
 
-        protected sealed override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
+        protected sealed override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             string operation_args = string.Join(" ", Package.Manager.GetOperationParameters(Package, Options, Role));
 
@@ -66,10 +66,7 @@ namespace UniGetUI.PackageEngine.Operations
                 startInfo.Arguments = $"{Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
 
-            return new Process()
-            {
-                StartInfo = startInfo
-            };
+            return startInfo;
         }
 
         protected override async Task HandleCancelation()
@@ -105,7 +102,7 @@ namespace UniGetUI.PackageEngine.Operations
                 if (Status == OperationStatus.Canceled)
                 {
                     Package.Tag = PackageTag.Default;
-                    return; // If th operation has been cancelled
+                    return; // If the operation has been cancelled
                 }
                 currentIndex = MainApp.Instance.OperationQueue.IndexOf(this);
                 if (currentIndex != oldIndex)

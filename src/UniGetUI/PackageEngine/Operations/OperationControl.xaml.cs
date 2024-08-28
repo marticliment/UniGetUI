@@ -314,11 +314,11 @@ namespace UniGetUI.PackageEngine.Operations
         {
             if (Status is OperationStatus.Pending or OperationStatus.Running)
             {
-                CancelButtonClicked(Status);
+                CancelButtonClicked();
             }
             else
             {
-                CloseButtonClicked(Status);
+                CloseButtonClicked();
             }
         }
 
@@ -337,25 +337,22 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        public void CancelButtonClicked(OperationStatus OldStatus)
+        public async void CancelButtonClicked()
         {
             RemoveFromQueue();
-            Status = OperationStatus.Canceled;
-            LineInfoText = CoreTools.Translate("Operation cancelled");
 
-            if ((this as PackageOperation) != null)
-            {
-                ((PackageOperation)this).Package.Tag = PackageTag.Default;
-            }
-
-            if (OldStatus == OperationStatus.Running)
+            if (Status is OperationStatus.Running)
             {
                 Process.Kill();
                 ProcessOutput.Add("Operation was cancelled by the user!");
             }
+
+            await HandleCancelation();
+            Status = OperationStatus.Canceled;
+            LineInfoText = CoreTools.Translate("Operation cancelled");
         }
 
-        public void CloseButtonClicked(OperationStatus OldStatus)
+        public void CloseButtonClicked()
         {
             _ = Close();
         }
@@ -372,9 +369,10 @@ namespace UniGetUI.PackageEngine.Operations
             int oldIndex = -1;
             while (currentIndex != 0)
             {
-                if (Status == OperationStatus.Canceled)
+                if (Status is OperationStatus.Canceled)
                 {
-                    return; // If the operation has been cancelled
+                    RemoveFromQueue();
+                    return;
                 }
 
                 currentIndex = MainApp.Instance.OperationQueue.IndexOf(this);
@@ -397,16 +395,13 @@ namespace UniGetUI.PackageEngine.Operations
             try
             {
 
-                if (Status == OperationStatus.Canceled)
+                if (Status is OperationStatus.Canceled)
                 {
-                    await HandleCancelation();
-                    Status = OperationStatus.Canceled;
                     return; // If the operation was cancelled, do nothing.
                 }
 
                 MainApp.Instance.TooltipStatus.OperationsInProgress += 1;
 
-                Status = OperationStatus.Running;
                 LineInfoText = CoreTools.Translate("Launching subprocess...");
                 ProcessStartInfo startInfo = new()
                 {
@@ -421,7 +416,7 @@ namespace UniGetUI.PackageEngine.Operations
                     WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
                 };
 
-                Process = await BuildProcessInstance(startInfo);
+                Process = new Process { StartInfo = await BuildProcessInstance(startInfo) };
 
                 foreach (string infoLine in GenerateProcessLogHeader())
                 {
@@ -434,6 +429,7 @@ namespace UniGetUI.PackageEngine.Operations
                 ProcessOutput.Add("Process Start Time     : " + DateTime.Now);
 
                 Process.Start();
+                Status = OperationStatus.Running;
 
                 string? line;
                 while ((line = await Process.StandardOutput.ReadLineAsync()) != null)
@@ -475,36 +471,39 @@ namespace UniGetUI.PackageEngine.Operations
                 OperationVeredict OperationVeredict = await GetProcessVeredict(Process.ExitCode, ProcessOutput.ToArray());
 
 
-                switch (OperationVeredict)
+                if (Status is not OperationStatus.Canceled)
                 {
-                    case OperationVeredict.Succeeded or OperationVeredict.RestartRequired:
-                        Status = OperationStatus.Succeeded;
-                        postAction = await HandleSuccess();
-                        RemoveFromQueue();
-                        break;
+                    switch (OperationVeredict)
+                    {
+                        case OperationVeredict.Succeeded or OperationVeredict.RestartRequired:
+                            Status = OperationStatus.Succeeded;
+                            postAction = await HandleSuccess();
+                            RemoveFromQueue();
+                            break;
 
-                    case OperationVeredict.Canceled:
-                        Status = OperationStatus.Canceled;
-                        RemoveFromQueue();
-                        postAction = AfterFinshAction.ManualClose;
-                        await HandleCancelation();
-                        break;
+                        case OperationVeredict.Canceled:
+                            Status = OperationStatus.Canceled;
+                            RemoveFromQueue();
+                            postAction = AfterFinshAction.ManualClose;
+                            await HandleCancelation();
+                            break;
 
-                    case OperationVeredict.AutoRetry:
-                        Status = OperationStatus.Pending;
-                        postAction = AfterFinshAction.Retry;
-                        break;
+                        case OperationVeredict.AutoRetry:
+                            Status = OperationStatus.Pending;
+                            postAction = AfterFinshAction.Retry;
+                            break;
 
-                    case OperationVeredict.Failed:
-                        Status = OperationStatus.Failed;
-                        RemoveFromQueue();
-                        MainApp.Instance.TooltipStatus.ErrorsOccurred += 1;
-                        postAction = await HandleFailure();
-                        MainApp.Instance.TooltipStatus.ErrorsOccurred -= 1;
-                        break;
+                        case OperationVeredict.Failed:
+                            Status = OperationStatus.Failed;
+                            RemoveFromQueue();
+                            MainApp.Instance.TooltipStatus.ErrorsOccurred += 1;
+                            postAction = await HandleFailure();
+                            MainApp.Instance.TooltipStatus.ErrorsOccurred -= 1;
+                            break;
 
-                    default:
-                        throw new ArgumentException($"Unexpected OperationVeredict {OperationVeredict}");
+                        default:
+                            throw new ArgumentException($"Unexpected OperationVeredict {OperationVeredict}");
+                    }
                 }
 
 
@@ -585,7 +584,7 @@ namespace UniGetUI.PackageEngine.Operations
         }
 
         protected abstract void Initialize();
-        protected abstract Task BuildProcessInstance(ProcessStartInfo startInfo, out Process process);
+        protected abstract Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo);
         protected abstract Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output);
         protected abstract Task<AfterFinshAction> HandleFailure();
         protected abstract Task<AfterFinshAction> HandleSuccess();
