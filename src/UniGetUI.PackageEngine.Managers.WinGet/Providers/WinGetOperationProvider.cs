@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
 internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
@@ -27,8 +21,8 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
         parameters.AddRange(["--source", package.Source.IsVirtualManager ? "winget" : package.Source.Name]);
         parameters.AddRange(["--accept-source-agreements", "--disable-interactivity"]);
 
-        // package.Scope is meaningless in WinGet packages. Default is unspecified, hence the _ => [].
-        parameters.AddRange(options.InstallationScope switch {
+        // package.OverridenInstallationOptions.Scope is meaningless in WinGet packages. Default is unspecified, hence the _ => [].
+        parameters.AddRange((package.OverridenOptions.Scope ?? options.InstallationScope) switch {
             PackageScope.User => ["--scope", "user"],
             PackageScope.Machine => ["--scope", "machine"],
             _ => []
@@ -45,7 +39,6 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
 
         parameters.Add(options.InteractiveInstallation ? "--interactive" : "--silent");
         parameters.AddRange(options.CustomParameters);
-
 
         if(operation is OperationType.Update)
         {
@@ -82,15 +75,24 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
         return parameters;
     }
 
-    public override OperationVeredict GetOperationResult(IPackage package, IInstallationOptions options, OperationType operation, IEnumerable<string> processOutput, int returnCode)
+    public override OperationVeredict GetOperationResult(
+        IPackage package,
+        OperationType operation,
+        IEnumerable<string> processOutput,
+        int returnCode)
     {
-        // SEE https://github.com/microsoft/winget-cli/blob/master/doc/windows/package-manager/winget/returnCodes.md for reference
+        // See https://github.com/microsoft/winget-cli/blob/master/doc/windows/package-manager/winget/returnCodes.md for reference
         uint uintCode = (uint)returnCode;
 
         if (uintCode == 0x8A150109)
         {
             // If the user is required to restart the system to complete the installation
             return OperationVeredict.RestartRequired;
+        }
+
+        if (uintCode == 0x8A150077 || uintCode == 0x8A15010C || uintCode == 0x8A150005)
+        {
+            return OperationVeredict.Canceled;
         }
 
         if (uintCode == 0x8A150011)
@@ -105,17 +107,17 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
             return OperationVeredict.Succeeded;
         }
 
-        if(uintCode == 0x8A150056 && options.RunAsAdministrator && !CoreTools.IsAdministrator())
+        if(uintCode == 0x8A150056 && package.OverridenOptions.RunAsAdministrator != false && !CoreTools.IsAdministrator())
         {
             // Installer can't run elevated
-            options.RunAsAdministrator = false;
+            package.OverridenOptions.RunAsAdministrator = false;
             return OperationVeredict.AutoRetry;
         }
 
-        if (uintCode == 0x8A150019 && !options.RunAsAdministrator)
+        if (uintCode == 0x8A150019 && package.OverridenOptions.RunAsAdministrator != true)
         {
             // Installer needs to run elevated
-            options.RunAsAdministrator = true;
+            package.OverridenOptions.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;
         }
 

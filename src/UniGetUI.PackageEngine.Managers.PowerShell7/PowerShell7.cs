@@ -6,7 +6,6 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
@@ -16,10 +15,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 {
     public class PowerShell7 : BaseNuGet
     {
-        public static new string[] FALSE_PACKAGE_NAMES = [""];
-        public static new string[] FALSE_PACKAGE_IDS = [""];
-        public static new string[] FALSE_PACKAGE_VERSIONS = [""];
-
         public PowerShell7()
         {
             Capabilities = new ManagerCapabilities

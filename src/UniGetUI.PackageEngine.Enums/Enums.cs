@@ -31,6 +31,7 @@ namespace UniGetUI.PackageEngine.Enums
     {
         Succeeded,
         Failed,
+        Canceled,
         RestartRequired,
         AutoRetry,
     }
@@ -40,7 +41,7 @@ namespace UniGetUI.PackageEngine.Enums
         Running,
         Succeeded,
         Failed,
-        Cancelled
+        Canceled
     }
 
     public enum OperationType
