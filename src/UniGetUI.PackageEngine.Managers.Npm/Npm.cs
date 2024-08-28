@@ -13,10 +13,6 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 {
     public class Npm : PackageManager
     {
-        public static new string[] FALSE_PACKAGE_NAMES = [""];
-        public static new string[] FALSE_PACKAGE_IDS = [""];
-        public static new string[] FALSE_PACKAGE_VERSIONS = [""];
-
         public Npm()
         {
             Capabilities = new ManagerCapabilities
@@ -46,7 +42,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             PackageDetailsProvider = new NpmPackageDetailsProvider(this);
             OperationProvider = new NpmOperationProvider(this);
         }
-        
+
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             Process p = new()

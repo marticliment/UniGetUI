@@ -15,10 +15,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 {
     public class PowerShell7 : BaseNuGet
     {
-        public static new string[] FALSE_PACKAGE_NAMES = [""];
-        public static new string[] FALSE_PACKAGE_IDS = [""];
-        public static new string[] FALSE_PACKAGE_VERSIONS = [""];
-
         public PowerShell7()
         {
             Capabilities = new ManagerCapabilities

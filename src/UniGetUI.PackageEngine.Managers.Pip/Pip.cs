@@ -13,7 +13,6 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 {
     public class Pip : PackageManager
     {
-        public static new string[] FALSE_PACKAGE_NAMES = ["", "WARNING:", "[notice]", "Package", "DEPRECATION:"];
         public static new string[] FALSE_PACKAGE_IDS = ["", "WARNING:", "[notice]", "Package", "DEPRECATION:"];
         public static new string[] FALSE_PACKAGE_VERSIONS = ["", "Ignoring", "invalid"];
 
@@ -46,7 +45,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             PackageDetailsProvider = new PipPackageDetailsProvider(this);
             OperationProvider = new PipOperationProvider(this);
         }
-        
+
         protected override async Task<Package[]> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];

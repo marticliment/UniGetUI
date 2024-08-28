@@ -38,7 +38,8 @@ internal sealed class PipOperationProvider : BaseOperationProvider<Pip>
             if (options.PreRelease)
                 parameters.Add("--pre");
 
-            if (package.OverridenOptions.Scope == PackageScope.User || (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.User))
+            if (package.OverridenOptions.Scope == PackageScope.User ||
+                (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.User))
                 parameters.Add("--user");
         }
 

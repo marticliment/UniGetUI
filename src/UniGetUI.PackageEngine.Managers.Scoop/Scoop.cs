@@ -20,7 +20,6 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
     public class Scoop : PackageManager
     {
-        public static new string[] FALSE_PACKAGE_NAMES = [""];
         public static new string[] FALSE_PACKAGE_IDS = ["No"];
         public static new string[] FALSE_PACKAGE_VERSIONS = ["Matches"];
 

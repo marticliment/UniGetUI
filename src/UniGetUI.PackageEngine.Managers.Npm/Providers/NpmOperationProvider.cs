@@ -20,7 +20,8 @@ internal sealed class NpmOperationProvider : BaseOperationProvider<Npm>
         if (options.CustomParameters != null)
             parameters.AddRange(options.CustomParameters);
 
-        if (package.OverridenOptions.Scope == PackageScope.Global || (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
+        if (package.OverridenOptions.Scope == PackageScope.Global ||
+            (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
             parameters.Add("--global");
 
         if (options.PreRelease)

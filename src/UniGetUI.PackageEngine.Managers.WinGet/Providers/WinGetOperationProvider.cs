@@ -21,8 +21,8 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
         parameters.AddRange(["--source", package.Source.IsVirtualManager ? "winget" : package.Source.Name]);
         parameters.AddRange(["--accept-source-agreements", "--disable-interactivity"]);
 
-        // package.Scope is meaningless in WinGet packages. Default is unspecified, hence the _ => [].
-        parameters.AddRange(options.InstallationScope switch {
+        // package.OverridenInstallationOptions.Scope is meaningless in WinGet packages. Default is unspecified, hence the _ => [].
+        parameters.AddRange((package.OverridenOptions.Scope ?? options.InstallationScope) switch {
             PackageScope.User => ["--scope", "user"],
             PackageScope.Machine => ["--scope", "machine"],
             _ => []

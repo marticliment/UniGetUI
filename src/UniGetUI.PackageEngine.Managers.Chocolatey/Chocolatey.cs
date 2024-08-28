@@ -18,7 +18,6 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 {
     public class Chocolatey : BaseNuGet
     {
-        public static new string[] FALSE_PACKAGE_NAMES = [""];
         public static new string[] FALSE_PACKAGE_IDS = ["Directory", "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"];
         public static new string[] FALSE_PACKAGE_VERSIONS = ["", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"];
 
@@ -62,7 +61,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             PackageDetailsProvider = new ChocolateyDetailsProvider(this);
             OperationProvider = new ChocolateyOperationProvider(this);
         }
-        
+
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
         {
             Process p = new()

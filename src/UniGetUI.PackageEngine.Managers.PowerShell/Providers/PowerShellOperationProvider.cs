@@ -25,7 +25,8 @@ internal sealed class PowerShellOperationProvider : BaseOperationProvider<PowerS
             if (options.PreRelease)
                 parameters.Add("-AllowPrerelease");
 
-            if (package.OverridenOptions.Scope == PackageScope.Global || (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
+            if (package.OverridenOptions.Scope == PackageScope.Global ||
+                (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
                 parameters.AddRange(["-Scope", "AllUsers"]);
             else
                 parameters.AddRange(["-Scope", "CurrentUser"]);

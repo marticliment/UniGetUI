@@ -18,7 +18,8 @@ internal sealed class ScoopOperationProvider : BaseOperationProvider<Scoop>
         }];
         parameters.Add($"{package.Source.Name}/{package.Id}");
 
-        if (package.OverridenOptions.Scope == PackageScope.Global || (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
+        if (package.OverridenOptions.Scope == PackageScope.Global ||
+            (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
         {
             // Scoop requires admin rights to install global packages
             package.OverridenOptions.RunAsAdministrator = true;

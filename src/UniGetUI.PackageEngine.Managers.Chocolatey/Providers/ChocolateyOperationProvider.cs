@@ -21,7 +21,7 @@ internal sealed class ChocolateyOperationProvider : BaseOperationProvider<Chocol
         }];
         parameters.AddRange([package.Id, "-y"]);
 
-        if (options.CustomParameters is not null)
+        if (options.CustomParameters.Count > 0)
             parameters.AddRange(options.CustomParameters);
 
         if (options.InteractiveInstallation)
