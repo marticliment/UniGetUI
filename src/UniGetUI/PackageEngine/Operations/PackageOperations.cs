@@ -72,6 +72,11 @@ namespace UniGetUI.PackageEngine.Operations
             };
         }
 
+        protected override async Task HandleCancelation()
+        {
+            Package.SetTag(PackageTag.Default);
+        }
+
 #pragma warning disable CS1998
         protected sealed override async Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
@@ -97,7 +102,7 @@ namespace UniGetUI.PackageEngine.Operations
             int oldIndex = -1;
             while (currentIndex != 0)
             {
-                if (Status == OperationStatus.Cancelled)
+                if (Status == OperationStatus.Canceled)
                 {
                     Package.Tag = PackageTag.Default;
                     return; // If th operation has been cancelled

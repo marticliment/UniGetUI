@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Reflection.Metadata;
 using ExternalLibraries.Clipboard;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -191,7 +192,7 @@ namespace UniGetUI.PackageEngine.Operations
                         ButtonText = CoreTools.Translate("Close");
                         break;
 
-                    case OperationStatus.Cancelled:
+                    case OperationStatus.Canceled:
                         ProgressIndicator.IsIndeterminate = false;
                         ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorCautionBrush"];
                         MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBackgroundBrush"];
@@ -339,7 +340,7 @@ namespace UniGetUI.PackageEngine.Operations
         public void CancelButtonClicked(OperationStatus OldStatus)
         {
             RemoveFromQueue();
-            Status = OperationStatus.Cancelled;
+            Status = OperationStatus.Canceled;
             LineInfoText = CoreTools.Translate("Operation cancelled");
 
             if ((this as PackageOperation) != null)
@@ -371,7 +372,7 @@ namespace UniGetUI.PackageEngine.Operations
             int oldIndex = -1;
             while (currentIndex != 0)
             {
-                if (Status == OperationStatus.Cancelled)
+                if (Status == OperationStatus.Canceled)
                 {
                     return; // If the operation has been cancelled
                 }
@@ -396,12 +397,14 @@ namespace UniGetUI.PackageEngine.Operations
             try
             {
 
-                if (Status == OperationStatus.Cancelled)
+                if (Status == OperationStatus.Canceled)
                 {
+                    await HandleCancelation();
+                    Status = OperationStatus.Canceled;
                     return; // If the operation was cancelled, do nothing.
                 }
 
-                MainApp.Instance.TooltipStatus.OperationsInProgress = MainApp.Instance.TooltipStatus.OperationsInProgress + 1;
+                MainApp.Instance.TooltipStatus.OperationsInProgress += 1;
 
                 Status = OperationStatus.Running;
                 LineInfoText = CoreTools.Translate("Launching subprocess...");
@@ -471,33 +474,39 @@ namespace UniGetUI.PackageEngine.Operations
 
                 OperationVeredict OperationVeredict = await GetProcessVeredict(Process.ExitCode, ProcessOutput.ToArray());
 
-                if (Status != OperationStatus.Cancelled)
+
+                switch (OperationVeredict)
                 {
-                    switch (OperationVeredict)
-                    {
-                        case OperationVeredict.Succeeded or OperationVeredict.RestartRequired:
-                            Status = OperationStatus.Succeeded;
-                            postAction = await HandleSuccess();
-                            RemoveFromQueue();
-                            break;
+                    case OperationVeredict.Succeeded or OperationVeredict.RestartRequired:
+                        Status = OperationStatus.Succeeded;
+                        postAction = await HandleSuccess();
+                        RemoveFromQueue();
+                        break;
 
-                        case OperationVeredict.AutoRetry:
-                            Status = OperationStatus.Pending;
-                            postAction = AfterFinshAction.Retry;
-                            break;
+                    case OperationVeredict.Canceled:
+                        Status = OperationStatus.Canceled;
+                        RemoveFromQueue();
+                        postAction = AfterFinshAction.ManualClose;
+                        await HandleCancelation();
+                        break;
 
-                        case OperationVeredict.Failed:
-                            Status = OperationStatus.Failed;
-                            RemoveFromQueue();
-                            MainApp.Instance.TooltipStatus.ErrorsOccurred += 1;
-                            postAction = await HandleFailure();
-                            MainApp.Instance.TooltipStatus.ErrorsOccurred -= 1;
-                            break;
+                    case OperationVeredict.AutoRetry:
+                        Status = OperationStatus.Pending;
+                        postAction = AfterFinshAction.Retry;
+                        break;
 
-                        default:
-                            throw new ArgumentException($"Unexpected OperationVeredict {OperationVeredict}");
-                    }
+                    case OperationVeredict.Failed:
+                        Status = OperationStatus.Failed;
+                        RemoveFromQueue();
+                        MainApp.Instance.TooltipStatus.ErrorsOccurred += 1;
+                        postAction = await HandleFailure();
+                        MainApp.Instance.TooltipStatus.ErrorsOccurred -= 1;
+                        break;
+
+                    default:
+                        throw new ArgumentException($"Unexpected OperationVeredict {OperationVeredict}");
                 }
+
 
                 switch (postAction)
                 {
@@ -559,7 +568,7 @@ namespace UniGetUI.PackageEngine.Operations
                 RemoveFromQueue();
                 try { Status = OperationStatus.Failed; } catch { }
             }
-            MainApp.Instance.TooltipStatus.OperationsInProgress = MainApp.Instance.TooltipStatus.OperationsInProgress - 1;
+            MainApp.Instance.TooltipStatus.OperationsInProgress -= 1;
         }
         protected async Task Close()
         {
@@ -576,10 +585,11 @@ namespace UniGetUI.PackageEngine.Operations
         }
 
         protected abstract void Initialize();
-        protected abstract Task<Process> BuildProcessInstance(ProcessStartInfo startInfo);
+        protected abstract Task BuildProcessInstance(ProcessStartInfo startInfo, out Process process);
         protected abstract Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output);
         protected abstract Task<AfterFinshAction> HandleFailure();
         protected abstract Task<AfterFinshAction> HandleSuccess();
+        protected abstract Task HandleCancelation();
         protected abstract string[] GenerateProcessLogHeader();
 
         protected void Retry()

@@ -19,6 +19,10 @@ namespace UniGetUI.PackageEngine.Operations
             Source = source;
             MainProcedure();
         }
+
+        protected override async Task HandleCancelation()
+        {
+        }
     }
 
     public class AddSourceOperation : SourceOperation
