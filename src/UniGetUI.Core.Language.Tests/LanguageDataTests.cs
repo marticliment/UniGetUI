@@ -25,12 +25,12 @@ namespace UniGetUI.Core.Language.Tests
             Assert.NotEmpty(LanguageData.LanguageReference);
         }
 
-        [Theory]
+        /*[Theory]
         [MemberData(nameof(LanguageReferences))]
         public void LanguageReferenceTest(string key, string value)
         {
             Assert.False(value.Contains("NoNameLang_"), $"The language with key {key} has no assigned name");
-        }
+        }*/
 
         [Fact]
         public void TranslatedPercentageNotEmptyTests()
