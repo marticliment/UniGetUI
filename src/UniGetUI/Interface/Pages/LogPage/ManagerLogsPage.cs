@@ -18,10 +18,10 @@ namespace UniGetUI.Interface.Pages.LogPage
         {
             bool IS_DARK = ActualTheme == Microsoft.UI.Xaml.ElementTheme.Dark;
 
-            bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains('(') ?? false;
+            bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains(CoreTools.Translate("Verbose")) ?? false;
             foreach (PackageManager manager in PEInterface.Managers)
             {
-                if (manager.DisplayName.Contains(LogLevelCombo.SelectedValue?.ToString()?.Split('(')[0] ?? "uncontained_word"))
+                if (LogLevelCombo.SelectedValue?.ToString()?.Contains(manager.DisplayName) ?? false)
                 {
                     IManagerLogger TaskLogger = manager.TaskLogger;
                     LogTextBox.Blocks.Clear();
@@ -61,7 +61,7 @@ namespace UniGetUI.Interface.Pages.LogPage
         protected override void LoadLogLevels()
         {
             LogLevelCombo.Items.Clear();
-            foreach (PackageEngine.ManagerClasses.Manager.PackageManager manager in PEInterface.Managers)
+            foreach (PackageManager manager in PEInterface.Managers)
             {
                 LogLevelCombo.Items.Add(manager.DisplayName);
                 LogLevelCombo.Items.Add($"{manager.DisplayName} ({CoreTools.Translate("Verbose")})");
