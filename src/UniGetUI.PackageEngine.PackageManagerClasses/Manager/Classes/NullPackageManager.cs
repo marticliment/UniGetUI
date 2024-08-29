@@ -117,6 +117,11 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             throw new NotImplementedException();
         }
 
+        public string? GetPackageInstallLocation(IPackage package)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<string[]> GetPackageVersions(IPackage package)
         {
             throw new NotImplementedException();
