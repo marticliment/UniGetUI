@@ -439,7 +439,8 @@ namespace UniGetUI.Interface.SoftwarePages
                         notification = builder.BuildNotification();
                     }
                 }
-                Logger.Error(AppNotificationManager.IsSupported().ToString());
+
+                notification.ExpiresOnReboot = true;
                 AppNotificationManager.Default.Show(notification);
             }
             catch (Exception ex)

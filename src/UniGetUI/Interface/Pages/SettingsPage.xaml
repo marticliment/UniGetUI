@@ -138,13 +138,17 @@
                                 SettingName="DisableUpdatesNotifications"
                                 />
                             <widgets:CheckboxCard
-                                Text="Show a notification when an installation fails"
+                                Text="Show a notification when an operation fails"
                                 SettingName="DisableErrorNotifications"
                                 />
                             <widgets:CheckboxCard
-                                Text="Show a notification when an installation finishes successfully"
+                                Text="Show a notification when an operation finishes successfully"
                                 SettingName="DisableSuccessNotifications"
                                 />
+                            <widgets:CheckboxCard
+                                Text="Show a silent notification when an operation is running"
+                                SettingName="DisableProgressNotifications"
+                            />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
 

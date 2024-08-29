@@ -43,6 +43,7 @@ namespace UniGetUI.PackageEngine.Operations
                     .AddText(body)
                     .AddArgument("action", NotificationArguments.Show);
                 AppNotification notification = builder.BuildNotification();
+                notification.ExpiresOnReboot = true;
                 AppNotificationManager.Default.Show(notification);
             }
             catch (Exception ex)
@@ -67,6 +68,7 @@ namespace UniGetUI.PackageEngine.Operations
                     .AddText(body)
                     .AddArgument("action", NotificationArguments.Show);
                 AppNotification notification = builder.BuildNotification();
+                notification.ExpiresOnReboot = true;
                 AppNotificationManager.Default.Show(notification);
             }
             catch (Exception ex)
@@ -75,13 +77,54 @@ namespace UniGetUI.PackageEngine.Operations
                 Logger.Error(ex);
             }
         }
+
+        protected string INSTALLING_STRING = "THIS NEEDS TO BE REDEFINED ON THE CONSTRUCTOR";
+
+        protected override void PostProcessStartAction()
+        {
+            if (Settings.AreProgressNotificationsDisabled())
+                return;
+
+            try
+            {
+                AppNotificationManager.Default.RemoveByTagAsync(Source.Name + "progress");
+                AppNotificationBuilder builder = new AppNotificationBuilder()
+                    .SetScenario(AppNotificationScenario.Default)
+                    .SetTag(Source.Name + "progress")
+                    .AddProgressBar(new AppNotificationProgressBar()
+                        .SetStatus(CoreTools.Translate("Please wait..."))
+                        .SetValueStringOverride("\uE002")
+                        .SetTitle(INSTALLING_STRING)
+                        .SetValue(1.0))
+                    .AddArgument("action", NotificationArguments.Show);
+                AppNotification notification = builder.BuildNotification();
+                notification.ExpiresOnReboot = true;
+                notification.SuppressDisplay = true;
+                AppNotificationManager.Default.Show(notification);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to show toast notification");
+                Logger.Error(ex);
+            }
+        }
+
+        protected override void PostProcessEndAction()
+        {
+            AppNotificationManager.Default.RemoveByTagAsync(Source.Name + "progress");
+        }
     }
 
     public class AddSourceOperation : SourceOperation
     {
 
         public event EventHandler<EventArgs>? OperationSucceeded;
-        public AddSourceOperation(IManagerSource source) : base(source) { }
+
+        public AddSourceOperation(IManagerSource source) : base(source)
+        {
+            INSTALLING_STRING = CoreTools.Translate("Adding source {source} to {manager}",
+                new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+        }
         protected override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
@@ -159,7 +202,12 @@ namespace UniGetUI.PackageEngine.Operations
     {
 
         public event EventHandler<EventArgs>? OperationSucceeded;
-        public RemoveSourceOperation(IManagerSource source) : base(source) { }
+
+        public RemoveSourceOperation(IManagerSource source) : base(source)
+        {
+            INSTALLING_STRING = CoreTools.Translate("Removing source {source} from {manager}",
+                new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name }});
+        }
         protected override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)

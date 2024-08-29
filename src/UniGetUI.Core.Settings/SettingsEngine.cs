@@ -25,6 +25,11 @@ namespace UniGetUI.Core.SettingsEngine
             return AreNotificationsDisabled() || Get("DisableSuccessNotifications");
         }
 
+        public static bool AreProgressNotificationsDisabled()
+        {
+            return AreNotificationsDisabled() || Get("DisableProgressNotifications");
+        }
+
         public static bool Get(string setting, bool invert = false)
         {
             return File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)) ^ invert;

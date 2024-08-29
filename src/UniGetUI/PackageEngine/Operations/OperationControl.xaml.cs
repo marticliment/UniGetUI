@@ -293,6 +293,7 @@ namespace UniGetUI.PackageEngine.Operations
             }
 
             await HandleCancelation();
+            PostProcessEndAction();
             Status = OperationStatus.Canceled;
         }
 
@@ -373,6 +374,7 @@ namespace UniGetUI.PackageEngine.Operations
                 ProcessOutput.Add("Process Start Time     : " + DateTime.Now);
 
                 Process.Start();
+                PostProcessStartAction();
                 Status = OperationStatus.Running;
 
                 string? line;
@@ -411,6 +413,7 @@ namespace UniGetUI.PackageEngine.Operations
                 }
 
                 await Process.WaitForExitAsync();
+                PostProcessEndAction();
 
                 ProcessOutput.Add("Process Exit Code      : " + Process.ExitCode);
                 ProcessOutput.Add("Process End Time       : " + DateTime.Now);
@@ -533,6 +536,8 @@ namespace UniGetUI.PackageEngine.Operations
         }
 
         protected abstract void Initialize();
+        protected abstract void PostProcessStartAction();
+        protected abstract void PostProcessEndAction();
         protected abstract Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo);
         protected abstract Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output);
         protected abstract Task<AfterFinshAction> HandleFailure();
