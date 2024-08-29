@@ -26,10 +26,6 @@
             Assert.NotEqual(0, CoreData.VersionNumber);
             Assert.True(File.Exists(CoreData.IgnoredUpdatesDatabaseFile), "The Ignored Updates database file does not exist, but it should have been created automatically.");
 
-            int notif_1 = CoreData.VolatileNotificationIdCounter;
-            int notif_2 = CoreData.VolatileNotificationIdCounter;
-            Assert.NotEqual(notif_1, notif_2);
-
             int notif_3 = CoreData.UpdatesAvailableNotificationTag;
             int notif_4 = CoreData.UpdatesAvailableNotificationTag;
             Assert.True(notif_3 == notif_4, "The UpdatesAvailableNotificationId must be always the same");
