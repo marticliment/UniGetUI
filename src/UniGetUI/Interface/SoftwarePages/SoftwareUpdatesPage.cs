@@ -2,6 +2,8 @@ using System.Diagnostics;
 using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -22,6 +24,8 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuInteractive;
         private BetterMenuItem? MenuskipHash;
         private BetterMenuItem? MenuOpenInstallLocation;
+
+        private int LastNotificationUpdateCount = -1;
 
         public SoftwareUpdatesPage()
         : base(new PackagesPageData
@@ -312,8 +316,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 MainApp.Instance.TooltipStatus.AvailableUpdates = Loader.Packages.Count();
             }
-            catch (Exception)
-            { }
+            catch { }
         }
 
         public void UpdateAll()
@@ -338,83 +341,111 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             }
 
-            if (upgradablePackages.Count > 0)
+            try
             {
-                string body;
-                string title;
-                string attribution = "";
-                bool ShowButtons = false;
-                if (Settings.Get("AutomaticallyUpdatePackages") || Environment.GetCommandLineArgs().Contains("--updateapps"))
+                if (upgradablePackages.Count == 0)
+                    return;
+
+                bool EnableAutoUpdate = Settings.Get("AutomaticallyUpdatePackages") ||
+                                   Environment.GetCommandLineArgs().Contains("--updateapps");
+
+                if(EnableAutoUpdate)
+                    UpdateAll();
+
+                if (Settings.AreUpdatesNotificationsDisabled())
+                    return;
+
+                AppNotificationManager.Default.RemoveByTagAsync(CoreData.UpdatesAvailableNotificationTag.ToString());
+
+
+                AppNotification notification;
+                if (upgradablePackages.Count == 1)
                 {
-                    if (upgradablePackages.Count == 1)
+                    if (EnableAutoUpdate)
                     {
-                        title = CoreTools.Translate("An update was found!");
-                        body = CoreTools.Translate("{0} is being updated to version {1}", upgradablePackages[0].Name, upgradablePackages[0].NewVersion);
-                        attribution = CoreTools.Translate("You have currently version {0} installed", upgradablePackages[0].Version);
+                        AppNotificationBuilder builder = new AppNotificationBuilder()
+                            .SetScenario(AppNotificationScenario.Default)
+                            .SetTag(CoreData.UpdatesAvailableNotificationTag.ToString())
+
+                            .AddText(CoreTools.Translate("An update was found!"))
+                            .AddText(CoreTools.Translate("{0} is being updated to version {1}",
+                                upgradablePackages[0].Name, upgradablePackages[0].NewVersion))
+                            .SetAttributionText(CoreTools.Translate("You have currently version {0} installed",
+                                upgradablePackages[0].Version))
+
+                            .AddArgument("action", NotificationArguments.ShowOnUpdatesTab);
+                        notification = builder.BuildNotification();
                     }
                     else
                     {
-                        title = CoreTools.Translate("Updates found!");
-                        body = CoreTools.Translate("{0} packages are being updated", upgradablePackages.Count);
-                        foreach (IPackage package in upgradablePackages)
-                        {
-                            attribution += package.Name + ", ";
-                        }
-                        attribution = attribution.TrimEnd(' ').TrimEnd(',');
+                        AppNotificationBuilder builder = new AppNotificationBuilder()
+                            .SetScenario(AppNotificationScenario.Default)
+                            .SetTag(CoreData.UpdatesAvailableNotificationTag.ToString())
+
+                            .AddText(CoreTools.Translate("An update was found!"))
+                            .AddText(CoreTools.Translate("{0} can be updated to version {1}",
+                                upgradablePackages[0].Name, upgradablePackages[0].NewVersion))
+                            .SetAttributionText(CoreTools.Translate("You have currently version {0} installed",
+                                upgradablePackages[0].Version))
+
+                            .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
+                            .AddButton(new AppNotificationButton(CoreTools.Translate("Open WingetUI"))
+                                .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
+                            )
+                            .AddButton(new AppNotificationButton(CoreTools.Translate("Update"))
+                                .AddArgument("action", NotificationArguments.UpdateAllPackages)
+                            );
+                        notification = builder.BuildNotification();
                     }
-                    UpdateAll();
                 }
                 else
                 {
-                    if (upgradablePackages.Count == 1)
+                    string attribution = "";
+                    foreach (IPackage package in upgradablePackages) attribution += package.Name + ", ";
+                    attribution = attribution.TrimEnd(' ').TrimEnd(',');
+
+                    if (EnableAutoUpdate)
                     {
-                        title = CoreTools.Translate("An update was found!");
-                        body = CoreTools.Translate("{0} can be updated to version {1}", upgradablePackages[0].Name, upgradablePackages[0].NewVersion);
-                        attribution = CoreTools.Translate("You have currently version {0} installed", upgradablePackages[0].Version);
+
+                        AppNotificationBuilder builder = new AppNotificationBuilder()
+                            .SetScenario(AppNotificationScenario.Default)
+                            .SetTag(CoreData.UpdatesAvailableNotificationTag.ToString())
+
+                            .AddText(
+                                CoreTools.Translate("{0} packages are being updated", upgradablePackages.Count))
+                            .SetAttributionText(attribution)
+                            .AddText(CoreTools.Translate("Updates found!"))
+
+                            .AddArgument("action", NotificationArguments.ShowOnUpdatesTab);
+                        notification = builder.BuildNotification();
                     }
                     else
                     {
-                        title = CoreTools.Translate("Updates found!");
-                        body = CoreTools.Translate("{0} packages can be updated", upgradablePackages.Count);
-                        foreach (IPackage package in upgradablePackages)
-                        {
-                            attribution += package.Name + ", ";
-                        }
-                        attribution = attribution.TrimEnd(' ').TrimEnd(',');
+                        AppNotificationBuilder builder = new AppNotificationBuilder()
+                            .SetScenario(AppNotificationScenario.Default)
+                            .SetTag(CoreData.UpdatesAvailableNotificationTag.ToString())
+
+                            .AddText(CoreTools.Translate("Updates found!"))
+                            .AddText(CoreTools.Translate("{0} can be updated", upgradablePackages.Count))
+                            .SetAttributionText(attribution)
+
+                            .AddButton(new AppNotificationButton(CoreTools.Translate("Open WingetUI"))
+                                .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
+                            )
+                            .AddButton(new AppNotificationButton(CoreTools.Translate("Update all"))
+                                .AddArgument("action", NotificationArguments.UpdateAllPackages)
+                            )
+                            .AddArgument("action", NotificationArguments.ShowOnUpdatesTab);
+                        notification = builder.BuildNotification();
                     }
-                    ShowButtons = true;
                 }
 
-                if (!(Settings.Get("DisableUpdatesNotifications") || Settings.AreNotificationsDisabled()))
-                {
-                    try
-                    {
-
-                        ToastContentBuilder toast = new();
-                        toast.AddArgument("action", "openUniGetUIOnUpdatesTab");
-                        toast.AddArgument("notificationId", CoreData.UpdatesAvailableNotificationId);
-                        toast.AddText(title);
-                        toast.AddText(body);
-                        toast.AddAttributionText(attribution);
-                        if (ShowButtons)
-                        {
-                            toast.AddButton(new ToastButton()
-                                .SetContent(CoreTools.Translate("Open WingetUI"))
-                                .AddArgument("action", "openUniGetUIOnUpdatesTab")
-                                .SetBackgroundActivation());
-                            toast.AddButton(new ToastButton()
-                                .SetContent(upgradablePackages.Count == 1 ? CoreTools.Translate("Update") : CoreTools.Translate("Update all"))
-                                .AddArgument("action", "updateAll")
-                                .SetBackgroundActivation());
-                        }
-                        toast.Show();
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Warn("An error occurred when showing a toast notification regarding available updates");
-                        Logger.Warn(ex);
-                    }
-                }
+                notification.ExpiresOnReboot = true;
+                AppNotificationManager.Default.Show(notification);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
             }
         }
 

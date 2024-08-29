@@ -1,5 +1,3 @@
-# IMPORTANT⚠️: Interactions have been locked temporarily due to the amount of spam content received in the latest 24h
-
 # <img src="https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/icon.png" height="40">UniGetUI (formerly WingetUI)
 
 [![Downloads@latest](https://img.shields.io/github/downloads/marticliment/UniGetUI/3.0.2/total?style=for-the-badge)](https://github.com/marticliment/UniGetUI/releases/latest/download/WingetUI.Installer.exe)
@@ -87,15 +85,16 @@ UniGetUI has a built-in autoupdater. However, it can also be updated like any ot
 
 **NOTE:** All package managers do support basic install, update, and uninstall processes, as well as checking for updates, finding new packages, and retrieving details from a package.
 
-| Manager | Skip integrity checks | Interactive installation | Install Older Versions | Install a PreRelease Version | Install a Custom Architecture | Install on a Custom Scope | Custom Install Location | Custom Package Sources | Supported since |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Winget** | ✅ | ⚠️³ | ✅ | ☑️² | ✅ | ⚠️¹ | ⚠️¹ | ✅ | 0.1.0 |
-| **Scoop** | ✅ | ❌ | ❌ | ☑️² | ✅ | ✅ | ❌ | ✅ | 0.1.0 |
-| **Chocolatey** | ✅ | ⚠️³ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | 1.6.0 |
-| **Npm** | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | 2.0.0 |
-| **Pip** | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ | 2.0.0 |
-| **.NET Tool** | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | 2.1.0 |
-| **PowerShell** | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ | ❌ | ✅ | 2.2.0 |
+| **Manager** 	| Install as administrator 	| Skip integrity checks 	| Interactive installation 	| Install Older Versions 	| Install a PreRelease Version 	| Install a Custom Architecture 	| Install on a Custom Scope 	| Custom Install Location 	| Custom Package Sources 	| Supported since 	|
+|:---:	|:---:	|:---:	|:---:	|:---:	|:---:	|:---:	|:---:	|:---:	|:---:	|:---:	|
+| **Winget** 	| ✅ 	| ✅ 	| ✅ 	| ✅ 	| ☑️ 	| ✅ 	| ⚠️ 	| ⚠️ 	| ✅ 	| 0.1.0 	|
+| **Scoop** 	| ✅ 	| ✅ 	| ❌ 	| ❌ 	| ☑️ 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| 0.1.0 	|
+| **Chocolatey** 	| ✅ 	| ✅ 	| ✅ 	| ✅ 	| ✅ 	| ✅ 	| ❌ 	| ❌ 	| ✅ 	| 1.6.0 	|
+| **Npm** 	| ✅ 	| ❌ 	| ❌ 	| ✅ 	| ❌ 	| ❌ 	| ✅ 	| ❌ 	| ❌ 	| 2.0.0 	|
+| **Pip** 	| ✅ 	| ❌ 	| ❌ 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| ❌ 	| ❌ 	| 2.0.0 	|
+| **.NET Tool** 	| ✅ 	| ❌ 	| ❌ 	| ✅ 	| ✅ 	| ✅ 	| ✅ 	| ✅ 	| ❌ 	| 2.1.0 	|
+| **PowerShell 5.x** 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| ❌ 	| ✅ 	| 2.2.0 	|
+| **PowerShell 7.x** 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| ❌ 	| ✅ 	| 3.1.1 	|
 
 ✅: Supported on UniGetUI<br>
 ☑️: Not directly supported but can be easily achieved<br>
