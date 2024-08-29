@@ -9,6 +9,7 @@ using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Managers.Chocolatey;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Structs;
@@ -58,6 +59,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 KnownSources = [new ManagerSource(this, "nuget.org", new Uri("https://www.nuget.org/api/v2"))],
             };
 
+            PackageDetailsProvider = new DotNetDetailsProvider(this);
             OperationProvider = new DotNetOperationProvider(this);
         }
 
