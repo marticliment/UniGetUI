@@ -1,5 +1,3 @@
-# IMPORTANT⚠️: Interactions have been locked temporarily due to the amount of spam content received in the latest 24h
-
 # <img src="https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/icon.png" height="40">UniGetUI (formerly WingetUI)
 
 [![Downloads@latest](https://img.shields.io/github/downloads/marticliment/UniGetUI/3.0.2/total?style=for-the-badge)](https://github.com/marticliment/UniGetUI/releases/latest/download/WingetUI.Installer.exe)
