@@ -165,19 +165,11 @@ namespace UniGetUI.Core.Data
         public static bool IsDaemon;
 
         private static int __volatile_notification_id_counter = 1235;
-
-        /// <summary>
-        /// A self-incremented value to generate random notification IDs
-        /// </summary>
-        public static int VolatileNotificationIdCounter
-        {
-            get => __volatile_notification_id_counter++;
-        }
-
+        
         /// <summary>
         /// The ID of the notification that is used to inform the user that updates are available
         /// </summary>
-        public const int UpdatesAvailableNotificationId = 1234;
+        public const int UpdatesAvailableNotificationTag = 1234;
 
 
         /// <summary>

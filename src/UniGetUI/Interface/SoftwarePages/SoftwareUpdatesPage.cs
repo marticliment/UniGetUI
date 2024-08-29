@@ -355,7 +355,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 if (Settings.AreUpdatesNotificationsDisabled())
                     return;
 
-                AppNotificationManager.Default.RemoveByTagAsync(CoreData.UpdatesAvailableNotificationId.ToString());
+                AppNotificationManager.Default.RemoveByTagAsync(CoreData.UpdatesAvailableNotificationTag.ToString());
 
 
                 AppNotification notification;
@@ -365,7 +365,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     {
                         AppNotificationBuilder builder = new AppNotificationBuilder()
                             .SetScenario(AppNotificationScenario.Default)
-                            .SetTag(CoreData.UpdatesAvailableNotificationId.ToString())
+                            .SetTag(CoreData.UpdatesAvailableNotificationTag.ToString())
 
                             .AddText(CoreTools.Translate("An update was found!"))
                             .AddText(CoreTools.Translate("{0} is being updated to version {1}",
@@ -373,14 +373,14 @@ namespace UniGetUI.Interface.SoftwarePages
                             .SetAttributionText(CoreTools.Translate("You have currently version {0} installed",
                                 upgradablePackages[0].Version))
 
-                            .AddArgument("action", "openUniGetUIOnUpdatesTab");
+                            .AddArgument("action", NotificationArguments.ShowOnUpdatesTab);
                         notification = builder.BuildNotification();
                     }
                     else
                     {
                         AppNotificationBuilder builder = new AppNotificationBuilder()
                             .SetScenario(AppNotificationScenario.Default)
-                            .SetTag(CoreData.UpdatesAvailableNotificationId.ToString())
+                            .SetTag(CoreData.UpdatesAvailableNotificationTag.ToString())
 
                             .AddText(CoreTools.Translate("An update was found!"))
                             .AddText(CoreTools.Translate("{0} can be updated to version {1}",
@@ -409,7 +409,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
                         AppNotificationBuilder builder = new AppNotificationBuilder()
                             .SetScenario(AppNotificationScenario.Default)
-                            .SetTag(CoreData.UpdatesAvailableNotificationId.ToString())
+                            .SetTag(CoreData.UpdatesAvailableNotificationTag.ToString())
 
                             .AddText(
                                 CoreTools.Translate("{0} packages are being updated", upgradablePackages.Count))
@@ -423,7 +423,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     {
                         AppNotificationBuilder builder = new AppNotificationBuilder()
                             .SetScenario(AppNotificationScenario.Default)
-                            .SetTag(CoreData.UpdatesAvailableNotificationId.ToString())
+                            .SetTag(CoreData.UpdatesAvailableNotificationTag.ToString())
 
                             .AddText(CoreTools.Translate("Updates found!"))
                             .AddText(CoreTools.Translate("{0} can be updated", upgradablePackages.Count))
