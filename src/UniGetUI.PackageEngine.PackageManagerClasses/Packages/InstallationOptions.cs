@@ -1,9 +1,10 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.PackageClasses
@@ -12,26 +13,26 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// <summary>
     /// This class represents the options in which a package must be installed, updated or uninstalled.
     /// </summary>
-    public class InstallationOptions
+    public class InstallationOptions : IInstallationOptions
     {
-        private static Dictionary<long, InstallationOptions?> OptionsCache = new();
+        private static readonly Dictionary<long, InstallationOptions?> OptionsCache = [];
 
-        public bool SkipHashCheck { get; set; } = false;
-        public bool InteractiveInstallation { get; set; } = false;
-        public bool RunAsAdministrator { get; set; } = false;
+        public bool SkipHashCheck { get; set; }
+        public bool InteractiveInstallation { get; set; }
+        public bool RunAsAdministrator { get; set; }
         public string Version { get; set; } = "";
-        public Architecture? Architecture { get; set; } = null;
-        public PackageScope? InstallationScope { get; set; } = null;
+        public Architecture? Architecture { get; set; }
+        public PackageScope? InstallationScope { get; set; }
         public List<string> CustomParameters { get; set; } = [];
-        public bool RemoveDataOnUninstall { get; set; } = false;
-        public bool PreRelease { get; set; } = false;
+        public bool RemoveDataOnUninstall { get; set; }
+        public bool PreRelease { get; set; }
         public string CustomInstallLocation { get; set; } = "";
 
-        public Package Package { get; }
+        public IPackage Package { get; }
 
-        private string __save_filename;
+        private readonly string __save_filename;
 
-        private InstallationOptions(Package package)
+        private InstallationOptions(IPackage package)
         {
             Package = package;
             __save_filename = package.Manager.Name.Replace(" ", "").Replace(".", "") + "." + package.Id;
@@ -42,7 +43,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         /// <param name="package">The package from which to load the InstallationOptions</param>
         /// <returns>The package's InstallationOptions instance</returns>
-        public static InstallationOptions FromPackage(Package package, bool? elevated = null, bool? 
+        public static InstallationOptions FromPackage(IPackage package, bool? elevated = null, bool?
             interactive = null, bool? no_integrity = null, bool? remove_data = null)
         {
             InstallationOptions instance;
@@ -58,10 +59,25 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 OptionsCache.Add(package.GetHash(), instance);
             }
 
-            if (elevated != null) instance.RunAsAdministrator = (bool)elevated;
-            if (interactive != null) instance.InteractiveInstallation = (bool)interactive;
-            if (no_integrity != null) instance.SkipHashCheck = (bool)no_integrity;
-            if (remove_data != null) instance.RemoveDataOnUninstall = (bool)remove_data;
+            if (elevated != null)
+            {
+                instance.RunAsAdministrator = (bool)elevated;
+            }
+
+            if (interactive != null)
+            {
+                instance.InteractiveInstallation = (bool)interactive;
+            }
+
+            if (no_integrity != null)
+            {
+                instance.SkipHashCheck = (bool)no_integrity;
+            }
+
+            if (remove_data != null)
+            {
+                instance.RemoveDataOnUninstall = (bool)remove_data;
+            }
 
             return instance;
         }
@@ -71,7 +87,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         /// <param name="package">The package from which to load the InstallationOptions</param>
         /// <returns>The package's InstallationOptions instance</returns>
-        public static async Task<InstallationOptions> FromPackageAsync(Package package, bool? elevated = null, 
+        public static async Task<InstallationOptions> FromPackageAsync(IPackage package, bool? elevated = null,
             bool? interactive = null, bool? no_integrity = null, bool? remove_data = null)
         {
             return await Task.Run(() => FromPackage(package, elevated, interactive, no_integrity, remove_data));
@@ -80,10 +96,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a new InstallationOptions object from a given SerializableInstallationOptions_v1 and a package.
         /// </summary>
-        /// <param name="options"></param>
-        /// <param name="package"></param>
-        /// <returns></returns>
-        public static InstallationOptions FromSerialized(SerializableInstallationOptions_v1 options, Package package)
+        public static InstallationOptions FromSerialized(SerializableInstallationOptions_v1 options, IPackage package)
         {
             InstallationOptions instance = new(package);
             instance.FromSerializable(options);
@@ -93,7 +106,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Loads and applies the options from the given SerializableInstallationOptions_v1 object to the current object.
         /// </summary>
-        /// <param name="options"></param>
         public void FromSerializable(SerializableInstallationOptions_v1 options)
         {
             SkipHashCheck = options.SkipHashCheck;
@@ -103,14 +115,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Version = options.Version;
             PreRelease = options.PreRelease;
 
-            if (options.Architecture != "" && CommonTranslations.InvertedArchNames.ContainsKey(options.Architecture))
+            if (options.Architecture != "" && CommonTranslations.InvertedArchNames.TryGetValue(options.Architecture, out var name))
             {
-                Architecture = CommonTranslations.InvertedArchNames[options.Architecture];
+                Architecture = name;
             }
 
-            if (options.InstallationScope != "" && CommonTranslations.InvertedScopeNames_NonLang.ContainsKey(options.InstallationScope))
+            if (options.InstallationScope != "" && CommonTranslations.InvertedScopeNames_NonLang.TryGetValue(options.InstallationScope, out var value))
             {
-                InstallationScope = CommonTranslations.InvertedScopeNames_NonLang[options.InstallationScope];
+                InstallationScope = value;
             }
 
             CustomParameters = options.CustomParameters;
@@ -119,16 +131,17 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a SerializableInstallationOptions_v1 object containing the options of the current instance.
         /// </summary>
-        /// <returns></returns>
         public SerializableInstallationOptions_v1 AsSerializable()
         {
-            SerializableInstallationOptions_v1 options = new();
-            options.SkipHashCheck = SkipHashCheck;
-            options.InteractiveInstallation = InteractiveInstallation;
-            options.RunAsAdministrator = RunAsAdministrator;
-            options.CustomInstallLocation = CustomInstallLocation;
-            options.PreRelease = PreRelease;
-            options.Version = Version;
+            SerializableInstallationOptions_v1 options = new()
+            {
+                SkipHashCheck = SkipHashCheck,
+                InteractiveInstallation = InteractiveInstallation,
+                RunAsAdministrator = RunAsAdministrator,
+                CustomInstallLocation = CustomInstallLocation,
+                PreRelease = PreRelease,
+                Version = Version
+            };
             if (Architecture != null)
             {
                 options.Architecture = CommonTranslations.ArchNames[Architecture.Value];
@@ -154,7 +167,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public async Task SaveToDiskAsync()
         {
-            await Task.Run(() => SaveToDisk());
+            await Task.Run(SaveToDisk);
         }
 
         /// <summary>
@@ -166,7 +179,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 FileInfo optionsFile = GetPackageOptionsFile();
                 if (optionsFile.Directory?.Exists == false)
+                {
                     optionsFile.Directory.Create();
+                }
 
                 string fileContents = JsonSerializer.Serialize(AsSerializable());
                 File.WriteAllText(optionsFile.FullName, fileContents);
@@ -181,21 +196,24 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Loads the options from disk.
         /// </summary>
-        private void LoadFromDisk()
+        public void LoadFromDisk()
         {
             FileInfo optionsFile = GetPackageOptionsFile();
             try
             {
                 if (!optionsFile.Exists)
+                {
                     return;
-
+                }
 
                 using FileStream inputStream = optionsFile.OpenRead();
                 SerializableInstallationOptions_v1? options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(inputStream);
 
                 if (options == null)
-                    throw new Exception("Deserialized options cannot be null!");
-                
+                {
+                    throw new InvalidOperationException("Deserialized options cannot be null!");
+                }
+
                 FromSerializable(options);
                 Logger.Debug($"InstallationOptions loaded successfully from disk for package {Package.Id}");
             }
@@ -214,7 +232,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns a string representation of the current options.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             string customparams = CustomParameters != null ? string.Join(",", CustomParameters) : "[]";

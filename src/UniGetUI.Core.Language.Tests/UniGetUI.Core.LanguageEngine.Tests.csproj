@@ -1,53 +1,54 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
+    <Platforms>x64</Platforms>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <SdkVersion>8.0.204</SdkVersion>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <PublishSelfContained>true</PublishSelfContained>
+    <Authors>Martí Climent and the contributors</Authors>
+    <PublisherName>Martí Climent</PublisherName>
+    <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Configurations>Debug;Release</Configurations>
+  </PropertyGroup>
 
-		<PropertyGroup>
-		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
-		<RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
-		<Platforms>ARM64;x64</Platforms>
-		<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
-		<SdkVersion>8.0.204</SdkVersion>
-		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-		<PublishSelfContained>true</PublishSelfContained>
-		<FileVersion>3.1.0.0</FileVersion>
-		<InformationalVersion>3.1.0-alpha0</InformationalVersion>
-		<Product>UniGetUI</Product>
-		<Authors>Martí Climent and the contributors</Authors>
-		<PublisherName>Martí Climent</PublisherName>
-		<ApplicationVersion>3.1.0-alpha0</ApplicationVersion>
-		<Copyright>2024, Martí Climent</Copyright>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-	
-	<PropertyGroup>
-		<Nullable>enable</Nullable>
-		<IsPackable>false</IsPackable>
-		<IsTestProject>true</IsTestProject>
-	</PropertyGroup>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="coverlet.collector" Version="6.0.2">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-		<PackageReference Include="xunit" Version="2.8.0" />
-		<PackageReference Include="xunit.analyzers" Version="1.13.0" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.0">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.analyzers" Version="1.15.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\UniGetUI.Core.LanguageEngine\UniGetUI.Core.LanguageEngine.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UniGetUI.Core.LanguageEngine\UniGetUI.Core.LanguageEngine.csproj" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<Using Include="Xunit" />
-	</ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+  </ItemGroup>
 </Project>

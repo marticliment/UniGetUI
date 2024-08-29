@@ -1,5 +1,5 @@
 name: '🐞 Report an issue or a bug'
-description: Report issues or unexpected behaviors
+description: Report issues or unexpected behaviors.
 title: "[BUG] (Enter your description here)"
 labels: ["bug"]
 assignees: marticliment
@@ -13,34 +13,46 @@ body:
           required: true
         - label: I have tested that this issue has not been fixed in the latest [(beta or stable) release](https://github.com/marticliment/WingetUI/releases/).
           required: true
-        - label: I have checked the [FAQ](https://github.com/marticliment/WingetUI#frequently-asked-questions) section for solutions
+        - label: I have checked the [FAQ](https://github.com/marticliment/WingetUI#frequently-asked-questions) section for solutions.
           required: true
-        - label: This issue is about a bug (if it is not, please use the [correct template](https://github.com/marticliment/WingetUI/issues/new/choose))
+        - label: This issue is about a bug (if it is not, please use the [correct template](https://github.com/marticliment/WingetUI/issues/new/choose)).
           required: true
+  - type: input
+    attributes:
+      label: UniGetUI Version
+      placeholder: 'x.y.z (e.g., 3.1.0)'
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Windows version, edition, and architecture
+      placeholder: Windows 11 Pro 10.0.22000.0 x64
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: Describe your issue
-      placeholder: Explain the issue you are experiencing, providing as many details as possible about it
+      placeholder: Explain the issue you are experiencing, providing as many details as possible.
     validations:
       required: true
   - type: textarea
     attributes:
       label: Steps to reproduce the issue
-      placeholder: How can this issue be reproduced? List here, if known, the steps followed before this issue appeared
+      placeholder: How can this issue be reproduced? List here, if known, the steps followed before this issue appeared.
     validations:
       required: false
   - type: textarea
     attributes:
-      label: WingetUI Log
+      label: UniGetUI Log
       render: "text"
-      placeholder: Paste here your WingetUI logs. Click the button on the top-right corner of WingetUI -> WingetUI Log
+      placeholder: Paste here your UniGetUI logs. Click the button on the bottom-left corner of UniGetUI -> UniGetUI Log.
     validations:
       required: true
   - type: textarea
     attributes:
       label: Package Managers Logs
       render: "text"
-      placeholder: Paste here your Package Manager logs. Click the button on the top-right corner of WingetUI -> Package Manager logs
+      placeholder: Paste here your Package Manager logs. Click the button on the bottom-left corner of UniGetUI -> Package Manager logs.
     validations:
       required: true
   - type: textarea

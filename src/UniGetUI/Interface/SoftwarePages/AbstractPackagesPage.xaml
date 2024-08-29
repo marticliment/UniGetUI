@@ -293,7 +293,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                
+
                                 <Viewbox x:Name="ContentViewbox"
                                 Height="24"
                                 Margin="0,12,0,12"
@@ -497,96 +497,102 @@
             </Setter>
         </Style>
 
-        <DataTemplate x:Key="PackageTemplate" x:DataType="pkgClasses:Package">
-            <Grid ColumnSpacing="5" Opacity="{x:Bind ListedOpacity, Mode=OneWay}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="*" MinWidth="100"/>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="*" MinWidth="100"/>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="*" MaxWidth="125"/>
-                    <ColumnDefinition Width="24" MaxWidth="{x:Bind NewVersionIconWidth}"/>
-                    <ColumnDefinition Width="*" MaxWidth="{x:Bind NewVersionLabelWidth}"/>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="*" MaxWidth="150"/>
-                </Grid.ColumnDefinitions>
-                <CheckBox 
+        <DataTemplate x:Key="PackageTemplate" x:DataType="pkgClasses:PackageWrapper">
+            <widgets:PackageItemContainer AutomationProperties.Name="{x:Bind Package.AutomationName}" CornerRadius="4"
+                Package="{x:Bind Package}" Wrapper="{x:Bind Self}"
+                RightTapped="PackageItemContainer_RightTapped"
+                DoubleTapped="PackageItemContainer_DoubleTapped"
+                KeyUp="PackageItemContainer_KeyUp">
+
+                <Grid ColumnSpacing="5" Opacity="{x:Bind ListedOpacity, Mode=OneWay}" Padding="12,3,8,3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="*" MinWidth="100"/>
+                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="*" MinWidth="100"/>
+                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="*" MaxWidth="125"/>
+                        <ColumnDefinition Width="24" MaxWidth="{x:Bind NewVersionIconWidth}"/>
+                        <ColumnDefinition Width="*" MaxWidth="{x:Bind NewVersionLabelWidth}"/>
+                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="*" MaxWidth="150"/>
+                    </Grid.ColumnDefinitions>
+                    <CheckBox
                     Grid.Column="0" Grid.Row="0"
                     VerticalAlignment="Center"
                     IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
                     />
-                <Canvas Grid.Column="1" Grid.Row="0" Height="24" Width="24">
-                    <Border Background="{ThemeResource AccentAAFillColorTertiaryBrush}" 
-                            Height="18" Width="18" 
-                            Canvas.Top="3" Canvas.Left="3"
-                            CornerRadius="12" Visibility="{x:Bind ListIconShowHighlight, Mode=OneWay}"/>
                     <widgets:LocalIcon
-                            IconName="{x:Bind ListedIconId, Mode=OneWay}"
-                            Height="24" Width="24" 
-                            Canvas.Top="0" Canvas.Left="0"
-                            VerticalAlignment="Center"
+                        Icon="{x:Bind ListedComplementaryIconId}" FontWeight="ExtraLight" FontSize="24"
+                        Grid.Column="1" Grid.Row="0" Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
+                        VerticalAlignment="Center"
                         />
-                </Canvas>
-                <TextBlock 
+                    <widgets:LocalIcon
+                        Icon="{x:Bind ListedIconId}" FontWeight="ExtraLight" FontSize="24"
+                        Grid.Column="1" Grid.Row="0"
+                        VerticalAlignment="Center"
+                        />
+                    <TextBlock
                     Grid.Column="2" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind Name}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                    Text="{x:Bind Package.Name}" FontSize="13" FontFamily="Segoe UI Variable Text"
                     ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                     />
-                <widgets:LocalIcon
-                    IconName="ID"
+                    <widgets:LocalIcon
+                    Icon="id" FontWeight="ExtraLight" FontSize="24"
                     Grid.Column="3" Grid.Row="0"
                     VerticalAlignment="Center"
                     />
-                <TextBlock 
+                    <TextBlock
                     Grid.Column="4" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind Id}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Id}"
+                    Text="{x:Bind Package.Id}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                    ToolTipService.ToolTip="{x:Bind Package.Id}"
                     />
-                <widgets:LocalIcon
-                    IconName="version"
+                    <widgets:LocalIcon
+                    Icon="version" FontWeight="ExtraLight" FontSize="24"
                     Grid.Column="5" Grid.Row="0"
                     VerticalAlignment="Center"
                     />
-                <TextBlock 
+                    <TextBlock
                     Grid.Column="6" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind Version}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Version}"
+                    Text="{x:Bind Package.Version}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                    ToolTipService.ToolTip="{x:Bind Package.Version}"
                     />
-                <widgets:LocalIcon
-                    IconName="newversion" Visibility="{x:Bind IsUpgradable}"
-                    Grid.Column="7" Grid.Row="0"
-                    VerticalAlignment="Center"
+                    <widgets:LocalIcon
+                        FontWeight="ExtraLight" FontSize="24"
+                        Icon="download" Visibility="{x:Bind Package.IsUpgradable}"
+                        Grid.Column="7" Grid.Row="0"
+                        VerticalAlignment="Center"
                     />
-                <TextBlock 
+                    <TextBlock
                     Grid.Column="8" Grid.Row="0"
-                    VerticalAlignment="Center" Visibility="{x:Bind IsUpgradable}"
-                    Text="{x:Bind NewVersion}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind NewVersion}"
+                    VerticalAlignment="Center" Visibility="{x:Bind Package.IsUpgradable}"
+                    Text="{x:Bind Package.NewVersion}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                    ToolTipService.ToolTip="{x:Bind Package.NewVersion}"
                     />
-                <widgets:LocalIcon
-                    Grid.Column="9" Grid.Row="0"
+                    <widgets:LocalIcon
+                    Grid.Column="9" Grid.Row="0" FontWeight="ExtraLight" FontSize="24"
                     VerticalAlignment="Center"
-                    IconName="{x:Bind Source.IconId}"
+                    Icon="{x:Bind Package.Source.IconId}"
                     />
-                <TextBlock 
+                    <TextBlock
                     Grid.Column="10" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind Source.ToString()}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Source.ToString()}"
+                    Text="{x:Bind Package.Source.AsString_DisplayName}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                    ToolTipService.ToolTip="{x:Bind Package.Source.AsString_DisplayName}"
                     />
-            </Grid>
+                </Grid>
+            </widgets:PackageItemContainer>
         </DataTemplate>
     </Page.Resources>
 
-    <Grid 
+    <Grid
         Padding="0"
         BorderThickness="1,1,0,0">
         <Grid.RowDefinitions>
@@ -614,13 +620,13 @@
             </Grid.RowDefinitions>
             <FontIcon Grid.Column="0" Grid.Row="0" Grid.RowSpan="3"
                 x:Name="HeaderIcon" FontSize="50" FontWeight="Normal" Height="60" Width="60"/>
-            <widgets:TranslatedTextBlock x:Name="MainTitle" x:FieldModifier="protected"
-                Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" 
+            <TextBlock x:Name="MainTitle" x:FieldModifier="protected"
+                Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
                 Text="" FontSize="30" Height="48"
                 HorizontalAlignment="Left"
                 FontWeight="Bold"  FontFamily="Segoe UI Variable Display"
                 />
-            <TextBlock Grid.Column="1" Grid.Row="2" 
+            <TextBlock Grid.Column="1" Grid.Row="2"
                 Text="" FontSize="11" x:Name="MainSubtitle" x:FieldModifier="protected"
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 FontWeight="Normal" Foreground="{StaticResource AppBarItemDisabledForegroundThemeBrush}"
@@ -654,6 +660,8 @@
             <CommandBar Name="ToolBar" x:FieldModifier="protected" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3" DefaultLabelPosition="Right" HorizontalAlignment="Stretch">
             </CommandBar>
         </Grid>
+
+
         <!-- NON-HEADER CONTENT -->
         <Grid Grid.Row="2" Grid.Column="1" RowSpacing="4" ColumnSpacing="12" Name="BodyGrid">
             <Grid.ColumnDefinitions>
@@ -665,9 +673,9 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <ProgressBar IsIndeterminate="True" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" x:Name="LoadingProgressBar" x:FieldModifier="protected" Visibility="Collapsed"/>
-            
+
             <!-- FILTERING PANE -->
-            <ScrollView Grid.Column="0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  
+            <ScrollView Grid.Column="0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                 BorderThickness="0" Name="SidePanel" SizeChanged="SidepanelWidth_SizeChanged"
                 HorizontalScrollMode="Disabled"
                 CornerRadius="8">
@@ -712,10 +720,10 @@
                                         <widgets:TranslatedTextBlock Text="Clear selection" FontSize="12" FontWeight="SemiBold"/>
                                     </HyperlinkButton>
                                     <TreeView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Name="SourcesTreeView" SelectionMode="Multiple" Padding="0"
-                                        SelectionChanged="SourcesTreeView_SelectionChanged" 
+                                        SelectionChanged="SourcesTreeView_SelectionChanged"
                                         HorizontalAlignment="Stretch"/>
                                 </Grid>
-                                
+
                             </StackPanel>
                         </Expander.Content>
                     </Expander>
@@ -806,9 +814,9 @@
             </Toolkit:GridSplitter>
 
             <!-- ACTUAL PACKAGE LIST -->
-            <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  
+            <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                 BorderBrush="{StaticResource ExpanderContentBorderBrush}"
-                BorderThickness="1" Padding="4,6,4,6" 
+                BorderThickness="1" Padding="4,6,4,6"
                 Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
                 CornerRadius="8">
                 <Grid.RowDefinitions>
@@ -820,32 +828,38 @@
                         <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="11"/>
-                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="32"/>
                         <ColumnDefinition Width="28"/>
                         <ColumnDefinition Width="*" MinWidth="100"/>
-                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="32"/>
                         <ColumnDefinition Width="*" MinWidth="100"/>
-                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="32"/>
                         <ColumnDefinition Width="*" MaxWidth="125"/>
-                        <ColumnDefinition Width="24" MaxWidth="{x:Bind NewVersionIconWidth}"/>
+                        <ColumnDefinition Width="32" MaxWidth="{x:Bind NewVersionIconWidth}"/>
                         <ColumnDefinition Width="*" MaxWidth="{x:Bind NewVersionLabelWidth}"/>
-                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="32"/>
                         <ColumnDefinition Width="*" MaxWidth="150"/>
                         <ColumnDefinition Width="11"/>
                     </Grid.ColumnDefinitions>
-                    <Button Name="CheckboxHeader" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="4,0,0,4" BorderThickness="0"/>
-                    <Button Name="NameHeader" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
+                    <Button Name="CheckboxHeader" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" CornerRadius="4,0,0,4" BorderThickness="0" Padding="0">
+                        <CheckBox Name="SelectAllCheckBox" Checked="SelectAllCheckBox_ValueChanged" Unchecked="SelectAllCheckBox_ValueChanged" Margin="12,4,4,4"/>
+                    </Button>
+                    <Button Name="NameHeader" Grid.Column="3" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
                     <Button Name="IdHeader" Grid.Column="4" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
                     <Button Name="VersionHeader" Grid.Column="6" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0"/>
                     <Button Name="NewVersionHeader" Grid.Column="8" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" CornerRadius="0" BorderThickness="0" Visibility="{x:Bind RoleIsUpdateLike}"/>
                     <Button Name="SourceHeader" Grid.Column="10" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" CornerRadius="0,4,4,0" BorderThickness="0"/>
                 </Grid>
 
-                <ListView x:Name="PackageList" x:FieldModifier="public" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"
+                <ItemsView x:Name="PackageList" x:FieldModifier="protected" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"
                     ItemsSource="{x:Bind FilteredPackages, Mode=TwoWay}"
-                    ItemTemplate="{StaticResource PackageTemplate}"
-                    CanBeScrollAnchor="False"/>
+                    ItemTemplate="{StaticResource PackageTemplate}" Padding="4,0,4,0"
+                    CanBeScrollAnchor="False">
+                    <ItemsView.Layout>
+                        <StackLayout Spacing="3"/>
+                    </ItemsView.Layout>
+                </ItemsView>
 
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
@@ -854,11 +868,11 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock x:Name="BackgroundText" 
-                        Text="Hello World Lorem Ipsum dolor sit amet" 
+                    <TextBlock x:Name="BackgroundText"
+                        Text="Hello World Lorem Ipsum dolor sit amet"
                         TextAlignment="Center" VerticalAlignment="Center"
                         TextWrapping="Wrap"
-                        Grid.Row="1" Grid.Column="1" 
+                        Grid.Row="1" Grid.Column="1"
                         FontSize="30" FontWeight="Bold" FontFamily="Segoe UI Variable Display"
                         Opacity="0.5"/>
                 </Grid>
@@ -880,7 +894,7 @@
                     <ColumnDefinition Width="80"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="MegaQueryBlock" x:FieldModifier="protected" Grid.Column="1" Grid.Row="1" 
+                <TextBox x:Name="MegaQueryBlock" x:FieldModifier="protected" Grid.Column="1" Grid.Row="1"
                          CornerRadius="8,0,0,8" FontSize="40" Padding="20,11,10,11" FontWeight="SemiBold"/>
                 <Button Grid.Column="2" Grid.Row="1" x:Name="MegaFindButton" CornerRadius="0,8,8,0" x:FieldModifier="protected"
                         Height="80" Width="80" Padding="12" AutomationProperties.HelpText="Search">

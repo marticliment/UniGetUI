@@ -1,24 +1,18 @@
-﻿using CommunityToolkit.WinUI.Helpers;
-using CommunityToolkit.WinUI.Notifications;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;
 using System.Globalization;
 using System.Security.Cryptography;
+using CommunityToolkit.WinUI.Helpers;
+using CommunityToolkit.WinUI.Notifications;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.Managers.ChocolateyManager;
-using UniGetUI.PackageEngine.Managers.DotNetManager;
-using UniGetUI.PackageEngine.Managers.NpmManager;
-using UniGetUI.PackageEngine.Managers.PipManager;
-using UniGetUI.PackageEngine.Managers.PowerShellManager;
-using UniGetUI.PackageEngine.Managers.ScoopManager;
-using UniGetUI.PackageEngine.Managers.WingetManager;
+using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Operations;
 using Windows.Foundation.Collections;
 
@@ -28,61 +22,35 @@ namespace UniGetUI
     {
         public class __tooltip_options
         {
-            private int _errors_occurred = 0;
-            public int ErrorsOccurred { get { return _errors_occurred; } set { _errors_occurred = value; MainApp.Instance.MainWindow.UpdateSystemTrayStatus(); } }
-            private bool _restart_required = false;
-            public bool RestartRequired { get { return _restart_required; } set { _restart_required = value; MainApp.Instance.MainWindow.UpdateSystemTrayStatus(); } }
-            private int _operations_in_progress = 0;
-            public int OperationsInProgress { get { return _operations_in_progress; } set { _operations_in_progress = value; MainApp.Instance.MainWindow.UpdateSystemTrayStatus(); } }
-            private int _available_updates = 0;
-            public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; MainApp.Instance.MainWindow.UpdateSystemTrayStatus(); } }
+            private int _errors_occurred;
+            public int ErrorsOccurred { get { return _errors_occurred; } set { _errors_occurred = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
+            private bool _restart_required;
+            public bool RestartRequired { get { return _restart_required; } set { _restart_required = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
+            private int _operations_in_progress;
+            public int OperationsInProgress { get { return _operations_in_progress; } set { _operations_in_progress = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
+            private int _available_updates;
+            public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
         }
-#pragma warning disable CS8618
-        public static Scoop Scoop;
-        public static WinGet Winget;
-        public static Chocolatey Choco;
-        public static Pip Pip;
-        public static Npm Npm;
-        public static DotNet Dotnet;
-        public static PowerShell PowerShell;
-        public List<AbstractOperation> OperationQueue = new();
+
+        public List<AbstractOperation> OperationQueue = [];
 
         public bool RaiseExceptionAsFatal = true;
-        public readonly List<PackageManager> PackageManagerList = new();
 
         public Interface.SettingsInterface settings;
         public MainWindow MainWindow;
         public ThemeListener ThemeListener;
 
-
-        private BackgroundApiRunner BackgroundApi = new();
-        private const int ManagerLoadTimeout = 10000; // 10 seconds timeout for Package Manager initialization
+        private readonly BackgroundApiRunner BackgroundApi = new();
+#pragma warning disable CS8618
         public static MainApp Instance;
         public __tooltip_options TooltipStatus = new();
 
-        public MainApp() : base()
+        public MainApp()
         {
+#pragma warning restore CS8618
             try
             {
                 Instance = this;
-                Scoop = new();
-                Winget = new();
-                Choco = new();
-                Pip = new();
-                Npm = new();
-                Dotnet = new();
-                PowerShell = new();
-
-                PackageManagerList.AddRange(new PackageManager[]
-                {
-                    Winget,
-                    Scoop,
-                    Choco,
-                    Pip,
-                    Npm,
-                    Dotnet,
-                    PowerShell
-                });
 
                 InitializeComponent();
 
@@ -112,7 +80,7 @@ namespace UniGetUI
             }
         }
 
-        private async void LoadGSudo()
+        private static async void LoadGSudo()
         {
             if (Settings.Get("UseUserGSudo"))
             {
@@ -150,7 +118,9 @@ namespace UniGetUI
                 Logger.Error(" -");
                 Logger.Error(" -");
                 if (Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal || MainWindow == null)
+                {
                     CoreTools.ReportFatalException(e.Exception);
+                }
                 else
                 {
                     MainWindow.ErrorBanner.Title = CoreTools.Translate("Something went wrong");
@@ -170,13 +140,16 @@ namespace UniGetUI
             };
         }
 
-        private void SetUpWebViewUserDataFolder()
+        private static void SetUpWebViewUserDataFolder()
         {
             try
             {
                 string WebViewPath = Path.Join(Path.GetTempPath(), "UniGetUI", "WebView");
                 if (!Directory.Exists(WebViewPath))
+                {
                     Directory.CreateDirectory(WebViewPath);
+                }
+
                 Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", WebViewPath);
             }
             catch (Exception e)
@@ -202,14 +175,15 @@ namespace UniGetUI
             Microsoft.UI.Windowing.AppWindow appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
             if (appWindow != null)
+            {
                 appWindow.Closing += MainWindow.HandleClosingEvent;
+            }
         }
-
 
         /// <summary>
         /// Clear the notification history, if possible
         /// </summary>
-        private void ClearNotificationHistory_Safe()
+        private static void ClearNotificationHistory_Safe()
         {
             try
             {
@@ -252,35 +226,76 @@ namespace UniGetUI
         }
 
         /// <summary>
-        /// Background component loader 
+        /// Background component loader
         /// </summary>
-        /// <returns></returns>
         private async Task LoadComponentsAsync()
         {
             try
             {
-                InitializePackageManagers();
-
                 // Run other initializations asynchronously
-                if(!Settings.Get("DisableAutoUpdateWingetUI"))
+                if (!Settings.Get("DisableAutoUpdateWingetUI"))
+                {
                     UpdateUniGetUIIfPossible();
-                
+                }
+
                 IconDatabase.InitializeInstance();
                 IconDatabase.Instance.LoadIconAndScreenshotsDatabase();
-                
+
+                // Bind the background api to the main interface
+
+                BackgroundApi.OnOpenWindow += (s, e) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    MainWindow.Activate();
+                });
+
+                BackgroundApi.OnOpenUpdatesPage += (s, e) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    MainWindow?.NavigationPage?.UpdatesNavButton.ForceClick();
+                    MainWindow?.Activate();
+                });
+
+                BackgroundApi.OnShowSharedPackage += (s, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    MainWindow?.NavigationPage?.DiscoverPage.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
+                    MainWindow?.Activate();
+                });
+
+                BackgroundApi.OnUpgradeAll += (s, e) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    MainWindow?.NavigationPage?.UpdatesPage.UpdateAll();
+                });
+
+                BackgroundApi.OnUpgradeAllForManager += (s, manager) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    MainWindow?.NavigationPage?.UpdatesPage.UpdateAllPackagesForManager(manager);
+                });
+
+                BackgroundApi.OnUpgradePackage += (s, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    MainWindow?.NavigationPage?.UpdatesPage.UpdatePackageForId(package);
+                });
+
                 if (!Settings.Get("DisableApi"))
+                {
                     _ = BackgroundApi.Start();
+                }
 
                 _ = MainWindow.DoEntryTextAnimationAsync();
 
-                await InitializeAllManagersAsync();
+                // Load package managers
+                await PEInterface.Initialize();
 
-                Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();
                 RaiseExceptionAsFatal = false;
-
                 if (Environment.GetCommandLineArgs().Contains("--load-and-quit"))
+                {
                     DisposeAndQuit(0);
+                }
+
+                await CheckForMissingDependencies();
+
+                Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
+
             }
             catch (Exception e)
             {
@@ -288,39 +303,50 @@ namespace UniGetUI
             }
         }
 
-        /// <summary>
-        /// Constructs Package Manager objects
-        /// </summary>
-        private void InitializePackageManagers()
+        private async Task CheckForMissingDependencies()
         {
-            
-        }
-
-        /// <summary>
-        /// Initializes Package Manager objects (asynchronously)
-        /// </summary>
-        /// <returns></returns>
-        private async Task InitializeAllManagersAsync()
-        {
-            List<Task> initializeTasks = new();
-
-            foreach (PackageManager manager in PackageManagerList)
+            // Check for missing dependencies on package managers
+            List<ManagerDependency> missing_deps = [];
+            foreach (PackageEngine.ManagerClasses.Manager.PackageManager manager in PEInterface.Managers)
             {
-                initializeTasks.Add(manager.InitializeAsync());
-            }
+                if (!manager.IsReady())
+                {
+                    continue;
+                }
 
+                foreach (ManagerDependency dependency in manager.Dependencies)
+                {
+                    bool isInstalled = true;
+                    try
+                    {
+                        isInstalled = await dependency.IsInstalled();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(
+                            $"An error occurred while checking if dependency {dependency.Name} was installed:");
+                        Logger.Error(ex);
+                    }
 
-            Task ManagersMetaTask = Task.WhenAll(initializeTasks);
-            try
-            {
-                await ManagersMetaTask.WaitAsync(TimeSpan.FromMilliseconds(ManagerLoadTimeout));
+                    if (!isInstalled)
+                    {
+                        if (Settings.Get($"SkippedInstalling{dependency.Name}"))
+                        {
+                            Logger.Error($"Dependency {dependency.Name} was not found, and the user set it to not be reminded of the midding dependency");
+                        }
+                        else
+                        {
+                            Logger.Warn($"Dependency {dependency.Name} was not found for manager {manager.Name}, marking to prompt...");
+                            missing_deps.Add(dependency);
+                        }
+                    }
+                    else
+                    {
+                        Logger.Info($"Dependency {dependency.Name} for manager {manager.Name} is present");
+                    }
+                }
             }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-            if (ManagersMetaTask.IsCompletedSuccessfully == false)
-                Logger.Warn("Timeout: Not all package managers have finished initializing.");
+            await MainWindow.ShowMissingDependenciesQuery(missing_deps);
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
@@ -366,9 +392,10 @@ namespace UniGetUI
                     fileContents = await client.GetStringAsync("https://www.marticliment.com/versions/unigetui.ver");
                 }
 
-
                 if (!fileContents.Contains("///"))
+                {
                     throw new FormatException("The updates file does not follow the FloatVersion///Sha256Hash format");
+                }
 
                 float LatestVersion = float.Parse(fileContents.Split("///")[0].Replace("\n", "").Trim(), CultureInfo.InvariantCulture);
                 string InstallerHash = fileContents.Split("///")[1].Replace("\n", "").Trim().ToLower();
@@ -393,8 +420,8 @@ namespace UniGetUI
                     {
                         client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                         HttpResponseMessage result = await client.GetAsync(DownloadUrl);
-                        using (FileStream fs = new(InstallerPath, FileMode.CreateNew))
-                            await result.Content.CopyToAsync(fs);
+                        using FileStream fs = new(InstallerPath, FileMode.CreateNew);
+                        await result.Content.CopyToAsync(fs);
                     }
 
                     string Hash = "";
@@ -409,18 +436,24 @@ namespace UniGetUI
 
                         banner.Title = CoreTools.Translate("WingetUI {0} is ready to be installed.", LatestVersion.ToString(CultureInfo.InvariantCulture));
                         banner.Message = CoreTools.Translate("The update will be installed upon closing WingetUI");
-                        banner.ActionButton = new Button();
-                        banner.ActionButton.Content = CoreTools.Translate("Update now");
+                        banner.ActionButton = new Button
+                        {
+                            Content = CoreTools.Translate("Update now")
+                        };
                         banner.ActionButton.Click += (sender, args) => { MainWindow.HideWindow(); };
                         banner.Severity = InfoBarSeverity.Success;
                         banner.IsOpen = true;
                         banner.IsClosable = true;
 
                         if (MainWindow.Visible)
+                        {
                             Logger.Debug("Waiting for mainWindow to be hidden");
+                        }
 
                         while (MainWindow.Visible)
+                        {
                             await Task.Delay(100);
+                        }
 
                         if (Settings.Get("DisableAutoUpdateWingetUI"))
                         {
@@ -475,17 +508,18 @@ namespace UniGetUI
                 Logger.Error(e);
 
                 if (round >= 3)
+                {
                     return;
+                }
 
                 await Task.Delay(600000); // Try again in 10 minutes
                 UpdateUniGetUIIfPossible(round + 1);
             }
         }
 
-        public void RestartApp()
+        public void KillAndRestart()
         {
-            Logger.Info(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
-            Process.Start(Environment.GetCommandLineArgs()[0].Replace(".dll", ".exe"));
+            Process.Start(CoreData.UniGetUIExecutableFile);
             DisposeAndQuit(0);
         }
     }

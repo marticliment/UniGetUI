@@ -12,6 +12,8 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class ReleaseNotes : Page
     {
+
+        public event EventHandler<EventArgs>? Close;
         public ReleaseNotes()
         {
             InitializeComponent();
@@ -32,6 +34,9 @@ namespace UniGetUI.Interface.Dialogs
             WebView.Close();
         }
 
-
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

@@ -19,12 +19,15 @@
                 <Setter Property="Height" Value="36"/>
             </Style>
 
+            <FontFamily x:Key="SymbolFont">/Assets/Symbols/Font/fonts/UniGetUI-Symbols.ttf#UniGetUI-Symbols</FontFamily>
+
+
             <Style TargetType="MenuFlyoutPresenter" x:Name="BetterContextMenu" BasedOn="{StaticResource DefaultMenuFlyoutPresenterStyle}">
                 <Setter Property="CornerRadius" Value="8"/>
                 <Setter Property="Margin" Value="0"/>
                 <Setter Property="BorderBrush" Value="{ThemeResource DividerStrokeColorDefaultBrush}"/>
             </Style>
-            
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

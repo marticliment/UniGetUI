@@ -19,9 +19,13 @@ namespace UniGetUI.Core.Tools.Tests
             Assert.Equal(CoreTools.Translate(textEntry), langEngine.Translate(textEntry));
 
             if (TranslationExists)
+            {
                 Assert.NotEqual(CoreTools.Translate(textEntry), textEntry);
+            }
             else
+            {
                 Assert.Equal(CoreTools.Translate(textEntry), textEntry);
+            }
 
             Assert.Equal(CoreTools.AutoTranslated(textEntry), textEntry);
         }
@@ -85,18 +89,22 @@ namespace UniGetUI.Core.Tools.Tests
                 Assert.NotEqual(string1, string3);
             }
 
-            foreach (string s in new string[] { string1, string2, string3})
+            foreach (string s in new[] { string1, string2, string3 })
+            {
                 foreach (char c in s)
-                   Assert.True("abcdefghijklmnopqrstuvwxyz0123456789".Contains(c));
+                {
+                    Assert.True("abcdefghijklmnopqrstuvwxyz0123456789".Contains(c));
+                }
+            }
         }
 
         [Theory]
         [InlineData("", 0)]
         [InlineData("https://invalid.url.com/this/is/an/invalid.php?file=to_test&if=the&code_returns=zero", 0)]
-        [InlineData("https://www.marticliment.com/wingetui/wingetui_size_test.txt", 460)]
+        [InlineData("https://www.marticliment.com/unigetui/wingetui_size_test.txt", 460)]
         public async Task TestFileSizeLoader(string uri, long expectedSize)
         {
-            double size = await CoreTools.GetFileSizeAsync(uri != ""? new Uri(uri): null);
+            double size = await CoreTools.GetFileSizeAsync(uri != "" ? new Uri(uri) : null);
             Assert.Equal(expectedSize / 1048576, size);
         }
 

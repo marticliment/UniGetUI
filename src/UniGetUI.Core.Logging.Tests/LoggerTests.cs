@@ -1,4 +1,5 @@
-﻿namespace UniGetUI.Core.Logging.Tests
+#pragma warning disable CA2201
+namespace UniGetUI.Core.Logging.Tests
 {
     public class LoggerTests
     {

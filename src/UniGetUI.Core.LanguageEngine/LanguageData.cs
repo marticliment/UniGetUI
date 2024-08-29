@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using UniGetUI.Core.Classes;
@@ -10,17 +10,16 @@ namespace UniGetUI.Core.Language
 {
     public static class LanguageData
     {
-        /// <summary>
-        /// Returns 
-        /// </summary>
         private static Person[]? __translators_list;
-        
+
         public static Person[] TranslatorsList
         {
             get
             {
                 if (__translators_list == null)
+                {
                     __translators_list = LoadLanguageTranslatorList();
+                }
 
                 return __translators_list;
             }
@@ -29,9 +28,13 @@ namespace UniGetUI.Core.Language
         private static ReadOnlyDictionary<string, string>? __language_reference;
         public static ReadOnlyDictionary<string, string> LanguageReference
         {
-            get {
+            get
+            {
                 if (__language_reference == null)
+                {
                     __language_reference = LoadLanguageReference();
+                }
+
                 return __language_reference;
             }
         }
@@ -42,37 +45,44 @@ namespace UniGetUI.Core.Language
             get
             {
                 if (__translation_percentages == null)
+                {
                     __translation_percentages = LoadTranslationPercentages();
+                }
+
                 return __translation_percentages;
             }
         }
 
         private static ReadOnlyDictionary<string, string> LoadTranslationPercentages()
         {
-            JsonObject? val = JsonObject.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "TranslatedPercentages.json"))) as JsonObject;
-            if (val != null)
+            if (JsonObject.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "TranslatedPercentages.json"))) is JsonObject val)
+            {
                 return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("404%" + x.Key)).ToString()));
-            else
-                return new(new Dictionary<string, string>());
+            }
+
+            return new(new Dictionary<string, string>());
         }
 
         private static ReadOnlyDictionary<string, string> LoadLanguageReference()
         {
-            JsonObject? val = JsonObject.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "LanguagesReference.json"))) as JsonObject;
-            if (val != null)
+            if (JsonObject.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "LanguagesReference.json"))) is JsonObject val)
+            {
                 return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("NoNameLang_" + x.Key)).ToString()));
-            else
-                return new(new Dictionary<string, string>());
+            }
+
+            return new(new Dictionary<string, string>());
         }
 
         private static Person[] LoadLanguageTranslatorList()
         {
             string JsonContents = File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "Translators.json"));
-            JsonObject? TranslatorsInfo = JsonNode.Parse(JsonContents) as JsonObject;
 
-            if (TranslatorsInfo == null) return [];
+            if (JsonNode.Parse(JsonContents) is not JsonObject TranslatorsInfo)
+            {
+                return [];
+            }
 
-            List<Person> result = new();
+            List<Person> result = [];
             foreach (KeyValuePair<string, JsonNode?> langKey in TranslatorsInfo)
             {
                 if (!LanguageReference.ContainsKey(langKey.Key))
@@ -85,11 +95,16 @@ namespace UniGetUI.Core.Language
                 bool LangShown = false;
                 foreach (JsonNode? translator in TranslatorsForLang)
                 {
-                    if (translator is null) continue;
+                    if (translator is null)
+                    {
+                        continue;
+                    }
 
                     Uri? url = null;
                     if (translator["link"] != null && translator["link"]?.ToString() != "")
+                    {
                         url = new Uri((translator["link"] ?? "").ToString());
+                    }
 
                     Person person = new(
                         Name: (url != null ? "@" : "") + (translator["name"] ?? "").ToString(),

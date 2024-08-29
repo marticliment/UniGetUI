@@ -21,7 +21,7 @@ try:
                         print("Package failed:", package, data["icons_and_screenshots"][package]["icon"])
                         with open("invalid_urls.txt", "a") as f:
                             f.write(data["icons_and_screenshots"][package]["icon"] + "\n")
-                    elif response.status_code != 200 and response.status_code != 403:
+                    elif response.status_code not in (200, 403):
                         print(response.status_code, "failed for:", data["icons_and_screenshots"][package]["icon"])
 
             except requests.exceptions.ConnectionError:
@@ -29,7 +29,7 @@ try:
                 try:
                     if data["icons_and_screenshots"][package]["icon"] != "":
                         response = requests.get(data["icons_and_screenshots"][package]["icon"])
-                        if response.status_code == 403 or response.status_code == 404:
+                        if response.status_code in (403, 404):
                             print("Package failed:", package, data["icons_and_screenshots"][package]["icon"])
                         elif response.status_code != 200:
                             response = requests.get(data["icons_and_screenshots"][package]["icon"])

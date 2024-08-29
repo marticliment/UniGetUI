@@ -1,6 +1,6 @@
+using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System.Diagnostics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -12,7 +12,7 @@ namespace UniGetUI.Interface.Dialogs
     /// </summary>
     public sealed partial class HelpDialog : Page
     {
-        bool Initialized = false;
+        private bool Initialized;
         public HelpDialog()
         {
             InitializeComponent();
@@ -24,10 +24,14 @@ namespace UniGetUI.Interface.Dialogs
                 if (e.Uri.ToString().Contains("marticliment.com") && !e.Uri.ToString().Contains("isWingetUIIframe"))
                 {
                     e.Cancel = true;
-                    if (e.Uri.ToString().Contains("?"))
+                    if (e.Uri.ToString().Contains('?'))
+                    {
                         WebView.Source = new Uri(e.Uri.ToString() + "&isWingetUIIframe");
+                    }
                     else
+                    {
                         WebView.Source = new Uri(e.Uri.ToString() + "?isWingetUIIframe");
+                    }
                 }
             };
             WebView.NavigationCompleted += (s, e) => { ProgressBar.Visibility = Visibility.Collapsed; };
@@ -43,33 +47,43 @@ namespace UniGetUI.Interface.Dialogs
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             if (Initialized && WebView.CanGoBack)
+            {
                 WebView.GoBack();
+            }
         }
 
         private void RightButton_Click(object sender, RoutedEventArgs e)
         {
 
             if (Initialized && WebView.CanGoForward)
+            {
                 WebView.GoForward();
+            }
         }
 
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
 
             if (Initialized)
+            {
                 WebView.Source = new Uri("https://marticliment.com/unigetui/help");
+            }
         }
 
         private void ReloadButton_Click(object sender, RoutedEventArgs e)
         {
             if (Initialized)
+            {
                 WebView.Reload();
+            }
         }
 
         private void BrowserButton_Click(object sender, RoutedEventArgs e)
         {
             if (Initialized)
+            {
                 Process.Start(new ProcessStartInfo { FileName = WebView.Source.ToString().Replace("?isWingetUIIframe", "").Replace("&isWingetUIIframe", ""), UseShellExecute = true });
+            }
         }
     }
 }

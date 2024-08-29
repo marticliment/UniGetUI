@@ -1,4 +1,4 @@
-﻿namespace UniGetUI.Core.Classes
+namespace UniGetUI.Core.Classes
 {
     public abstract class SingletonBase<T> where T : SingletonBase<T>
     {
@@ -6,7 +6,5 @@
             new(() => (Activator.CreateInstance(typeof(T), true) as T)!);
 
         public static T Instance => Lazy.Value;
-
-        protected SingletonBase() { }
     }
 }

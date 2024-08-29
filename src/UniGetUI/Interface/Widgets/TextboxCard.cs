@@ -9,96 +9,61 @@ using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public class TextboxEventArgs : EventArgs
-    {
-
-        public TextboxEventArgs()
-        {
-        }
-    }
-
     public sealed class TextboxCard : SettingsCard
     {
-        private TextBox _textbox = new();
-        private HyperlinkButton _helpbutton = new();
+        private readonly TextBox _textbox = new();
+        private readonly HyperlinkButton _helpbutton = new();
 
+        private string setting_name = "";
         public string SettingName
         {
-            get => (string)GetValue(SettingProperty);
-            set => SetValue(SettingProperty, value);
+            set {
+                setting_name = value;
+                _textbox.Text = Settings.GetValue(setting_name);
+                _textbox.TextChanged += (_, _) => SaveValue();
+            }
         }
 
         public string Placeholder
         {
-            get => (string)GetValue(PlaceholderProperty);
-            set => SetValue(PlaceholderProperty, value);
+            set => _textbox.PlaceholderText = CoreTools.Translate(value);
         }
 
         public string Text
         {
-            get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
+            set => Header = CoreTools.Translate(value);
         }
 
         public Uri HelpUrl
         {
-            get => (Uri)GetValue(HelpUrlProperty);
-            set => SetValue(HelpUrlProperty, value);
+            set
+            {
+                _helpbutton.NavigateUri = value;
+                _helpbutton.Visibility = Visibility.Visible;
+                _helpbutton.Content = CoreTools.Translate("More info");
+            }
         }
 
-        DependencyProperty PlaceholderProperty;
-
-        DependencyProperty SettingProperty;
-
-        DependencyProperty TextProperty;
-
-        DependencyProperty HelpUrlProperty;
-
-        public event EventHandler<TextboxEventArgs>? ValueChanged;
+        public event EventHandler<EventArgs>? ValueChanged;
 
         public TextboxCard()
         {
-            TextProperty = DependencyProperty.Register(
-            nameof(Text),
-            typeof(string),
-            typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { Header = CoreTools.Translate((string)e.NewValue); })));
 
-            PlaceholderProperty = DependencyProperty.Register(
-            nameof(Placeholder),
-            typeof(string),
-            typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) => { _textbox.PlaceholderText = CoreTools.Translate((string)e.NewValue); })));
-
-            SettingProperty = DependencyProperty.Register(
-            nameof(SettingName),
-            typeof(string),
-            typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
+            _helpbutton = new HyperlinkButton
             {
-                _textbox.Text = Settings.GetValue((string)e.NewValue);
-                _textbox.TextChanged += (sender, e) => { SaveValue(); };
-            })));
+                Visibility = Visibility.Collapsed
+            };
 
-            HelpUrlProperty = DependencyProperty.Register(
-            nameof(HelpUrl),
-            typeof(Uri),
-            typeof(CheckboxCard),
-            new PropertyMetadata(default(string), new PropertyChangedCallback((d, e) =>
+            _textbox = new TextBox
             {
-                _helpbutton.NavigateUri = (Uri)e.NewValue;
-                _helpbutton.Visibility = Visibility.Visible;
-                _helpbutton.Content = CoreTools.Translate("More info");
-            })));
+                MinWidth = 200,
+                MaxWidth = 300
+            };
 
-            _helpbutton = new HyperlinkButton();
-            _helpbutton.Visibility = Visibility.Collapsed;
-
-            _textbox = new TextBox();
-            _textbox.MinWidth = 200;
-
-            StackPanel s = new();
-            s.Orientation = Orientation.Horizontal;
+            StackPanel s = new()
+            {
+                Orientation = Orientation.Horizontal
+            };
             s.Children.Add(_helpbutton);
             s.Children.Add(_textbox);
 
@@ -110,16 +75,24 @@ namespace UniGetUI.Interface.Widgets
         {
             string SanitizedText = _textbox.Text;
 
-            if (SettingName.Contains("File"))
+            if (setting_name.Contains("File"))
+            {
                 foreach (char rem in "#%&{}\\/<>*?$!'\":;@`|~")
+                {
                     SanitizedText = SanitizedText.Replace(rem.ToString(), "");
+                }
+            }
 
             if (SanitizedText != "")
-                Settings.SetValue(SettingName, SanitizedText);
+            {
+                Settings.SetValue(setting_name, SanitizedText);
+            }
             else
-                Settings.Set(SettingName, false);
-            TextboxEventArgs args = new();
-            ValueChanged?.Invoke(this, args);
+            {
+                Settings.Set(setting_name, false);
+            }
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
         }
 
     }

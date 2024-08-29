@@ -1,4 +1,3 @@
-﻿using Jeffijoe.MessageFormat;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net;
@@ -19,31 +18,31 @@ namespace UniGetUI.Core.Tools
             AutomaticDecompression = DecompressionMethods.All
         };
 
-        private static LanguageEngine? LanguageEngine;
+        private static LanguageEngine LanguageEngine = new();
 
         /// <summary>
         /// Translate a string to the current language
         /// </summary>
         /// <param name="text">The string to translate</param>
         /// <returns>The translated string if available, the original string otherwise</returns>
-        public static string Translate(string text) {
-            if(LanguageEngine == null) LanguageEngine = new LanguageEngine();
+        public static string Translate(string text)
+        {
             return LanguageEngine.Translate(text);
         }
 
         public static string Translate(string text, Dictionary<string, object?> dict)
         {
-            return MessageFormatter.Format(Translate(text), dict);
+            return LanguageEngine.Translate(text, dict);
         }
 
         public static string Translate(string text, params object[] values)
         {
-            Dictionary<string, object?> dict = new();
+            Dictionary<string, object?> dict = [];
             foreach ((object item, int index) in values.Select((item, index) => (item, index)))
             {
                 dict.Add(index.ToString(), item);
             }
-            return MessageFormatter.Format(Translate(text), dict);
+            return Translate(text, dict);
         }
 
         public static void ReloadLanguageEngineInstance(string ForceLanguage = "")
@@ -54,8 +53,6 @@ namespace UniGetUI.Core.Tools
         /// <summary>
         /// Dummy function to capture the strings that need to be translated but the translation is handled by a custom widget
         /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
         public static string AutoTranslated(string text)
         {
             return text;
@@ -76,42 +73,46 @@ namespace UniGetUI.Core.Tools
         /// Finds an executable in path and returns its location
         /// </summary>
         /// <param name="command">The executable alias to find</param>
-        /// <returns>A tuple containing: a boolean hat represents wether the path was found or not; the path to the file if found.</returns>
+        /// <returns>A tuple containing: a boolean hat represents whether the path was found or not; the path to the file if found.</returns>
         public static async Task<Tuple<bool, string>> Which(string command)
         {
             command = command.Replace(";", "").Replace("&", "").Trim();
             Logger.Debug($"Begin \"which\" search for command {command}");
             Process process = new()
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
-                    FileName = "cmd.exe",
-                    Arguments = "/C where " + command,
+                    FileName = Path.Join(Environment.SystemDirectory, "where.exe"),
+                    Arguments = command,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                    StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
+                    StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
                 }
             };
             process.Start();
             string? line = await process.StandardOutput.ReadLineAsync();
             string output;
             if (line == null)
+            {
                 output = "";
+            }
             else
+            {
                 output = line.Trim();
+            }
+
             await process.WaitForExitAsync();
             if (process.ExitCode != 0 || output == "")
             {
                 Logger.ImportantInfo($"Command {command} was not found on the system");
                 return new Tuple<bool, string>(false, "");
             }
-            else
-            {
-                Logger.Debug($"Command {command} was found on {output}");
-                return new Tuple<bool, string>(File.Exists(output), output);
-            }
+
+            Logger.Debug($"Command {command} was found on {output}");
+            return new Tuple<bool, string>(File.Exists(output), output);
         }
 
         /// <summary>
@@ -126,9 +127,13 @@ namespace UniGetUI.Core.Tools
             for (int i = 0; i < name.Length; i++)
             {
                 if (i == 0 || name[i - 1] == ' ')
+                {
                     newName += name[i].ToString().ToUpper();
+                }
                 else
+                {
                     newName += name[i];
+                }
             }
             return newName;
         }
@@ -152,7 +157,7 @@ namespace UniGetUI.Core.Tools
             string LangName = "Unknown";
             try
             {
-                LangName = Translate("langName");
+                LangName = LanguageEngine.Locale;
             }
             catch { }
 
@@ -167,17 +172,16 @@ namespace UniGetUI.Core.Tools
 
 Crash Message: {e.Message}
 
-Crash Traceback: 
+Crash Traceback:
 {e.StackTrace}";
 
             Console.WriteLine(Error_String);
-
 
             string ErrorBody = "https://www.marticliment.com/error-report/?appName=UniGetUI^&errorBody=" + Uri.EscapeDataString(Error_String.Replace("\n", "{l}"));
 
             Console.WriteLine(ErrorBody);
 
-            using System.Diagnostics.Process cmd = new();
+            using Process cmd = new();
             cmd.StartInfo.FileName = "cmd.exe";
             cmd.StartInfo.RedirectStandardInput = true;
             cmd.StartInfo.RedirectStandardOutput = true;
@@ -188,7 +192,6 @@ Crash Traceback:
             cmd.StandardInput.WriteLine("exit");
             cmd.WaitForExit();
             Environment.Exit(1);
-
         }
 
         /// <summary>
@@ -217,7 +220,7 @@ Crash Traceback:
         {
             try
             {
-                return (new WindowsPrincipal(WindowsIdentity.GetCurrent()))
+                return new WindowsPrincipal(WindowsIdentity.GetCurrent())
                           .IsInRole(WindowsBuiltInRole.Administrator);
             }
             catch (Exception e)
@@ -240,8 +243,10 @@ Crash Traceback:
 
         public static async Task<long> GetFileSizeAsyncAsLong(Uri? url)
         {
-            if(url == null)
+            if (url == null)
+            {
                 return 0;
+            }
 
             try
             {
@@ -250,8 +255,7 @@ Crash Traceback:
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
                 req.Method = "HEAD";
                 WebResponse resp = await req.GetResponseAsync();
-                long ContentLength;
-                if (long.TryParse(resp.Headers.Get("Content-Length"), out ContentLength))
+                if (long.TryParse(resp.Headers.Get("Content-Length"), out long ContentLength))
                 {
                     return ContentLength;
                 }
@@ -279,7 +283,9 @@ Crash Traceback:
                 foreach (char _char in Version)
                 {
                     if (char.IsDigit(_char))
+                    {
                         _ver += _char;
+                    }
                     else if (_char == '.')
                     {
                         if (!_dotAdded)
@@ -290,13 +296,16 @@ Crash Traceback:
                     }
                 }
                 double res = -1;
-                if (_ver != "" && _ver != ".")
+                if (_ver is not "" and not ".")
+                {
                     try
                     {
                         double val = double.Parse(_ver, CultureInfo.InvariantCulture);
                         return val;
                     }
                     catch { }
+                }
+
                 return res;
             }
             catch
@@ -335,18 +344,26 @@ Crash Traceback:
         /// <returns>a string? instance</returns>
         public static string? GetStringOrNull(string? value)
         {
-            if (value == "") return null;
+            if (value == "")
+            {
+                return null;
+            }
+
             return value;
         }
 
         /// <summary>
-        /// Returns a new Uri if the string is not empty. Returns null otherwhise
+        /// Returns a new Uri if the string is not empty. Returns null otherwise
         /// </summary>
         /// <param name="url">The null, empty or valid string</param>
         /// <returns>an Uri? instance</returns>
         public static Uri? GetUriOrNull(string? url)
         {
-            if (url == "" || url == null) return null;
+            if (url is "" or null)
+            {
+                return null;
+            }
+
             return new Uri(url);
         }
 
@@ -355,19 +372,21 @@ Crash Traceback:
         /// </summary>
         public static async Task CacheUACForCurrentProcess()
         {
-            Logger.Info("Caching admin rights for process id " + Process.GetCurrentProcess().Id);
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Logger.Info("Caching admin rights for process id " + Environment.ProcessId);
+            Process p = new()
             {
-                FileName = CoreData.GSudoPath,
-                Arguments = "cache on --pid " + Process.GetCurrentProcess().Id + " -d 1",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8,
-            };  
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = CoreData.GSudoPath,
+                    Arguments = "cache on --pid " + Environment.ProcessId + " -d 1",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = Encoding.UTF8,
+                }
+            };
             p.Start();
             await p.WaitForExitAsync();
         }
@@ -377,18 +396,20 @@ Crash Traceback:
         /// </summary>
         public static async Task ResetUACForCurrentProcess()
         {
-            Logger.Info("Resetting administrator rights cache for process id " + Process.GetCurrentProcess().Id);
-            Process p = new();
-            p.StartInfo = new ProcessStartInfo()
+            Logger.Info("Resetting administrator rights cache for process id " + Environment.ProcessId);
+            Process p = new()
             {
-                FileName = CoreData.GSudoPath,
-                Arguments = "cache off --pid " + Process.GetCurrentProcess().Id,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8,
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = CoreData.GSudoPath,
+                    Arguments = "cache off --pid " + Environment.ProcessId,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = Encoding.UTF8,
+                }
             };
             p.Start();
             await p.WaitForExitAsync();
@@ -399,12 +420,57 @@ Crash Traceback:
         /// The long integer is built with the first half of the MD5 sum of the given string
         /// </summary>
         /// <param name="inputString">A non-empty string</param>
-        /// <returns>A long integer containing the first half of the bytes resultng from MD5suming inputString</returns>
+        /// <returns>A long integer containing the first half of the bytes resulting from MD5suming inputString</returns>
         public static long HashStringAsLong(string inputString)
         {
             byte[] bytes = MD5.HashData(Encoding.UTF8.GetBytes(inputString));
             return BitConverter.ToInt64(bytes, 0);
         }
+
+        /// <summary>
+        /// Creates a symbolic link between directories
+        /// </summary>
+        /// <param name="linkPath">The location of the link to be created</param>
+        /// <param name="targetPath">The location of the real folder where to point</param>
+        public static async Task CreateSymbolicLinkDir(string linkPath, string targetPath)
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "cmd.exe",
+                Arguments = $"/c mklink /D \"{linkPath}\" \"{targetPath}\"",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+
+            Process? p = Process.Start(startInfo);
+            if (p is not null)
+            {
+                await p.WaitForExitAsync();
+            }
+
+            if (p is null || p.ExitCode != 0)
+            {
+                throw new InvalidOperationException(
+                    $"The operation did not complete successfully: \n{p?.StandardOutput.ReadToEnd()}\n{p?.StandardError.ReadToEnd()}\n");
+            }
+        }
+
+        /// <summary>
+        /// Will check whether the given folder is a symbolic link
+        /// </summary>
+        /// <param name="path">The folder to check</param>
+        /// <exception cref="FileNotFoundException"></exception>
+        public static bool IsSymbolicLinkDir(string path)
+        {
+            if (!Directory.Exists(path) && !File.Exists(path))
+            {
+                throw new FileNotFoundException("The specified path does not exist.", path);
+            }
+
+            var attributes = File.GetAttributes(path);
+            return (attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint;
+        }
     }
 }
-
