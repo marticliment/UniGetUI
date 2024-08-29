@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json.Nodes;
+using Windows.System;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -196,6 +197,12 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         protected override Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
         {
             throw new NotImplementedException();
+        }
+
+        protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+        {
+            return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scoop", "apps",
+                package.Id, "current");
         }
 
 #pragma warning disable

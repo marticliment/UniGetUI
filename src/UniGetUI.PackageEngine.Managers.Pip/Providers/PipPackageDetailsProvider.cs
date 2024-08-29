@@ -4,6 +4,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -147,6 +148,12 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         protected override Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
         {
             throw new NotImplementedException();
+        }
+
+        protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+        {
+            var full_path = Path.Join(Path.GetDirectoryName(Manager.Status.ExecutablePath), "Lib", "site-packages", package.Id);
+            return Directory.Exists(full_path) ? full_path : Path.GetDirectoryName(full_path);
         }
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
