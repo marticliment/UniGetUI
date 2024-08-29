@@ -18,9 +18,15 @@ namespace UniGetUI.Interface.SoftwarePages
     {
         private bool HasDoneBackup;
 
-        private BetterMenuItem? MenuAsAdmin;
-        private BetterMenuItem? MenuInteractive;
-        private BetterMenuItem? MenuRemoveData;
+        BetterMenuItem? MenuAsAdmin;
+        BetterMenuItem? MenuInteractive;
+        BetterMenuItem? MenuRemoveData;
+        private BetterMenuItem? MenuInstallationOptions;
+        private BetterMenuItem? MenuReinstallPackage;
+        private BetterMenuItem? MenuUninstallThenReinstall;
+        private BetterMenuItem? MenuIgnoreUpdates;
+        private BetterMenuItem? MenuSharePackage;
+        private BetterMenuItem? MenuPackageDetails;
 
         public InstalledPackagesPage()
         : base(new PackagesPageData
@@ -61,14 +67,14 @@ namespace UniGetUI.Interface.SoftwarePages
 
             menu.Items.Add(new MenuFlyoutSeparator { Height = 5 });
 
-            BetterMenuItem menuInstallSettings = new()
+            MenuInstallationOptions = new()
             {
                 Text = "Installation options",
                 IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
-            menuInstallSettings.Click += MenuInstallSettings_Invoked;
-            menu.Items.Add(menuInstallSettings);
+            MenuInstallationOptions.Click += MenuInstallSettings_Invoked;
+            menu.Items.Add(MenuInstallationOptions);
 
             menu.Items.Add(new MenuFlyoutSeparator());
 
@@ -98,50 +104,50 @@ namespace UniGetUI.Interface.SoftwarePages
 
             menu.Items.Add(new MenuFlyoutSeparator());
 
-            BetterMenuItem menuReinstall = new()
+            MenuReinstallPackage = new()
             {
                 Text = "Reinstall package",
                 IconName = IconType.Download
             };
-            menuReinstall.Click += MenuReinstall_Invoked;
-            menu.Items.Add(menuReinstall);
+            MenuReinstallPackage.Click += MenuReinstall_Invoked;
+            menu.Items.Add(MenuReinstallPackage);
 
-            BetterMenuItem menuUninstallThenReinstall = new()
+            MenuUninstallThenReinstall = new()
             {
                 Text = "Uninstall package, then reinstall it",
                 IconName = IconType.Undelete
             };
-            menuUninstallThenReinstall.Click += MenuUninstallThenReinstall_Invoked;
-            menu.Items.Add(menuUninstallThenReinstall);
+            MenuUninstallThenReinstall.Click += MenuUninstallThenReinstall_Invoked;
+            menu.Items.Add(MenuUninstallThenReinstall);
 
             menu.Items.Add(new MenuFlyoutSeparator());
 
-            BetterMenuItem menuIgnorePackage = new()
+            MenuIgnoreUpdates = new()
             {
                 Text = "Ignore updates for this package",
                 IconName = IconType.Pin
             };
-            menuIgnorePackage.Click += MenuIgnorePackage_Invoked;
-            menu.Items.Add(menuIgnorePackage);
+            MenuIgnoreUpdates.Click += MenuIgnorePackage_Invoked;
+            menu.Items.Add(MenuIgnoreUpdates);
 
             menu.Items.Add(new MenuFlyoutSeparator());
 
-            BetterMenuItem menuShare = new()
+            MenuSharePackage = new()
             {
                 Text = "Share this package",
                 IconName = IconType.Share
             };
-            menuShare.Click += MenuShare_Invoked;
-            menu.Items.Add(menuShare);
+            MenuSharePackage.Click += MenuShare_Invoked;
+            menu.Items.Add(MenuSharePackage);
 
-            BetterMenuItem menuDetails = new()
+            MenuPackageDetails = new()
             {
                 Text = "Package details",
                 IconName = IconType.Info_Round,
                 KeyboardAcceleratorTextOverride = "Enter"
             };
-            menuDetails.Click += MenuDetails_Invoked;
-            menu.Items.Add(menuDetails);
+            MenuPackageDetails.Click += MenuDetails_Invoked;
+            menu.Items.Add(MenuPackageDetails);
 
             return menu;
         }
@@ -264,7 +270,15 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override void WhenShowingContextMenu(IPackage package)
         {
-            if (MenuAsAdmin == null || MenuInteractive == null || MenuRemoveData == null)
+            if (MenuAsAdmin == null
+                || MenuInteractive == null
+                || MenuRemoveData == null
+                || MenuInstallationOptions is null
+                || MenuUninstallThenReinstall is null
+                || MenuReinstallPackage is null
+                || MenuIgnoreUpdates is null
+                || MenuSharePackage is null
+                || MenuPackageDetails is null)
             {
                 Logger.Error("Menu items are null on InstalledPackagesTab");
                 return;
@@ -273,6 +287,15 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin.IsEnabled = package.Manager.Capabilities.CanRunAsAdmin;
             MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
             MenuRemoveData.IsEnabled = package.Manager.Capabilities.CanRemoveDataOnUninstall;
+
+            bool IS_LOCAL = package.Source.IsVirtualManager;
+
+            MenuInstallationOptions.IsEnabled = !IS_LOCAL;
+            MenuReinstallPackage.IsEnabled = !IS_LOCAL;
+            MenuUninstallThenReinstall.IsEnabled = !IS_LOCAL;
+            MenuIgnoreUpdates.IsEnabled = !IS_LOCAL;
+            MenuSharePackage.IsEnabled = !IS_LOCAL;
+            MenuPackageDetails.IsEnabled = !IS_LOCAL;
         }
 
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)

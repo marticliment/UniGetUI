@@ -19,6 +19,10 @@ namespace UniGetUI.Interface.SoftwarePages
 {
     public class PackageBundlesPage : AbstractPackagesPage
     {
+        BetterMenuItem? MenuInstallOptions;
+        BetterMenuItem? MenuInstall;
+        BetterMenuItem? MenuShare;
+        BetterMenuItem? MenuDetails;
         BetterMenuItem? MenuAsAdmin;
         BetterMenuItem? MenuInteractive;
         BetterMenuItem? MenuSkipHash;
@@ -44,32 +48,32 @@ namespace UniGetUI.Interface.SoftwarePages
 
             PageTitle = CoreTools.Translate("Package Bundles"),
             Glyph = "\uF133"
-        }) 
+        })
         {
         }
 
         public override BetterMenu GenerateContextMenu()
         {
             BetterMenu menu = new();
-            BetterMenuItem menuUninstall = new()
+            MenuInstall = new()
             {
                 Text = "Install",
                 IconName = IconType.Download,
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
-            menuUninstall.Click += MenuUninstall_Invoked;
-            menu.Items.Add(menuUninstall);
+            MenuInstall.Click += MenuUninstall_Invoked;
+            menu.Items.Add(MenuInstall);
 
             menu.Items.Add(new MenuFlyoutSeparator { Height = 5 });
 
-            BetterMenuItem menuInstallSettings = new()
+            MenuInstallOptions = new()
             {
                 Text = "Installation options",
                 IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
-            menuInstallSettings.Click += MenuInstallSettings_Invoked;
-            menu.Items.Add(menuInstallSettings);
+            MenuInstallOptions.Click += MenuInstallSettings_Invoked;
+            menu.Items.Add(MenuInstallOptions);
 
             menu.Items.Add(new MenuFlyoutSeparator());
 
@@ -108,22 +112,22 @@ namespace UniGetUI.Interface.SoftwarePages
             menu.Items.Add(menuRemoveFromList);
             menu.Items.Add(new MenuFlyoutSeparator());
 
-            BetterMenuItem menuShare = new()
+            MenuShare = new()
             {
                 Text = "Share this package",
                 IconName = IconType.Share
             };
-            menuShare.Click += MenuShare_Invoked;
-            menu.Items.Add(menuShare);
+            MenuShare.Click += MenuShare_Invoked;
+            menu.Items.Add(MenuShare);
 
-            BetterMenuItem menuDetails = new()
+            MenuDetails = new()
             {
                 Text = "Package details",
                 IconName = IconType.Info_Round,
                 KeyboardAcceleratorTextOverride = "Enter"
             };
-            menuDetails.Click += MenuDetails_Invoked;
-            menu.Items.Add(menuDetails);
+            MenuDetails.Click += MenuDetails_Invoked;
+            menu.Items.Add(MenuDetails);
 
             return menu;
         }
@@ -248,7 +252,7 @@ namespace UniGetUI.Interface.SoftwarePages
             foreach (IPackage package in packages)
             {
                 if(package is ImportedPackage imported)
-                { 
+                {
                     Logger.ImportantInfo($"Registering package {imported.Id} from manager {imported.Source.AsString}");
                     packages_to_install.Add(await imported.RegisterAndGetPackageAsync());
                 }
@@ -281,15 +285,27 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override void WhenShowingContextMenu(IPackage package)
         {
-            if (MenuAsAdmin == null || MenuInteractive == null || MenuSkipHash == null)
+            if (MenuAsAdmin is null
+                || MenuInteractive is null
+                || MenuSkipHash is null
+                || MenuDetails is null
+                || MenuShare is null
+                || MenuInstall is null
+                || MenuInstallOptions is null)
             {
                 Logger.Error("Menu items are null on InstalledPackagesTab");
                 return;
             }
 
-            MenuAsAdmin.IsEnabled = package.Manager.Capabilities.CanRunAsAdmin;
-            MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
-            MenuSkipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
+            bool IS_VALID = package as InvalidImportedPackage is null;
+
+            MenuAsAdmin.IsEnabled = IS_VALID && package.Manager.Capabilities.CanRunAsAdmin;
+            MenuInteractive.IsEnabled = IS_VALID && package.Manager.Capabilities.CanRunInteractively;
+            MenuSkipHash.IsEnabled = IS_VALID && package.Manager.Capabilities.CanSkipIntegrityChecks;
+            MenuDetails.IsEnabled = IS_VALID;
+            MenuShare.IsEnabled = IS_VALID;
+            MenuInstall.IsEnabled = IS_VALID;
+            MenuInstallOptions.IsEnabled = IS_VALID;
         }
 
         private async void MenuUninstall_Invoked(object sender, RoutedEventArgs args)
@@ -392,7 +408,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             try
             {
-                // Get file 
+                // Get file
                 // Save file
                 string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string> { "*.json", "*.yaml", "*.xml" }, CoreTools.Translate("Package bundle") + ".json");
                 if (file != String.Empty)
