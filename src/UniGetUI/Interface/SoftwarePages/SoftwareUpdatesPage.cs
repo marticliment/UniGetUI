@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -20,6 +21,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuAsAdmin;
         private BetterMenuItem? MenuInteractive;
         private BetterMenuItem? MenuskipHash;
+        private BetterMenuItem? MenuOpenInstallLocation;
 
         public SoftwareUpdatesPage()
         : base(new PackagesPageData
@@ -64,10 +66,14 @@ namespace UniGetUI.Interface.SoftwarePages
                 IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
-            menuInstallSettings.Click += (s, e) =>
+            menuInstallSettings.Click += (s, e) => ShowInstallationOptionsForPackage(SelectedItem);
+
+            MenuOpenInstallLocation = new()
             {
-                ShowInstallationOptionsForPackage(SelectedItem);
+                Text = "Open install location",
+                IconName = IconType.Launch,
             };
+            MenuOpenInstallLocation.Click += (s, e) => OpenPackageInstallLocation(SelectedItem);
 
             MenuAsAdmin = new BetterMenuItem
             {
@@ -136,6 +142,7 @@ namespace UniGetUI.Interface.SoftwarePages
             ContextMenu.Items.Add(menuInstall);
             ContextMenu.Items.Add(new MenuFlyoutSeparator());
             ContextMenu.Items.Add(menuInstallSettings);
+            ContextMenu.Items.Add(MenuOpenInstallLocation);
             ContextMenu.Items.Add(new MenuFlyoutSeparator());
             ContextMenu.Items.Add(MenuAsAdmin);
             ContextMenu.Items.Add(MenuInteractive);
@@ -155,7 +162,10 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override void WhenShowingContextMenu(IPackage package)
         {
-            if (MenuAsAdmin == null || MenuInteractive == null || MenuskipHash == null)
+            if (MenuAsAdmin is null
+                || MenuInteractive is null
+                || MenuskipHash is null
+                || MenuOpenInstallLocation is null)
             {
                 Logger.Error("Menu items are null on SoftwareUpdatesTab");
                 return;
@@ -164,6 +174,8 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin.IsEnabled = package.Manager.Capabilities.CanRunAsAdmin;
             MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
             MenuskipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
+
+            MenuOpenInstallLocation.IsEnabled = package.Manager.GetPackageInstallLocation(package) is not null;
         }
 
         public override void GenerateToolBar()

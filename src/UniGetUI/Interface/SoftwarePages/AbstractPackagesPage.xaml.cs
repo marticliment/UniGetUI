@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -657,6 +658,20 @@ namespace UniGetUI.Interface
             Logger.Warn(PAGE_ROLE.ToString());
             await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package, PAGE_ROLE);
         }
+
+        protected void OpenPackageInstallLocation(IPackage? package)
+        {
+            string? path = package?.Manager.GetPackageInstallLocation(package);
+
+            if(path is not null)
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = path,
+                    UseShellExecute = true,
+                    Verb = "open"
+                });
+        }
+
 
         protected void SharePackage(IPackage? package)
         {
