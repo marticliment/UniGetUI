@@ -1,6 +1,7 @@
 using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
+using Microsoft.Windows.AppNotifications;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;

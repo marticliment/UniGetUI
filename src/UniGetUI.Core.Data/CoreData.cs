@@ -164,8 +164,6 @@ namespace UniGetUI.Core.Data
 
         public static bool IsDaemon;
 
-        public static string ManagerLogs = "";
-
         private static int __volatile_notification_id_counter = 1235;
 
         /// <summary>
@@ -179,10 +177,8 @@ namespace UniGetUI.Core.Data
         /// <summary>
         /// The ID of the notification that is used to inform the user that updates are available
         /// </summary>
-        public static int UpdatesAvailableNotificationId
-        {
-            get => 1234;
-        }
+        public const int UpdatesAvailableNotificationId = 1234;
+
 
         /// <summary>
         /// A path pointing to the location where the app is installed

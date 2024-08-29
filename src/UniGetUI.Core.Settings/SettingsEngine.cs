@@ -10,6 +10,11 @@ namespace UniGetUI.Core.SettingsEngine
             return Get("DisableSystemTray") || Get("DisableNotifications");
         }
 
+        public static bool AreUpdatesNotificationsDisabled()
+        {
+            return AreNotificationsDisabled() || Settings.Get("DisableUpdatesNotifications");
+        }
+
         public static bool Get(string setting, bool invert = false)
         {
             return File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)) ^ invert;
