@@ -1,10 +1,12 @@
 using System.Globalization;
 using System.Net;
 using System.Text.RegularExpressions;
+using ABI.Windows.UI.Composition;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUIManagers = UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
@@ -89,6 +91,32 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             return FoundIcons.ToArray();
+        }
+
+        protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+        {
+            foreach (var base_path in new string[]
+                     {
+                         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+                         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs"),
+                         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "WinGet", "Packages"),
+                         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "WinGet", "Packages"),
+                         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "WinGet", "Packages"),
+                         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                     })
+            {
+                var path_with_name = Path.Join(base_path, package.Name);
+                if (Directory.Exists(path_with_name)) return path_with_name;
+                
+                var path_with_id = Path.Join(base_path, package.Id);
+                if (Directory.Exists(path_with_id)) return path_with_id;
+
+                var path_with_source = Path.Join(base_path, $"{package.Id}_{package.Source.Name}");
+                if (Directory.Exists(path_with_source)) return path_with_source;
+            }
+
+            return null;
         }
 
         private static async Task<string?> GetMicrosoftStorePackageManifest(IPackage package)
