@@ -1,0 +1,65 @@
+version = 1
+
+[[analyzers]]
+name = "python"
+enabled = true
+
+  [analyzers.meta]
+  runtime_version = "3.x.x"
+
+  [analyzers.pylint]
+  enabled = true
+  config = """
+  [MESSAGES CONTROL]
+  disable = C0111  # Disables missing docstring warnings
+  """
+
+[[analyzers]]
+name = "javascript"
+enabled = true
+
+  [analyzers.meta]
+  plugins = [
+    "react",
+    "vue",
+    "angular"
+  ]
+  environment = [
+    "nodejs",
+    "mocha",
+    "mongo",
+    "browser",
+    "jasmine",
+    "cypress",
+    "vitest",
+    "jquery",
+    "jest"
+  ]
+
+[[transformers]]
+name = "autopep8"
+enabled = false  # Disables autopep8 transformer
+
+[[transformers]]
+name = "isort"
+enabled = false  # Disables isort transformer
+
+[[transformers]]
+name = "black"
+enabled = false  # Disables black transformer
+
+[[transformers]]
+name = "yapf"
+enabled = false  # Disables yapf transformer
+
+[[transformers]]
+name = "ruff"
+enabled = false  # Disables ruff transformer
+
+[[transformers]]
+name = "standardjs"
+enabled = false  # Disables standardjs transformer
+
+[[transformers]]
+name = "prettier"
+enabled = false  # Disables prettier transformer

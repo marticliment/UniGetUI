@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Net;
+using System.Runtime.InteropServices.JavaScript;
 using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.Data
@@ -25,7 +26,17 @@ namespace UniGetUI.Core.Data
                 };
                 p.Start();
                 string contents = p.StandardOutput.ReadToEnd();
-                return int.Parse(contents.Split(':')[^1].Trim());
+                string purifiedString = "";
+
+                foreach (var c in contents.Split(':')[^1].Trim())
+                {
+                    if (c >= '0' && c <= '9')
+                    {
+                        purifiedString += c;
+                    }
+                }
+
+                return int.Parse(purifiedString);
             }
             catch (Exception e)
             {

@@ -1,11 +1,12 @@
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Reflection.Metadata;
 using ExternalLibraries.Clipboard;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -32,11 +33,6 @@ namespace UniGetUI.PackageEngine.Operations
             Compact,
         }
 
-        private string __button_text = "";
-        private string __line_info_text = "Please wait...";
-        private Uri __icon_source = new("ms-appx:///Assets/Images/package_color.png");
-        private string __operation_description = "$Package Install";
-        private SolidColorBrush? __progressbar_color;
         private OperationStatus __status = OperationStatus.Pending;
         private bool IsDialogOpen;
 
@@ -78,63 +74,24 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected string ButtonText
         {
-            get { return __button_text; }
-            set
-            {
-                __button_text = value; if (ActionButton != null)
-                {
-                    ActionButton.Content = __button_text;
-                }
-            }
+            set => ActionButton.Content = value;
         }
         protected string LineInfoText
         {
-            get { return __line_info_text; }
-            set
-            {
-                __line_info_text = value; if (OutputViewewBlock != null)
-                {
-                    OutputViewewBlock.Content = __line_info_text;
-                }
-            }
+            set => OutputViewewBlock.Content = value;
         }
         protected Uri IconSource
         {
-            get { return __icon_source; }
-            set
-            {
-                __icon_source = value; if (PackageIcon != null)
-                {
-                    PackageIcon.Source = new BitmapImage(__icon_source);
-                }
-            }
+            set => PackageIcon.Source = new BitmapImage(value);
         }
         protected string OperationTitle
         {
-            get { return __operation_description; }
-            set
-            {
-                __operation_description = value; if (InfoTextBlock != null)
-                {
-                    InfoTextBlock.Text = __operation_description;
-                }
-            }
-        }
-        protected SolidColorBrush? ProgressBarColor
-        {
-            get { return __progressbar_color; }
-            set
-            {
-                __progressbar_color = value; if (ProgressIndicator != null)
-                {
-                    ProgressIndicator.Foreground = __progressbar_color ?? null;
-                }
-            }
+            set => InfoTextBlock.Text = value;
         }
 
 #pragma warning disable CS0067
-        protected event EventHandler<OperationCancelledEventArgs>? CancelRequested;
-        protected event EventHandler<OperationCancelledEventArgs>? CloseRequested;
+        protected event EventHandler<OperationCanceledEventArgs>? CancelRequested;
+        protected event EventHandler<OperationCanceledEventArgs>? CloseRequested;
 #pragma warning restore CS0067
         protected Process Process = new();
         protected ObservableCollection<string> ProcessOutput = [];
@@ -145,23 +102,13 @@ namespace UniGetUI.PackageEngine.Operations
 
         public OperationStatus Status
         {
-            get { return __status; }
+            get => __status;
             set
             {
                 MainGrid.RequestedTheme = MainApp.Instance.MainWindow.ContentRoot.RequestedTheme;
                 __status = value;
                 switch (__status)
                 {
-
-                    /*
-                     *
-                     *
-        <SolidColorBrush x:Key="ProgressWaiting" Color="{ThemeResource SystemFillColorNeutralBrush}"/>
-        <SolidColorBrush x:Key="ProgressRunning" Color="{ThemeResource SystemFillColorAttentionBrush}"/>
-        <SolidColorBrush x:Key="ProgressSucceeded" Color="{ThemeResource SystemFillColorSuccessBrush}"/>
-        <SolidColorBrush x:Key="ProgressFailed" Color="{ThemeResource SystemFillColorCriticalBrush}"/>
-        <SolidColorBrush x:Key="ProgressCanceled" Color="{ThemeResource SystemFillColorCautionBrush}"/>
-                     * */
                     case OperationStatus.Pending:
                         ProgressIndicator.IsIndeterminate = false;
                         ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBrush"];
@@ -173,7 +120,6 @@ namespace UniGetUI.PackageEngine.Operations
                         ProgressIndicator.IsIndeterminate = true;
                         ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorAttentionBrush"];
                         MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorAttentionBackgroundBrush"];
-
                         ButtonText = CoreTools.Translate("Cancel");
                         break;
 
@@ -191,11 +137,12 @@ namespace UniGetUI.PackageEngine.Operations
                         ButtonText = CoreTools.Translate("Close");
                         break;
 
-                    case OperationStatus.Cancelled:
+                    case OperationStatus.Canceled:
                         ProgressIndicator.IsIndeterminate = false;
                         ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorCautionBrush"];
                         MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBackgroundBrush"];
                         ButtonText = CoreTools.Translate("Close");
+                        LineInfoText = CoreTools.Translate("Operation canceled by user");
                         break;
                 }
             }
@@ -313,11 +260,11 @@ namespace UniGetUI.PackageEngine.Operations
         {
             if (Status is OperationStatus.Pending or OperationStatus.Running)
             {
-                CancelButtonClicked(Status);
+                CancelButtonClicked();
             }
             else
             {
-                CloseButtonClicked(Status);
+                CloseButtonClicked();
             }
         }
 
@@ -336,25 +283,20 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        public void CancelButtonClicked(OperationStatus OldStatus)
+        public async void CancelButtonClicked()
         {
             RemoveFromQueue();
-            Status = OperationStatus.Cancelled;
-            LineInfoText = CoreTools.Translate("Operation cancelled");
 
-            if ((this as PackageOperation) != null)
-            {
-                ((PackageOperation)this).Package.Tag = PackageTag.Default;
-            }
-
-            if (OldStatus == OperationStatus.Running)
+            if (Status is OperationStatus.Running)
             {
                 Process.Kill();
-                ProcessOutput.Add("Operation was cancelled by the user!");
             }
+
+            await HandleCancelation();
+            Status = OperationStatus.Canceled;
         }
 
-        public void CloseButtonClicked(OperationStatus OldStatus)
+        public void CloseButtonClicked()
         {
             _ = Close();
         }
@@ -371,9 +313,10 @@ namespace UniGetUI.PackageEngine.Operations
             int oldIndex = -1;
             while (currentIndex != 0)
             {
-                if (Status == OperationStatus.Cancelled)
+                if (Status is OperationStatus.Canceled)
                 {
-                    return; // If the operation has been cancelled
+                    RemoveFromQueue();
+                    return;
                 }
 
                 currentIndex = MainApp.Instance.OperationQueue.IndexOf(this);
@@ -396,14 +339,13 @@ namespace UniGetUI.PackageEngine.Operations
             try
             {
 
-                if (Status == OperationStatus.Cancelled)
+                if (Status is OperationStatus.Canceled)
                 {
-                    return; // If the operation was cancelled, do nothing.
+                    return; // If the operation was canceled, do nothing.
                 }
 
-                MainApp.Instance.TooltipStatus.OperationsInProgress = MainApp.Instance.TooltipStatus.OperationsInProgress + 1;
+                MainApp.Instance.TooltipStatus.OperationsInProgress += 1;
 
-                Status = OperationStatus.Running;
                 LineInfoText = CoreTools.Translate("Launching subprocess...");
                 ProcessStartInfo startInfo = new()
                 {
@@ -418,7 +360,7 @@ namespace UniGetUI.PackageEngine.Operations
                     WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
                 };
 
-                Process = await BuildProcessInstance(startInfo);
+                Process = new Process { StartInfo = await BuildProcessInstance(startInfo) };
 
                 foreach (string infoLine in GenerateProcessLogHeader())
                 {
@@ -428,28 +370,34 @@ namespace UniGetUI.PackageEngine.Operations
                 ProcessOutput.Add("Process Executable     : " + Process.StartInfo.FileName);
                 ProcessOutput.Add("Process Call Arguments : " + Process.StartInfo.Arguments);
                 ProcessOutput.Add("Working Directory      : " + Process.StartInfo.WorkingDirectory);
-                ProcessOutput.Add("Process Start Time     : " + DateTime.Now.ToString());
+                ProcessOutput.Add("Process Start Time     : " + DateTime.Now);
 
                 Process.Start();
+                Status = OperationStatus.Running;
 
                 string? line;
                 while ((line = await Process.StandardOutput.ReadLineAsync()) != null)
                 {
                     if (line.Trim() != "")
                     {
-                        if (line.Contains("For the question below") || line.Contains("Would remove:")) // Mitigate chocolatey timeouts
+                        if (line.Contains("For the question below") ||
+                            line.Contains("Would remove:")) // Mitigate chocolatey timeouts
                         {
-                            Process.StandardInput.WriteLine("");
+                            await Process.StandardInput.WriteLineAsync("");
                         }
 
-                        LineInfoText = line.Trim();
-                        if (line.Length > 5 || ProcessOutput.Count == 0)
+                        if (Status is not OperationStatus.Canceled)
                         {
-                            ProcessOutput.Add("    | " + line);
-                        }
-                        else
-                        {
-                            ProcessOutput[^1] = "    | " + line;
+                            LineInfoText = line.Trim();
+
+                            if (line.Length > 5 || ProcessOutput.Count == 0)
+                            {
+                                ProcessOutput.Add("    | " + line);
+                            }
+                            else
+                            {
+                                ProcessOutput[^1] = "    | " + line;
+                            }
                         }
                     }
                 }
@@ -464,37 +412,49 @@ namespace UniGetUI.PackageEngine.Operations
 
                 await Process.WaitForExitAsync();
 
-                ProcessOutput.Add("Process Exit Code      : " + Process.ExitCode.ToString());
-                ProcessOutput.Add("Process End Time       : " + DateTime.Now.ToString());
+                ProcessOutput.Add("Process Exit Code      : " + Process.ExitCode);
+                ProcessOutput.Add("Process End Time       : " + DateTime.Now);
 
                 AfterFinshAction postAction = AfterFinshAction.ManualClose;
 
                 OperationVeredict OperationVeredict = await GetProcessVeredict(Process.ExitCode, ProcessOutput.ToArray());
 
-                if (Status != OperationStatus.Cancelled)
+
+                if (Status is not OperationStatus.Canceled)
                 {
                     switch (OperationVeredict)
                     {
-                        case OperationVeredict.Failed:
-                            Status = OperationStatus.Failed;
-                            RemoveFromQueue();
-                            MainApp.Instance.TooltipStatus.ErrorsOccurred = MainApp.Instance.TooltipStatus.ErrorsOccurred + 1;
-                            postAction = await HandleFailure();
-                            MainApp.Instance.TooltipStatus.ErrorsOccurred = MainApp.Instance.TooltipStatus.ErrorsOccurred - 1;
-                            break;
-
-                        case OperationVeredict.Succeeded:
+                        case OperationVeredict.Succeeded or OperationVeredict.RestartRequired:
                             Status = OperationStatus.Succeeded;
                             postAction = await HandleSuccess();
                             RemoveFromQueue();
+                            break;
+
+                        case OperationVeredict.Canceled:
+                            Status = OperationStatus.Canceled;
+                            RemoveFromQueue();
+                            postAction = AfterFinshAction.ManualClose;
+                            await HandleCancelation();
                             break;
 
                         case OperationVeredict.AutoRetry:
                             Status = OperationStatus.Pending;
                             postAction = AfterFinshAction.Retry;
                             break;
+
+                        case OperationVeredict.Failed:
+                            Status = OperationStatus.Failed;
+                            RemoveFromQueue();
+                            MainApp.Instance.TooltipStatus.ErrorsOccurred += 1;
+                            postAction = await HandleFailure();
+                            MainApp.Instance.TooltipStatus.ErrorsOccurred -= 1;
+                            break;
+
+                        default:
+                            throw new ArgumentException($"Unexpected OperationVeredict {OperationVeredict}");
                     }
                 }
+
 
                 switch (postAction)
                 {
@@ -556,7 +516,7 @@ namespace UniGetUI.PackageEngine.Operations
                 RemoveFromQueue();
                 try { Status = OperationStatus.Failed; } catch { }
             }
-            MainApp.Instance.TooltipStatus.OperationsInProgress = MainApp.Instance.TooltipStatus.OperationsInProgress - 1;
+            MainApp.Instance.TooltipStatus.OperationsInProgress -= 1;
         }
         protected async Task Close()
         {
@@ -573,10 +533,11 @@ namespace UniGetUI.PackageEngine.Operations
         }
 
         protected abstract void Initialize();
-        protected abstract Task<Process> BuildProcessInstance(ProcessStartInfo startInfo);
+        protected abstract Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo);
         protected abstract Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output);
         protected abstract Task<AfterFinshAction> HandleFailure();
         protected abstract Task<AfterFinshAction> HandleSuccess();
+        protected abstract Task HandleCancelation();
         protected abstract string[] GenerateProcessLogHeader();
 
         protected void Retry()

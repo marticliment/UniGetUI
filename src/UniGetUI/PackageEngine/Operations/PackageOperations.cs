@@ -1,6 +1,6 @@
+using System.Diagnostics;
 using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml.Controls;
-using System.Diagnostics;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -13,10 +13,10 @@ using UniGetUI.PackageEngine.PackageClasses;
 namespace UniGetUI.PackageEngine.Operations
 {
 
-    public class OperationCancelledEventArgs : EventArgs
+    public class OperationCanceledEventArgs : EventArgs
     {
         public OperationStatus OldStatus;
-        public OperationCancelledEventArgs(OperationStatus OldStatus)
+        public OperationCanceledEventArgs(OperationStatus OldStatus)
         {
             this.OldStatus = OldStatus;
         }
@@ -47,34 +47,37 @@ namespace UniGetUI.PackageEngine.Operations
             : this(package, InstallationOptions.FromPackage(package), role, IgnoreParallelInstalls)
         { }
 
-        protected sealed override async Task<Process> BuildProcessInstance(ProcessStartInfo startInfo)
+        protected sealed override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
-            if (Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
+            string operation_args = string.Join(" ", Package.Manager.GetOperationParameters(Package, Options, Role));
+
+            if (Package.OverridenOptions.RunAsAdministrator == true || Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
                     await CoreTools.CacheUACForCurrentProcess();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" " + Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetOperationParameters(Package, Options, Role));
+                startInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
             else
             {
                 startInfo.FileName = Package.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Package.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Package.Manager.GetOperationParameters(Package, Options, Role));
+                startInfo.Arguments = $"{Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
-            Process process = new()
-            {
-                StartInfo = startInfo
-            };
 
-            return process;
+            return startInfo;
+        }
+
+        protected override async Task HandleCancelation()
+        {
+            Package.SetTag(PackageTag.Default);
         }
 
 #pragma warning disable CS1998
         protected sealed override async Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
-            return Package.Manager.GetOperationResult(Package, Options, Role, Output, ReturnCode);
+            return Package.Manager.GetOperationResult(Package, Role, Output, ReturnCode);
         }
 #pragma warning restore CS1998
 
@@ -96,10 +99,10 @@ namespace UniGetUI.PackageEngine.Operations
             int oldIndex = -1;
             while (currentIndex != 0)
             {
-                if (Status == OperationStatus.Cancelled)
+                if (Status == OperationStatus.Canceled)
                 {
                     Package.Tag = PackageTag.Default;
-                    return; // If th operation has been cancelled
+                    return; // If the operation has been cancelled
                 }
                 currentIndex = MainApp.Instance.OperationQueue.IndexOf(this);
                 if (currentIndex != oldIndex)
@@ -224,7 +227,7 @@ namespace UniGetUI.PackageEngine.Operations
             IPackage package,
             bool IgnoreParallelInstalls = false)
             : base(package, OperationType.Update, IgnoreParallelInstalls) { }
-      
+
 
         protected override string[] GenerateProcessLogHeader()
         {
@@ -277,6 +280,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             LineInfoText = CoreTools.Translate("{package} was updated successfully", new Dictionary<string, object?> { { "package", Package.Name } });
 
+            Package.SetTag(PackageTag.Default);
             Package.GetInstalledPackage()?.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
 
@@ -384,6 +388,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             LineInfoText = CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?> { { "package", Package.Name } });
 
+            Package.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.Default);
             PEInterface.UpgradablePackagesLoader.Remove(Package);
             PEInterface.InstalledPackagesLoader.Remove(Package);
