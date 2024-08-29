@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -24,15 +26,16 @@ namespace UniGetUI.PackageEngine.Operations
 
     public abstract class PackageOperation : AbstractOperation
     {
-        public IPackage Package;
-        protected IInstallationOptions Options;
-        protected OperationType Role;
+        protected readonly IPackage Package;
+        protected readonly IInstallationOptions Options;
+        protected readonly OperationType Role;
+
         public PackageOperation(
             IPackage package,
             IInstallationOptions options,
             OperationType role,
             bool IgnoreParallelInstalls = false)
-        : base(IgnoreParallelInstalls)
+            : base(IgnoreParallelInstalls)
         {
             Package = package;
             Options = options;
@@ -45,20 +48,24 @@ namespace UniGetUI.PackageEngine.Operations
             OperationType role,
             bool IgnoreParallelInstalls = false)
             : this(package, InstallationOptions.FromPackage(package), role, IgnoreParallelInstalls)
-        { }
+        {
+        }
 
         protected sealed override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             string operation_args = string.Join(" ", Package.Manager.GetOperationParameters(Package, Options, Role));
 
-            if (Package.OverridenOptions.RunAsAdministrator == true || Options.RunAsAdministrator || Settings.Get("AlwaysElevate" + Package.Manager.Name))
+            if (Package.OverridenOptions.RunAsAdministrator == true || Options.RunAsAdministrator ||
+                Settings.Get("AlwaysElevate" + Package.Manager.Name))
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
                     await CoreTools.CacheUACForCurrentProcess();
                 }
+
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
+                startInfo.Arguments =
+                    $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
             else
             {
@@ -85,7 +92,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             if (!IGNORE_PARALLEL_OPERATION_SETTINGS &&
                 (Settings.Get("AllowParallelInstalls")
-                || Settings.Get($"AllowParallelInstallsForManager{Package.Manager.Name}")))
+                 || Settings.Get($"AllowParallelInstallsForManager{Package.Manager.Name}")))
             {
                 Logger.Debug("Parallel installs are allowed. Skipping queue check");
                 Package.SetTag(PackageTag.BeingProcessed);
@@ -104,18 +111,107 @@ namespace UniGetUI.PackageEngine.Operations
                     Package.Tag = PackageTag.Default;
                     return; // If the operation has been cancelled
                 }
+
                 currentIndex = MainApp.Instance.OperationQueue.IndexOf(this);
                 if (currentIndex != oldIndex)
                 {
                     LineInfoText = CoreTools.Translate("Operation on queue (position {0})...", currentIndex);
                     oldIndex = currentIndex;
                 }
+
                 await Task.Delay(100);
             }
+
             Package.SetTag(PackageTag.BeingProcessed);
 
         }
 
+        protected void ShowErrorNotification(string title, string body)
+        {
+            if (Settings.AreErrorNotificationsDisabled())
+                return;
+
+            try
+            {
+                AppNotificationManager.Default.RemoveByTagAsync(Package.Id);
+                AppNotificationBuilder builder = new AppNotificationBuilder()
+                    .SetScenario(AppNotificationScenario.Urgent)
+                    .SetTag(Package.Id)
+                    .AddText(title)
+                    .AddText(body)
+                    .AddArgument("action", NotificationArguments.Show);
+                AppNotification notification = builder.BuildNotification();
+                notification.ExpiresOnReboot = true;
+                AppNotificationManager.Default.Show(notification);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to show toast notification");
+                Logger.Error(ex);
+            }
+        }
+
+        protected void ShowSuccessNotification(string title, string body)
+        {
+            if (Settings.AreSuccessNotificationsDisabled())
+                return;
+
+            try
+            {
+                AppNotificationManager.Default.RemoveByTagAsync(Package.Id);
+                AppNotificationBuilder builder = new AppNotificationBuilder()
+                    .SetScenario(AppNotificationScenario.Default)
+                    .SetTag(Package.Id)
+                    .AddText(title)
+                    .AddText(body)
+                    .AddArgument("action", NotificationArguments.Show);
+                AppNotification notification = builder.BuildNotification();
+                notification.ExpiresOnReboot = true;
+                AppNotificationManager.Default.Show(notification);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to show toast notification");
+                Logger.Error(ex);
+            }
+        }
+
+        protected string INSTALLING_STRING = "THIS NEEDS TO BE REDEFINED ON THE CONSTRUCTOR";
+
+
+        protected override void PostProcessStartAction()
+        {
+            if (Settings.AreProgressNotificationsDisabled())
+                return;
+
+            try
+            {
+                AppNotificationManager.Default.RemoveByTagAsync(Package.Id + "progress");
+                AppNotificationBuilder builder = new AppNotificationBuilder()
+                    .SetScenario(AppNotificationScenario.Default)
+                    .SetTag(Package.Id + "progress")
+                    .AddProgressBar(new AppNotificationProgressBar()
+                        .SetStatus(CoreTools.Translate("Please wait..."))
+                        .SetValueStringOverride("\u2003")
+                        .SetTitle(INSTALLING_STRING)
+                        .SetValue(1.0))
+                    .AddArgument("action", NotificationArguments.Show);
+                AppNotification notification = builder.BuildNotification();
+                notification.ExpiresOnReboot = true;
+                notification.SuppressDisplay = true;
+                AppNotificationManager.Default.Show(notification);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to show toast notification");
+                Logger.Error(ex);
+            }
+        }
+
+        protected override void PostProcessEndAction()
+        {
+            AppNotificationManager.Default.RemoveByTagAsync(Package.Id + "progress");
+        }
     }
 
     public class InstallPackageOperation : PackageOperation
@@ -125,12 +221,18 @@ namespace UniGetUI.PackageEngine.Operations
             IPackage package,
             IInstallationOptions options,
             bool IgnoreParallelInstalls = false)
-            : base(package, options, OperationType.Install, IgnoreParallelInstalls) { }
+            : base(package, options, OperationType.Install, IgnoreParallelInstalls)
+        {
+            INSTALLING_STRING = CoreTools.Translate("{0} is being installed", package.Name);
+        }
 
         public InstallPackageOperation(
             IPackage package,
             bool IgnoreParallelInstalls = false)
-            : base(package, OperationType.Install, IgnoreParallelInstalls) { }
+            : base(package, OperationType.Install, IgnoreParallelInstalls)
+        {
+            INSTALLING_STRING = CoreTools.Translate("{0} is being installed", package.Name);
+        }
 
         protected override string[] GenerateProcessLogHeader()
         {
@@ -144,26 +246,13 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleFailure()
         {
             LineInfoText = CoreTools.Translate("{package} installation failed", new Dictionary<string, object?> { { "package", Package.Name } });
-
             Package.SetTag(PackageTag.Failed);
 
-            if (!(Settings.Get("DisableErrorNotifications") || Settings.AreNotificationsDisabled()))
-            {
-                try
-                {
-                    new ToastContentBuilder()
-                        .AddArgument("action", "OpenUniGetUI")
-                        .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                        .AddText(CoreTools.Translate("Installation failed"))
-                        .AddText(CoreTools.Translate("{package} could not be installed", new Dictionary<string, object?> { { "package", Package.Name } })).Show();
-
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn("Failed to show toast notification");
-                    Logger.Warn(ex);
-                }
-            }
+            ShowErrorNotification(
+                CoreTools.Translate("Installation failed"),
+                CoreTools.Translate("{package} could not be installed",
+                    new Dictionary<string, object?> { { "package", Package.Name } })
+            );
 
             ContentDialogResult result = await MainApp.Instance.MainWindow.NavigationPage.ShowOperationFailedDialog(
                 ProcessOutput,
@@ -171,40 +260,22 @@ namespace UniGetUI.PackageEngine.Operations
                 CoreTools.Translate("{package} could not be installed", new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            if (result == ContentDialogResult.Primary)
-            {
-                return AfterFinshAction.Retry;
-            }
+            return result == ContentDialogResult.Primary? AfterFinshAction.Retry: AfterFinshAction.ManualClose;
 
-            return AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             LineInfoText = CoreTools.Translate("{package} was installed successfully", new Dictionary<string, object?> { { "package", Package.Name } });
-
             Package.SetTag(PackageTag.AlreadyInstalled);
             PEInterface.InstalledPackagesLoader.AddForeign(Package);
 
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
-            {
-                try
-                {
-                    new ToastContentBuilder()
-                    .AddArgument("action", "OpenUniGetUI")
-                    .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                    .AddText(CoreTools.Translate("Installation succeeded"))
-                    .AddText(CoreTools.Translate("{package} was installed successfully", new Dictionary<string, object?> { { "package", Package.Name } })).Show();
+            ShowSuccessNotification(
+                CoreTools.Translate("Installation succeeded"),
+                CoreTools.Translate("{package} was installed successfully",
+                    new Dictionary<string, object?> { { "package", Package.Name } })
+            );
 
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn("Failed to show toast notification");
-                    Logger.Warn(ex);
-                }
-            }
-
-            await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
 
@@ -222,11 +293,18 @@ namespace UniGetUI.PackageEngine.Operations
             IPackage package,
             IInstallationOptions options,
             bool IgnoreParallelInstalls = false)
-            : base(package, options, OperationType.Update, IgnoreParallelInstalls) { }
+            : base(package, options, OperationType.Update, IgnoreParallelInstalls)
+        {
+            INSTALLING_STRING = CoreTools.Translate("{0} is being updated to version {1}", package.Name, package.NewVersion);
+        }
+
         public UpdatePackageOperation(
             IPackage package,
             bool IgnoreParallelInstalls = false)
-            : base(package, OperationType.Update, IgnoreParallelInstalls) { }
+            : base(package, OperationType.Update, IgnoreParallelInstalls)
+        {
+            INSTALLING_STRING = CoreTools.Translate("{0} is being updated to version {1}", package.Name, package.NewVersion);
+        }
 
 
         protected override string[] GenerateProcessLogHeader()
@@ -241,26 +319,13 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleFailure()
         {
             LineInfoText = CoreTools.Translate("{package} update failed. Click here for more details.", new Dictionary<string, object?> { { "package", Package.Name } });
-
             Package.SetTag(PackageTag.Failed);
 
-            if (!Settings.Get("DisableErrorNotifications") && !Settings.AreNotificationsDisabled())
-            {
-                try
-                {
-                    new ToastContentBuilder()
-                    .AddArgument("action", "OpenUniGetUI")
-                    .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                    .AddText(CoreTools.Translate("Update failed"))
-                    .AddText(CoreTools.Translate("{package} could not be updated", new Dictionary<string, object?> { { "package", Package.Name } })).Show();
-
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn("Failed to show toast notification");
-                    Logger.Warn(ex);
-                }
-            }
+            ShowErrorNotification(
+                CoreTools.Translate("Update failed"),
+                CoreTools.Translate("{package} could not be updated",
+                    new Dictionary<string, object?> { { "package", Package.Name } })
+            );
 
             ContentDialogResult result = await MainApp.Instance.MainWindow.NavigationPage.ShowOperationFailedDialog(
                 ProcessOutput,
@@ -268,18 +333,12 @@ namespace UniGetUI.PackageEngine.Operations
                 CoreTools.Translate("{package} could not be updated", new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            if (result == ContentDialogResult.Primary)
-            {
-                return AfterFinshAction.Retry;
-            }
-
-            return AfterFinshAction.ManualClose;
+            return result == ContentDialogResult.Primary ? AfterFinshAction.Retry : AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             LineInfoText = CoreTools.Translate("{package} was updated successfully", new Dictionary<string, object?> { { "package", Package.Name } });
-
             Package.SetTag(PackageTag.Default);
             Package.GetInstalledPackage()?.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
@@ -288,26 +347,13 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 await Package.RemoveFromIgnoredUpdatesAsync();
             }
-
             PEInterface.UpgradablePackagesLoader.Remove(Package);
 
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
-            {
-                try
-                {
-                    new ToastContentBuilder()
-                .AddArgument("action", "OpenUniGetUI")
-                .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                .AddText(CoreTools.Translate("Update succeeded"))
-                .AddText(CoreTools.Translate("{package} was updated successfully", new Dictionary<string, object?> { { "package", Package.Name } })).Show();
-
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn("Failed to show toast notification");
-                    Logger.Warn(ex);
-                }
-            }
+            ShowSuccessNotification(
+                CoreTools.Translate("Update succeeded"),
+                CoreTools.Translate("{package} was updated successfully",
+                    new Dictionary<string, object?> { { "package", Package.Name } })
+            );
 
             if (Package.Version == "Unknown")
             {
@@ -331,11 +377,17 @@ namespace UniGetUI.PackageEngine.Operations
             IPackage package,
             IInstallationOptions options,
             bool IgnoreParallelInstalls = false)
-            : base(package, options, OperationType.Uninstall, IgnoreParallelInstalls) { }
+            : base(package, options, OperationType.Uninstall, IgnoreParallelInstalls)
+        {
+            INSTALLING_STRING = CoreTools.Translate("{0} is being uninstalled", package.Name);
+        }
         public UninstallPackageOperation(
             IPackage package,
             bool IgnoreParallelInstalls = false)
-            : base(package, OperationType.Uninstall, IgnoreParallelInstalls) { }
+            : base(package, OperationType.Uninstall, IgnoreParallelInstalls)
+        {
+            INSTALLING_STRING = CoreTools.Translate("{0} is being uninstalled", package.Name);
+        }
 
         protected override string[] GenerateProcessLogHeader()
         {
@@ -349,26 +401,13 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleFailure()
         {
             LineInfoText = CoreTools.Translate("{package} uninstall failed", new Dictionary<string, object?> { { "package", Package.Name } });
-
             Package.SetTag(PackageTag.Failed);
 
-            if (!Settings.Get("DisableErrorNotifications") && !Settings.AreNotificationsDisabled())
-            {
-                try
-                {
-                    new ToastContentBuilder()
-                    .AddArgument("action", "OpenUniGetUI")
-                    .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                    .AddText(CoreTools.Translate("Uninstall failed"))
-                    .AddText(CoreTools.Translate("{package} could not be uninstalled", new Dictionary<string, object?> { { "package", Package.Name } })).Show();
-
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn("Failed to show toast notification");
-                    Logger.Warn(ex);
-                }
-            }
+            ShowErrorNotification(
+                CoreTools.Translate("Uninstall failed"),
+                CoreTools.Translate("{package} could not be uninstalled",
+                    new Dictionary<string, object?> { { "package", Package.Name } })
+            );
 
             ContentDialogResult result = await MainApp.Instance.MainWindow.NavigationPage.ShowOperationFailedDialog(
                 ProcessOutput,
@@ -376,42 +415,23 @@ namespace UniGetUI.PackageEngine.Operations
                 CoreTools.Translate("{package} could not be uninstalled", new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            if (result == ContentDialogResult.Primary)
-            {
-                return AfterFinshAction.Retry;
-            }
-
-            return AfterFinshAction.ManualClose;
+            return result == ContentDialogResult.Primary ? AfterFinshAction.Retry : AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             LineInfoText = CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?> { { "package", Package.Name } });
-
             Package.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.Default);
             PEInterface.UpgradablePackagesLoader.Remove(Package);
             PEInterface.InstalledPackagesLoader.Remove(Package);
 
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
-            {
-                try
-                {
-                    new ToastContentBuilder()
-                .AddArgument("action", "OpenUniGetUI")
-                .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                .AddText(CoreTools.Translate("Uninstall succeeded"))
-                .AddText(CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?> { { "package", Package.Name } })).Show();
+            ShowSuccessNotification(
+                CoreTools.Translate("Uninstall succeeded"),
+                CoreTools.Translate("{package} was uninstalled successfully",
+                    new Dictionary<string, object?> { { "package", Package.Name } })
+            );
 
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn("Failed to show toast notification");
-                    Logger.Warn(ex);
-                }
-            }
-
-            await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
 

@@ -164,25 +164,11 @@ namespace UniGetUI.Core.Data
 
         public static bool IsDaemon;
 
-        public static string ManagerLogs = "";
-
-        private static int __volatile_notification_id_counter = 1235;
-
-        /// <summary>
-        /// A self-incremented value to generate random notification IDs
-        /// </summary>
-        public static int VolatileNotificationIdCounter
-        {
-            get => __volatile_notification_id_counter++;
-        }
-
         /// <summary>
         /// The ID of the notification that is used to inform the user that updates are available
         /// </summary>
-        public static int UpdatesAvailableNotificationId
-        {
-            get => 1234;
-        }
+        public const int UpdatesAvailableNotificationTag = 1234;
+
 
         /// <summary>
         /// A path pointing to the location where the app is installed

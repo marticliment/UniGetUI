@@ -15,6 +15,7 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Operations;
 using Windows.Foundation.Collections;
+using Microsoft.Windows.AppNotifications;
 
 namespace UniGetUI
 {
@@ -70,7 +71,7 @@ namespace UniGetUI
                 SetUpWebViewUserDataFolder();
                 InitializeMainWindow();
                 ClearNotificationHistory_Safe();
-                RegisterNotificationActivationEvent_Safe();
+                RegisterNotificationService();
 
                 LoadComponentsAsync().ConfigureAwait(false);
             }
@@ -198,20 +199,18 @@ namespace UniGetUI
         /// <summary>
         /// Register the notification activation event
         /// </summary>
-        private void RegisterNotificationActivationEvent_Safe()
+        private void RegisterNotificationService()
         {
             try
             {
-                ToastNotificationManagerCompat.OnActivated += toastArgs =>
+                AppNotificationManager.Default.NotificationInvoked += (_, args) =>
                 {
-                    ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
-                    ValueSet userInput = toastArgs.UserInput;
-
                     MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        MainWindow.HandleNotificationActivation(args, userInput);
+                        MainWindow.HandleNotificationActivation(args);
                     });
                 };
+                AppNotificationManager.Default.Register();
             }
             catch (Exception ex)
             {

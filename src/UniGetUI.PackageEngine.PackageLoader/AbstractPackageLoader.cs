@@ -42,7 +42,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         private int LoadOperationIdentifier;
         protected IEnumerable<IPackageManager> Managers { get; private set; }
 
-        public AbstractPackageLoader(IEnumerable<IPackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false, bool DisableReload = false) 
+        public AbstractPackageLoader(IEnumerable<IPackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false, bool DisableReload = false)
         {
             Managers = managers;
             PackageReference = new Dictionary<long, IPackage>();
@@ -62,7 +62,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             LoadOperationIdentifier = -1;
             IsLoaded = false;
             IsLoading = false;
-            InvokeFinishedLoadingEvent();
+            if(emitFinishSignal) InvokeFinishedLoadingEvent();
         }
 
         protected void InvokePackagesChangedEvent()
