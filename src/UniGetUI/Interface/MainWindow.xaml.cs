@@ -20,6 +20,8 @@ using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Interfaces;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
+using Microsoft.Windows.AppNotifications;
+using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Interface
 {
@@ -106,22 +108,30 @@ namespace UniGetUI.Interface
             };
         }
 #pragma warning restore CS8618
-        public void HandleNotificationActivation(ToastArguments args, ValueSet input)
+        public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)
         {
-            if (args.Contains("action") && args["action"] == "updateAll")
+            args.Arguments.TryGetValue("action", out string? action);
+            if (action is null) action = "";
+
+            if (action == NotificationArguments.UpdateAllPackages)
             {
                 NavigationPage.UpdatesPage.UpdateAll();
             }
-            else if (args.Contains("action") && args["action"] == "openUniGetUIOnUpdatesTab")
+            else if (action == NotificationArguments.ShowOnUpdatesTab)
             {
                 NavigationPage.UpdatesNavButton.ForceClick();
                 Activate();
             }
-            else
+            else if(action == NotificationArguments.Show)
             {
                 Activate();
             }
-            Logger.Debug("Notification activated: " + args.ToString() + " " + input.ToString());
+            else
+            {
+                throw new ArgumentException(
+                    "args.Argument was not set to a value present in Enums.NotificationArguments");
+            }
+            Logger.Debug("Notification activated: " + args.Arguments);
         }
 
         /// <summary>

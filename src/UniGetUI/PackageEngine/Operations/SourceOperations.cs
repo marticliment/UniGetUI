@@ -1,10 +1,13 @@
 using System.Diagnostics;
 using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
@@ -23,13 +26,105 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task HandleCancelation()
         {
         }
+
+
+        protected void ShowErrorNotification(string title, string body)
+        {
+            if (Settings.AreErrorNotificationsDisabled())
+                return;
+
+            try
+            {
+                AppNotificationManager.Default.RemoveByTagAsync(Source.Name);
+                AppNotificationBuilder builder = new AppNotificationBuilder()
+                    .SetScenario(AppNotificationScenario.Urgent)
+                    .SetTag(Source.Name)
+                    .AddText(title)
+                    .AddText(body)
+                    .AddArgument("action", NotificationArguments.Show);
+                AppNotification notification = builder.BuildNotification();
+                notification.ExpiresOnReboot = true;
+                AppNotificationManager.Default.Show(notification);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to show toast notification");
+                Logger.Error(ex);
+            }
+        }
+
+        protected void ShowSuccessNotification(string title, string body)
+        {
+            if (Settings.AreSuccessNotificationsDisabled())
+                return;
+
+            try
+            {
+                AppNotificationManager.Default.RemoveByTagAsync(Source.Name);
+                AppNotificationBuilder builder = new AppNotificationBuilder()
+                    .SetScenario(AppNotificationScenario.Default)
+                    .SetTag(Source.Name)
+                    .AddText(title)
+                    .AddText(body)
+                    .AddArgument("action", NotificationArguments.Show);
+                AppNotification notification = builder.BuildNotification();
+                notification.ExpiresOnReboot = true;
+                AppNotificationManager.Default.Show(notification);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to show toast notification");
+                Logger.Error(ex);
+            }
+        }
+
+        protected string INSTALLING_STRING = "THIS NEEDS TO BE REDEFINED ON THE CONSTRUCTOR";
+
+        protected override void PostProcessStartAction()
+        {
+            if (Settings.AreProgressNotificationsDisabled())
+                return;
+
+            try
+            {
+                AppNotificationManager.Default.RemoveByTagAsync(Source.Name + "progress");
+                AppNotificationBuilder builder = new AppNotificationBuilder()
+                    .SetScenario(AppNotificationScenario.Default)
+                    .SetTag(Source.Name + "progress")
+                    .AddProgressBar(new AppNotificationProgressBar()
+                        .SetStatus(CoreTools.Translate("Please wait..."))
+                        .SetValueStringOverride("\uE002")
+                        .SetTitle(INSTALLING_STRING)
+                        .SetValue(1.0))
+                    .AddArgument("action", NotificationArguments.Show);
+                AppNotification notification = builder.BuildNotification();
+                notification.ExpiresOnReboot = true;
+                notification.SuppressDisplay = true;
+                AppNotificationManager.Default.Show(notification);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to show toast notification");
+                Logger.Error(ex);
+            }
+        }
+
+        protected override void PostProcessEndAction()
+        {
+            AppNotificationManager.Default.RemoveByTagAsync(Source.Name + "progress");
+        }
     }
 
     public class AddSourceOperation : SourceOperation
     {
 
         public event EventHandler<EventArgs>? OperationSucceeded;
-        public AddSourceOperation(IManagerSource source) : base(source) { }
+
+        public AddSourceOperation(IManagerSource source) : base(source)
+        {
+            INSTALLING_STRING = CoreTools.Translate("Adding source {source} to {manager}",
+                new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+        }
         protected override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
@@ -66,23 +161,12 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleFailure()
         {
             LineInfoText = CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
-            if (!Settings.Get("DisableErrorNotifications") && !Settings.AreNotificationsDisabled())
-            {
-                try
-                {
-                    new ToastContentBuilder()
-                    .AddArgument("action", "OpenUniGetUI")
-                    .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                    .AddText(CoreTools.Translate("Installation failed"))
-                    .AddText(CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
 
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn("Failed to show toast notification");
-                    Logger.Warn(ex);
-                }
-            }
+            ShowErrorNotification(
+                CoreTools.Translate("Installation failed"),
+                CoreTools.Translate("Could not add source {source} to {manager}",
+                    new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
+            );
 
             ContentDialogResult result = await MainApp.Instance.MainWindow.NavigationPage.ShowOperationFailedDialog(
                 ProcessOutput,
@@ -90,37 +174,20 @@ namespace UniGetUI.PackageEngine.Operations
                 CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
             );
 
-            if (result == ContentDialogResult.Primary)
-            {
-                return AfterFinshAction.Retry;
-            }
-
-            return AfterFinshAction.ManualClose;
+            return result == ContentDialogResult.Primary ? AfterFinshAction.Retry : AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             OperationSucceeded?.Invoke(this, EventArgs.Empty);
             LineInfoText = CoreTools.Translate("The source {source} was added to {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
-            {
-                try
-                {
-                    new ToastContentBuilder()
-                    .AddArgument("action", "OpenUniGetUI")
-                    .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                    .AddText(CoreTools.Translate("Addition succeeded"))
-                    .AddText(CoreTools.Translate("The source {source} was added to {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
 
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn("Failed to show toast notification");
-                    Logger.Warn(ex);
-                }
-            }
+            ShowSuccessNotification(
+                CoreTools.Translate("Addition succeeded"),
+                CoreTools.Translate("The source {source} was added to {manager} successfully",
+                    new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
+            );
 
-            await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
         }
 
@@ -135,7 +202,12 @@ namespace UniGetUI.PackageEngine.Operations
     {
 
         public event EventHandler<EventArgs>? OperationSucceeded;
-        public RemoveSourceOperation(IManagerSource source) : base(source) { }
+
+        public RemoveSourceOperation(IManagerSource source) : base(source)
+        {
+            INSTALLING_STRING = CoreTools.Translate("Removing source {source} from {manager}",
+                new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name }});
+        }
         protected override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
@@ -173,14 +245,12 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task<AfterFinshAction> HandleFailure()
         {
             LineInfoText = CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
-            if (!Settings.Get("DisableErrorNotifications") && !Settings.AreNotificationsDisabled())
-            {
-                new ToastContentBuilder()
-                    .AddArgument("action", "OpenUniGetUI")
-                    .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                    .AddText(CoreTools.Translate("Removal failed"))
-                    .AddText(CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
-            }
+
+            ShowErrorNotification(
+                CoreTools.Translate("Removal failed"),
+                CoreTools.Translate("Could not add remove {source} from {manager}",
+                    new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
+            );
 
             ContentDialogResult result = await MainApp.Instance.MainWindow.NavigationPage.ShowOperationFailedDialog(
                 ProcessOutput,
@@ -188,35 +258,19 @@ namespace UniGetUI.PackageEngine.Operations
                 CoreTools.Translate("Could remove source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
             );
 
-            if (result == ContentDialogResult.Primary)
-            {
-                return AfterFinshAction.Retry;
-            }
-
-            return AfterFinshAction.ManualClose;
+            return result == ContentDialogResult.Primary ? AfterFinshAction.Retry : AfterFinshAction.ManualClose;
         }
 
         protected override async Task<AfterFinshAction> HandleSuccess()
         {
             OperationSucceeded?.Invoke(this, EventArgs.Empty);
             LineInfoText = CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
-            if (!Settings.Get("DisableSuccessNotifications") && !Settings.AreNotificationsDisabled())
-            {
-                try
-                {
-                    new ToastContentBuilder()
-                        .AddArgument("action", "OpenUniGetUI")
-                        .AddArgument("notificationId", CoreData.VolatileNotificationIdCounter)
-                        .AddText(CoreTools.Translate("Removal succeeded"))
-                        .AddText(CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })).Show();
 
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn("Failed to show toast notification");
-                    Logger.Warn(ex);
-                }
-            }
+            ShowSuccessNotification(
+                CoreTools.Translate("Removal succeeded"),
+                CoreTools.Translate("The source {source} was removed from {manager} successfully",
+                    new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
+            );
 
             await Task.Delay(0);
             return AfterFinshAction.TimeoutClose;
