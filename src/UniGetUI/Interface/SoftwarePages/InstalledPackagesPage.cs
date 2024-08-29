@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Data;
@@ -27,6 +28,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuIgnoreUpdates;
         private BetterMenuItem? MenuSharePackage;
         private BetterMenuItem? MenuPackageDetails;
+        private BetterMenuItem? MenuOpenInstallLocation;
 
         public InstalledPackagesPage()
         : base(new PackagesPageData
@@ -75,6 +77,14 @@ namespace UniGetUI.Interface.SoftwarePages
             };
             MenuInstallationOptions.Click += MenuInstallSettings_Invoked;
             menu.Items.Add(MenuInstallationOptions);
+
+            MenuOpenInstallLocation = new()
+            {
+                Text = "Open install location",
+                IconName = IconType.Launch,
+            };
+            MenuOpenInstallLocation.Click += (s, e) => OpenPackageInstallLocation(SelectedItem);;
+            menu.Items.Add(MenuOpenInstallLocation);
 
             menu.Items.Add(new MenuFlyoutSeparator());
 
@@ -278,7 +288,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 || MenuReinstallPackage is null
                 || MenuIgnoreUpdates is null
                 || MenuSharePackage is null
-                || MenuPackageDetails is null)
+                || MenuPackageDetails is null
+                || MenuOpenInstallLocation is null)
             {
                 Logger.Error("Menu items are null on InstalledPackagesTab");
                 return;
@@ -296,6 +307,8 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuIgnoreUpdates.IsEnabled = !IS_LOCAL;
             MenuSharePackage.IsEnabled = !IS_LOCAL;
             MenuPackageDetails.IsEnabled = !IS_LOCAL;
+
+            MenuOpenInstallLocation.IsEnabled = package.Manager.GetPackageInstallLocation(package) is not null;
         }
 
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)

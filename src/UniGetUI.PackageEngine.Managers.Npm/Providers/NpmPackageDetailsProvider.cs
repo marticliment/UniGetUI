@@ -3,6 +3,7 @@ using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -108,6 +109,15 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         protected override Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
         {
             throw new NotImplementedException();
+        }
+
+        protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+        {
+            if (package.OverridenOptions.Scope is PackageScope.Local)
+                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "node_modules", package.Id);
+            else
+                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Roaming", "npm",
+                    "node_modules", package.Id);
         }
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)

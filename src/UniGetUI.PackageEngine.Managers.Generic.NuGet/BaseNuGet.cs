@@ -11,15 +11,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
     public abstract class BaseNuGet : PackageManager
     {
-        public static new string[] FALSE_PACKAGE_NAMES = [""];
-        public static new string[] FALSE_PACKAGE_IDS = [""];
-        public static new string[] FALSE_PACKAGE_VERSIONS = [""];
-
-        public BaseNuGet()
-        {
-            PackageDetailsProvider = new BaseNuGetDetailsProvider(this);
-        }
-
         public sealed override async Task InitializeAsync()
         {
             if (PackageDetailsProvider is not BaseNuGetDetailsProvider)
@@ -62,7 +53,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             {
                 sources = [ Properties.DefaultSource ];
             }
-            
+
             foreach(IManagerSource source in sources)
             {
                 Uri SearchUrl = new($"{source.Url}/Search()?searchTerm=%27{HttpUtility.UrlEncode(query)}%27&targetFramework=%27%27&includePrerelease=false");

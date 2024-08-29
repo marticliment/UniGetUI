@@ -49,5 +49,27 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
 
             return versions.ToArray();
         }
+
+        protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+        {
+            string portable_path = Manager.Status.ExecutablePath.Replace("choco.exe", $"bin\\{package.Id}.exe");
+            if (File.Exists(portable_path))
+                return Path.GetDirectoryName(portable_path);
+
+            foreach (var base_path in new string[]
+                     {
+                         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+                         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs"),
+                         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                     })
+            {
+                var path_with_id = Path.Join(base_path, package.Id);
+                if (Directory.Exists(path_with_id)) return path_with_id;
+            }
+
+            return Path.Join(Path.GetDirectoryName(Manager.Status.ExecutablePath), "lib", package.Id);
+
+        }
     }
 }

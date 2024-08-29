@@ -102,5 +102,29 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
         protected abstract Task<string[]> GetPackageVersions_Unsafe(IPackage package);
         protected abstract Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package);
         protected abstract Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package);
+        protected abstract string? GetPackageInstallLocation_Unsafe(IPackage package);
+
+        public string? GetPackageInstallLocation(IPackage package)
+        {
+            try
+            {
+                string? path = GetPackageInstallLocation_Unsafe(package);
+                if (path is not null && !Directory.Exists(path))
+                {
+                    Logger.Warn($"Path returned by the package manager \"{path}\" did not exist while loading package install location for package Id={package.Id} with Manager={package.Manager.Name}");
+                    return null;
+                }
+
+                return path;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"An error occurred while loading package install location for package Id={package.Id} with Manager={package.Manager.Name}");
+                Logger.Error(ex);
+                return null;
+            }
+        }
+
+
     }
 }
