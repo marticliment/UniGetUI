@@ -39,7 +39,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         List<Package> Packages = [];
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
         Dictionary<(PackageCatalogReference, PackageMatchField), Task<FindPackagesResult>> FindPackageTasks = [];
-        
+
         // Load catalogs
         logger.Log("Loading available catalogs...");
         IReadOnlyList<PackageCatalogReference> AvailableCatalogs = WinGetManager.GetPackageCatalogs();
