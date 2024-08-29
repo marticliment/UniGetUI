@@ -137,7 +137,6 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             catch (Exception ex) { logger.Error("Can't load installer data: " + ex); }
 
             logger.Close(0);
-            return;
         }
 
         protected override Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package)
