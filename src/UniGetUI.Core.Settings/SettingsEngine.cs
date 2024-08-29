@@ -12,7 +12,17 @@ namespace UniGetUI.Core.SettingsEngine
 
         public static bool AreUpdatesNotificationsDisabled()
         {
-            return AreNotificationsDisabled() || Settings.Get("DisableUpdatesNotifications");
+            return AreNotificationsDisabled() || Get("DisableUpdatesNotifications");
+        }
+
+        public static bool AreErrorNotificationsDisabled()
+        {
+            return AreNotificationsDisabled() || Get("DisableErrorNotifications");
+        }
+
+        public static bool AreSuccessNotificationsDisabled()
+        {
+            return AreNotificationsDisabled() || Get("DisableSuccessNotifications");
         }
 
         public static bool Get(string setting, bool invert = false)

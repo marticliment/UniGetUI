@@ -164,8 +164,6 @@ namespace UniGetUI.Core.Data
 
         public static bool IsDaemon;
 
-        private static int __volatile_notification_id_counter = 1235;
-        
         /// <summary>
         /// The ID of the notification that is used to inform the user that updates are available
         /// </summary>
