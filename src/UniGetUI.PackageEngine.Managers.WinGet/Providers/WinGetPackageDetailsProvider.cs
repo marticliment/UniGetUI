@@ -108,7 +108,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 var path_with_name = Path.Join(base_path, package.Name);
                 if (Directory.Exists(path_with_name)) return path_with_name;
-                
+
                 var path_with_id = Path.Join(base_path, package.Id);
                 if (Directory.Exists(path_with_id)) return path_with_id;
 

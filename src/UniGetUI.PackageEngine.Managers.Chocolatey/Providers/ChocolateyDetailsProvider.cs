@@ -52,9 +52,9 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
 
         protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
         {
-            string portable_path = Manager.Status.ExecutablePath.Replace("choco.exe", package.Id + ".exe");
+            string portable_path = Manager.Status.ExecutablePath.Replace("choco.exe", $"bin\\{package.Id}.exe");
             if (File.Exists(portable_path))
-                return portable_path;
+                return Path.GetDirectoryName(portable_path);
 
             foreach (var base_path in new string[]
                      {
@@ -68,7 +68,7 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
                 if (Directory.Exists(path_with_id)) return path_with_id;
             }
 
-            return Path.Join(Path.GetDirectoryName(Path.GetDirectoryName(Manager.Status.ExecutablePath)), "lib", package.Id);
+            return Path.Join(Path.GetDirectoryName(Manager.Status.ExecutablePath), "lib", package.Id);
 
         }
     }
