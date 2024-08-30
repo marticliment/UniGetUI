@@ -498,7 +498,16 @@ Crash Traceback:
             }
             foreach (DictionaryEntry env in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User))
             {
-                info.Environment[env.Key.ToString()] = env.Value?.ToString();
+                string key = env.Key.ToString() ?? "";
+                string newValue = env.Value?.ToString() ?? "";
+                if (info.Environment.TryGetValue(key, out string? oldValue) && oldValue is not null && oldValue.Contains(';') && newValue != "")
+                {
+                    info.Environment[key] = oldValue + ";" + newValue;
+                }
+                else
+                {
+                    info.Environment[key] = newValue;
+                }
             }
             return info;
         }
