@@ -68,7 +68,9 @@ internal sealed class ChocolateyOperationProvider : BaseOperationProvider<Chocol
         if (!package.OverridenOptions.RunAsAdministrator != true &&
             (output_string.Contains("Run as administrator")
             || output_string.Contains("The requested operation requires elevation")
-            || output_string.Contains("ERROR: Exception calling \"CreateDirectory\" with \"1\" argument(s): \"Access to the path")) )
+            || output_string.Contains("ERROR: Exception calling \"CreateDirectory\" with \"1\" argument(s): \"Access to the path")
+            || output_string.Contains("Access denied")
+            || output_string.Contains("access denied")))
         {
             package.OverridenOptions.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;
