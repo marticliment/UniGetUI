@@ -362,6 +362,7 @@ namespace UniGetUI.PackageEngine.Operations
                 };
 
                 Process = new Process { StartInfo = await BuildProcessInstance(startInfo) };
+                Process.StartInfo = CoreTools.UpdateEnvironmentVariables(Process.StartInfo);
 
                 foreach (string infoLine in GenerateProcessLogHeader())
                 {

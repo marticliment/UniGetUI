@@ -91,8 +91,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             };
 
+            p.StartInfo = CoreTools.UpdateEnvironmentVariables(p.StartInfo);
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
-
             p.Start();
 
             string? line;

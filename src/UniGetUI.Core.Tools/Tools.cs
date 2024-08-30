@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net;
@@ -92,6 +93,7 @@ namespace UniGetUI.Core.Tools
                     StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
                 }
             };
+            process.StartInfo = UpdateEnvironmentVariables(process.StartInfo);
             process.Start();
             string? line = await process.StandardOutput.ReadLineAsync();
             string output;
@@ -208,6 +210,7 @@ Crash Traceback:
             p.StartInfo.UseShellExecute = true;
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.Verb = RunAsAdmin ? "runas" : "";
+            p.StartInfo = UpdateEnvironmentVariables(p.StartInfo);
             p.Start();
             await p.WaitForExitAsync();
         }
@@ -471,6 +474,33 @@ Crash Traceback:
 
             var attributes = File.GetAttributes(path);
             return (attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint;
+        }
+
+        /// <summary>
+        /// Returns the updated environment variables on a new ProcessStartInfo object
+        /// </summary>
+        /// <returns></returns>
+        public static ProcessStartInfo UpdateEnvironmentVariables()
+        {
+            return UpdateEnvironmentVariables(new ProcessStartInfo());
+        }
+
+
+        /// <summary>
+        /// Returns the updated environment variables on the returned ProcessStartInfo object
+        /// </summary>
+        /// <returns></returns>
+        public static ProcessStartInfo UpdateEnvironmentVariables(ProcessStartInfo info)
+        {
+            foreach (DictionaryEntry env in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine))
+            {
+                info.Environment[env.Key.ToString()] = env.Value?.ToString();
+            }
+            foreach (DictionaryEntry env in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User))
+            {
+                info.Environment[env.Key.ToString()] = env.Value?.ToString();
+            }
+            return info;
         }
     }
 }

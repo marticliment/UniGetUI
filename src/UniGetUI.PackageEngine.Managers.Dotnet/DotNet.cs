@@ -107,6 +107,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 }
             };
 
+            p.StartInfo = CoreTools.UpdateEnvironmentVariables(p.StartInfo);
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
             p.Start();
 
