@@ -81,6 +81,9 @@ namespace UniGetUI.Interface
         public List<ContentDialog> DialogQueue = [];
 
         public List<NavButton> NavButtonList = [];
+
+        public static Queue<string> ParametersToProcess;
+
 #pragma warning disable CS8618
         public MainWindow()
         {
