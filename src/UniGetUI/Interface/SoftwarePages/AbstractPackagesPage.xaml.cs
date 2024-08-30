@@ -574,8 +574,8 @@ namespace UniGetUI.Interface
             }
             FilteredPackages.BlockSorting = false;
             FilteredPackages.Sort();
-            PackageList.InvalidateArrange();
             UpdatePackageCount();
+            ForceRedrawByScroll();
         }
 
         /// <summary>
@@ -797,6 +797,16 @@ namespace UniGetUI.Interface
             else
             {
                 FilteredPackages.ClearSelection();
+            }
+        }
+
+        private async void ForceRedrawByScroll()
+        {
+            if (PackageList is not null)
+            {
+                PackageList.ScrollView?.ScrollTo(0, 1);
+                await Task.Delay(10);
+                PackageList.ScrollView?.ScrollTo(0, 0);
             }
         }
     }
