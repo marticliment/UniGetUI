@@ -487,7 +487,13 @@ namespace UniGetUI.Interface
                     }
                     else if (RootNodeForManager.ContainsValue(node))
                     {
-                        VisibleManagers.Add(RootNodeForManager.First(x => x.Value == node).Key);
+                        IPackageManager manager = RootNodeForManager.First(x => x.Value == node).Key;
+                        VisibleManagers.Add(manager);
+                        if (manager.Capabilities.SupportsCustomSources)
+                        {
+                            foreach (IManagerSource source in manager.SourceFactory.GetAvailableSources())
+                                if (!VisibleSources.Contains(source)) VisibleSources.Add(source);
+                        }
                     }
                 }
             }
@@ -568,8 +574,8 @@ namespace UniGetUI.Interface
             }
             FilteredPackages.BlockSorting = false;
             FilteredPackages.Sort();
-            PackageList.InvalidateArrange();
             UpdatePackageCount();
+            ForceRedrawByScroll();
         }
 
         /// <summary>
@@ -791,6 +797,16 @@ namespace UniGetUI.Interface
             else
             {
                 FilteredPackages.ClearSelection();
+            }
+        }
+
+        private async void ForceRedrawByScroll()
+        {
+            if (PackageList is not null)
+            {
+                PackageList.ScrollView?.ScrollTo(0, 1);
+                await Task.Delay(10);
+                PackageList.ScrollView?.ScrollTo(0, 0);
             }
         }
     }

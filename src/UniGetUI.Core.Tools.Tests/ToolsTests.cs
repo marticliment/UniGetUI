@@ -139,7 +139,7 @@ namespace UniGetUI.Core.Tools.Tests
         }
 
         [Fact]
-        public void TestEnvVariables()
+        public void TestEnvVariableCreation()
         {
             const string ENV1 = "NONEXISTENTENVVARIABLE";
             Environment.SetEnvironmentVariable(ENV1, null, EnvironmentVariableTarget.Process);
@@ -159,6 +159,31 @@ namespace UniGetUI.Core.Tools.Tests
             ProcessStartInfo newInfo2 = CoreTools.UpdateEnvironmentVariables();
             newInfo2.Environment.TryGetValue(ENV1, out string? result3);
             Assert.Null(result3);
+        }
+
+        [Fact]
+        public void TestEnvVariableReplacement()
+        {
+            const string ENV = "TMP";
+
+            var expected = Environment.GetEnvironmentVariable(ENV, EnvironmentVariableTarget.User);
+
+            ProcessStartInfo info = CoreTools.UpdateEnvironmentVariables();
+            info.Environment.TryGetValue(ENV, out string? result);
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void TestEnvVariableYuxtaposition()
+        {
+            const string ENV = "PATH";
+
+            var oldpath = Environment.GetEnvironmentVariable(ENV, EnvironmentVariableTarget.Machine) + ";" +
+                          Environment.GetEnvironmentVariable(ENV, EnvironmentVariableTarget.User);
+
+            ProcessStartInfo info = CoreTools.UpdateEnvironmentVariables();
+            info.Environment.TryGetValue(ENV, out string? result);
+            Assert.Equal(oldpath, result);
         }
     }
 }
