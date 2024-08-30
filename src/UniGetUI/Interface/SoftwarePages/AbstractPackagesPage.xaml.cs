@@ -487,7 +487,13 @@ namespace UniGetUI.Interface
                     }
                     else if (RootNodeForManager.ContainsValue(node))
                     {
-                        VisibleManagers.Add(RootNodeForManager.First(x => x.Value == node).Key);
+                        IPackageManager manager = RootNodeForManager.First(x => x.Value == node).Key;
+                        VisibleManagers.Add(manager);
+                        if (manager.Capabilities.SupportsCustomSources)
+                        {
+                            foreach (IManagerSource source in manager.SourceFactory.GetAvailableSources())
+                                if (!VisibleSources.Contains(source)) VisibleSources.Add(source);
+                        }
                     }
                 }
             }
