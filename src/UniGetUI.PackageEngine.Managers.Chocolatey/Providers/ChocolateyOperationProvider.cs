@@ -70,6 +70,7 @@ internal sealed class ChocolateyOperationProvider : BaseOperationProvider<Chocol
             || output_string.Contains("The requested operation requires elevation")
             || output_string.Contains("ERROR: Exception calling \"CreateDirectory\" with \"1\" argument(s): \"Access to the path")
             || output_string.Contains("Access denied")
+            || output_string.Contains("WARNING: Unable to create shortcut. Error captured was Unable to save shortcut")
             || output_string.Contains("access denied")))
         {
             package.OverridenOptions.RunAsAdministrator = true;
