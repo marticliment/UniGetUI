@@ -38,7 +38,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             {
                 IPackage? package = null;
 
-                if (foreign is Package native && native is not null)
+                if (foreign is not ImportedPackage && foreign is Package native)
                 {
                     if (native.Source.IsVirtualManager)
                     {
@@ -51,12 +51,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
                         package = new ImportedPackage(await native.AsSerializable(), native.Manager, native.Source);
                     }
                 }
-                else if (foreign is ImportedPackage imported && imported is not null)
+                else if (foreign is ImportedPackage imported)
                 {
                     Logger.Debug($"Adding loaded imported package with id={imported.Id} to bundle...");
                     package = imported;
                 }
-                else if (foreign is InvalidImportedPackage invalid && invalid is not null)
+                else if (foreign is InvalidImportedPackage invalid)
                 {
                     Logger.Debug($"Adding loaded incompatible package with id={invalid.Id} to bundle...");
                     package = invalid;
