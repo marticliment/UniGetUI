@@ -7,8 +7,8 @@ public class ObservableQueue<T> : Queue<T>
         public readonly T Item = item;
     }
 
-    public event EventHandler<EventArgs> ItemEnqueued;
-    public event EventHandler<EventArgs> ItemDequeued;
+    public event EventHandler<EventArgs>? ItemEnqueued;
+    public event EventHandler<EventArgs>? ItemDequeued;
 
     public new void Enqueue(T item)
     {

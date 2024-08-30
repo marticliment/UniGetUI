@@ -21,6 +21,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
 using Microsoft.Windows.AppNotifications;
+using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Interface
@@ -63,9 +64,9 @@ namespace UniGetUI.Interface
         }
         public delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
         [DllImport("user32.dll")]
-        public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
+        private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
         [DllImport("user32.dll")]
-        public static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+        private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
         /* END INTEROP STUFF */
 
         private TaskbarIcon? TrayIcon;
@@ -78,25 +79,25 @@ namespace UniGetUI.Interface
 
         private int LoadingDialogCount;
 
-        public List<ContentDialog> DialogQueue = [];
+        private List<ContentDialog> DialogQueue = [];
 
         public List<NavButton> NavButtonList = [];
 
-        public static Queue<string> ParametersToProcess;
+        public static readonly ObservableQueue<string> ParametersToProcess = new();
 
 #pragma warning disable CS8618
         public MainWindow()
         {
             InitializeComponent();
-            LoadTrayMenu();
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(__content_root);
             ContentRoot = __content_root;
+            SizeChanged += (s, e) => { SaveGeometry(); };
+            AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
+
+            LoadTrayMenu();
             ApplyTheme();
 
-            SizeChanged += (s, e) => { SaveGeometry(); };
-
-            AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
             if (CoreTools.IsAdministrator())
             {
                 Title = "UniGetUI " + CoreTools.Translate("[RAN AS ADMINISTRATOR]");
@@ -109,8 +110,14 @@ namespace UniGetUI.Interface
                 Title = CoreTools.Translate("Please wait"),
                 Content = new ProgressBar { IsIndeterminate = true, Width = 300 }
             };
+
+            foreach (var arg in Environment.GetCommandLineArgs())
+            {
+                ParametersToProcess.Enqueue(arg);
+            }
         }
 #pragma warning restore CS8618
+
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)
         {
             args.Arguments.TryGetValue("action", out string? action);
@@ -179,6 +186,15 @@ namespace UniGetUI.Interface
                         MainApp.Instance.DisposeAndQuit();
                     }
                 }
+            }
+        }
+
+        public async void ProcessCommandLineParameters()
+        {
+            while (ParametersToProcess.Count > 0)
+            {
+                string param = ParametersToProcess.Dequeue();
+                Logger.Warn(param);
             }
         }
 
