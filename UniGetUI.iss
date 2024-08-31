@@ -198,6 +198,19 @@ Name: "regularinstall\chocoinstall"; Description: "{cm:ChocoInstall}"; GroupDesc
 [Registry]
 Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\UniGetUI.exe"" --daemon"; Flags: uninsdeletevalue; Tasks: regularinstall
 
+// Register the unigetui:// deep link
+Root: HKA; Subkey: "Software\Classes\unigetui"; ValueType: "string"; ValueData: "URL:UniGetUI Protocol"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\unigetui"; ValueType: "string"; ValueName: "URL Protocol"; ValueData: ""
+Root: HKA; Subkey: "Software\Classes\unigetui\DefaultIcon"; ValueType: "string"; ValueData: "{app}\{#MyAppExeName},0"
+Root: HKA; Subkey: "Software\Classes\unigetui\shell\open\command"; ValueType: "string"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
+
+// Register the .ubundle file type
+Root: HKA; Subkey: "Software\Classes\.ubundle"; ValueType: string; ValueData: "UniGetUI.PackageBundle"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\UniGetUI.PackageBundle"; ValueType: string; ValueData: {cm:PackageBundleName}; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\UniGetUI.PackageBundle\DefaultIcon"; ValueType: string; ValueData: "{app}\{#MyAppExeName},0"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\UniGetUI.PackageBundle\shell\open\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; Flags: uninsdeletekey
+
+
 [Files]
 Source: "unigetui_bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');
 Source: "unigetui_bin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;

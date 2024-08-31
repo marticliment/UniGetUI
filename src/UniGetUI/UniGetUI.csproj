@@ -40,6 +40,9 @@
     <EmbeddedResource Remove="Intereface\**" />
     <None Remove="Intereface\**" />
     <Page Remove="Intereface\**" />
+    <Page Update="MainView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Remove="Interface\Dialogs\HelpInterface.xaml" />
@@ -95,9 +98,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Interface\Pages\PackageBundle.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-    </Page>
-    <Page Update="Interface\SoftwarePages\AbstractPackagesPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Interface\SoftwareUpdates.xaml">
@@ -176,21 +176,6 @@
     <None Update="Assets\Utilities\uninstall_scoop.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Page Update="Interface\Pages\AboutPages\SupportMe.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Interface\Pages\AboutPages\Translators.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Interface\Pages\AboutPages\Contributors.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Interface\Pages\AboutPages\ThirdPartyLicenses.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Interface\Pages\AboutPages\AboutUniGetUI.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Interface\Dialogs\PackageDetailsPage.xaml">
@@ -223,16 +208,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Interface\Widgets\NavButton.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Interface\MainView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
     <Page Update="Interface\Dialogs\InstallOptions.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -241,9 +216,6 @@
     <Page Update="Interface\Pages\LogPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="PackageEngine\Operations\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExternalLibraries.Clipboard\ExternalLibraries.Clipboard.csproj" />

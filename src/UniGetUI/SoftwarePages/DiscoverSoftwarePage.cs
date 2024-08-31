@@ -360,76 +360,91 @@ namespace UniGetUI.Interface.SoftwarePages
             ShowInstallationOptionsForPackage(SelectedItem);
         }
 
-        public void ShowSharedPackage_ThreadSafe(string pId, string pSource)
+        public void ShowSharedPackage_ThreadSafe(string id, string combinedSourceName)
         {
-            MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() => { ShowSharedPackage(pId, pSource); });
+            var contents = combinedSourceName.Split(':');
+            string managerName = contents[0];
+            string sourceName = "";
+            if (contents.Length > 1) sourceName = contents[1];
+            ShowSharedPackage_ThreadSafe(id, managerName, sourceName);
         }
 
-        private async void ShowSharedPackage(string pId, string pSource)
+        public void ShowSharedPackage_ThreadSafe(string id, string managerName, string sourceName)
         {
-            Logger.Info($"Showing shared package with pId=${pId} and pSource=${pSource}...");
-
-            MainApp.Instance.MainWindow.Activate();
-
-            MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait...", pId));
-            MainApp.Instance.MainWindow.NavigationPage.DiscoverNavButton.ForceClick();
-            MegaQueryBlock.Visibility = Visibility.Collapsed;
-            MegaFindButton.Visibility = Visibility.Collapsed;
-
-            QueryIdRadio.IsChecked = true;
-            QueryBlock.Text = pId;
-            await PEInterface.DiscoveredPackagesLoader.ReloadPackages(pId);
-            QueryBothRadio.IsChecked = true;
-            MainApp.Instance.MainWindow.HideLoadingDialog();
-            if (FilteredPackages.Count == 1)
+            MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(async () =>
             {
-                Logger.Debug("Only one package was found for pId=" + pId + ", showing it.");
-                ShowDetailsForPackage(FilteredPackages[0].Package);
-            }
-            else if (FilteredPackages.Count > 1)
+                IPackage? package = await GetPackageFromIdAndManager(id, managerName, sourceName);
+                if (package is not null) ShowDetailsForPackage(package);
+            });
+        }
+
+        private static async Task<IPackage?> GetPackageFromIdAndManager(string id, string managerName, string sourceName)
+        {
+            try
             {
-                // Find a package that matches both the Id and the Source
-                string managerName = pSource.Contains(':') ? pSource.Split(':')[0] : pSource;
-                foreach (IPackage match in FilteredPackages.GetPackages())
+                Logger.Info($"Showing shared package with pId={id} and pSource={managerName}: ´{sourceName} ...");
+                MainApp.Instance.MainWindow.Activate();
+                MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait...", id));
+
+                IPackageManager? manager = null;
+
+                foreach (var candidate in PEInterface.Managers)
                 {
-                    if (match.Source.Manager.Name == managerName && match.Id == pId)
+                    if (candidate.Name == managerName || candidate.DisplayName == managerName)
                     {
-                        Logger.Debug("Equivalent package for pId=" + pId + " and pSource=" + pSource + " found: " + match.ToString());
-                        ShowDetailsForPackage(match);
-                        return;
-                    }
-                }
-                
-                Logger.Info($"No package was found with Id={pId} and Source={pSource}, checking for Id only.");
-                // Find a package that matches the Id only
-                foreach (IPackage match in FilteredPackages.GetPackages())
-                {
-                    if (match.Id == pId)
-                    {
-                        Logger.Debug("Equivalent package for pId=" + pId + " and pSource=" + pSource + " found: " + match.ToString());
-                        ShowDetailsForPackage(match);
-                        return;
+                        manager = candidate;
+                        break;
                     }
                 }
 
-                Logger.Debug("No package found with the exact same manager, showing the first one.");
-                ShowDetailsForPackage(FilteredPackages[0].Package);
-            }
-            else
-            {
-                Logger.Error("No packages were found matching the given pId=" + pId);
-                ContentDialog c = new()
+                if (manager is null)
                 {
-                    XamlRoot = XamlRoot,
-                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                    throw new ArgumentException(CoreTools.Translate("The package manager {0} was not found", managerName));
+                }
+
+                if(!manager.IsEnabled())
+                    throw new ArgumentException(CoreTools.Translate("The package manager {0} is disabled", manager.DisplayName));
+
+                if(!manager.Status.Found)
+                    throw new ArgumentException(CoreTools.Translate("There is an error with the configuration of the package manager {0}", manager.DisplayName));
+
+                var results = await manager.FindPackages(id);
+                var candidates = results.Where(p => p.Id == id).ToArray();
+
+                if (candidates.Length == 0)
+                {
+                    throw new ArgumentException(CoreTools.Translate("The package {0} was not found on {1}", id, manager.DisplayName));
+                }
+
+                IPackage package = candidates[0];
+
+                // Get package from best source
+                if (candidates.Length >= 1 && manager.Capabilities.SupportsCustomSources)
+                    foreach (var candidate in candidates)
+                        if (candidate.Source.Name == sourceName)
+                            package = candidate;
+
+                Logger.ImportantInfo($"Found package {package.Id} on manager {package.Manager.Name}, showing it...");
+                MainApp.Instance.MainWindow.HideLoadingDialog();
+                return package;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"An error occurred while attempting to show the package with id {id}");
+                Logger.Error(ex);
+                var warningDialog = new ContentDialog
+                {
                     Title = CoreTools.Translate("Package not found"),
-                    Content = CoreTools.Translate("The package {0} from {1} was not found.", pId, pSource),
-                    PrimaryButtonText = CoreTools.Translate("OK"),
-                    DefaultButton = ContentDialogButton.Primary
+                    Content = CoreTools.Translate("An error occurred when attempting to show the package with Id {0}", id) + ":\n" + ex.Message,
+                    CloseButtonText = CoreTools.Translate("Ok"),
+                    DefaultButton = ContentDialogButton.Close,
+                    XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
                 };
-                await MainApp.Instance.MainWindow.ShowDialogAsync(c);
+
+                MainApp.Instance.MainWindow.HideLoadingDialog();
+                await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
+                return null;
             }
         }
-
     }
 }

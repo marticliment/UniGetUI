@@ -426,7 +426,7 @@ namespace UniGetUI.Interface.SoftwarePages
                             .SetTag(CoreData.UpdatesAvailableNotificationTag.ToString())
 
                             .AddText(CoreTools.Translate("Updates found!"))
-                            .AddText(CoreTools.Translate("{0} can be updated", upgradablePackages.Count))
+                            .AddText(CoreTools.Translate("{0} packages can be updated", upgradablePackages.Count))
                             .SetAttributionText(attribution)
 
                             .AddButton(new AppNotificationButton(CoreTools.Translate("Open WingetUI"))

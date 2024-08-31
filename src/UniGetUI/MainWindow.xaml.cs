@@ -1,6 +1,11 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
-using CommunityToolkit.WinUI.Notifications;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using H.NotifyIcon;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -19,8 +24,8 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Interfaces;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation.Collections;
 using Microsoft.Windows.AppNotifications;
+using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Interface
@@ -63,9 +68,9 @@ namespace UniGetUI.Interface
         }
         public delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
         [DllImport("user32.dll")]
-        public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
+        private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
         [DllImport("user32.dll")]
-        public static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+        private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
         /* END INTEROP STUFF */
 
         private TaskbarIcon? TrayIcon;
@@ -78,22 +83,25 @@ namespace UniGetUI.Interface
 
         private int LoadingDialogCount;
 
-        public List<ContentDialog> DialogQueue = [];
+        private List<ContentDialog> DialogQueue = [];
 
         public List<NavButton> NavButtonList = [];
+
+        public static readonly ObservableQueue<string> ParametersToProcess = new();
+
 #pragma warning disable CS8618
         public MainWindow()
         {
             InitializeComponent();
-            LoadTrayMenu();
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(__content_root);
             ContentRoot = __content_root;
+            SizeChanged += (s, e) => { SaveGeometry(); };
+            AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
+
+            LoadTrayMenu();
             ApplyTheme();
 
-            SizeChanged += (s, e) => { SaveGeometry(); };
-
-            AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
             if (CoreTools.IsAdministrator())
             {
                 Title = "UniGetUI " + CoreTools.Translate("[RAN AS ADMINISTRATOR]");
@@ -106,8 +114,14 @@ namespace UniGetUI.Interface
                 Title = CoreTools.Translate("Please wait"),
                 Content = new ProgressBar { IsIndeterminate = true, Width = 300 }
             };
+
+            foreach (var arg in Environment.GetCommandLineArgs())
+            {
+                ParametersToProcess.Enqueue(arg);
+            }
         }
 #pragma warning restore CS8618
+
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)
         {
             args.Arguments.TryGetValue("action", out string? action);
@@ -175,6 +189,105 @@ namespace UniGetUI.Interface
                     {
                         MainApp.Instance.DisposeAndQuit();
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// For a given deep link, perform the appropiate action
+        /// </summary>
+        /// <param name="link">the unigetui:// deep link to handle</param>
+        private void HandleDeepLink(string link)
+        {
+            string baseUrl = Uri.UnescapeDataString(link[11..]);
+            Logger.ImportantInfo("Begin handle of deep link with body " + baseUrl);
+
+            if (baseUrl.StartsWith("showPackage"))
+            {
+                string Id = Regex.Match(baseUrl, "id=([^&]+)").Value.Split("=")[^1];
+                string CombinedManagerName = Regex.Match(baseUrl, "combinedManagerName=([^&]+)").Value.Split("=")[^1];
+                string ManagerName = Regex.Match(baseUrl, "managerName=([^&]+)").Value.Split("=")[^1];
+                string SourceName = Regex.Match(baseUrl, "sourceName=([^&]+)").Value.Split("=")[^1];
+
+
+                if (Id != "" && CombinedManagerName != "" && ManagerName == "" && SourceName == "")
+                {
+                    Logger.Warn($"URI {link} follows old scheme");
+                    NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Id, CombinedManagerName);
+                }
+                else if (Id != "" && ManagerName != "" && SourceName != "")
+                {
+                    NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Id, ManagerName, SourceName);
+                }
+                else
+                {
+                    Logger.Error(new UriFormatException($"Malformed URL {link}"));
+                }
+            }
+            else if (baseUrl.StartsWith("showUniGetUI"))
+            { /* Skip */ }
+            else if (baseUrl.StartsWith("showDiscoverPage"))
+            {
+                NavigationPage.DiscoverNavButton.ForceClick();
+            }
+            else if (baseUrl.StartsWith("showUpdatesPage"))
+            {
+                NavigationPage.UpdatesNavButton.ForceClick();
+            }
+            else if (baseUrl.StartsWith("showInstalledPage"))
+            {
+                NavigationPage.InstalledNavButton.ForceClick();
+            }
+            else
+            {
+                Logger.Error(new UriFormatException($"Malformed URL {link}"));
+            }
+        }
+
+        /// <summary>
+        /// Will process any remaining CLI parameter stored on MainWindow.ParametersToProcess
+        /// </summary>
+        public void ProcessCommandLineParameters()
+        {
+            while (ParametersToProcess.Count > 0)
+            {
+                string param = ParametersToProcess.Dequeue().Trim('\'').Trim('"');
+                if (param.Length > 2 && param[0] == '-' && param[1] == '-')
+                {
+                    if (param == "--help")
+                    {
+                        NavigationPage.ShowHelp();
+                    }
+                    else if (new[]{ "--daemon", "--updateapps", "--report-all-errors", "--uninstall-unigetui", "--migrate-wingetui-to-unigetui" }.Contains(param))
+                    { /* Skip */ }
+                    else
+                    {
+                        Logger.Warn("Unknown parameter " + param);
+                    }
+                }
+                else if (param.Length > 11 && param.ToLower().StartsWith("unigetui://"))
+                {
+                    HandleDeepLink(param);
+                }
+                else if (Path.IsPathFullyQualified(param) && File.Exists(param))
+                {
+                    if (param.EndsWith(".ubundle") || param.EndsWith(".json") || param.EndsWith(".xml") || param.EndsWith(".yaml"))
+                    {
+                        // Handle potential JSON files
+                        Logger.ImportantInfo("Begin attempt to open the package bundle " + param);
+                        NavigationPage.BundlesNavButton.ForceClick();
+                        _ = NavigationPage.BundlesPage.OpenFromFile(param);
+                    }
+                    else
+                    {
+                        Logger.Warn("Attempted to open the unrecognized file " + param);
+                    }
+                }
+                else if (param.EndsWith("UniGetUI.exe") || param.EndsWith("UniGetUI.dll"))
+                { /* Skip */ }
+                else
+                {
+                    Logger.Warn("Did not know how to handle the parameter " + param);
                 }
             }
         }
@@ -426,7 +539,7 @@ namespace UniGetUI.Interface
             {
                 LoadingSthDalog.Title = text;
                 LoadingSthDalog.XamlRoot = NavigationPage.XamlRoot;
-                _ = LoadingSthDalog.ShowAsync();
+                _ = ShowDialogAsync(LoadingSthDalog, HighPriority: true);
             }
             LoadingDialogCount++;
         }
@@ -454,12 +567,11 @@ namespace UniGetUI.Interface
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
 
             IDataTransferManagerInterop interop =
-            Windows.ApplicationModel.DataTransfer.DataTransferManager.As
-                <IDataTransferManagerInterop>();
+                DataTransferManager.As<IDataTransferManagerInterop>();
 
             IntPtr result = interop.GetForWindow(hWnd, _dtm_iid);
             DataTransferManager dataTransferManager = WinRT.MarshalInterface
-                <Windows.ApplicationModel.DataTransfer.DataTransferManager>.FromAbi(result);
+                <DataTransferManager>.FromAbi(result);
 
             dataTransferManager.DataRequested += (sender, args) =>
             {
