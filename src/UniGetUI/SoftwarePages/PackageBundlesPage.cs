@@ -228,7 +228,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
             OpenBundle.Click += async (s, e) =>
             {
-                Loader.ClearPackages();
                 await OpenFromFile();
             };
 
@@ -393,6 +392,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 string fileContent = await File.ReadAllTextAsync(file);
 
+                Loader.ClearPackages();
                 // Import packages to list
                 await AddFromBundle(fileContent, formatType);
 
@@ -471,11 +471,11 @@ namespace UniGetUI.Interface.SoftwarePages
                 else
                     exportable.incompatible_packages.Add(package.AsSerializable_Incompatible());
 
-            Logger.Debug("Finished loading serializable objects. Serializing with format " + formatType.ToString());
+            Logger.Debug("Finished loading serializable objects. Serializing with format " + formatType);
             string ExportableData;
 
             if (formatType == BundleFormatType.JSON)
-                ExportableData = JsonSerializer.Serialize<SerializableBundle_v1>(exportable, new JsonSerializerOptions { WriteIndented = true });
+                ExportableData = JsonSerializer.Serialize(exportable, new JsonSerializerOptions { WriteIndented = true });
             else if (formatType == BundleFormatType.YAML)
             {
                 YamlDotNet.Serialization.ISerializer serializer = new YamlDotNet.Serialization.SerializerBuilder()
@@ -544,6 +544,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 packages.Add(InvalidPackageFromSerializable(DeserializedPackage, NullSource.Instance));
             }
+
 
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(packages);
 

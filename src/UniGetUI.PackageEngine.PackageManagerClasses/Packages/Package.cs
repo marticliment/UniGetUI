@@ -357,7 +357,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return PackageCacher.NewerVersionIsInstalled(this);
         }
 
-        public async Task<SerializablePackage_v1> AsSerializable()
+        public virtual async Task<SerializablePackage_v1> AsSerializable()
         {
             return new SerializablePackage_v1
             {
