@@ -376,7 +376,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     fileName += " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
                 }
 
-                fileName += ".json";
+                fileName += ".ubundle";
 
                 string filePath = Path.Combine(dirName, fileName);
                 await File.WriteAllTextAsync(filePath, BackupContents);

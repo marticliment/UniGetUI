@@ -374,7 +374,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 {
                     // Select file
                     FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
-                    file = picker.Show(new List<string> { "*.json", "*.yaml", "*.xml" });
+                    file = picker.Show(new List<string> { "*.ubundle", "*.json", "*.yaml", "*.xml" });
                     if (file == String.Empty)
                         return;
                 }
@@ -383,17 +383,19 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 // Read file
                 BundleFormatType formatType;
-                if (file.Split('.')[^1].ToLower() == "yaml")
+                string EXT = file.Split('.')[^1].ToLower();
+                if (EXT == "yaml")
                     formatType = BundleFormatType.YAML;
-                else if (file.Split('.')[^1].ToLower() == "xml")
+                else if (EXT == "xml")
                     formatType = BundleFormatType.XML;
+                else if (EXT == "json" || EXT == "ubundle")
+                    formatType = BundleFormatType.JSON;
                 else
                     formatType = BundleFormatType.JSON;
 
                 string fileContent = await File.ReadAllTextAsync(file);
 
                 Loader.ClearPackages();
-                // Import packages to list
                 await AddFromBundle(fileContent, formatType);
 
                 MainApp.Instance.MainWindow.HideLoadingDialog();
@@ -424,7 +426,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 // Get file
                 // Save file
-                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string> { "*.json", "*.yaml", "*.xml" }, CoreTools.Translate("Package bundle") + ".json");
+                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string> { "*.ubundle", "*.json", "*.yaml", "*.xml" }, CoreTools.Translate("Package bundle") + ".ubundle");
                 if (file != String.Empty)
                 {
                     // Loading dialog
@@ -432,10 +434,13 @@ namespace UniGetUI.Interface.SoftwarePages
 
                     // Select appropriate format
                     BundleFormatType formatType;
-                    if (file.Split('.')[^1].ToLower() == "yaml")
+                    string EXT = file.Split('.')[^1].ToLower();
+                    if (EXT == "yaml")
                         formatType = BundleFormatType.YAML;
-                    else if (file.Split('.')[^1].ToLower() == "xml")
+                    else if (EXT == "xml")
                         formatType = BundleFormatType.XML;
+                    else if (EXT == "json" || EXT == "ubundle")
+                        formatType = BundleFormatType.JSON;
                     else
                         formatType = BundleFormatType.JSON;
 
@@ -506,8 +511,6 @@ namespace UniGetUI.Interface.SoftwarePages
             if (format is BundleFormatType.JSON)
             {
                 DeserializedData = await Task.Run(() => JsonSerializer.Deserialize<SerializableBundle_v1>(content));
-                Logger.Error(DeserializedData.packages.Count.ToString());
-                Logger.Error(DeserializedData.export_version.ToString());
             }
             else if (format is BundleFormatType.YAML)
             {

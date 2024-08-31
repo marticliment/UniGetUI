@@ -199,10 +199,10 @@ namespace UniGetUI.Interface
         /// <param name="link">the unigetui:// deep link to handle</param>
         private void HandleDeepLink(string link)
         {
-            string baseUrl = link[11..];
+            string baseUrl = Uri.UnescapeDataString(link[11..]);
             Logger.ImportantInfo("Begin handle of deep link with body " + baseUrl);
 
-            if (baseUrl.StartsWith("showPackage?"))
+            if (baseUrl.StartsWith("showPackage"))
             {
                 string Id = Regex.Match(baseUrl, "id=([^&]+)").Value.Split("=")[^1];
                 string CombinedManagerName = Regex.Match(baseUrl, "combinedManagerName=([^&]+)").Value.Split("=")[^1];
@@ -271,7 +271,7 @@ namespace UniGetUI.Interface
                 }
                 else if (Path.IsPathFullyQualified(param) && File.Exists(param))
                 {
-                    if (param.EndsWith(".json") || param.EndsWith(".xml") || param.EndsWith(".yaml"))
+                    if (param.EndsWith(".ubundle") || param.EndsWith(".json") || param.EndsWith(".xml") || param.EndsWith(".yaml"))
                     {
                         // Handle potential JSON files
                         Logger.ImportantInfo("Begin attempt to open the package bundle " + param);
