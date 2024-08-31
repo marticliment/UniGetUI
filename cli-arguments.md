@@ -3,7 +3,7 @@
 | Parameter                                           | Description | Compatible versions |
 | --------------------------------------------------- | ---------- | ------- |
 | `--daemon` | Start UniGetUI without spawning a new window. UniGetUI will run minimized on the system tray. UniGetUI is called with this parameter when launched at startup. **Autostart UniGetUI in the notifications area must be enabled for this parameter to work.** | 1.0+ |
-| `--welcomewizard` or `--welcome` | Shows the user the Setup Wizard | up to 2.2.0 |
+| `--welcome` | Shows the user the Setup Wizard | up to 2.2.0 |
 | `--updateapps` | Force enable automatic installation of available updates | 1.6.0+ |
 | `--report-all-errors` | Will force UniGetUI to show the error report page on any crash when loading | 3.0.0+ |
 | `--uninstall-unigetui` | Will unregister UniGetUI from the notification panel, and silently quit | 3.1.0+ |
