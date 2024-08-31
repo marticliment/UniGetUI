@@ -406,7 +406,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     throw new ArgumentException(CoreTools.Translate("The package manager {0} is disabled", manager.DisplayName));
 
                 if(!manager.Status.Found)
-                    throw new ArgumentException(CoreTools.Translate("The package manager {0} is not properly set up", manager.DisplayName));
+                    throw new ArgumentException(CoreTools.Translate("There is an error with the configuration of the package manager {0}", manager.DisplayName));
 
                 var results = await manager.FindPackages(id);
                 var candidates = results.Where(p => p.Id == id).ToArray();
