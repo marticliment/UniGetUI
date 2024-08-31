@@ -279,7 +279,10 @@ namespace UniGetUI
                 RaiseExceptionAsFatal = false;
 
                 MainWindow.ProcessCommandLineParameters();
-                MainWindow.ParametersToProcess.ItemEnqueued += (s, e) => MainWindow.ProcessCommandLineParameters();
+                MainWindow.ParametersToProcess.ItemEnqueued += (s, e) =>
+                {
+                    MainWindow.DispatcherQueue.TryEnqueue(MainWindow.ProcessCommandLineParameters);
+                };
 
                 await CheckForMissingDependencies();
             }
@@ -370,7 +373,7 @@ namespace UniGetUI
             }
             else
             {
-                Logger.Error("REDIRECTOR ACTIVATOR: args.Kind is not Launch but rather " + kind);
+                Logger.Warn("REDIRECTOR ACTIVATOR: args.Kind is not Launch but rather " + kind);
             }
 
             MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);

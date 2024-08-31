@@ -23,6 +23,7 @@ using Windows.Foundation.Collections;
 using Microsoft.Windows.AppNotifications;
 using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.SoftwarePages;
 
 namespace UniGetUI.Interface
 {
@@ -189,12 +190,40 @@ namespace UniGetUI.Interface
             }
         }
 
-        public async void ProcessCommandLineParameters()
+        public void ProcessCommandLineParameters()
         {
             while (ParametersToProcess.Count > 0)
             {
-                string param = ParametersToProcess.Dequeue();
-                Logger.Warn(param);
+                string param = ParametersToProcess.Dequeue().Trim('\'').Trim('"');
+                if (param.Length > 2 && param[0] == '-' && param[1] == '-')
+                {
+                    Logger.ImportantInfo("Ignoring CLI-parameter " + param);
+                    // Handle other --param command-line parameters
+                }
+                else if (param.Length > 11 && param.ToLower().StartsWith("unigetui://"))
+                {
+                    string baseUrl = param[11..];
+                    Logger.ImportantInfo("Begin handle of deep link with body " + baseUrl);
+                    // Handle URLs
+                }
+                else if (Path.IsPathFullyQualified(param) && File.Exists(param))
+                {
+                    if (param.EndsWith(".json") || param.EndsWith(".xml") || param.EndsWith(".yaml"))
+                    {
+                        // Handle potential JSON files
+                        Logger.ImportantInfo("Begin attempt to open the package bundle " + param);
+                        NavigationPage.BundlesNavButton.ForceClick();
+                        _ = NavigationPage.BundlesPage.OpenFromFile(param);
+                    }
+                    else
+                    {
+                        Logger.Warn("Attempted to open the unrecognized file " + param);
+                    }
+                }
+                else
+                {
+                    Logger.Warn("Did not know how to handle the parameter " + param);
+                }
             }
         }
 
@@ -445,7 +474,7 @@ namespace UniGetUI.Interface
             {
                 LoadingSthDalog.Title = text;
                 LoadingSthDalog.XamlRoot = NavigationPage.XamlRoot;
-                _ = LoadingSthDalog.ShowAsync();
+                _ = ShowDialogAsync(LoadingSthDalog, HighPriority: true);
             }
             LoadingDialogCount++;
         }
@@ -473,12 +502,11 @@ namespace UniGetUI.Interface
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
 
             IDataTransferManagerInterop interop =
-            Windows.ApplicationModel.DataTransfer.DataTransferManager.As
-                <IDataTransferManagerInterop>();
+                DataTransferManager.As<IDataTransferManagerInterop>();
 
             IntPtr result = interop.GetForWindow(hWnd, _dtm_iid);
             DataTransferManager dataTransferManager = WinRT.MarshalInterface
-                <Windows.ApplicationModel.DataTransfer.DataTransferManager>.FromAbi(result);
+                <DataTransferManager>.FromAbi(result);
 
             dataTransferManager.DataRequested += (sender, args) =>
             {

@@ -229,7 +229,7 @@ namespace UniGetUI.Interface.SoftwarePages
             OpenBundle.Click += async (s, e) =>
             {
                 Loader.ClearPackages();
-                await OpenFile();
+                await OpenFromFile();
             };
 
             ExportBundle.Click += async (s, e) =>
@@ -367,15 +367,18 @@ namespace UniGetUI.Interface.SoftwarePages
         }
 
 
-        public async Task OpenFile()
+        public async Task OpenFromFile(string? file = null)
         {
             try
             {
-                // Select file
-                FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
-                string file = picker.Show(new List<string> { "*.json", "*.yaml", "*.xml" });
-                if (file == String.Empty)
-                    return;
+                if (file == null)
+                {
+                    // Select file
+                    FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
+                    file = picker.Show(new List<string> { "*.json", "*.yaml", "*.xml" });
+                    if (file == String.Empty)
+                        return;
+                }
 
                 MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Loading packages, please wait..."));
 
@@ -398,9 +401,20 @@ namespace UniGetUI.Interface.SoftwarePages
             }
             catch (Exception ex)
             {
-                Logger.Error("Could not load packages from a file");
+
+                Logger.Error("An error occurred while attempting to open a bundle");
                 Logger.Error(ex);
+                var warningDialog = new ContentDialog
+                {
+                    Title = CoreTools.Translate("The package bundle is not valid"),
+                    Content = CoreTools.Translate("The bundle you are trying to load appears to be invalid. Please check the file and try again.") + "\n\n" + ex.Message,
+                    CloseButtonText = CoreTools.Translate("Ok"),
+                    DefaultButton = ContentDialogButton.Close,
+                    XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
+                };
+
                 MainApp.Instance.MainWindow.HideLoadingDialog();
+                await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
             }
         }
 
@@ -450,6 +464,7 @@ namespace UniGetUI.Interface.SoftwarePages
         public static async Task<string> CreateBundle(IEnumerable<IPackage> packages, BundleFormatType formatType = BundleFormatType.JSON)
         {
             SerializableBundle_v1 exportable = new();
+            exportable.export_version = 2.0;
             foreach (IPackage package in packages)
                 if (package is Package && !package.Source.IsVirtualManager)
                     exportable.packages.Add(await package.AsSerializable());
@@ -485,17 +500,21 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public async Task AddFromBundle(string content, BundleFormatType format)
         {
+
             // Deserialize data
             SerializableBundle_v1? DeserializedData;
-            if (format == BundleFormatType.JSON)
+            if (format is BundleFormatType.JSON)
             {
-                DeserializedData = JsonSerializer.Deserialize<SerializableBundle_v1>(content);
+                DeserializedData = await Task.Run(() => JsonSerializer.Deserialize<SerializableBundle_v1>(content));
+                Logger.Error(DeserializedData.packages.Count.ToString());
+                Logger.Error(DeserializedData.export_version.ToString());
             }
-            else if (format == BundleFormatType.YAML)
+            else if (format is BundleFormatType.YAML)
             {
-                YamlDotNet.Serialization.IDeserializer deserializer = new YamlDotNet.Serialization.DeserializerBuilder()
-                    .Build();
-                DeserializedData = deserializer.Deserialize<SerializableBundle_v1>(content);
+                YamlDotNet.Serialization.IDeserializer deserializer =
+                    new YamlDotNet.Serialization.DeserializerBuilder()
+                        .Build();
+                DeserializedData = await Task.Run(() => deserializer.Deserialize<SerializableBundle_v1>(content));
             }
             else
             {
@@ -503,14 +522,14 @@ namespace UniGetUI.Interface.SoftwarePages
                 await File.WriteAllTextAsync(tempfile, content);
                 StreamReader reader = new(tempfile);
                 XmlSerializer serializer = new(typeof(SerializableBundle_v1));
-                DeserializedData = serializer.Deserialize(reader) as SerializableBundle_v1;
+                DeserializedData = await Task.Run(() => serializer.Deserialize(reader) as SerializableBundle_v1);
                 reader.Close();
                 File.Delete(tempfile);
             }
 
-            if (DeserializedData is null)
+            if (DeserializedData is null || DeserializedData.export_version is -1)
             {
-                throw new InvalidDataException($"Deserialized data was null for content {content} and format {format}");
+                throw new ArgumentException("DeserializedData was null");
             }
 
             List<IPackage> packages = new List<IPackage>();
@@ -520,12 +539,14 @@ namespace UniGetUI.Interface.SoftwarePages
                 packages.Add(PackageFromSerializable(DeserializedPackage));
             }
 
-            foreach (SerializableIncompatiblePackage_v1 DeserializedPackage in DeserializedData.incompatible_packages)
+            foreach (SerializableIncompatiblePackage_v1 DeserializedPackage in DeserializedData
+                         .incompatible_packages)
             {
                 packages.Add(InvalidPackageFromSerializable(DeserializedPackage, NullSource.Instance));
             }
 
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(packages);
+
         }
 
         public static IPackage PackageFromSerializable(SerializablePackage_v1 raw_package)
