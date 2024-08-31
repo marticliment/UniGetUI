@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using CommunityToolkit.WinUI.Notifications;
 using H.NotifyIcon;
 using Microsoft.UI;
@@ -20,10 +21,13 @@ using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Interfaces;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
+using Windows.UI.WebUI;
 using Microsoft.Windows.AppNotifications;
 using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.SoftwarePages;
+using UniGetUI.PackageEngine.PackageClasses;
+using YamlDotNet.Core.Tokens;
 
 namespace UniGetUI.Interface
 {
@@ -204,7 +208,41 @@ namespace UniGetUI.Interface
                 {
                     string baseUrl = param[11..];
                     Logger.ImportantInfo("Begin handle of deep link with body " + baseUrl);
-                    // Handle URLs
+
+                    if (baseUrl.StartsWith("showPackage?"))
+                    {
+                        string Id = Regex.Match(baseUrl, "id=([^&]+)").Value.Split("=")[^1];
+                        string CombinedManagerName = Regex.Match(baseUrl, "combinedManagerName=([^&]+)").Value.Split("=")[^1];
+                        string ManagerName = Regex.Match(baseUrl, "managerName=([^&]+)").Value.Split("=")[^1];
+                        string SourceName = Regex.Match(baseUrl, "sourceName=([^&]+)").Value.Split("=")[^1];
+
+
+                        if (Id != "" && CombinedManagerName != "" && ManagerName == "" && SourceName == "")
+                        {
+                            Logger.Warn($"URI {param} follows old scheme");
+                            NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Id, CombinedManagerName);
+                        }
+                        else if (Id != "" && ManagerName != "" && SourceName != "")
+                        {
+                            NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Id, ManagerName, SourceName);
+                        }
+                        else
+                        {
+                            Logger.Error(new UriFormatException($"Malformed URL {param}"));
+                        }
+                    }
+                    else if (baseUrl.StartsWith("showUniGetUI"))
+                    {
+                        // Do nothing, window already shown
+                    }
+                    else if (baseUrl.StartsWith("showUpdatesPage"))
+                    {
+                        NavigationPage.UpdatesNavButton.ForceClick();
+                    }
+                    else
+                    {
+                        Logger.Error(new UriFormatException($"Malformed URL {param}"));
+                    }
                 }
                 else if (Path.IsPathFullyQualified(param) && File.Exists(param))
                 {
@@ -219,6 +257,10 @@ namespace UniGetUI.Interface
                     {
                         Logger.Warn("Attempted to open the unrecognized file " + param);
                     }
+                }
+                else if (param.EndsWith("UniGetUI.exe") || param.EndsWith("UniGetUI.dll"))
+                {
+                    // Skip
                 }
                 else
                 {
