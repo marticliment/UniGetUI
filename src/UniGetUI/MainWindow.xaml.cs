@@ -1,7 +1,11 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using CommunityToolkit.WinUI.Notifications;
+using System.Threading.Tasks;
 using H.NotifyIcon;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -20,14 +24,9 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Interfaces;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation.Collections;
-using Windows.UI.WebUI;
 using Microsoft.Windows.AppNotifications;
 using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
-using UniGetUI.Interface.SoftwarePages;
-using UniGetUI.PackageEngine.PackageClasses;
-using YamlDotNet.Core.Tokens;
 
 namespace UniGetUI.Interface
 {
@@ -194,6 +193,62 @@ namespace UniGetUI.Interface
             }
         }
 
+        /// <summary>
+        /// For a given deep link, perform the appropiate action
+        /// </summary>
+        /// <param name="link">the unigetui:// deep link to handle</param>
+        private void HandleDeepLink(string link)
+        {
+            string baseUrl = link[11..];
+            Logger.ImportantInfo("Begin handle of deep link with body " + baseUrl);
+
+            if (baseUrl.StartsWith("showPackage?"))
+            {
+                string Id = Regex.Match(baseUrl, "id=([^&]+)").Value.Split("=")[^1];
+                string CombinedManagerName = Regex.Match(baseUrl, "combinedManagerName=([^&]+)").Value.Split("=")[^1];
+                string ManagerName = Regex.Match(baseUrl, "managerName=([^&]+)").Value.Split("=")[^1];
+                string SourceName = Regex.Match(baseUrl, "sourceName=([^&]+)").Value.Split("=")[^1];
+
+
+                if (Id != "" && CombinedManagerName != "" && ManagerName == "" && SourceName == "")
+                {
+                    Logger.Warn($"URI {link} follows old scheme");
+                    NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Id, CombinedManagerName);
+                }
+                else if (Id != "" && ManagerName != "" && SourceName != "")
+                {
+                    NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Id, ManagerName, SourceName);
+                }
+                else
+                {
+                    Logger.Error(new UriFormatException($"Malformed URL {link}"));
+                }
+            }
+            else if (baseUrl.StartsWith("showUniGetUI"))
+            {
+                // Do nothing, window already shown
+            }
+            else if (baseUrl.StartsWith("showDiscoverPage"))
+            {
+                NavigationPage.DiscoverNavButton.ForceClick();
+            }
+            else if (baseUrl.StartsWith("showUpdatesPage"))
+            {
+                NavigationPage.UpdatesNavButton.ForceClick();
+            }
+            else if (baseUrl.StartsWith("showInstalledPage"))
+            {
+                NavigationPage.InstalledNavButton.ForceClick();
+            }
+            else
+            {
+                Logger.Error(new UriFormatException($"Malformed URL {link}"));
+            }
+        }
+
+        /// <summary>
+        /// Will process any remaining CLI parameter stored on MainWindow.ParametersToProcess
+        /// </summary>
         public void ProcessCommandLineParameters()
         {
             while (ParametersToProcess.Count > 0)
@@ -201,48 +256,22 @@ namespace UniGetUI.Interface
                 string param = ParametersToProcess.Dequeue().Trim('\'').Trim('"');
                 if (param.Length > 2 && param[0] == '-' && param[1] == '-')
                 {
-                    Logger.ImportantInfo("Ignoring CLI-parameter " + param);
-                    // Handle other --param command-line parameters
-                }
-                else if (param.Length > 11 && param.ToLower().StartsWith("unigetui://"))
-                {
-                    string baseUrl = param[11..];
-                    Logger.ImportantInfo("Begin handle of deep link with body " + baseUrl);
-
-                    if (baseUrl.StartsWith("showPackage?"))
+                    if (param == "--help")
                     {
-                        string Id = Regex.Match(baseUrl, "id=([^&]+)").Value.Split("=")[^1];
-                        string CombinedManagerName = Regex.Match(baseUrl, "combinedManagerName=([^&]+)").Value.Split("=")[^1];
-                        string ManagerName = Regex.Match(baseUrl, "managerName=([^&]+)").Value.Split("=")[^1];
-                        string SourceName = Regex.Match(baseUrl, "sourceName=([^&]+)").Value.Split("=")[^1];
-
-
-                        if (Id != "" && CombinedManagerName != "" && ManagerName == "" && SourceName == "")
-                        {
-                            Logger.Warn($"URI {param} follows old scheme");
-                            NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Id, CombinedManagerName);
-                        }
-                        else if (Id != "" && ManagerName != "" && SourceName != "")
-                        {
-                            NavigationPage.DiscoverPage.ShowSharedPackage_ThreadSafe(Id, ManagerName, SourceName);
-                        }
-                        else
-                        {
-                            Logger.Error(new UriFormatException($"Malformed URL {param}"));
-                        }
+                        NavigationPage.ShowHelp();
                     }
-                    else if (baseUrl.StartsWith("showUniGetUI"))
+                    else if (new[]{ "--daemon", "--updateapps", "--report-all-errors", "--uninstall-unigetui", "--migrate-wingetui-to-unigetui" }.Contains(param))
                     {
-                        // Do nothing, window already shown
-                    }
-                    else if (baseUrl.StartsWith("showUpdatesPage"))
-                    {
-                        NavigationPage.UpdatesNavButton.ForceClick();
+                        // Pass, this parameters are handled elsewhere
                     }
                     else
                     {
-                        Logger.Error(new UriFormatException($"Malformed URL {param}"));
+                        Logger.Warn("Unknown parameter " + param);
                     }
+                }
+                else if (param.Length > 11 && param.ToLower().StartsWith("unigetui://"))
+                {
+                    HandleDeepLink(param);
                 }
                 else if (Path.IsPathFullyQualified(param) && File.Exists(param))
                 {
