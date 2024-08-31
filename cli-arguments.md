@@ -10,9 +10,17 @@
 | `--migrate-wingetui-to-unigetui` | Will migrate WingetUI data folders and shortcuts to UniGetUI (if possible), and silently quit | 3.1.0+ |
 | `X:\Path\To\file` | Provided that the file is a valid bundle, will load the bundle into the Package Bundles page | 3.1.2+ |
 
-
+<br><br>
 # `unigetui://` protocol
-Not yet
+On a system where UniGetUI 3.1.2+ is installed, the following deep links can be used to communicate with UniGetUI:
+
+| Parameter                                           | Description |
+| --------------------------------------------------- | ---------- |
+| `unigetui://showPackage?id=[...]&managerName=[...]&sourceName=[...]` | Show the Package Details page with the provided package. The package id, the Name or DisplayName of the package manager and the name of the source are requied |
+| `unigetui://showUniGetUI` | Shows UniGetUI and brings the window to the front |
+| `unigetui://showUpdatesPage` | Shows UniGetUI and loads the Updates page | 
+
+<br><br>
 
 # Installer command-line parameters 
 The installer is inno-setup based. It supports all Inno Setup command-line parameters as well as the following:
