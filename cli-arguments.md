@@ -12,7 +12,7 @@
 
 
 # `unigetui://` protocol
-Not yet ;)
+Not yet
 
 # Installer command-line parameters 
 The installer is inno-setup based. It supports all Inno Setup command-line parameters as well as the following:
