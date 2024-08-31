@@ -234,17 +234,6 @@ Microsoft has implemented a few checks for the software available on Winget to m
 <br><p align="center"><i>Check out the <a href="https://github.com/marticliment/UniGetUI/wiki">Wiki</a> for more information!</i></p>
 
 ## Command-line parameters:
-`--daemon`: Start UniGetUI without spawning a new window. UniGetUI will run minimized on the system tray. UniGetUI is called with this parameter when launched at startup. **Autostart UniGetUI in the notifications area** must be enabled for this parameter to work.<br>
-`--welcomewizard` (or simply `--welcome`): Show a window to choose which package managers to use.<br>
-`--updateapps`: Enable automatic installation of available updates.<br>
-Since 3.0.0: `--report-all-errors`: May help debug crashes<br>
-Since 3.1.0: `--uninstall-unigetui`: Attempts to unregister UniGetUI from the notification panel, and silently quit<br>
-Since 3.1.0: `--migrate-wingetui-to-unigetui`: Attempts to migrate WingetUI data folders and shortcuts to UniGetUI, and silently quits<br>
 
-### Installer command-line parameters:
-The installer is inno-setup based. It supports all Inno Setup command-line parameters as well as the following:
-<br>`/NoAutoStart`: Will not launch UniGetUI after installing it.
-<br> `/ALLUSERS`: Install UniGetUI for every user
-<br> `/CURRENTUSER`: Install UniGetUI for the current user only
-<br> Since 3.1.0: `/NoChocolatey`: Do NOT install chocolatey within UniGetUI
-<br> Since 3.1.0: `/NoWinGet `: Do NOT install WinGet and Microsoft.WinGet.Client if not installed **(not recommended)**
+Check out the full list of paramaters [here](https://github.com/marticliment/UniGetUI/blob/main/cli-arguments.md)
+
