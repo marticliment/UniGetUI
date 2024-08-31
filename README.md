@@ -35,6 +35,7 @@ It really does make a big difference, and is very much appreciated. Thanks :)<br
  - [Contributors](#contributors)
  - [Screenshots](#screenshots)
  - [Frequently Asked Questions](#frequently-asked-questions)
+ - [Command-line Arguments](https://github.com/marticliment/UniGetUI/blob/main/cli-arguments.md)
 
  
 ## Installation
