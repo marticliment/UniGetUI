@@ -366,15 +366,19 @@ namespace UniGetUI.Interface.SoftwarePages
             string managerName = contents[0];
             string sourceName = "";
             if (contents.Length > 1) sourceName = contents[1];
-            MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() => { ShowSharedPackage(id, managerName, sourceName); });
+            ShowSharedPackage_ThreadSafe(id, managerName, sourceName);
         }
 
         public void ShowSharedPackage_ThreadSafe(string id, string managerName, string sourceName)
         {
-            MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() => { ShowSharedPackage(id, managerName, sourceName); });
+            MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(async () =>
+            {
+                IPackage? package = await GetPackageFromIdAndManager(id, managerName, sourceName);
+                if (package is not null) ShowDetailsForPackage(package);
+            });
         }
 
-        private async void ShowSharedPackage(string id, string managerName, string sourceName)
+        private static async Task<IPackage?> GetPackageFromIdAndManager(string id, string managerName, string sourceName)
         {
             try
             {
@@ -388,13 +392,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 {
                     if (candidate.Name == managerName || candidate.DisplayName == managerName)
                     {
-                        if (candidate.IsEnabled())
-                        {
-                            manager = candidate;
-                            break;
-                        }
-                        throw new ArgumentException(CoreTools.Translate("The Package Manager {0} is disabled",
-                                candidate.DisplayName));
+                        manager = candidate;
+                        break;
                     }
                 }
 
@@ -402,6 +401,12 @@ namespace UniGetUI.Interface.SoftwarePages
                 {
                     throw new ArgumentException(CoreTools.Translate("The package manager {0} was not found", managerName));
                 }
+
+                if(!manager.IsEnabled())
+                    throw new ArgumentException(CoreTools.Translate("The package manager {0} is disabled", manager.DisplayName));
+
+                if(!manager.Status.Found)
+                    throw new ArgumentException(CoreTools.Translate("The package manager {0} is not properly set up", manager.DisplayName));
 
                 var results = await manager.FindPackages(id);
                 var candidates = results.Where(p => p.Id == id).ToArray();
@@ -421,8 +426,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 Logger.ImportantInfo($"Found package {package.Id} on manager {package.Manager.Name}, showing it...");
                 MainApp.Instance.MainWindow.HideLoadingDialog();
-                ShowDetailsForPackage(package);
-
+                return package;
             }
             catch (Exception ex)
             {
@@ -439,7 +443,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 MainApp.Instance.MainWindow.HideLoadingDialog();
                 await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
-
+                return null;
             }
         }
     }

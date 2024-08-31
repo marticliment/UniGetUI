@@ -225,9 +225,7 @@ namespace UniGetUI.Interface
                 }
             }
             else if (baseUrl.StartsWith("showUniGetUI"))
-            {
-                // Do nothing, window already shown
-            }
+            { /* Skip */ }
             else if (baseUrl.StartsWith("showDiscoverPage"))
             {
                 NavigationPage.DiscoverNavButton.ForceClick();
@@ -261,9 +259,7 @@ namespace UniGetUI.Interface
                         NavigationPage.ShowHelp();
                     }
                     else if (new[]{ "--daemon", "--updateapps", "--report-all-errors", "--uninstall-unigetui", "--migrate-wingetui-to-unigetui" }.Contains(param))
-                    {
-                        // Pass, this parameters are handled elsewhere
-                    }
+                    { /* Skip */ }
                     else
                     {
                         Logger.Warn("Unknown parameter " + param);
@@ -288,9 +284,7 @@ namespace UniGetUI.Interface
                     }
                 }
                 else if (param.EndsWith("UniGetUI.exe") || param.EndsWith("UniGetUI.dll"))
-                {
-                    // Skip
-                }
+                { /* Skip */ }
                 else
                 {
                     Logger.Warn("Did not know how to handle the parameter " + param);
