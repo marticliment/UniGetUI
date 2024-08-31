@@ -11,7 +11,7 @@
 | `X:\Path\To\file` | Provided that the file is a valid bundle, will load the bundle into the Package Bundles page | 3.1.2+ |
 
 <br><br>
-# `unigetui://` protocol
+# `unigetui://` deep link
 On a system where UniGetUI 3.1.2+ is installed, the following deep links can be used to communicate with UniGetUI:
 
 | Parameter                                           | Description |
