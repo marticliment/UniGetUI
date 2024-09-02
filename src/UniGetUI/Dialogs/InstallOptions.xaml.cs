@@ -60,12 +60,12 @@ namespace UniGetUI.Interface.Dialogs
                 IgnoreUpdatesCheckbox.IsChecked =
                     !(new []
                     {
-                        CoreTools.Translate("Latest"), 
-                        CoreTools.Translate("PreRelease"), 
+                        CoreTools.Translate("Latest"),
+                        CoreTools.Translate("PreRelease"),
                         ""
                     }.Contains(VersionComboBox.SelectedValue.ToString()));
             };
-            
+
             VersionComboBox.Items.Add(CoreTools.Translate("Latest"));
             VersionComboBox.SelectedIndex = 0;
             if (package.Manager.Capabilities.SupportsPreRelease)
@@ -92,13 +92,13 @@ namespace UniGetUI.Interface.Dialogs
             if (package.Manager.Capabilities.SupportsCustomScopes)
             {
                 ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
-                if (Options.InstallationScope == CommonTranslations.ScopeNames[PackageScope.Local])
+                if (Options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Local])
                 {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Local];
                 }
 
                 ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Global]));
-                if (Options.InstallationScope == CommonTranslations.ScopeNames[PackageScope.Global])
+                if (Options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Global])
                 {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
                 }
@@ -108,7 +108,7 @@ namespace UniGetUI.Interface.Dialogs
             SelectDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
             CustomInstallLocation.Text = Options.CustomInstallLocation;
 
-            if (Options.CustomParameters != null)
+            if (Options.CustomParameters.Any())
             {
                 CustomParameters.Text = string.Join(' ', Options.CustomParameters);
             }
@@ -156,7 +156,7 @@ namespace UniGetUI.Interface.Dialogs
 
             if (CommonTranslations.InvertedScopeNames.ContainsKey(ScopeCombo.SelectedValue.ToString() ?? ""))
             {
-                Options.InstallationScope = ScopeCombo.SelectedValue.ToString() ?? "";
+                Options.InstallationScope = CommonTranslations.ScopeNames_NonLang[CommonTranslations.InvertedScopeNames[ScopeCombo.SelectedValue.ToString() ?? ""]];
             }
             else
             {
