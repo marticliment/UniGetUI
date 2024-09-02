@@ -639,7 +639,7 @@
   "updating" : "正在更新",
   "{0} Uninstallation" : "{0} 卸载",
   "{0} aborted" : "{0} 已中止",
-  "{0} can be updated" : "{0} 可更新",
+  "{0} can be updated" : "{0} 个可更新",
   "{0} can be updated to version {1}" : "{0} 可更新至版本 {1}",
   "{0} days" : "{0} 天",
   "{0} failed" : "{0} 失败",

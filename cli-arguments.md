@@ -8,7 +8,7 @@
 | `--report-all-errors` | Will force UniGetUI to show the error report page on any crash when loading | 3.0.0+ |
 | `--uninstall-unigetui` | Will unregister UniGetUI from the notification panel, and silently quit | 3.1.0+ |
 | `--migrate-wingetui-to-unigetui` | Will migrate WingetUI data folders and shortcuts to UniGetUI (if possible), and silently quit | 3.1.0+ |
-| `X:\Path\To\file` | Provided that the file is a valid bundle, will load the bundle into the Package Bundles page | 3.1.2+ |
+| `X:\Path\To\file` | Provided that the file is a valid bundle, will load the bundle into the Package Bundles page. Compatible bundle files include the following extensions: `.ubundle`, `.json`, `.yaml`, `.xml` | 3.1.2+ |
 
 <br><br>
 # `unigetui://` deep link
