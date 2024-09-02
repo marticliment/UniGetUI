@@ -3,6 +3,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Managers.CargoManager;
+
 internal sealed class CargoOperationProvider(Cargo cargo) : BaseOperationProvider<Cargo>(cargo)
 {
     public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
@@ -19,7 +20,7 @@ internal sealed class CargoOperationProvider(Cargo cargo) : BaseOperationProvide
         return parameters;
     }
 
-    public override OperationVeredict GetOperationResult(IPackage package, IInstallationOptions options, OperationType operation, IEnumerable<string> processOutput, int returnCode)
+    public override OperationVeredict GetOperationResult(IPackage package, OperationType operation, IEnumerable<string> processOutput, int returnCode)
     {
         return returnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
     }
