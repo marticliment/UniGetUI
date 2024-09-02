@@ -70,6 +70,11 @@ internal sealed class CargoPackageDetailsProvider(Cargo manager) : BasePackageDe
         throw new NotImplementedException();
     }
 
+    protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+    {
+        return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cargo", "bin");
+    }
+
     protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
     {
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions);
