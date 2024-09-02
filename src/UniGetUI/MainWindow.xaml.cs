@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using H.NotifyIcon;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -576,14 +577,11 @@ namespace UniGetUI.Interface
             dataTransferManager.DataRequested += (sender, args) =>
             {
                 DataRequest dataPackage = args.Request;
-                Uri ShareUrl = new("https://marticliment.com/unigetui/share?name="
-                                   + System.Web.HttpUtility.UrlEncode(package.Name)
-                                   + "&id="
-                                   + System.Web.HttpUtility.UrlEncode(package.Id) +
-                                   "&sourceName="
-                                   + System.Web.HttpUtility.UrlEncode(package.Source.Name) +
-                                   "&managerName="
-                                   + System.Web.HttpUtility.UrlEncode(package.Manager.DisplayName));
+                Uri ShareUrl = new("https://marticliment.com/unigetui/share?"
+                                   + "name=" + HttpUtility.UrlEncode(package.Name)
+                                   + "&id=" + HttpUtility.UrlEncode(package.Id)
+                                   + "&sourceName=" + HttpUtility.UrlEncode(package.Source.Name)
+                                   + "&managerName=" + HttpUtility.UrlEncode(package.Manager.DisplayName));
 
                 dataPackage.Data.SetWebLink(ShareUrl);
                 dataPackage.Data.Properties.Title = "Sharing " + package.Name;
