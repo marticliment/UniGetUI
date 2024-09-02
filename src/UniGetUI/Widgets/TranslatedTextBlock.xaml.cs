@@ -38,7 +38,8 @@ namespace UniGetUI.Interface.Widgets
 
         public void ApplyText()
         {
-            __textblock.Text = __prefix + __text + __suffix;
+            if(__textblock != null)
+                __textblock.Text = __prefix + __text + __suffix;
         }
     }
 }
