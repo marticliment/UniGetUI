@@ -210,7 +210,6 @@ Crash Traceback:
             p.StartInfo.UseShellExecute = true;
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.Verb = RunAsAdmin ? "runas" : "";
-            p.StartInfo = UpdateEnvironmentVariables(p.StartInfo);
             p.Start();
             await p.WaitForExitAsync();
         }
