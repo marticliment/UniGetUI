@@ -120,7 +120,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Architecture = name;
             }
 
-            if (options.InstallationScope != "" && CommonTranslations.InvertedScopeNames_NonLang.TryGetValue(options.InstallationScope, out var value))
+            if (options.InstallationScope != "" && CommonTranslations.InvertedScopeNames.TryGetValue(options.InstallationScope, out var value))
             {
                 InstallationScope = value;
             }

@@ -92,13 +92,13 @@ namespace UniGetUI.Interface.Dialogs
             if (package.Manager.Capabilities.SupportsCustomScopes)
             {
                 ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Local]));
-                if (Options.InstallationScope == CommonTranslations.ScopeNames[PackageScope.Local])
+                if (Options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Local])
                 {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Local];
                 }
 
                 ScopeCombo.Items.Add(CoreTools.Translate(CommonTranslations.ScopeNames[PackageScope.Global]));
-                if (Options.InstallationScope == CommonTranslations.ScopeNames[PackageScope.Global])
+                if (Options.InstallationScope == CommonTranslations.ScopeNames_NonLang[PackageScope.Global])
                 {
                     ScopeCombo.SelectedValue = CommonTranslations.ScopeNames[PackageScope.Global];
                 }
