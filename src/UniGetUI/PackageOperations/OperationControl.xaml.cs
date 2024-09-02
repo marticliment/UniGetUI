@@ -443,7 +443,7 @@ namespace UniGetUI.PackageEngine.Operations
 
                 Process.Start();
                 PostProcessStartAction();
-                
+
                 Process.BeginOutputReadLine();
                 Process.BeginErrorReadLine();
 
@@ -531,11 +531,13 @@ namespace UniGetUI.PackageEngine.Operations
                         break;
                 }
 
-                ProcessOutput.Insert(0, new("                           ", OutputLine.LineType.Header));
-                ProcessOutput.Insert(0, new("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄", OutputLine.LineType.Header));
-                ProcessOutput.Add(new("", OutputLine.LineType.Header));
-                ProcessOutput.Add(new("", OutputLine.LineType.Header));
-                ProcessOutput.Add(new("", OutputLine.LineType.Header));
+                List<string> rawOutput = RawProcessOutput.ToList();
+
+                rawOutput.Insert(0, "                           ");
+                rawOutput.Insert(0, "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄");
+                rawOutput.Add("");
+                rawOutput.Add("");
+                rawOutput.Add("");
 
                 string[] oldHistory = Settings.GetValue("OperationHistory").Split("\n");
 
@@ -544,7 +546,7 @@ namespace UniGetUI.PackageEngine.Operations
                     oldHistory = oldHistory.Take(1000).ToArray();
                 }
 
-                List<string> newHistory = [.. RawProcessOutput, .. oldHistory];
+                List<string> newHistory = [.. rawOutput, .. oldHistory];
 
                 Settings.SetValue("OperationHistory", string.Join('\n', newHistory).Replace(" | ", " ║ "));
             }
