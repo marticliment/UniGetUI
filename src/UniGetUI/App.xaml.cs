@@ -387,11 +387,13 @@ namespace UniGetUI
             MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);
         }
 
-        public void DisposeAndQuit(int outputCode = 0)
+        public async void DisposeAndQuit(int outputCode = 0)
         {
             Logger.Warn("Quitting...");
             MainWindow?.Close();
             BackgroundApi?.Stop();
+            Exit();
+            await Task.Delay(100);
             Environment.Exit(outputCode);
         }
 
