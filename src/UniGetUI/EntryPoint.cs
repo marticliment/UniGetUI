@@ -1,6 +1,7 @@
 using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
+using Microsoft.Windows.AppNotifications;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -71,7 +72,7 @@ namespace UniGetUI
                         DispatcherQueueSynchronizationContext context = new(
                             DispatcherQueue.GetForCurrentThread());
                         SynchronizationContext.SetSynchronizationContext(context);
-                        new MainApp();
+                        var app = new MainApp();
                     });
                 }
             }
@@ -91,25 +92,23 @@ namespace UniGetUI
                 // IDK how does this work, I copied it from the MS Docs
                 // example on single-instance apps using unpackaged AppSdk + WinUI3
                 bool isRedirect = false;
-                AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();
-                ExtendedActivationKind kind = args.Kind;
 
-                AppInstance keyInstance = AppInstance.FindOrRegisterForKey("MartiCliment.UniGetUI.MainInterface");
+                var keyInstance = AppInstance.FindOrRegisterForKey("MartiCliment.UniGetUI.MainInterface");
 
                 if (keyInstance.IsCurrent)
                 {
                     keyInstance.Activated += async (s, e) =>
                     {
-                        MainApp? AppInstance = MainApp.Current as MainApp;
-                        if (AppInstance != null)
+                        if (MainApp.Current is MainApp baseInstance)
                         {
-                            await AppInstance.ShowMainWindowFromRedirectAsync();
+                            await baseInstance.ShowMainWindowFromRedirectAsync(e);
                         }
                     };
                 }
                 else
                 {
                     isRedirect = true;
+                    AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();
                     await keyInstance.RedirectActivationToAsync(args);
                 }
                 return isRedirect;

@@ -84,4 +84,11 @@ namespace UniGetUI.Interface.Enums
         WinGet = '\uE940',
         Rust = '\uE941',
     }
+
+    public class NotificationArguments
+    {
+        public const string Show = "openUniGetUI";
+        public const string ShowOnUpdatesTab = "openUniGetUIOnUpdatesTab";
+        public const string UpdateAllPackages = "updateAll";
+    }
 }

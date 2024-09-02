@@ -413,6 +413,11 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 return [];
             }
         }
+
+        public string? GetPackageInstallLocation(IPackage package)
+        {
+            return PackageDetailsProvider.GetPackageInstallLocation(package);
+        }
         // END PACKAGEDETAILS-RELATED METHODS
 
 
@@ -501,6 +506,11 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         protected override async Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
         {
             return [];
+        }
+
+        protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+        {
+            return null;
         }
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)

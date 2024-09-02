@@ -36,5 +36,12 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// <param name="package">The package from which to load the screenshots</param>
         /// <returns>An array with valid URIs to the screenshots</returns>
         public abstract Task<Uri[]> GetPackageScreenshotsUrl(IPackage package);
+
+        /// <summary>
+        /// Returns the location where the package is installed, or null if the location cannot be loaded.
+        /// </summary>
+        /// <param name="package">The package for which to get the location</param>
+        /// <returns>A valid path in the form of a string or a null object</returns>
+        public abstract string? GetPackageInstallLocation(IPackage package);
     }
 }

@@ -8,6 +8,7 @@ using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Managers.Chocolatey;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -36,7 +37,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             Properties = new ManagerProperties
             {
                 Name = "PowerShell7",
-                DisplayName = "PowerShell 7.x (beta)",
+                DisplayName = "PowerShell 7.x",
                 Description = CoreTools.Translate("PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>"),
                 IconId = IconType.PowerShell,
                 ColorIconId = "powershell_color",
@@ -50,6 +51,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
             };
 
+            PackageDetailsProvider = new PowerShell7DetailsProvider(this);
             SourceProvider = new PowerShell7SourceProvider(this);
             OperationProvider = new PowerShell7OperationProvider(this);
         }

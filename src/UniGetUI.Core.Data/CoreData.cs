@@ -45,8 +45,8 @@ namespace UniGetUI.Core.Data
             }
         }
 
-        public const string VersionName =  "3.1.1"; // Do not modify this line, use file scripts/apply_versions.py
-        public const double VersionNumber =  3.11; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName =  "3.1.2-beta0"; // Do not modify this line, use file scripts/apply_versions.py
+        public const double VersionNumber =  3.119; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 
@@ -164,25 +164,11 @@ namespace UniGetUI.Core.Data
 
         public static bool IsDaemon;
 
-        public static string ManagerLogs = "";
-
-        private static int __volatile_notification_id_counter = 1235;
-
-        /// <summary>
-        /// A self-incremented value to generate random notification IDs
-        /// </summary>
-        public static int VolatileNotificationIdCounter
-        {
-            get => __volatile_notification_id_counter++;
-        }
-
         /// <summary>
         /// The ID of the notification that is used to inform the user that updates are available
         /// </summary>
-        public static int UpdatesAvailableNotificationId
-        {
-            get => 1234;
-        }
+        public const int UpdatesAvailableNotificationTag = 1234;
+
 
         /// <summary>
         /// A path pointing to the location where the app is installed

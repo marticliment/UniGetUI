@@ -8,6 +8,7 @@ using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Managers.Chocolatey;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager
@@ -49,6 +50,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
             };
 
+            PackageDetailsProvider = new PowerShellDetailsProvider(this);
             SourceProvider = new PowerShellSourceProvider(this);
             OperationProvider = new PowerShellOperationProvider(this);
         }

@@ -11,7 +11,7 @@ using UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
-    public class BaseNuGetDetailsProvider : BasePackageDetailsProvider<PackageManager>
+    public abstract class BaseNuGetDetailsProvider : BasePackageDetailsProvider<PackageManager>
     {
         public BaseNuGetDetailsProvider(BaseNuGet manager) : base(manager) { }
 
@@ -144,6 +144,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         {
             throw new NotImplementedException();
         }
+
 
         protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
         {

@@ -84,9 +84,11 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                     else
                     {
                         string[] parts = Regex.Replace(line.Trim(), " {2,}", " ").Split(' ');
-                        if (parts.Length >= 3)
+                        if (parts.Length >= 2)
                         {
-                            sources.Add(new ManagerSource(Manager, parts[0].Trim(), new Uri(parts[2].Trim())));
+                            string uri = Regex.Match(line, "https?:\\/\\/([\\w%-]+\\.)+[\\w%-]+(\\/[\\w%-]+)+\\/?").Value;
+                            if(uri == "") continue;
+                            sources.Add(new ManagerSource(Manager, parts[0].Trim(), new Uri(uri)));
                         }
                     }
                 }

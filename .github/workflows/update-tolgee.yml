@@ -29,6 +29,9 @@ jobs:
           labels: tolgee-ci
           title: "Load translations from Tolgee"
           body: ""
+          asignees: marticliment
           author: "Martí Climent <marticlilop@gmail.com>"
-          commit-message: "Load updated translations from Tolgee"
+          commit-message:  |
+            Load updated translations from Tolgee
+            Co-authored-by: Martí Climent from the multiverse <121457539+martinet101@users.noreply.github.com>
           branch: pull-request/update-translation

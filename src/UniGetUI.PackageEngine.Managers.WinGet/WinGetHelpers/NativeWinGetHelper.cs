@@ -39,7 +39,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         List<Package> Packages = [];
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
         Dictionary<(PackageCatalogReference, PackageMatchField), Task<FindPackagesResult>> FindPackageTasks = [];
-        
+
         // Load catalogs
         logger.Log("Loading available catalogs...");
         IReadOnlyList<PackageCatalogReference> AvailableCatalogs = WinGetManager.GetPackageCatalogs();
@@ -281,10 +281,9 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         filters.Option = PackageFieldMatchOption.Equals;
         packageMatchFilter.Filters.Add(filters);
         packageMatchFilter.ResultLimit = 1;
-        Task<FindPackagesResult> SearchResult =
-            Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
+        var SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
 
-        if (SearchResult.Result == null || SearchResult.Result.Matches == null ||
+        if (SearchResult?.Result?.Matches == null ||
             SearchResult.Result.Matches.Count == 0)
         {
             logger.Error("Failed to find package " + package.Id + " in catalog " + package.Source.Name);

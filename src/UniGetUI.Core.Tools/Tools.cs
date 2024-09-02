@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net;
@@ -92,6 +93,7 @@ namespace UniGetUI.Core.Tools
                     StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
                 }
             };
+            process.StartInfo = UpdateEnvironmentVariables(process.StartInfo);
             process.Start();
             string? line = await process.StandardOutput.ReadLineAsync();
             string output;
@@ -238,7 +240,7 @@ Crash Traceback:
         /// <returns>a double representing the size in MBs, 0 if the process fails</returns>
         public static async Task<double> GetFileSizeAsync(Uri? url)
         {
-            return await GetFileSizeAsyncAsLong(url) / 1048576;
+            return await GetFileSizeAsyncAsLong(url) / 1048576d;
         }
 
         public static async Task<long> GetFileSizeAsyncAsLong(Uri? url)
@@ -471,6 +473,42 @@ Crash Traceback:
 
             var attributes = File.GetAttributes(path);
             return (attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint;
+        }
+
+        /// <summary>
+        /// Returns the updated environment variables on a new ProcessStartInfo object
+        /// </summary>
+        /// <returns></returns>
+        public static ProcessStartInfo UpdateEnvironmentVariables()
+        {
+            return UpdateEnvironmentVariables(new ProcessStartInfo());
+        }
+
+
+        /// <summary>
+        /// Returns the updated environment variables on the returned ProcessStartInfo object
+        /// </summary>
+        /// <returns></returns>
+        public static ProcessStartInfo UpdateEnvironmentVariables(ProcessStartInfo info)
+        {
+            foreach (DictionaryEntry env in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine))
+            {
+                info.Environment[env.Key.ToString()] = env.Value?.ToString();
+            }
+            foreach (DictionaryEntry env in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User))
+            {
+                string key = env.Key.ToString() ?? "";
+                string newValue = env.Value?.ToString() ?? "";
+                if (info.Environment.TryGetValue(key, out string? oldValue) && oldValue is not null && oldValue.Contains(';') && newValue != "")
+                {
+                    info.Environment[key] = oldValue + ";" + newValue;
+                }
+                else
+                {
+                    info.Environment[key] = newValue;
+                }
+            }
+            return info;
         }
     }
 }
