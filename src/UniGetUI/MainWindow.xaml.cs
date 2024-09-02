@@ -576,7 +576,15 @@ namespace UniGetUI.Interface
             dataTransferManager.DataRequested += (sender, args) =>
             {
                 DataRequest dataPackage = args.Request;
-                Uri ShareUrl = new("https://marticliment.com/unigetui/share?pid=" + System.Web.HttpUtility.UrlEncode(package.Id) + "&pname=" + System.Web.HttpUtility.UrlEncode(package.Name) + "&psource=" + System.Web.HttpUtility.UrlEncode(package.Source.AsString));
+                Uri ShareUrl = new("https://marticliment.com/unigetui/share?name="
+                                   + System.Web.HttpUtility.UrlEncode(package.Name)
+                                   + "&id="
+                                   + System.Web.HttpUtility.UrlEncode(package.Id) +
+                                   "&sourceName="
+                                   + System.Web.HttpUtility.UrlEncode(package.Source.Name) +
+                                   "&managerName="
+                                   + System.Web.HttpUtility.UrlEncode(package.Manager.DisplayName));
+
                 dataPackage.Data.SetWebLink(ShareUrl);
                 dataPackage.Data.Properties.Title = "Sharing " + package.Name;
                 dataPackage.Data.Properties.ApplicationName = "WingetUI";
