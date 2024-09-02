@@ -47,7 +47,7 @@ public partial class Cargo : PackageManager
             Name = "Cargo",
             Description = CoreTools.Translate("The Rust package manager.<br>Contains: <b>Rust libraries and programs written in Rust</b>"),
             IconId = IconType.Rust,
-            ColorIconId = "rust_color",
+            ColorIconId = "cargo_color",
             ExecutableFriendlyName = "cargo.exe",
             InstallVerb = "install",
             UninstallVerb = "uninstall",
