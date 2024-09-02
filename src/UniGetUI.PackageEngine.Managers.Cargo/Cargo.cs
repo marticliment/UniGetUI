@@ -87,7 +87,7 @@ public partial class Cargo : PackageManager
 
         return Packages.ToArray();
     }
-    
+
     protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
     {
         return await GetPackages(LoggableTaskType.ListUpdates);
@@ -132,7 +132,10 @@ public partial class Cargo : PackageManager
                 var name = CoreTools.FormatAsName(id);
                 var oldVersion = match.Groups[2].Value;
                 var newVersion = match.Groups[3].Value;
-                Packages.Add(new Package(name, id, oldVersion, newVersion, DefaultSource, this));
+                if(taskType is LoggableTaskType.ListUpdates && oldVersion != newVersion)
+                    Packages.Add(new Package(name, id, oldVersion, newVersion, DefaultSource, this));
+                else if(taskType is LoggableTaskType.ListInstalledPackages)
+                    Packages.Add(new Package(name, id, oldVersion, DefaultSource, this));
             }
         }
         logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
