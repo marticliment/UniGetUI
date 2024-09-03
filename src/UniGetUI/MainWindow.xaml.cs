@@ -309,7 +309,7 @@ namespace UniGetUI.Interface
             SetForegroundWindow(GetWindowHandle());
             if (!PEInterface.InstalledPackagesLoader.IsLoading)
             {
-                _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
+                _ = PEInterface.InstalledPackagesLoader.ReloadPackagesSilently();
             } (this as Window).Activate();
         }
 

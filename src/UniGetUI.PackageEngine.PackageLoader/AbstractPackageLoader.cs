@@ -13,7 +13,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <summary>
         /// Checks if the loader is fetching new packages right now
         /// </summary>
-        public bool IsLoading { get; private set; }
+        public bool IsLoading { get; protected set; }
 
         /// <summary>
         /// The collection of currently available packages
@@ -68,6 +68,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
         protected void InvokePackagesChangedEvent()
         {
             PackagesChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected void InvokeStartedLoadingEvent()
+        {
+            StartedLoading?.Invoke(this, EventArgs.Empty);
         }
 
         protected void InvokeFinishedLoadingEvent()
