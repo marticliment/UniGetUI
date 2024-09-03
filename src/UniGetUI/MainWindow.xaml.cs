@@ -284,6 +284,8 @@ namespace UniGetUI.Interface
                         NavigationPage.BundlesNavButton.ForceClick();
                         _ = NavigationPage.BundlesPage.OpenFromFile(param);
                     }
+                    else if (param.EndsWith("UniGetUI.exe") || param.EndsWith("UniGetUI.dll"))
+                    { /* Skip */ }
                     else
                     {
                         Logger.Warn("Attempted to open the unrecognized file " + param);
