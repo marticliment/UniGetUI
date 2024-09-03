@@ -14,6 +14,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -269,17 +270,15 @@ namespace UniGetUI.Interface
                 BackgroundText.Visibility = Visibility.Collapsed;
             }
 
-            int width = 250;
-            try
+            if (Settings.Get($"HideToggleFilters{PAGE_NAME}Page"))
             {
-                width = int.Parse(Settings.GetValue(SIDEPANEL_WIDTH_SETTING_NAME));
+                HideFilteringPane();
             }
-            catch
+            else
             {
-                Settings.SetValue(SIDEPANEL_WIDTH_SETTING_NAME, "250");
+                ShowFilteringPane();
             }
 
-            BodyGrid.ColumnDefinitions.ElementAt(0).Width = new GridLength(width);
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
             MegaQueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
             InstantSearchCheckbox.IsChecked = !Settings.Get(INSTANT_SEARCH_SETTING_NAME);
@@ -709,10 +708,14 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            Settings.SetValue(SIDEPANEL_WIDTH_SETTING_NAME, ((int)e.NewSize.Width).ToString());
-            foreach (UIElement control in SidePanelGrid.Children)
+            if ((int)e.NewSize.Width < 30)
             {
-                control.Visibility = e.NewSize.Width > 20 ? Visibility.Visible : Visibility.Collapsed;
+                HideFilteringPane();
+                Settings.SetValue(SIDEPANEL_WIDTH_SETTING_NAME, "250");
+            }
+            else
+            {
+                Settings.SetValue(SIDEPANEL_WIDTH_SETTING_NAME, ((int)e.NewSize.Width).ToString());
             }
         }
 
@@ -808,6 +811,45 @@ namespace UniGetUI.Interface
                 await Task.Delay(10);
                 PackageList.ScrollView?.ScrollTo(0, 0);
             }
+        }
+
+        private void ToggleFiltersButton_Click(object sender, RoutedEventArgs e)
+        {
+            Settings.Set($"HideToggleFilters{PAGE_NAME}Page", !ToggleFiltersButton.IsChecked ?? false);
+            if (ToggleFiltersButton.IsChecked ?? false)
+            {
+                ShowFilteringPane();
+            }
+            else
+            {
+                HideFilteringPane();
+            }
+        }
+
+        private void HideFilteringPane()
+        {
+            ToggleFiltersButton.IsChecked = false;
+            FiltersResizer.Visibility = SidePanel.Visibility = Visibility.Collapsed;
+            BodyGrid.ColumnDefinitions[0].Width = new GridLength(0);
+            BodyGrid.ColumnSpacing = 0;
+        }
+
+        private void ShowFilteringPane()
+        {
+            ToggleFiltersButton.IsChecked = true;
+            FiltersResizer.Visibility = SidePanel.Visibility = Visibility.Visible;
+            BodyGrid.ColumnSpacing = 12;
+            int width = 250;
+            try
+            {
+                width = int.Parse(Settings.GetValue(SIDEPANEL_WIDTH_SETTING_NAME));
+            }
+            catch
+            {
+                Settings.SetValue(SIDEPANEL_WIDTH_SETTING_NAME, "250");
+            }
+
+            BodyGrid.ColumnDefinitions.ElementAt(0).Width = new GridLength(width);
         }
     }
 }
