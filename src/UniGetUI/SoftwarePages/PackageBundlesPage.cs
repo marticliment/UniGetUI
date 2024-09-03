@@ -70,6 +70,8 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 HasUnsavedChanges = true;
             };
+
+            ReloadButton.Visibility = Visibility.Collapsed;
         }
 
         public override BetterMenu GenerateContextMenu()
@@ -289,7 +291,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 Title = CoreTools.Translate("Warning!"),
                 Content = rtb,
-                DefaultButton = ContentDialogButton.Close,
+                DefaultButton = ContentDialogButton.Secondary,
                 PrimaryButtonText = CoreTools.Translate("Yes"),
                 SecondaryButtonText = CoreTools.Translate("No"),
                 XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot
@@ -494,7 +496,9 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 // Get file
                 // Save file
-                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string> { "*.ubundle", "*.json", "*.yaml", "*.xml" }, CoreTools.Translate("Package bundle") + ".ubundle");
+
+                string defaultName = CoreTools.Translate("Package bundle") + ".ubundle";
+                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string> { "*.ubundle", "*.json", "*.yaml", "*.xml" }, defaultName);
                 if (file != String.Empty)
                 {
                     // Loading dialog
@@ -530,9 +534,22 @@ namespace UniGetUI.Interface.SoftwarePages
             }
             catch (Exception ex)
             {
-                MainApp.Instance.MainWindow.HideLoadingDialog();
                 Logger.Error("An error occurred when saving packages to a file");
                 Logger.Error(ex);
+
+                var warningDialog = new ContentDialog
+                {
+                    Title = CoreTools.Translate("Could not create bundle"),
+                    Content = CoreTools.Translate("The package bundle could not be created due to an error.") + "\n\n" + ex.Message,
+                    CloseButtonText = CoreTools.Translate("Ok"),
+                    DefaultButton = ContentDialogButton.Close,
+                    XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
+                };
+
+                MainApp.Instance.MainWindow.HideLoadingDialog();
+                await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
+
+
             }
         }
 

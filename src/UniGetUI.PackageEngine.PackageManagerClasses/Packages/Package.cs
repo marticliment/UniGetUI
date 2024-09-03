@@ -50,7 +50,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public string Name { get; }
         public string AutomationName { get; }
         public string Id { get; }
-        public string Version { get; }
+        public virtual string Version { get; }
         public double VersionAsFloat { get; }
         public double NewVersionAsFloat { get; }
         public bool IsPopulated { get; set; }
