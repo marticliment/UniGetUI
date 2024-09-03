@@ -109,6 +109,11 @@ namespace UniGetUI.Interface
                 AppTitle.Text = Title;
             }
 
+#if DEBUG
+            Title = Title + " - DEBUG BUILD";
+            AppTitle.Text = Title;
+#endif
+
             LoadingSthDalog = new ContentDialog
             {
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
@@ -279,6 +284,8 @@ namespace UniGetUI.Interface
                         NavigationPage.BundlesNavButton.ForceClick();
                         _ = NavigationPage.BundlesPage.OpenFromFile(param);
                     }
+                    else if (param.EndsWith("UniGetUI.exe") || param.EndsWith("UniGetUI.dll"))
+                    { /* Skip */ }
                     else
                     {
                         Logger.Warn("Attempted to open the unrecognized file " + param);
@@ -304,7 +311,7 @@ namespace UniGetUI.Interface
             SetForegroundWindow(GetWindowHandle());
             if (!PEInterface.InstalledPackagesLoader.IsLoading)
             {
-                _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
+                _ = PEInterface.InstalledPackagesLoader.ReloadPackagesSilently();
             } (this as Window).Activate();
         }
 

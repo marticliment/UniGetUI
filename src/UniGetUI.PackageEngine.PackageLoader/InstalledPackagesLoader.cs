@@ -1,5 +1,7 @@
+using UniGetUI.Core.Logging;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
@@ -34,6 +36,56 @@ namespace UniGetUI.PackageEngine.PackageLoader
             }
 
             package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
+        }
+
+        public async Task ReloadPackagesSilently()
+        {
+            IsLoading = true;
+            InvokeStartedLoadingEvent();
+
+            List<Task<IPackage[]>> tasks = new();
+
+            foreach (IPackageManager manager in Managers)
+            {
+                if (manager.IsEnabled() && manager.Status.Found)
+                {
+                    Task<IPackage[]> task = LoadPackagesFromManager(manager);
+                    tasks.Add(task);
+                }
+            }
+
+            while (tasks.Count > 0)
+            {
+                foreach (Task<IPackage[]> task in tasks.ToArray())
+                {
+                    if (!task.IsCompleted)
+                    {
+                        await Task.Delay(100);
+                    }
+
+                    if (task.IsCompleted)
+                    {
+                        if (task.IsCompletedSuccessfully)
+                        {
+                            foreach (IPackage package in task.Result)
+                            {
+                                if (!Contains(package))
+                                {
+                                    Logger.ImportantInfo($"Adding missing package {package.Id} to installed packages list");
+                                    AddPackage(package);
+                                    await WhenAddingPackage(package);
+                                }
+                            }
+                            InvokePackagesChangedEvent();
+                        }
+                        tasks.Remove(task);
+                    }
+                }
+            }
+
+            InvokeFinishedLoadingEvent();
+            IsLoading = false;
+
         }
     }
 }

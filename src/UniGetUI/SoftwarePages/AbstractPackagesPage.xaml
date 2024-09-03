@@ -685,10 +685,18 @@
                 <ColumnDefinition MinWidth="200"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="6"/>
+                <RowDefinition Height="0"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <ProgressBar IsIndeterminate="True" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" x:Name="LoadingProgressBar" x:FieldModifier="protected" Visibility="Collapsed"/>
+
+            <ProgressBar IsIndeterminate="True"
+                Grid.Row="1" Grid.Column="1"
+                Grid.ColumnSpan="1"
+                VerticalAlignment="Top"
+                Margin="1,-6,1,0"
+                x:Name="LoadingProgressBar"
+                x:FieldModifier="protected"
+                Visibility="Visible"/>
 
             <!-- FILTERING PANE -->
             <ScrollView Grid.Column="0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
