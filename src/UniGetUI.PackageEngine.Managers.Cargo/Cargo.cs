@@ -83,9 +83,33 @@ public partial class Cargo : PackageManager
 
         logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
         await p.WaitForExitAsync();
+
+        List<Package> BinPackages = [];
+
+        for (int i = 0; i < Packages.Count; i++)
+        {
+            var package = Packages[i];
+            try
+            {
+                var versionInfo = await CratesIOClient.GetManifestVersion(package.Id, package.Version);
+                if (versionInfo.bin_names?.Length > 0)
+                {
+                    BinPackages.Add(package);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.AddToStdErr($"{ex.Message}");
+            }
+
+            if (i + 1 == Packages.Count) break;
+            // Crates.io api requests that we send no more than one request per second
+            await Task.Delay(900);
+        }
+
         logger.Close(p.ExitCode);
 
-        return Packages.ToArray();
+        return [.. BinPackages];
     }
 
     protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
