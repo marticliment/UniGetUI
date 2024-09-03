@@ -35,17 +35,11 @@ namespace UniGetUI.Interface
         public PackageBundlesPage BundlesPage;
         public Page? OldPage;
         public Page? CurrentPage;
-        public InfoBadge UpdatesBadge;
-        public InfoBadge BundleBadge;
-        public StackPanel OperationStackPanel;
         private readonly Dictionary<Page, NavButton> PageButtonReference = [];
 
         public MainView()
         {
             InitializeComponent();
-            UpdatesBadge = __updates_count_badge;
-            BundleBadge = __bundle_count_badge;
-            OperationStackPanel = __operations_list_stackpanel;
             DiscoverPage = new DiscoverSoftwarePage();
             UpdatesPage = new SoftwareUpdatesPage
             {
@@ -55,13 +49,11 @@ namespace UniGetUI.Interface
             BundlesPage = new PackageBundlesPage();
             SettingsPage = new SettingsInterface();
 
-            int i = 0;
             foreach (Page page in new Page[] { DiscoverPage, UpdatesPage, InstalledPage, SettingsPage, BundlesPage })
             {
                 Grid.SetColumn(page, 0);
                 Grid.SetRow(page, 0);
                 MainContentPresenterGrid.Children.Add(page);
-                i++;
             }
 
             PageButtonReference.Add(DiscoverPage, DiscoverNavButton);

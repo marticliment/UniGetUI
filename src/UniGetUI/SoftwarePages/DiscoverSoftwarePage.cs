@@ -399,21 +399,21 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 if (manager is null)
                 {
-                    throw new ArgumentException(CoreTools.Translate("The package manager {0} was not found", managerName));
+                    throw new ArgumentException(CoreTools.Translate("The package manager \"{0}\" was not found", managerName));
                 }
 
                 if(!manager.IsEnabled())
-                    throw new ArgumentException(CoreTools.Translate("The package manager {0} is disabled", manager.DisplayName));
+                    throw new ArgumentException(CoreTools.Translate("The package manager \"{0}\" is disabled", manager.DisplayName));
 
                 if(!manager.Status.Found)
-                    throw new ArgumentException(CoreTools.Translate("There is an error with the configuration of the package manager {0}", manager.DisplayName));
+                    throw new ArgumentException(CoreTools.Translate("There is an error with the configuration of the package manager \"{0}\"", manager.DisplayName));
 
                 var results = await manager.FindPackages(id);
                 var candidates = results.Where(p => p.Id == id).ToArray();
 
                 if (candidates.Length == 0)
                 {
-                    throw new ArgumentException(CoreTools.Translate("The package {0} was not found on {1}", id, manager.DisplayName));
+                    throw new ArgumentException(CoreTools.Translate("The package \"{0}\" was not found on the package manager \"{1}\"", id, manager.DisplayName));
                 }
 
                 IPackage package = candidates[0];

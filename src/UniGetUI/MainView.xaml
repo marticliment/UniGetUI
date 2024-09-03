@@ -52,7 +52,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <ScrollView Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1" Margin="0" Padding="0,0,0,0" MaxHeight="200">
-                <StackPanel Orientation="Vertical" Spacing="0" Margin="0,0,0,0" Padding="0,0,0,0" Name="__operations_list_stackpanel"/>
+                <StackPanel Orientation="Vertical" Spacing="0" Margin="0,0,0,0" Padding="0,0,0,0" Name="OperationStackPanel" x:FieldModifier="public"/>
             </ScrollView>
         </Grid>
 
@@ -76,7 +76,16 @@
                             Text="Software Updates"
                             Glyph="&#xE895;" Click="UpdatesNavButton_Click"
                         />
-                        <InfoBadge Value="0" Name="__updates_count_badge" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,1.5,1.5,0"/>
+                        <InfoBadge
+                            Value="0"
+                            Name="UpdatesBadge"
+                            Visibility="Collapsed"
+                            Padding="0"
+                            Height="16"
+                            HorizontalAlignment="Right"
+                            x:FieldModifier="public"
+                            VerticalAlignment="Top"
+                            Margin="0,1.5,1.5,0"/>
                     </Grid>
                     <widgets:NavButton x:Name="InstalledNavButton"
                         x:FieldModifier="public"
@@ -89,7 +98,24 @@
                             Text="Package Bundles"
                             Glyph="&#xF133;" Click="BundlesNavButton_Click"
                         />
-                        <InfoBadge Value="0" Name="__bundle_count_badge" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,1.5,1.5,0"/>
+                        <Border
+                            Name="BundlesBadge"
+                            x:FieldModifier="public"
+                            Background="{ThemeResource SystemFillColorCautionBrush}"
+                            Visibility="Collapsed"
+                            Height="16"
+                            Width="16"
+                            CornerRadius="8"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Margin="0,1.5,1.5,0">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,-5"
+                                FontSize="24"
+                                Foreground="{ThemeResource SystemFillColorCautionBackground}">*</TextBlock>
+                        </Border>
                     </Grid>
                 </StackPanel>
 
