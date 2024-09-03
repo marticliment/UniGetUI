@@ -389,6 +389,7 @@ namespace UniGetUI.Interface
         {
             var result = await ShowInstallOptionsDialog(importedPackage, OperationType.None, importedPackage.installation_options);
             importedPackage.installation_options = result.Item1;
+            importedPackage.FirePackageVersionChangedEvent();
             return result;
         }
 

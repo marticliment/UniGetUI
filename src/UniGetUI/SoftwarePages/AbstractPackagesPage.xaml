@@ -561,7 +561,7 @@
                     <TextBlock
                     Grid.Column="6" Grid.Row="0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind Package.Version}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                    Text="{x:Bind Package.Version, Mode=OneWay}" FontSize="13" FontFamily="Segoe UI Variable Text"
                     ToolTipService.ToolTip="{x:Bind Package.Version}"
                     />
                     <widgets:LocalIcon
@@ -662,7 +662,7 @@
                         </AnimatedIcon.FallbackIconSource>
                     </AnimatedIcon>
                 </Button>
-                <Button Grid.Column="3" x:Name="ReloadButton" CornerRadius="4"
+                <Button Grid.Column="3" x:Name="ReloadButton" CornerRadius="4" x:FieldModifier="protected"
                         Margin="6,0,4,0" Padding="0" AutomationProperties.HelpText="Reload packages"
                         Height="32" Width="32">
                     <FontIcon Glyph="&#xE72C;" FontSize="16"/>

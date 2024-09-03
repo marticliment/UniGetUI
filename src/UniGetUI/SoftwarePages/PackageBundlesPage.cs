@@ -70,6 +70,8 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 HasUnsavedChanges = true;
             };
+
+            ReloadButton.Visibility = Visibility.Collapsed;
         }
 
         public override BetterMenu GenerateContextMenu()
