@@ -496,7 +496,21 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 // Get file
                 // Save file
-                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string> { "*.ubundle", "*.json", "*.yaml", "*.xml" }, CoreTools.Translate("Package bundle") + ".ubundle");
+
+                string defaultName = CoreTools.Translate("Package bundle") + ".ubundle";
+
+                if (File.Exists(defaultName))
+                {
+                    defaultName = defaultName.Replace(".ubundle", " (1).ubundle");
+                }
+
+                int i = 1;
+                while (File.Exists(defaultName))
+                {
+                    defaultName = defaultName.Replace($" ({i}).ubundle", $" ({++i}).ubundle");
+                }
+
+                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string> { "*.ubundle", "*.json", "*.yaml", "*.xml" }, defaultName);
                 if (file != String.Empty)
                 {
                     // Loading dialog
