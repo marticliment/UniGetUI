@@ -495,8 +495,6 @@ namespace UniGetUI.Interface.SoftwarePages
             try
             {
                 // Get file
-                // Save file
-
                 string defaultName = CoreTools.Translate("Package bundle") + ".ubundle";
                 string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string> { "*.ubundle", "*.json", "*.yaml", "*.xml" }, defaultName);
                 if (file != String.Empty)

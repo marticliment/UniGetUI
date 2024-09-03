@@ -109,6 +109,11 @@ namespace UniGetUI.Interface
                 AppTitle.Text = Title;
             }
 
+#if DEBUG
+            Title = Title + " - DEBUG BUILD";
+            AppTitle.Text = Title;
+#endif
+
             LoadingSthDalog = new ContentDialog
             {
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
