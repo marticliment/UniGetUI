@@ -289,7 +289,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 Title = CoreTools.Translate("Warning!"),
                 Content = rtb,
-                DefaultButton = ContentDialogButton.Close,
+                DefaultButton = ContentDialogButton.Secondary,
                 PrimaryButtonText = CoreTools.Translate("Yes"),
                 SecondaryButtonText = CoreTools.Translate("No"),
                 XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot
