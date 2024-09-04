@@ -540,7 +540,8 @@ namespace UniGetUI
         public void KillAndRestart()
         {
             Process.Start(CoreData.UniGetUIExecutableFile);
-            DisposeAndQuit(0);
+            MainApp.Instance.MainWindow?.Close();
+            Environment.Exit(0);
         }
     }
 }
