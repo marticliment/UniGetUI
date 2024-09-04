@@ -23,16 +23,16 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" 
-                            BorderThickness="10" 
-                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+                    <Border Grid.Column="0"
+                            BorderThickness="10"
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                             Height="128" Width="128" CornerRadius="24">
                         <Image Name="PackageIcon" Height="80" Width="80" Margin="8"/>
                     </Border>
 
-                    <TextBlock Grid.Column="1" Name="PackageName" 
-                        HorizontalAlignment="Left" VerticalAlignment="Center" 
-                        FontFamily="Segoe UI Variable Display" 
+                    <TextBlock Grid.Column="1" Name="PackageName"
+                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                        FontFamily="Segoe UI Variable Display"
                         FontWeight="Bold" FontSize="50"
                         TextWrapping="Wrap"/>
                 </Grid>
@@ -42,8 +42,8 @@
                     <xaml:ItemsRepeater Name="TagGridView" ItemsSource="{x:Bind ShowableTags}">
                         <xaml:ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="TextBlock">
-                                <Border Background="{ThemeResource AccentAAFillColorDefaultBrush}" 
-                                        Padding="8,2,8,2" Margin="2" CornerRadius="12" Height="24" 
+                                <Border Background="{ThemeResource AccentAAFillColorDefaultBrush}"
+                                        Padding="8,2,8,2" Margin="2" CornerRadius="12" Height="24"
                                         VerticalAlignment="Center" >
                                     <TextBlock Text="{x:Bind Text}" Foreground="{ThemeResource TextOnAccentAAFillColorPrimary}"/>
                                 </Border>
@@ -96,7 +96,43 @@
                             <widgets:TranslatedTextBlock Text="Share this package" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
-                    <Button Grid.Column="2" Name="ActionButton" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" Content="Action!" Click="ActionButton_Click" Height="40" CornerRadius="8"/>
+
+
+                    <Grid Grid.Column="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                            Name="MainActionButton"
+                            HorizontalAlignment="Stretch"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Content="Action!"
+                            Click="ActionButton_Click"
+                            Height="40"
+                            CornerRadius="8,0,0,8"/>
+
+                        <DropDownButton Grid.Column="1"
+                            Name="ExtendedActionButton"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Height="40" Padding="0,0,2,0"
+                            Width="30" Margin="1,0,0,0"
+                            CornerRadius="0,8,8,0"
+                            >
+                            <DropDownButton.Content>
+                                <FontIcon Glyph="&#xE70D;" FontSize="13"/>
+                            </DropDownButton.Content>
+                            <DropDownButton.Flyout>
+                                <widgets:BetterMenu
+                                    x:Name="ExtendedActionsMenu"
+                                    Placement="BottomEdgeAlignedRight">
+                                </widgets:BetterMenu>
+                            </DropDownButton.Flyout>
+                        </DropDownButton>
+                    </Grid>
+
+
                     <TextBox Name="CommandTextBlock" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" FontFamily="Consolas" IsReadOnly="True" Padding="12,6,12,6" CornerRadius="8" TextWrapping="Wrap"/>
                 </Grid>
 
