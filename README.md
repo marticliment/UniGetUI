@@ -37,6 +37,8 @@ It really does make a big difference, and is very much appreciated. Thanks :)<br
  - [Frequently Asked Questions](#frequently-asked-questions)
  - [Command-line Arguments](https://github.com/marticliment/UniGetUI/blob/main/cli-arguments.md)
 
+
+<a href="https://hellogithub.com/repository/46bec642537f449a857215e39a1d64ae" target="_blank"><img src="https://abroad.hellogithub.com/v1/widgets/recommend.svg?rid=46bec642537f449a857215e39a1d64ae&claim_uid=u6sFoX4hC2HztbD" alt="Featured｜HelloGitHub" style="width: 250px; height: 54px;" width="250" height="54" /></a>
  
 ## Installation
 <p>There are multiple ways to install UniGetUI — choose whichever one you prefer!<br</p>
