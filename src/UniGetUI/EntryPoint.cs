@@ -1,4 +1,3 @@
-using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
@@ -126,13 +125,13 @@ namespace UniGetUI
         /// </summary>
         private static void UninstallPreps()
         {
-            try
+            /*try
             {
-                ToastNotificationManagerCompat.Uninstall();
+                AppNotificationManager.Default.UnregisterAll();
             }
             catch
             {
-            }
+            }*/
         }
 
         // This method shall be ran as administrator
