@@ -8,6 +8,7 @@ using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -565,7 +566,10 @@ namespace UniGetUI.Interface.SoftwarePages
             string ExportableData;
 
             if (formatType == BundleFormatType.JSON)
-                ExportableData = JsonSerializer.Serialize(exportable, new JsonSerializerOptions { WriteIndented = true });
+                ExportableData = JsonSerializer.Serialize(
+                    exportable,
+                    CoreData.SerializingOptions);
+
             else if (formatType == BundleFormatType.YAML)
             {
                 YamlDotNet.Serialization.ISerializer serializer = new YamlDotNet.Serialization.SerializerBuilder()
@@ -595,7 +599,7 @@ namespace UniGetUI.Interface.SoftwarePages
             SerializableBundle_v1? DeserializedData;
             if (format is BundleFormatType.JSON)
             {
-                DeserializedData = await Task.Run(() => JsonSerializer.Deserialize<SerializableBundle_v1>(content));
+                DeserializedData = await Task.Run(() => JsonSerializer.Deserialize<SerializableBundle_v1>(content, CoreData.SerializingOptions));
             }
             else if (format is BundleFormatType.YAML)
             {

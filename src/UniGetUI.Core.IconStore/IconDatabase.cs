@@ -88,7 +88,10 @@ namespace UniGetUI.Core.IconEngine
 
             try
             {
-                IconScreenshotDatabase_v2 JsonData = JsonSerializer.Deserialize<IconScreenshotDatabase_v2>(await File.ReadAllTextAsync(IconsAndScreenshotsFile));
+                IconScreenshotDatabase_v2 JsonData = JsonSerializer.Deserialize<IconScreenshotDatabase_v2>(
+                    await File.ReadAllTextAsync(IconsAndScreenshotsFile),
+                    CoreData.SerializingOptions
+                    );
                 if (JsonData.icons_and_screenshots != null)
                 {
                     IconDatabaseData = JsonData.icons_and_screenshots;
