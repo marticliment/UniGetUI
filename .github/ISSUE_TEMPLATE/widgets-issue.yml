@@ -1,0 +1,75 @@
+name: '🧩 Report an issue with Widgets for UniGetUI'
+description: Report issues or unexpected behaviors with Widgets for UniGetUI.
+title: "[WIDGETS BUG] (Enter your description here)"
+labels: ["bug", "widgets-for-unigetui"]
+assignees: marticliment
+body:
+  - type: checkboxes
+    attributes:
+      label: Please confirm these before moving forward
+      description: Please confirm the following before posting your issue.
+      options:
+        - label: I have searched for my issue and have not found a work-in-progress/duplicate/resolved issue.
+          required: true
+        - label: I have tested that this issue has not been fixed in the latest [(beta or stable) release](https://github.com/marticliment/WingetUI/releases/).
+          required: true
+        - label: I have checked the [FAQ](https://github.com/marticliment/WingetUI#frequently-asked-questions) section for solutions.
+          required: true
+        - label: This issue is about a bug (if it is not, please use the [correct template](https://github.com/marticliment/WingetUI/issues/new/choose)).
+          required: true
+  - type: input
+    attributes:
+      label: UniGetUI Version
+      placeholder: 'x.y.z (e.g., 3.1.0)'
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Widgets for UniGetUI Version
+      placeholder: 'x.y.z.w (e.g., 0.6.1.0)'
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Windows version, edition, and architecture
+      placeholder: Windows 11 Pro 10.0.22000.0 x64
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Describe your issue
+      placeholder: Explain the issue you are experiencing, providing as many details as possible.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce the issue
+      placeholder: How can this issue be reproduced? List here, if known, the steps followed before this issue appeared.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: UniGetUI Log
+      render: "text"
+      placeholder: Paste here your UniGetUI logs. Click the button on the bottom-left corner of UniGetUI -> UniGetUI Log.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Package Managers Logs
+      render: "text"
+      placeholder: Paste here your Package Manager logs. Click the button on the bottom-left corner of UniGetUI -> Package Manager logs.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Relevant information
+      placeholder: Other relevant information about this issue. Perhaps you have some special settings enabled or any other detail that could be related.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Screenshots and videos
+      placeholder: If applicable, please post here a video or a screenshot of the issue.
+    validations:
+      required: false
