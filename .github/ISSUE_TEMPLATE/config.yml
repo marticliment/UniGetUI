@@ -1,5 +1,6 @@
 blank_issues_enabled: false
+
 contact_links:
-  - name: 📧 Contact me by email
+  - name: 📧 Contact me by EMAIL
     url: https://marticliment.com/contact
-    about: Please use only if the issue cannot be posted publicly
+    about: Please use only if the issue (for example, a vulnerability) cannot be posted publicly
