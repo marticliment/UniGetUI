@@ -113,6 +113,14 @@ namespace UniGetUI.Interface
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), CoreTools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
             };
 
+            CheckboxCard Winget_AllowLowerTrustRegistration = new()
+            {
+                Text = CoreTools.Translate("Allow using class registered with lower trust"),
+                SettingName = "AllowLowerTrustRegistration",
+            };
+            Winget_AllowLowerTrustRegistration.StateChanged += (s, e) => PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
+            Winget_AllowLowerTrustRegistration.IsEnabled = !Settings.Get("ForceLegacyBundledWinGet");
+
             CheckboxCard Winget_DisableCOM = new()
             {
                 Text = CoreTools.Translate("Use the WinGet PowerShell Module instead of the WinGet COM API"),
@@ -133,6 +141,7 @@ namespace UniGetUI.Interface
             };
 
             ExtraSettingsCards[PEInterface.WinGet].Add(Winget_UseBundled);
+            ExtraSettingsCards[PEInterface.WinGet].Add(Winget_AllowLowerTrustRegistration);
             ExtraSettingsCards[PEInterface.WinGet].Add(Winget_DisableCOM);
             ExtraSettingsCards[PEInterface.WinGet].Add(Winget_ResetSources);
 
