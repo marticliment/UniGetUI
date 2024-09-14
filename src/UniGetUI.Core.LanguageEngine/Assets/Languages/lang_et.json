@@ -109,7 +109,7 @@
   "Continue" : null,
   "Contribute to the icon and screenshot repository" : null,
   "Contributors" : null,
-  "Copy" : null,
+  "Copy" : "Kopeeri",
   "Copy to clipboard" : null,
   "Could not add source {source} to {manager}" : null,
   "Could not load announcements - " : null,

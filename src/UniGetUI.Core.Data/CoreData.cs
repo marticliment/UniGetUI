@@ -185,7 +185,7 @@ namespace UniGetUI.Core.Data
 
                 Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
 
-                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UiGetUI");
+                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UniGetUI");
             }
         }
 
