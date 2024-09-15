@@ -703,6 +703,14 @@
                 BorderThickness="0" Name="SidePanel" SizeChanged="SidepanelWidth_SizeChanged"
                 HorizontalScrollMode="Disabled"
                 CornerRadius="8">
+                <animations:Explicit.Animations>
+                    <animations:AnimationSet x:Name="OutAnimation_FiltersPane">
+                        <animations:OpacityAnimation From="1" To="0" Duration="0:0:0.15" EasingMode="EaseOut"/>
+                    </animations:AnimationSet>
+                    <animations:AnimationSet x:Name="InAnimation_FiltersPane">
+                        <animations:OpacityAnimation From="0" To="1" Duration="0:0:0.15" EasingMode="EaseIn"/>
+                    </animations:AnimationSet>
+                </animations:Explicit.Animations>
                 <Grid RowSpacing="8" Name="SidePanelGrid" >
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

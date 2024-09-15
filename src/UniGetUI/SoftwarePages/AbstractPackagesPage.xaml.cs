@@ -93,6 +93,8 @@ namespace UniGetUI.Interface
         protected readonly string NoPackages_SubtitleText_Base;
         protected readonly string NoMatches_BackgroundText;
 
+        private bool PaneIsAnimated = false;
+
         protected Func<int, int, string> FoundPackages_SubtitleText_Base = (a, b) => CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.", a, b);
 
         protected string NoPackages_SubtitleText
@@ -272,11 +274,11 @@ namespace UniGetUI.Interface
 
             if (Settings.Get($"HideToggleFilters{PAGE_NAME}Page"))
             {
-                HideFilteringPane();
+                HideFilteringPane(skipAnimation: true);
             }
             else
             {
-                ShowFilteringPane();
+                ShowFilteringPane(skipAnimation: true);
             }
 
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
@@ -703,6 +705,10 @@ namespace UniGetUI.Interface
 
         private void SidepanelWidth_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            if (PaneIsAnimated)
+                return;
+
+
             if (e.NewSize.Width == ((int)(e.NewSize.Width / 10)) || e.NewSize.Width == 25)
             {
                 return;
@@ -826,30 +832,64 @@ namespace UniGetUI.Interface
             }
         }
 
-        private void HideFilteringPane()
+        private async void HideFilteringPane(bool skipAnimation = false)
         {
+            if (PaneIsAnimated) return;
+
+            PaneIsAnimated = true;
             ToggleFiltersButton.IsChecked = false;
+
+            if (!skipAnimation)
+            {
+                OutAnimation_FiltersPane.Start();
+                double width = BodyGrid.ColumnDefinitions[0].Width.Value;
+                while (width > 0)
+                {
+                    BodyGrid.ColumnDefinitions[0].Width = new GridLength(width);
+                    await Task.Delay(10);
+                    width -= 40;
+                }
+            }
+
             FiltersResizer.Visibility = SidePanel.Visibility = Visibility.Collapsed;
             BodyGrid.ColumnDefinitions[0].Width = new GridLength(0);
             BodyGrid.ColumnSpacing = 0;
+            PaneIsAnimated = false;
         }
 
-        private void ShowFilteringPane()
+        private async void ShowFilteringPane(bool skipAnimation = false)
         {
+            if (PaneIsAnimated) return;
+
+            PaneIsAnimated = true;
             ToggleFiltersButton.IsChecked = true;
             FiltersResizer.Visibility = SidePanel.Visibility = Visibility.Visible;
             BodyGrid.ColumnSpacing = 12;
-            int width = 250;
+            InAnimation_FiltersPane.Start();
+
+            int final_width = 250;
             try
             {
-                width = int.Parse(Settings.GetValue(SIDEPANEL_WIDTH_SETTING_NAME));
+                final_width = int.Parse(Settings.GetValue(SIDEPANEL_WIDTH_SETTING_NAME));
             }
             catch
             {
                 Settings.SetValue(SIDEPANEL_WIDTH_SETTING_NAME, "250");
             }
 
-            BodyGrid.ColumnDefinitions.ElementAt(0).Width = new GridLength(width);
+            if (!skipAnimation)
+            {
+                double width = 0;
+                while (width < final_width)
+                {
+                    BodyGrid.ColumnDefinitions[0].Width = new GridLength(width);
+                    await Task.Delay(10);
+                    width += 40;
+                }
+            }
+
+            BodyGrid.ColumnDefinitions[0].Width = new GridLength(final_width);
+            PaneIsAnimated = false;
         }
     }
 }
