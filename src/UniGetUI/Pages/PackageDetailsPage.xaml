@@ -14,9 +14,23 @@
         <ScrollViewer HorizontalAlignment="Stretch" Margin="0,0,-15,0" Padding="0,0,15,0">
             <Grid Name="MainGrid" ColumnSpacing="32" RowSpacing="16">
 
-                <StackPanel Name="LeftPanel" Spacing="16"/>
-                <StackPanel Name="RightPanel" Spacing="16"/>
-
+                <Grid Name="LeftPanel" RowSpacing="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                </Grid>
+                <Grid Name="RightPanel" RowSpacing="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                </Grid>
                 <!-- Title + Icon -->
                 <Grid Name="TitlePanel" HorizontalAlignment="Stretch" ColumnSpacing="8">
                     <Grid.ColumnDefinitions>

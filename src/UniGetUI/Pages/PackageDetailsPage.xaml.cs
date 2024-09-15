@@ -594,20 +594,29 @@ namespace UniGetUI.Interface.Dialogs
 
                     MainGrid.RowDefinitions.Clear();
                     MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
-                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
-                    Grid.SetRow(LeftPanel, 1);
+                    Grid.SetRow(LeftPanel, 0);
                     Grid.SetRow(RightPanel, 0);
-                    Grid.SetRow(TitlePanel, 0);
-                    Grid.SetRowSpan(RightPanel, 2);
 
                     LeftPanel.Children.Clear();
                     RightPanel.Children.Clear();
                     MainGrid.Children.Clear();
+
+                    Grid.SetRow(TitlePanel, 0);
+                    Grid.SetRow(DescriptionPanel, 1);
+                    Grid.SetRow(BasicInfoPanelText, 2);
+                    Grid.SetRow(ActionsPanel, 3);
+                    Grid.SetRow(InstallOptionsBorder, 4);
+
+                    LeftPanel.Children.Add(TitlePanel);
                     LeftPanel.Children.Add(DescriptionPanel);
                     LeftPanel.Children.Add(BasicInfoPanelText);
-                    RightPanel.Children.Add(ScreenshotsPanel);
                     LeftPanel.Children.Add(ActionsPanel);
                     LeftPanel.Children.Add(InstallOptionsBorder);
+
+                    Grid.SetRow(ScreenshotsPanel, 0);
+                    Grid.SetRow(DetailsPanelText, 1);
+
+                    RightPanel.Children.Add(ScreenshotsPanel);
                     RightPanel.Children.Add(DetailsPanelText);
                     ScreenshotsCarroussel.Height = PackageHasScreenshots ? 400 : 150;
 
@@ -615,7 +624,6 @@ namespace UniGetUI.Interface.Dialogs
 
                     MainGrid.Children.Add(LeftPanel);
                     MainGrid.Children.Add(RightPanel);
-                    MainGrid.Children.Add(TitlePanel);
 
                 }
             }
