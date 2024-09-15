@@ -32,7 +32,7 @@ rem sign code
 rmdir /Q /S unigetui_bin
 
 mkdir unigetui_bin
-robocopy src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish unigetui_bin *.* /MOVE /E
+robocopy src\UniGetUI\bin\x64\Release\net8.0-windows10.0.22621.0\win-x64\publish unigetui_bin *.* /MOVE /E
 rem pushd src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish
 pushd unigetui_bin
 
