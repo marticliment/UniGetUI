@@ -27,10 +27,10 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
         if (CoreTools.IsAdministrator())
         {
-            Logger.Info("Running elevated, WinGet class registration is likely to fail");
+            Logger.Info("Running elevated, WinGet class registration is likely to fail unless using lower trust class registration is allowed in settings");
         }
 
-        Factory = new WindowsPackageManagerStandardFactory();
+        Factory = new WindowsPackageManagerStandardFactory(allowLowerTrustRegistration:Settings.Get("AllowLowerTrustRegistration"));
         WinGetManager = Factory.CreatePackageManager();
     }
 

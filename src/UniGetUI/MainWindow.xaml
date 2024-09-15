@@ -5,14 +5,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniGetUI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets"
     mc:Ignorable="d"
     Title="UniGetUI">
 
     <Window.SystemBackdrop>
         <MicaBackdrop Kind="Base"/>
     </Window.SystemBackdrop>
-    
+
     <Grid Name="__content_root">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="SplashScreenColumn" Width="*"/>
@@ -86,7 +88,7 @@
                     </animations:Explicit.Animations>
 
                     <Grid>
-                    <TextBlock Text="UniGetUI" VerticalAlignment="Center" FontWeight="ExtraBlack" 
+                    <TextBlock Text="UniGetUI" VerticalAlignment="Center" FontWeight="ExtraBlack"
                         HorizontalAlignment="Right" HorizontalTextAlignment="Right" Padding="0,0,0,10"
                         FontFamily="Segoe UI Variable Display" FontSize="90" Name="UniGetUITitle"/>
                         <widgets:TranslatedTextBlock Text="Formerly known as WingetUI" VerticalAlignment="Bottom"

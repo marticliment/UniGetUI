@@ -51,48 +51,72 @@ namespace UniGetUI.Core.Language
             Logger.Info("Loaded language locale: " + Locale);
         }
 
-        public Dictionary<string, string> LoadLanguageFile(string LangKey, bool ForceBundled = false)
+        public Dictionary<string, string> LoadLanguageFile(string LangKey)
         {
             try
             {
-                Dictionary<string, string> LangDict = [];
-                string LangFileToLoad = Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
 
-                if (!File.Exists(LangFileToLoad) || Settings.Get("DisableLangAutoUpdater"))
+                string BundledLangFileToLoad = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
+                JsonObject BundledContents = new();
+
+                if (!File.Exists(BundledLangFileToLoad))
                 {
-                    ForceBundled = true;
-                }
-
-                if (ForceBundled)
-                {
-                    LangFileToLoad = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
-                    if (!File.Exists(LangFileToLoad))
-                    {
-                        Logger.Error($"Tried to access a non-existing bundled language file! file={LangFileToLoad}");
-                    }
-                }
-
-                Dictionary<string, string>? __LangDict = (JsonNode.Parse(File.ReadAllText(LangFileToLoad)) as JsonObject)?.ToDictionary(x => x.Key, x => x.Value != null ? x.Value.ToString() : "");
-
-                if (__LangDict != null)
-                {
-                    LangDict = __LangDict;
+                    Logger.Error($"Tried to access a non-existing bundled language file! file={BundledLangFileToLoad}");
                 }
                 else
                 {
-                    Logger.Error($"Deserialization of language file {LangFileToLoad} resulted in a null object");
+                    try
+                    {
+                        if (JsonNode.Parse(File.ReadAllText(BundledLangFileToLoad)) is JsonObject parsedObject)
+                            BundledContents = parsedObject;
+                        else
+                            throw new ArgumentException($"parsedObject was null for lang file {BundledLangFileToLoad}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Warn($"Something went wrong when parsing language file {BundledLangFileToLoad}");
+                        Logger.Warn(ex);
+                    }
+                }
+
+                Dictionary<string, string> LangDict = BundledContents.ToDictionary(x => x.Key, x => x.Value?.ToString() ?? "");
+
+
+                string CachedLangFileToLoad = Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
+
+                if (Settings.Get("DisableLangAutoUpdater"))
+                {
+                    Logger.Warn("User has updated translations disabled");
+                }
+                else if(!File.Exists(CachedLangFileToLoad))
+                {
+                    Logger.Warn($"Tried to access a non-existing cached language file! file={CachedLangFileToLoad}");
+                }
+                else
+                {
+                    try
+                    {
+                        if (JsonNode.Parse(File.ReadAllText(CachedLangFileToLoad)) is JsonObject parsedObject)
+                            foreach (var keyval in parsedObject.ToDictionary(x => x.Key, x => x.Value))
+                                LangDict[keyval.Key] = keyval.Value?.ToString() ?? "";
+                        else
+                            throw new ArgumentException($"parsedObject was null for lang file {CachedLangFileToLoad}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Warn($"Something went wrong when parsing language file {BundledLangFileToLoad}");
+                        Logger.Warn(ex);
+                    }
                 }
 
                 if (!Settings.Get("DisableLangAutoUpdater"))
-                {
                     _ = DownloadUpdatedLanguageFile(LangKey);
-                }
 
                 return LangDict;
             }
             catch (Exception e)
             {
-                Logger.Error($"LoadLanguageFile Failed for LangKey={LangKey}, ForceBundled={ForceBundled}");
+                Logger.Error($"LoadLanguageFile Failed for LangKey={LangKey}");
                 Logger.Error(e);
                 return [];
             }

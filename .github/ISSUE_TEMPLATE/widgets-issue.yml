@@ -1,7 +1,7 @@
-name: '🐞 Report a bug or an issue'
-description: Report issues or unexpected behaviors.
-title: "[BUG] (Enter your description here)"
-labels: ["bug"]
+name: '🧩 Report an issue with Widgets for UniGetUI'
+description: Report issues or unexpected behaviors with Widgets for UniGetUI.
+title: "[WIDGETS BUG] (Enter your description here)"
+labels: ["bug", "widgets-for-unigetui"]
 assignees: marticliment
 body:
   - type: checkboxes
@@ -21,6 +21,12 @@ body:
     attributes:
       label: UniGetUI Version
       placeholder: 'x.y.z (e.g., 3.1.0)'
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Widgets for UniGetUI Version
+      placeholder: 'x.y.z.w (e.g., 0.6.1.0)'
     validations:
       required: true
   - type: input

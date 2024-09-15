@@ -119,10 +119,19 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 Architecture = name;
             }
+            else
+            {
+                Architecture = null;
+            }
+
 
             if (options.InstallationScope != "" && CommonTranslations.InvertedScopeNames_NonLang.TryGetValue(options.InstallationScope, out var value))
             {
                 InstallationScope = value;
+            }
+            else
+            {
+                InstallationScope = null;
             }
 
             CustomParameters = options.CustomParameters;
@@ -183,7 +192,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
                     optionsFile.Directory.Create();
                 }
 
-                string fileContents = JsonSerializer.Serialize(AsSerializable());
+                string fileContents = JsonSerializer.Serialize(
+                    AsSerializable(),
+                    new JsonSerializerOptions(){ WriteIndented = true }
+                );
                 File.WriteAllText(optionsFile.FullName, fileContents);
             }
             catch (Exception ex)

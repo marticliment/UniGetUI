@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;

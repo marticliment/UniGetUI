@@ -3,8 +3,8 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
+using Windows.Security.Authentication.Web.Provider;
 using CommunityToolkit.WinUI.Helpers;
-using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Data;
@@ -16,8 +16,6 @@ using UniGetUI.Interface;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Operations;
-using Windows.Foundation.Collections;
-using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -408,6 +406,7 @@ namespace UniGetUI
 
                 using (HttpClient client = new(CoreData.GenericHttpClientParameters))
                 {
+                    client.Timeout = TimeSpan.FromSeconds(600);
                     client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     fileContents = await client.GetStringAsync("https://www.marticliment.com/versions/unigetui.ver");
                 }
@@ -540,7 +539,8 @@ namespace UniGetUI
         public void KillAndRestart()
         {
             Process.Start(CoreData.UniGetUIExecutableFile);
-            DisposeAndQuit(0);
+            MainApp.Instance.MainWindow?.Close();
+            Environment.Exit(0);
         }
     }
 }

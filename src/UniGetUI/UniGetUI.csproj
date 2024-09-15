@@ -1,35 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
     <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
     <Platforms>ARM64;x64</Platforms>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-    <SdkVersion>8.0.204</SdkVersion>
-    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-    <PublishSelfContained>true</PublishSelfContained>
     <Authors>Martí Climent and the contributors</Authors>
     <PublisherName>Martí Climent</PublisherName>
     <Nullable>enable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Configurations>Debug;Release</Configurations>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <RootNamespace>UniGetUI</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x64</Platforms>
     <UseWinUI>true</UseWinUI>
-    <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <WindowsPackageType>None</WindowsPackageType>
     <StartupObject>UniGetUI.EntryPoint</StartupObject>
     <SignAssembly>False</SignAssembly>
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <Nullable>enable</Nullable>
+
+      <!-- .NET & AppSdk publish options -->
+      <PublishSelfContained>true</PublishSelfContained>
+      <SdkVersion>8.0.401</SdkVersion>
+      <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+      <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
+      <WindowsPackageType>None</WindowsPackageType>
+      <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -69,18 +69,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.0.240109" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.0.240109" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.0.240109" />
-    <PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.1.240821" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.1.240821" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.1.240821" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.1.240821" />
     <PackageReference Include="H.NotifyIcon.WinUI" Version="2.1.3" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240802000" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240829007" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageReference Include="YamlDotNet" Version="16.0.0" />
+    <PackageReference Include="YamlDotNet" Version="16.1.0" />
 
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>

@@ -1,9 +1,13 @@
 using System.Diagnostics;
 using System.Text.Json;
 using System.Xml.Serialization;
+using Windows.UI.Notifications;
+using CommunityToolkit.WinUI;
 using ExternalLibraries.Pickers;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -26,6 +30,18 @@ namespace UniGetUI.Interface.SoftwarePages
         BetterMenuItem? MenuAsAdmin;
         BetterMenuItem? MenuInteractive;
         BetterMenuItem? MenuSkipHash;
+
+        private bool _hasUnsavedChanges = false;
+        private bool HasUnsavedChanges
+        {
+            get => _hasUnsavedChanges;
+            set
+            {
+                MainApp.Instance.MainWindow.NavigationPage.BundlesBadge.Visibility =
+                    value ? Visibility.Visible : Visibility.Collapsed;
+                _hasUnsavedChanges = value;
+            }
+        }
 
         public PackageBundlesPage()
         : base(new PackagesPageData
@@ -50,6 +66,12 @@ namespace UniGetUI.Interface.SoftwarePages
             Glyph = "\uF133"
         })
         {
+            Loader.PackagesChanged += (sender, args) =>
+            {
+                HasUnsavedChanges = true;
+            };
+
+            ReloadButton.Visibility = Visibility.Collapsed;
         }
 
         public override BetterMenu GenerateContextMenu()
@@ -61,7 +83,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 IconName = IconType.Download,
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
-            MenuInstall.Click += MenuUninstall_Invoked;
+            MenuInstall.Click += MenuInstall_Invoked;
             menu.Items.Add(MenuInstall);
 
             menu.Items.Add(new MenuFlyoutSeparator { Height = 5 });
@@ -141,14 +163,14 @@ namespace UniGetUI.Interface.SoftwarePages
             AppBarButton InstallInteractive = new();
             AppBarButton InstallSkipHash = new();
             AppBarButton RemoveSelected = new();
-            AppBarButton ExportBundle = new();
+            AppBarButton SaveBundle = new();
             AppBarButton PackageDetails = new();
             AppBarButton SharePackage = new();
             AppBarButton HelpButton = new();
 
             ToolBar.PrimaryCommands.Add(NewBundle);
             ToolBar.PrimaryCommands.Add(OpenBundle);
-            ToolBar.PrimaryCommands.Add(ExportBundle);
+            ToolBar.PrimaryCommands.Add(SaveBundle);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(InstallPackages);
             ToolBar.PrimaryCommands.Add(InstallAsAdmin);
@@ -172,7 +194,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     { InstallSkipHash, " " + CoreTools.Translate("Skip integrity checks") },
                     { OpenBundle,             CoreTools.Translate("Open existing bundle") },
                     { RemoveSelected,         CoreTools.Translate("Remove selection from bundle") },
-                    { ExportBundle,           CoreTools.Translate("Save bundle as") },
+                    { SaveBundle,           CoreTools.Translate("Save bundle as") },
                     { PackageDetails,         " " + CoreTools.Translate("Package details") },
                     { SharePackage,           " " + CoreTools.Translate("Share") },
                     { HelpButton,             CoreTools.Translate("Help") }
@@ -195,7 +217,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     { InstallSkipHash,        IconType.Checksum },
                     { OpenBundle,             IconType.OpenFolder },
                     { RemoveSelected,         IconType.Delete},
-                    { ExportBundle,           IconType.SaveAs },
+                    { SaveBundle,           IconType.SaveAs },
                     { PackageDetails,         IconType.Info_Round },
                     { SharePackage,           IconType.Share },
                     { HelpButton,             IconType.Help }
@@ -215,10 +237,14 @@ namespace UniGetUI.Interface.SoftwarePages
 
             NewBundle.Click += (s, e) =>
             {
-                Loader.ClearPackages();
+                _ = AskForNewBundle();
             };
 
-            RemoveSelected.Click += (s, e) => PEInterface.PackageBundlesLoader.RemoveRange(FilteredPackages.GetCheckedPackages());
+            RemoveSelected.Click += (s, e) =>
+            {
+                HasUnsavedChanges = true;
+                PEInterface.PackageBundlesLoader.RemoveRange(FilteredPackages.GetCheckedPackages());
+            };
 
             InstallPackages.Click += async (s, e) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages());
             InstallSkipHash.Click += async (s, e) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), skiphash: true);
@@ -231,17 +257,55 @@ namespace UniGetUI.Interface.SoftwarePages
                 await OpenFromFile();
             };
 
-            ExportBundle.Click += async (s, e) =>
+            SaveBundle.Click += async (s, e) =>
             {
                 await SaveFile();
             };
 
             SharePackage.Click += (s, e) =>
             {
-                IPackage? package = SelectedItem as IPackage;
+                IPackage? package = SelectedItem;
                 if (package != null) MainApp.Instance.MainWindow.SharePackage(package);
             };
 
+        }
+
+        public async Task<bool> AskForNewBundle()
+        {
+            if (!Loader.Packages.Any() || !HasUnsavedChanges)
+            {
+                // Need to call ClearPackages, this method also clears internal caches
+                Loader.ClearPackages();
+                HasUnsavedChanges = false;
+                return true;
+            }
+
+            RichTextBlock rtb = new();
+            var p = new Paragraph();
+            rtb.Blocks.Add(p);
+            p.Inlines.Add(new Run() {Text = CoreTools.Translate("Are you sure you want to create a new package bundle? ")});
+            p.Inlines.Add(new LineBreak());
+            p.Inlines.Add(new Run() {Text = CoreTools.Translate("Any unsaved changes will be lost"), FontWeight = FontWeights.Bold});
+
+            ContentDialog dialog = new()
+            {
+                Title = CoreTools.Translate("Warning!"),
+                Content = rtb,
+                DefaultButton = ContentDialogButton.Secondary,
+                PrimaryButtonText = CoreTools.Translate("Yes"),
+                SecondaryButtonText = CoreTools.Translate("No"),
+                XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot
+            };
+
+            ContentDialogResult result = await MainApp.Instance.MainWindow.ShowDialogAsync(dialog);
+            if (result == ContentDialogResult.Primary)
+            {
+                Loader.ClearPackages();
+                HasUnsavedChanges = false;
+                return true;
+            }
+
+            return false;
         }
 
         public async Task ImportAndInstallPackage(IEnumerable<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? skiphash = null)
@@ -307,7 +371,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuInstallOptions.IsEnabled = IS_VALID;
         }
 
-        private async void MenuUninstall_Invoked(object sender, RoutedEventArgs args)
+        private async void MenuInstall_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
             if (package == null) return;
@@ -354,6 +418,7 @@ namespace UniGetUI.Interface.SoftwarePages
             IPackage? package = SelectedItem;
             if (package is ImportedPackage imported)
             {
+                HasUnsavedChanges = true;
                 await MainApp.Instance.MainWindow.NavigationPage.ShowInstallOptionsDialog_ImportedPackage(imported);
             }
         }
@@ -362,6 +427,8 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             IPackage? package = SelectedItem;
             if (package == null) return;
+
+            HasUnsavedChanges = true;
             Loader.Remove(package);
         }
 
@@ -370,6 +437,9 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             try
             {
+                if (await AskForNewBundle() == false)
+                    return;
+
                 if (file == null)
                 {
                     // Select file
@@ -395,8 +465,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 string fileContent = await File.ReadAllTextAsync(file);
 
-                Loader.ClearPackages();
                 await AddFromBundle(fileContent, formatType);
+                HasUnsavedChanges = false;
 
                 MainApp.Instance.MainWindow.HideLoadingDialog();
 
@@ -425,8 +495,8 @@ namespace UniGetUI.Interface.SoftwarePages
             try
             {
                 // Get file
-                // Save file
-                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string> { "*.ubundle", "*.json", "*.yaml", "*.xml" }, CoreTools.Translate("Package bundle") + ".ubundle");
+                string defaultName = CoreTools.Translate("Package bundle") + ".ubundle";
+                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string> { "*.ubundle", "*.json", "*.yaml", "*.xml" }, defaultName);
                 if (file != String.Empty)
                 {
                     // Loading dialog
@@ -456,13 +526,28 @@ namespace UniGetUI.Interface.SoftwarePages
                         Arguments = @$"/select, ""{file}"""
                     });
 
+                    HasUnsavedChanges = false;
+
                 }
             }
             catch (Exception ex)
             {
-                MainApp.Instance.MainWindow.HideLoadingDialog();
                 Logger.Error("An error occurred when saving packages to a file");
                 Logger.Error(ex);
+
+                var warningDialog = new ContentDialog
+                {
+                    Title = CoreTools.Translate("Could not create bundle"),
+                    Content = CoreTools.Translate("The package bundle could not be created due to an error.") + "\n\n" + ex.Message,
+                    CloseButtonText = CoreTools.Translate("Ok"),
+                    DefaultButton = ContentDialogButton.Close,
+                    XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
+                };
+
+                MainApp.Instance.MainWindow.HideLoadingDialog();
+                await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
+
+
             }
         }
 
@@ -547,7 +632,6 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 packages.Add(InvalidPackageFromSerializable(DeserializedPackage, NullSource.Instance));
             }
-
 
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(packages);
 

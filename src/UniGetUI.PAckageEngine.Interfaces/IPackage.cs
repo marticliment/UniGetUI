@@ -98,7 +98,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// all updates are ignored, calling this method with a specific version will
         /// still return true, although the passed version is not explicitly ignored.
         /// </summary>
-        public Task<bool> HasUpdatesIgnoredAsync(string Version = "*");
+        public Task<bool> HasUpdatesIgnoredAsync(string version = "*");
 
         /// <summary>
         /// Returns (as a string) the version for which a package has been ignored. When no versions
