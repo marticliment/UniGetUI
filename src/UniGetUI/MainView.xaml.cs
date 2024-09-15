@@ -17,6 +17,8 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
 using Windows.UI.Core;
+using Microsoft.UI;
+using UniGetUI.PackageEngine.Operations;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -242,7 +244,7 @@ namespace UniGetUI.Interface
         }
 
         public async Task<ContentDialogResult> ShowOperationFailedDialog(
-            IEnumerable<string> processOutput,
+            IEnumerable<AbstractOperation.OutputLine> processOutput,
             string dialogTitle,
             string shortDescription)
         {
@@ -326,9 +328,15 @@ namespace UniGetUI.Interface
             };
 
             Paragraph par = new();
-            foreach (string line in processOutput)
+            foreach (var line in processOutput)
             {
-                par.Inlines.Add(new Run { Text = line + "\x0a" });
+                if (line.Type is AbstractOperation.OutputLine.LineType.STDOUT)
+                    par.Inlines.Add(new Run { Text = line.Contents + "\x0a" });
+                else if (line.Type is AbstractOperation.OutputLine.LineType.Header)
+                    // TODO: Theme-aware colorss
+                    par.Inlines.Add(new Run { Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Azure)});
+                else
+                    par.Inlines.Add(new Run { Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Red)});
             }
 
             CommandLineOutput.Blocks.Add(par);

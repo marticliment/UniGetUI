@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reflection.Metadata;
+using Windows.UI;
 using ExternalLibraries.Clipboard;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
@@ -31,6 +33,25 @@ namespace UniGetUI.PackageEngine.Operations
         {
             Default,
             Compact,
+        }
+
+        public struct OutputLine
+        {
+            public enum LineType
+            {
+                Header,
+                STDOUT,
+                STDERR
+            }
+
+            readonly public LineType Type;
+            readonly public string Contents;
+
+            public OutputLine(string contents, LineType type)
+            {
+                Contents = contents;
+                Type = type;
+            }
         }
 
         private OperationStatus __status = OperationStatus.Pending;
@@ -94,7 +115,23 @@ namespace UniGetUI.PackageEngine.Operations
         protected event EventHandler<OperationCanceledEventArgs>? CloseRequested;
 #pragma warning restore CS0067
         protected Process Process = new();
-        protected ObservableCollection<string> ProcessOutput = [];
+
+        protected ObservableCollection<OutputLine> ProcessOutput = [];
+
+        protected string[] RawProcessOutput
+        {
+            get
+            {
+                List<string> tempOutput = new();
+                foreach (var line in ProcessOutput)
+                {
+                    if(line.Type is not OutputLine.LineType.Header)
+                        tempOutput.Add(line.Contents);
+                }
+
+                return tempOutput.ToArray();
+            }
+        }
 
         private readonly ContentDialog OutputDialog = new();
         private readonly ScrollViewer LiveOutputScrollBar = new();
@@ -202,12 +239,15 @@ namespace UniGetUI.PackageEngine.Operations
 
                 LiveOutputTextBlock.Blocks.Clear();
                 Paragraph p = new();
-                foreach (string line in ProcessOutput)
+                foreach (OutputLine line in ProcessOutput)
                 {
-                    if (line.Contains("  | "))
-                    {
-                        p.Inlines.Add(new Run { Text = line.Replace(" | ", "").Trim() + "\x0a" });
-                    }
+                    if (line.Type is OutputLine.LineType.STDOUT)
+                        p.Inlines.Add(new Run { Text = line.Contents + "\x0a" });
+                    else if (line.Type is OutputLine.LineType.Header)
+                        // TODO: Theme-aware colorss
+                        p.Inlines.Add(new Run { Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Azure)});
+                    else
+                        p.Inlines.Add(new Run { Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Red)});
                 }
                 LiveOutputTextBlock.Blocks.Add(p);
                 await Task.Delay(100);
@@ -231,19 +271,15 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 LineHeight = 4.8
             };
-            foreach (string line in ProcessOutput)
+            foreach (OutputLine line in ProcessOutput)
             {
-                if (Status != OperationStatus.Failed)
-                {
-                    if (line.Contains("  | "))
-                    {
-                        p.Inlines.Add(new Run { Text = line.Replace(" | ", "").Trim() + "\x0a" });
-                    }
-                }
+                if (line.Type is OutputLine.LineType.STDOUT)
+                    p.Inlines.Add(new Run { Text = line.Contents + "\x0a" });
+                else if (line.Type is OutputLine.LineType.Header)
+                    // TODO: Theme-aware colorss
+                    p.Inlines.Add(new Run { Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Azure)});
                 else
-                {
-                    p.Inlines.Add(new Run { Text = line + "\x0a" });
-                }
+                    p.Inlines.Add(new Run { Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Red)});
             }
             LiveOutputTextBlock.Blocks.Add(p);
             IsDialogOpen = true;
@@ -366,22 +402,17 @@ namespace UniGetUI.PackageEngine.Operations
 
                 foreach (string infoLine in GenerateProcessLogHeader())
                 {
-                    ProcessOutput.Add(infoLine);
+                    ProcessOutput.Add(new(infoLine, OutputLine.LineType.Header));
                 }
 
-                ProcessOutput.Add("Process Executable     : " + Process.StartInfo.FileName);
-                ProcessOutput.Add("Process Call Arguments : " + Process.StartInfo.Arguments);
-                ProcessOutput.Add("Working Directory      : " + Process.StartInfo.WorkingDirectory);
-                ProcessOutput.Add("Process Start Time     : " + DateTime.Now);
+                ProcessOutput.Add(new("Process Executable     : " + Process.StartInfo.FileName, OutputLine.LineType.Header));
+                ProcessOutput.Add(new("Process Call Arguments : " + Process.StartInfo.Arguments, OutputLine.LineType.Header));
+                ProcessOutput.Add(new("Working Directory      : " + Process.StartInfo.WorkingDirectory, OutputLine.LineType.Header));
+                ProcessOutput.Add(new("Process Start Time     : " + DateTime.Now, OutputLine.LineType.Header));
 
-                Process.Start();
-                PostProcessStartAction();
-                Status = OperationStatus.Running;
-
-                string? line;
-                while ((line = await Process.StandardOutput.ReadLineAsync()) != null)
+                Process.OutputDataReceived += (s, e) => DispatcherQueue.TryEnqueue(async () =>
                 {
-                    if (line.Trim() != "")
+                    if (e.Data?.Trim() is string line && line != String.Empty)
                     {
                         if (line.Contains("For the question below") ||
                             line.Contains("Would remove:")) // Mitigate chocolatey timeouts
@@ -391,37 +422,42 @@ namespace UniGetUI.PackageEngine.Operations
 
                         if (Status is not OperationStatus.Canceled)
                         {
-                            LineInfoText = line.Trim();
-
-                            if (line.Length > 5 || ProcessOutput.Count == 0)
-                            {
-                                ProcessOutput.Add("    | " + line);
-                            }
-                            else
-                            {
-                                ProcessOutput[^1] = "    | " + line;
-                            }
+                            LineInfoText = line;
+                            ProcessOutput.Add(new(line, OutputLine.LineType.STDOUT));
                         }
                     }
-                }
+                });
 
-                foreach (string errorLine in (await Process.StandardError.ReadToEndAsync()).Split('\n'))
+                Process.ErrorDataReceived += (s, e) => DispatcherQueue.TryEnqueue(async () =>
                 {
-                    if (errorLine.Trim() != "")
+                    if (e.Data?.Trim() is string line && line != String.Empty)
                     {
-                        ProcessOutput.Add("ERR | " + errorLine);
+                        if (Status is not OperationStatus.Canceled)
+                        {
+                            LineInfoText = line;
+                            ProcessOutput.Add(new(line, OutputLine.LineType.STDERR));
+                        }
                     }
-                }
+                });
+
+
+                Process.Start();
+                PostProcessStartAction();
+
+                Process.BeginOutputReadLine();
+                Process.BeginErrorReadLine();
+
+                Status = OperationStatus.Running;
 
                 await Process.WaitForExitAsync();
                 PostProcessEndAction();
 
-                ProcessOutput.Add("Process Exit Code      : " + Process.ExitCode);
-                ProcessOutput.Add("Process End Time       : " + DateTime.Now);
+                ProcessOutput.Add(new("Process Exit Code      : " + Process.ExitCode, OutputLine.LineType.Header));
+                ProcessOutput.Add(new("Process End Time       : " + DateTime.Now, OutputLine.LineType.Header));
 
                 AfterFinshAction postAction = AfterFinshAction.ManualClose;
 
-                OperationVeredict OperationVeredict = await GetProcessVeredict(Process.ExitCode, ProcessOutput.ToArray());
+                OperationVeredict OperationVeredict = await GetProcessVeredict(Process.ExitCode, RawProcessOutput);
 
 
                 if (Status is not OperationStatus.Canceled)
@@ -495,11 +531,13 @@ namespace UniGetUI.PackageEngine.Operations
                         break;
                 }
 
-                ProcessOutput.Insert(0, "                           ");
-                ProcessOutput.Insert(0, "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄");
-                ProcessOutput.Add("");
-                ProcessOutput.Add("");
-                ProcessOutput.Add("");
+                List<string> rawOutput = RawProcessOutput.ToList();
+
+                rawOutput.Insert(0, "                           ");
+                rawOutput.Insert(0, "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄");
+                rawOutput.Add("");
+                rawOutput.Add("");
+                rawOutput.Add("");
 
                 string[] oldHistory = Settings.GetValue("OperationHistory").Split("\n");
 
@@ -508,7 +546,7 @@ namespace UniGetUI.PackageEngine.Operations
                     oldHistory = oldHistory.Take(1000).ToArray();
                 }
 
-                List<string> newHistory = [.. ProcessOutput, .. oldHistory];
+                List<string> newHistory = [.. rawOutput, .. oldHistory];
 
                 Settings.SetValue("OperationHistory", string.Join('\n', newHistory).Replace(" | ", " ║ "));
             }

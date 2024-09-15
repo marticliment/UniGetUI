@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'UniGetUI-Symbols';
   src:
-    url('fonts/UniGetUI-Symbols.ttf?la4row') format('truetype'),
-    url('fonts/UniGetUI-Symbols.woff?la4row') format('woff'),
-    url('fonts/UniGetUI-Symbols.svg?la4row#UniGetUI-Symbols') format('svg');
+    url('fonts/UniGetUI-Symbols.ttf?ut936y') format('truetype'),
+    url('fonts/UniGetUI-Symbols.woff?ut936y') format('woff'),
+    url('fonts/UniGetUI-Symbols.svg?ut936y#UniGetUI-Symbols') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -218,4 +218,7 @@
 }
 .icon-winget:before {
   content: "\e940";
+}
+.icon-rust:before {
+  content: "\e941";
 }
