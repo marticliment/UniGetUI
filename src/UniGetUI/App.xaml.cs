@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
+using Windows.Security.Authentication.Web.Provider;
 using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -405,6 +406,7 @@ namespace UniGetUI
 
                 using (HttpClient client = new(CoreData.GenericHttpClientParameters))
                 {
+                    client.Timeout = TimeSpan.FromSeconds(600);
                     client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     fileContents = await client.GetStringAsync("https://www.marticliment.com/versions/unigetui.ver");
                 }
