@@ -182,8 +182,10 @@ begin
   try
     Dependency_AddVC2015To2022;
     Dependency_AddWebView2;
+    RaiseException('Your message goes here');
     Result := True;
   except
+    Result := True;
   end;
 end;
 
