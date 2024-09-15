@@ -205,21 +205,38 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return await Manager.GetPackageScreenshotsUrl(this);
         }
 
+        private static async Task<JsonObject> ReadIgnoredUpdatesDatabase()
+        {
+            JsonObject? IgnoredUpdatesJson = null;
+
+            try
+            {
+                IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+
+            if (IgnoredUpdatesJson is null)
+            {
+                Logger.Warn("The ignored packages database was corrupt, so it has been reset.");
+                await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, "{}");
+                IgnoredUpdatesJson = new JsonObject();
+            }
+
+            return IgnoredUpdatesJson;
+        }
+
         public virtual async Task AddToIgnoredUpdatesAsync(string version = "*")
         {
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-
-                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
-                {
-                    throw new InvalidOperationException("The IgnoredUpdates database seems to be invalid!");
-                }
+                var IgnoredUpdatesJson = await ReadIgnoredUpdatesDatabase();
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
-                {
                     IgnoredUpdatesJson.Remove(IgnoredId);
-                }
 
                 IgnoredUpdatesJson.Add(IgnoredId, version);
                 await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
@@ -237,11 +254,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-
-                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
-                {
-                    throw new InvalidOperationException("The IgnoredUpdates database seems to be invalid!");
-                }
+                var IgnoredUpdatesJson = await ReadIgnoredUpdatesDatabase();
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
                 {
@@ -264,18 +277,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// all updates are ignored, calling this method with a specific version will
         /// still return true, although the passed version is not explicitly ignored.
         /// </summary>
-        public async Task<bool> HasUpdatesIgnoredAsync(string Version = "*")
+        public async Task<bool> HasUpdatesIgnoredAsync(string version = "*")
         {
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
+                var IgnoredUpdatesJson = await ReadIgnoredUpdatesDatabase();
 
-                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
-                {
-                    throw new InvalidOperationException("The IgnoredUpdates database seems to be invalid!");
-                }
-
-                if (IgnoredUpdatesJson.ContainsKey(IgnoredId) && (IgnoredUpdatesJson[IgnoredId]?.ToString() == "*" || IgnoredUpdatesJson[IgnoredId]?.ToString() == Version))
+                if (IgnoredUpdatesJson.ContainsKey(IgnoredId) && (IgnoredUpdatesJson[IgnoredId]?.ToString() == "*" || IgnoredUpdatesJson[IgnoredId]?.ToString() == version))
                 {
                     return true;
                 }
@@ -301,11 +310,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-
-                if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
-                {
-                    throw new InvalidOperationException("The IgnoredUpdates database seems to be invalid!");
-                }
+                var IgnoredUpdatesJson = await ReadIgnoredUpdatesDatabase();
 
                 if (IgnoredUpdatesJson.ContainsKey(IgnoredId))
                 {
