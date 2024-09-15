@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
-using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager;
@@ -90,16 +89,22 @@ public partial class Cargo : PackageManager
         for (int i = 0; i < Packages.Count; i++)
         {
             var package = Packages[i];
-            using (var client = new HttpClient(CoreData.GenericHttpClientParameters))
+            try
             {
-                Uri url = new Uri($"https://crates.io/crates/{package.Id}");
-                string htmlContent = await client.GetStringAsync(url);
-
-                if (htmlContent.Contains("cargo install "))
+                var versionInfo = await CratesIOClient.GetManifestVersion(package.Id, package.Version);
+                if (versionInfo.bin_names?.Length > 0)
                 {
                     BinPackages.Add(package);
                 }
             }
+            catch (Exception ex)
+            {
+                logger.AddToStdErr($"{ex.Message}");
+            }
+
+            if (i + 1 == Packages.Count) break;
+            // Crates.io api requests that we send no more than one request per second
+            await Task.Delay(900);
         }
 
         logger.Close(p.ExitCode);
