@@ -88,6 +88,8 @@ public partial class Cargo : PackageManager
 
         for (int i = 0; i < Packages.Count; i++)
         {
+            DateTime startTime = DateTime.Now;
+
             var package = Packages[i];
             try
             {
@@ -104,7 +106,7 @@ public partial class Cargo : PackageManager
 
             if (i + 1 == Packages.Count) break;
             // Crates.io api requests that we send no more than one request per second
-            await Task.Delay(900);
+            await Task.Delay(Math.Max(0, 1000 - (int)((DateTime.Now - startTime).TotalMilliseconds)));
         }
 
         logger.Close(p.ExitCode);
