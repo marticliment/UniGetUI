@@ -9,6 +9,6 @@ jobs:
     steps:
       - uses: vedantmgoyal2009/winget-releaser@v2
         with:
-          identifier: SomePythonThings.WingetUIStore
+          identifier: MartiCliment.UniGetUI
           version: ${{ github.event.release.tag_name }}
           token: ${{ secrets.WINGET_TOKEN }}
