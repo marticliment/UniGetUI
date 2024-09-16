@@ -127,6 +127,11 @@ public partial class Cargo : PackageManager
     protected override async Task<ManagerStatus> LoadManager()
     {
         var (found, executablePath) = await CoreTools.Which("cargo");
+        if (!found)
+        {
+            return new(){ ExecutablePath = executablePath, Found = false, Version = ""};
+        }
+
         Process p = GetProcess(executablePath, "--version");
         p.Start();
         string version = (await p.StandardOutput.ReadToEndAsync()).Trim();
