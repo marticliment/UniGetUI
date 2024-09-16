@@ -1,0 +1,14 @@
+name: Publish stable releases to WinGet
+on:
+  release:
+    types: [released]
+  workflow_dispatch:
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: vedantmgoyal2009/winget-releaser@v2
+        with:
+          identifier: MartiCliment.UniGetUI
+          version: ${{ github.event.release.tag_name }}
+          token: ${{ secrets.WINGET_TOKEN }}
