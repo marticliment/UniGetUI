@@ -24742,9 +24742,9 @@
             "images": []
         },
         "microsoft-devhome": {
-            "icon": "https://i.postimg.cc/g0941961/dev-home.png",
+            "icon": "https://github.com/microsoft/devhome/blob/main/src/Assets/Preview/StoreDisplay-150.png",
             "images": [
-                "https://raw.githubusercontent.com/microsoft/devhome/main/src/Assets/Preview/StoreDisplay-150.png",
+                "https://github.com/microsoft/devhome/blob/main/src/Assets/Preview/StoreDisplay-150.png",
                 "https://i.postimg.cc/6qBmSkFB/devhome-machine-config.png",
                 "https://i.postimg.cc/tJDMHrHW/devhome-widgets.png",
                 "https://i.postimg.cc/PfMcZq8J/devhome-environment-manage.png"
