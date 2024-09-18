@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json.Nodes;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -41,7 +42,9 @@ namespace UniGetUI.Interface
 
             IgnoredUpdatesList.Items.Clear();
 
-            foreach (var(ignoredId, version) in await Task.Run(() => IgnoredUpdatesDatabase.GetDatabase()).ConfigureAwait(false))
+            var rawIgnoredPackages = await Task.Run(() => IgnoredUpdatesDatabase.GetDatabase());
+
+            foreach (var(ignoredId, version) in rawIgnoredPackages)
             {
                 IPackageManager manager = PEInterface.WinGet; // Manager by default
                 if (ManagerNameReference.ContainsKey(ignoredId.Split("\\")[0]))

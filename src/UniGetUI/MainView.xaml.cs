@@ -234,13 +234,10 @@ namespace UniGetUI.Interface
             IgnoredUpdatesManager IgnoredUpdatesPage = new();
             UpdatesDialog.PrimaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
             UpdatesDialog.Content = IgnoredUpdatesPage;
-            IgnoredUpdatesPage.Close += (s, e) => { UpdatesDialog.Hide(); };
+            IgnoredUpdatesPage.Close += (s, e) => UpdatesDialog.Hide();
 
             _ = IgnoredUpdatesPage.UpdateData();
             await MainApp.Instance.MainWindow.ShowDialogAsync(UpdatesDialog);
-
-            UpdatesDialog.Content = null;
-            UpdatesDialog = null;
         }
 
         public async Task<ContentDialogResult> ShowOperationFailedDialog(
