@@ -225,7 +225,7 @@ namespace UniGetUI.Interface
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
                 XamlRoot = XamlRoot
             };
-            UpdatesDialog.Resources["ContentDialogMaxWidth"] = 1200;
+            UpdatesDialog.Resources["ContentDialogMaxWidth"] = 1400;
             UpdatesDialog.Resources["ContentDialogMaxHeight"] = 1000;
             UpdatesDialog.SecondaryButtonText = CoreTools.Translate("Close");
             UpdatesDialog.PrimaryButtonText = CoreTools.Translate("Reset");
