@@ -19,7 +19,7 @@ public static class IgnoredUpdatesDatabase
         try
         {
             var rawContents = File.ReadAllText(CoreData.IgnoredUpdatesDatabaseFile);
-            return JsonSerializer.Deserialize<Dictionary<string, string>>(rawContents)
+            return JsonSerializer.Deserialize<Dictionary<string, string>>(rawContents, options: CoreData.SerializingOptions)
                    ?? throw new InvalidExpressionException("Deserialization of Ignored Updates file returned a null object");
         }
         catch (Exception ex)
