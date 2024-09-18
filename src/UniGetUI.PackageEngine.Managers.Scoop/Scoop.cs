@@ -89,11 +89,11 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             OperationProvider = new ScoopOperationProvider(this);
         }
 
-        protected override async Task<Package[]> FindPackages_UnSafe(string query)
+        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];
 
-            Tuple<bool, string> which_res = await CoreTools.Which("scoop-search.exe");
+            Tuple<bool, string> which_res = CoreTools.Which("scoop-search.exe").GetAwaiter().GetResult();
             string path = which_res.Item2;
             if (!which_res.Item1)
             {
@@ -111,9 +111,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 };
                 IProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
                 proc.Start();
-                aux_logger.AddToStdOut(await proc.StandardOutput.ReadToEndAsync());
-                aux_logger.AddToStdErr(await proc.StandardError.ReadToEndAsync());
-                await proc.WaitForExitAsync();
+                aux_logger.AddToStdOut(proc.StandardOutput.ReadToEnd());
+                aux_logger.AddToStdErr(proc.StandardError.ReadToEnd());
+                proc.WaitForExit();
                 aux_logger.Close(proc.ExitCode);
                 path = "scoop-search.exe";
             }
@@ -138,7 +138,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             string? line;
             IManagerSource source = Properties.DefaultSource;
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (line.StartsWith("'"))
@@ -167,8 +167,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1].Replace("(", "").Replace(")", ""), source, this));
                 }
             }
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
             return Packages.ToArray();
         }

@@ -43,7 +43,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             OperationProvider = new NpmOperationProvider(this);
         }
 
-        protected override async Task<Package[]> FindPackages_UnSafe(string query)
+        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
         {
             Process p = new()
             {
@@ -67,7 +67,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             string? line;
             List<Package> Packages = [];
             bool HeaderPassed = false;
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (!HeaderPassed)
@@ -87,8 +87,8 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 }
             }
 
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
             return Packages.ToArray();

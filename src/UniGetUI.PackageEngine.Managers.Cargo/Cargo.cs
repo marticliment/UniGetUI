@@ -61,7 +61,7 @@ public partial class Cargo : PackageManager
         OperationProvider = new CargoOperationProvider(this);
     }
 
-    protected override async Task<Package[]> FindPackages_UnSafe(string query)
+    protected override IEnumerable<Package> FindPackages_UnSafe(string query)
     {
         Process p = GetProcess(Status.ExecutablePath, "search -q --color=never " + query);
         IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
@@ -69,7 +69,7 @@ public partial class Cargo : PackageManager
 
         string? line;
         List<Package> Packages = [];
-        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+        while ((line = p.StandardOutput.ReadLine()) != null)
         {
             logger.AddToStdOut(line);
             var match = SearchLineRegex().Match(line);
@@ -81,8 +81,8 @@ public partial class Cargo : PackageManager
             }
         }
 
-        logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-        await p.WaitForExitAsync();
+        logger.AddToStdErr(p.StandardError.ReadToEnd());
+        p.WaitForExit();
 
         List<Package> BinPackages = [];
 
@@ -93,7 +93,7 @@ public partial class Cargo : PackageManager
             var package = Packages[i];
             try
             {
-                var versionInfo = await CratesIOClient.GetManifestVersion(package.Id, package.Version);
+                var versionInfo = CratesIOClient.GetManifestVersion(package.Id, package.Version).GetAwaiter().GetResult();
                 if (versionInfo.bin_names?.Length > 0)
                 {
                     BinPackages.Add(package);
@@ -106,7 +106,7 @@ public partial class Cargo : PackageManager
 
             if (i + 1 == Packages.Count) break;
             // Crates.io api requests that we send no more than one request per second
-            await Task.Delay(Math.Max(0, 1000 - (int)((DateTime.Now - startTime).TotalMilliseconds)));
+            Task.Delay(Math.Max(0, 1000 - (int)((DateTime.Now - startTime).TotalMilliseconds))).GetAwaiter().GetResult();
         }
 
         logger.Close(p.ExitCode);

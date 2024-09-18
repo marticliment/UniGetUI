@@ -164,7 +164,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet FindPackages was called"); return []; }
             try
             {
-                Package[] packages = await FindPackages_UnSafe(query).WaitAsync(TimeSpan.FromSeconds(60));
+                Package[] packages = (await Task.Run(() => FindPackages_UnSafe(query))).ToArray();
                 for (int i = 0; i < packages.Length; i++)
                 {
                     packages[i] = PackageCacher.GetAvailablePackage(packages[i]);
@@ -239,7 +239,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// </summary>
         /// <param name="query">The query string to search for</param>
         /// <returns>An array of Package objects</returns>
-        protected abstract Task<Package[]> FindPackages_UnSafe(string query);
+        protected abstract IEnumerable<Package> FindPackages_UnSafe(string query);
 
         /// <summary>
         /// Returns the available updates reported by the manager.

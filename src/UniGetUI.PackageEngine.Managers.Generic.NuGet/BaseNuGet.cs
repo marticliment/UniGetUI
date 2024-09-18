@@ -38,7 +38,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             public string id;
         }
 
-        protected sealed override async Task<Package[]> FindPackages_UnSafe(string query)
+        protected sealed override IEnumerable<Package> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];
 
@@ -47,7 +47,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             IManagerSource[] sources;
             if (Capabilities.SupportsCustomSources)
             {
-                sources = await GetSources();
+                sources = GetSources().GetAwaiter().GetResult();
             }
             else
             {
@@ -61,7 +61,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
                 using HttpClient client = new(CoreData.GenericHttpClientParameters);
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-                HttpResponseMessage response = await client.GetAsync(SearchUrl);
+                HttpResponseMessage response = client.GetAsync(SearchUrl).GetAwaiter().GetResult();
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -69,7 +69,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     continue;
                 }
 
-                string SearchResults = await response.Content.ReadAsStringAsync();
+                string SearchResults = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 MatchCollection matches = Regex.Matches(SearchResults, "<entry>([\\s\\S]*?)<\\/entry>");
 
                 Dictionary<string, SearchResult> AlreadyProcessedPackages = [];

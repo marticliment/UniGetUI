@@ -123,9 +123,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             MicrosoftStoreSource = new(this, "Microsoft Store", IconType.MsStore);
         }
 
-        protected override async Task<Package[]> FindPackages_UnSafe(string query)
+        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
         {
-            return await Task.Run(() => WinGetHelper.Instance.FindPackages_UnSafe(this, query).GetAwaiter().GetResult());
+            return WinGetHelper.Instance.FindPackages_UnSafe(this, query);
         }
 
         protected override async Task<Package[]> GetAvailableUpdates_UnSafe()

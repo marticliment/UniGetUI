@@ -34,7 +34,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         WinGetManager = Factory.CreatePackageManager();
     }
 
-    public async Task<Package[]> FindPackages_UnSafe(WinGet Manager, string query)
+    public IEnumerable<Package> FindPackages_UnSafe(WinGet Manager, string query)
     {
         List<Package> Packages = [];
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
@@ -51,7 +51,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             logger.Log($"Begin search on catalog {CatalogReference.Info.Name}");
             // Connect to catalog
             CatalogReference.AcceptSourceAgreements = true;
-            ConnectResult result = await CatalogReference.ConnectAsync();
+            ConnectResult result = CatalogReference.Connect();
             if (result.Status == ConnectResultStatus.Ok)
             {
                 foreach (var filter_type in new PackageMatchField[] { PackageMatchField.Name, PackageMatchField.Id, PackageMatchField.Moniker })
@@ -93,7 +93,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         }
 
         // Wait for tasks completion
-        await Task.WhenAll(FindPackageTasks.Values.ToArray());
+        Task.WhenAll(FindPackageTasks.Values.ToArray()).GetAwaiter().GetResult();
         logger.Log($"All catalogs fetched. Fetching results for query piece {query}");
 
         foreach (var CatalogTaskPair in FindPackageTasks)

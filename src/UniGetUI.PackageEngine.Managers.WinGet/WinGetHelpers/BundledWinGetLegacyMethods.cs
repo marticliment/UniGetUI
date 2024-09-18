@@ -9,7 +9,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
 internal static partial class BundledWinGetLegacyMethods
 {
-    public static async Task<Package[]> FindPackages_UnSafe(WinGet Manager, string query)
+    public static IEnumerable<Package> FindPackages_UnSafe(WinGet Manager, string query)
     {
         List<Package> Packages = [];
         Process p = new()
@@ -37,7 +37,7 @@ internal static partial class BundledWinGetLegacyMethods
         int SourceIndex = -1;
         bool DashesPassed = false;
         string? line;
-        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+        while ((line = p.StandardOutput.ReadLine()) != null)
         {
             logger.AddToStdOut(line);
             if (!DashesPassed && line.Contains("---"))
@@ -74,8 +74,8 @@ internal static partial class BundledWinGetLegacyMethods
             OldLine = line;
         }
 
-        logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-        await p.WaitForExitAsync();
+        logger.AddToStdErr(p.StandardError.ReadToEnd());
+        p.WaitForExit();
         logger.Close(p.ExitCode);
 
         return Packages.ToArray();
