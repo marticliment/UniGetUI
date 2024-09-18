@@ -76,3 +76,4 @@ src/UniGetUI/choco-cli/extensions/chocolatey-visualstudio/
 src/UniGetUI/choco-cli/extensions/chocolatey-dotnetfx/
 
 *.user
+/src/UniGetUI/Generated Files
