@@ -32,6 +32,7 @@
       <WindowsSdkPackageVersion>10.0.22621.41</WindowsSdkPackageVersion>
       
       <PublishTrimmed>true</PublishTrimmed>
+      <TrimMode>full</TrimMode>
       <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
   </PropertyGroup>
 
