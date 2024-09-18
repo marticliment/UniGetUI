@@ -1,7 +1,7 @@
-name: Publish to WinGet
+name: Publish prereleases to WinGet
 on:
   release:
-    types: [released]
+    types: [prereleased]
   workflow_dispatch:
 jobs:
   publish:
@@ -9,6 +9,6 @@ jobs:
     steps:
       - uses: vedantmgoyal2009/winget-releaser@v2
         with:
-          identifier: SomePythonThings.WingetUIStore
+          identifier: MartiCliment.UniGetUI.Pre-Release
           version: ${{ github.event.release.tag_name }}
           token: ${{ secrets.WINGET_TOKEN }}

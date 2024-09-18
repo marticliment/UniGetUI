@@ -1,5 +1,6 @@
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Managers.CargoManager;
 using UniGetUI.PackageEngine.Managers.ChocolateyManager;
 using UniGetUI.PackageEngine.Managers.DotNetManager;
 using UniGetUI.PackageEngine.Managers.NpmManager;
@@ -27,8 +28,9 @@ namespace UniGetUI.PackageEngine
         public static readonly DotNet DotNet = new();
         public static readonly PowerShell PowerShell = new();
         public static readonly PowerShell7 PowerShell7 = new();
+        public static readonly Cargo Cargo = new();
 
-        public static readonly IPackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, DotNet, PowerShell, PowerShell7];
+        public static readonly IPackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, Cargo, DotNet, PowerShell, PowerShell7];
 
         public static readonly DiscoverablePackagesLoader DiscoveredPackagesLoader = new(Managers);
         public static readonly UpgradablePackagesLoader UpgradablePackagesLoader = new(Managers);

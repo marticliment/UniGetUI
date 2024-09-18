@@ -1,4 +1,4 @@
-name: '🐞 Report an issue or a bug'
+name: '🐞 Report a bug or an issue'
 description: Report issues or unexpected behaviors.
 title: "[BUG] (Enter your description here)"
 labels: ["bug"]

@@ -6,6 +6,8 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -30,37 +32,31 @@ namespace UniGetUI.Interface
 
         public async Task UpdateData()
         {
-            Dictionary<string, PackageManager> ManagerNameReference = [];
+            Dictionary<string, IPackageManager> ManagerNameReference = [];
 
-            foreach (PackageManager Manager in PEInterface.Managers)
+            foreach (IPackageManager Manager in PEInterface.Managers)
             {
                 ManagerNameReference.Add(Manager.Name.ToLower(), Manager);
             }
 
-            if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is not JsonObject IgnoredUpdatesJson)
-            {
-                Logger.Warn("Ignored updates JSON database was null after deserialization");
-                return;
-            }
-
             IgnoredUpdatesList.Items.Clear();
 
-            foreach (KeyValuePair<string, JsonNode?> keypair in IgnoredUpdatesJson)
+            foreach (var(ignoredId, version) in await Task.Run(() => IgnoredUpdatesDatabase.GetDatabase()).ConfigureAwait(false))
             {
-                PackageManager manager = PEInterface.WinGet; // Manager by default
-                if (ManagerNameReference.ContainsKey(keypair.Key.Split("\\")[0]))
+                IPackageManager manager = PEInterface.WinGet; // Manager by default
+                if (ManagerNameReference.ContainsKey(ignoredId.Split("\\")[0]))
                 {
-                    manager = ManagerNameReference[keypair.Key.Split("\\")[0]];
+                    manager = ManagerNameReference[ignoredId.Split("\\")[0]];
                 }
 
-                IgnoredUpdatesList.Items.Add(new IgnoredPackage(keypair.Key.Split("\\")[^1], keypair.Value?.ToString() ?? "", manager, IgnoredUpdatesList));
+                IgnoredUpdatesList.Items.Add(new IgnoredPackageEntry(ignoredId.Split("\\")[^1], version, manager, IgnoredUpdatesList));
             }
 
         }
 
         private async void IgnoredUpdatesList_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            if (IgnoredUpdatesList.SelectedItem is IgnoredPackage package)
+            if (IgnoredUpdatesList.SelectedItem is IgnoredPackageEntry package)
             {
                 await package.RemoveFromIgnoredUpdates();
             }
@@ -69,7 +65,7 @@ namespace UniGetUI.Interface
         public async void ManageIgnoredUpdates_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             args.Cancel = true;
-            foreach (IgnoredPackage package in IgnoredUpdatesList.Items.ToArray())
+            foreach (IgnoredPackageEntry package in IgnoredUpdatesList.Items.ToArray())
             {
                 await package.RemoveFromIgnoredUpdates();
             }
@@ -81,14 +77,14 @@ namespace UniGetUI.Interface
         }
     }
 
-    public class IgnoredPackage
+    public class IgnoredPackageEntry
     {
         public string Id { get; }
         public string Name { get; }
         public string Version { get; }
-        public PackageManager Manager { get; }
+        public IPackageManager Manager { get; }
         private ListView List { get; }
-        public IgnoredPackage(string id, string version, PackageManager manager, ListView list)
+        public IgnoredPackageEntry(string id, string version, IPackageManager manager, ListView list)
         {
             Id = id;
             Name = CoreTools.FormatAsName(id);
@@ -107,16 +103,12 @@ namespace UniGetUI.Interface
 
         public async Task RemoveFromIgnoredUpdates()
         {
-            string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-            if (JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) is JsonObject IgnoredUpdatesJson && IgnoredUpdatesJson.ContainsKey(IgnoredId))
-            {
-                IgnoredUpdatesJson.Remove(IgnoredId);
-                await File.WriteAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile, IgnoredUpdatesJson.ToString());
-            }
+            string ignoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
+            await Task.Run(() => IgnoredUpdatesDatabase.Remove(ignoredId)).ConfigureAwait(false);
 
-            foreach (Package package in PEInterface.InstalledPackagesLoader.Packages)
+            foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)
             {
-                if (package.Id == Id && Manager == package.Manager)
+                if (Manager == package.Manager && package.Id == Id)
                 {
                     package.SetTag(PackageTag.Default);
                     break;

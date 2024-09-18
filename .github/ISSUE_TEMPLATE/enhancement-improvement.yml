@@ -1,6 +1,6 @@
-name: '🚧 Suggest an improvement or an enhancement'
+name: '🚧 Suggest an improvement for an existing feature'
 description: Propose an improvement to UniGetUI.
-title: "[ENHANCEMENT] (Enter your description here)"
+title: "[IMPROVEMENT] (Enter your description here)"
 labels: ["enhancement"]
 assignees: marticliment
 body:

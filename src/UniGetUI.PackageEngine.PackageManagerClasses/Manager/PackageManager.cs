@@ -309,11 +309,24 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             AssertSourceCompatibility("GetAddSourceOperationVeredict");
+
+            if (ReturnCode is 999 && Output.Last() == "Error: The operation was canceled by the user.")
+            {
+                Logger.Warn("Elevator [or GSudo] UAC prompt was canceled, not showing error message...");
+                return OperationVeredict.Canceled;
+            }
             return SourceProvider.GetAddSourceOperationVeredict(source, ReturnCode, Output);
         }
+
         public OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             AssertSourceCompatibility("GetRemoveSourceOperationVeredict");
+
+            if (ReturnCode is 999 && Output.Last() == "Error: The operation was canceled by the user.")
+            {
+                Logger.Warn("Elevator [or GSudo] UAC prompt was canceled, not showing error message...");
+                return OperationVeredict.Canceled;
+            }
             return SourceProvider.GetRemoveSourceOperationVeredict(source, ReturnCode, Output);
         }
 
@@ -442,6 +455,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         {
             try
             {
+                if (returnCode is 999 && processOutput.Last() == "Error: The operation was canceled by the user.")
+                {
+                    Logger.Warn("Elevator [or GSudo] UAC prompt was canceled, not showing error message...");
+                    return OperationVeredict.Canceled;
+                }
+
                 return OperationProvider.GetOperationResult(package, operation, processOutput, returnCode);
             }
             catch (Exception ex)

@@ -47,8 +47,8 @@ namespace UniGetUI.Core.Data
             }
         }
 
-        public const string VersionName =  "3.1.2-beta1"; // Do not modify this line, use file scripts/apply_versions.py
-        public const double VersionNumber =  3.1191; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName =  "3.1.2-beta2"; // Do not modify this line, use file scripts/apply_versions.py
+        public const double VersionNumber =  3.1192; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 
@@ -187,7 +187,7 @@ namespace UniGetUI.Core.Data
 
                 Logger.Error("System.Reflection.Assembly.GetExecutingAssembly().Location returned an empty path");
 
-                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UiGetUI");
+                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "UniGetUI");
             }
         }
 

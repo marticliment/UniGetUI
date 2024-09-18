@@ -142,7 +142,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return __extended_hash;
         }
 
-        public async Task<bool> HasUpdatesIgnoredAsync(string Version = "*")
+        public async Task<bool> HasUpdatesIgnoredAsync(string version = "*")
         {
             return false;
         }
