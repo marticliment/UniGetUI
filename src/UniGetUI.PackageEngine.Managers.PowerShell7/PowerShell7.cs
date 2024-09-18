@@ -197,14 +197,14 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 
             return Packages.ToArray();
         }
-        protected override async Task<ManagerStatus> LoadManager()
+        protected override ManagerStatus LoadManager()
         {
-            var result = await CoreTools.Which("pwsh.exe");
+            var (found, path) = CoreTools.Which("pwsh.exe").GetAwaiter().GetResult();
 
             ManagerStatus status = new()
             {
-                ExecutablePath = result.Item2,
-                Found = result.Item1,
+                ExecutablePath = path,
+                Found = found,
             };
 
             if (!status.Found)
@@ -226,7 +226,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 }
             };
             process.Start();
-            status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
+            status.Version = process.StandardOutput.ReadToEnd().Trim();
 
             return status;
         }

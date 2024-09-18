@@ -258,13 +258,13 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return Packages.ToArray();
         }
 
-        protected override async Task<ManagerStatus> LoadManager()
+        protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new();
 
-            Tuple<bool, string> which_res = await CoreTools.Which("python.exe");
-            status.ExecutablePath = which_res.Item2;
-            status.Found = which_res.Item1;
+            var (found, path) = CoreTools.Which("python.exe").GetAwaiter().GetResult();
+            status.ExecutablePath = path;
+            status.Found = found;
 
             if (!status.Found)
             {
@@ -285,7 +285,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             };
             process.Start();
-            status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
+            status.Version = process.StandardOutput.ReadToEnd().Trim();
 
             return status;
         }

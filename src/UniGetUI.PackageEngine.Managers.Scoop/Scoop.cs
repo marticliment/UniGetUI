@@ -342,7 +342,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             logger.Close(p.ExitCode);
         }
 
-        protected override async Task<ManagerStatus> LoadManager()
+        protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new()
             {
@@ -363,8 +363,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 }
             };
             process.Start();
-            status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
-            status.Found = (await CoreTools.Which("scoop")).Item1;
+            status.Version = process.StandardOutput.ReadToEnd().Trim();
+            status.Found = CoreTools.Which("scoop").GetAwaiter().GetResult().Item1;
 
             Status = status; // Wee need this for the RunCleanup method to get the executable path
             if (status.Found && IsEnabled() && Settings.Get("EnableScoopCleanup"))

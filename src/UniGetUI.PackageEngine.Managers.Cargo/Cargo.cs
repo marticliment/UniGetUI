@@ -124,9 +124,9 @@ public partial class Cargo : PackageManager
         return await GetPackages(LoggableTaskType.ListInstalledPackages);
     }
 
-    protected override async Task<ManagerStatus> LoadManager()
+    protected override ManagerStatus LoadManager()
     {
-        var (found, executablePath) = await CoreTools.Which("cargo");
+        var (found, executablePath) = CoreTools.Which("cargo").GetAwaiter().GetResult();
         if (!found)
         {
             return new(){ ExecutablePath = executablePath, Found = false, Version = ""};
@@ -134,8 +134,8 @@ public partial class Cargo : PackageManager
 
         Process p = GetProcess(executablePath, "--version");
         p.Start();
-        string version = (await p.StandardOutput.ReadToEndAsync()).Trim();
-        string error = await p.StandardError.ReadToEndAsync();
+        string version = p.StandardOutput.ReadToEnd().Trim();
+        string error = p.StandardError.ReadToEnd();
         if (!string.IsNullOrEmpty(error))
         {
             Logger.Error("cargo version error: " + error);

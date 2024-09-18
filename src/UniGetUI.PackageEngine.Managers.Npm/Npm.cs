@@ -207,12 +207,12 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return Packages.ToArray();
         }
 
-        protected override async Task<ManagerStatus> LoadManager()
+        protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new()
             {
                 ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
-                Found = (await CoreTools.Which("npm")).Item1
+                Found = CoreTools.Which("npm").GetAwaiter().GetResult().Item1
             };
 
             if (!status.Found)
@@ -236,8 +236,8 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 }
             };
             process.Start();
-            status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
-            await process.WaitForExitAsync();
+            status.Version = process.StandardOutput.ReadToEnd().Trim();
+            process.WaitForExit();
 
             return status;
         }

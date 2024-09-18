@@ -197,7 +197,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             return Packages.ToArray();
         }
 
-        protected override async Task<ManagerStatus> LoadManager()
+        protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new()
             {
@@ -224,7 +224,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 }
             };
             process.Start();
-            status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
+            status.Version = process.StandardOutput.ReadToEnd().Trim();
 
             return status;
         }

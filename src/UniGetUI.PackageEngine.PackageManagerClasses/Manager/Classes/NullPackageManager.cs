@@ -2,7 +2,9 @@ using System.Diagnostics;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
@@ -207,4 +209,86 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             throw new NotImplementedException();
         }
     }
+
+    internal sealed class NullSourceProvider : BaseSourceProvider<IPackageManager>
+    {
+        public NullSourceProvider(IPackageManager manager) : base(manager)
+        {
+        }
+
+        public override string[] GetAddSourceParameters(IManagerSource source)
+        {
+            throw new InvalidOperationException("Package manager does not support adding sources");
+        }
+        public override string[] GetRemoveSourceParameters(IManagerSource source)
+        {
+            throw new InvalidOperationException("Package manager does not support removing sources");
+        }
+
+        public override OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        {
+            return OperationVeredict.Failed;
+        }
+
+        public override OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        {
+            return OperationVeredict.Failed;
+        }
+
+        protected override async Task<IManagerSource[]> GetSources_UnSafe()
+        {
+            return await Task.Run(() => new IManagerSource[] { Manager.DefaultSource });
+        }
+    }
+
+    internal sealed class NullPackageDetailsProvider : BasePackageDetailsProvider<IPackageManager>
+    {
+#pragma warning disable CS1998
+        public NullPackageDetailsProvider(IPackageManager manager) : base(manager)
+        {
+        }
+
+        protected override async Task GetPackageDetails_Unsafe(IPackageDetails details)
+        {
+            return;
+        }
+
+        protected override async Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package)
+        {
+            return null;
+        }
+
+        protected override async Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
+        {
+            return [];
+        }
+
+        protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+        {
+            return null;
+        }
+
+        protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
+        {
+            return [];
+        }
+    }
+
+    internal sealed class NullOperationProvider : BaseOperationProvider<IPackageManager>
+    {
+        public NullOperationProvider(IPackageManager manager) : base(manager)
+        {
+        }
+
+        public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+        {
+            return Array.Empty<string>();
+        }
+
+        public override OperationVeredict GetOperationResult(IPackage package, OperationType operation, IEnumerable<string> processOutput, int returnCode)
+        {
+            return OperationVeredict.Failed;
+        }
+    }
+#pragma warning restore CS1998
 }

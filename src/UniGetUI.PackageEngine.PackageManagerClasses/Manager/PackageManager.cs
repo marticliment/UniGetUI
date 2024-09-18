@@ -2,6 +2,7 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
@@ -85,7 +86,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
             try
             {
-                Status = await LoadManager();
+                Status = await Task.Run(() => LoadManager()).ConfigureAwait(false);
 
                 if (IsReady() && Capabilities.SupportsCustomSources)
                 {
@@ -138,7 +139,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <summary>
         /// Returns a ManagerStatus object representing the current status of the package manager. This method runs asynchronously.
         /// </summary>
-        protected abstract Task<ManagerStatus> LoadManager();
+        protected abstract ManagerStatus LoadManager();
 
         /// <summary>
         /// Returns true if the manager is enabled, false otherwise
@@ -473,86 +474,4 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         // END OPERATION-RELATED METHODS
 #pragma warning restore CS8602
     }
-
-    internal sealed class NullSourceProvider : BaseSourceProvider<IPackageManager>
-    {
-        public NullSourceProvider(IPackageManager manager) : base(manager)
-        {
-        }
-
-        public override string[] GetAddSourceParameters(IManagerSource source)
-        {
-            throw new InvalidOperationException("Package manager does not support adding sources");
-        }
-        public override string[] GetRemoveSourceParameters(IManagerSource source)
-        {
-            throw new InvalidOperationException("Package manager does not support removing sources");
-        }
-
-        public override OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
-        {
-            return OperationVeredict.Failed;
-        }
-
-        public override OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
-        {
-            return OperationVeredict.Failed;
-        }
-
-        protected override async Task<IManagerSource[]> GetSources_UnSafe()
-        {
-            return await Task.Run(() => new IManagerSource[] { Manager.DefaultSource });
-        }
-    }
-
-    internal sealed class NullPackageDetailsProvider : BasePackageDetailsProvider<IPackageManager>
-    {
-#pragma warning disable CS1998
-        public NullPackageDetailsProvider(IPackageManager manager) : base(manager)
-        {
-        }
-
-        protected override async Task GetPackageDetails_Unsafe(IPackageDetails details)
-        {
-            return;
-        }
-
-        protected override async Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package)
-        {
-            return null;
-        }
-
-        protected override async Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
-        {
-            return [];
-        }
-
-        protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
-        {
-            return null;
-        }
-
-        protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
-        {
-            return [];
-        }
-    }
-
-    internal sealed class NullOperationProvider : BaseOperationProvider<IPackageManager>
-    {
-        public NullOperationProvider(IPackageManager manager) : base(manager)
-        {
-        }
-
-        public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
-        {
-            return Array.Empty<string>();
-        }
-
-        public override OperationVeredict GetOperationResult(IPackage package, OperationType operation, IEnumerable<string> processOutput, int returnCode)
-        {
-            return OperationVeredict.Failed;
-        }
-    }
-#pragma warning restore CS1998
 }

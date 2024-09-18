@@ -434,7 +434,7 @@ Crash Traceback:
         /// </summary>
         /// <param name="linkPath">The location of the link to be created</param>
         /// <param name="targetPath">The location of the real folder where to point</param>
-        public static async Task CreateSymbolicLinkDir(string linkPath, string targetPath)
+        public static void CreateSymbolicLinkDir(string linkPath, string targetPath)
         {
             var startInfo = new ProcessStartInfo
             {
@@ -449,7 +449,7 @@ Crash Traceback:
             Process? p = Process.Start(startInfo);
             if (p is not null)
             {
-                await p.WaitForExitAsync();
+                p.WaitForExit();
             }
 
             if (p is null || p.ExitCode != 0)
