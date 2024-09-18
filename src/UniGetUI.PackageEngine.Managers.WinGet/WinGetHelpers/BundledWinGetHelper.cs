@@ -101,7 +101,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         if (Packages.Count > 0)
         {
-            return Packages.ToArray();
+            return Packages;
         }
 
         Logger.Warn("WinGet updates returned zero packages, attempting legacy...");
@@ -198,7 +198,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         if (Packages.Count > 0)
         {
-            return Packages.ToArray();
+            return Packages;
         }
 
         Logger.Warn("WinGet installed packages returned zero packages, attempting legacy...");
@@ -287,7 +287,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         if (Packages.Count > 0)
         {
-            return Packages.ToArray();
+            return Packages;
         }
 
         Logger.Warn("WinGet package fetching returned zero packages, attempting legacy...");

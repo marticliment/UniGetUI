@@ -213,7 +213,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             try
             {
-                await Task.Run(() => IgnoredUpdatesDatabase.Add(ignoredId, version)).ConfigureAwait(false);
+                await Task.Run(() => IgnoredUpdatesDatabase.Add(ignoredId, version));
                 GetInstalledPackage()?.SetTag(PackageTag.Pinned);
             }
             catch (Exception ex)
@@ -227,7 +227,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             try
             {
-                await Task.Run(() => IgnoredUpdatesDatabase.Remove(ignoredId)).ConfigureAwait(false);
+                await Task.Run(() => IgnoredUpdatesDatabase.Remove(ignoredId));
                 GetInstalledPackage()?.SetTag(PackageTag.Default);
             }
             catch (Exception ex)
@@ -247,7 +247,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             try
             {
-                return await Task.Run(() => IgnoredUpdatesDatabase.HasUpdatesIgnored(ignoredId, version)).ConfigureAwait(false);
+                return await Task.Run(() => IgnoredUpdatesDatabase.HasUpdatesIgnored(ignoredId, version));
             }
             catch (Exception ex)
             {
@@ -267,7 +267,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             try
             {
-                return await Task.Run(() => IgnoredUpdatesDatabase.GetIgnoredVersion(ignoredId)).ConfigureAwait(false) ?? "";
+                return await Task.Run(() => IgnoredUpdatesDatabase.GetIgnoredVersion(ignoredId)) ?? "";
             }
             catch (Exception ex)
             {

@@ -142,7 +142,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         }
 
         logger.Close(0);
-        return Packages.ToArray();
+        return Packages;
     }
 
     public IEnumerable<Package> GetAvailableUpdates_UnSafe(WinGet Manager)
@@ -161,7 +161,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         }
 
         logger.Close(0);
-        return packages.ToArray();
+        return packages;
 
     }
 
@@ -184,7 +184,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             packages.Add(new Package(nativePackage.Name, nativePackage.Id, nativePackage.InstalledVersion.Version, source, Manager));
         }
         logger.Close(0);
-        return packages.ToArray();
+        return packages;
     }
 
     private IEnumerable<CatalogPackage> GetLocalWinGetPackages(INativeTaskLogger logger)

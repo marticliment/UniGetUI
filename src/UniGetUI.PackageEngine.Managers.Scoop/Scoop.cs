@@ -169,7 +169,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             logger.AddToStdErr(p.StandardError.ReadToEnd());
             p.WaitForExit();
             logger.Close(p.ExitCode);
-            return Packages.ToArray();
+            return Packages;
         }
 
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
@@ -246,7 +246,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             logger.AddToStdErr(p.StandardError.ReadToEnd());
             p.WaitForExit();
             logger.Close(p.ExitCode);
-            return Packages.ToArray();
+            return Packages;
         }
 
         protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
@@ -309,7 +309,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             logger.AddToStdErr(p.StandardError.ReadToEnd());
             p.WaitForExit();
             logger.Close(p.ExitCode);
-            return Packages.ToArray();
+            return Packages;
         }
 
         public override async Task RefreshPackageIndexes()

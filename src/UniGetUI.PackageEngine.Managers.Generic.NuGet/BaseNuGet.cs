@@ -102,7 +102,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             logger.Close(0);
 
-            return Packages.ToArray();
+            return Packages;
         }
 
     }

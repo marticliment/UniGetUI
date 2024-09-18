@@ -91,7 +91,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return Packages.ToArray();
+            return Packages;
         }
 
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
@@ -151,7 +151,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 p.WaitForExit();
                 logger.Close(p.ExitCode);
             }
-            return Packages.ToArray();
+            return Packages;
         }
 
         protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
@@ -204,7 +204,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 logger.Close(p.ExitCode);
             }
 
-            return Packages.ToArray();
+            return Packages;
         }
 
         protected override ManagerStatus LoadManager()

@@ -172,7 +172,7 @@ public partial class Cargo : PackageManager
         logger.AddToStdErr(p.StandardError.ReadToEnd());
         p.WaitForExit();
         logger.Close(p.ExitCode);
-        return Packages.ToArray();
+        return Packages;
     }
 
     private Process GetProcess(string fileName, string extraArguments)

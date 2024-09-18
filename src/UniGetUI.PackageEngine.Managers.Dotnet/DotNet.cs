@@ -156,7 +156,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return Packages.ToArray();
+            return Packages;
         }
 
         protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
@@ -225,7 +225,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 p.WaitForExit();
                 logger.Close(p.ExitCode);
             }
-            return Packages.ToArray();
+            return Packages;
         }
 
         protected override ManagerStatus LoadManager()

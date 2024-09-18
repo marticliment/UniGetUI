@@ -78,7 +78,7 @@ internal static class BundledWinGetLegacyMethods
         p.WaitForExit();
         logger.Close(p.ExitCode);
 
-        return Packages.ToArray();
+        return Packages;
     }
 
     public static IEnumerable<Package> GetAvailableUpdates_UnSafe(WinGet Manager)
@@ -174,7 +174,7 @@ internal static class BundledWinGetLegacyMethods
         p.WaitForExit();
         logger.Close(p.ExitCode);
 
-        return Packages.ToArray();
+        return Packages;
     }
 
     public static IEnumerable<Package> GetInstalledPackages_UnSafe(WinGet Manager)
@@ -265,7 +265,7 @@ internal static class BundledWinGetLegacyMethods
         p.WaitForExit();
         logger.Close(p.ExitCode);
 
-        return Packages.ToArray();
+        return Packages;
     }
 
     private static IManagerSource GetLocalSource(WinGet Manager, string id)
