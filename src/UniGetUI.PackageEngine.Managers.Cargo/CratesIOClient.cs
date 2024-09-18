@@ -92,7 +92,8 @@ class CratesIOClient
 
         var manifestStr = await client.GetStringAsync(url);
 
-        var manifest = JsonSerializer.Deserialize<T>(manifestStr) ?? throw new NullResponseException($"Null response for request to {url}");
+        var manifest = JsonSerializer.Deserialize<T>(manifestStr, options: CoreData.SerializingOptions)
+                       ?? throw new NullResponseException($"Null response for request to {url}");
         return manifest;
     }
 }

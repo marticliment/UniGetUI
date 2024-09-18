@@ -16,10 +16,6 @@ namespace UniGetUI.PackageEngine.Managers.CargoManager;
 
 public partial class Cargo : PackageManager
 {
-    public static new string[] FALSE_PACKAGE_NAMES = [""];
-    public static new string[] FALSE_PACKAGE_IDS = [""];
-    public static new string[] FALSE_PACKAGE_VERSIONS = [""];
-
     [GeneratedRegex(@"(\w+)\s=\s""(\d+\.\d+\.\d+)""\s*#\s(.*)")]
     private static partial Regex SearchLineRegex();
 
