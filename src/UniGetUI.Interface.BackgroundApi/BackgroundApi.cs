@@ -321,7 +321,15 @@ namespace UniGetUI.Interface
                     ContentType = $"image/{iconPath.Split('.')[^1]}",
                     Contents = (stream) =>
                     {
-                        stream.Write(fileContents, 0, fileContents.Length);
+                        try
+                        {
+                            stream.Write(fileContents, 0, fileContents.Length);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Warn($"Unable to load icon to path {iconPath}");
+                            Logger.Warn(ex);
+                        }
                     }
                 };
 
