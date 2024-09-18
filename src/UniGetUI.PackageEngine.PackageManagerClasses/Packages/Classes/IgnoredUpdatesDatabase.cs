@@ -40,7 +40,7 @@ public static class IgnoredUpdatesDatabase
     private static void SaveDatabase()
     {
         // Serialize and save to disk
-        string rawContents = JsonSerializer.Serialize(IgnoredPackages, options: new(){ WriteIndented = true });
+        string rawContents = JsonSerializer.Serialize(IgnoredPackages, options: CoreData.SerializingOptions);
         File.WriteAllText(CoreData.IgnoredUpdatesDatabaseFile, rawContents);
     }
 

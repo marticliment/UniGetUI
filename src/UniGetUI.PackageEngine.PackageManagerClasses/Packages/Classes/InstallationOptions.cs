@@ -194,7 +194,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
                 string fileContents = JsonSerializer.Serialize(
                     AsSerializable(),
-                    new JsonSerializerOptions(){ WriteIndented = true }
+                    CoreData.SerializingOptions
                 );
                 File.WriteAllText(optionsFile.FullName, fileContents);
             }
@@ -219,7 +219,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 }
 
                 using FileStream inputStream = optionsFile.OpenRead();
-                SerializableInstallationOptions_v1? options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(inputStream);
+                SerializableInstallationOptions_v1? options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(
+                    inputStream, CoreData.SerializingOptions);
 
                 if (options == null)
                 {
