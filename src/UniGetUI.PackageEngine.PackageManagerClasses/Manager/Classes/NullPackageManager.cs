@@ -174,7 +174,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             throw new NotImplementedException();
         }
 
-        public Task InitializeAsync()
+        public void Initialize()
         {
             throw new NotImplementedException();
         }

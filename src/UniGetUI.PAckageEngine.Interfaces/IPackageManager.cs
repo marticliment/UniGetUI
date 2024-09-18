@@ -23,7 +23,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// <summary>
         /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.
         /// </summary>
-        public Task InitializeAsync();
+        public void Initialize();
 
         /// <summary>
         /// Returns true if the manager is enabled, false otherwise

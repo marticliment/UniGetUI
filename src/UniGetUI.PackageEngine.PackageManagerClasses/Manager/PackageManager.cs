@@ -52,7 +52,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// <summary>
         /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.
         /// </summary>
-        public virtual async Task InitializeAsync()
+        public virtual void Initialize()
         {
             // BEGIN integrity check
             if (!__base_constructor_called)
@@ -86,21 +86,19 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
             try
             {
-                Status = await Task.Run(() => LoadManager()).ConfigureAwait(false);
+                Status = LoadManager();
 
                 if (IsReady() && Capabilities.SupportsCustomSources)
                 {
-                    Task<IManagerSource[]> SourcesTask = GetSources();
-                    Task winner = await Task.WhenAny(
-                        SourcesTask,
-                        Task.Delay(10000));
-                    if (winner == SourcesTask)
+                    Task<IManagerSource[]> sourcesTask = GetSources();
+
+                    if (sourcesTask.Wait(TimeSpan.FromSeconds(15)))
                     {
-                        ManagerReady = true;
+                        foreach (var source in sourcesTask.Result)
+                            SourceFactory.AddSource(source);
                     }
                     else
                     {
-                        ManagerReady = true;
                         Logger.Warn(Name + " sources took too long to load, using known sources as default");
                     }
                 }

@@ -11,7 +11,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
     public abstract class BaseNuGet : PackageManager
     {
-        public sealed override async Task InitializeAsync()
+        public sealed override void Initialize()
         {
             if (PackageDetailsProvider is not BaseNuGetDetailsProvider)
             {
@@ -28,7 +28,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 throw new InvalidOperationException("NuGet-based package managers must support custom versions");
             }
 
-            await base.InitializeAsync();
+            base.Initialize();
         }
 
         private struct SearchResult
