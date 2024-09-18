@@ -62,7 +62,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             OperationProvider = new ChocolateyOperationProvider(this);
         }
 
-        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
+        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
             Process p = new()
             {
@@ -84,7 +84,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             string? line;
             List<Package> Packages = [];
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (!line.StartsWith("Chocolatey"))
@@ -109,14 +109,14 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             }
 
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
             return Packages.ToArray();
         }
 
-        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
+        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
         {
             Process p = new()
             {
@@ -138,7 +138,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             string? line;
             List<Package> Packages = [];
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (!line.StartsWith("Chocolatey"))
@@ -163,8 +163,8 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             }
 
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
             return Packages.ToArray();

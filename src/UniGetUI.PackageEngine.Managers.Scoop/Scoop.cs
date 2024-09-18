@@ -93,9 +93,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         {
             List<Package> Packages = [];
 
-            Tuple<bool, string> which_res = CoreTools.Which("scoop-search.exe").GetAwaiter().GetResult();
-            string path = which_res.Item2;
-            if (!which_res.Item1)
+            var (found, path) = CoreTools.Which("scoop-search.exe").GetAwaiter().GetResult();
+            if (!found)
             {
                 Process proc = new()
                 {
@@ -173,10 +172,10 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return Packages.ToArray();
         }
 
-        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
+        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
-            Dictionary<string, Package> InstalledPackages = [];
-            foreach (Package InstalledPackage in await GetInstalledPackages())
+            Dictionary<string, IPackage> InstalledPackages = [];
+            foreach (IPackage InstalledPackage in GetInstalledPackages().GetAwaiter().GetResult())
             {
                 if (!InstalledPackages.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.Version))
                 {
@@ -205,7 +204,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             string? line;
             bool DashesPassed = false;
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (!DashesPassed)
@@ -233,7 +232,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         continue;
                     }
 
-                    if (InstalledPackages.TryGetValue(elements[0] + "." + elements[1], out Package? InstalledPackage) && InstalledPackage is not null)
+                    if (InstalledPackages.TryGetValue(elements[0] + "." + elements[1], out IPackage? InstalledPackage))
                     {
                         OverridenInstallationOptions options = new(InstalledPackage.OverridenOptions.Scope);
                         Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackage.Source, this, options));
@@ -244,13 +243,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     }
                 }
             }
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
             return Packages.ToArray();
         }
 
-        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
+        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
 
@@ -272,7 +271,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             string? line;
             bool DashesPassed = false;
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (!DashesPassed)
@@ -307,8 +306,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], GetSourceOrDefault(elements[2]), this, options));
                 }
             }
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
             return Packages.ToArray();
         }

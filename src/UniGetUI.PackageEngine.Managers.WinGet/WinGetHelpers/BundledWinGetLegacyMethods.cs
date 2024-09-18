@@ -7,7 +7,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
-internal static partial class BundledWinGetLegacyMethods
+internal static class BundledWinGetLegacyMethods
 {
     public static IEnumerable<Package> FindPackages_UnSafe(WinGet Manager, string query)
     {
@@ -43,9 +43,9 @@ internal static partial class BundledWinGetLegacyMethods
             if (!DashesPassed && line.Contains("---"))
             {
                 string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
-                IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
-                VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
-                SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
+                IdIndex = OldLine.IndexOf(HeaderPrefix + "Id", StringComparison.InvariantCulture);
+                VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version", StringComparison.InvariantCulture);
+                SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source", StringComparison.InvariantCulture);
                 DashesPassed = true;
             }
             else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
@@ -81,7 +81,7 @@ internal static partial class BundledWinGetLegacyMethods
         return Packages.ToArray();
     }
 
-    public static async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
+    public static IEnumerable<Package> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
         List<Package> Packages = [];
         Process p = new()
@@ -110,7 +110,7 @@ internal static partial class BundledWinGetLegacyMethods
         int SourceIndex = -1;
         bool DashesPassed = false;
         string? line;
-        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+        while ((line = p.StandardOutput.ReadLine()) != null)
         {
             logger.AddToStdOut(line);
 
@@ -123,10 +123,10 @@ internal static partial class BundledWinGetLegacyMethods
             {
                 string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
                 string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
-                IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
-                VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
-                NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix);
-                SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
+                IdIndex = OldLine.IndexOf(HeaderPrefix + "Id", StringComparison.InvariantCulture);
+                VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version", StringComparison.InvariantCulture);
+                NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix, StringComparison.InvariantCulture);
+                SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source", StringComparison.InvariantCulture);
                 DashesPassed = true;
             }
             else if (line.Trim() == "")
@@ -170,14 +170,14 @@ internal static partial class BundledWinGetLegacyMethods
             OldLine = line;
         }
 
-        logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-        await p.WaitForExitAsync();
+        logger.AddToStdErr(p.StandardError.ReadToEnd());
+        p.WaitForExit();
         logger.Close(p.ExitCode);
 
         return Packages.ToArray();
     }
 
-    public static async Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager)
+    public static IEnumerable<Package> GetInstalledPackages_UnSafe(WinGet Manager)
     {
         List<Package> Packages = [];
         Process p = new()
@@ -205,7 +205,7 @@ internal static partial class BundledWinGetLegacyMethods
         int NewVersionIndex = -1;
         bool DashesPassed = false;
         string? line;
-        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+        while ((line = p.StandardOutput.ReadLine()) != null)
         {
             try
             {
@@ -214,10 +214,10 @@ internal static partial class BundledWinGetLegacyMethods
                 {
                     string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
                     string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
-                    IdIndex = OldLine.IndexOf(HeaderPrefix + "Id");
-                    VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version");
-                    NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix);
-                    SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source");
+                    IdIndex = OldLine.IndexOf(HeaderPrefix + "Id", StringComparison.InvariantCulture);
+                    VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version", StringComparison.InvariantCulture);
+                    NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix, StringComparison.InvariantCulture);
+                    SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source", StringComparison.InvariantCulture);
                     DashesPassed = true;
                 }
                 else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
@@ -261,8 +261,8 @@ internal static partial class BundledWinGetLegacyMethods
             }
         }
 
-        logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-        await p.WaitForExitAsync();
+        logger.AddToStdErr(p.StandardError.ReadToEnd());
+        p.WaitForExit();
         logger.Close(p.ExitCode);
 
         return Packages.ToArray();

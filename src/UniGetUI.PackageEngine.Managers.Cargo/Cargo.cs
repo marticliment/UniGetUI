@@ -114,14 +114,14 @@ public partial class Cargo : PackageManager
         return [.. BinPackages];
     }
 
-    protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
+    protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
     {
-        return await GetPackages(LoggableTaskType.ListUpdates);
+        return GetPackages(LoggableTaskType.ListUpdates);
     }
 
-    protected override async Task<Package[]> GetInstalledPackages_UnSafe()
+    protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
     {
-        return await GetPackages(LoggableTaskType.ListInstalledPackages);
+        return GetPackages(LoggableTaskType.ListInstalledPackages);
     }
 
     protected override ManagerStatus LoadManager()
@@ -144,7 +144,7 @@ public partial class Cargo : PackageManager
         return new() { ExecutablePath = executablePath, Found = found, Version = version };
     }
 
-    private async Task<Package[]> GetPackages(LoggableTaskType taskType)
+    private IEnumerable<Package> GetPackages(LoggableTaskType taskType)
     {
         List<Package> Packages = [];
 
@@ -153,7 +153,7 @@ public partial class Cargo : PackageManager
         p.Start();
 
         string? line;
-        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+        while ((line = p.StandardOutput.ReadLine()) != null)
         {
             logger.AddToStdOut(line);
             var match = UpdateLineRegex().Match(line);
@@ -169,8 +169,8 @@ public partial class Cargo : PackageManager
                     Packages.Add(new Package(name, id, oldVersion, DefaultSource, this));
             }
         }
-        logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-        await p.WaitForExitAsync();
+        logger.AddToStdErr(p.StandardError.ReadToEnd());
+        p.WaitForExit();
         logger.Close(p.ExitCode);
         return Packages.ToArray();
     }

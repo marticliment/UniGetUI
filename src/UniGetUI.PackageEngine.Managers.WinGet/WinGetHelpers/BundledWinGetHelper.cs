@@ -15,11 +15,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
 internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 {
-    public async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
+    public IEnumerable<Package> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
         if (Settings.Get("ForceLegacyBundledWinGet"))
         {
-            return await BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(Manager);
+            return BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(Manager);
         }
 
         List<Package> Packages = [];
@@ -71,12 +71,12 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
                          """;
 
-        await p.StandardInput.WriteAsync(command);
+        p.StandardInput.Write(command);
         p.StandardInput.Close();
         logger.AddToStdIn(command);
 
         string? line;
-        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+        while ((line = p.StandardOutput.ReadLine()) != null)
         {
             logger.AddToStdOut(line);
             if (!line.StartsWith("#"))
@@ -95,8 +95,8 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             Packages.Add(new Package(elements[0][1..], elements[1], elements[2], elements[3], source, Manager));
         }
 
-        logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-        await p.WaitForExitAsync();
+        logger.AddToStdErr(p.StandardError.ReadToEnd());
+        p.WaitForExit();
         logger.Close(p.ExitCode);
 
         if (Packages.Count > 0)
@@ -105,14 +105,14 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         }
 
         Logger.Warn("WinGet updates returned zero packages, attempting legacy...");
-        return await BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(Manager);
+        return BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(Manager);
     }
 
-    public async Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager)
+    public IEnumerable<Package> GetInstalledPackages_UnSafe(WinGet Manager)
     {
         if (Settings.Get("ForceLegacyBundledWinGet"))
         {
-            return await BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(Manager);
+            return BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(Manager);
         }
 
         List<Package> Packages = [];
@@ -160,12 +160,12 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
                          """;
 
-        await p.StandardInput.WriteAsync(command);
+        p.StandardInput.Write(command);
         p.StandardInput.Close();
         logger.AddToStdIn(command);
 
         string? line;
-        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+        while ((line = p.StandardOutput.ReadLine()) != null)
         {
             logger.AddToStdOut(line);
             if (!line.StartsWith("#"))
@@ -192,8 +192,8 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             Packages.Add(new Package(elements[0][1..], elements[1], elements[2], source, Manager));
         }
 
-        logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-        await p.WaitForExitAsync();
+        logger.AddToStdErr(p.StandardError.ReadToEnd());
+        p.WaitForExit();
         logger.Close(p.ExitCode);
 
         if (Packages.Count > 0)
@@ -202,7 +202,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         }
 
         Logger.Warn("WinGet installed packages returned zero packages, attempting legacy...");
-        return await BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(Manager);
+        return BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(Manager);
     }
 
     public IEnumerable<Package> FindPackages_UnSafe(WinGet Manager, string query)

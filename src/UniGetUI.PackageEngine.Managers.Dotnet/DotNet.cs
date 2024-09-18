@@ -63,11 +63,10 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             OperationProvider = new DotNetOperationProvider(this);
         }
 
-        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
+        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
-            Tuple<bool, string> which_res = await CoreTools.Which("dotnet-tools-outdated.exe");
-            string path = which_res.Item2;
-            if (!which_res.Item1)
+            var (found, path) = CoreTools.Which("dotnet-tools-outdated.exe").GetAwaiter().GetResult();
+            if (!found)
             {
                 Process proc = new()
                 {
@@ -85,9 +84,9 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 IProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
                 proc.Start();
 
-                aux_logger.AddToStdOut(await proc.StandardOutput.ReadToEndAsync());
-                aux_logger.AddToStdErr(await proc.StandardError.ReadToEndAsync());
-                await proc.WaitForExitAsync();
+                aux_logger.AddToStdOut(proc.StandardOutput.ReadToEnd());
+                aux_logger.AddToStdErr(proc.StandardError.ReadToEnd());
+                proc.WaitForExit();
                 aux_logger.Close(proc.ExitCode);
 
                 path = "dotnet-tools-outdated.exe";
@@ -114,7 +113,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             string? line;
             bool DashesPassed = false;
             List<Package> Packages = [];
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (!DashesPassed)
@@ -153,14 +152,14 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     ));
                 }
             }
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
             return Packages.ToArray();
         }
 
-        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
+        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
             foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })
@@ -184,7 +183,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
                 string? line;
                 bool DashesPassed = false;
-                while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+                while ((line = p.StandardOutput.ReadLine()) != null)
                 {
                     logger.AddToStdOut(line);
                     if (!DashesPassed)
@@ -222,8 +221,8 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                         ));
                     }
                 }
-                logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-                await p.WaitForExitAsync();
+                logger.AddToStdErr(p.StandardError.ReadToEnd());
+                p.WaitForExit();
                 logger.Close(p.ExitCode);
             }
             return Packages.ToArray();

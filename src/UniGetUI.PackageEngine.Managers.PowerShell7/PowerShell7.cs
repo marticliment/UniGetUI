@@ -55,7 +55,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             SourceProvider = new PowerShell7SourceProvider(this);
             OperationProvider = new PowerShell7OperationProvider(this);
         }
-        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
+        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
             Process p = new()
             {
@@ -101,13 +101,13 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 
                 exit
                 """;
-            await p.StandardInput.WriteLineAsync(command);
+            p.StandardInput.WriteLine(command);
             logger.AddToStdIn(command);
             p.StandardInput.Close();
 
             string? line;
             List<Package> Packages = [];
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (line.StartsWith(">>"))
@@ -134,14 +134,14 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], GetSourceOrDefault(elements[3]), this));
             }
 
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
             return Packages.ToArray();
         }
 
-        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
+        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
         {
             Process p = new()
             {
@@ -164,7 +164,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             string? line;
             List<Package> Packages = [];
             bool DashesPassed = false;
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (!DashesPassed)
@@ -191,8 +191,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 }
             }
 
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
             return Packages.ToArray();

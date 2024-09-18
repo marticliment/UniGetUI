@@ -145,11 +145,11 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return Packages.ToArray();
     }
 
-    public async Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager)
+    public IEnumerable<Package> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates);
         List<Package> packages = [];
-        foreach (var nativePackage in await Task.Run(() => GetLocalWinGetPackages(logger)))
+        foreach (var nativePackage in GetLocalWinGetPackages(logger))
         {
             if (nativePackage.IsUpdateAvailable)
             {
@@ -165,11 +165,11 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
     }
 
-    public async Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager)
+    public IEnumerable<Package> GetInstalledPackages_UnSafe(WinGet Manager)
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages);
         List<Package> packages = [];
-        foreach (var nativePackage in await Task.Run(() => GetLocalWinGetPackages(logger)))
+        foreach (var nativePackage in GetLocalWinGetPackages(logger))
         {
             IManagerSource source;
             if (nativePackage.DefaultInstallVersion != null)

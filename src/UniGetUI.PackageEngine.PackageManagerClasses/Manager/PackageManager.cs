@@ -164,7 +164,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet FindPackages was called"); return []; }
             try
             {
-                Package[] packages = (await Task.Run(() => FindPackages_UnSafe(query))).ToArray();
+                Package[] packages = (await Task.Run(
+                    () => FindPackages_UnSafe(query)).WaitAsync(TimeSpan.FromSeconds(60))
+                ).ToArray();
+
                 for (int i = 0; i < packages.Length; i++)
                 {
                     packages[i] = PackageCacher.GetAvailablePackage(packages[i]);
@@ -190,7 +193,11 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             try
             {
                 await RefreshPackageIndexes().WaitAsync(TimeSpan.FromSeconds(60));
-                Package[] packages = await GetAvailableUpdates_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
+
+                Package[] packages = (await Task.Run(
+                    () => GetAvailableUpdates_UnSafe()
+                ).WaitAsync(TimeSpan.FromSeconds(60))).ToArray();
+
                 for (int i = 0; i < packages.Length; i++)
                 {
                     packages[i] = PackageCacher.GetUpgradablePackage(packages[i]);
@@ -216,7 +223,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetInstalledPackages was called"); return []; }
             try
             {
-                Package[] packages = await GetInstalledPackages_UnSafe().WaitAsync(TimeSpan.FromSeconds(60));
+                Package[] packages = (await Task.Run(
+                    () => GetInstalledPackages_UnSafe()
+                ).WaitAsync(TimeSpan.FromSeconds(60))).ToArray();
+
                 for (int i = 0; i < packages.Length; i++)
                 {
                     packages[i] = PackageCacher.GetInstalledPackage(packages[i]);
@@ -246,14 +256,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Each manager MUST implement this method.
         /// </summary>
         /// <returns>An array of UpgradablePackage objects</returns>
-        protected abstract Task<Package[]> GetAvailableUpdates_UnSafe();
+        protected abstract IEnumerable<Package> GetAvailableUpdates_UnSafe();
 
         /// <summary>
         /// Returns an array of Package objects containing the installed packages reported by the manager.
         /// Each manager MUST implement this method.
         /// </summary>
         /// <returns>An array of Package objects</returns>
-        protected abstract Task<Package[]> GetInstalledPackages_UnSafe();
+        protected abstract IEnumerable<Package> GetInstalledPackages_UnSafe();
 
         /// <summary>
         /// Refreshes the Package Manager sources/indexes

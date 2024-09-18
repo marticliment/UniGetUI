@@ -94,7 +94,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return Packages.ToArray();
         }
 
-        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
+        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
             List<Package> Packages = [];
             foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })
@@ -119,7 +119,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 p.Start();
 
                 string? line;
-                while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+                while ((line = p.StandardOutput.ReadLine()) != null)
                 {
                     logger.AddToStdOut(line);
                     string[] elements = line.Split(':');
@@ -147,14 +147,14 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     }
                 }
 
-                logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-                await p.WaitForExitAsync();
+                logger.AddToStdErr(p.StandardError.ReadToEnd());
+                p.WaitForExit();
                 logger.Close(p.ExitCode);
             }
             return Packages.ToArray();
         }
 
-        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
+        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
             foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })
@@ -179,7 +179,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 p.Start();
 
                 string? line;
-                while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+                while ((line = p.StandardOutput.ReadLine()) != null)
                 {
                     logger.AddToStdOut(line);
                     if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
@@ -199,8 +199,8 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                         }
                     }
                 }
-                logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-                await p.WaitForExitAsync();
+                logger.AddToStdErr(p.StandardError.ReadToEnd());
+                p.WaitForExit();
                 logger.Close(p.ExitCode);
             }
 
