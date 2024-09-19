@@ -16,16 +16,16 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
 
         public async Task GetPackageDetails(IPackageDetails details)
         {
-            await GetPackageDetails_Unsafe(details);
+            await Task.Run(() => GetDetails_UnSafe(details));
         }
 
         public async Task<string[]> GetPackageVersions(IPackage package)
         {
             if (Manager.Capabilities.SupportsCustomVersions)
             {
-                string[] result = await GetPackageVersions_Unsafe(package);
-                Logger.Debug($"Found {result.Length} versions for package Id={package.Id} on manager {Manager.Name}");
-                return result;
+                var result = await Task.Run(() => GetInstallableVersions_UnSafe(package));
+                Logger.Debug($"Found {result.Count()} versions for package Id={package.Id} on manager {Manager.Name}");
+                return result.ToArray();
             }
 
             Logger.Warn($"Manager {Manager.Name} does not support version retrieving, this method should have not been called");
@@ -37,7 +37,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
             CacheableIcon? Icon = null;
             if (Manager.Capabilities.SupportsCustomPackageIcons)
             {
-                Icon = await GetPackageIcon_Unsafe(package);
+                Icon = await Task.Run(() => GetIcon_UnSafe(package));
                 if (Icon == null)
                 {
                     Logger.Debug($"Manager {Manager.Name} did not find a native icon for {package.Id}");
@@ -69,18 +69,18 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
 
         public async Task<Uri[]> GetPackageScreenshotsUrl(IPackage package)
         {
-            Uri[] URIs = [];
+            IEnumerable<Uri> URIs = [];
 
             if (Manager.Capabilities.SupportsCustomPackageScreenshots)
             {
-                URIs = await GetPackageScreenshots_Unsafe(package);
+                URIs = await Task.Run(() => GetScreenshots_UnSafe(package));
             }
             else
             {
                 Logger.Debug($"Manager {Manager.Name} does not support native screenshots");
             }
 
-            if (URIs.Length == 0)
+            if (!URIs.Any())
             {
                 string[] UrlArray = IconDatabase.Instance.GetScreenshotsUrlForId(package.Id);
                 List<Uri> UriList = [];
@@ -94,21 +94,21 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
 
                 URIs = UriList.ToArray();
             }
-            Logger.Info($"Found {URIs.Length} screenshots for package Id={package.Id}");
-            return URIs;
+            Logger.Info($"Found {URIs.Count()} screenshots for package Id={package.Id}");
+            return URIs.ToArray();
         }
 
-        protected abstract Task GetPackageDetails_Unsafe(IPackageDetails details);
-        protected abstract Task<string[]> GetPackageVersions_Unsafe(IPackage package);
-        protected abstract Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package);
-        protected abstract Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package);
-        protected abstract string? GetPackageInstallLocation_Unsafe(IPackage package);
+        protected abstract void GetDetails_UnSafe(IPackageDetails details);
+        protected abstract IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package);
+        protected abstract CacheableIcon? GetIcon_UnSafe(IPackage package);
+        protected abstract IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package);
+        protected abstract string? GetInstallLocation_UnSafe(IPackage package);
 
         public string? GetPackageInstallLocation(IPackage package)
         {
             try
             {
-                string? path = GetPackageInstallLocation_Unsafe(package);
+                string? path = GetInstallLocation_UnSafe(package);
                 if (path is not null && !Directory.Exists(path))
                 {
                     Logger.Warn($"Path returned by the package manager \"{path}\" did not exist while loading package install location for package Id={package.Id} with Manager={package.Manager.Name}");

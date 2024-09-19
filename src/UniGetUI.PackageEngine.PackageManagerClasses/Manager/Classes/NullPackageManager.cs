@@ -248,27 +248,27 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         {
         }
 
-        protected override async Task GetPackageDetails_Unsafe(IPackageDetails details)
+        protected override void GetDetails_UnSafe(IPackageDetails details)
         {
             return;
         }
 
-        protected override async Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package)
+        protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
         {
             return null;
         }
 
-        protected override async Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
+        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             return [];
         }
 
-        protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+        protected override string? GetInstallLocation_UnSafe(IPackage package)
         {
             return null;
         }
 
-        protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
+        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             return [];
         }

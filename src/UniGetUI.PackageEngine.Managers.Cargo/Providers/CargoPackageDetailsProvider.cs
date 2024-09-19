@@ -7,7 +7,7 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 namespace UniGetUI.PackageEngine.Managers.CargoManager;
 internal sealed class CargoPackageDetailsProvider(Cargo manager) : BasePackageDetailsProvider<PackageManager>(manager)
 {
-    protected override async Task GetPackageDetails_Unsafe(IPackageDetails details)
+    protected override void GetDetails_UnSafe(IPackageDetails details)
     {
         details.InstallerType = "Source";
 
@@ -17,7 +17,7 @@ internal sealed class CargoPackageDetailsProvider(Cargo manager) : BasePackageDe
         CargoManifest manifest;
         try
         {
-            (manifestUrl, manifest) = await CratesIOClient.GetManifest(details.Package.Id);
+            (manifestUrl, manifest) = CratesIOClient.GetManifest(details.Package.Id);
         }
         catch (Exception ex)
         {
@@ -56,27 +56,27 @@ internal sealed class CargoPackageDetailsProvider(Cargo manager) : BasePackageDe
         return;
     }
 
-    protected override Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package)
+    protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
     {
         throw new NotImplementedException();
     }
 
-    protected override Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
+    protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
     {
         throw new NotImplementedException();
     }
 
-    protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+    protected override string? GetInstallLocation_UnSafe(IPackage package)
     {
         return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cargo", "bin");
     }
 
-    protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
+    protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
     {
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions);
         try
         {
-            var (_, manifest) = await CratesIOClient.GetManifest(package.Id);
+            var (_, manifest) = CratesIOClient.GetManifest(package.Id);
             var versions = manifest.versions.Select((v) => v.num).ToArray();
             logger.Close(0);
             return versions;

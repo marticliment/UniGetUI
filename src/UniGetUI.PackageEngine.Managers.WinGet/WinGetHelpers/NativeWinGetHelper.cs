@@ -250,7 +250,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return sources.ToArray();
     }
 
-    public async Task<string[]> GetPackageVersions_Unsafe(WinGet Manager, IPackage package)
+    public IEnumerable<string> GetInstallableVersions_Unsafe(WinGet Manager, IPackage package)
     {
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions);
 
@@ -265,7 +265,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
         // Connect to catalog
         Catalog.AcceptSourceAgreements = true;
-        ConnectResult ConnectResult = await Task.Run(() => Catalog.Connect());
+        ConnectResult ConnectResult = Catalog.Connect();
         if (ConnectResult.Status != ConnectResultStatus.Ok)
         {
             logger.Error("Failed to connect to catalog " + package.Source.Name);
@@ -303,7 +303,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return versions ?? [];
     }
 
-    public async Task GetPackageDetails_UnSafe(WinGet Manager, IPackageDetails details)
+    public void GetPackageDetails_UnSafe(WinGet Manager, IPackageDetails details)
     {
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
 
@@ -334,7 +334,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
         // Connect to catalog
         Catalog.AcceptSourceAgreements = true;
-        ConnectResult ConnectResult = await Task.Run(() => Catalog.Connect());
+        ConnectResult ConnectResult = Catalog.Connect();
         if (ConnectResult.Status != ConnectResultStatus.Ok)
         {
             logger.Error("Failed to connect to catalog " + details.Package.Source.Name);
@@ -371,49 +371,31 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
                 .GlobalizationPreferences.Languages[0]);
 
         if (NativeDetails.Author != "")
-        {
             details.Author = NativeDetails.Author;
-        }
 
         if (NativeDetails.Description != "")
-        {
             details.Description = NativeDetails.Description;
-        }
 
         if (NativeDetails.PackageUrl != "")
-        {
             details.HomepageUrl = new Uri(NativeDetails.PackageUrl);
-        }
 
         if (NativeDetails.License != "")
-        {
             details.License = NativeDetails.License;
-        }
 
         if (NativeDetails.LicenseUrl != "")
-        {
             details.LicenseUrl = new Uri(NativeDetails.LicenseUrl);
-        }
 
         if (NativeDetails.Publisher != "")
-        {
             details.Publisher = NativeDetails.Publisher;
-        }
 
         if (NativeDetails.ReleaseNotes != "")
-        {
             details.ReleaseNotes = NativeDetails.ReleaseNotes;
-        }
 
         if (NativeDetails.ReleaseNotesUrl != "")
-        {
             details.ReleaseNotesUrl = new Uri(NativeDetails.ReleaseNotesUrl);
-        }
 
         if (NativeDetails.Tags != null)
-        {
             details.Tags = NativeDetails.Tags.ToArray();
-        }
 
         // There is no way yet to retrieve installer URLs right now so this part will be console-parsed.
         // TODO: Replace this code with native code when available on the COM api
@@ -441,7 +423,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
         // Retrieve the output
         string? _line;
-        while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
+        while ((_line = process.StandardOutput.ReadLine()) != null)
         {
             if (_line.Trim() != "")
             {
@@ -450,7 +432,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             }
         }
 
-        logger.Error(await process.StandardError.ReadToEndAsync());
+        logger.Error(process.StandardError.ReadToEnd());
 
         // Parse the output
         foreach (string __line in output)
@@ -465,7 +447,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
                 else if (line.Contains("Installer Url:"))
                 {
                     details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
-                    details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
+                    details.InstallerSize = CoreTools.GetFileSizeAsync(details.InstallerUrl).GetAwaiter().GetResult();
                 }
                 else if (line.Contains("Release Date:"))
                 {
@@ -484,6 +466,5 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         }
 
         logger.Close(0);
-        return;
     }
 }

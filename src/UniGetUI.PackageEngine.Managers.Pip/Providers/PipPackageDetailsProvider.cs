@@ -15,14 +15,14 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
     {
         public PipPackageDetailsProvider(Pip manager) : base(manager) { }
 
-        protected override async Task GetPackageDetails_Unsafe(IPackageDetails details)
+        protected override void GetDetails_UnSafe(IPackageDetails details)
         {
             INativeTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails);
 
             string JsonString;
             HttpClient client = new(CoreData.GenericHttpClientParameters);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-            JsonString = await client.GetStringAsync($"https://pypi.org/pypi/{details.Package.Id}/json");
+            JsonString = client.GetStringAsync($"https://pypi.org/pypi/{details.Package.Id}/json").GetAwaiter().GetResult();
 
             if (JsonObject.Parse(JsonString) is not JsonObject RawInfo)
             {
@@ -130,7 +130,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     {
                         details.InstallerType = url["url"]?.ToString().Split('.')[^1].Replace("whl", "Wheel");
                         details.InstallerUrl = CoreTools.GetUriOrNull(url["url"]?.ToString());
-                        details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
+                        details.InstallerSize = CoreTools.GetFileSizeAsync(details.InstallerUrl).GetAwaiter().GetResult();
                     }
                 }
             }
@@ -139,23 +139,23 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             logger.Close(0);
         }
 
-        protected override Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package)
+        protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
 
-        protected override Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
+        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
 
-        protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+        protected override string? GetInstallLocation_UnSafe(IPackage package)
         {
             var full_path = Path.Join(Path.GetDirectoryName(Manager.Status.ExecutablePath), "Lib", "site-packages", package.Id);
             return Directory.Exists(full_path) ? full_path : Path.GetDirectoryName(full_path);
         }
 
-        protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
+        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             Process p = new()
             {
@@ -177,7 +177,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             string? line;
             string[] result = [];
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (line.Contains("Available versions:"))
@@ -186,8 +186,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             }
 
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
             return result;

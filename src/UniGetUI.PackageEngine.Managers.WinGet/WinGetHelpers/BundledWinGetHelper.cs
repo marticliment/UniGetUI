@@ -295,7 +295,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
     }
 
-    public async Task GetPackageDetails_UnSafe(WinGet Manager, IPackageDetails details)
+    public void GetPackageDetails_UnSafe(WinGet Manager, IPackageDetails details)
     {
         if (details.Package.Source.Name == "winget")
         {
@@ -336,7 +336,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         process.Start();
 
         string? _line;
-        while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
+        while ((_line = process.StandardOutput.ReadLine()) != null)
         {
             if (_line.Trim() != "")
             {
@@ -373,7 +373,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             process.StartInfo = startInfo;
             process.Start();
 
-            while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
+            while ((_line = process.StandardOutput.ReadLine()) != null)
             {
                 if (_line.Trim() != "")
                 {
@@ -410,7 +410,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             process.StartInfo = startInfo;
             process.Start();
 
-            while ((_line = await process.StandardOutput.ReadLineAsync()) != null)
+            while ((_line = process.StandardOutput.ReadLine()) != null)
             {
                 if (_line.Trim() != "")
                 {
@@ -489,7 +489,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 else if (line.Contains("Installer Url:"))
                 {
                     details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
-                    details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
+                    details.InstallerSize = CoreTools.GetFileSizeAsync(details.InstallerUrl).GetAwaiter().GetResult();
                 }
                 else if (line.Contains("Release Date:"))
                 {
@@ -529,7 +529,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return;
     }
 
-    public async Task<string[]> GetPackageVersions_Unsafe(WinGet Manager, IPackage package)
+    public IEnumerable<string> GetInstallableVersions_Unsafe(WinGet Manager, IPackage package)
     {
         Process p = new()
         {
@@ -554,7 +554,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         string? line;
         List<string> versions = [];
         bool DashesPassed = false;
-        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+        while ((line = p.StandardOutput.ReadLine()) != null)
         {
             logger.AddToStdOut(line);
             if (!DashesPassed)
@@ -570,8 +570,8 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             }
         }
 
-        logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-        await p.WaitForExitAsync();
+        logger.AddToStdErr(p.StandardError.ReadToEnd());
+        p.WaitForExit();
         logger.Close(p.ExitCode);
         return versions.ToArray();
     }

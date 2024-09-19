@@ -15,7 +15,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
     {
         public ScoopPackageDetailsProvider(Scoop manager) : base(manager) { }
 
-        protected override async Task GetPackageDetails_Unsafe(IPackageDetails details)
+        protected override void GetDetails_UnSafe(IPackageDetails details)
         {
             if (details.Package.Source.Url != null)
             {
@@ -47,9 +47,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
 
             p.Start();
-            string JsonString = await p.StandardOutput.ReadToEndAsync();
+            string JsonString = p.StandardOutput.ReadToEnd();
             logger.AddToStdOut(JsonString);
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
 
 
             if (JsonObject.Parse(JsonString) is not JsonObject RawInfo)
@@ -171,7 +171,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     details.InstallerUrl = CoreTools.GetUriOrNull(RawInfo["architecture"]?[FirstArch]?["url"]?.ToString());
                 }
 
-                details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
+                details.InstallerSize = CoreTools.GetFileSizeAsync(details.InstallerUrl).GetAwaiter().GetResult();
             }
             catch (Exception ex) { logger.AddToStdErr("Can't load installer URL: " + ex); }
 
@@ -189,24 +189,24 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         }
 
-        protected override Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package)
+        protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
 
-        protected override Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
+        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
 
-        protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+        protected override string? GetInstallLocation_UnSafe(IPackage package)
         {
             return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scoop", "apps",
                 package.Id, "current");
         }
 
 #pragma warning disable
-        protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
+        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             throw new Exception("Scoop does not support custom package versions");
         }
