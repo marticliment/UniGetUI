@@ -58,8 +58,6 @@ namespace UniGetUI.Interface
                 }
 
                 ApiTokenHolder.Token = CoreTools.RandomString(64);
-                Settings.SetValue("CurrentSessionToken", ApiTokenHolder.Token);
-                Logger.Info("Randomly-generated background API auth token for the current session: " + ApiTokenHolder.Token);
 
                 __running = true;
                 NancyHost host;
@@ -73,6 +71,9 @@ namespace UniGetUI.Interface
                     host = new NancyHost(new Uri("http://localhost:7058/"));
                     host.Start();
                 }
+
+                Settings.SetValue("CurrentSessionToken", ApiTokenHolder.Token);
+                Logger.Info("Randomly-generated background API auth token for the current session: " + ApiTokenHolder.Token);
 
                 Logger.Info("Api running on http://localhost:7058");
 
