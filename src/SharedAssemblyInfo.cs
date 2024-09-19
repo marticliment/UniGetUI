@@ -8,7 +8,5 @@ using System.Runtime.Versioning;
 [assembly: AssemblyCopyright("2024, Martí Climent")]
 [assembly: AssemblyVersion("3.1.2.0")]
 [assembly: AssemblyFileVersion("3.1.2.0")]
-[assembly: AssemblyVersionAttribute("3.1.2.0")]
 [assembly: AssemblyInformationalVersion("3.1.2-beta2")]
-[assembly: AssemblyInformationalVersionAttribute("3.1.2-beta2")]
 [assembly: SupportedOSPlatform("windows10.0.19041")]
