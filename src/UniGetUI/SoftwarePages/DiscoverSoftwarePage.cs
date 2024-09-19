@@ -408,7 +408,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 if(!manager.Status.Found)
                     throw new ArgumentException(CoreTools.Translate("There is an error with the configuration of the package manager \"{0}\"", manager.DisplayName));
 
-                var results = await manager.FindPackages(id);
+                var results = await Task.Run(() => manager.FindPackages(id));
                 var candidates = results.Where(p => p.Id == id).ToArray();
 
                 if (candidates.Length == 0)

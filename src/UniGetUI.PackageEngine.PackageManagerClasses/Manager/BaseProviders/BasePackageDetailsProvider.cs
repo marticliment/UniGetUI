@@ -14,30 +14,30 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
             Manager = manager;
         }
 
-        public async Task GetPackageDetails(IPackageDetails details)
+        public void GetPackageDetails(IPackageDetails details)
         {
-            await Task.Run(() => GetDetails_UnSafe(details));
+            GetDetails_UnSafe(details);
         }
 
-        public async Task<string[]> GetPackageVersions(IPackage package)
+        public IEnumerable<string> GetPackageVersions(IPackage package)
         {
             if (Manager.Capabilities.SupportsCustomVersions)
             {
-                var result = await Task.Run(() => GetInstallableVersions_UnSafe(package));
+                var result = GetInstallableVersions_UnSafe(package);
                 Logger.Debug($"Found {result.Count()} versions for package Id={package.Id} on manager {Manager.Name}");
-                return result.ToArray();
+                return result;
             }
 
             Logger.Warn($"Manager {Manager.Name} does not support version retrieving, this method should have not been called");
             return [];
         }
 
-        public async Task<CacheableIcon?> GetPackageIconUrl(IPackage package)
+        public CacheableIcon? GetPackageIconUrl(IPackage package)
         {
             CacheableIcon? Icon = null;
             if (Manager.Capabilities.SupportsCustomPackageIcons)
             {
-                Icon = await Task.Run(() => GetIcon_UnSafe(package));
+                Icon = GetIcon_UnSafe(package);
                 if (Icon == null)
                 {
                     Logger.Debug($"Manager {Manager.Name} did not find a native icon for {package.Id}");
@@ -67,13 +67,13 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
             return Icon;
         }
 
-        public async Task<Uri[]> GetPackageScreenshotsUrl(IPackage package)
+        public IEnumerable<Uri> GetPackageScreenshotsUrl(IPackage package)
         {
             IEnumerable<Uri> URIs = [];
 
             if (Manager.Capabilities.SupportsCustomPackageScreenshots)
             {
-                URIs = await Task.Run(() => GetScreenshots_UnSafe(package));
+                URIs = GetScreenshots_UnSafe(package);
             }
             else
             {
@@ -92,10 +92,10 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                     }
                 }
 
-                URIs = UriList.ToArray();
+                URIs = UriList;
             }
             Logger.Info($"Found {URIs.Count()} screenshots for package Id={package.Id}");
-            return URIs.ToArray();
+            return URIs;
         }
 
         protected abstract void GetDetails_UnSafe(IPackageDetails details);

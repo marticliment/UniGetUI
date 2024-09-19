@@ -175,7 +175,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
             Dictionary<string, IPackage> InstalledPackages = [];
-            foreach (IPackage InstalledPackage in GetInstalledPackages().GetAwaiter().GetResult())
+            foreach (IPackage InstalledPackage in GetInstalledPackages())
             {
                 if (!InstalledPackages.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.Version))
                 {
@@ -312,7 +312,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return Packages;
         }
 
-        public override async Task RefreshPackageIndexes()
+        public override void RefreshPackageIndexes()
         {
             if (new TimeSpan(DateTime.Now.Ticks - LastScoopSourceUpdateTime).TotalMinutes < 10)
             {
@@ -335,9 +335,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             p.StartInfo = StartInfo;
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
             p.Start();
-            logger.AddToStdOut(await p.StandardOutput.ReadToEndAsync());
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdOut(p.StandardOutput.ReadToEnd());
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
         }
 

@@ -1,3 +1,4 @@
+using System.Collections;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Interfaces;
 
@@ -97,20 +98,20 @@ namespace UniGetUI.PackageEngine.PackageLoader
             IsLoading = true;
             StartedLoading?.Invoke(this, EventArgs.Empty);
 
-            List<Task<IPackage[]>> tasks = new();
+            List<Task<IEnumerable<IPackage>>> tasks = new();
 
             foreach (IPackageManager manager in Managers)
             {
                 if (manager.IsEnabled() && manager.Status.Found)
                 {
-                    Task<IPackage[]> task = LoadPackagesFromManager(manager);
+                    Task<IEnumerable<IPackage>> task = Task.Run(() => LoadPackagesFromManager(manager));
                     tasks.Add(task);
                 }
             }
 
             while (tasks.Count > 0)
             {
-                foreach (Task<IPackage[]> task in tasks.ToArray())
+                foreach (Task<IEnumerable<IPackage>> task in tasks.ToArray())
                 {
                     if (!task.IsCompleted)
                     {
@@ -163,7 +164,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         /// <param name="manager">The manager from which to load packages</param>
         /// <returns>A task that will load the packages</returns>
-        protected abstract Task<IPackage[]> LoadPackagesFromManager(IPackageManager manager);
+        protected abstract IEnumerable<IPackage> LoadPackagesFromManager(IPackageManager manager);
 
         /// <summary>
         /// Checks whether the package is valid or must be skipped

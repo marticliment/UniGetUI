@@ -35,16 +35,16 @@ namespace UniGetUI.PackageEngine.PackageLoader
         }
 #pragma warning restore
 
-        protected override Task<IPackage[]> LoadPackagesFromManager(IPackageManager manager)
+        protected override IEnumerable<IPackage> LoadPackagesFromManager(IPackageManager manager)
         {
             string text = QUERY_TEXT;
             text = CoreTools.EnsureSafeQueryString(text);
             if (text == string.Empty)
             {
-                return new Task<IPackage[]>(() => { return []; });
+                return [];
             }
 
-            return manager.FindPackages(text);
+            return  manager.FindPackages(text);
         }
 
 #pragma warning disable

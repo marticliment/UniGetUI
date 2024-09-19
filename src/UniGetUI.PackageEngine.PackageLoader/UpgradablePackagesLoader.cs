@@ -30,11 +30,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
             return true;
         }
 
-        protected override Task<IPackage[]> LoadPackagesFromManager(IPackageManager manager)
+        protected override IEnumerable<IPackage> LoadPackagesFromManager(IPackageManager manager)
         {
             return manager.GetAvailableUpdates();
         }
-#pragma warning disable 
+#pragma warning disable
         protected override async Task WhenAddingPackage(IPackage package)
         {
             package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);

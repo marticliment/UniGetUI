@@ -19,9 +19,9 @@ namespace UniGetUI.PackageEngine.PackageLoader
         }
 #pragma warning restore
 
-        protected override Task<IPackage[]> LoadPackagesFromManager(IPackageManager manager)
+        protected override IEnumerable<IPackage> LoadPackagesFromManager(IPackageManager manager)
         {
-            return Task.Run(Array.Empty<IPackage>);
+            return [];
         }
 
 #pragma warning disable CS1998

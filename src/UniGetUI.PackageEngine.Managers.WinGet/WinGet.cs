@@ -278,7 +278,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return status;
         }
 
-        public override async Task RefreshPackageIndexes()
+        public override void RefreshPackageIndexes()
         {
             Process p = new()
             {
@@ -298,10 +298,10 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
 
             p.Start();
-            logger.AddToStdOut(await p.StandardOutput.ReadToEndAsync());
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            logger.AddToStdOut(p.StandardOutput.ReadToEnd());
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
             logger.Close(p.ExitCode);
-            await p.WaitForExitAsync();
+            p.WaitForExit();
             p.Close();
         }
     }

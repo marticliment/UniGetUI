@@ -21,5 +21,4 @@ public abstract class BaseOperationProvider<ManagerT> : IOperationProvider where
         OperationType operation,
         IEnumerable<string> processOutput,
         int returnCode);
-
 }

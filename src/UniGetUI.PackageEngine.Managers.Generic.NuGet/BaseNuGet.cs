@@ -41,13 +41,12 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         protected sealed override IEnumerable<Package> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];
-
             INativeTaskLogger logger = TaskLogger.CreateNew(Enums.LoggableTaskType.FindPackages);
 
-            IManagerSource[] sources;
+            IEnumerable<IManagerSource> sources;
             if (Capabilities.SupportsCustomSources)
             {
-                sources = GetSources().GetAwaiter().GetResult();
+                sources = GetSources();
             }
             else
             {
@@ -84,7 +83,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     string id = Regex.Match(match.Value, "Id='([^<>']+)'").Groups[1].Value;
                     string version = Regex.Match(match.Value, "Version='([^<>']+)'").Groups[1].Value;
                     double float_version = CoreTools.GetVersionStringAsFloat(version);
-                    Match title = Regex.Match(match.Value, "<title[ \\\"\\=A-Za-z0-9]+>([^<>]+)<\\/title>");
+                    // Match title = Regex.Match(match.Value, "<title[ \\\"\\=A-Za-z0-9]+>([^<>]+)<\\/title>");
 
                     if (AlreadyProcessedPackages.TryGetValue(id, out var value) && value.version_float >= float_version)
                     {

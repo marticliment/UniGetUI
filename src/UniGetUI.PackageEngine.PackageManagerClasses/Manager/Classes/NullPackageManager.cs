@@ -69,7 +69,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             };
         }
 
-        public Task<IPackage[]> FindPackages(string query)
+        public IEnumerable<IPackage> FindPackages(string query)
         {
             throw new NotImplementedException();
         }
@@ -84,12 +84,12 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             throw new NotImplementedException();
         }
 
-        public Task<IPackage[]> GetAvailableUpdates()
+        public IEnumerable<IPackage> GetAvailableUpdates()
         {
             throw new NotImplementedException();
         }
 
-        public Task<IPackage[]> GetInstalledPackages()
+        public IEnumerable<IPackage> GetInstalledPackages()
         {
             throw new NotImplementedException();
         }
@@ -104,17 +104,17 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             throw new NotImplementedException();
         }
 
-        public Task GetPackageDetails(IPackageDetails details)
+        public void GetPackageDetails(IPackageDetails details)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CacheableIcon?> GetPackageIconUrl(IPackage package)
+        public CacheableIcon? GetPackageIconUrl(IPackage package)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Uri[]> GetPackageScreenshotsUrl(IPackage package)
+        public IEnumerable<Uri> GetPackageScreenshotsUrl(IPackage package)
         {
             throw new NotImplementedException();
         }
@@ -124,7 +124,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             throw new NotImplementedException();
         }
 
-        public Task<string[]> GetPackageVersions(IPackage package)
+        public IEnumerable<string> GetPackageVersions(IPackage package)
         {
             throw new NotImplementedException();
         }
@@ -149,7 +149,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             throw new NotImplementedException();
         }
 
-        public Task<IManagerSource[]> GetSources()
+        public IEnumerable<IManagerSource> GetSources()
         {
             throw new NotImplementedException();
         }
@@ -194,7 +194,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             throw new NotImplementedException();
         }
 
-        public Task RefreshPackageIndexes()
+        public void RefreshPackageIndexes()
         {
             throw new NotImplementedException();
         }

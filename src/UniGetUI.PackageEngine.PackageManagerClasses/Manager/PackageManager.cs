@@ -1,3 +1,4 @@
+using ABI.Windows.Management.Update;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
@@ -90,7 +91,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
                 if (IsReady() && Capabilities.SupportsCustomSources)
                 {
-                    Task<IManagerSource[]> sourcesTask = GetSources();
+                    Task<IEnumerable<IManagerSource>> sourcesTask = Task.Run(() => GetSources());
 
                     if (sourcesTask.Wait(TimeSpan.FromSeconds(15)))
                     {
@@ -159,14 +160,16 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of Package objects that the manager lists for the given query. Depending on the manager, the list may
         /// also include similar results. This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public async Task<IPackage[]> FindPackages(string query)
+        public IEnumerable<IPackage> FindPackages(string query)
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet FindPackages was called"); return []; }
             try
             {
-                Package[] packages = (await Task.Run(
-                    () => FindPackages_UnSafe(query)).WaitAsync(TimeSpan.FromSeconds(60))
-                ).ToArray();
+                var task = Task.Run(() => FindPackages_UnSafe(query));
+                if (!task.Wait(TimeSpan.FromSeconds(60)))
+                    throw new TimeoutException();
+
+                Package[] packages = task.GetAwaiter().GetResult().ToArray();
 
                 for (int i = 0; i < packages.Length; i++)
                 {
@@ -187,16 +190,18 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of UpgradablePackage objects that represent the available updates reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public async Task<IPackage[]> GetAvailableUpdates()
+        public IEnumerable<IPackage> GetAvailableUpdates()
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetAvailableUpdates was called"); return []; }
             try
             {
-                await RefreshPackageIndexes().WaitAsync(TimeSpan.FromSeconds(60));
+                Task.Run(RefreshPackageIndexes).Wait(TimeSpan.FromSeconds(60));
 
-                Package[] packages = (await Task.Run(
-                    () => GetAvailableUpdates_UnSafe()
-                ).WaitAsync(TimeSpan.FromSeconds(60))).ToArray();
+                var task = Task.Run(GetAvailableUpdates_UnSafe);
+                if (!task.Wait(TimeSpan.FromSeconds(60)))
+                    throw new TimeoutException();
+
+                Package[] packages = task.GetAwaiter().GetResult().ToArray();
 
                 for (int i = 0; i < packages.Length; i++)
                 {
@@ -218,14 +223,16 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of Package objects that represent the installed reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public async Task<IPackage[]> GetInstalledPackages()
+        public IEnumerable<IPackage> GetInstalledPackages()
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetInstalledPackages was called"); return []; }
             try
             {
-                Package[] packages = (await Task.Run(
-                    () => GetInstalledPackages_UnSafe()
-                ).WaitAsync(TimeSpan.FromSeconds(60))).ToArray();
+                var task = Task.Run(GetInstalledPackages_UnSafe);
+                if (!task.Wait(TimeSpan.FromSeconds(60)))
+                    throw new TimeoutException();
+
+                Package[] packages = task.GetAwaiter().GetResult().ToArray();
 
                 for (int i = 0; i < packages.Length; i++)
                 {
@@ -270,7 +277,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Each manager MUST implement this method.
         /// </summary>
 #pragma warning disable CS1998
-        public virtual async Task RefreshPackageIndexes()
+        public virtual async void RefreshPackageIndexes()
         {
             Logger.Debug($"Manager {Name} has not implemented RefreshPackageIndexes");
         }
@@ -339,14 +346,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             return SourceProvider.GetRemoveSourceOperationVeredict(source, ReturnCode, Output);
         }
 
-        public virtual async Task<IManagerSource[]> GetSources()
+        public virtual IEnumerable<IManagerSource> GetSources()
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetSources was called"); return []; }
             try
             {
                 AssertSourceCompatibility("GetSources");
-                IManagerSource[] result = await SourceProvider.GetSources().WaitAsync(TimeSpan.FromSeconds(60));
-                Logger.Debug($"Loaded {result.Length} sources for manager {Name}");
+                var result = SourceProvider.GetSources();
+                Logger.Debug($"Loaded {result.Count()} sources for manager {Name}");
                 return result;
             }
             catch (Exception e)
@@ -369,13 +376,13 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         }
 #pragma warning disable CS8602
 
-        public async Task GetPackageDetails(IPackageDetails details)
+        public void GetPackageDetails(IPackageDetails details)
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageDetails was called"); return; }
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageDetails");
-                await PackageDetailsProvider.GetPackageDetails(details);
+                PackageDetailsProvider.GetPackageDetails(details);
                 Logger.Info($"Loaded details for package {details.Package.Id} on manager {Name}");
             }
             catch (Exception e)
@@ -385,7 +392,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
         }
 
-        public async Task<string[]> GetPackageVersions(IPackage package)
+        public IEnumerable<string> GetPackageVersions(IPackage package)
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageVersions was called"); return []; }
             try
@@ -393,7 +400,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 AssertPackageDetailsCompatibility("GetPackageVersions");
                 if (package.Manager.Capabilities.SupportsCustomVersions)
                 {
-                    return await PackageDetailsProvider.GetPackageVersions(package);
+                    return PackageDetailsProvider.GetPackageVersions(package);
                 }
 
                 return [];
@@ -406,12 +413,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
         }
 
-        public async Task<CacheableIcon?> GetPackageIconUrl(IPackage package)
+        public CacheableIcon? GetPackageIconUrl(IPackage package)
         {
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageIcon");
-                return await PackageDetailsProvider.GetPackageIconUrl(package);
+                return PackageDetailsProvider.GetPackageIconUrl(package);
             }
             catch (Exception e)
             {
@@ -421,12 +428,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
         }
 
-        public async Task<Uri[]> GetPackageScreenshotsUrl(IPackage package)
+        public IEnumerable<Uri> GetPackageScreenshotsUrl(IPackage package)
         {
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageScreenshots");
-                return await PackageDetailsProvider.GetPackageScreenshotsUrl(package);
+                return PackageDetailsProvider.GetPackageScreenshotsUrl(package);
             }
             catch (Exception e)
             {

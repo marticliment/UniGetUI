@@ -180,7 +180,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 string iconId = GetIconId();
 
-                CacheableIcon? icon = await Manager.GetPackageIconUrl(this);
+                CacheableIcon? icon = await Task.Run(() => Manager.GetPackageIconUrl(this));
                 string path = await IconCacheEngine.DownloadIconOrCache(icon, Manager.Name, Id);
 
                 Uri Icon;
@@ -206,7 +206,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public virtual async Task<Uri[]> GetPackageScreenshots()
         {
-            return await Manager.GetPackageScreenshotsUrl(this);
+            return (await Task.Run(() => Manager.GetPackageScreenshotsUrl(this))).ToArray();
         }
 
         public virtual async Task AddToIgnoredUpdatesAsync(string version = "*")
