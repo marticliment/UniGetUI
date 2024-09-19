@@ -55,7 +55,7 @@ namespace UniGetUI.Core.Language
 
         private static ReadOnlyDictionary<string, string> LoadTranslationPercentages()
         {
-            if (JsonObject.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "TranslatedPercentages.json"))) is JsonObject val)
+            if (JsonNode.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "TranslatedPercentages.json"))) is JsonObject val)
             {
                 return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("404%" + x.Key)).ToString()));
             }
@@ -65,7 +65,7 @@ namespace UniGetUI.Core.Language
 
         private static ReadOnlyDictionary<string, string> LoadLanguageReference()
         {
-            if (JsonObject.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "LanguagesReference.json"))) is JsonObject val)
+            if (JsonNode.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "LanguagesReference.json"))) is JsonObject val)
             {
                 return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("NoNameLang_" + x.Key)).ToString()));
             }
