@@ -191,7 +191,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             bool FORCE_BUNDLED = Settings.Get("ForceLegacyBundledWinGet");
 
-            var (found, path) = CoreTools.Which("winget.exe").GetAwaiter().GetResult();
+            var (found, path) = CoreTools.Which("winget.exe");
             status.ExecutablePath = path;
             status.Found = found;
 

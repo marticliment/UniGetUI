@@ -130,7 +130,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     {
                         details.InstallerType = url["url"]?.ToString().Split('.')[^1].Replace("whl", "Wheel");
                         details.InstallerUrl = CoreTools.GetUriOrNull(url["url"]?.ToString());
-                        details.InstallerSize = CoreTools.GetFileSizeAsync(details.InstallerUrl).GetAwaiter().GetResult();
+                        details.InstallerSize = CoreTools.GetFileSize(details.InstallerUrl);
                     }
                 }
             }

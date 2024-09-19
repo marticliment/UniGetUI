@@ -266,7 +266,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             if (Settings.Get("UseSystemChocolatey"))
             {
-                status.ExecutablePath = CoreTools.Which("choco.exe").GetAwaiter().GetResult().Item2;
+                status.ExecutablePath = CoreTools.Which("choco.exe").Item2;
             }
             else if (File.Exists(Path.Join(new_choco_path, "choco.exe")))
             {

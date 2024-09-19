@@ -212,7 +212,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             ManagerStatus status = new()
             {
                 ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
-                Found = CoreTools.Which("npm").GetAwaiter().GetResult().Item1
+                Found = CoreTools.Which("npm").Item1
             };
 
             if (!status.Found)

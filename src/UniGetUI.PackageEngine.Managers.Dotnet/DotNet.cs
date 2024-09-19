@@ -29,7 +29,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                     Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {dotnet tool install --global dotnet-tools-outdated --add-source https://api.nuget.org/v3/index.json; if($error.count -ne 0){pause}}\"",
                     "dotnet tool install --global dotnet-tools-outdated --add-source https://api.nuget.org/v3/index.json",
-                    async () => (await CoreTools.Which("dotnet-tools-outdated.exe")).Item1)
+                    async () => (await CoreTools.WhichAsync("dotnet-tools-outdated.exe")).Item1)
             ];
 
             Capabilities = new ManagerCapabilities
@@ -65,7 +65,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
-            var (found, path) = CoreTools.Which("dotnet-tools-outdated.exe").GetAwaiter().GetResult();
+            var (found, path) = CoreTools.Which("dotnet-tools-outdated.exe");
             if (!found)
             {
                 Process proc = new()
@@ -232,7 +232,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
         {
             ManagerStatus status = new();
 
-            var (found, path) = CoreTools.Which("dotnet.exe").GetAwaiter().GetResult();
+            var (found, path) = CoreTools.Which("dotnet.exe");
             status.ExecutablePath = path;
             status.Found = found;
 

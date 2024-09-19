@@ -89,7 +89,7 @@ namespace UniGetUI
         {
             if (Settings.Get("UseUserGSudo"))
             {
-                Tuple<bool, string> gsudo_result = await CoreTools.Which("gsudo.exe");
+                Tuple<bool, string> gsudo_result = await CoreTools.WhichAsync("gsudo.exe");
                 if (gsudo_result.Item1 != false)
                 {
                     Logger.Info($"Using System GSudo at {gsudo_result.Item2}");

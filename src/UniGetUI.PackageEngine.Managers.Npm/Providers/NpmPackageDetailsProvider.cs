@@ -62,7 +62,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                         else if (outLine.StartsWith(".tarball"))
                         {
                             details.InstallerUrl = new Uri(outLine.Replace(".tarball: ", "").Trim());
-                            details.InstallerSize = CoreTools.GetFileSizeAsync(details.InstallerUrl).GetAwaiter().GetResult();
+                            details.InstallerSize = CoreTools.GetFileSize(details.InstallerUrl);
                         }
                         else if (outLine.StartsWith(".integrity"))
                         {

@@ -31,7 +31,7 @@ public partial class Cargo : PackageManager
                 Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
                 "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {cargo install cargo-update; if($error.count -ne 0){pause}}\"",
                 "cargo install cargo-update",
-                async () => (await CoreTools.Which("cargo-install-update.exe")).Item1),
+                async () => (await CoreTools.WhichAsync("cargo-install-update.exe")).Item1),
         ];
 
         Capabilities = new ManagerCapabilities { };
@@ -122,7 +122,7 @@ public partial class Cargo : PackageManager
 
     protected override ManagerStatus LoadManager()
     {
-        var (found, executablePath) = CoreTools.Which("cargo").GetAwaiter().GetResult();
+        var (found, executablePath) = CoreTools.Which("cargo");
         if (!found)
         {
             return new(){ ExecutablePath = executablePath, Found = false, Version = ""};

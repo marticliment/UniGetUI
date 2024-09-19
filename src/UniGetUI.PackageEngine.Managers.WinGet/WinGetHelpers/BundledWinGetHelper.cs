@@ -489,7 +489,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 else if (line.Contains("Installer Url:"))
                 {
                     details.InstallerUrl = new Uri(line.Replace("Installer Url:", "").Trim());
-                    details.InstallerSize = CoreTools.GetFileSizeAsync(details.InstallerUrl).GetAwaiter().GetResult();
+                    details.InstallerSize = CoreTools.GetFileSize(details.InstallerUrl);
                 }
                 else if (line.Contains("Release Date:"))
                 {

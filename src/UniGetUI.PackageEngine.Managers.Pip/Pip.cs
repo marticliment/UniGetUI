@@ -50,7 +50,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         {
             List<Package> Packages = [];
 
-            var (found, path) = CoreTools.Which("parse_pip_search.exe").GetAwaiter().GetResult();
+            var (found, path) = CoreTools.Which("parse_pip_search.exe");
             if (!found)
             {
                 Process proc = new()
@@ -261,7 +261,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         {
             ManagerStatus status = new();
 
-            var (found, path) = CoreTools.Which("python.exe").GetAwaiter().GetResult();
+            var (found, path) = CoreTools.Which("python.exe");
             status.ExecutablePath = path;
             status.Found = found;
 

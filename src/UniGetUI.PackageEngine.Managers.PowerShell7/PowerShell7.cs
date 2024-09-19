@@ -199,7 +199,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
         }
         protected override ManagerStatus LoadManager()
         {
-            var (found, path) = CoreTools.Which("pwsh.exe").GetAwaiter().GetResult();
+            var (found, path) = CoreTools.Which("pwsh.exe");
 
             ManagerStatus status = new()
             {

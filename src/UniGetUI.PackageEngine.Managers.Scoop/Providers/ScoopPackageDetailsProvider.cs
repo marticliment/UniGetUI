@@ -171,7 +171,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     details.InstallerUrl = CoreTools.GetUriOrNull(RawInfo["architecture"]?[FirstArch]?["url"]?.ToString());
                 }
 
-                details.InstallerSize = CoreTools.GetFileSizeAsync(details.InstallerUrl).GetAwaiter().GetResult();
+                details.InstallerSize = CoreTools.GetFileSize(details.InstallerUrl);
             }
             catch (Exception ex) { logger.AddToStdErr("Can't load installer URL: " + ex); }
 
