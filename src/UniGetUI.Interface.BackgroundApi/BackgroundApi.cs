@@ -303,7 +303,7 @@ namespace UniGetUI.Interface
                 IPackage? package = PEInterface.UpgradablePackagesLoader.GetPackageForId(Request.Query.@packageId, Request.Query.@packageSource);
                 if (package != null)
                 {
-                    Uri iconUrl = await package.GetIconUrl();
+                    Uri iconUrl = await Task.Run(package.GetIconUrl);
                     if (iconUrl.ToString() != "ms-appx:///Assets/Images/package_color.png")
                     {
                         iconPath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name, $"{package.Id}.{iconUrl.ToString().Split('.')[^1]}");

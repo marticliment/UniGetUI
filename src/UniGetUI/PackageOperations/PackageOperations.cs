@@ -281,7 +281,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task Initialize()
         {
             OperationTitle = CoreTools.Translate("{package} Installation", new Dictionary<string, object?> { { "package", Package.Name } });
-            IconSource = await Package.GetIconUrl();
+            IconSource = await Task.Run(Package.GetIconUrl);
         }
     }
 
@@ -365,7 +365,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task Initialize()
         {
             OperationTitle = CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
-            IconSource = await Package.GetIconUrl();
+            IconSource = await Task.Run(Package.GetIconUrl);
         }
     }
 
@@ -437,7 +437,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected override async Task Initialize()
         {
             OperationTitle = CoreTools.Translate("{package} Uninstall", new Dictionary<string, object?> { { "package", Package.Name } });
-            IconSource = await Package.GetIconUrl();
+            IconSource = await Task.Run(Package.GetIconUrl);
         }
     }
 }

@@ -48,7 +48,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                     else
                     {
                         Logger.Debug($"Adding native package with id={native.Id} to bundle as a VALID package...");
-                        package = new ImportedPackage(await native.AsSerializable(), native.Manager, native.Source);
+                        package = new ImportedPackage(await Task.Run(native.AsSerializable), native.Manager, native.Source);
                     }
                 }
                 else if (foreign is ImportedPackage imported)

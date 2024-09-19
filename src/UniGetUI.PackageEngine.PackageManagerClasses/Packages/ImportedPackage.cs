@@ -50,7 +50,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return new Package(Name, Id, _version, Source, Manager);
         }
 
-        public override async Task<SerializablePackage_v1> AsSerializable()
+        public override SerializablePackage_v1 AsSerializable()
         {
             return new SerializablePackage_v1
             {

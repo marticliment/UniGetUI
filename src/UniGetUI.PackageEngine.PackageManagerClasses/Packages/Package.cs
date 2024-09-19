@@ -174,24 +174,16 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return iconId;
         }
 
-        public virtual async Task<Uri> GetIconUrl()
+        public virtual Uri GetIconUrl()
         {
             try
             {
-                string iconId = GetIconId();
-
-                CacheableIcon? icon = await Task.Run(() => Manager.GetPackageIconUrl(this));
-                string path = await IconCacheEngine.DownloadIconOrCache(icon, Manager.Name, Id);
+                CacheableIcon? icon = Manager.GetPackageIconUrl(this);
+                string path = IconCacheEngine.DownloadIconOrCache(icon, Manager.Name, Id).GetAwaiter().GetResult();
 
                 Uri Icon;
-                if (path == "")
-                {
-                    Icon = new Uri("ms-appx:///Assets/Images/package_color.png");
-                }
-                else
-                {
-                    Icon = new Uri("file:///" + path);
-                }
+                if (path == "") Icon = new Uri("ms-appx:///Assets/Images/package_color.png");
+                else Icon = new Uri("file:///" + path);
 
                 Logger.Debug($"Icon for package {Id} was loaded from {Icon}");
                 return Icon;
@@ -204,9 +196,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
         }
 
-        public virtual async Task<Uri[]> GetPackageScreenshots()
+        public virtual IEnumerable<Uri> GetScreenshots()
         {
-            return (await Task.Run(() => Manager.GetPackageScreenshotsUrl(this))).ToArray();
+            return Manager.GetPackageScreenshotsUrl(this);
         }
 
         public virtual async Task AddToIgnoredUpdatesAsync(string version = "*")
@@ -312,7 +304,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return PackageCacher.NewerVersionIsInstalled(this);
         }
 
-        public virtual async Task<SerializablePackage_v1> AsSerializable()
+        public virtual SerializablePackage_v1 AsSerializable()
         {
             return new SerializablePackage_v1
             {
@@ -321,11 +313,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Version = Version,
                 Source = Source.Name,
                 ManagerName = Manager.Name,
-                InstallationOptions = (await InstallationOptions.FromPackageAsync(this)).AsSerializable(),
+                InstallationOptions = InstallationOptions.FromPackage(this).AsSerializable(),
                 Updates = new SerializableUpdatesOptions_v1
                 {
-                    IgnoredVersion = await GetIgnoredUpdatesVersionAsync(),
-                    UpdatesIgnored = await HasUpdatesIgnoredAsync(),
+                    IgnoredVersion = GetIgnoredUpdatesVersionAsync().GetAwaiter().GetResult(),
+                    UpdatesIgnored = HasUpdatesIgnoredAsync().GetAwaiter().GetResult(),
                 }
             };
         }
