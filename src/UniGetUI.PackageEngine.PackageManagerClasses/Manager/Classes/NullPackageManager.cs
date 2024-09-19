@@ -235,9 +235,9 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             return OperationVeredict.Failed;
         }
 
-        protected override async Task<IManagerSource[]> GetSources_UnSafe()
+        protected override IEnumerable<IManagerSource> GetSources_UnSafe()
         {
-            return await Task.Run(() => new IManagerSource[] { Manager.DefaultSource });
+            return Array.Empty<IManagerSource>();
         }
     }
 

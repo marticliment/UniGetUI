@@ -35,11 +35,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
-        protected override async Task<IManagerSource[]> GetSources_UnSafe()
+        protected override IEnumerable<IManagerSource> GetSources_UnSafe()
         {
             if (Manager is WinGet manager)
             {
-                return await WinGetHelper.Instance.GetSources_UnSafe(manager);
+                return WinGetHelper.Instance.GetSources_UnSafe(manager);
             }
 
             throw new InvalidOperationException("WinGetSourceProvider.GetSources_UnSafe: Manager is supposed to be WinGet");

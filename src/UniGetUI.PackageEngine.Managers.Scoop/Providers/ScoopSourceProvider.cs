@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Windows.System;
+using ABI.Windows.ApplicationModel;
 using ABI.Windows.UI.Composition;
 using Microsoft.VisualBasic.FileIO;
 using UniGetUI.Core.Logging;
@@ -38,21 +39,25 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return ["bucket", "rm", source.Name];
         }
 
-        protected override async Task<IManagerSource[]> GetSources_UnSafe()
+        protected override IEnumerable<IManagerSource> GetSources_UnSafe()
         {
-            using Process p = new();
-            p.StartInfo.FileName = Manager.Status.ExecutablePath;
-            p.StartInfo.Arguments = Manager.Properties.ExecutableCallArgs + " bucket list";
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.RedirectStandardError = true;
-            p.StartInfo.RedirectStandardInput = true;
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.StandardInputEncoding = System.Text.Encoding.UTF8;
-            p.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+            using var p = new Process()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = Manager.Status.ExecutablePath,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " bucket list",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardInputEncoding = System.Text.Encoding.UTF8,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                }
+            };
 
             IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources, p);
-
             List<ManagerSource> sources = [];
 
             p.Start();
@@ -60,7 +65,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             bool DashesPassed = false;
 
             string? line;
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 try
@@ -92,8 +97,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     Logger.Warn(e);
                 }
             }
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
             return sources.ToArray();

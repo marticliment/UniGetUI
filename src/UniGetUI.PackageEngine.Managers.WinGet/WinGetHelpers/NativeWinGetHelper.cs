@@ -224,12 +224,12 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return foundPackages;
     }
 
-    public async Task<IManagerSource[]> GetSources_UnSafe(WinGet Manager)
+    public IEnumerable<IManagerSource> GetSources_UnSafe(WinGet Manager)
     {
         List<ManagerSource> sources = [];
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources);
 
-        foreach (PackageCatalogReference catalog in await Task.Run(() => WinGetManager.GetPackageCatalogs().ToArray()))
+        foreach (PackageCatalogReference catalog in WinGetManager.GetPackageCatalogs().ToArray())
         {
             try
             {
@@ -247,7 +247,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         }
 
         logger.Close(0);
-        return sources.ToArray();
+        return sources;
     }
 
     public IEnumerable<string> GetInstallableVersions_Unsafe(WinGet Manager, IPackage package)

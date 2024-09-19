@@ -23,10 +23,10 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
         /// <summary>
         /// Loads the sources for the manager. This method SHOULD NOT handle exceptions
         /// </summary>
-        protected abstract Task<IManagerSource[]> GetSources_UnSafe();
+        protected abstract IEnumerable<IManagerSource> GetSources_UnSafe();
         public virtual async Task<IManagerSource[]> GetSources()
         {
-            IManagerSource[] sources = await GetSources_UnSafe();
+            IEnumerable<IManagerSource> sources = await Task.Run(() => GetSources_UnSafe());
             SourceFactory.Reset();
 
             foreach (IManagerSource source in sources)
@@ -34,7 +34,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
                 SourceFactory.AddSource(source);
             }
 
-            return sources;
+            return sources.ToArray();
         }
     }
 }

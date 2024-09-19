@@ -576,7 +576,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return versions.ToArray();
     }
 
-    public async Task<IManagerSource[]> GetSources_UnSafe(WinGet Manager)
+    public IEnumerable<IManagerSource> GetSources_UnSafe(WinGet Manager)
     {
         List<IManagerSource> sources = [];
 
@@ -591,7 +591,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 RedirectStandardInput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8
+                StandardOutputEncoding = Encoding.UTF8
             }
         };
 
@@ -601,7 +601,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         bool dashesPassed = false;
         string? line;
-        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+        while ((line = p.StandardOutput.ReadLine()) != null)
         {
             logger.AddToStdOut(line);
             try
@@ -633,10 +633,10 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             }
         }
 
-        logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-        await p.WaitForExitAsync();
+        logger.AddToStdErr(p.StandardError.ReadToEnd());
+        p.WaitForExit();
         logger.Close(p.ExitCode);
-        return sources.ToArray();
+        return sources;
 
     }
 }
