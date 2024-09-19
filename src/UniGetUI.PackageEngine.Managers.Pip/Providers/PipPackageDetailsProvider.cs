@@ -17,7 +17,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         protected override void GetDetails_UnSafe(IPackageDetails details)
         {
-            INativeTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails);
+            INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
 
             string JsonString;
             HttpClient client = new(CoreData.GenericHttpClientParameters);
