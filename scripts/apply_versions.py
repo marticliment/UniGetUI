@@ -39,6 +39,8 @@ try:
         "[assembly: AssemblyVersion(\"": f"{versionISS}\")]\n",
         "[assembly: AssemblyFileVersion(\"": f"{versionISS}\")]\n",
         "[assembly: AssemblyInformationalVersion(\"": f"{versionName}\")]\n",
+        "[assembly: AssemblyInformationalVersionAttribute(\"": f"{versionName}\")]\n",
+        "[assembly: AssemblyVersionAttribute(\"": f"{versionISS}\")]\n",
         # Your replacement dictionary here
     }, encoding="utf-8-sig")
 

@@ -39,7 +39,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
-        protected override async Task<IManagerSource[]> GetSources_UnSafe()
+        protected override IEnumerable<IManagerSource> GetSources_UnSafe()
         {
             List<ManagerSource> sources = [];
 
@@ -64,7 +64,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             bool dashesPassed = false;
             string? line;
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 try
@@ -95,11 +95,11 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     Logger.Warn(e);
                 }
             }
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return sources.ToArray();
+            return sources;
         }
     }
 }

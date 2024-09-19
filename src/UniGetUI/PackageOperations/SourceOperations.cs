@@ -190,7 +190,7 @@ namespace UniGetUI.PackageEngine.Operations
             return AfterFinshAction.TimeoutClose;
         }
 
-        protected override void Initialize()
+        protected override async Task Initialize()
         {
             OperationTitle = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
             IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
@@ -275,7 +275,7 @@ namespace UniGetUI.PackageEngine.Operations
             return AfterFinshAction.TimeoutClose;
         }
 
-        protected override void Initialize()
+        protected override async Task Initialize()
         {
             OperationTitle = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
             IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");

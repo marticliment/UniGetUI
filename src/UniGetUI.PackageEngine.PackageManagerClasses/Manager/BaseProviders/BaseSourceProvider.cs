@@ -23,16 +23,14 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
         /// <summary>
         /// Loads the sources for the manager. This method SHOULD NOT handle exceptions
         /// </summary>
-        protected abstract Task<IManagerSource[]> GetSources_UnSafe();
-        public virtual async Task<IManagerSource[]> GetSources()
+        protected abstract IEnumerable<IManagerSource> GetSources_UnSafe();
+        public virtual IEnumerable<IManagerSource> GetSources()
         {
-            IManagerSource[] sources = await GetSources_UnSafe();
+            IEnumerable<IManagerSource> sources = GetSources_UnSafe();
             SourceFactory.Reset();
 
             foreach (IManagerSource source in sources)
-            {
                 SourceFactory.AddSource(source);
-            }
 
             return sources;
         }

@@ -420,13 +420,16 @@ namespace UniGetUI.Interface.Dialogs
 
         public async void LoadIcon()
         {
-            PackageIcon.Source = new BitmapImage { UriSource = await Package.GetIconUrl() };
+            PackageIcon.Source = new BitmapImage
+            {
+                UriSource = await Task.Run(Package.GetIconUrl)
+            };
         }
 
         public async void LoadScreenshots()
         {
-            Uri[] screenshots = await Package.GetPackageScreenshots();
-            PackageHasScreenshots = screenshots.Length > 0;
+            IEnumerable<Uri> screenshots = await Task.Run(Package.GetScreenshots);
+            PackageHasScreenshots = screenshots.Any();
             if (PackageHasScreenshots)
             {
                 PackageHasScreenshots = true;

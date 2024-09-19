@@ -43,6 +43,7 @@ namespace UniGetUI.Core.Tools
             {
                 dict.Add(index.ToString(), item);
             }
+
             return Translate(text, dict);
         }
 
@@ -75,7 +76,12 @@ namespace UniGetUI.Core.Tools
         /// </summary>
         /// <param name="command">The executable alias to find</param>
         /// <returns>A tuple containing: a boolean hat represents whether the path was found or not; the path to the file if found.</returns>
-        public static async Task<Tuple<bool, string>> Which(string command)
+        public static async Task<Tuple<bool, string>> WhichAsync(string command)
+        {
+            return await Task.Run(() => Which(command));
+        }
+
+        public static Tuple<bool, string> Which(string command)
         {
             command = command.Replace(";", "").Replace("&", "").Trim();
             Logger.Debug($"Begin \"which\" search for command {command}");
@@ -95,18 +101,14 @@ namespace UniGetUI.Core.Tools
             };
             process.StartInfo = UpdateEnvironmentVariables(process.StartInfo);
             process.Start();
-            string? line = await process.StandardOutput.ReadLineAsync();
+            string? line = process.StandardOutput.ReadLine();
             string output;
-            if (line == null)
-            {
-                output = "";
-            }
-            else
-            {
-                output = line.Trim();
-            }
 
-            await process.WaitForExitAsync();
+            if (line is null) output = "";
+            else output = line.Trim();
+
+            process.WaitForExit();
+
             if (process.ExitCode != 0 || output == "")
             {
                 Logger.ImportantInfo($"Command {command} was not found on the system");
@@ -241,6 +243,11 @@ Crash Traceback:
         public static async Task<double> GetFileSizeAsync(Uri? url)
         {
             return await GetFileSizeAsyncAsLong(url) / 1048576d;
+        }
+
+        public static double GetFileSize(Uri? url)
+        {
+            return GetFileSizeAsyncAsLong(url).GetAwaiter().GetResult() / 1048576d;
         }
 
         public static async Task<long> GetFileSizeAsyncAsLong(Uri? url)
@@ -434,7 +441,7 @@ Crash Traceback:
         /// </summary>
         /// <param name="linkPath">The location of the link to be created</param>
         /// <param name="targetPath">The location of the real folder where to point</param>
-        public static async Task CreateSymbolicLinkDir(string linkPath, string targetPath)
+        public static void CreateSymbolicLinkDir(string linkPath, string targetPath)
         {
             var startInfo = new ProcessStartInfo
             {
@@ -449,7 +456,7 @@ Crash Traceback:
             Process? p = Process.Start(startInfo);
             if (p is not null)
             {
-                await p.WaitForExitAsync();
+                p.WaitForExit();
             }
 
             if (p is null || p.ExitCode != 0)

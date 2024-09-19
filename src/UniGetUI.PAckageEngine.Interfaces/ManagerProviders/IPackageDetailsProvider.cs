@@ -11,7 +11,7 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// </summary>
         /// <param name="details">The PackageDetails instance to load</param>
         /// <returns>A PackageDetails object</returns>
-        public abstract Task GetPackageDetails(IPackageDetails details);
+        public void GetPackageDetails(IPackageDetails details);
 
         /// <summary>
         /// Returns the available versions to install for the given package.
@@ -20,7 +20,7 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// </summary>
         /// <param name="package">The package from which to load its versions</param>
         /// <returns>An array of stings containing the found versions, an empty array if none.</returns>
-        public abstract Task<string[]> GetPackageVersions(IPackage package);
+        public IEnumerable<string> GetPackageVersions(IPackage package);
 
         /// <summary>
         /// Returns an Uri pointing to the icon of this package.
@@ -28,20 +28,20 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// </summary>
         /// <param name="package">The package from which to load the icon</param>
         /// <returns>A full path to a valid icon file</returns>
-        public abstract Task<CacheableIcon?> GetPackageIconUrl(IPackage package);
+        public CacheableIcon? GetPackageIconUrl(IPackage package);
 
         /// <summary>
         /// Returns the URLs to the screenshots (if any) of this package.
         /// </summary>
         /// <param name="package">The package from which to load the screenshots</param>
         /// <returns>An array with valid URIs to the screenshots</returns>
-        public abstract Task<Uri[]> GetPackageScreenshotsUrl(IPackage package);
+        public IEnumerable<Uri> GetPackageScreenshotsUrl(IPackage package);
 
         /// <summary>
         /// Returns the location where the package is installed, or null if the location cannot be loaded.
         /// </summary>
         /// <param name="package">The package for which to get the location</param>
         /// <returns>A valid path in the form of a string or a null object</returns>
-        public abstract string? GetPackageInstallLocation(IPackage package);
+        public string? GetPackageInstallLocation(IPackage package);
     }
 }

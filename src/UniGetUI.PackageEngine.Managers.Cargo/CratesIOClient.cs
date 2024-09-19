@@ -63,10 +63,10 @@ class CratesIOClient
 {
     public const string ApiUrl = "https://crates.io/api/v1";
 
-    public static async Task<Tuple<Uri, CargoManifest>> GetManifest(string packageId)
+    public static Tuple<Uri, CargoManifest> GetManifest(string packageId)
     {
         var manifestUrl = new Uri($"{ApiUrl}/crates/{packageId}");
-        var manifest = await Fetch<CargoManifest>(manifestUrl);
+        var manifest = Fetch<CargoManifest>(manifestUrl);
         if (manifest.crate == null)
         {
             throw new NullResponseException($"Null response for package {packageId}");
@@ -74,10 +74,10 @@ class CratesIOClient
         return Tuple.Create(manifestUrl, manifest);
     }
 
-    public static async Task<CargoManifestVersion> GetManifestVersion(string packageId, string version)
+    public static CargoManifestVersion GetManifestVersion(string packageId, string version)
     {
         var manifestUrl = new Uri($"{ApiUrl}/crates/{packageId}/{version}");
-        var manifest = await Fetch<CargoManifestVersionWrapper>(manifestUrl);
+        var manifest = Fetch<CargoManifestVersionWrapper>(manifestUrl);
         if (manifest.version == null)
         {
             throw new NullResponseException($"Null response for package {packageId}");
@@ -85,14 +85,15 @@ class CratesIOClient
         return manifest.version;
     }
 
-    private static async Task<T> Fetch<T>(Uri url)
+    private static T Fetch<T>(Uri url)
     {
         HttpClient client = new(CoreData.GenericHttpClientParameters);
         client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
 
-        var manifestStr = await client.GetStringAsync(url);
+        var manifestStr = client.GetStringAsync(url).GetAwaiter().GetResult();
 
-        var manifest = JsonSerializer.Deserialize<T>(manifestStr) ?? throw new NullResponseException($"Null response for request to {url}");
+        var manifest = JsonSerializer.Deserialize<T>(manifestStr, options: CoreData.SerializingOptions)
+                       ?? throw new NullResponseException($"Null response for request to {url}");
         return manifest;
     }
 }

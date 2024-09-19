@@ -558,7 +558,7 @@ namespace UniGetUI.Interface.SoftwarePages
             exportable.export_version = 2.0;
             foreach (IPackage package in packages)
                 if (package is Package && !package.Source.IsVirtualManager)
-                    exportable.packages.Add(await package.AsSerializable());
+                    exportable.packages.Add(await Task.Run(package.AsSerializable));
                 else
                     exportable.incompatible_packages.Add(package.AsSerializable_Incompatible());
 

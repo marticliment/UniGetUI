@@ -43,7 +43,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             OperationProvider = new NpmOperationProvider(this);
         }
 
-        protected override async Task<Package[]> FindPackages_UnSafe(string query)
+        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
         {
             Process p = new()
             {
@@ -67,7 +67,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             string? line;
             List<Package> Packages = [];
             bool HeaderPassed = false;
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (!HeaderPassed)
@@ -87,14 +87,14 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 }
             }
 
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return Packages.ToArray();
+            return Packages;
         }
 
-        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
+        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
             List<Package> Packages = [];
             foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })
@@ -119,7 +119,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 p.Start();
 
                 string? line;
-                while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+                while ((line = p.StandardOutput.ReadLine()) != null)
                 {
                     logger.AddToStdOut(line);
                     string[] elements = line.Split(':');
@@ -147,14 +147,14 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     }
                 }
 
-                logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-                await p.WaitForExitAsync();
+                logger.AddToStdErr(p.StandardError.ReadToEnd());
+                p.WaitForExit();
                 logger.Close(p.ExitCode);
             }
-            return Packages.ToArray();
+            return Packages;
         }
 
-        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
+        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
             foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })
@@ -179,7 +179,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 p.Start();
 
                 string? line;
-                while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+                while ((line = p.StandardOutput.ReadLine()) != null)
                 {
                     logger.AddToStdOut(line);
                     if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
@@ -199,20 +199,20 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                         }
                     }
                 }
-                logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-                await p.WaitForExitAsync();
+                logger.AddToStdErr(p.StandardError.ReadToEnd());
+                p.WaitForExit();
                 logger.Close(p.ExitCode);
             }
 
-            return Packages.ToArray();
+            return Packages;
         }
 
-        protected override async Task<ManagerStatus> LoadManager()
+        protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new()
             {
                 ExecutablePath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
-                Found = (await CoreTools.Which("npm")).Item1
+                Found = CoreTools.Which("npm").Item1
             };
 
             if (!status.Found)
@@ -236,8 +236,8 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 }
             };
             process.Start();
-            status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
-            await process.WaitForExitAsync();
+            status.Version = process.StandardOutput.ReadToEnd().Trim();
+            process.WaitForExit();
 
             return status;
         }

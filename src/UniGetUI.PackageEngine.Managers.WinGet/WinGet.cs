@@ -123,19 +123,19 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             MicrosoftStoreSource = new(this, "Microsoft Store", IconType.MsStore);
         }
 
-        protected override async Task<Package[]> FindPackages_UnSafe(string query)
+        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
         {
-            return await Task.Run(() => WinGetHelper.Instance.FindPackages_UnSafe(this, query).GetAwaiter().GetResult());
+            return WinGetHelper.Instance.FindPackages_UnSafe(this, query);
         }
 
-        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
+        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
-            return await Task.Run(() => WinGetHelper.Instance.GetAvailableUpdates_UnSafe(this).GetAwaiter().GetResult());
+            return WinGetHelper.Instance.GetAvailableUpdates_UnSafe(this);
         }
 
-        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
+        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
         {
-            return await Task.Run(() => WinGetHelper.Instance.GetInstalledPackages_UnSafe(this).GetAwaiter().GetResult());
+            return WinGetHelper.Instance.GetInstalledPackages_UnSafe(this);
         }
 
         public ManagerSource GetLocalSource(string id)
@@ -185,15 +185,15 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
         }
 
-        protected override async Task<ManagerStatus> LoadManager()
+        protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new();
 
             bool FORCE_BUNDLED = Settings.Get("ForceLegacyBundledWinGet");
 
-            Tuple<bool, string> which_res = await CoreTools.Which("winget.exe");
-            status.ExecutablePath = which_res.Item2;
-            status.Found = which_res.Item1;
+            var (found, path) = CoreTools.Which("winget.exe");
+            status.ExecutablePath = path;
+            status.Found = found;
 
             if (!status.Found)
             {
@@ -227,8 +227,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             };
             process.Start();
-            status.Version = $"{(FORCE_BUNDLED ? "Bundled" : "System")} WinGet CLI Version: {(await process.StandardOutput.ReadToEndAsync()).Trim()}";
-            string error = await process.StandardError.ReadToEndAsync();
+            status.Version = $"{(FORCE_BUNDLED ? "Bundled" : "System")} WinGet CLI Version: {process.StandardOutput.ReadToEnd().Trim()}";
+            string error = process.StandardError.ReadToEnd();
             if (error != "")
             {
                 Logger.Error("WinGet STDERR not empty: " + error);
@@ -249,8 +249,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
             };
             process.Start();
-            status.Version += $"\nMicrosoft.WinGet.Client PSModule version: \"{(await process.StandardOutput.ReadToEndAsync()).Trim()}\"";
-            error = await process.StandardError.ReadToEndAsync();
+            status.Version += $"\nMicrosoft.WinGet.Client PSModule version: \"{process.StandardOutput.ReadToEnd().Trim()}\"";
+            error = process.StandardError.ReadToEnd();
             if (error != "")
             {
                 Logger.Error("WinGet STDERR not empty: " + error);
@@ -263,7 +263,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     throw new InvalidOperationException("Bundled WinGet was forced by the user!");
                 }
 
-                await Task.Run(() => WinGetHelper.Instance = new NativeWinGetHelper());
+                WinGetHelper.Instance = new NativeWinGetHelper();
                 status.Version += "\nUsing Native WinGet helper (COM Api)";
             }
             catch (Exception ex)
@@ -278,7 +278,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return status;
         }
 
-        public override async Task RefreshPackageIndexes()
+        public override void RefreshPackageIndexes()
         {
             Process p = new()
             {
@@ -291,17 +291,17 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                    StandardOutputEncoding = Encoding.UTF8
                 }
             };
 
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
 
             p.Start();
-            logger.AddToStdOut(await p.StandardOutput.ReadToEndAsync());
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
+            logger.AddToStdOut(p.StandardOutput.ReadToEnd());
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
             logger.Close(p.ExitCode);
-            await p.WaitForExitAsync();
+            p.WaitForExit();
             p.Close();
         }
     }

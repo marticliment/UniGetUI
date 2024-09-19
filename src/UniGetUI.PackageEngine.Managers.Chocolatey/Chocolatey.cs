@@ -62,7 +62,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             OperationProvider = new ChocolateyOperationProvider(this);
         }
 
-        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
+        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
             Process p = new()
             {
@@ -84,7 +84,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             string? line;
             List<Package> Packages = [];
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (!line.StartsWith("Chocolatey"))
@@ -109,14 +109,14 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             }
 
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return Packages.ToArray();
+            return Packages;
         }
 
-        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
+        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
         {
             Process p = new()
             {
@@ -138,7 +138,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             string? line;
             List<Package> Packages = [];
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (!line.StartsWith("Chocolatey"))
@@ -163,14 +163,14 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             }
 
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return Packages.ToArray();
+            return Packages;
         }
 
-        protected override async Task<ManagerStatus> LoadManager()
+        protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new();
 
@@ -214,7 +214,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                         if (!Directory.Exists(new_subdir))
                         {
                             Logger.Debug("New directory: " + new_subdir);
-                            await Task.Run(() => Directory.CreateDirectory(new_subdir));
+                            Directory.CreateDirectory(new_subdir);
                         }
                         else
                         {
@@ -228,7 +228,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                         if (!File.Exists(new_file))
                         {
                             Logger.Info("Copying " + old_file);
-                            await Task.Run(() => File.Move(old_file, new_file));
+                            File.Move(old_file, new_file);
                         }
                         else
                         {
@@ -252,7 +252,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                         Directory.Delete(old_choco_path);
                     }
 
-                    await CoreTools.CreateSymbolicLinkDir(old_choco_path, new_choco_path);
+                    CoreTools.CreateSymbolicLinkDir(old_choco_path, new_choco_path);
                     Settings.Set("ChocolateySymbolicLinkCreated", true);
                     Logger.Info($"Symbolic link created successfully from {old_choco_path} to {new_choco_path}.");
 
@@ -266,7 +266,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             if (Settings.Get("UseSystemChocolatey"))
             {
-                status.ExecutablePath = (await CoreTools.Which("choco.exe")).Item2;
+                status.ExecutablePath = CoreTools.Which("choco.exe").Item2;
             }
             else if (File.Exists(Path.Join(new_choco_path, "choco.exe")))
             {
@@ -298,7 +298,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 }
             };
             process.Start();
-            status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
+            status.Version = process.StandardOutput.ReadToEnd().Trim();
 
             // If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
             if (/*Settings.Get("ShownWelcomeWizard") && */!Settings.Get("UseSystemChocolatey") && !File.Exists(@"C:\ProgramData\Chocolatey\bin\choco.exe"))

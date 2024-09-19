@@ -15,13 +15,13 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
     {
         public BaseNuGetDetailsProvider(BaseNuGet manager) : base(manager) { }
 
-        protected override async Task GetPackageDetails_Unsafe(IPackageDetails details)
+        protected override void GetDetails_UnSafe(IPackageDetails details)
         {
             var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
             try
             {
-                details.ManifestUrl = PackageManifestLoader.GetPackageManifestUrl(details.Package);
-                string? PackageManifestContents = await PackageManifestLoader.GetPackageManifestContent(details.Package);
+                details.ManifestUrl = NuGetManifestLoader.GetManifestUrl(details.Package);
+                string? PackageManifestContents = NuGetManifestLoader.GetManifestContent(details.Package);
                 logger.Log(PackageManifestContents);
 
                 if (PackageManifestContents == null)
@@ -119,20 +119,20 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
         }
 
-        protected override async Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package)
+        protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
         {
-            string? PackageManifestContent = await PackageManifestLoader.GetPackageManifestContent(package);
-            if (PackageManifestContent == null)
+            string? ManifestContent = NuGetManifestLoader.GetManifestContent(package);
+            if (ManifestContent == null)
             {
                 Logger.Warn($"No manifest content could be loaded for package {package.Id} on manager {package.Manager.Name}");
                 return null;
             }
 
-            Match possibleIconUrl = Regex.Match(PackageManifestContent, "<(?:d\\:)?IconUrl>(.*)<(?:\\/d:)?IconUrl>");
+            Match possibleIconUrl = Regex.Match(ManifestContent, "<(?:d\\:)?IconUrl>(.*)<(?:\\/d:)?IconUrl>");
 
             if (!possibleIconUrl.Success)
             {
-                Logger.Warn($"No Icon URL could be parsed on the manifest Url={PackageManifestLoader.GetPackageManifestUrl(package).ToString()}");
+                Logger.Warn($"No Icon URL could be parsed on the manifest Url={NuGetManifestLoader.GetManifestUrl(package).ToString()}");
                 return null;
             }
 
@@ -140,13 +140,13 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             return new CacheableIcon(new Uri(possibleIconUrl.Groups[1].Value), package.Version);
         }
 
-        protected override Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
+        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
 
 
-        protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
+        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             Uri SearchUrl = new($"{package.Source.Url}/FindPackagesById()?id='{package.Id}'");
             Logger.Debug($"Begin package version search with url={SearchUrl} on manager {Manager.Name}");
@@ -156,14 +156,14 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             HttpClient client = new(CoreData.GenericHttpClientParameters);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
 
-            HttpResponseMessage response = await client.GetAsync(SearchUrl);
+            HttpResponseMessage response = client.GetAsync(SearchUrl).GetAwaiter().GetResult();
             if (!response.IsSuccessStatusCode)
             {
                 Logger.Warn($"Failed to fetch api at Url={SearchUrl} with status code {response.StatusCode} to load versions");
                 return [];
             }
 
-            string SearchResults = await response.Content.ReadAsStringAsync();
+            string SearchResults = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             HashSet<string> alreadyProcessed = [];
 
             MatchCollection matches = Regex.Matches(SearchResults, "Version='([^<>']+)'");
@@ -177,7 +177,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
 
             results.Sort(StringComparer.OrdinalIgnoreCase);
-            return results.ToArray();
+            return results;
         }
     }
 }

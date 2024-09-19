@@ -303,7 +303,7 @@ namespace UniGetUI.Interface
                 IPackage? package = PEInterface.UpgradablePackagesLoader.GetPackageForId(Request.Query.@packageId, Request.Query.@packageSource);
                 if (package != null)
                 {
-                    Uri iconUrl = await package.GetIconUrl();
+                    Uri iconUrl = await Task.Run(package.GetIconUrl);
                     if (iconUrl.ToString() != "ms-appx:///Assets/Images/package_color.png")
                     {
                         iconPath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name, $"{package.Id}.{iconUrl.ToString().Split('.')[^1]}");
@@ -321,7 +321,15 @@ namespace UniGetUI.Interface
                     ContentType = $"image/{iconPath.Split('.')[^1]}",
                     Contents = (stream) =>
                     {
-                        stream.Write(fileContents, 0, fileContents.Length);
+                        try
+                        {
+                            stream.Write(fileContents, 0, fileContents.Length);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Warn($"Unable to load icon to path {iconPath}");
+                            Logger.Warn(ex);
+                        }
                     }
                 };
 

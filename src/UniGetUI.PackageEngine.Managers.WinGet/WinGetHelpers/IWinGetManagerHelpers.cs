@@ -26,11 +26,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
     internal interface IWinGetManagerHelper
     {
-        public Task<Package[]> GetAvailableUpdates_UnSafe(WinGet Manager);
-        public Task<Package[]> GetInstalledPackages_UnSafe(WinGet Manager);
-        public Task<Package[]> FindPackages_UnSafe(WinGet Manager, string query);
-        public Task<IManagerSource[]> GetSources_UnSafe(WinGet Manager);
-        public Task<string[]> GetPackageVersions_Unsafe(WinGet Manager, IPackage package);
-        public Task GetPackageDetails_UnSafe(WinGet Manager, IPackageDetails details);
+        public IEnumerable<Package> GetAvailableUpdates_UnSafe(WinGet Manager);
+        public IEnumerable<Package> GetInstalledPackages_UnSafe(WinGet Manager);
+        public IEnumerable<Package> FindPackages_UnSafe(WinGet Manager, string query);
+        public IEnumerable<IManagerSource> GetSources_UnSafe(WinGet Manager);
+        public IEnumerable<string> GetInstallableVersions_Unsafe(WinGet Manager, IPackage package);
+        public void GetPackageDetails_UnSafe(WinGet Manager, IPackageDetails details);
     }
 }

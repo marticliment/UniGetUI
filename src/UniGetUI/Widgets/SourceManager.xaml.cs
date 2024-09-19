@@ -26,7 +26,7 @@ namespace UniGetUI.Interface.Widgets
         {
             RemoveSourceOperation op = new(Source);
             MainApp.Instance.AddOperationToList(op);
-            op.OperationSucceeded += (sender, e) => { Parent.RemoveSourceItem(this); };
+            op.OperationSucceeded += (_, _) => { Parent.RemoveSourceItem(this); };
         }
     }
     public sealed partial class SourceManager : UserControl
@@ -89,7 +89,7 @@ namespace UniGetUI.Interface.Widgets
 
                     SourcesCombo.Items.Add(CoreTools.Translate("Other"));
                     SourcesCombo.HorizontalAlignment = HorizontalAlignment.Stretch;
-                    SourcesCombo.SelectionChanged += (sender, e) =>
+                    SourcesCombo.SelectionChanged += (_, _) =>
                     {
                         if (SourcesCombo.SelectedValue.ToString() == CoreTools.Translate("Other"))
                         {
@@ -132,7 +132,7 @@ namespace UniGetUI.Interface.Widgets
                         }
 
                         MainApp.Instance.AddOperationToList(op);
-                        op.OperationSucceeded += (sender, e) => { LoadSources(); };
+                        op.OperationSucceeded += (_, _) => { LoadSources(); };
 
                     }
                 }
@@ -166,7 +166,7 @@ namespace UniGetUI.Interface.Widgets
 
             LoadingBar.Visibility = Visibility.Visible;
             Sources.Clear();
-            foreach (IManagerSource source in await Manager.GetSources())
+            foreach (IManagerSource source in await Task.Run(Manager.GetSources))
             {
                 Sources.Add(new SourceItem(this, source));
             }

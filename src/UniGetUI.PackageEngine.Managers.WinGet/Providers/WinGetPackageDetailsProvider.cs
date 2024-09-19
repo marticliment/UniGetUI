@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net;
 using System.Text.RegularExpressions;
 using ABI.Windows.UI.Composition;
+using Microsoft.Management.Deployment;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
@@ -22,22 +23,22 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public WinGetPackageDetailsProvider(WinGet manager) : base(manager) { }
 
-        protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
+        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
         {
-            return await WinGetHelper.Instance.GetPackageVersions_Unsafe((WinGet)Manager, package);
+            return WinGetHelper.Instance.GetInstallableVersions_Unsafe((WinGet)Manager, package);
         }
 
-        protected override async Task GetPackageDetails_Unsafe(IPackageDetails details)
+        protected override void GetDetails_UnSafe(IPackageDetails details)
         {
-            await WinGetHelper.Instance.GetPackageDetails_UnSafe((WinGet)Manager, details);
+            WinGetHelper.Instance.GetPackageDetails_UnSafe((WinGet)Manager, details);
         }
 
-        protected override async Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package)
+        protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
         {
 
             if (package.Source.Name == "msstore")
             {
-                return await GetMicrosoftStorePackageIcon(package);
+                return GetMicrosoftStoreIcon(package);
             }
 
             Logger.Warn("Non-MSStore WinGet Native Icons have been forcefully disabled on code");
@@ -45,14 +46,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             //return await GetWinGetPackageIcon(package);
         }
 
-        protected override async Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
+        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             if (package.Source.Name != "msstore")
             {
                 return [];
             }
 
-            string? ResponseContent = await GetMicrosoftStorePackageManifest(package);
+            string? ResponseContent = GetMicrosoftStoreManifest(package);
             if (ResponseContent == null)
             {
                 return [];
@@ -90,21 +91,21 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 FoundIcons.Add(new Uri("https:" + ImageUrl.Groups[1].Value));
             }
 
-            return FoundIcons.ToArray();
+            return FoundIcons;
         }
 
-        protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+        protected override string? GetInstallLocation_UnSafe(IPackage package)
         {
-            foreach (var base_path in new string[]
-                     {
-                         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-                         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
-                         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs"),
-                         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "WinGet", "Packages"),
-                         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "WinGet", "Packages"),
-                         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "WinGet", "Packages"),
-                         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                     })
+            foreach (var base_path in new[]
+                 {
+                     Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                     Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+                     Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs"),
+                     Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "WinGet", "Packages"),
+                     Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "WinGet", "Packages"),
+                     Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "WinGet", "Packages"),
+                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                 })
             {
                 var path_with_name = Path.Join(base_path, package.Name);
                 if (Directory.Exists(path_with_name)) return path_with_name;
@@ -119,7 +120,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return null;
         }
 
-        private static async Task<string?> GetMicrosoftStorePackageManifest(IPackage package)
+        private static string? GetMicrosoftStoreManifest(IPackage package)
         {
             if (__msstore_package_manifests.TryGetValue(package.Id, out var manifest))
             {
@@ -144,7 +145,13 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 streamWriter.Write(data);
             }
 
-            HttpWebResponse httpResponse = (HttpWebResponse)await httpRequest.GetResponseAsync();
+            HttpWebResponse? httpResponse = httpRequest.GetResponse() as HttpWebResponse;
+            if (httpResponse is null)
+            {
+                Logger.Warn($"Null MS Store response for uri={url} and data={data}");
+                return null;
+            }
+
             string result;
             using (StreamReader streamReader = new(httpResponse.GetResponseStream()))
             {
@@ -161,9 +168,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return result;
         }
 
-        private static async Task<CacheableIcon?> GetMicrosoftStorePackageIcon(IPackage package)
+        private static CacheableIcon? GetMicrosoftStoreIcon(IPackage package)
         {
-            string? ResponseContent = await GetMicrosoftStorePackageManifest(package);
+            string? ResponseContent = GetMicrosoftStoreManifest(package);
             if (ResponseContent == null)
             {
                 return null;
@@ -218,7 +225,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         }
 
         // TODO: Need to work on retrieving WinGet icons
-        /*private static async Task<CacheableIcon?> GetWinGetPackageIcon(IPackage package)
+        private static CacheableIcon? GetWinGetPackageIcon(IPackage package)
         {
             if (WinGetHelper.Instance is not NativeWinGetHelper)
             {
@@ -226,7 +233,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return null;
             }
 
-            Microsoft.Management.Deployment.PackageManager WinGetManager = ((NativeWinGetHelper)WinGetHelper.Instance).WinGetManager;
+            PackageManager WinGetManager = ((NativeWinGetHelper)WinGetHelper.Instance).WinGetManager;
             WindowsPackageManager.Interop.WindowsPackageManagerFactory Factory = ((NativeWinGetHelper)WinGetHelper.Instance).Factory;
 
             // Find the native package for the given Package object
@@ -239,7 +246,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             // Connect to catalog
             Catalog.AcceptSourceAgreements = true;
-            ConnectResult ConnectResult = await Task.Run(() => Catalog.Connect());
+            ConnectResult ConnectResult = Catalog.Connect();
             // ConnectResult ConnectResult = await Catalog.ConnectAsync();
             if (ConnectResult.Status != ConnectResultStatus.Ok)
             {
@@ -255,19 +262,19 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             filters.Option = PackageFieldMatchOption.Equals;
             packageMatchFilter.Filters.Add(filters);
             packageMatchFilter.ResultLimit = 1;
-            Task<FindPackagesResult> SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
+            FindPackagesResult SearchResult = ConnectResult.PackageCatalog.FindPackages(packageMatchFilter);
 
-            if (SearchResult.Result == null || SearchResult.Result.Matches == null || SearchResult.Result.Matches.Count == 0)
+            if (SearchResult.Matches == null || SearchResult.Matches.Count == 0)
             {
                 Logger.Error("[WINGET COM] Failed to find package " + package.Id + " in catalog " + package.Source.Name);
                 return null;
             }
 
             // Get the Native Package
-            CatalogPackage NativePackage = SearchResult.Result.Matches.First().CatalogPackage;
+            CatalogPackage NativePackage = SearchResult.Matches.First().CatalogPackage;
 
             // Extract data from NativeDetails
-            CatalogPackageMetadata NativeDetails = await Task.Run(() => NativePackage.DefaultInstallVersion.GetCatalogPackageMetadata());
+            CatalogPackageMetadata NativeDetails = NativePackage.DefaultInstallVersion.GetCatalogPackageMetadata();
 
             CacheableIcon? Icon = null;
 
@@ -278,6 +285,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             return Icon;
-        }*/
+        }
     }
 }

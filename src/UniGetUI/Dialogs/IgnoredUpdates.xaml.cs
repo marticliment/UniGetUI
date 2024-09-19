@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Text.Json.Nodes;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -9,6 +11,7 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.PackageClasses;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -23,10 +26,12 @@ namespace UniGetUI.Interface
     public sealed partial class IgnoredUpdatesManager : Page
     {
         public event EventHandler? Close;
+        private ObservableCollection<IgnoredPackageEntry> ignoredPackages = new ObservableCollection<IgnoredPackageEntry>();
 
         public IgnoredUpdatesManager()
         {
             InitializeComponent();
+            IgnoredUpdatesList.ItemsSource = ignoredPackages;
             IgnoredUpdatesList.DoubleTapped += IgnoredUpdatesList_DoubleTapped;
         }
 
@@ -39,9 +44,11 @@ namespace UniGetUI.Interface
                 ManagerNameReference.Add(Manager.Name.ToLower(), Manager);
             }
 
-            IgnoredUpdatesList.Items.Clear();
+            ignoredPackages.Clear();
 
-            foreach (var(ignoredId, version) in await Task.Run(() => IgnoredUpdatesDatabase.GetDatabase()).ConfigureAwait(false))
+            var rawIgnoredPackages = await Task.Run(() => IgnoredUpdatesDatabase.GetDatabase());
+
+            foreach (var(ignoredId, version) in rawIgnoredPackages)
             {
                 IPackageManager manager = PEInterface.WinGet; // Manager by default
                 if (ManagerNameReference.ContainsKey(ignoredId.Split("\\")[0]))
@@ -49,7 +56,7 @@ namespace UniGetUI.Interface
                     manager = ManagerNameReference[ignoredId.Split("\\")[0]];
                 }
 
-                IgnoredUpdatesList.Items.Add(new IgnoredPackageEntry(ignoredId.Split("\\")[^1], version, manager, IgnoredUpdatesList));
+                ignoredPackages.Add(new IgnoredPackageEntry(ignoredId.Split("\\")[^1], version, manager, ignoredPackages));
             }
 
         }
@@ -65,7 +72,7 @@ namespace UniGetUI.Interface
         public async void ManageIgnoredUpdates_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             args.Cancel = true;
-            foreach (IgnoredPackageEntry package in IgnoredUpdatesList.Items.ToArray())
+            foreach (IgnoredPackageEntry package in ignoredPackages.ToArray())
             {
                 await package.RemoveFromIgnoredUpdates();
             }
@@ -83,11 +90,14 @@ namespace UniGetUI.Interface
         public string Name { get; }
         public string Version { get; }
         public IPackageManager Manager { get; }
-        private ListView List { get; }
-        public IgnoredPackageEntry(string id, string version, IPackageManager manager, ListView list)
+        private ObservableCollection<IgnoredPackageEntry> List { get; }
+        public IgnoredPackageEntry(string id, string version, IPackageManager manager, ObservableCollection<IgnoredPackageEntry> list)
         {
             Id = id;
-            Name = CoreTools.FormatAsName(id);
+
+            if (manager is WinGet && id.Contains('.')) Name = String.Join(' ', id.Split('.')[1..]);
+            else Name = CoreTools.FormatAsName(id);
+
             if (version == "*")
             {
                 Version = CoreTools.Translate("All versions");
@@ -104,7 +114,7 @@ namespace UniGetUI.Interface
         public async Task RemoveFromIgnoredUpdates()
         {
             string ignoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-            await Task.Run(() => IgnoredUpdatesDatabase.Remove(ignoredId)).ConfigureAwait(false);
+            await Task.Run(() => IgnoredUpdatesDatabase.Remove(ignoredId));
 
             foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)
             {
@@ -115,7 +125,7 @@ namespace UniGetUI.Interface
                 }
             }
 
-            List.Items.Remove(this);
+            List.Remove(this);
         }
     }
 }

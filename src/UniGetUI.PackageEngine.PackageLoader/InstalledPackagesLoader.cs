@@ -19,7 +19,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         }
 #pragma warning restore
 
-        protected override Task<IPackage[]> LoadPackagesFromManager(IPackageManager manager)
+        protected override IEnumerable<IPackage> LoadPackagesFromManager(IPackageManager manager)
         {
             return manager.GetInstalledPackages();
         }
@@ -43,20 +43,20 @@ namespace UniGetUI.PackageEngine.PackageLoader
             IsLoading = true;
             InvokeStartedLoadingEvent();
 
-            List<Task<IPackage[]>> tasks = new();
+            List<Task<IEnumerable<IPackage>>> tasks = new();
 
             foreach (IPackageManager manager in Managers)
             {
                 if (manager.IsEnabled() && manager.Status.Found)
                 {
-                    Task<IPackage[]> task = LoadPackagesFromManager(manager);
+                    Task<IEnumerable<IPackage>> task = Task.Run(() => LoadPackagesFromManager(manager));
                     tasks.Add(task);
                 }
             }
 
             while (tasks.Count > 0)
             {
-                foreach (Task<IPackage[]> task in tasks.ToArray())
+                foreach (Task<IEnumerable<IPackage>> task in tasks.ToArray())
                 {
                     if (!task.IsCompleted)
                     {

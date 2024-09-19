@@ -4,7 +4,7 @@ using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
 {
-    internal static class PackageManifestLoader
+    internal static class NuGetManifestLoader
     {
         private static readonly Dictionary<string, string> __manifest_cache = [];
 
@@ -13,17 +13,17 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
         /// </summary>
         /// <param name="package">A valid Package object</param>
         /// <returns>A Uri object</returns>
-        public static Uri GetPackageManifestUrl(IPackage package)
+        public static Uri GetManifestUrl(IPackage package)
         {
             return new Uri($"{package.Source.Url}/Packages(Id='{package.Id}',Version='{package.Version}')");
         }
 
         /// <summary>
-        /// Returns the URL to the NuPk file
+        /// Returns the URL to the NuPkg file
         /// </summary>
         /// <param name="package">A valid Package object</param>
         /// <returns>A Uri object</returns>
-        public static Uri GetPackageNuGetPackageUrl(IPackage package)
+        public static Uri GetNuPkgUrl(IPackage package)
         {
             return new Uri($"{package.Source.Url}/package/{package.Id}/{package.Version}");
         }
@@ -33,10 +33,10 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
         /// </summary>
         /// <param name="package">The package for which to obtain the manifest</param>
         /// <returns>A string containing the contents of the manifest</returns>
-        public static async Task<string?> GetPackageManifestContent(IPackage package)
+        public static string? GetManifestContent(IPackage package)
         {
             string? PackageManifestContent = "";
-            string PackageManifestUrl = GetPackageManifestUrl(package).ToString();
+            string PackageManifestUrl = GetManifestUrl(package).ToString();
             if (__manifest_cache.TryGetValue(PackageManifestUrl, out var content))
             {
                 Logger.Debug($"Loading cached NuGet manifest for package {package.Id} on manager {package.Manager.Name}");
@@ -48,10 +48,10 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
                 using (HttpClient client = new(CoreData.GenericHttpClientParameters))
                 {
                     client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-                    HttpResponseMessage response = await client.GetAsync(PackageManifestUrl);
+                    HttpResponseMessage response = client.GetAsync(PackageManifestUrl).GetAwaiter().GetResult();
                     if (!response.IsSuccessStatusCode && package.Version.EndsWith(".0"))
                     {
-                        response = await client.GetAsync(new Uri(PackageManifestUrl.ToString().Replace(".0')", "')")));
+                        response = client.GetAsync(new Uri(PackageManifestUrl.ToString().Replace(".0')", "')"))).GetAwaiter().GetResult();
                     }
 
                     if (!response.IsSuccessStatusCode)
@@ -60,7 +60,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
                         return null;
                     }
 
-                    PackageManifestContent = await response.Content.ReadAsStringAsync();
+                    PackageManifestContent = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 }
                 __manifest_cache[PackageManifestUrl] = PackageManifestContent;
                 return PackageManifestContent;

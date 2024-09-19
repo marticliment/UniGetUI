@@ -37,19 +37,19 @@ namespace UniGetUI.PackageEngine
         public static readonly InstalledPackagesLoader InstalledPackagesLoader = new(Managers);
         public static readonly PackageBundlesLoader PackageBundlesLoader = new(Managers);
 
-        public static async Task Initialize()
+        public static void Initialize()
         {
             List<Task> initializeTasks = [];
 
             foreach (IPackageManager manager in Managers)
             {
-                initializeTasks.Add(manager.InitializeAsync());
+                initializeTasks.Add(Task.Run(() => manager.Initialize()));
             }
 
             Task ManagersMetaTask = Task.WhenAll(initializeTasks);
             try
             {
-                await ManagersMetaTask.WaitAsync(TimeSpan.FromSeconds(ManagerLoadTimeout));
+                ManagersMetaTask.Wait(TimeSpan.FromSeconds(ManagerLoadTimeout));
             }
             catch (Exception e)
             {

@@ -574,7 +574,7 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        protected abstract void Initialize();
+        protected abstract Task Initialize();
         protected abstract void PostProcessStartAction();
         protected abstract void PostProcessEndAction();
         protected abstract Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo);

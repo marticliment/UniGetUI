@@ -46,13 +46,12 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             OperationProvider = new PipOperationProvider(this);
         }
 
-        protected override async Task<Package[]> FindPackages_UnSafe(string query)
+        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];
 
-            Tuple<bool, string> which_res = await CoreTools.Which("parse_pip_search.exe");
-            string path = which_res.Item2;
-            if (!which_res.Item1)
+            var (found, path) = CoreTools.Which("parse_pip_search.exe");
+            if (!found)
             {
                 Process proc = new()
                 {
@@ -69,10 +68,10 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 IProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
                 proc.Start();
 
-                aux_logger.AddToStdOut(await proc.StandardOutput.ReadToEndAsync());
-                aux_logger.AddToStdErr(await proc.StandardError.ReadToEndAsync());
+                aux_logger.AddToStdOut(proc.StandardOutput.ReadToEnd());
+                aux_logger.AddToStdErr(proc.StandardError.ReadToEnd());
 
-                await proc.WaitForExitAsync();
+                proc.WaitForExit();
                 aux_logger.Close(proc.ExitCode);
                 path = "parse_pip_search.exe";
             }
@@ -97,7 +96,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             string? line;
             bool DashesPassed = false;
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (!DashesPassed)
@@ -125,17 +124,17 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         continue;
                     }
 
-                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, new(PackageScope.Global)));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, new(PackageScope.Global)));
                 }
             }
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return Packages.ToArray();
+            return Packages;
         }
 
-        protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
+        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
             Process p = new()
             {
@@ -158,7 +157,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             string? line;
             bool DashesPassed = false;
             List<Package> Packages = [];
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (!DashesPassed)
@@ -189,14 +188,14 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], DefaultSource, this, new(PackageScope.Global)));
                 }
             }
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return Packages.ToArray();
+            return Packages;
         }
 
-        protected override async Task<Package[]> GetInstalledPackages_UnSafe()
+        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
         {
 
             Process p = new()
@@ -220,7 +219,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             string? line;
             bool DashesPassed = false;
             List<Package> Packages = [];
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (!DashesPassed)
@@ -251,20 +250,20 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, new(PackageScope.Global)));
                 }
             }
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return Packages.ToArray();
+            return Packages;
         }
 
-        protected override async Task<ManagerStatus> LoadManager()
+        protected override ManagerStatus LoadManager()
         {
             ManagerStatus status = new();
 
-            Tuple<bool, string> which_res = await CoreTools.Which("python.exe");
-            status.ExecutablePath = which_res.Item2;
-            status.Found = which_res.Item1;
+            var (found, path) = CoreTools.Which("python.exe");
+            status.ExecutablePath = path;
+            status.Found = found;
 
             if (!status.Found)
             {
@@ -285,7 +284,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 }
             };
             process.Start();
-            status.Version = (await process.StandardOutput.ReadToEndAsync()).Trim();
+            status.Version = process.StandardOutput.ReadToEnd().Trim();
 
             return status;
         }

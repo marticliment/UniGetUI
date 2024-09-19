@@ -11,7 +11,7 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
         public DotNetDetailsProvider(BaseNuGet manager) : base(manager)
         { }
 
-        protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+        protected override string? GetInstallLocation_UnSafe(IPackage package)
         {
             return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".dotnet", "tools");
         }

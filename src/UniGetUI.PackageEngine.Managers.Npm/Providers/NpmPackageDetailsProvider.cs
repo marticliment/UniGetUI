@@ -14,7 +14,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
     {
         public NpmPackageDetailsProvider(Npm manager) : base(manager) { }
 
-        protected override async Task GetPackageDetails_Unsafe(IPackageDetails details)
+        protected override void GetDetails_UnSafe(IPackageDetails details)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 string? outLine;
                 int lineNo = 0;
                 bool ReadingMaintainer = false;
-                while ((outLine = await p.StandardOutput.ReadLineAsync()) != null)
+                while ((outLine = p.StandardOutput.ReadLine()) != null)
                 {
                     try
                     {
@@ -62,7 +62,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                         else if (outLine.StartsWith(".tarball"))
                         {
                             details.InstallerUrl = new Uri(outLine.Replace(".tarball: ", "").Trim());
-                            details.InstallerSize = await CoreTools.GetFileSizeAsync(details.InstallerUrl);
+                            details.InstallerSize = CoreTools.GetFileSize(details.InstallerUrl);
                         }
                         else if (outLine.StartsWith(".integrity"))
                         {
@@ -89,8 +89,8 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     }
                 }
 
-                logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-                await p.WaitForExitAsync();
+                logger.AddToStdErr(p.StandardError.ReadToEnd());
+                p.WaitForExit();
                 logger.Close(p.ExitCode);
             }
             catch (Exception e)
@@ -101,17 +101,17 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return;
         }
 
-        protected override Task<CacheableIcon?> GetPackageIcon_Unsafe(IPackage package)
+        protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
 
-        protected override Task<Uri[]> GetPackageScreenshots_Unsafe(IPackage package)
+        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
 
-        protected override string? GetPackageInstallLocation_Unsafe(IPackage package)
+        protected override string? GetInstallLocation_UnSafe(IPackage package)
         {
             if (package.OverridenOptions.Scope is PackageScope.Local)
                 return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "node_modules", package.Id);
@@ -120,7 +120,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     "node_modules", package.Id);
         }
 
-        protected override async Task<string[]> GetPackageVersions_Unsafe(IPackage package)
+        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             Process p = new()
             {
@@ -144,7 +144,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             string? line;
             List<string> versions = [];
 
-            while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+            while ((line = p.StandardOutput.ReadLine()) != null)
             {
                 logger.AddToStdOut(line);
                 if (line.Contains('"'))
@@ -153,11 +153,11 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 }
             }
 
-            logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-            await p.WaitForExitAsync();
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return versions.ToArray();
+            return versions;
         }
     }
 }

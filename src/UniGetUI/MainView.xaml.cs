@@ -225,7 +225,7 @@ namespace UniGetUI.Interface
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
                 XamlRoot = XamlRoot
             };
-            UpdatesDialog.Resources["ContentDialogMaxWidth"] = 1200;
+            UpdatesDialog.Resources["ContentDialogMaxWidth"] = 1400;
             UpdatesDialog.Resources["ContentDialogMaxHeight"] = 1000;
             UpdatesDialog.SecondaryButtonText = CoreTools.Translate("Close");
             UpdatesDialog.PrimaryButtonText = CoreTools.Translate("Reset");
@@ -234,13 +234,10 @@ namespace UniGetUI.Interface
             IgnoredUpdatesManager IgnoredUpdatesPage = new();
             UpdatesDialog.PrimaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
             UpdatesDialog.Content = IgnoredUpdatesPage;
-            IgnoredUpdatesPage.Close += (s, e) => { UpdatesDialog.Hide(); };
+            IgnoredUpdatesPage.Close += (s, e) => UpdatesDialog.Hide();
 
             _ = IgnoredUpdatesPage.UpdateData();
             await MainApp.Instance.MainWindow.ShowDialogAsync(UpdatesDialog);
-
-            UpdatesDialog.Content = null;
-            UpdatesDialog = null;
         }
 
         public async Task<ContentDialogResult> ShowOperationFailedDialog(

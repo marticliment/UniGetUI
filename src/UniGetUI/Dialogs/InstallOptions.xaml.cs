@@ -125,8 +125,7 @@ namespace UniGetUI.Interface.Dialogs
         {
             IgnoreUpdatesCheckbox.IsChecked = await Package.HasUpdatesIgnoredAsync();
 
-            string[] versions = await Package.Manager.GetPackageVersions(Package);
-
+            IEnumerable<string> versions = await Task.Run(() => Package.Manager.GetPackageVersions(Package));
             foreach (string ver in versions)
             {
                 VersionComboBox.Items.Add(ver);

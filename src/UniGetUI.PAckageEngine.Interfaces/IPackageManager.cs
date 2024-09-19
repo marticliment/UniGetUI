@@ -23,7 +23,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// <summary>
         /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.
         /// </summary>
-        public Task InitializeAsync();
+        public void Initialize();
 
         /// <summary>
         /// Returns true if the manager is enabled, false otherwise
@@ -39,25 +39,25 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// Returns an array of Package objects that the manager lists for the given query. Depending on the manager, the list may
         /// also include similar results. This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public Task<IPackage[]> FindPackages(string query);
+        public IEnumerable<IPackage> FindPackages(string query);
 
         /// <summary>
         /// Returns an array of UpgradablePackage objects that represent the available updates reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public Task<IPackage[]> GetAvailableUpdates();
+        public IEnumerable<IPackage> GetAvailableUpdates();
 
         /// <summary>
         /// Returns an array of Package objects that represent the installed reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public Task<IPackage[]> GetInstalledPackages();
+        public IEnumerable<IPackage> GetInstalledPackages();
 
         /// <summary>
         /// Refreshes the Package Manager sources/indexes
         /// Each manager MUST implement this method.
         /// </summary>
-        public Task RefreshPackageIndexes();
+        public void RefreshPackageIndexes();
 
         public IManagerSource GetSourceOrDefault(string SourceName);
         public IManagerSource? GetSourceIfExists(string SourceName);

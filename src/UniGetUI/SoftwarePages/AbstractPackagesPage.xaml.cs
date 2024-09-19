@@ -317,7 +317,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                foreach (IPackage package in Loader.Packages)
+                foreach (IPackage package in Loader.Packages.ToArray())
                 {
                     AddPackageToSourcesList(package);
                 }

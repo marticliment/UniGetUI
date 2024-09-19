@@ -18,6 +18,7 @@ using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Operations;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
@@ -88,7 +89,7 @@ namespace UniGetUI
         {
             if (Settings.Get("UseUserGSudo"))
             {
-                Tuple<bool, string> gsudo_result = await CoreTools.Which("gsudo.exe");
+                Tuple<bool, string> gsudo_result = await CoreTools.WhichAsync("gsudo.exe");
                 if (gsudo_result.Item1 != false)
                 {
                     Logger.Info($"Using System GSudo at {gsudo_result.Item2}");
@@ -270,7 +271,7 @@ namespace UniGetUI
                 _ = MainWindow.DoEntryTextAnimationAsync();
 
                 // Load package managers
-                await PEInterface.Initialize();
+                await Task.Run(() => PEInterface.Initialize());
 
                 Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();

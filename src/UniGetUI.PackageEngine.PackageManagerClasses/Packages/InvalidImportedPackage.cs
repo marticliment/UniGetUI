@@ -76,7 +76,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return;
         }
 
-        public Task<SerializablePackage_v1> AsSerializable()
+        public SerializablePackage_v1 AsSerializable()
         {
             throw new NotImplementedException();
         }
@@ -112,7 +112,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             throw new NotImplementedException();
         }
 
-        public async Task<Uri> GetIconUrl()
+        public Uri GetIconUrl()
         {
             return new Uri("ms-appx:///Assets/Images/package_color.png");
         }
@@ -127,7 +127,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return null;
         }
 
-        public async Task<Uri[]> GetPackageScreenshots()
+        public IEnumerable<Uri> GetScreenshots()
         {
             return [];
         }

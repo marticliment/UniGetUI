@@ -16,10 +16,6 @@ namespace UniGetUI.PackageEngine.Managers.CargoManager;
 
 public partial class Cargo : PackageManager
 {
-    public static new string[] FALSE_PACKAGE_NAMES = [""];
-    public static new string[] FALSE_PACKAGE_IDS = [""];
-    public static new string[] FALSE_PACKAGE_VERSIONS = [""];
-
     [GeneratedRegex(@"(\w+)\s=\s""(\d+\.\d+\.\d+)""\s*#\s(.*)")]
     private static partial Regex SearchLineRegex();
 
@@ -35,7 +31,7 @@ public partial class Cargo : PackageManager
                 Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
                 "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {cargo install cargo-update; if($error.count -ne 0){pause}}\"",
                 "cargo install cargo-update",
-                async () => (await CoreTools.Which("cargo-install-update.exe")).Item1),
+                async () => (await CoreTools.WhichAsync("cargo-install-update.exe")).Item1),
         ];
 
         Capabilities = new ManagerCapabilities { };
@@ -61,7 +57,7 @@ public partial class Cargo : PackageManager
         OperationProvider = new CargoOperationProvider(this);
     }
 
-    protected override async Task<Package[]> FindPackages_UnSafe(string query)
+    protected override IEnumerable<Package> FindPackages_UnSafe(string query)
     {
         Process p = GetProcess(Status.ExecutablePath, "search -q --color=never " + query);
         IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
@@ -69,7 +65,7 @@ public partial class Cargo : PackageManager
 
         string? line;
         List<Package> Packages = [];
-        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+        while ((line = p.StandardOutput.ReadLine()) != null)
         {
             logger.AddToStdOut(line);
             var match = SearchLineRegex().Match(line);
@@ -81,8 +77,8 @@ public partial class Cargo : PackageManager
             }
         }
 
-        logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-        await p.WaitForExitAsync();
+        logger.AddToStdErr(p.StandardError.ReadToEnd());
+        p.WaitForExit();
 
         List<Package> BinPackages = [];
 
@@ -93,7 +89,7 @@ public partial class Cargo : PackageManager
             var package = Packages[i];
             try
             {
-                var versionInfo = await CratesIOClient.GetManifestVersion(package.Id, package.Version);
+                var versionInfo = CratesIOClient.GetManifestVersion(package.Id, package.Version);
                 if (versionInfo.bin_names?.Length > 0)
                 {
                     BinPackages.Add(package);
@@ -106,7 +102,7 @@ public partial class Cargo : PackageManager
 
             if (i + 1 == Packages.Count) break;
             // Crates.io api requests that we send no more than one request per second
-            await Task.Delay(Math.Max(0, 1000 - (int)((DateTime.Now - startTime).TotalMilliseconds)));
+            Task.Delay(Math.Max(0, 1000 - (int)((DateTime.Now - startTime).TotalMilliseconds))).GetAwaiter().GetResult();
         }
 
         logger.Close(p.ExitCode);
@@ -114,19 +110,19 @@ public partial class Cargo : PackageManager
         return [.. BinPackages];
     }
 
-    protected override async Task<Package[]> GetAvailableUpdates_UnSafe()
+    protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
     {
-        return await GetPackages(LoggableTaskType.ListUpdates);
+        return GetPackages(LoggableTaskType.ListUpdates);
     }
 
-    protected override async Task<Package[]> GetInstalledPackages_UnSafe()
+    protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
     {
-        return await GetPackages(LoggableTaskType.ListInstalledPackages);
+        return GetPackages(LoggableTaskType.ListInstalledPackages);
     }
 
-    protected override async Task<ManagerStatus> LoadManager()
+    protected override ManagerStatus LoadManager()
     {
-        var (found, executablePath) = await CoreTools.Which("cargo");
+        var (found, executablePath) = CoreTools.Which("cargo");
         if (!found)
         {
             return new(){ ExecutablePath = executablePath, Found = false, Version = ""};
@@ -134,8 +130,8 @@ public partial class Cargo : PackageManager
 
         Process p = GetProcess(executablePath, "--version");
         p.Start();
-        string version = (await p.StandardOutput.ReadToEndAsync()).Trim();
-        string error = await p.StandardError.ReadToEndAsync();
+        string version = p.StandardOutput.ReadToEnd().Trim();
+        string error = p.StandardError.ReadToEnd();
         if (!string.IsNullOrEmpty(error))
         {
             Logger.Error("cargo version error: " + error);
@@ -144,7 +140,7 @@ public partial class Cargo : PackageManager
         return new() { ExecutablePath = executablePath, Found = found, Version = version };
     }
 
-    private async Task<Package[]> GetPackages(LoggableTaskType taskType)
+    private IEnumerable<Package> GetPackages(LoggableTaskType taskType)
     {
         List<Package> Packages = [];
 
@@ -153,7 +149,7 @@ public partial class Cargo : PackageManager
         p.Start();
 
         string? line;
-        while ((line = await p.StandardOutput.ReadLineAsync()) != null)
+        while ((line = p.StandardOutput.ReadLine()) != null)
         {
             logger.AddToStdOut(line);
             var match = UpdateLineRegex().Match(line);
@@ -169,10 +165,10 @@ public partial class Cargo : PackageManager
                     Packages.Add(new Package(name, id, oldVersion, DefaultSource, this));
             }
         }
-        logger.AddToStdErr(await p.StandardError.ReadToEndAsync());
-        await p.WaitForExitAsync();
+        logger.AddToStdErr(p.StandardError.ReadToEnd());
+        p.WaitForExit();
         logger.Close(p.ExitCode);
-        return Packages.ToArray();
+        return Packages;
     }
 
     private Process GetProcess(string fileName, string extraArguments)
