@@ -157,7 +157,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return versions.ToArray();
+            return versions;
         }
     }
 }

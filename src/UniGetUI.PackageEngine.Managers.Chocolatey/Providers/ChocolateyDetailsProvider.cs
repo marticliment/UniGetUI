@@ -47,7 +47,7 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
             p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return versions.ToArray();
+            return versions;
         }
 
         protected override string? GetInstallLocation_UnSafe(IPackage package)

@@ -573,7 +573,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         logger.AddToStdErr(p.StandardError.ReadToEnd());
         p.WaitForExit();
         logger.Close(p.ExitCode);
-        return versions.ToArray();
+        return versions;
     }
 
     public IEnumerable<IManagerSource> GetSources_UnSafe(WinGet Manager)

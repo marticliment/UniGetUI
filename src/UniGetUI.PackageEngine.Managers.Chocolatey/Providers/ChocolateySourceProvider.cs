@@ -88,7 +88,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return sources.ToArray();
+            return sources;
         }
     }
 }

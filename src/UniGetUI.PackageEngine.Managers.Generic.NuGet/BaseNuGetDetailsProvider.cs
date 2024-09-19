@@ -177,7 +177,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
 
             results.Sort(StringComparer.OrdinalIgnoreCase);
-            return results.ToArray();
+            return results;
         }
     }
 }

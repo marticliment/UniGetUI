@@ -101,7 +101,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return sources.ToArray();
+            return sources;
         }
     }
 }

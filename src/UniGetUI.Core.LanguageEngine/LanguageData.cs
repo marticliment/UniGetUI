@@ -117,7 +117,7 @@ namespace UniGetUI.Core.Language
                 }
             }
 
-            return result.ToArray();
+            return result;
         }
     }
 

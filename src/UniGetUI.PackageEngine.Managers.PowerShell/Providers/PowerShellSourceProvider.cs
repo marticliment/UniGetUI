@@ -99,7 +99,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             p.WaitForExit();
             logger.Close(p.ExitCode);
 
-            return sources.ToArray();
+            return sources;
         }
     }
 }

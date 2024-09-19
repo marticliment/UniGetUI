@@ -91,21 +91,21 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 FoundIcons.Add(new Uri("https:" + ImageUrl.Groups[1].Value));
             }
 
-            return FoundIcons.ToArray();
+            return FoundIcons;
         }
 
         protected override string? GetInstallLocation_UnSafe(IPackage package)
         {
             foreach (var base_path in new[]
-                     {
-                         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-                         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
-                         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs"),
-                         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "WinGet", "Packages"),
-                         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "WinGet", "Packages"),
-                         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "WinGet", "Packages"),
-                         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                     })
+                 {
+                     Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                     Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+                     Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs"),
+                     Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "WinGet", "Packages"),
+                     Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "WinGet", "Packages"),
+                     Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "WinGet", "Packages"),
+                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                 })
             {
                 var path_with_name = Path.Join(base_path, package.Name);
                 if (Directory.Exists(path_with_name)) return path_with_name;
