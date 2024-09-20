@@ -32,9 +32,9 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
         {
             parameters.AddRange(["--version", $"{package.Version}"]);
         }
-        else if (operation is OperationType.Install && package.Version != "Unknown")
+        else if (operation is OperationType.Install && options.Version != "")
         {
-            parameters.AddRange(["--version", options.Version != "" ? $"{options.Version}" : $"{package.Version}"]);
+            parameters.AddRange(["--version", $"{options.Version}"]);
         }
 
         parameters.Add(options.InteractiveInstallation ? "--interactive" : "--silent");
