@@ -24742,9 +24742,9 @@
             "images": []
         },
         "microsoft-devhome": {
-            "icon": "https://i.postimg.cc/g0941961/dev-home.png",
+            "icon": "https://github.com/microsoft/devhome/blob/main/src/Assets/Preview/StoreDisplay-150.png",
             "images": [
-                "https://raw.githubusercontent.com/microsoft/devhome/main/src/Assets/Preview/StoreDisplay-150.png",
+                "https://github.com/microsoft/devhome/blob/main/src/Assets/Preview/StoreDisplay-150.png",
                 "https://i.postimg.cc/6qBmSkFB/devhome-machine-config.png",
                 "https://i.postimg.cc/tJDMHrHW/devhome-widgets.png",
                 "https://i.postimg.cc/PfMcZq8J/devhome-environment-manage.png"
@@ -35532,7 +35532,7 @@
             "images": []
         },
         "sandboxie-plus": {
-            "icon": "https://community.chocolatey.org/content/packageimages/sandboxie-plus.install.1.7.2.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/sandboxie-plus.install.1.14.9.png",
             "images": []
         },
         "sandman": {
@@ -42716,7 +42716,7 @@
             "images": []
         },
         "unity-hub": {
-            "icon": "https://community.chocolatey.org/content/packageimages/unity-hub.3.4.1.png",
+            "icon": "https://community.chocolatey.org/content/packageimages/unity-hub.3.9.1.png",
             "images": []
         },
         "unity-il2cpp": {
