@@ -81,7 +81,7 @@ namespace UniGetUI.Core.Tools
             return await Task.Run(() => Which(command));
         }
 
-        public static Tuple<bool, string> Which(string command)
+        public static Tuple<bool, string> Which(string command, bool updateEnv = true)
         {
             command = command.Replace(";", "").Replace("&", "").Trim();
             Logger.Debug($"Begin \"which\" search for command {command}");
@@ -99,24 +99,38 @@ namespace UniGetUI.Core.Tools
                     StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
                 }
             };
-            process.StartInfo = UpdateEnvironmentVariables(process.StartInfo);
-            process.Start();
-            string? line = process.StandardOutput.ReadLine();
-            string output;
-
-            if (line is null) output = "";
-            else output = line.Trim();
-
-            process.WaitForExit();
-
-            if (process.ExitCode != 0 || output == "")
+            if (updateEnv)
             {
-                Logger.ImportantInfo($"Command {command} was not found on the system");
-                return new Tuple<bool, string>(false, "");
+                process.StartInfo = UpdateEnvironmentVariables(process.StartInfo);
             }
 
-            Logger.Debug($"Command {command} was found on {output}");
-            return new Tuple<bool, string>(File.Exists(output), output);
+            try
+            {
+
+
+                process.Start();
+                string? line = process.StandardOutput.ReadLine();
+                string output;
+
+                if (line is null) output = "";
+                else output = line.Trim();
+
+                process.WaitForExit();
+
+                if (process.ExitCode != 0 || output == "")
+                {
+                    Logger.ImportantInfo($"Command {command} was not found on the system");
+                    return new Tuple<bool, string>(false, "");
+                }
+
+                Logger.Debug($"Command {command} was found on {output}");
+                return new Tuple<bool, string>(File.Exists(output), output);
+            }
+            catch
+            {
+                if (updateEnv) return Which(command, false);
+                throw;
+            }
         }
 
         /// <summary>
@@ -163,7 +177,10 @@ namespace UniGetUI.Core.Tools
             {
                 LangName = LanguageEngine.Locale;
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
 
             string Error_String = $@"
                         OS: {Environment.OSVersion.Platform}
@@ -245,6 +262,11 @@ Crash Traceback:
             return await GetFileSizeAsyncAsLong(url) / 1048576d;
         }
 
+        /// <summary>
+        /// Returns the size (in MB) of the file at the given URL
+        /// </summary>
+        /// <param name="url">a valid Uri object containing a URL to a file</param>
+        /// <returns>a double representing the size in MBs, 0 if the process fails</returns>
         public static double GetFileSize(Uri? url)
         {
             return GetFileSizeAsyncAsLong(url).GetAwaiter().GetResult() / 1048576d;
@@ -312,7 +334,10 @@ Crash Traceback:
                         double val = double.Parse(_ver, CultureInfo.InvariantCulture);
                         return val;
                     }
-                    catch { }
+                    catch
+                    {
+                        // ignored
+                    }
                 }
 
                 return res;
@@ -500,7 +525,7 @@ Crash Traceback:
         {
             foreach (DictionaryEntry env in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine))
             {
-                info.Environment[env.Key.ToString()] = env.Value?.ToString();
+                info.Environment[env.Key?.ToString() ?? "UNKNOWN"] = env.Value?.ToString();
             }
             foreach (DictionaryEntry env in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User))
             {
