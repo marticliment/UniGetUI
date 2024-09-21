@@ -333,7 +333,7 @@
   "Please wait" : "Attendi",
   "Please wait..." : "Attendi...",
   "Portable" : "Portatile",
-  "PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>" : "Il gestore pacchetti di PowerShell. Trova librerie e script per espandere le funzionalità di PowerShell<br>Contiene: <b>moduli, script, cmdlet</b>",
+  "PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>" : "Il gestore pacchetti di PowerShell. Trova librerie e script per espandere le funzionalità di PowerShell.<br>Contiene: <b>moduli, script, cmdlet</b>",
   "PreRelease" : "Versione di sviluppo",
   "Preparing packages, please wait..." : "Preparazione dei pacchetti, attendi...",
   "Publication date:" : "Data pubblicazione:",
