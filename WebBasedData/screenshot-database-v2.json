@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11707,
-        "done": 5108,
-        "packages_with_icon": 5108,
+        "done": 5109,
+        "packages_with_icon": 5109,
         "packages_with_screenshot": 584,
         "total_screenshots": 1819
     },
@@ -311,7 +311,7 @@
             "images": []
         },
         "7tsp": {
-            "icon": "",
+            "icon": "https://img.informer.com/icons/png/128/3964/3964022.png",
             "images": []
         },
         "7tt": {
@@ -4901,7 +4901,7 @@
             "images": []
         },
         "betterbird": {
-            "icon": "https://www.betterbird.eu/betterbird.svg",
+            "icon": "https://cdn.meowcat285.com/public/betterbird/betterbird.png",
             "images": []
         },
         "bettercrewlink": {
@@ -5145,7 +5145,7 @@
             "images": []
         },
         "bitdefender": {
-            "icon": "",
+            "icon": "https://cdn.meowcat285.com/public/bitdefender/bitdefendericon.png",
             "images": []
         },
         "bitdefender-usb-immunizer": {
@@ -24742,7 +24742,7 @@
             "images": []
         },
         "microsoft-devhome": {
-            "icon": "https://github.com/microsoft/devhome/blob/main/src/Assets/Preview/StoreDisplay-150.png",
+            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/DevHome.png",
             "images": [
                 "https://github.com/microsoft/devhome/blob/main/src/Assets/Preview/StoreDisplay-150.png",
                 "https://i.postimg.cc/6qBmSkFB/devhome-machine-config.png",
@@ -30808,7 +30808,7 @@
             "images": []
         },
         "pidgin": {
-            "icon": "https://community.chocolatey.org/content/packageimages/pidgin.2.14.12.png",
+            "icon": "",
             "images": []
         },
         "pidgin-otr": {
