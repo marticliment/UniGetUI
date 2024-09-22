@@ -15,6 +15,7 @@ using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
+using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -506,8 +507,6 @@ namespace UniGetUI.Interface
                 }
             }
 
-            IEnumerable<IPackage> MatchingList;
-
             Func<string, string> CaseFunc;
             if (UpperLowerCaseCheckbox.IsChecked == true)
             {
@@ -550,6 +549,7 @@ namespace UniGetUI.Interface
             }
 
             string treatedQuery = CharsFunc(QueryBlock.Text.Trim());
+            IEnumerable<IPackage> MatchingList;
 
             if (QueryIdRadio.IsChecked == true)
             {
@@ -683,7 +683,7 @@ namespace UniGetUI.Interface
             FilterPackages();
         }
 
-        protected async void ShowDetailsForPackage(IPackage? package)
+        protected void ShowDetailsForPackage(IPackage? package)
         {
             if (package == null)
             {
@@ -691,7 +691,7 @@ namespace UniGetUI.Interface
             }
 
             Logger.Warn(PAGE_ROLE.ToString());
-            await MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package, PAGE_ROLE);
+            DialogHelper.ShowPackageDetails(package, PAGE_ROLE);
         }
 
         protected void OpenPackageInstallLocation(IPackage? package)
@@ -725,7 +725,7 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            if (await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsAndContinue(package, PAGE_ROLE))
+            if (await DialogHelper.ShowInstallatOptions_Continue(package, PAGE_ROLE))
             {
                 PerformMainPackageAction(package);
             }

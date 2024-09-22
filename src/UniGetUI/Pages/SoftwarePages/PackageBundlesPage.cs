@@ -19,6 +19,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -231,8 +232,8 @@ namespace UniGetUI.Interface.SoftwarePages
             PackageDetails.Click += (s, e) =>
             {
                 IPackage? package = SelectedItem as IPackage;
-                if (package != null)
-                    _ = MainApp.Instance.MainWindow.NavigationPage.ShowPackageDetails(package, OperationType.None);
+                if (package is not null)
+                    DialogHelper.ShowPackageDetails(package, OperationType.None);
             };
 
             HelpButton.Click += (s, e) => { MainApp.Instance.MainWindow.NavigationPage.ShowHelp(); };
@@ -252,7 +253,6 @@ namespace UniGetUI.Interface.SoftwarePages
             InstallSkipHash.Click += async (s, e) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), skiphash: true);
             InstallInteractive.Click += async (s, e) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), interactive: true);
             InstallAsAdmin.Click += async (s, e) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), elevated: true);
-
 
             OpenBundle.Click += async (s, e) =>
             {
@@ -312,7 +312,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public async Task ImportAndInstallPackage(IEnumerable<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? skiphash = null)
         {
-            MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Preparing packages, please wait..."));
+            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Preparing packages, please wait..."));
             List<Package> packages_to_install = new();
             foreach (IPackage package in packages)
             {
@@ -327,7 +327,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             }
 
-            MainApp.Instance.MainWindow.HideLoadingDialog();
+            DialogHelper.HideLoadingDialog();
 
             foreach (Package package in packages_to_install)
             {
@@ -421,7 +421,7 @@ namespace UniGetUI.Interface.SoftwarePages
             if (package is ImportedPackage imported)
             {
                 HasUnsavedChanges = true;
-                await MainApp.Instance.MainWindow.NavigationPage.ShowInstallOptionsDialog_ImportedPackage(imported);
+                await DialogHelper.ShowInstallOptions_ImportedPackage(imported);
             }
         }
 
@@ -451,7 +451,7 @@ namespace UniGetUI.Interface.SoftwarePages
                         return;
                 }
 
-                MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Loading packages, please wait..."));
+                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Loading packages, please wait..."));
 
                 // Read file
                 BundleFormatType formatType;
@@ -470,7 +470,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 await AddFromBundle(fileContent, formatType);
                 HasUnsavedChanges = false;
 
-                MainApp.Instance.MainWindow.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog();
 
             }
             catch (Exception ex)
@@ -487,7 +487,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
                 };
 
-                MainApp.Instance.MainWindow.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog();
                 await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
             }
         }
@@ -502,7 +502,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 if (file != String.Empty)
                 {
                     // Loading dialog
-                    MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Saving packages, please wait..."));
+                    DialogHelper.ShowLoadingDialog(CoreTools.Translate("Saving packages, please wait..."));
 
                     // Select appropriate format
                     BundleFormatType formatType;
@@ -519,7 +519,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     // Save serialized data
                     await File.WriteAllTextAsync(file, await CreateBundle(Loader.Packages, formatType));
 
-                    MainApp.Instance.MainWindow.HideLoadingDialog();
+                    DialogHelper.HideLoadingDialog();
 
                     // Launch file
                     Process.Start(new ProcessStartInfo
@@ -546,7 +546,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
                 };
 
-                MainApp.Instance.MainWindow.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog();
                 await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
 
 

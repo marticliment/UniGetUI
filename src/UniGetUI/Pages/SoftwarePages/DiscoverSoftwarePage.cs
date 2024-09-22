@@ -11,6 +11,7 @@ using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
+using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -289,9 +290,9 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
-            MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
-            MainApp.Instance.MainWindow.HideLoadingDialog();
+            DialogHelper.HideLoadingDialog();
         }
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs e)
@@ -385,7 +386,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 Logger.Info($"Showing shared package with pId={id} and pSource={managerName}: ´{sourceName} ...");
                 MainApp.Instance.MainWindow.Activate();
-                MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait...", id));
+                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait...", id));
 
                 IPackageManager? manager = null;
 
@@ -426,7 +427,7 @@ namespace UniGetUI.Interface.SoftwarePages
                             package = candidate;
 
                 Logger.ImportantInfo($"Found package {package.Id} on manager {package.Manager.Name}, showing it...");
-                MainApp.Instance.MainWindow.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog();
                 return package;
             }
             catch (Exception ex)
@@ -442,7 +443,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot // Ensure the dialog is shown in the correct context
                 };
 
-                MainApp.Instance.MainWindow.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog();
                 await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
                 return null;
             }

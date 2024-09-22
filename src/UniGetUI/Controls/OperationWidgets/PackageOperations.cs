@@ -10,6 +10,7 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.PackageEngine.Operations
 {
@@ -253,7 +254,7 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            ContentDialogResult result = await MainApp.Instance.MainWindow.NavigationPage.ShowOperationFailedDialog(
+            ContentDialogResult result = await DialogHelper.ShowOperationFailed(
                 ProcessOutput,
                 CoreTools.Translate("{package} installation failed", new Dictionary<string, object?> { { "package", Package.Name } }),
                 CoreTools.Translate("{package} could not be installed", new Dictionary<string, object?> { { "package", Package.Name } })
@@ -326,7 +327,7 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            ContentDialogResult result = await MainApp.Instance.MainWindow.NavigationPage.ShowOperationFailedDialog(
+            ContentDialogResult result = await DialogHelper.ShowOperationFailed(
                 ProcessOutput,
                 CoreTools.Translate("{package} update failed", new Dictionary<string, object?> { { "package", Package.Name } }),
                 CoreTools.Translate("{package} could not be updated", new Dictionary<string, object?> { { "package", Package.Name } })
@@ -408,7 +409,7 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            ContentDialogResult result = await MainApp.Instance.MainWindow.NavigationPage.ShowOperationFailedDialog(
+            ContentDialogResult result = await DialogHelper.ShowOperationFailed(
                 ProcessOutput,
                 CoreTools.Translate("{package} uninstall failed", new Dictionary<string, object?> { { "package", Package.Name } }),
                 CoreTools.Translate("{package} could not be uninstalled", new Dictionary<string, object?> { { "package", Package.Name } })

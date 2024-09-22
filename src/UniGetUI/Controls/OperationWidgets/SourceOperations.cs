@@ -9,6 +9,7 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.PackageEngine.Operations
 {
@@ -167,7 +168,7 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
             );
 
-            ContentDialogResult result = await MainApp.Instance.MainWindow.NavigationPage.ShowOperationFailedDialog(
+            ContentDialogResult result = await DialogHelper.ShowOperationFailed(
                 ProcessOutput,
                 CoreTools.Translate("Source addition failed"),
                 CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
@@ -251,7 +252,7 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
             );
 
-            ContentDialogResult result = await MainApp.Instance.MainWindow.NavigationPage.ShowOperationFailedDialog(
+            ContentDialogResult result = await DialogHelper.ShowOperationFailed(
                 ProcessOutput,
                 CoreTools.Translate("Source removal failed"),
                 CoreTools.Translate("Could remove source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })

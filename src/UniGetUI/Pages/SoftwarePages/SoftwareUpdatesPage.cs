@@ -14,6 +14,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -262,7 +263,7 @@ namespace UniGetUI.Interface.SoftwarePages
             PackageDetails.Click += (s, e) => ShowDetailsForPackage(SelectedItem);
             HelpButton.Click += (s, e) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
             InstallationSettings.Click += (s, e) => ShowInstallationOptionsForPackage(SelectedItem);
-            ManageIgnored.Click += async (s, e) => await MainApp.Instance.MainWindow.NavigationPage.ManageIgnoredUpdatesDialog();
+            ManageIgnored.Click += async (s, e) => await DialogHelper.ManageIgnoredUpdates();
             IgnoreSelected.Click += async (s, e) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())

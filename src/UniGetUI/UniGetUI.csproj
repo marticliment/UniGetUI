@@ -44,7 +44,7 @@
     <EmbeddedResource Remove="Intereface\**" />
     <None Remove="Intereface\**" />
     <Page Remove="Intereface\**" />
-    <Page Update="MainView.xaml">
+    <Page Update="Pages\MainView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
@@ -281,5 +281,7 @@
 
   <ItemGroup>
     <Resource Remove="Interface\Widgets\DialogCloseButton.xaml" />
+    <Resource Remove="SoftwarePages\AbstractPackagesPage.xaml" />
+    <Resource Remove="PackageOperations\OperationControl.xaml" />
   </ItemGroup>
 </Project>

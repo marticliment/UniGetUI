@@ -12,6 +12,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -245,7 +246,7 @@ namespace UniGetUI.Interface.SoftwarePages
             ExportSelection.Click += ExportSelection_Click;
             HelpButton.Click += (s, e) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
             InstallationSettings.Click += (s, e) => ShowInstallationOptionsForPackage(SelectedItem);
-            ManageIgnored.Click += async (s, e) => await MainApp.Instance.MainWindow.NavigationPage.ManageIgnoredUpdatesDialog();
+            ManageIgnored.Click += async (s, e) => await DialogHelper.ManageIgnoredUpdates();
             IgnoreSelected.Click += async (s, e) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
@@ -315,15 +316,15 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
             MainApp.Instance.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
-            MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
-            MainApp.Instance.MainWindow.HideLoadingDialog();
+            DialogHelper.HideLoadingDialog();
 
         }
 
         public async void ConfirmAndUninstall(IPackage package, IInstallationOptions options)
         {
-            if (await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(package))
+            if (await DialogHelper.ConfirmUninstallation(package))
             {
                 MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, options));
             }
@@ -331,7 +332,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public async void ConfirmAndUninstall(IEnumerable<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? remove_data = null)
         {
-            if (await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(packages))
+            if (await DialogHelper.ConfirmUninstallation(packages))
             {
                 foreach (IPackage package in packages)
                 {
@@ -347,13 +348,13 @@ namespace UniGetUI.Interface.SoftwarePages
             try
             {
                 Logger.Debug("Starting package backup");
-                List<IPackage> packagestoExport = [];
-                foreach (Package package in Loader.Packages)
+                List<IPackage> packagesToExport = [];
+                foreach (IPackage package in Loader.Packages)
                 {
-                    packagestoExport.Add(package);
+                    packagesToExport.Add(package);
                 }
 
-                string BackupContents = await PackageBundlesPage.CreateBundle(packagestoExport.ToArray(), BundleFormatType.JSON);
+                string BackupContents = await PackageBundlesPage.CreateBundle(packagesToExport.ToArray(), BundleFormatType.JSON);
 
                 string dirName = Settings.GetValue("ChangeBackupOutputDirectory");
                 if (dirName == "")
@@ -489,7 +490,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             IPackage? package = SelectedItem;
             if (package != null &&
-                await MainApp.Instance.MainWindow.NavigationPage.ShowInstallationSettingsAndContinue(package, OperationType.Uninstall))
+                await DialogHelper.ShowInstallatOptions_Continue(package, OperationType.Uninstall))
             {
                 ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package));
             }

@@ -13,6 +13,7 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -372,7 +373,7 @@ namespace UniGetUI.Interface
 
                 if (file != string.Empty)
                 {
-                    MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+                    DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
 
                     string[] IgnoredSettings = ["OperationHistory", "CurrentSessionToken", "OldWindowGeometry"];
 
@@ -389,12 +390,12 @@ namespace UniGetUI.Interface
 
                     await File.WriteAllTextAsync(file, JsonConvert.SerializeObject(settings));
 
-                    MainApp.Instance.MainWindow.HideLoadingDialog();
+                    DialogHelper.HideLoadingDialog();
                 }
             }
             catch (Exception ex)
             {
-                MainApp.Instance.MainWindow.HideLoadingDialog();
+                DialogHelper.HideLoadingDialog();
                 Logger.Error("An error occurred when exporting settings");
                 Logger.Error(ex);
             }
@@ -514,9 +515,9 @@ namespace UniGetUI.Interface
 
         private async void DoBackup_Click(object sender, EventArgs e)
         {
-            MainApp.Instance.MainWindow.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
+            DialogHelper.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
             await MainApp.Instance.MainWindow.NavigationPage.InstalledPage.BackupPackages();
-            MainApp.Instance.MainWindow.HideLoadingDialog();
+            DialogHelper.HideLoadingDialog();
         }
 
         private void EditAutostartSettings_Click(object sender, EventArgs e)

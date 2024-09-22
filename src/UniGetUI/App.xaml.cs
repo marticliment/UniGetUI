@@ -334,7 +334,7 @@ namespace UniGetUI
                     }
                 }
             }
-            await MainWindow.ShowMissingDependenciesQuery(missing_deps);
+            await MainWindow.HandleMissingDependencies(missing_deps);
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs args)

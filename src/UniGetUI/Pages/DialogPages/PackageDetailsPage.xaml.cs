@@ -21,6 +21,7 @@ using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
+using UniGetUI.Pages.DialogPages;
 using FileSavePicker = Windows.Storage.Pickers.FileSavePicker;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -501,20 +502,19 @@ namespace UniGetUI.Interface.Dialogs
                     };
                     _ = loader();
 
-                    Logger.Debug($"Downloading installer ${file.Path.ToString()}");
+                    Logger.Debug($"Downloading installer ${file.Path}");
 
                     using HttpClient httpClient = new(CoreData.GenericHttpClientParameters);
                     httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     await using Stream s = await httpClient.GetStreamAsync(Package.Details.InstallerUrl);
-                    await using FileStream fs = File.OpenWrite(file.Path.ToString());
+                    await using FileStream fs = File.OpenWrite(file.Path);
                     await s.CopyToAsync(fs);
-                    fs.Dispose();
                     DownloadInstaller_Button.Inlines.Clear();
                     DownloadInstaller_Button.Inlines.Add(new Run { Text = CoreTools.Translate("Download installer") });
                     running = false;
                     Logger.ImportantInfo($"Installer for {Package.Id} has been downloaded successfully");
-                    MainApp.Instance.MainWindow.HideLoadingDialog();
-                    System.Diagnostics.Process.Start("explorer.exe", "/select," + $"\"{file.Path.ToString()}\"");
+                    DialogHelper.HideLoadingDialog();
+                    Process.Start("explorer.exe", "/select," + $"\"{file.Path}\"");
                 }
             }
             catch (Exception ex)
@@ -662,7 +662,7 @@ namespace UniGetUI.Interface.Dialogs
             }
             else if (action is OperationType.Uninstall)
             {
-                if (await MainApp.Instance.MainWindow.NavigationPage.ConfirmUninstallation(package))
+                if (await DialogHelper.ConfirmUninstallation(package))
                 {
                     MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, newOptions));
                 }

@@ -15,7 +15,7 @@
         <MicaBackdrop Kind="Base"/>
     </Window.SystemBackdrop>
 
-    <Grid Name="__content_root">
+    <Grid Name="ContentRoot" x:FieldModifier="public">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="SplashScreenColumn" Width="*"/>
             <ColumnDefinition x:Name="ContentColumn" Width="0"/>
@@ -23,7 +23,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="MainContentGrid" Visibility="Visible">
+        <Grid Grid.Row="0" Grid.Column="1" x:Name="MainContentGrid" Visibility="Visible" x:FieldModifier="public">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
