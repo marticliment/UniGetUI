@@ -274,7 +274,7 @@ Crash Traceback:
 
         public static async Task<long> GetFileSizeAsyncAsLong(Uri? url)
         {
-            if (url == null)
+            if (url is null)
             {
                 return 0;
             }

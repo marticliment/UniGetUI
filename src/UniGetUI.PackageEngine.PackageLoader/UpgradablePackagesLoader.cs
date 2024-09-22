@@ -57,7 +57,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                     Logger.Debug("Invalid value for UpdatesCheckInterval, using default value of 3600 seconds");
                 }
 
-                if (UpdatesTimer != null)
+                if (UpdatesTimer is not null)
                 {
                     UpdatesTimer.Stop();
                     UpdatesTimer.Dispose();

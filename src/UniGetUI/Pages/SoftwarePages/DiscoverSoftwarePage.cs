@@ -276,7 +276,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override void WhenShowingContextMenu(IPackage package)
         {
-            if (MenuAsAdmin == null || MenuInteractive == null || MenuSkipHash == null)
+            if (MenuAsAdmin is null || MenuInteractive is null || MenuSkipHash is null)
             {
                 Logger.Warn("MenuItems are null on DiscoverPackagesPage");
                 return;
@@ -302,7 +302,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs e)
         {
-            if (PackageList.SelectedItem == null)
+            if (PackageList.SelectedItem is null)
             {
                 return;
             }
@@ -313,7 +313,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -324,7 +324,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -336,7 +336,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -348,7 +348,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }

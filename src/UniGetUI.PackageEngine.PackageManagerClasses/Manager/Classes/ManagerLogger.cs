@@ -18,7 +18,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         public IProcessTaskLogger CreateNew(LoggableTaskType type, Process process)
         {
-            if (process.StartInfo == null)
+            if (process.StartInfo is null)
             {
                 throw new InvalidOperationException("Given process instance did not have a valid StartInfo value");
             }
@@ -106,7 +106,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         public void AddToStdIn(string? line)
         {
-            if (line != null)
+            if (line is not null)
             {
                 AddToStdIn(line.Split('\n'));
             }
@@ -130,7 +130,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         public void AddToStdOut(string? line)
         {
-            if (line != null)
+            if (line is not null)
             {
                 AddToStdOut(line.Split('\n'));
             }
@@ -154,7 +154,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         public void AddToStdErr(string? line)
         {
-            if (line != null)
+            if (line is not null)
             {
                 AddToStdErr(line.Split('\n'));
             }
@@ -178,12 +178,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         public override IEnumerable<string> AsColoredString(bool verbose = false)
         {
-            if (!verbose && CachedMessage != null && isComplete)
+            if (!verbose && CachedMessage is not null && isComplete)
             {
                 return CachedMessage;
             }
 
-            if (verbose && CachedVerboseMessage != null && isComplete)
+            if (verbose && CachedVerboseMessage is not null && isComplete)
             {
                 return CachedVerboseMessage;
             }
@@ -194,7 +194,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
                 $"0Subprocess executable: \"{Executable}\"",
                 $"0Command-line arguments: \"{Arguments}\"",
                 $"0Process start time: {StartTime}",
-                EndTime == null ? "2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
+                EndTime is null ? "2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
             ];
 
             if (StdIn.Count > 0)
@@ -301,7 +301,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         public void Log(string? line)
         {
-            if (line != null)
+            if (line is not null)
             {
                 Log(line.Split('\n'));
             }
@@ -325,7 +325,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         public void Error(string? line)
         {
-            if (line != null)
+            if (line is not null)
             {
                 Error(line.Split('\n'));
             }
@@ -333,7 +333,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         public void Error(Exception? e)
         {
-            if (e != null)
+            if (e is not null)
             {
                 Error(e.ToString().Split('\n'));
             }
@@ -341,12 +341,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 
         public override IEnumerable<string> AsColoredString(bool verbose = false)
         {
-            if (!verbose && CachedMessage != null && isComplete)
+            if (!verbose && CachedMessage is not null && isComplete)
             {
                 return CachedMessage;
             }
 
-            if (verbose && CachedVerboseMessage != null && isComplete)
+            if (verbose && CachedVerboseMessage is not null && isComplete)
             {
                 return CachedVerboseMessage;
             }
@@ -355,7 +355,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             [
                 $"0Logged native task on manager {Manager.Name}. Task type is {Type}",
                 $"0Process start time: {StartTime}",
-                EndTime == null ? "2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
+                EndTime is null ? "2Process end time:   UNFINISHED" : $"0Process end time:   {EndTime}",
             ];
 
             if (Info.Count > 0)

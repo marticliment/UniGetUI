@@ -99,7 +99,7 @@ namespace UniGetUI.Interface.Widgets
                         else
                         {
                             string? sourceName = SourcesCombo.SelectedValue.ToString();
-                            if (sourceName != null)
+                            if (sourceName is not null)
                             {
                                 SourceUrlTextBox.IsEnabled = SourceNameTextBox.IsEnabled = false;
                                 SourceUrlTextBox.Text = NameSourceRef[sourceName].Url.ToString();

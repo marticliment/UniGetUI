@@ -64,7 +64,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 
             bool dashesPassed = false;
             string? line;
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 try

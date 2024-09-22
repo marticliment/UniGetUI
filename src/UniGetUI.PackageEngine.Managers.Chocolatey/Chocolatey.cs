@@ -84,7 +84,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             string? line;
             List<Package> Packages = [];
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 if (!line.StartsWith("Chocolatey"))
@@ -138,7 +138,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             string? line;
             List<Package> Packages = [];
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 if (!line.StartsWith("Chocolatey"))

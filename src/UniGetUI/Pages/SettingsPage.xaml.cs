@@ -550,7 +550,7 @@ namespace UniGetUI.Interface
 
         public void EnablePackageBackupUI(bool enabled)
         {
-            if (BackupNowButton == null)
+            if (BackupNowButton is null)
             {
                 return; // This could happen when this event is triggered but the SettingsPage
             }

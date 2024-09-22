@@ -76,7 +76,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         logger.AddToStdIn(command);
 
         string? line;
-        while ((line = p.StandardOutput.ReadLine()) != null)
+        while ((line = p.StandardOutput.ReadLine()) is not null)
         {
             logger.AddToStdOut(line);
             if (!line.StartsWith("#"))
@@ -165,7 +165,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         logger.AddToStdIn(command);
 
         string? line;
-        while ((line = p.StandardOutput.ReadLine()) != null)
+        while ((line = p.StandardOutput.ReadLine()) is not null)
         {
             logger.AddToStdOut(line);
             if (!line.StartsWith("#"))
@@ -262,7 +262,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         logger.AddToStdIn(command);
 
         string? line;
-        while ((line = p.StandardOutput.ReadLine()) != null)
+        while ((line = p.StandardOutput.ReadLine()) is not null)
         {
             logger.AddToStdOut(line);
             if (!line.StartsWith("#"))
@@ -336,7 +336,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         process.Start();
 
         string? _line;
-        while ((_line = process.StandardOutput.ReadLine()) != null)
+        while ((_line = process.StandardOutput.ReadLine()) is not null)
         {
             if (_line.Trim() != "")
             {
@@ -373,7 +373,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             process.StartInfo = startInfo;
             process.Start();
 
-            while ((_line = process.StandardOutput.ReadLine()) != null)
+            while ((_line = process.StandardOutput.ReadLine()) is not null)
             {
                 if (_line.Trim() != "")
                 {
@@ -410,7 +410,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             process.StartInfo = startInfo;
             process.Start();
 
-            while ((_line = process.StandardOutput.ReadLine()) != null)
+            while ((_line = process.StandardOutput.ReadLine()) is not null)
             {
                 if (_line.Trim() != "")
                 {
@@ -554,7 +554,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         string? line;
         List<string> versions = [];
         bool DashesPassed = false;
-        while ((line = p.StandardOutput.ReadLine()) != null)
+        while ((line = p.StandardOutput.ReadLine()) is not null)
         {
             logger.AddToStdOut(line);
             if (!DashesPassed)
@@ -601,7 +601,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         bool dashesPassed = false;
         string? line;
-        while ((line = p.StandardOutput.ReadLine()) != null)
+        while ((line = p.StandardOutput.ReadLine()) is not null)
         {
             logger.AddToStdOut(line);
             try

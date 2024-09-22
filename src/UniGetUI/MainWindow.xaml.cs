@@ -433,7 +433,7 @@ namespace UniGetUI.Interface
                 }
             }
 
-            if (TrayIcon == null)
+            if (TrayIcon is null)
             {
                 Logger.Warn("Attempting to update a null taskbar icon tray, aborting!");
                 return;
@@ -446,7 +446,7 @@ namespace UniGetUI.Interface
             string RegistryValueName = "SystemUsesLightTheme";
             RegistryKey? key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath);
             object? registryValueObject = key?.GetValue(RegistryValueName) ?? null;
-            if (registryValueObject != null)
+            if (registryValueObject is not null)
             {
                 int registryValue = (int)registryValueObject;
                 theme = registryValue > 0 ? ApplicationTheme.Light : ApplicationTheme.Dark;
@@ -539,7 +539,7 @@ namespace UniGetUI.Interface
 
         public void SharePackage(IPackage? package)
         {
-            if (package == null)
+            if (package is null)
             {
                 return;
             }

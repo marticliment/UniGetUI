@@ -16,7 +16,7 @@ namespace UniGetUI.Core.Language
         {
             get
             {
-                if (__translators_list == null)
+                if (__translators_list is null)
                 {
                     __translators_list = LoadLanguageTranslatorList();
                 }
@@ -30,7 +30,7 @@ namespace UniGetUI.Core.Language
         {
             get
             {
-                if (__language_reference == null)
+                if (__language_reference is null)
                 {
                     __language_reference = LoadLanguageReference();
                 }
@@ -44,7 +44,7 @@ namespace UniGetUI.Core.Language
         {
             get
             {
-                if (__translation_percentages == null)
+                if (__translation_percentages is null)
                 {
                     __translation_percentages = LoadTranslationPercentages();
                 }
@@ -101,14 +101,14 @@ namespace UniGetUI.Core.Language
                     }
 
                     Uri? url = null;
-                    if (translator["link"] != null && translator["link"]?.ToString() != "")
+                    if (translator["link"] is not null && translator["link"]?.ToString() != "")
                     {
                         url = new Uri((translator["link"] ?? "").ToString());
                     }
 
                     Person person = new(
-                        Name: (url != null ? "@" : "") + (translator["name"] ?? "").ToString(),
-                        ProfilePicture: url != null ? new Uri(url.ToString() + ".png") : null,
+                        Name: (url is not null ? "@" : "") + (translator["name"] ?? "").ToString(),
+                        ProfilePicture: url is not null ? new Uri(url.ToString() + ".png") : null,
                         GitHubUrl: url,
                         Language: !LangShown ? LanguageData.LanguageReference[langKey.Key] : ""
                     );

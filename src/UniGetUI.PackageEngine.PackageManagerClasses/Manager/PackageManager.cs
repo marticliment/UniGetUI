@@ -296,7 +296,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 throw new InvalidOperationException($"Manager {Name} does not support custom sources but yet {MethodName} method was called.\n {Environment.StackTrace}");
             }
 
-            if (SourceProvider == null)
+            if (SourceProvider is null)
             {
                 throw new InvalidOperationException($"Manager {Name} does support custom sources but yet the source helper is null");
             }
@@ -369,7 +369,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         // BEGIN PACKAGEDEAILS-RELATED METHODS
         private void AssertPackageDetailsCompatibility(string methodName)
         {
-            if (PackageDetailsProvider == null)
+            if (PackageDetailsProvider is null)
             {
                 throw new InvalidOperationException($"Manager {Name} does not have a valid PackageDetailsProvider helper, when attemtping to call {methodName}");
             }

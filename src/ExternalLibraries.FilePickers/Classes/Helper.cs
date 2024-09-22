@@ -21,7 +21,7 @@ internal static class Helper
         {
             dialog.SetOptions(fos);
 
-            if (typeFilters != null)
+            if (typeFilters is not null)
             {
                 typeFilters.Insert(0, string.Join("; ", typeFilters));
                 COMDLG_FILTERSPEC[] filterSpecs = typeFilters.Select(f => new COMDLG_FILTERSPEC(f)).ToArray();
@@ -53,7 +53,7 @@ internal static class Helper
         {
             dialog.SetOptions(fos);
 
-            if (typeFilters != null)
+            if (typeFilters is not null)
             {
                 COMDLG_FILTERSPEC[] filterSpecs = typeFilters.Select(f => new COMDLG_FILTERSPEC(f)).ToArray();
 

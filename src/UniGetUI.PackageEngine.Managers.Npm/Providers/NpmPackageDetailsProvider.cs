@@ -42,7 +42,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 string? outLine;
                 int lineNo = 0;
                 bool ReadingMaintainer = false;
-                while ((outLine = p.StandardOutput.ReadLine()) != null)
+                while ((outLine = p.StandardOutput.ReadLine()) is not null)
                 {
                     try
                     {
@@ -144,7 +144,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             string? line;
             List<string> versions = [];
 
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 if (line.Contains('"'))

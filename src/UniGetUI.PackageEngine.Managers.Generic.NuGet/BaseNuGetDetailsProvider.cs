@@ -24,7 +24,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 string? PackageManifestContents = NuGetManifestLoader.GetManifestContent(details.Package);
                 logger.Log(PackageManifestContents);
 
-                if (PackageManifestContents == null)
+                if (PackageManifestContents is null)
                 {
                     logger.Error($"No manifest content could be loaded for package {details.Package.Id} on manager {details.Package.Manager.Name}, returning empty PackageDetails");
                     logger.Close(1);
@@ -122,7 +122,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
         {
             string? ManifestContent = NuGetManifestLoader.GetManifestContent(package);
-            if (ManifestContent == null)
+            if (ManifestContent is null)
             {
                 Logger.Warn($"No manifest content could be loaded for package {package.Id} on manager {package.Manager.Name}");
                 return null;

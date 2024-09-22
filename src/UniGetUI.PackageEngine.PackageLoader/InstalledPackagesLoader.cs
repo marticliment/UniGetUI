@@ -30,7 +30,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             {
                 package.Tag = PackageTag.Pinned;
             }
-            else if (package.GetUpgradablePackage() != null)
+            else if (package.GetUpgradablePackage() is not null)
             {
                 package.Tag = PackageTag.IsUpgradable;
             }

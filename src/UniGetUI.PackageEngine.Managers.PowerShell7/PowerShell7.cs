@@ -107,7 +107,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 
             string? line;
             List<Package> Packages = [];
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 if (line.StartsWith(">>"))
@@ -164,7 +164,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             string? line;
             List<Package> Packages = [];
             bool DashesPassed = false;
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 if (!DashesPassed)

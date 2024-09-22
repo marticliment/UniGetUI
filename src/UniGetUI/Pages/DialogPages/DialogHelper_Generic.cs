@@ -238,7 +238,7 @@ public static partial class DialogHelper
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
         };
 
-        while (Window.XamlRoot == null)
+        while (Window.XamlRoot is null)
         {
             await Task.Delay(100);
         }

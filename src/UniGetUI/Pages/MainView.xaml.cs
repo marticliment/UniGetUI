@@ -96,7 +96,7 @@ namespace UniGetUI.Interface
 
                 if (e.Key == Windows.System.VirtualKey.Tab && IS_CONTROL_PRESSED)
                 {
-                    if (CurrentPage != null)
+                    if (CurrentPage is not null)
                     {
                         if (!IS_SHIFT_PRESSED)
                         {
@@ -260,7 +260,7 @@ namespace UniGetUI.Interface
         }
         public void ShowHelp()
         {
-            if (HelpPage == null)
+            if (HelpPage is null)
             {
                 HelpPage = new HelpDialog();
             }

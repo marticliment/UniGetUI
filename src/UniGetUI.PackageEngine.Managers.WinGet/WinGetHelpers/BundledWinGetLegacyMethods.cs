@@ -37,7 +37,7 @@ internal static class BundledWinGetLegacyMethods
         int SourceIndex = -1;
         bool DashesPassed = false;
         string? line;
-        while ((line = p.StandardOutput.ReadLine()) != null)
+        while ((line = p.StandardOutput.ReadLine()) is not null)
         {
             logger.AddToStdOut(line);
             if (!DashesPassed && line.Contains("---"))
@@ -110,7 +110,7 @@ internal static class BundledWinGetLegacyMethods
         int SourceIndex = -1;
         bool DashesPassed = false;
         string? line;
-        while ((line = p.StandardOutput.ReadLine()) != null)
+        while ((line = p.StandardOutput.ReadLine()) is not null)
         {
             logger.AddToStdOut(line);
 
@@ -205,7 +205,7 @@ internal static class BundledWinGetLegacyMethods
         int NewVersionIndex = -1;
         bool DashesPassed = false;
         string? line;
-        while ((line = p.StandardOutput.ReadLine()) != null)
+        while ((line = p.StandardOutput.ReadLine()) is not null)
         {
             try
             {

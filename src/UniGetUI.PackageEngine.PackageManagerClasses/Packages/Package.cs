@@ -83,7 +83,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Source = source;
             Manager = manager;
 
-            if (options != null)
+            if (options is not null)
             {
                 _overriden_options = (OverridenInstallationOptions)options;
             }

@@ -180,7 +180,7 @@ namespace UniGetUI.Core.Data
             get
             {
                 string? dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-                if (dir != null)
+                if (dir is not null)
                 {
                     return dir;
                 }
@@ -199,7 +199,7 @@ namespace UniGetUI.Core.Data
             get
             {
                 string? filename = Process.GetCurrentProcess().MainModule?.FileName;
-                if (filename != null)
+                if (filename is not null)
                 {
                     return filename.Replace(".dll", ".exe");
                 }

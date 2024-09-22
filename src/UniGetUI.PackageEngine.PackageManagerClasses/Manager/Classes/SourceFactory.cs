@@ -26,7 +26,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         /// <returns>A valid ManagerSource</returns>
         public IManagerSource GetSourceOrDefault(string name)
         {
-            if (__reference.TryGetValue(name, out IManagerSource? source) && source != null)
+            if (__reference.TryGetValue(name, out IManagerSource? source) && source is not null)
             {
                 return source;
             }

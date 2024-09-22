@@ -67,7 +67,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             string? line;
             List<Package> Packages = [];
             bool HeaderPassed = false;
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 if (!HeaderPassed)
@@ -119,7 +119,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 p.Start();
 
                 string? line;
-                while ((line = p.StandardOutput.ReadLine()) != null)
+                while ((line = p.StandardOutput.ReadLine()) is not null)
                 {
                     logger.AddToStdOut(line);
                     string[] elements = line.Split(':');
@@ -179,7 +179,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 p.Start();
 
                 string? line;
-                while ((line = p.StandardOutput.ReadLine()) != null)
+                while ((line = p.StandardOutput.ReadLine()) is not null)
                 {
                     logger.AddToStdOut(line);
                     if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))

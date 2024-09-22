@@ -10,7 +10,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             get
             {
-                if (__helper == null)
+                if (__helper is null)
                 {
                     __helper = new BundledWinGetHelper();
                 }

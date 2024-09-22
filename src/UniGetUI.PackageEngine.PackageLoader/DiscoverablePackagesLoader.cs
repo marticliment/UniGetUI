@@ -50,11 +50,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
 #pragma warning disable
         protected override async Task WhenAddingPackage(IPackage package)
         {
-            if (package.GetUpgradablePackage() != null)
+            if (package.GetUpgradablePackage() is not null)
             {
                 package.SetTag(PackageTag.IsUpgradable);
             }
-            else if (package.GetInstalledPackage() != null)
+            else if (package.GetInstalledPackage() is not null)
             {
                 package.SetTag(PackageTag.AlreadyInstalled);
             }

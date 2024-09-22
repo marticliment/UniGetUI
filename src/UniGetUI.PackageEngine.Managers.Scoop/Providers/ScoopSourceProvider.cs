@@ -65,7 +65,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             bool DashesPassed = false;
 
             string? line;
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 try

@@ -120,7 +120,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     url = (RawInfo["urls"] as JsonArray)?[0] as JsonObject;
                 }
 
-                if (url != null)
+                if (url is not null)
                 {
                     if (url.ContainsKey("digests") && ((url["digests"] as JsonObject)?.ContainsKey("sha256") ?? false))
                     {
@@ -177,7 +177,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             string? line;
             string[] result = [];
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 if (line.Contains("Available versions:"))

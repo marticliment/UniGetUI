@@ -91,7 +91,7 @@ namespace UniGetUI.Interface.Pages
             savePicker.SuggestedFileName = CoreTools.Translate("WingetUI Log");
 
             StorageFile file = await savePicker.PickSaveFileAsync();
-            if (file != null)
+            if (file is not null)
             {
                 LogTextBox.SelectAll();
                 await File.WriteAllTextAsync(file.Path, LogTextBox.SelectedText);

@@ -38,7 +38,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
             if (Manager.Capabilities.SupportsCustomPackageIcons)
             {
                 Icon = GetIcon_UnSafe(package);
-                if (Icon == null)
+                if (Icon is null)
                 {
                     Logger.Debug($"Manager {Manager.Name} did not find a native icon for {package.Id}");
                 }
@@ -48,7 +48,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                 Logger.Debug($"Manager {Manager.Name} does not support native icons");
             }
 
-            if (Icon == null)
+            if (Icon is null)
             {
                 string url = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
                 if (url != "")
@@ -57,7 +57,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                 }
             }
 
-            if (Icon == null)
+            if (Icon is null)
             {
                 Logger.Warn($"Icon for package {package.Id} was not found, returning default icon");
                 return null;

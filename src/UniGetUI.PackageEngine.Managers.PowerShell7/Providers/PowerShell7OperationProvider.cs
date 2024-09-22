@@ -17,7 +17,7 @@ internal sealed class PowerShell7OperationProvider : BaseOperationProvider<Power
         }];
         parameters.AddRange(["-Name", package.Id, "-Confirm:$false", "-Force"]);
 
-        if (options.CustomParameters != null)
+        if (options.CustomParameters is not null)
             parameters.AddRange(options.CustomParameters);
 
         if(operation is not OperationType.Uninstall)

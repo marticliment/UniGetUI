@@ -282,9 +282,9 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override void WhenShowingContextMenu(IPackage package)
         {
-            if (MenuAsAdmin == null
-                || MenuInteractive == null
-                || MenuRemoveData == null
+            if (MenuAsAdmin is null
+                || MenuInteractive is null
+                || MenuRemoveData is null
                 || MenuInstallationOptions is null
                 || MenuUninstallThenReinstall is null
                 || MenuReinstallPackage is null
@@ -395,7 +395,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuUninstall_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -406,7 +406,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -417,7 +417,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -428,7 +428,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuRemoveData_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -439,7 +439,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuReinstall_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -450,7 +450,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -462,7 +462,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -473,7 +473,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)
         {
-            if (PackageList.SelectedItem == null)
+            if (PackageList.SelectedItem is null)
             {
                 return;
             }
@@ -489,7 +489,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package != null &&
+            if (package is not null &&
                 await DialogHelper.ShowInstallatOptions_Continue(package, OperationType.Uninstall))
             {
                 ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package));

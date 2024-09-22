@@ -47,7 +47,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             interactive = null, bool? no_integrity = null, bool? remove_data = null)
         {
             InstallationOptions instance;
-            if (OptionsCache.TryGetValue(package.GetHash(), out InstallationOptions? cached_instance) && cached_instance != null)
+            if (OptionsCache.TryGetValue(package.GetHash(), out InstallationOptions? cached_instance) && cached_instance is not null)
             {
                 instance = cached_instance;
             }
@@ -59,22 +59,22 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 OptionsCache.Add(package.GetHash(), instance);
             }
 
-            if (elevated != null)
+            if (elevated is not null)
             {
                 instance.RunAsAdministrator = (bool)elevated;
             }
 
-            if (interactive != null)
+            if (interactive is not null)
             {
                 instance.InteractiveInstallation = (bool)interactive;
             }
 
-            if (no_integrity != null)
+            if (no_integrity is not null)
             {
                 instance.SkipHashCheck = (bool)no_integrity;
             }
 
-            if (remove_data != null)
+            if (remove_data is not null)
             {
                 instance.RemoveDataOnUninstall = (bool)remove_data;
             }
@@ -151,12 +151,12 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 PreRelease = PreRelease,
                 Version = Version
             };
-            if (Architecture != null)
+            if (Architecture is not null)
             {
                 options.Architecture = CommonTranslations.ArchNames[Architecture.Value];
             }
 
-            if (InstallationScope != null)
+            if (InstallationScope is not null)
             {
                 options.InstallationScope = CommonTranslations.ScopeNames_NonLang[InstallationScope.Value];
             }
@@ -222,7 +222,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 SerializableInstallationOptions_v1? options = JsonSerializer.Deserialize<SerializableInstallationOptions_v1>(
                     inputStream, CoreData.SerializingOptions);
 
-                if (options == null)
+                if (options is null)
                 {
                     throw new InvalidOperationException("Deserialized options cannot be null!");
                 }
@@ -247,7 +247,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public override string ToString()
         {
-            string customparams = CustomParameters != null ? string.Join(",", CustomParameters) : "[]";
+            string customparams = CustomParameters is not null ? string.Join(",", CustomParameters) : "[]";
             return $"<InstallationOptions: SkipHashCheck={SkipHashCheck};" +
                    $"InteractiveInstallation={InteractiveInstallation};" +
                    $"RunAsAdministrator={RunAsAdministrator};" +

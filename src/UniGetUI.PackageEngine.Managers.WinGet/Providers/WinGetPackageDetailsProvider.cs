@@ -54,7 +54,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
 
             string? ResponseContent = GetMicrosoftStoreManifest(package);
-            if (ResponseContent == null)
+            if (ResponseContent is null)
             {
                 return [];
             }
@@ -171,7 +171,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         private static CacheableIcon? GetMicrosoftStoreIcon(IPackage package)
         {
             string? ResponseContent = GetMicrosoftStoreManifest(package);
-            if (ResponseContent == null)
+            if (ResponseContent is null)
             {
                 return null;
             }
@@ -238,7 +238,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             // Find the native package for the given Package object
             PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
-            if (Catalog == null)
+            if (Catalog is null)
             {
                 Logger.Error("[WINGET COM] Failed to get catalog " + package.Source.Name + ". Is the package local?");
                 return null;
@@ -264,7 +264,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             packageMatchFilter.ResultLimit = 1;
             FindPackagesResult SearchResult = ConnectResult.PackageCatalog.FindPackages(packageMatchFilter);
 
-            if (SearchResult.Matches == null || SearchResult.Matches.Count == 0)
+            if (SearchResult.Matches is null || SearchResult.Matches.Count == 0)
             {
                 Logger.Error("[WINGET COM] Failed to find package " + package.Id + " in catalog " + package.Source.Name);
                 return null;

@@ -216,7 +216,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <param name="package">The package to add</param>
         public void AddForeign(IPackage? package)
         {
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -235,7 +235,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public void Remove(IPackage? package)
         {
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -256,7 +256,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// <returns>A Package? object</returns>
         public IPackage? GetEquivalentPackage(IPackage? package)
         {
-            if (package == null)
+            if (package is null)
             {
                 return null;
             }
@@ -298,7 +298,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         {
             foreach (IPackage package in Packages)
             {
-                if (package.Id == id && (sourceName == null || package.Source.Name == sourceName))
+                if (package.Id == id && (sourceName is null || package.Source.Name == sourceName))
                 {
                     return package;
                 }

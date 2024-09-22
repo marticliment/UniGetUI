@@ -55,7 +55,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             p.Start();
 
             string? line;
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 try

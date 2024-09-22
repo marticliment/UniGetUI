@@ -453,7 +453,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -464,7 +464,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -476,7 +476,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -488,7 +488,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -500,7 +500,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -512,7 +512,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -523,7 +523,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -535,7 +535,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuSkipVersion_Invoked(object sender, RoutedEventArgs e)
         {
             IPackage? package = SelectedItem;
-            if (package == null)
+            if (package is null)
             {
                 return;
             }

@@ -14,7 +14,7 @@ namespace UniGetUI.Core.Classes
             if (!BlockSorting)
             {
                 base.OnCollectionChanged(e);
-                if (SortingSelector == null
+                if (SortingSelector is null
                     || e.Action == NotifyCollectionChangedAction.Remove
                     || e.Action == NotifyCollectionChangedAction.Reset)
                 {
@@ -29,7 +29,7 @@ namespace UniGetUI.Core.Classes
         {
             BlockSorting = true;
 
-            if (SortingSelector == null)
+            if (SortingSelector is null)
             {
                 throw new InvalidOperationException("SortableObservableCollection<T>.SortingSelector must not be null when sorting");
             }

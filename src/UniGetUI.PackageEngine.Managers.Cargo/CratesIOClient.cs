@@ -67,7 +67,7 @@ class CratesIOClient
     {
         var manifestUrl = new Uri($"{ApiUrl}/crates/{packageId}");
         var manifest = Fetch<CargoManifest>(manifestUrl);
-        if (manifest.crate == null)
+        if (manifest.crate is null)
         {
             throw new NullResponseException($"Null response for package {packageId}");
         }
@@ -78,7 +78,7 @@ class CratesIOClient
     {
         var manifestUrl = new Uri($"{ApiUrl}/crates/{packageId}/{version}");
         var manifest = Fetch<CargoManifestVersionWrapper>(manifestUrl);
-        if (manifest.version == null)
+        if (manifest.version is null)
         {
             throw new NullResponseException($"Null response for package {packageId}");
         }

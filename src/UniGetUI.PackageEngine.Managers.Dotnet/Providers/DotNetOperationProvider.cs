@@ -21,7 +21,7 @@ internal sealed class DotNetOperationProvider : BaseOperationProvider<DotNet>
         }];
         parameters.Add(package.Id);
 
-        if (options.CustomParameters != null)
+        if (options.CustomParameters is not null)
             parameters.AddRange(options.CustomParameters);
 
         if (options.CustomInstallLocation != "")

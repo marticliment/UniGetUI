@@ -65,7 +65,7 @@ public partial class Cargo : PackageManager
 
         string? line;
         List<Package> Packages = [];
-        while ((line = p.StandardOutput.ReadLine()) != null)
+        while ((line = p.StandardOutput.ReadLine()) is not null)
         {
             logger.AddToStdOut(line);
             var match = SearchLineRegex().Match(line);
@@ -149,7 +149,7 @@ public partial class Cargo : PackageManager
         p.Start();
 
         string? line;
-        while ((line = p.StandardOutput.ReadLine()) != null)
+        while ((line = p.StandardOutput.ReadLine()) is not null)
         {
             logger.AddToStdOut(line);
             var match = UpdateLineRegex().Match(line);

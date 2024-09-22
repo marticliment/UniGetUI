@@ -35,7 +35,7 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
 
             string? line;
             List<string> versions = [];
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 if (line.Contains("[Approved]"))

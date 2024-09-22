@@ -26,7 +26,7 @@ internal sealed class PipOperationProvider : BaseOperationProvider<Pip>
             "--no-cache"
         ]);
 
-        if (options.CustomParameters != null)
+        if (options.CustomParameters is not null)
             parameters.AddRange(options.CustomParameters);
 
         if (operation is OperationType.Uninstall)

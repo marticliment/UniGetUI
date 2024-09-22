@@ -27,7 +27,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 #pragma warning disable CS1998
         protected override async Task WhenAddingPackage(IPackage package)
         {
-            if(package.GetInstalledPackage() != null)
+            if(package.GetInstalledPackage() is not null)
                 package.SetTag(PackageTag.AlreadyInstalled);
         }
 #pragma warning restore CS1998

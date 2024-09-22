@@ -17,7 +17,7 @@ internal sealed class NpmOperationProvider : BaseOperationProvider<Npm>
         };
         parameters.Add(package.Id);
 
-        if (options.CustomParameters != null)
+        if (options.CustomParameters is not null)
             parameters.AddRange(options.CustomParameters);
 
         if (package.OverridenOptions.Scope == PackageScope.Global ||

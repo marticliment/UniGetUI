@@ -172,7 +172,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         foreach (var nativePackage in GetLocalWinGetPackages(logger))
         {
             IManagerSource source;
-            if (nativePackage.DefaultInstallVersion != null)
+            if (nativePackage.DefaultInstallVersion is not null)
             {
                 source = Manager.GetSourceOrDefault(nativePackage.DefaultInstallVersion.PackageCatalog.Info.Name);
             }
@@ -256,7 +256,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
         // Find the native package for the given Package object
         PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
-        if (Catalog == null)
+        if (Catalog is null)
         {
             logger.Error("Failed to get catalog " + package.Source.Name + ". Is the package local?");
             logger.Close(1);
@@ -283,7 +283,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         packageMatchFilter.ResultLimit = 1;
         var SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
 
-        if (SearchResult?.Result?.Matches == null ||
+        if (SearchResult?.Result?.Matches is null ||
             SearchResult.Result.Matches.Count == 0)
         {
             logger.Error("Failed to find package " + package.Id + " in catalog " + package.Source.Name);
@@ -325,7 +325,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
         // Find the native package for the given Package object
         PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(details.Package.Source.Name);
-        if (Catalog == null)
+        if (Catalog is null)
         {
             logger.Error("Failed to get catalog " + details.Package.Source.Name + ". Is the package local?");
             logger.Close(1);
@@ -353,7 +353,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         Task<FindPackagesResult> SearchResult =
             Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
 
-        if (SearchResult.Result == null || SearchResult.Result.Matches == null ||
+        if (SearchResult.Result is null || SearchResult.Result.Matches is null ||
             SearchResult.Result.Matches.Count == 0)
         {
             logger.Error("WinGet: Failed to find package " + details.Package.Id + " in catalog " +
@@ -394,7 +394,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         if (NativeDetails.ReleaseNotesUrl != "")
             details.ReleaseNotesUrl = new Uri(NativeDetails.ReleaseNotesUrl);
 
-        if (NativeDetails.Tags != null)
+        if (NativeDetails.Tags is not null)
             details.Tags = NativeDetails.Tags.ToArray();
 
         // There is no way yet to retrieve installer URLs right now so this part will be console-parsed.
@@ -423,7 +423,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
         // Retrieve the output
         string? _line;
-        while ((_line = process.StandardOutput.ReadLine()) != null)
+        while ((_line = process.StandardOutput.ReadLine()) is not null)
         {
             if (_line.Trim() != "")
             {

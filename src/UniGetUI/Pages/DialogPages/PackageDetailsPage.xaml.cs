@@ -317,17 +317,17 @@ namespace UniGetUI.Interface.Dialogs
             SetTextToItem(Author_Content, details.Author);
             SetTextToItem(Publisher_Content, details.Publisher);
 
-            if (details.License != null && details.LicenseUrl != null)
+            if (details.License is not null && details.LicenseUrl is not null)
             {
                 SetTextToItem(License_Content_Text, details.License);
                 SetTextToItem(License_Content_Uri, details.LicenseUrl, "(", ")");
             }
-            else if (details.License != null && details.LicenseUrl == null)
+            else if (details.License is not null && details.LicenseUrl is null)
             {
                 SetTextToItem(License_Content_Text, details.License);
                 SetTextToItem(License_Content_Uri, "");
             }
-            else if (details.License == null && details.LicenseUrl != null)
+            else if (details.License is null && details.LicenseUrl is not null)
             {
                 SetTextToItem(License_Content_Text, "");
                 SetTextToItem(License_Content_Uri, details.LicenseUrl);
@@ -350,7 +350,7 @@ namespace UniGetUI.Interface.Dialogs
             }
 
             SetTextToItem(InstallerHash_Content, details.InstallerHash);
-            if (details.InstallerUrl != null)
+            if (details.InstallerUrl is not null)
             {
                 SetTextToItem(InstallerSize_Content, details.InstallerSize > 0 ? $" ({details.InstallerSize} MB)" : $" ({CoreTools.Translate("Unknown size")})");
                 SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Download installer"));
@@ -380,7 +380,7 @@ namespace UniGetUI.Interface.Dialogs
 
         public void SetTextToItem(Run r, string? s)
         {
-            if (s == null)
+            if (s is null)
             {
                 r.Text = CoreTools.Translate("Not available");
                 r.Foreground = new SolidColorBrush(color: Color.FromArgb(255, 127, 127, 127));
@@ -394,7 +394,7 @@ namespace UniGetUI.Interface.Dialogs
 
         public void SetTextToItem(Hyperlink h, Uri? u, string prefix = "", string suffix = "")
         {
-            if (u == null)
+            if (u is null)
             {
                 h.Inlines.Clear();
                 h.Inlines.Add(new Run()
@@ -457,7 +457,7 @@ namespace UniGetUI.Interface.Dialogs
             bool running = true;
             try
             {
-                if (Package.Details?.InstallerUrl == null)
+                if (Package.Details?.InstallerUrl is null)
                 {
                     return;
                 }
@@ -480,7 +480,7 @@ namespace UniGetUI.Interface.Dialogs
                 savePicker.FileTypeChoices.Add("Default", [$".{extension}"]);
 
                 StorageFile file = await savePicker.PickSaveFileAsync();
-                if (file != null)
+                if (file is not null)
                 {
                     Func<Task> loader = async () =>
                     {

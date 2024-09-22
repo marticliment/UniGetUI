@@ -96,7 +96,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             string? line;
             bool DashesPassed = false;
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 if (!DashesPassed)
@@ -157,7 +157,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             string? line;
             bool DashesPassed = false;
             List<Package> Packages = [];
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 if (!DashesPassed)
@@ -219,7 +219,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             string? line;
             bool DashesPassed = false;
             List<Package> Packages = [];
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 if (!DashesPassed)

@@ -17,7 +17,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         protected override void GetDetails_UnSafe(IPackageDetails details)
         {
-            if (details.Package.Source.Url != null)
+            if (details.Package.Source.Url is not null)
             {
                 try
                 {

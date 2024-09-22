@@ -302,7 +302,7 @@ namespace UniGetUI.Interface
 
                 string iconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "package_color.png");
                 IPackage? package = PEInterface.UpgradablePackagesLoader.GetPackageForId(Request.Query.@packageId, Request.Query.@packageSource);
-                if (package != null)
+                if (package is not null)
                 {
                     Uri iconUrl = await Task.Run(package.GetIconUrl);
                     if (iconUrl.ToString() != "ms-appx:///Assets/Images/package_color.png")

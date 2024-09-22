@@ -267,7 +267,7 @@ namespace UniGetUI.Interface.SoftwarePages
             SharePackage.Click += (s, e) =>
             {
                 IPackage? package = SelectedItem;
-                if (package != null) MainApp.Instance.MainWindow.SharePackage(package);
+                if (package is not null) MainApp.Instance.MainWindow.SharePackage(package);
             };
 
         }
@@ -376,7 +376,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuInstall_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null) return;
+            if (package is null) return;
 
             await ImportAndInstallPackage([package]);
         }
@@ -384,14 +384,14 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null) return;
+            if (package is null) return;
             await ImportAndInstallPackage([package], elevated: true);
         }
 
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null) return;
+            if (package is null) return;
 
             await ImportAndInstallPackage([package], interactive: true);
 
@@ -399,14 +399,14 @@ namespace UniGetUI.Interface.SoftwarePages
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null) return;
+            if (package is null) return;
 
             await ImportAndInstallPackage([package], skiphash: true);
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)
         {
-            if (PackageList.SelectedItem == null) return;
+            if (PackageList.SelectedItem is null) return;
             MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
@@ -428,7 +428,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private void MenuRemoveFromList_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package == null) return;
+            if (package is null) return;
 
             HasUnsavedChanges = true;
             Loader.Remove(package);
@@ -442,7 +442,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 if (await AskForNewBundle() == false)
                     return;
 
-                if (file == null)
+                if (file is null)
                 {
                     // Select file
                     FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());

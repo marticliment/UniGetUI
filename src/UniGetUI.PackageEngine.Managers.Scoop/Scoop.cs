@@ -137,7 +137,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             string? line;
             IManagerSource source = Properties.DefaultSource;
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 if (line.StartsWith("'"))
@@ -204,7 +204,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             string? line;
             bool DashesPassed = false;
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 if (!DashesPassed)
@@ -271,7 +271,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             string? line;
             bool DashesPassed = false;
-            while ((line = p.StandardOutput.ReadLine()) != null)
+            while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
                 if (!DashesPassed)

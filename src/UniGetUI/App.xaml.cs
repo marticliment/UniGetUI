@@ -122,7 +122,7 @@ namespace UniGetUI
                 Logger.Error("  ⚠️⚠️⚠️  END OF UNHANDLED ERROR TRACE  ⚠️⚠️⚠️");
                 Logger.Error(" -");
                 Logger.Error(" -");
-                if (Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal || MainWindow == null)
+                if (Environment.GetCommandLineArgs().Contains("--report-all-errors") || RaiseExceptionAsFatal || MainWindow is null)
                 {
                     CoreTools.ReportFatalException(e.Exception);
                 }
@@ -179,7 +179,7 @@ namespace UniGetUI
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
-            if (appWindow != null)
+            if (appWindow is not null)
             {
                 appWindow.Closing += MainWindow.HandleClosingEvent;
             }
@@ -349,7 +349,7 @@ namespace UniGetUI
 
         public async Task ShowMainWindowFromRedirectAsync(AppActivationArguments rawArgs)
         {
-            while (MainWindow == null)
+            while (MainWindow is null)
                 await Task.Delay(100);
 
             ExtendedActivationKind kind = rawArgs.Kind;
@@ -380,7 +380,7 @@ namespace UniGetUI
 
         public async Task ShowMainWindowFromLaunchAsync()
         {
-            while (MainWindow == null)
+            while (MainWindow is null)
                 await Task.Delay(100);
 
             MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);
@@ -516,7 +516,7 @@ namespace UniGetUI
             }
             catch (Exception e)
             {
-                if (banner != null)
+                if (banner is not null)
                 {
                     banner.Title = CoreTools.Translate("An error occurred when checking for updates: ");
                     banner.Message = e.Message;

@@ -35,7 +35,7 @@ internal sealed class CargoPackageDetailsProvider(Cargo manager) : BasePackageDe
             details.HomepageUrl = new Uri(homepage);
         }
 
-        var keywords = manifest.crate.keywords == null ? [] : (string[]) manifest.crate.keywords.Clone();
+        var keywords = manifest.crate.keywords is null ? [] : (string[]) manifest.crate.keywords.Clone();
         var categories = manifest.categories?.Select(c => c.category);
         details.Tags = [.. keywords, .. categories];
 

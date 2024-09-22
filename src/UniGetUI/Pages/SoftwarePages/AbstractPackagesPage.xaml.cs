@@ -240,7 +240,7 @@ namespace UniGetUI.Interface
             SourcesTreeView.Tapped += (s, e) =>
             {
                 TreeViewNode? node = (e.OriginalSource as FrameworkElement)?.DataContext as TreeViewNode;
-                if (node == null)
+                if (node is null)
                 {
                     return;
                 }
@@ -261,7 +261,7 @@ namespace UniGetUI.Interface
             SourcesTreeView.RightTapped += (s, e) =>
             {
                 TreeViewNode? node = (e.OriginalSource as FrameworkElement)?.DataContext as TreeViewNode;
-                if (node == null)
+                if (node is null)
                 {
                     return;
                 }
@@ -311,7 +311,7 @@ namespace UniGetUI.Interface
         private void Loader_PackagesChanged(object? sender, EventArgs e)
         {
             // Ensure we are in the UI thread
-            if (Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() == null)
+            if (Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() is null)
             {
                 DispatcherQueue.TryEnqueue(() => Loader_PackagesChanged(sender, e));
                 return;
@@ -335,7 +335,7 @@ namespace UniGetUI.Interface
         private void Loader_FinishedLoading(object? sender, EventArgs e)
         {
             // Ensure we are in the UI thread
-            if (Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() == null)
+            if (Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() is null)
             {
                 DispatcherQueue.TryEnqueue(() => Loader_FinishedLoading(sender, e));
                 return;
@@ -350,7 +350,7 @@ namespace UniGetUI.Interface
         private void Loader_StartedLoading(object? sender, EventArgs e)
         {
             // Ensure we are in the UI thread
-            if (Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() == null)
+            if (Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() is null)
             {
                 DispatcherQueue.TryEnqueue(() => Loader_StartedLoading(sender, e));
                 return;
@@ -433,7 +433,7 @@ namespace UniGetUI.Interface
 
         private void FilterOptionsChanged(object sender, RoutedEventArgs e)
         {
-            if (QueryBothRadio == null)
+            if (QueryBothRadio is null)
             {
                 return;
             }
@@ -647,7 +647,7 @@ namespace UniGetUI.Interface
                 MainSubtitle.Text = FoundPackages_SubtitleText;
             }
 
-            if (ExternalCountBadge != null)
+            if (ExternalCountBadge is not null)
             {
                 ExternalCountBadge.Visibility = !Loader.Packages.Any() ? Visibility.Collapsed : Visibility.Visible;
                 ExternalCountBadge.Value = Loader.Count();
@@ -685,7 +685,7 @@ namespace UniGetUI.Interface
 
         protected void ShowDetailsForPackage(IPackage? package)
         {
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -710,7 +710,7 @@ namespace UniGetUI.Interface
 
         protected void SharePackage(IPackage? package)
         {
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -720,7 +720,7 @@ namespace UniGetUI.Interface
 
         protected async void ShowInstallationOptionsForPackage(IPackage? package)
         {
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
@@ -755,7 +755,7 @@ namespace UniGetUI.Interface
 
         protected void PerformMainPackageAction(IPackage? package)
         {
-            if (package == null)
+            if (package is null)
             {
                 return;
             }
