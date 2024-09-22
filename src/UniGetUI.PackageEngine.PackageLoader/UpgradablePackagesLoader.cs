@@ -12,7 +12,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public UpgradablePackagesLoader(IEnumerable<IPackageManager> managers)
         : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false)
         {
-            FinishedLoading += (s, e) => StartAutoCheckTimeout();
+            FinishedLoading += (_, _) => StartAutoCheckTimeout();
         }
 
         protected override async Task<bool> IsPackageValid(IPackage package)
@@ -34,13 +34,13 @@ namespace UniGetUI.PackageEngine.PackageLoader
         {
             return manager.GetAvailableUpdates();
         }
-#pragma warning disable
-        protected override async Task WhenAddingPackage(IPackage package)
+        protected override Task WhenAddingPackage(IPackage package)
         {
             package.GetAvailablePackage()?.SetTag(PackageTag.IsUpgradable);
             package.GetInstalledPackage()?.SetTag(PackageTag.IsUpgradable);
+
+            return Task.CompletedTask;
         }
-#pragma warning restore
 
         protected void StartAutoCheckTimeout()
         {

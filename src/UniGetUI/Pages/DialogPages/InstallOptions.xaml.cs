@@ -55,7 +55,7 @@ namespace UniGetUI.Interface.Dialogs
             }
 
             VersionComboBox.IsEnabled = (Operation == OperationType.Install || Operation == OperationType.None) && (Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease);
-            VersionComboBox.SelectionChanged += (s, e) =>
+            VersionComboBox.SelectionChanged += (_, _) =>
             {
                 IgnoreUpdatesCheckbox.IsChecked =
                     !(new []

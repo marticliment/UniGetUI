@@ -31,14 +31,14 @@ namespace UniGetUI.Interface.Widgets
             nameof(UrlProperty),
             typeof(Uri),
             typeof(CheckboxCard),
-            new PropertyMetadata(default(Uri), new PropertyChangedCallback((d, e) => { LoadAnnouncements(); })));
+            new PropertyMetadata(default(Uri), new PropertyChangedCallback((_, _) => { LoadAnnouncements(); })));
 
             InitializeComponent();
             DefaultStyleKey = typeof(Announcer);
-            BringIntoViewRequested += (s, e) => { LoadAnnouncements(); };
+            BringIntoViewRequested += (_, _) => { LoadAnnouncements(); };
 
             int i = 0;
-            PointerPressed += (s, e) => { if (i++ % 3 != 0) { LoadAnnouncements(); } };
+            PointerPressed += (_, _) => { if (i++ % 3 != 0) { LoadAnnouncements(); } };
 
             SetText(CoreTools.Translate("Fetching latest announcements, please wait..."));
             _textblock.TextWrapping = TextWrapping.Wrap;

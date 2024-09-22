@@ -68,8 +68,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public void WhenTagHasChanged()
         {
-#pragma warning disable CS8524
-
             ListedIconId = Package.Tag switch
             {
                 PackageTag.Default => IconType.Package,
@@ -79,7 +77,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 PackageTag.OnQueue => IconType.SandClock,
                 PackageTag.BeingProcessed => IconType.Loading,
                 PackageTag.Failed => IconType.Warning,
-                PackageTag.Unavailable => IconType.Help
+                PackageTag.Unavailable => IconType.Help,
+                _ => throw new ArgumentException($"Unknown tag {Package.Tag}"),
             };
 
             ListedComplementaryIconId = Package.Tag switch
@@ -91,7 +90,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 PackageTag.OnQueue => IconType.Empty,
                 PackageTag.BeingProcessed => IconType.Loading_Filled,
                 PackageTag.Failed => IconType.Warning_Filled,
-                PackageTag.Unavailable => IconType.Empty
+                PackageTag.Unavailable => IconType.Empty,
+                _ => throw new ArgumentException($"Unknown tag {Package.Tag}"),
             };
 
             ListedNameTooltip = Package.Tag switch
@@ -104,6 +104,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 PackageTag.BeingProcessed => CoreTools.Translate("This package is being processed"),
                 PackageTag.Failed => CoreTools.Translate("An error occurred while processing this package"),
                 PackageTag.Unavailable => CoreTools.Translate("This package is not available"),
+                _ => throw new ArgumentException($"Unknown tag {Package.Tag}"),
             } + " - " + Package.Name;
 
             ListedOpacity = Package.Tag switch
@@ -116,6 +117,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 PackageTag.BeingProcessed => .5F,
                 PackageTag.Failed => 1,
                 PackageTag.Unavailable => .5F,
+                _ => throw new ArgumentException($"Unknown tag {Package.Tag}"),
             };
 #pragma warning restore CS8524
         }

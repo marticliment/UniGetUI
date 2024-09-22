@@ -47,7 +47,7 @@ namespace UniGetUI.Interface.Widgets
             };
             infoBar.ActionButton = RestartButton;
             RestartButton.Content = CoreTools.Translate("Restart WingetUI");
-            RestartButton.Click += (s, e) => { MainApp.Instance.KillAndRestart(); };
+            RestartButton.Click += (_, _) => { MainApp.Instance.KillAndRestart(); };
             ItemsHeader = infoBar;
 
             DefaultStyleKey = typeof(SettingsExpander);

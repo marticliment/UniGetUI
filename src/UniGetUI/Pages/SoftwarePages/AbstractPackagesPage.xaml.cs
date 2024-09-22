@@ -14,7 +14,6 @@ using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -171,17 +170,17 @@ namespace UniGetUI.Interface
                 IsExpanded = false
             };
 
-            ReloadButton.Click += async (s, e) => await LoadPackages();
+            ReloadButton.Click += async (_, _) => await LoadPackages();
 
             // Handle Find Button click on the Query Block
-            FindButton.Click += (s, e) =>
+            FindButton.Click += (_, _) =>
             {
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 FilterPackages();
             };
 
             // Handle Enter pressed on the QueryBlock
-            QueryBlock.KeyUp += (s, e) =>
+            QueryBlock.KeyUp += (_, e) =>
             {
                 if (e.Key != VirtualKey.Enter)
                 {
@@ -194,7 +193,7 @@ namespace UniGetUI.Interface
             };
 
             // Handle showing the MegaQueryBlock
-            QueryBlock.TextChanged += (s, e) =>
+            QueryBlock.TextChanged += (_, _) =>
             {
                 if (InstantSearchCheckbox.IsChecked == true)
                 {
@@ -215,7 +214,7 @@ namespace UniGetUI.Interface
             };
 
             // Handle the Enter Pressed event on the MegaQueryBlock
-            MegaQueryBlock.KeyUp += (s, e) =>
+            MegaQueryBlock.KeyUp += (_, e) =>
             {
                 if (e.Key != VirtualKey.Enter)
                 {
@@ -229,7 +228,7 @@ namespace UniGetUI.Interface
             };
 
             // Hande the MegaQueryBlock search button click
-            MegaFindButton.Click += (s, e) =>
+            MegaFindButton.Click += (_, _) =>
             {
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 QueryBlock.Text = MegaQueryBlock.Text.Trim();
@@ -237,7 +236,7 @@ namespace UniGetUI.Interface
             };
 
             // Handle when a source is clicked
-            SourcesTreeView.Tapped += (s, e) =>
+            SourcesTreeView.Tapped += (_, e) =>
             {
                 TreeViewNode? node = (e.OriginalSource as FrameworkElement)?.DataContext as TreeViewNode;
                 if (node is null)
@@ -258,7 +257,7 @@ namespace UniGetUI.Interface
             };
 
             // Handle when a source is double-clicked
-            SourcesTreeView.RightTapped += (s, e) =>
+            SourcesTreeView.RightTapped += (_, e) =>
             {
                 TreeViewNode? node = (e.OriginalSource as FrameworkElement)?.DataContext as TreeViewNode;
                 if (node is null)
@@ -298,11 +297,11 @@ namespace UniGetUI.Interface
             NewVersionHeader.Content = CoreTools.Translate("New version");
             SourceHeader.Content = CoreTools.Translate("Source");
 
-            NameHeader.Click += (s, e) => SortPackagesBy(ObservablePackageCollection.Sorter.Name);
-            IdHeader.Click += (s, e) => SortPackagesBy(ObservablePackageCollection.Sorter.Id);
-            VersionHeader.Click += (s, e) => SortPackagesBy(ObservablePackageCollection.Sorter.Version);
-            NewVersionHeader.Click += (s, e) => SortPackagesBy(ObservablePackageCollection.Sorter.NewVersion);
-            SourceHeader.Click += (s, e) => SortPackagesBy(ObservablePackageCollection.Sorter.Source);
+            NameHeader.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Name);
+            IdHeader.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Id);
+            VersionHeader.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Version);
+            NewVersionHeader.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.NewVersion);
+            SourceHeader.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Source);
 
             GenerateToolBar();
             PackageList.ContextFlyout = GenerateContextMenu();

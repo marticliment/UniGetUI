@@ -28,12 +28,10 @@ namespace UniGetUI.PackageEngine.PackageLoader
             await base.ReloadPackages();
         }
 
-#pragma warning disable
         protected override async Task<bool> IsPackageValid(IPackage package)
         {
-            return true;
+            return await Task.FromResult(true);
         }
-#pragma warning restore
 
         protected override IEnumerable<IPackage> LoadPackagesFromManager(IPackageManager manager)
         {
@@ -47,8 +45,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             return  manager.FindPackages(text);
         }
 
-#pragma warning disable
-        protected override async Task WhenAddingPackage(IPackage package)
+        protected override Task WhenAddingPackage(IPackage package)
         {
             if (package.GetUpgradablePackage() is not null)
             {
@@ -58,7 +55,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             {
                 package.SetTag(PackageTag.AlreadyInstalled);
             }
+            return Task.CompletedTask;
         }
-#pragma warning restore
     }
 }

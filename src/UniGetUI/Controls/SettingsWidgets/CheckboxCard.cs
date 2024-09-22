@@ -46,8 +46,8 @@ namespace UniGetUI.Interface.Widgets
             DefaultStyleKey = typeof(CheckboxCard);
             Content = _checkbox;
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            _checkbox.Checked += (s, e) => { Settings.Set(setting_name, true ^ IS_INVERTED); StateChanged?.Invoke(this, EventArgs.Empty); };
-            _checkbox.Unchecked += (s, e) => { Settings.Set(setting_name, false ^ IS_INVERTED); StateChanged?.Invoke(this, EventArgs.Empty); };
+            _checkbox.Checked += (_, _) => { Settings.Set(setting_name, true ^ IS_INVERTED); StateChanged?.Invoke(this, EventArgs.Empty); };
+            _checkbox.Unchecked += (_, _) => { Settings.Set(setting_name, false ^ IS_INVERTED); StateChanged?.Invoke(this, EventArgs.Empty); };
         }
     }
 }

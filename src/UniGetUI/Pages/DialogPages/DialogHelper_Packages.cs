@@ -77,7 +77,7 @@ public static partial class DialogHelper
         OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
         OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
         OptionsDialog.Content = OptionsPage;
-        OptionsPage.Close += (s, e) => { OptionsDialog.Hide(); };
+        OptionsPage.Close += (_, _) => { OptionsDialog.Hide(); };
 
         ContentDialogResult result = await Window.ShowDialogAsync(OptionsDialog);
         return (await OptionsPage.GetUpdatedOptions(), result);
@@ -96,7 +96,7 @@ public static partial class DialogHelper
         DetailsDialog.Resources["ContentDialogMaxWidth"] = 8000;
         DetailsDialog.Resources["ContentDialogMaxHeight"] = 4000;
         DetailsDialog.Content = DetailsPage;
-        DetailsDialog.SizeChanged += (s, e) =>
+        DetailsDialog.SizeChanged += (_, _) =>
         {
             int hOffset = (Window.NavigationPage.ActualWidth < 1300) ? 100 : 300;
             DetailsPage.MinWidth = Math.Abs(Window.NavigationPage.ActualWidth - hOffset);
@@ -105,7 +105,7 @@ public static partial class DialogHelper
             DetailsPage.MaxHeight = Math.Abs(Window.NavigationPage.ActualHeight - 100);
         };
 
-        DetailsPage.Close += (s, e) => { DetailsDialog.Hide(); };
+        DetailsPage.Close += (_, _) => { DetailsDialog.Hide(); };
 
         await Window.ShowDialogAsync(DetailsDialog);
     }

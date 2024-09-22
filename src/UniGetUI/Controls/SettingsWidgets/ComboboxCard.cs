@@ -70,7 +70,7 @@ namespace UniGetUI.Interface.Widgets
             {
                 _combobox.SelectedIndex = 0;
             }
-            _combobox.SelectionChanged += (sender, e) =>
+            _combobox.SelectionChanged += (_, _) =>
             {
                 try
                 {

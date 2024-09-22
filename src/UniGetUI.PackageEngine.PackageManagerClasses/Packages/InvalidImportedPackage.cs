@@ -70,10 +70,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             __hash = CoreTools.HashStringAsLong(data.Name + data.Id);
             __extended_hash = CoreTools.HashStringAsLong(data.Name + data.Id + data.Version);
         }
-#pragma warning disable CS1998
-        public async Task AddToIgnoredUpdatesAsync(string version = "*")
+        public Task AddToIgnoredUpdatesAsync(string version = "*")
         {
-            return;
+            return Task.CompletedTask;
         }
 
         public SerializablePackage_v1 AsSerializable()

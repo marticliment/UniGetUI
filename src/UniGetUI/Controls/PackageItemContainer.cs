@@ -6,9 +6,7 @@ namespace UniGetUI.Interface.Widgets
 {
     public class PackageItemContainer : ItemContainer
     {
-#pragma warning disable CS8618
         public IPackage? Package { get; set; }
-        public PackageWrapper Wrapper { get; set; }
+        public PackageWrapper Wrapper { get; set; } = null!;
     }
-#pragma warning restore CS8618
 }

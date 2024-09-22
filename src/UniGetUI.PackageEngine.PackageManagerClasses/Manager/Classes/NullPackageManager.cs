@@ -243,7 +243,6 @@ namespace UniGetUI.PackageEngine.Classes.Manager
 
     internal sealed class NullPackageDetailsProvider : BasePackageDetailsProvider<IPackageManager>
     {
-#pragma warning disable CS1998
         public NullPackageDetailsProvider(IPackageManager manager) : base(manager)
         {
         }
@@ -290,5 +289,4 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             return OperationVeredict.Failed;
         }
     }
-#pragma warning restore CS1998
 }

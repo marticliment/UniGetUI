@@ -17,10 +17,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public string UpdateVerb { get; set; } = "Unset";
         public string UninstallVerb { get; set; } = "Unset";
         public IManagerSource[] KnownSources { get; set; } = [];
-        public IManagerSource DefaultSource { get; set; }
-#pragma warning disable CS8618
+        public IManagerSource DefaultSource { get; set; } = null!;
         public ManagerProperties() { }
         public ManagerProperties(bool IsDummy) { this.IsDummy = IsDummy; }
-#pragma warning restore CS8618
     }
 }

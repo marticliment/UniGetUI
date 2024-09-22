@@ -1,8 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
 using System.Xml.Serialization;
-using Windows.UI.Notifications;
-using CommunityToolkit.WinUI;
 using ExternalLibraries.Pickers;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
@@ -69,7 +67,7 @@ namespace UniGetUI.Interface.SoftwarePages
             Glyph = "\uF133"
         })
         {
-            Loader.PackagesChanged += (sender, args) =>
+            Loader.PackagesChanged += (_, _) =>
             {
                 HasUnsavedChanges = true;
             };
@@ -229,42 +227,42 @@ namespace UniGetUI.Interface.SoftwarePages
             foreach (AppBarButton toolButton in Icons.Keys)
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
 
-            PackageDetails.Click += (s, e) =>
+            PackageDetails.Click += (_, _) =>
             {
                 IPackage? package = SelectedItem as IPackage;
                 if (package is not null)
                     DialogHelper.ShowPackageDetails(package, OperationType.None);
             };
 
-            HelpButton.Click += (s, e) => { MainApp.Instance.MainWindow.NavigationPage.ShowHelp(); };
+            HelpButton.Click += (_, _) => { MainApp.Instance.MainWindow.NavigationPage.ShowHelp(); };
 
             NewBundle.Click += (s, e) =>
             {
                 _ = AskForNewBundle();
             };
 
-            RemoveSelected.Click += (s, e) =>
+            RemoveSelected.Click += (_, _) =>
             {
                 HasUnsavedChanges = true;
                 PEInterface.PackageBundlesLoader.RemoveRange(FilteredPackages.GetCheckedPackages());
             };
 
-            InstallPackages.Click += async (s, e) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages());
-            InstallSkipHash.Click += async (s, e) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), skiphash: true);
-            InstallInteractive.Click += async (s, e) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), interactive: true);
-            InstallAsAdmin.Click += async (s, e) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), elevated: true);
+            InstallPackages.Click += async (_, _) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages());
+            InstallSkipHash.Click += async (_, _) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), skiphash: true);
+            InstallInteractive.Click += async (_, _) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), interactive: true);
+            InstallAsAdmin.Click += async (_, _) => await ImportAndInstallPackage(FilteredPackages.GetCheckedPackages(), elevated: true);
 
-            OpenBundle.Click += async (s, e) =>
+            OpenBundle.Click += async (_, _) =>
             {
                 await OpenFromFile();
             };
 
-            SaveBundle.Click += async (s, e) =>
+            SaveBundle.Click += async (_, _) =>
             {
                 await SaveFile();
             };
 
-            SharePackage.Click += (s, e) =>
+            SharePackage.Click += (_, _) =>
             {
                 IPackage? package = SelectedItem;
                 if (package is not null) MainApp.Instance.MainWindow.SharePackage(package);
@@ -337,16 +335,10 @@ namespace UniGetUI.Interface.SoftwarePages
         }
 
         protected override void WhenPackageCountUpdated()
-        {
-            return;
-        }
+        { }
 
-#pragma warning disable
         protected override void WhenPackagesLoaded(ReloadReason reason)
-        {
-            return;
-        }
-#pragma warning restore
+        { }
 
         protected override void WhenShowingContextMenu(IPackage package)
         {

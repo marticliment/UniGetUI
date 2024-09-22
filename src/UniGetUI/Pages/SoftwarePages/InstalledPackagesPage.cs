@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Data;
@@ -85,7 +84,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 Text = "Open install location",
                 IconName = IconType.Launch,
             };
-            MenuOpenInstallLocation.Click += (s, e) => OpenPackageInstallLocation(SelectedItem);;
+            MenuOpenInstallLocation.Click += (_, _) => OpenPackageInstallLocation(SelectedItem);;
             menu.Items.Add(MenuOpenInstallLocation);
 
             menu.Items.Add(new MenuFlyoutSeparator());
@@ -241,13 +240,13 @@ namespace UniGetUI.Interface.SoftwarePages
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
             }
 
-            PackageDetails.Click += (s, e) => ShowDetailsForPackage(SelectedItem);
+            PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem);
 
             ExportSelection.Click += ExportSelection_Click;
-            HelpButton.Click += (s, e) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
-            InstallationSettings.Click += (s, e) => ShowInstallationOptionsForPackage(SelectedItem);
-            ManageIgnored.Click += async (s, e) => await DialogHelper.ManageIgnoredUpdates();
-            IgnoreSelected.Click += async (s, e) =>
+            HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
+            InstallationSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
+            ManageIgnored.Click += async (_, _) => await DialogHelper.ManageIgnoredUpdates();
+            IgnoreSelected.Click += async (_, _) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
@@ -256,10 +255,10 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             };
 
-            UninstallSelected.Click += (s, e) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
-            UninstallAsAdmin.Click += (s, e) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), elevated: true);
-            UninstallInteractive.Click += (s, e) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), interactive: true);
-            SharePackage.Click += (s, e) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
+            UninstallSelected.Click += (_, _) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
+            UninstallAsAdmin.Click += (_, _) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), elevated: true);
+            UninstallInteractive.Click += (_, _) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), interactive: true);
+            SharePackage.Click += (_, _) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
         protected override void WhenPackageCountUpdated()
@@ -267,7 +266,6 @@ namespace UniGetUI.Interface.SoftwarePages
             return;
         }
 
-#pragma warning disable
         protected override void WhenPackagesLoaded(ReloadReason reason)
         {
             if (!HasDoneBackup)
@@ -278,7 +276,6 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             }
         }
-#pragma warning restore
 
         protected override void WhenShowingContextMenu(IPackage package)
         {

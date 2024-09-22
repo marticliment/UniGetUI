@@ -18,7 +18,7 @@ namespace UniGetUI.Interface.Dialogs
             InitializeComponent();
             _ = InitializeWebView();
 
-            WebView.NavigationStarting += (s, e) =>
+            WebView.NavigationStarting += (_, e) =>
             {
                 ProgressBar.Visibility = Visibility.Visible;
                 if (e.Uri.ToString().Contains("marticliment.com") && !e.Uri.ToString().Contains("isWingetUIIframe"))
@@ -34,7 +34,7 @@ namespace UniGetUI.Interface.Dialogs
                     }
                 }
             };
-            WebView.NavigationCompleted += (s, e) => { ProgressBar.Visibility = Visibility.Collapsed; };
+            WebView.NavigationCompleted += (_, _) => { ProgressBar.Visibility = Visibility.Collapsed; };
         }
 
         private async Task InitializeWebView()

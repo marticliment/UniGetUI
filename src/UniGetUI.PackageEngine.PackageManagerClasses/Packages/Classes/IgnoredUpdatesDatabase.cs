@@ -1,10 +1,7 @@
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Classes.Packages.Classes;

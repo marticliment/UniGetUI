@@ -1,4 +1,3 @@
-using System.Collections;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Interfaces;
 

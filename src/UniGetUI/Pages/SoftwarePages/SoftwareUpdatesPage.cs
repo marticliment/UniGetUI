@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.AppNotifications;
@@ -71,14 +70,14 @@ namespace UniGetUI.Interface.SoftwarePages
                 IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
-            menuInstallSettings.Click += (s, e) => ShowInstallationOptionsForPackage(SelectedItem);
+            menuInstallSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
 
             MenuOpenInstallLocation = new()
             {
                 Text = "Open install location",
                 IconName = IconType.Launch,
             };
-            MenuOpenInstallLocation.Click += (s, e) => OpenPackageInstallLocation(SelectedItem);
+            MenuOpenInstallLocation.Click += (_, _) => OpenPackageInstallLocation(SelectedItem);
 
             MenuAsAdmin = new BetterMenuItem
             {
@@ -134,7 +133,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 Text = "Share this package",
                 IconName = IconType.Share,
             };
-            menuShare.Click += (o, e) => SharePackage(SelectedItem);
+            menuShare.Click += (_, _) => SharePackage(SelectedItem);
 
             BetterMenuItem menuDetails = new()
             {
@@ -142,7 +141,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 IconName = IconType.Info_Round,
                 KeyboardAcceleratorTextOverride = "Enter"
             };
-            menuDetails.Click += (o, e) => ShowDetailsForPackage(SelectedItem);
+            menuDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem);
 
             ContextMenu.Items.Add(menuInstall);
             ContextMenu.Items.Add(new MenuFlyoutSeparator());
@@ -260,11 +259,11 @@ namespace UniGetUI.Interface.SoftwarePages
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
             }
 
-            PackageDetails.Click += (s, e) => ShowDetailsForPackage(SelectedItem);
-            HelpButton.Click += (s, e) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
-            InstallationSettings.Click += (s, e) => ShowInstallationOptionsForPackage(SelectedItem);
-            ManageIgnored.Click += async (s, e) => await DialogHelper.ManageIgnoredUpdates();
-            IgnoreSelected.Click += async (s, e) =>
+            PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem);
+            HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
+            InstallationSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
+            ManageIgnored.Click += async (_, _) => await DialogHelper.ManageIgnoredUpdates();
+            IgnoreSelected.Click += async (_, _) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
@@ -273,7 +272,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             };
 
-            UpdateSelected.Click += (s, e) =>
+            UpdateSelected.Click += (_, _) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
@@ -281,7 +280,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             };
 
-            UpdateAsAdmin.Click += async (s, e) =>
+            UpdateAsAdmin.Click += async (_, _) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
@@ -290,7 +289,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             };
 
-            UpdateSkipHash.Click += async (s, e) =>
+            UpdateSkipHash.Click += async (_, _) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
@@ -299,7 +298,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             };
 
-            UpdateInteractive.Click += async (s, e) =>
+            UpdateInteractive.Click += async (_, _) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
@@ -308,7 +307,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             };
 
-            SharePackage.Click += (s, e) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
+            SharePackage.Click += (_, _) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
         protected override void WhenPackageCountUpdated()

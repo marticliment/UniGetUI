@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Text.Json.Nodes;
-using Windows.System;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -205,11 +204,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 package.Id, "current");
         }
 
-#pragma warning disable
         protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
         {
-            throw new Exception("Scoop does not support custom package versions");
+            throw new InvalidOperationException("Scoop does not support custom package versions");
         }
     }
-#pragma warning enable
 }

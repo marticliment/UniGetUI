@@ -1,6 +1,5 @@
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
-using Microsoft.Windows.AppNotifications;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -66,7 +65,7 @@ namespace UniGetUI
                 // If this is the main instance, start the app
                 if (!isRedirect)
                 {
-                    Microsoft.UI.Xaml.Application.Start((p) =>
+                    Microsoft.UI.Xaml.Application.Start((_) =>
                     {
                         DispatcherQueueSynchronizationContext context = new(
                             DispatcherQueue.GetForCurrentThread());
@@ -96,7 +95,7 @@ namespace UniGetUI
 
                 if (keyInstance.IsCurrent)
                 {
-                    keyInstance.Activated += async (s, e) =>
+                    keyInstance.Activated += async (_, e) =>
                     {
                         if (MainApp.Current is MainApp baseInstance)
                         {

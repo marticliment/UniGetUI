@@ -1,7 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Reflection.Metadata;
-using Windows.UI;
 using ExternalLibraries.Clipboard;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
@@ -12,7 +10,6 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Enums;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -217,7 +214,7 @@ namespace UniGetUI.PackageEngine.Operations
             OutputDialog.Title = CoreTools.Translate("Live output");
             OutputDialog.CloseButtonText = CoreTools.Translate("Close");
 
-            OutputDialog.SizeChanged += (s, e) =>
+            OutputDialog.SizeChanged += (_, _) =>
             {
                 if (!IsDialogOpen)
                 {
@@ -230,7 +227,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             OutputDialog.Content = LiveOutputScrollBar;
 
-            ProcessOutput.CollectionChanged += async (s, e) =>
+            ProcessOutput.CollectionChanged += async (_, _) =>
             {
                 if (!IsDialogOpen)
                 {
@@ -257,7 +254,7 @@ namespace UniGetUI.PackageEngine.Operations
             Status = OperationStatus.Pending;
 
             ActionButton.Click += ActionButtonClicked;
-            OutputViewewBlock.Click += (s, e) =>
+            OutputViewewBlock.Click += (_, _) =>
             {
                 OpenLiveViewDialog();
             };
@@ -410,7 +407,7 @@ namespace UniGetUI.PackageEngine.Operations
                 ProcessOutput.Add(new("Working Directory      : " + Process.StartInfo.WorkingDirectory, OutputLine.LineType.Header));
                 ProcessOutput.Add(new("Process Start Time     : " + DateTime.Now, OutputLine.LineType.Header));
 
-                Process.OutputDataReceived += (s, e) => DispatcherQueue.TryEnqueue(async () =>
+                Process.OutputDataReceived += (_, e) => DispatcherQueue.TryEnqueue(async () =>
                 {
                     if (e.Data?.Trim() is string line && line != String.Empty)
                     {
@@ -428,7 +425,7 @@ namespace UniGetUI.PackageEngine.Operations
                     }
                 });
 
-                Process.ErrorDataReceived += (s, e) => DispatcherQueue.TryEnqueue(async () =>
+                Process.ErrorDataReceived += (_, e) => DispatcherQueue.TryEnqueue(async () =>
                 {
                     if (e.Data?.Trim() is string line && line != String.Empty)
                     {

@@ -131,7 +131,7 @@ namespace UniGetUI.Interface
         public void BuildShareApi()
         {
             // Show package from https://marticliment.com/unigetui/share
-            Get("/v2/show-package", (parameters) =>
+            Get("/v2/show-package", (_) =>
             {
                 try
                 {
@@ -152,7 +152,7 @@ namespace UniGetUI.Interface
             });
 
             // Basic entrypoint to know if UniGetUI is running
-            Get("/is-running", (parameters) =>
+            Get("/is-running", (_) =>
             {
                 return "{\"status\": \"success\"}";
             });
@@ -165,7 +165,7 @@ namespace UniGetUI.Interface
         public void BuildV1WidgetsApi()
         {
             // Basic version check
-            Get("/widgets/v1/get_wingetui_version", (parameters) =>
+            Get("/widgets/v1/get_wingetui_version", (_) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                 {
@@ -216,7 +216,7 @@ namespace UniGetUI.Interface
             });
 
             // Open UniGetUI (as it was)
-            Get("/widgets/v1/open_wingetui", (parameters) =>
+            Get("/widgets/v1/open_wingetui", (_) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                 {
@@ -228,7 +228,7 @@ namespace UniGetUI.Interface
             });
 
             // Open UniGetUI with the Updates page shown
-            Get("/widgets/v1/view_on_wingetui", (parameters) =>
+            Get("/widgets/v1/view_on_wingetui", (_) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                 {
@@ -240,7 +240,7 @@ namespace UniGetUI.Interface
             });
 
             // Update a specific package given its Id
-            Get("/widgets/v1/update_package", (parameters) =>
+            Get("/widgets/v1/update_package", (_) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                 {
@@ -257,7 +257,7 @@ namespace UniGetUI.Interface
             });
 
             // Update all packages
-            Get("/widgets/v1/update_all_packages", (parameters) =>
+            Get("/widgets/v1/update_all_packages", (_) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                 {
@@ -270,7 +270,7 @@ namespace UniGetUI.Interface
             });
 
             // Update all packages for a specific manager
-            Get("/widgets/v1/update_all_packages_for_source", (parameters) =>
+            Get("/widgets/v1/update_all_packages_for_source", (_) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                 {
@@ -288,7 +288,7 @@ namespace UniGetUI.Interface
             });
 
             // Update all packages for a specific manager
-            Get("/widgets/v2/get_icon_for_package", async (parameters) =>
+            Get("/widgets/v2/get_icon_for_package", async (_) =>
             {
                 if (!BackgroundApiRunner.AuthenticateToken(Request.Query.@token))
                 {

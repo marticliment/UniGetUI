@@ -1,13 +1,11 @@
 using System.Globalization;
 using System.Net;
 using System.Text.RegularExpressions;
-using ABI.Windows.UI.Composition;
 using Microsoft.Management.Deployment;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUIManagers = UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager

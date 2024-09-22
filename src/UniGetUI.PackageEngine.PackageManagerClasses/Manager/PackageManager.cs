@@ -1,13 +1,10 @@
-using ABI.Windows.Management.Update;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.Classes.Manager;
-using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
-using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -276,12 +273,11 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Refreshes the Package Manager sources/indexes
         /// Each manager MUST implement this method.
         /// </summary>
-#pragma warning disable CS1998
         public virtual async void RefreshPackageIndexes()
         {
             Logger.Debug($"Manager {Name} has not implemented RefreshPackageIndexes");
+            await Task.CompletedTask;
         }
-#pragma warning restore CS1998
 
         // BEGIN SOURCE-RELATED METHODS
 
@@ -301,7 +297,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 throw new InvalidOperationException($"Manager {Name} does support custom sources but yet the source helper is null");
             }
         }
-#pragma warning disable CS8602
         public IManagerSource GetSourceOrDefault(string SourceName)
         {
             AssertSourceCompatibility("GetSourceFromName");
@@ -363,7 +358,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 return [];
             }
         }
-#pragma warning restore CS8602
         // END SOURCE-RELATED METHODS
 
         // BEGIN PACKAGEDEAILS-RELATED METHODS
@@ -374,7 +368,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 throw new InvalidOperationException($"Manager {Name} does not have a valid PackageDetailsProvider helper, when attemtping to call {methodName}");
             }
         }
-#pragma warning disable CS8602
 
         public void GetPackageDetails(IPackageDetails details)
         {
@@ -382,7 +375,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageDetails");
-                PackageDetailsProvider.GetPackageDetails(details);
+                PackageDetailsProvider?.GetPackageDetails(details);
                 Logger.Info($"Loaded details for package {details.Package.Id} on manager {Name}");
             }
             catch (Exception e)
@@ -394,13 +387,17 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         public IEnumerable<string> GetPackageVersions(IPackage package)
         {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageVersions was called"); return []; }
+            if (!IsReady())
+            {
+                Logger.Warn($"Manager {Name} is disabled but yet GetPackageVersions was called");
+                return [];
+            }
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageVersions");
                 if (package.Manager.Capabilities.SupportsCustomVersions)
                 {
-                    return PackageDetailsProvider.GetPackageVersions(package);
+                    return PackageDetailsProvider?.GetPackageVersions(package) ?? [];
                 }
 
                 return [];
@@ -418,7 +415,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageIcon");
-                return PackageDetailsProvider.GetPackageIconUrl(package);
+                return PackageDetailsProvider?.GetPackageIconUrl(package);
             }
             catch (Exception e)
             {
@@ -433,7 +430,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             try
             {
                 AssertPackageDetailsCompatibility("GetPackageScreenshots");
-                return PackageDetailsProvider.GetPackageScreenshotsUrl(package);
+                return PackageDetailsProvider?.GetPackageScreenshotsUrl(package) ?? [];
             }
             catch (Exception e)
             {
@@ -445,7 +442,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
         public string? GetPackageInstallLocation(IPackage package)
         {
-            return PackageDetailsProvider.GetPackageInstallLocation(package);
+            return PackageDetailsProvider?.GetPackageInstallLocation(package);
         }
         // END PACKAGEDETAILS-RELATED METHODS
 

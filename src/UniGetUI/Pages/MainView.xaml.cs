@@ -2,8 +2,6 @@ using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -12,13 +10,7 @@ using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Pages.LogPage;
 using UniGetUI.Interface.SoftwarePages;
 using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.PackageClasses;
-using UniGetUI.PackageEngine.Serializable;
 using Windows.UI.Core;
-using Microsoft.UI;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -178,7 +170,7 @@ namespace UniGetUI.Interface
             (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
             MoreNavButtonMenu.ShowAt(MoreNavButton, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Standard });
 
-            MoreNavButtonMenu.Closed += (s, e) =>
+            MoreNavButtonMenu.Closed += (_, _) =>
             {
                 foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
                 {

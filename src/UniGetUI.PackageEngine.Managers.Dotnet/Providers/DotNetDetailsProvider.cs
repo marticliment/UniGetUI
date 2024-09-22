@@ -1,7 +1,4 @@
-using System.Diagnostics;
-using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 
 namespace UniGetUI.PackageEngine.Managers.Chocolatey

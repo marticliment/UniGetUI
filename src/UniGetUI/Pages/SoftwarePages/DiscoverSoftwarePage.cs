@@ -199,12 +199,12 @@ namespace UniGetUI.Interface.SoftwarePages
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
             }
 
-            PackageDetails.Click += (s, e) => ShowDetailsForPackage(SelectedItem);
+            PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem);
             ExportSelection.Click += ExportSelection_Click;
-            HelpButton.Click += (s, e) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
-            InstallationSettings.Click += (s, e) => ShowInstallationOptionsForPackage(SelectedItem);
+            HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
+            InstallationSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
 
-            InstallSelected.Click += (s, e) =>
+            InstallSelected.Click += (_, _) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
@@ -212,7 +212,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             };
 
-            InstallAsAdmin.Click += async (s, e) =>
+            InstallAsAdmin.Click += async (_, _) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
@@ -221,7 +221,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             };
 
-            InstallSkipHash.Click += async (s, e) =>
+            InstallSkipHash.Click += async (_, _) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
@@ -230,7 +230,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             };
 
-            InstallInteractive.Click += async (s, e) =>
+            InstallInteractive.Click += async (_, _) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
@@ -239,7 +239,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             };
 
-            SharePackage.Click += (s, e) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
+            SharePackage.Click += (_, _) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
         public override async Task LoadPackages()
@@ -263,16 +263,10 @@ namespace UniGetUI.Interface.SoftwarePages
         }
 
         protected override void WhenPackageCountUpdated()
-        {
-            return;
-        }
+        { }
 
-#pragma warning disable
         protected override void WhenPackagesLoaded(ReloadReason reason)
-        {
-            return;
-        }
-#pragma warning restore
+        { }
 
         protected override void WhenShowingContextMenu(IPackage package)
         {

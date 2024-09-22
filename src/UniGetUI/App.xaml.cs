@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
-using Windows.Security.Authentication.Web.Provider;
 using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -24,7 +23,7 @@ using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 namespace UniGetUI
 {
-    public partial class MainApp : Application
+    public partial class MainApp
     {
         public class __tooltip_options
         {
@@ -42,18 +41,16 @@ namespace UniGetUI
 
         public bool RaiseExceptionAsFatal = true;
 
-        public Interface.SettingsInterface settings;
-        public MainWindow MainWindow;
-        public ThemeListener ThemeListener;
+        public SettingsInterface settings = null!;
+        public MainWindow MainWindow = null!;
+        public ThemeListener ThemeListener = null!;
 
         private readonly BackgroundApiRunner BackgroundApi = new();
-#pragma warning disable CS8618
-        public static MainApp Instance;
+        public static MainApp Instance = null!;
         public __tooltip_options TooltipStatus = new();
 
         public MainApp()
         {
-#pragma warning restore CS8618
             try
             {
                 Instance = this;
@@ -110,7 +107,7 @@ namespace UniGetUI
 
         private void RegisterErrorHandling()
         {
-            UnhandledException += (sender, e) =>
+            UnhandledException += (_, e) =>
             {
                 string message = $"Unhandled Exception raised: {e.Message}";
                 string stackTrace = $"Stack Trace: \n{e.Exception.StackTrace}";
@@ -173,7 +170,7 @@ namespace UniGetUI
             {
                 BlockLoading = true
             };
-            MainWindow.Closed += (sender, args) => DisposeAndQuit(0);
+            MainWindow.Closed += (_, _) => DisposeAndQuit(0);
 
             nint hWnd = MainWindow.GetWindowHandle();
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
@@ -231,34 +228,34 @@ namespace UniGetUI
 
                 // Bind the background api to the main interface
 
-                BackgroundApi.OnOpenWindow += (s, e) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                BackgroundApi.OnOpenWindow += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
                     MainWindow.Activate();
                 });
 
-                BackgroundApi.OnOpenUpdatesPage += (s, e) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                BackgroundApi.OnOpenUpdatesPage += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
                     MainWindow?.NavigationPage?.UpdatesNavButton.ForceClick();
                     MainWindow?.Activate();
                 });
 
-                BackgroundApi.OnShowSharedPackage += (s, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                BackgroundApi.OnShowSharedPackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
                     MainWindow?.NavigationPage?.DiscoverPage.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
                     MainWindow?.Activate();
                 });
 
-                BackgroundApi.OnUpgradeAll += (s, e) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                BackgroundApi.OnUpgradeAll += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
                     MainWindow?.NavigationPage?.UpdatesPage.UpdateAll();
                 });
 
-                BackgroundApi.OnUpgradeAllForManager += (s, manager) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                BackgroundApi.OnUpgradeAllForManager += (_, manager) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
                     MainWindow?.NavigationPage?.UpdatesPage.UpdateAllPackagesForManager(manager);
                 });
 
-                BackgroundApi.OnUpgradePackage += (s, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                BackgroundApi.OnUpgradePackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
                     MainWindow?.NavigationPage?.UpdatesPage.UpdatePackageForId(package);
                 });
@@ -278,7 +275,7 @@ namespace UniGetUI
                 RaiseExceptionAsFatal = false;
 
                 MainWindow.ProcessCommandLineParameters();
-                MainWindow.ParametersToProcess.ItemEnqueued += (s, e) =>
+                MainWindow.ParametersToProcess.ItemEnqueued += (_, _) =>
                 {
                     MainWindow.DispatcherQueue.TryEnqueue(MainWindow.ProcessCommandLineParameters);
                 };
@@ -295,8 +292,10 @@ namespace UniGetUI
         {
             // Check for missing dependencies on package managers
             List<ManagerDependency> missing_deps = [];
-            foreach (PackageManager manager in PEInterface.Managers)
+            foreach (IPackageManager imanager in PEInterface.Managers)
             {
+                if (imanager is not PackageManager manager) continue;
+
                 if (!manager.IsReady())
                 {
                     continue;
@@ -403,7 +402,7 @@ namespace UniGetUI
             {
                 Logger.Debug("Starting update check");
 
-                string fileContents = "";
+                string fileContents;
 
                 using (HttpClient client = new(CoreData.GenericHttpClientParameters))
                 {
@@ -460,7 +459,7 @@ namespace UniGetUI
                         {
                             Content = CoreTools.Translate("Update now")
                         };
-                        banner.ActionButton.Click += (sender, args) => { MainWindow.HideWindow(); };
+                        banner.ActionButton.Click += (_, _) => { MainWindow.HideWindow(); };
                         banner.Severity = InfoBarSeverity.Success;
                         banner.IsOpen = true;
                         banner.IsClosable = true;

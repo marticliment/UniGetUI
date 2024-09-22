@@ -1,7 +1,6 @@
 using UniGetUI.Core.Logging;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
@@ -12,12 +11,10 @@ namespace UniGetUI.PackageEngine.PackageLoader
         {
         }
 
-#pragma warning disable
-        protected override async Task<bool> IsPackageValid(IPackage package)
+        protected override Task<bool> IsPackageValid(IPackage package)
         {
-            return true;
+            return Task.FromResult(true);
         }
-#pragma warning restore
 
         protected override IEnumerable<IPackage> LoadPackagesFromManager(IPackageManager manager)
         {

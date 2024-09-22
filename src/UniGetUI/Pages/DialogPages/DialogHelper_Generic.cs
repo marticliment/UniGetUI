@@ -116,15 +116,15 @@ public static partial class DialogHelper
         {
             c.Content = CoreTools.Translate("Do not show this dialog again for {0}", dep_name);
             c.IsChecked = false;
-            c.Checked += (s, e) => Settings.Set(DEP_SKIPPED_PREF, true);
-            c.Unchecked += (s, e) => Settings.Set(DEP_SKIPPED_PREF, false);
+            c.Checked += (_, _) => Settings.Set(DEP_SKIPPED_PREF, true);
+            c.Unchecked += (_, _) => Settings.Set(DEP_SKIPPED_PREF, false);
             p.Children.Add(c);
         }
 
         ProgressBar progress = new() { IsIndeterminate = false, Opacity = .0F };
         p.Children.Add(progress);
 
-        dialog.PrimaryButtonClick += async (s, e) =>
+        dialog.PrimaryButtonClick += async (_, _) =>
         {
             if (!has_installed)
             {
@@ -200,7 +200,7 @@ public static partial class DialogHelper
             }
         };
 
-        dialog.Closing += (s, e) =>
+        dialog.Closing += (_, e) =>
         {
             e.Cancel = block_closing;
             block_closing = false;
@@ -224,7 +224,7 @@ public static partial class DialogHelper
         IgnoredUpdatesManager IgnoredUpdatesPage = new();
         UpdatesDialog.PrimaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
         UpdatesDialog.Content = IgnoredUpdatesPage;
-        IgnoredUpdatesPage.Close += (s, e) => UpdatesDialog.Hide();
+        IgnoredUpdatesPage.Close += (_, _) => UpdatesDialog.Hide();
 
         _ = IgnoredUpdatesPage.UpdateData();
         await Window.ShowDialogAsync(UpdatesDialog);
@@ -283,7 +283,7 @@ public static partial class DialogHelper
         ReleaseNotes? notes = new();
         notes.Close += (_, _) => NotesDialog.Hide();
         NotesDialog.Content = notes;
-        NotesDialog.SizeChanged += (s, e) =>
+        NotesDialog.SizeChanged += (_, _) =>
         {
             notes.MinWidth = Math.Abs(Window.NavigationPage.ActualWidth - 300);
             notes.MinHeight = Math.Abs(Window.NavigationPage.ActualHeight - 200);

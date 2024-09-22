@@ -76,17 +76,16 @@ namespace UniGetUI.PackageEngine.Operations
             return startInfo;
         }
 
-        protected override async Task HandleCancelation()
+        protected override Task HandleCancelation()
         {
             Package.SetTag(PackageTag.Default);
+            return Task.CompletedTask;
         }
 
-#pragma warning disable CS1998
-        protected sealed override async Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
+        protected sealed override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
-            return Package.Manager.GetOperationResult(Package, Role, Output, ReturnCode);
+            return Task.FromResult(Package.Manager.GetOperationResult(Package, Role, Output, ReturnCode));
         }
-#pragma warning restore CS1998
 
         protected override async Task WaitForAvailability()
         {

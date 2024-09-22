@@ -12,25 +12,23 @@ namespace UniGetUI.PackageEngine.PackageLoader
         {
         }
 
-#pragma warning disable
-        protected override async Task<bool> IsPackageValid(IPackage package)
+        protected override Task<bool> IsPackageValid(IPackage package)
         {
-            return true;
+            return Task.FromResult(true);
         }
-#pragma warning restore
 
         protected override IEnumerable<IPackage> LoadPackagesFromManager(IPackageManager manager)
         {
             return [];
         }
 
-#pragma warning disable CS1998
-        protected override async Task WhenAddingPackage(IPackage package)
+        protected override Task WhenAddingPackage(IPackage package)
         {
             if(package.GetInstalledPackage() is not null)
                 package.SetTag(PackageTag.AlreadyInstalled);
+
+            return Task.CompletedTask;
         }
-#pragma warning restore CS1998
 
         public async Task AddPackagesAsync(IEnumerable<IPackage> foreign_packages)
         {

@@ -109,7 +109,7 @@ namespace UniGetUI.Interface
             }
 
             ButtonCard Winget_ResetSources = new() { Text = CoreTools.AutoTranslated("Reset Winget sources (might help if no packages are listed)"), ButtonText = CoreTools.AutoTranslated("Reset") };
-            Winget_ResetSources.Click += (s, e) =>
+            Winget_ResetSources.Click += (_, _) =>
             {
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), CoreTools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
             };
@@ -119,7 +119,7 @@ namespace UniGetUI.Interface
                 Text = CoreTools.Translate("Allow using class registered with lower trust"),
                 SettingName = "AllowLowerTrustRegistration",
             };
-            Winget_AllowLowerTrustRegistration.StateChanged += (s, e) => PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
+            Winget_AllowLowerTrustRegistration.StateChanged += (_, _) => PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
             Winget_AllowLowerTrustRegistration.IsEnabled = !Settings.Get("ForceLegacyBundledWinGet");
 
             CheckboxCard Winget_DisableCOM = new()
@@ -127,7 +127,7 @@ namespace UniGetUI.Interface
                 Text = CoreTools.Translate("Use the WinGet PowerShell Module instead of the WinGet COM API"),
                 SettingName = "ForceUsePowerShellModules",
             };
-            Winget_DisableCOM.StateChanged += (s, e) => PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
+            Winget_DisableCOM.StateChanged += (_, _) => PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
             Winget_DisableCOM.IsEnabled = !Settings.Get("ForceLegacyBundledWinGet");
 
             CheckboxCard Winget_UseBundled = new()
@@ -135,7 +135,7 @@ namespace UniGetUI.Interface
                 Text = $"{CoreTools.Translate("Use bundled WinGet instead of system WinGet")} ({CoreTools.Translate("This may help if WinGet packages are not shown")})",
                 SettingName = "ForceLegacyBundledWinGet"
             };
-            Winget_UseBundled.StateChanged += (s, e) =>
+            Winget_UseBundled.StateChanged += (_, _) =>
             {
                 PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
                 Winget_DisableCOM.IsEnabled = !Settings.Get("ForceLegacyBundledWinGet");
@@ -147,19 +147,19 @@ namespace UniGetUI.Interface
             ExtraSettingsCards[PEInterface.WinGet].Add(Winget_ResetSources);
 
             ButtonCard Scoop_Install = new() { Text = CoreTools.AutoTranslated("Install Scoop"), ButtonText = CoreTools.AutoTranslated("Install") };
-            Scoop_Install.Click += (s, e) =>
+            Scoop_Install.Click += (_, _) =>
             {
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"), CoreTools.Translate("Scoop Installer - WingetUI"));
                 PackageManagerExpanders[PEInterface.Scoop].ShowRestartRequiredBanner();
             };
             ButtonCard Scoop_Uninstall = new() { Text = CoreTools.AutoTranslated("Uninstall Scoop (and its packages)"), ButtonText = CoreTools.AutoTranslated("Uninstall") };
-            Scoop_Uninstall.Click += (s, e) =>
+            Scoop_Uninstall.Click += (_, _) =>
             {
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"), CoreTools.Translate("Scoop Uninstaller - WingetUI"));
                 PackageManagerExpanders[PEInterface.Scoop].ShowRestartRequiredBanner();
             };
             ButtonCard Scoop_ResetAppCache = new() { Text = CoreTools.AutoTranslated("Run cleanup and clear cache"), ButtonText = CoreTools.AutoTranslated("Run") };
-            Scoop_ResetAppCache.Click += (s, e) =>
+            Scoop_ResetAppCache.Click += (_, _) =>
             {
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"), CoreTools.Translate("Clearing Scoop cache - WingetUI"), RunAsAdmin: true);
             };
@@ -169,7 +169,7 @@ namespace UniGetUI.Interface
             ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_ResetAppCache);
 
             CheckboxCard Chocolatey_SystemChoco = new() { Text = CoreTools.AutoTranslated("Use system Chocolatey"), SettingName = "UseSystemChocolatey" };
-            Chocolatey_SystemChoco.StateChanged += (s, e) =>
+            Chocolatey_SystemChoco.StateChanged += (_, _) =>
             {
                 PackageManagerExpanders[PEInterface.Chocolatey].ShowRestartRequiredBanner();
             };
@@ -195,7 +195,7 @@ namespace UniGetUI.Interface
                     Visibility = Visibility.Collapsed
                 };
                 ManagerStatus.ActionButton = ShowVersionButton;
-                ShowVersionButton.Click += (s, e) => { SetManagerStatus(Manager, true); };
+                ShowVersionButton.Click += (_, _) => { SetManagerStatus(Manager, true); };
 
                 LongVersion.TextWrapping = TextWrapping.Wrap;
                 LongVersion.Text = Manager.Status.Version + "\n";
@@ -253,7 +253,7 @@ namespace UniGetUI.Interface
                 {
                     IsOn = Manager.IsEnabled()
                 };
-                ManagerSwitch.Toggled += (s, e) =>
+                ManagerSwitch.Toggled += (_, _) =>
                 {
                     Settings.Set("Disable" + Manager.Name, !ManagerSwitch.IsOn);
                     SetManagerStatus(Manager);
@@ -287,7 +287,7 @@ namespace UniGetUI.Interface
                     IsClickEnabled = true,
                     ActionIcon = new SymbolIcon(Symbol.Copy)
                 };
-                ManagerPath.Click += (s, e) =>
+                ManagerPath.Click += (_, _) =>
                 {
                     WindowsClipboard.SetText(ManagerPath.Description.ToString() ?? "");
                 };

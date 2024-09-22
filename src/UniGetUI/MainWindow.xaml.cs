@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Web;
 using H.NotifyIcon;
 using Microsoft.UI;
@@ -13,7 +7,6 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
 using UniGetUI.Core.Data;
@@ -64,7 +57,7 @@ namespace UniGetUI.Interface
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(ContentRoot);
 
-            SizeChanged += (s, e) => { SaveGeometry(); };
+            SizeChanged += (_, _) => { SaveGeometry(); };
             AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
 
             LoadTrayMenu();
@@ -345,24 +338,24 @@ namespace UniGetUI.Interface
                 item.Key.IconSource = new FontIconSource { Glyph = item.Value };
             }
 
-            DiscoverPackages.ExecuteRequested += (s, e) =>
+            DiscoverPackages.ExecuteRequested += (_, _) =>
             {
                 NavigationPage.DiscoverNavButton.ForceClick();
                 Activate();
             };
-            AvailableUpdates.ExecuteRequested += (s, e) =>
+            AvailableUpdates.ExecuteRequested += (_, _) =>
             {
                 NavigationPage.UpdatesNavButton.ForceClick();
                 Activate();
             };
-            InstalledPackages.ExecuteRequested += (s, e) =>
+            InstalledPackages.ExecuteRequested += (_, _) =>
             {
                 NavigationPage.InstalledNavButton.ForceClick();
                 Activate();
             };
             AboutUniGetUI.Label = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
-            ShowUniGetUI.ExecuteRequested += (s, e) => { Activate(); };
-            QuitUniGetUI.ExecuteRequested += (s, e) => { MainApp.Instance.DisposeAndQuit(); };
+            ShowUniGetUI.ExecuteRequested += (_, _) => { Activate(); };
+            QuitUniGetUI.ExecuteRequested += (_, _) => { MainApp.Instance.DisposeAndQuit(); };
 
             TrayMenu.Items.Add(new MenuFlyoutItem { Command = DiscoverPackages });
             TrayMenu.Items.Add(new MenuFlyoutItem { Command = AvailableUpdates });
@@ -378,11 +371,11 @@ namespace UniGetUI.Interface
 
             TrayIcon = new TaskbarIcon();
             ContentRoot.Children.Add(TrayIcon);
-            Closed += (s, e) => TrayIcon.Dispose();
+            Closed += (_, _) => TrayIcon.Dispose();
             TrayIcon.ContextMenuMode = H.NotifyIcon.ContextMenuMode.PopupMenu;
 
             XamlUICommand ShowHideCommand = new();
-            ShowHideCommand.ExecuteRequested += (s, e) =>
+            ShowHideCommand.ExecuteRequested += (_, _) =>
             {
                 if (MainApp.Instance.TooltipStatus.AvailableUpdates > 0)
                 {
@@ -553,7 +546,7 @@ namespace UniGetUI.Interface
             DataTransferManager dataTransferManager = WinRT.MarshalInterface
                 <DataTransferManager>.FromAbi(result);
 
-            dataTransferManager.DataRequested += (sender, args) =>
+            dataTransferManager.DataRequested += (_, args) =>
             {
                 DataRequest dataPackage = args.Request;
                 Uri ShareUrl = new("https://marticliment.com/unigetui/share?"
@@ -722,7 +715,7 @@ namespace UniGetUI.Interface
             List<NativeHelpers.MONITORINFO> monitorInfos = [];
 
             NativeHelpers.MonitorEnumDelegate callback =
-                (IntPtr hMonitor, IntPtr hdcMonitor, ref NativeHelpers.RECT lprcMonitor, IntPtr dwData) =>
+                (IntPtr hMonitor, IntPtr _, ref NativeHelpers.RECT _, IntPtr _) =>
                 {
                     NativeHelpers.MONITORINFO monitorInfo = new()
                     {

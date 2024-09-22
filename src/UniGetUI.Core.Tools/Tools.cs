@@ -166,7 +166,7 @@ namespace UniGetUI.Core.Tools
             Random random = new();
             const string pool = "abcdefghijklmnopqrstuvwxyz0123456789";
             IEnumerable<char> chars = Enumerable.Range(0, length)
-                .Select(x => pool[random.Next(0, pool.Length)]);
+                .Select(_ => pool[random.Next(0, pool.Length)]);
             return new string(chars.ToArray());
         }
 

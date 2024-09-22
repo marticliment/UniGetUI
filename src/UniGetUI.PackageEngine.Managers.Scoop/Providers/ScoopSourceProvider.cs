@@ -1,11 +1,6 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using Windows.System;
-using ABI.Windows.ApplicationModel;
-using ABI.Windows.UI.Composition;
-using Microsoft.VisualBasic.FileIO;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Enums;

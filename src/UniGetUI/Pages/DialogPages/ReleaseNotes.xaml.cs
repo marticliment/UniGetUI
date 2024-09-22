@@ -19,8 +19,8 @@ namespace UniGetUI.Interface.Dialogs
             InitializeComponent();
             _ = InitializeWebView();
 
-            WebView.NavigationStarting += (s, e) => { ProgressBar.Visibility = Visibility.Visible; };
-            WebView.NavigationCompleted += (s, e) => { ProgressBar.Visibility = Visibility.Collapsed; };
+            WebView.NavigationStarting += (_, _) => { ProgressBar.Visibility = Visibility.Visible; };
+            WebView.NavigationCompleted += (_, _) => { ProgressBar.Visibility = Visibility.Collapsed; };
         }
 
         private async Task InitializeWebView()
