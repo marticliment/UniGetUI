@@ -593,7 +593,6 @@ namespace UniGetUI.Interface
                         ));
                         break;
                     }
-
                 }
             }
             else
@@ -804,15 +803,18 @@ namespace UniGetUI.Interface
             {
                 if (IS_ALT_PRESSED)
                 {
-                    ShowInstallationOptionsForPackage(package);
+                    if(!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
+                        ShowInstallationOptionsForPackage(package);
                 }
                 else if (IS_CONTROL_PRESSED)
                 {
-                    PerformMainPackageAction(package);
+                    if(package is not InvalidImportedPackage)
+                        PerformMainPackageAction(package);
                 }
                 else
                 {
-                    ShowDetailsForPackage(package);
+                    if(!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
+                        ShowDetailsForPackage(package);
                 }
             }
             else if (e.Key == VirtualKey.Space && package is not null)
