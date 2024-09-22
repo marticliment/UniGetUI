@@ -31,6 +31,7 @@ namespace UniGetUI.Interface
             public bool PackagesAreCheckedByDefault;
             public bool ShowLastLoadTime;
             public bool DisableSuggestedResultsRadio;
+            public bool DisableFilterOnQueryChange;
 
             public OperationType PageRole;
             public AbstractPackageLoader Loader;
@@ -57,6 +58,7 @@ namespace UniGetUI.Interface
         protected readonly bool DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START;
         protected readonly bool MEGA_QUERY_BOX_ENABLED;
         protected readonly bool SHOW_LAST_CHECKED_TIME;
+        protected readonly bool DISABLE_FILTER_ON_QUERY_CHANGE;
         public readonly string INSTANT_SEARCH_SETTING_NAME;
         public readonly string SIDEPANEL_WIDTH_SETTING_NAME;
         protected readonly string PAGE_NAME;
@@ -116,6 +118,7 @@ namespace UniGetUI.Interface
             Loader = data.Loader;
 
             DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = data.DisableAutomaticPackageLoadOnStart;
+            DISABLE_FILTER_ON_QUERY_CHANGE = data.DisableFilterOnQueryChange;
             MEGA_QUERY_BOX_ENABLED = data.MegaQueryBlockEnabled;
             SHOW_LAST_CHECKED_TIME = data.ShowLastLoadTime;
 
@@ -185,8 +188,8 @@ namespace UniGetUI.Interface
                 }
 
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
-                FilterPackages();
-
+                if(!DISABLE_FILTER_ON_QUERY_CHANGE)
+                    FilterPackages();
             };
 
             // Handle showing the MegaQueryBlock
@@ -194,7 +197,8 @@ namespace UniGetUI.Interface
             {
                 if (InstantSearchCheckbox.IsChecked == true)
                 {
-                    FilterPackages();
+                    if(!DISABLE_FILTER_ON_QUERY_CHANGE)
+                        FilterPackages();
                 }
 
                 if (MEGA_QUERY_BOX_ENABLED && QueryBlock.Text.Trim() == "")
@@ -219,7 +223,8 @@ namespace UniGetUI.Interface
 
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 QueryBlock.Text = MegaQueryBlock.Text.Trim();
-                FilterPackages();
+                if(!DISABLE_FILTER_ON_QUERY_CHANGE)
+                    FilterPackages();
             };
 
             // Hande the MegaQueryBlock search button click

@@ -30,6 +30,7 @@ namespace UniGetUI.Interface.SoftwarePages
         : base(new PackagesPageData
         {
             DisableAutomaticPackageLoadOnStart = false,
+            DisableFilterOnQueryChange = false,
             MegaQueryBlockEnabled = false,
             ShowLastLoadTime = true,
             PackagesAreCheckedByDefault = true,
