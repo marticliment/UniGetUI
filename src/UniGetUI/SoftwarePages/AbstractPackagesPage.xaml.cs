@@ -311,6 +311,7 @@ namespace UniGetUI.Interface
                 return;
             }
 
+
             if (Loader.Count() == 0)
             {
                 ClearPackageList();
@@ -473,6 +474,7 @@ namespace UniGetUI.Interface
         /// </summary>
         public void FilterPackages()
         {
+            PackageWrapper? previousSelection = PackageList.SelectedItem as PackageWrapper;
             FilteredPackages.Clear();
 
             List<IManagerSource> VisibleSources = [];
@@ -576,7 +578,29 @@ namespace UniGetUI.Interface
             FilteredPackages.BlockSorting = false;
             FilteredPackages.Sort();
             UpdatePackageCount();
-            ForceRedrawByScroll();
+
+            if (previousSelection is not null)
+            {
+                for (int i = 0; i < FilteredPackages.Count; i++)
+                {
+                    if (FilteredPackages[i].Package.Equals(previousSelection.Package))
+                    {
+                        PackageList.Select(i);
+                        PackageList.ScrollView?.ScrollTo(0, Math.Max(0, (i - 3) * 39), new ScrollingScrollOptions
+                        (
+                            ScrollingAnimationMode.Enabled,
+                            ScrollingSnapPointsMode.Ignore
+                        ));
+                        break;
+                    }
+
+                }
+            }
+            else
+            {
+                ForceRedrawByScroll();
+            }
+
         }
 
         /// <summary>
