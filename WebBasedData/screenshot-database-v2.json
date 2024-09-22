@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 11707,
-        "done": 5108,
-        "packages_with_icon": 5108,
+        "total": 11708,
+        "done": 5112,
+        "packages_with_icon": 5112,
         "packages_with_screenshot": 584,
         "total_screenshots": 1819
     },
@@ -311,7 +311,7 @@
             "images": []
         },
         "7tsp": {
-            "icon": "",
+            "icon": "https://img.informer.com/icons/png/128/3964/3964022.png",
             "images": []
         },
         "7tt": {
@@ -4901,7 +4901,7 @@
             "images": []
         },
         "betterbird": {
-            "icon": "https://www.betterbird.eu/betterbird.svg",
+            "icon": "https://cdn.meowcat285.com/public/betterbird/betterbird.png",
             "images": []
         },
         "bettercrewlink": {
@@ -5145,7 +5145,7 @@
             "images": []
         },
         "bitdefender": {
-            "icon": "",
+            "icon": "https://cdn.meowcat285.com/public/bitdefender/bitdefendericon.png",
             "images": []
         },
         "bitdefender-usb-immunizer": {
@@ -8119,6 +8119,10 @@
         },
         "comicrack": {
             "icon": "",
+            "images": []
+        },
+        "comicrack community edition": {
+            "icon": "https://images.freeimages.com/fic/images/icons/2804/plex/512/comicrack.png",
             "images": []
         },
         "comicreader-plex": {
@@ -20933,7 +20937,7 @@
             "images": []
         },
         "kalilinux": {
-            "icon": "",
+            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/KaliLinux.png",
             "images": []
         },
         "kalk": {
@@ -24742,7 +24746,7 @@
             "images": []
         },
         "microsoft-devhome": {
-            "icon": "https://github.com/microsoft/devhome/blob/main/src/Assets/Preview/StoreDisplay-150.png",
+            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/DevHome.png",
             "images": [
                 "https://github.com/microsoft/devhome/blob/main/src/Assets/Preview/StoreDisplay-150.png",
                 "https://i.postimg.cc/6qBmSkFB/devhome-machine-config.png",
@@ -25915,7 +25919,7 @@
             "images": []
         },
         "msedgeredirect": {
-            "icon": "",
+            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/msedgeredirect.0.7.5.3.png",
             "images": []
         },
         "mseries": {
@@ -26438,7 +26442,7 @@
             "images": []
         },
         "mysql-workbench": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mysql.workbench.8.0.31.png",
+            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/MySQLWorkbench.png",
             "images": []
         },
         "mysqlnotifier": {
@@ -30808,7 +30812,7 @@
             "images": []
         },
         "pidgin": {
-            "icon": "https://community.chocolatey.org/content/packageimages/pidgin.2.14.12.png",
+            "icon": "",
             "images": []
         },
         "pidgin-otr": {
@@ -41570,7 +41574,7 @@
             "images": []
         },
         "tortoisegit": {
-            "icon": "https://community.chocolatey.org/content/packageimages/TortoiseGit.2.14.0.0.png",
+            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/tortoisegit.png",
             "images": []
         },
         "tortoisegit-latest": {
