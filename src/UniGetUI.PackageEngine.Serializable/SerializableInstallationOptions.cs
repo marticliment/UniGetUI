@@ -11,5 +11,21 @@ namespace UniGetUI.PackageEngine.Serializable
         public bool PreRelease { get; set; }
         public string CustomInstallLocation { get; set; } = "";
         public string Version { get; set; } = "";
+
+        public SerializableInstallationOptions_v1 Copy()
+        {
+            return new()
+            {
+                SkipHashCheck = SkipHashCheck,
+                Architecture = Architecture,
+                CustomInstallLocation = CustomInstallLocation,
+                CustomParameters = CustomParameters,
+                InstallationScope = InstallationScope,
+                InteractiveInstallation = InteractiveInstallation,
+                PreRelease = PreRelease,
+                RunAsAdministrator = RunAsAdministrator,
+                Version = Version,
+            };
+        }
     }
 }

@@ -26,29 +26,34 @@ public static partial class DialogHelper
     public static async Task<bool> ShowInstallatOptions_Continue(IPackage package, OperationType operation)
     {
         var options = (await InstallationOptions.FromPackageAsync(package)).AsSerializable();
+        var (dialogOptions, dialogResult) = await ShowInstallOptions(package, operation, options);
 
-        var result = await ShowInstallOptions(package, operation, options);
-        InstallationOptions newOptions = await InstallationOptions.FromPackageAsync(package);
-        newOptions.FromSerializable(result.Item1);
-        await newOptions.SaveToDiskAsync();
+        if (dialogResult != ContentDialogResult.None)
+        {
+            InstallationOptions newOptions = await InstallationOptions.FromPackageAsync(package);
+            newOptions.FromSerializable(dialogOptions);
+            await newOptions.SaveToDiskAsync();
+        }
 
-        return result.Item2 == ContentDialogResult.Secondary;
+        return dialogResult == ContentDialogResult.Secondary;
     }
 
 
     /// <summary>
     /// Will update the Installation Options for the given imported package
     /// </summary>
-    public static async Task<(SerializableInstallationOptions_v1, ContentDialogResult)>
-        ShowInstallOptions_ImportedPackage(ImportedPackage importedPackage)
+    public static async Task<ContentDialogResult> ShowInstallOptions_ImportedPackage(ImportedPackage importedPackage)
     {
         var (options, dialogResult) =
-            await ShowInstallOptions(importedPackage, OperationType.None, importedPackage.installation_options);
+            await ShowInstallOptions(importedPackage, OperationType.None, importedPackage.installation_options.Copy());
 
-        importedPackage.installation_options = options;
-        importedPackage.FirePackageVersionChangedEvent();
+        if (dialogResult != ContentDialogResult.None)
+        {
+            importedPackage.installation_options = options;
+            importedPackage.FirePackageVersionChangedEvent();
+        }
 
-        return (options, dialogResult);
+        return dialogResult;
     }
 
     private static async Task<(SerializableInstallationOptions_v1, ContentDialogResult)> ShowInstallOptions(
