@@ -217,12 +217,14 @@ public static partial class DialogHelper
         };
         UpdatesDialog.Resources["ContentDialogMaxWidth"] = 1400;
         UpdatesDialog.Resources["ContentDialogMaxHeight"] = 1000;
+
         UpdatesDialog.SecondaryButtonText = CoreTools.Translate("Close");
-        UpdatesDialog.PrimaryButtonText = CoreTools.Translate("Reset");
+
+        //UpdatesDialog.PrimaryButtonText = CoreTools.Translate("Reset");
+
         UpdatesDialog.DefaultButton = ContentDialogButton.Secondary;
         UpdatesDialog.Title = CoreTools.Translate("Manage ignored updates");
         IgnoredUpdatesManager IgnoredUpdatesPage = new();
-        UpdatesDialog.PrimaryButtonClick += IgnoredUpdatesPage.ManageIgnoredUpdates_SecondaryButtonClick;
         UpdatesDialog.Content = IgnoredUpdatesPage;
         IgnoredUpdatesPage.Close += (_, _) => UpdatesDialog.Hide();
 

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
@@ -63,18 +64,24 @@ namespace UniGetUI.Interface
             }
         }
 
-        public async void ManageIgnoredUpdates_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void CloseButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            args.Cancel = true;
+            Close?.Invoke(this, EventArgs.Empty);
+        }
+
+
+        private async void YesResetButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
             foreach (IgnoredPackageEntry package in ignoredPackages.ToArray())
             {
                 await package.RemoveFromIgnoredUpdates();
             }
+            ConfirmResetFlyout.Hide();
         }
 
-        private void CloseButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void NoResetButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            Close?.Invoke(this, EventArgs.Empty);
+            ConfirmResetFlyout.Hide();
         }
     }
 
