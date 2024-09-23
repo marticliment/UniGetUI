@@ -48,7 +48,7 @@ It really does make a big difference, and is very much appreciated. Thanks :)<br
 
 **Install UniGetUI through Winget:**    
 ```cmd
-winget install --exact --id SomePythonThings.WingetUIStore --source winget
+winget install --exact --id MartiCliment.UniGetUI --source winget
 ```
 
 **Install UniGetUI through Scoop:**
