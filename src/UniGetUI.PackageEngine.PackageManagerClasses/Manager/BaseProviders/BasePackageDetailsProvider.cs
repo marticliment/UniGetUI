@@ -82,7 +82,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
 
             if (!URIs.Any())
             {
-                string[] UrlArray = IconDatabase.Instance.GetScreenshotsUrlForId(package.Id);
+                string[] UrlArray = IconDatabase.Instance.GetScreenshotsUrlForId(package.GetIconId());
                 List<Uri> UriList = [];
                 foreach (string url in UrlArray)
                 {

@@ -169,6 +169,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 iconId = iconId.Replace(".app", "");
             }
 
+            Logger.Debug($"Icon id for package={Id} is {iconId}");
             return iconId;
         }
 
