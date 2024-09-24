@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json.Nodes;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
@@ -50,7 +51,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\" --parseable",
+                    Arguments = Properties.ExecutableCallArgs + " search \"" + query + "\" --json",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
@@ -66,23 +67,21 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
             string? line;
             List<Package> Packages = [];
-            bool HeaderPassed = false;
             while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
-                if (!HeaderPassed)
+                if (line.StartsWith("{"))
                 {
-                    if (line.Contains("NAME"))
+                    JsonNode? node = JsonNode.Parse(line);
+                    string? id = node?["name"]?.ToString();
+                    string? version = node?["version"]?.ToString();
+                    if (id is not null && version is not null)
                     {
-                        HeaderPassed = true;
+                        Packages.Add(new Package(CoreTools.FormatAsName(id), id, version, DefaultSource, this));
                     }
                     else
                     {
-                        string[] elements = line.Split('\t');
-                        if (elements.Length >= 5)
-                        {
-                            Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[4], DefaultSource, this));
-                        }
+                        logger.AddToStdErr("Line could not be parsed: " + line);
                     }
                 }
             }
