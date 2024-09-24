@@ -20,13 +20,14 @@ namespace UniGetUI.Interface.Dialogs
         public SerializableInstallationOptions_v1 Options;
         public IPackage Package;
         public event EventHandler? Close;
+        private OperationType Operation;
 
         public InstallOptionsPage(IPackage package, SerializableInstallationOptions_v1 options) : this(package, OperationType.None, options) { }
-        public InstallOptionsPage(IPackage package, OperationType Operation, SerializableInstallationOptions_v1 options)
+        public InstallOptionsPage(IPackage package, OperationType operation, SerializableInstallationOptions_v1 options)
         {
             Package = package;
             InitializeComponent();
-
+            Operation = operation;
             Options = options;
 
             AdminCheckBox.IsChecked = Options.RunAsAdministrator;
@@ -36,9 +37,9 @@ namespace UniGetUI.Interface.Dialogs
             InteractiveCheckBox.IsEnabled = Package.Manager.Capabilities.CanRunInteractively;
 
             HashCheckbox.IsChecked = Options.SkipHashCheck;
-            HashCheckbox.IsEnabled = Operation != OperationType.Uninstall && Package.Manager.Capabilities.CanSkipIntegrityChecks;
+            HashCheckbox.IsEnabled = operation != OperationType.Uninstall && Package.Manager.Capabilities.CanSkipIntegrityChecks;
 
-            ArchitectureComboBox.IsEnabled = Operation != OperationType.Uninstall && Package.Manager.Capabilities.SupportsCustomArchitectures;
+            ArchitectureComboBox.IsEnabled = operation != OperationType.Uninstall && Package.Manager.Capabilities.SupportsCustomArchitectures;
             ArchitectureComboBox.Items.Add(CoreTools.Translate("Default"));
             ArchitectureComboBox.SelectedIndex = 0;
 
@@ -54,7 +55,12 @@ namespace UniGetUI.Interface.Dialogs
                 }
             }
 
-            VersionComboBox.IsEnabled = (Operation == OperationType.Install || Operation == OperationType.None) && (Package.Manager.Capabilities.SupportsCustomVersions || Package.Manager.Capabilities.SupportsPreRelease);
+            VersionComboBox.IsEnabled =
+                (operation == OperationType.Install
+                    || operation == OperationType.None)
+                && (Package.Manager.Capabilities.SupportsCustomVersions
+                    || Package.Manager.Capabilities.SupportsPreRelease);
+
             VersionComboBox.SelectionChanged += (_, _) =>
             {
                 IgnoreUpdatesCheckbox.IsChecked =
@@ -124,6 +130,7 @@ namespace UniGetUI.Interface.Dialogs
         private async Task LoadVersions()
         {
             IgnoreUpdatesCheckbox.IsChecked = await Package.HasUpdatesIgnoredAsync();
+            VersionComboBox.IsEnabled = false;
 
             IEnumerable<string> versions = await Task.Run(() => Package.Manager.GetPackageVersions(Package));
             foreach (string ver in versions)
@@ -135,6 +142,11 @@ namespace UniGetUI.Interface.Dialogs
                 }
             }
 
+            VersionComboBox.IsEnabled =
+                (Operation == OperationType.Install
+                 || Operation == OperationType.None)
+                && (Package.Manager.Capabilities.SupportsCustomVersions
+                    || Package.Manager.Capabilities.SupportsPreRelease);
             VersionProgress.Visibility = Visibility.Collapsed;
         }
 

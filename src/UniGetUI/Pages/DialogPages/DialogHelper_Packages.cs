@@ -61,11 +61,12 @@ public static partial class DialogHelper
         OperationType operation,
         SerializableInstallationOptions_v1 options)
     {
-        InstallOptionsPage OptionsPage = new(package, options);
+        InstallOptionsPage OptionsPage = new(package, operation, options);
 
         ContentDialog OptionsDialog = new()
         {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style, XamlRoot = Window.XamlRoot
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            XamlRoot = Window.XamlRoot
         };
         OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
         OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
