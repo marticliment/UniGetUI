@@ -163,28 +163,6 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
                 p.Start();
 
-                /*string? line;
-                while ((line = p.StandardOutput.ReadLine()) is not null)
-                {
-                    logger.AddToStdOut(line);
-                    if (line.Contains("--") || line.Contains("├─") || line.Contains("└─"))
-                    {
-                        string[] elements = line[4..].Split('@');
-                        if (elements.Length >= 2)
-                        {
-                            if (line.Contains(" @"))
-                            {
-                                elements[0] = "@" + elements[1];
-                                if (elements.Length >= 3)
-                                {
-                                    elements[1] = elements[2];
-                                }
-                            }
-                            Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, options));
-                        }
-                    }
-                }*/
-
                 string strContents = p.StandardOutput.ReadToEnd();
                 logger.AddToStdOut(strContents);
                 JsonObject? contents = (JsonNode.Parse(strContents) as JsonObject)?["dependencies"] as JsonObject;
