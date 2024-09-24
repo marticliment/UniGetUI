@@ -36,7 +36,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 };
 
-                IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageDetails, p);
+                IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails, p);
                 p.Start();
 
                 string? outLine;
