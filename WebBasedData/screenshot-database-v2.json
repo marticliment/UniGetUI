@@ -3,8 +3,8 @@
         "total": 11708,
         "done": 5112,
         "packages_with_icon": 5112,
-        "packages_with_screenshot": 584,
-        "total_screenshots": 1819
+        "packages_with_screenshot": 585,
+        "total_screenshots": 1820
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -24745,7 +24745,7 @@
             "icon": "https://community.chocolatey.org/content/packageimages/microsoft-build-tools-2013.2013.1.png",
             "images": []
         },
-        "microsoft-devhome": {
+        "devhome": {
             "icon": "https://cdn.meowcat285.com/public/UnigetIcons/DevHome.png",
             "images": [
                 "https://github.com/microsoft/devhome/blob/main/src/Assets/Preview/StoreDisplay-150.png",
@@ -43963,8 +43963,10 @@
             "images": []
         },
         "virtualbox": {
-            "icon": "https://community.chocolatey.org/content/packageimages/virtualbox.7.0.6.20230201.png",
-            "images": []
+            "icon": "https://i.postimg.cc/pV0RWJPN/Virtual-Box-2024-Logo.png",
+            "images": [
+                "https://raw.githubusercontent.com/chocolatey-community/chocolatey-packages/refs/heads/master/automatic/virtualbox/screenshot.png"
+            ]
         },
         "virtualbox-guest-additions-guest": {
             "icon": "https://community.chocolatey.org/content/packageimages/virtualbox-guest-additions-guest.install.7.0.6.png",
