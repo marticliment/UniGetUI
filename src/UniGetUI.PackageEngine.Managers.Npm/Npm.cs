@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Net.Http.Json;
 using System.Text.Json.Nodes;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -103,7 +104,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " outdated --parseable" + (options.Scope == PackageScope.Global ? " --global" : ""),
+                        Arguments = Properties.ExecutableCallArgs + " outdated --json" + (options.Scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         RedirectStandardInput = true,
@@ -117,32 +118,17 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
                 p.Start();
 
-                string? line;
-                while ((line = p.StandardOutput.ReadLine()) is not null)
+                string strContents = p.StandardOutput.ReadToEnd();
+                logger.AddToStdOut(strContents);
+                JsonObject? contents = JsonNode.Parse(strContents) as JsonObject;
+                foreach (var (packageId, packageData) in contents?.ToDictionary() ?? new())
                 {
-                    logger.AddToStdOut(line);
-                    string[] elements = line.Split(':');
-                    if (elements.Length >= 4)
+                    string? version = packageData?["current"]?.ToString();
+                    string? newVersion = packageData?["latest"]?.ToString();
+                    if (version is not null && newVersion is not null)
                     {
-                        if (elements[2][0] == '@')
-                        {
-                            elements[2] = "%" + elements[2][1..];
-                        }
-
-                        if (elements[3][0] == '@')
-                        {
-                            elements[3] = "%" + elements[3][1..];
-                        }
-
-                        Packages.Add(new Package(
-                            CoreTools.FormatAsName(elements[2].Split('@')[0]).Replace('%', '@'),
-                            elements[2].Split('@')[0].Replace('%', '@'),
-                            elements[3].Split('@')[^1].Replace('%', '@'),
-                            elements[2].Split('@')[^1].Replace('%', '@'),
-                            DefaultSource,
-                            this,
-                            options
-                        ));
+                        Packages.Add(new Package(CoreTools.FormatAsName(packageId), packageId, version, newVersion,
+                            DefaultSource, this, options));
                     }
                 }
 
@@ -163,7 +149,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " list" + (options.Scope == PackageScope.Global ? " --global" : ""),
+                        Arguments = Properties.ExecutableCallArgs + " list --json" + (options.Scope == PackageScope.Global ? " --global" : ""),
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         RedirectStandardInput = true,
@@ -177,7 +163,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
                 p.Start();
 
-                string? line;
+                /*string? line;
                 while ((line = p.StandardOutput.ReadLine()) is not null)
                 {
                     logger.AddToStdOut(line);
@@ -197,7 +183,20 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                             Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], DefaultSource, this, options));
                         }
                     }
+                }*/
+
+                string strContents = p.StandardOutput.ReadToEnd();
+                logger.AddToStdOut(strContents);
+                JsonObject? contents = (JsonNode.Parse(strContents) as JsonObject)?["dependencies"] as JsonObject;
+                foreach (var (packageId, packageData) in contents?.ToDictionary() ?? new())
+                {
+                    string? version = packageData?["version"]?.ToString();
+                    if (version is not null)
+                    {
+                        Packages.Add(new Package(CoreTools.FormatAsName(packageId), packageId, version, DefaultSource, this, options));
+                    }
                 }
+
                 logger.AddToStdErr(p.StandardError.ReadToEnd());
                 p.WaitForExit();
                 logger.Close(p.ExitCode);
