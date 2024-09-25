@@ -74,7 +74,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                         }
                         else
                         {
-                            sources.Add(new ManagerSource(Manager, parts[0].Trim(), new Uri(parts[1].Trim())));
+                            sources.Add(new ManagerSource(Manager, parts[0].Trim(), new Uri(parts[1].Split(" ")[0].Trim())));
                         }
                     }
                 }
