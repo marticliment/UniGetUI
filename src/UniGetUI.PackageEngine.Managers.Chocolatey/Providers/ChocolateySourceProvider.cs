@@ -65,7 +65,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                         continue;
                     }
 
-                    if (line.Contains(" - ") && line.Contains(" | "))
+                    if (line.Contains(" - ") && line.Contains("| "))
                     {
                         string[] parts = line.Trim().Split('|')[0].Trim().Split(" - ");
                         if (parts[1].Trim() == "https://community.chocolatey.org/api/v2/")
