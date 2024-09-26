@@ -24,117 +24,57 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             JsonString = client.GetStringAsync($"https://pypi.org/pypi/{details.Package.Id}/json").GetAwaiter().GetResult();
 
-            if (JsonObject.Parse(JsonString) is not JsonObject RawInfo)
-            {
-                logger.Error($"Can't load package info on manager {Manager.Name}, JsonObject? RawInfo was null");
-                logger.Close(1);
-                return;
-            }
+            JsonObject? contents = JsonNode.Parse(JsonString) as JsonObject;
 
-            if (RawInfo["info"] is JsonObject infoNode)
+            if (contents?["info"] is JsonObject info)
             {
-                try
+                details.Description = info["summary"]?.ToString();
+                details.Author = info["author"]?.ToString();
+                details.Publisher = info["maintainer"]?.ToString();
+                details.License = info["license"]?.ToString();
+
+                if (Uri.TryCreate(info["home_page"]?.ToString(), UriKind.RelativeOrAbsolute, out var homepageUrl))
+                    details.HomepageUrl = homepageUrl;
+
+                if (Uri.TryCreate(info["package_url"]?.ToString(), UriKind.RelativeOrAbsolute, out var packageUrl))
+                    details.ManifestUrl = packageUrl;
+
+                if (info["classifiers"] is JsonArray classifiers)
                 {
-                    if (infoNode.ContainsKey("author"))
+                    List<string> Tags = new();
+                    foreach (string? line in classifiers)
                     {
-                        details.Author = CoreTools.GetStringOrNull(infoNode["author"]?.ToString());
-                    }
-                }
-                catch (Exception ex) { logger.Error("Can't load author: " + ex); }
-                try
-                {
-                    if (infoNode.ContainsKey("home_page"))
-                    {
-                        details.HomepageUrl = CoreTools.GetUriOrNull(infoNode["home_page"]?.ToString());
-                    }
-                }
-                catch (Exception ex) { logger.Error("Can't load home_page: " + ex); }
-                try
-                {
-                    if (infoNode.ContainsKey("package_url"))
-                    {
-                        details.ManifestUrl = CoreTools.GetUriOrNull(infoNode["package_url"]?.ToString());
-                    }
-                }
-                catch (Exception ex) { logger.Error("Can't load package_url: " + ex); }
-                try
-                {
-                    if (infoNode.ContainsKey("summary"))
-                    {
-                        details.Description = CoreTools.GetStringOrNull(infoNode["summary"]?.ToString());
-                    }
-                }
-                catch (Exception ex) { logger.Error("Can't load summary: " + ex); }
-                try
-                {
-                    if (infoNode.ContainsKey("license"))
-                    {
-                        details.License = CoreTools.GetStringOrNull(infoNode["license"]?.ToString());
-                    }
-                }
-                catch (Exception ex) { logger.Error("Can't load license: " + ex); }
-                try
-                {
-                    if (infoNode.ContainsKey("maintainer"))
-                    {
-                        details.Publisher = CoreTools.GetStringOrNull(infoNode["maintainer"]?.ToString());
-                    }
-                }
-                catch (Exception ex) { logger.Error("Can't load maintainer: " + ex); }
-                try
-                {
-                    if (infoNode.ContainsKey("classifiers")
-                        && (infoNode["classifiers"] is JsonArray))
-                    {
-                        List<string> Tags = [];
-                        foreach (string? line in infoNode["classifiers"] as JsonArray ?? [])
+                        if (line?.Contains("License ::") ?? false)
                         {
-                            if (line?.Contains("License ::") ?? false)
-                            {
-                                details.License = line.Split("::")[^1].Trim();
-                            }
-                            else if (line?.Contains("Topic ::") ?? false)
-                            {
-                                if (!Tags.Contains(line.Split("::")[^1].Trim()))
-                                {
-                                    Tags.Add(line.Split("::")[^1].Trim());
-                                }
-                            }
+                            details.License = line.Split("::")[^1].Trim();
                         }
-
-                        details.Tags = Tags.ToArray();
+                        else if (line?.Contains("Topic ::") ?? false)
+                        {
+                            if (!Tags.Contains(line.Split("::")[^1].Trim()))
+                                Tags.Add(line.Split("::")[^1].Trim());
+                        }
                     }
+                    details.Tags = Tags.ToArray();
                 }
-                catch (Exception ex) { logger.Error("Can't load classifiers: " + ex); }
             }
 
-            try
+            JsonObject? url = contents?["url"] as JsonObject;
+            url ??= (contents?["urls"] as JsonArray)?[0] as JsonObject;
+
+            if (url is not null)
             {
-                JsonObject? url = null;
-                if (RawInfo.ContainsKey("url"))
+                if (url["digests"] is JsonObject digests)
+                    details.InstallerHash = digests["sha256"]?.ToString();
+
+                if (Uri.TryCreate(url["url"]?.ToString(), UriKind.RelativeOrAbsolute, out var installerUrl))
                 {
-                    url = RawInfo["url"] as JsonObject;
-                }
-                else if (RawInfo.ContainsKey("urls"))
-                {
-                    url = (RawInfo["urls"] as JsonArray)?[0] as JsonObject;
+                    details.InstallerType = url["url"]?.ToString().Split('.')[^1].Replace("whl", "Wheel");
+                    details.InstallerUrl = installerUrl;
+                    details.InstallerSize = CoreTools.GetFileSize(installerUrl);
                 }
 
-                if (url is not null)
-                {
-                    if (url.ContainsKey("digests") && ((url["digests"] as JsonObject)?.ContainsKey("sha256") ?? false))
-                    {
-                        details.InstallerHash = url["digests"]?["sha256"]?.ToString();
-                    }
-                    if (url.ContainsKey("url"))
-                    {
-                        details.InstallerType = url["url"]?.ToString().Split('.')[^1].Replace("whl", "Wheel");
-                        details.InstallerUrl = CoreTools.GetUriOrNull(url["url"]?.ToString());
-                        details.InstallerSize = CoreTools.GetFileSize(details.InstallerUrl);
-                    }
-                }
+                details.UpdateDate = url["upload_time"]?.ToString();
             }
-            catch (Exception ex) { logger.Error("Can't load installer data: " + ex); }
 
             logger.Close(0);
         }
