@@ -12,6 +12,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.Pages.DialogPages;
 
@@ -71,7 +72,7 @@ namespace UniGetUI.Interface
 
             foreach (KeyValuePair<string, string> entry in updates_dict)
             {
-                UpdatesCheckIntervalSelector.AddItem(entry.Key, entry.Value.ToString(), false);
+                UpdatesCheckIntervalSelector.AddItem(entry.Key, entry.Value, false);
             }
             UpdatesCheckIntervalSelector.ShowAddedItems();
 
@@ -100,10 +101,10 @@ namespace UniGetUI.Interface
             ExperimentalSettingsExpander.HideRestartRequiredBanner();
 
             // Package Manager banners;
-            Dictionary<PackageManager, SettingsEntry> PackageManagerExpanders = [];
-            Dictionary<PackageManager, List<SettingsCard>> ExtraSettingsCards = [];
+            Dictionary<IPackageManager, SettingsEntry> PackageManagerExpanders = [];
+            Dictionary<IPackageManager, List<SettingsCard>> ExtraSettingsCards = [];
 
-            foreach (PackageManager Manager in PEInterface.Managers)
+            foreach (IPackageManager Manager in PEInterface.Managers)
             {
                 ExtraSettingsCards.Add(Manager, []);
             }
@@ -157,7 +158,7 @@ namespace UniGetUI.Interface
 
             ExtraSettingsCards[PEInterface.Chocolatey].Add(Chocolatey_SystemChoco);
 
-            foreach (PackageManager Manager in PEInterface.Managers)
+            foreach (IPackageManager Manager in PEInterface.Managers)
             {
 
                 SettingsEntry ManagerExpander = new()
@@ -184,7 +185,7 @@ namespace UniGetUI.Interface
                 LongVersion.Visibility = Visibility.Collapsed;
                 ManagerStatus.Content = LongVersion;
 
-                void SetManagerStatus(PackageManager manager, bool ShowVersion = false)
+                void SetManagerStatus(IPackageManager manager, bool ShowVersion = false)
                 {
                     ShowVersionButton.Visibility = Visibility.Collapsed;
                     LongVersion.Visibility = Visibility.Collapsed;
@@ -468,13 +469,7 @@ namespace UniGetUI.Interface
         private void DisableWidgetsApi_StateChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
-        private void UseSystemWinget_StateChanged(object sender, EventArgs e)
-        { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
-
         private void DisableDownloadingNewTranslations_StateChanged(object sender, EventArgs e)
-        { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
-
-        private void ForceArmWinget_StateChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
         private void TextboxCard_ValueChanged(object sender, EventArgs e)
