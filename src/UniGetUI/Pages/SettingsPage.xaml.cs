@@ -12,6 +12,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.Pages.DialogPages;
 
@@ -71,7 +72,7 @@ namespace UniGetUI.Interface
 
             foreach (KeyValuePair<string, string> entry in updates_dict)
             {
-                UpdatesCheckIntervalSelector.AddItem(entry.Key, entry.Value.ToString(), false);
+                UpdatesCheckIntervalSelector.AddItem(entry.Key, entry.Value, false);
             }
             UpdatesCheckIntervalSelector.ShowAddedItems();
 
@@ -100,10 +101,10 @@ namespace UniGetUI.Interface
             ExperimentalSettingsExpander.HideRestartRequiredBanner();
 
             // Package Manager banners;
-            Dictionary<PackageManager, SettingsEntry> PackageManagerExpanders = [];
-            Dictionary<PackageManager, List<SettingsCard>> ExtraSettingsCards = [];
+            Dictionary<IPackageManager, SettingsEntry> PackageManagerExpanders = [];
+            Dictionary<IPackageManager, List<SettingsCard>> ExtraSettingsCards = [];
 
-            foreach (PackageManager Manager in PEInterface.Managers)
+            foreach (IPackageManager Manager in PEInterface.Managers)
             {
                 ExtraSettingsCards.Add(Manager, []);
             }
@@ -114,22 +115,6 @@ namespace UniGetUI.Interface
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), CoreTools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
             };
 
-            CheckboxCard Winget_AllowLowerTrustRegistration = new()
-            {
-                Text = CoreTools.Translate("Allow using class registered with lower trust"),
-                SettingName = "AllowLowerTrustRegistration",
-            };
-            Winget_AllowLowerTrustRegistration.StateChanged += (_, _) => PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
-            Winget_AllowLowerTrustRegistration.IsEnabled = !Settings.Get("ForceLegacyBundledWinGet");
-
-            CheckboxCard Winget_DisableCOM = new()
-            {
-                Text = CoreTools.Translate("Use the WinGet PowerShell Module instead of the WinGet COM API"),
-                SettingName = "ForceUsePowerShellModules",
-            };
-            Winget_DisableCOM.StateChanged += (_, _) => PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
-            Winget_DisableCOM.IsEnabled = !Settings.Get("ForceLegacyBundledWinGet");
-
             CheckboxCard Winget_UseBundled = new()
             {
                 Text = $"{CoreTools.Translate("Use bundled WinGet instead of system WinGet")} ({CoreTools.Translate("This may help if WinGet packages are not shown")})",
@@ -138,12 +123,9 @@ namespace UniGetUI.Interface
             Winget_UseBundled.StateChanged += (_, _) =>
             {
                 PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
-                Winget_DisableCOM.IsEnabled = !Settings.Get("ForceLegacyBundledWinGet");
             };
 
             ExtraSettingsCards[PEInterface.WinGet].Add(Winget_UseBundled);
-            ExtraSettingsCards[PEInterface.WinGet].Add(Winget_AllowLowerTrustRegistration);
-            ExtraSettingsCards[PEInterface.WinGet].Add(Winget_DisableCOM);
             ExtraSettingsCards[PEInterface.WinGet].Add(Winget_ResetSources);
 
             ButtonCard Scoop_Install = new() { Text = CoreTools.AutoTranslated("Install Scoop"), ButtonText = CoreTools.AutoTranslated("Install") };
@@ -176,7 +158,7 @@ namespace UniGetUI.Interface
 
             ExtraSettingsCards[PEInterface.Chocolatey].Add(Chocolatey_SystemChoco);
 
-            foreach (PackageManager Manager in PEInterface.Managers)
+            foreach (IPackageManager Manager in PEInterface.Managers)
             {
 
                 SettingsEntry ManagerExpander = new()
@@ -203,7 +185,7 @@ namespace UniGetUI.Interface
                 LongVersion.Visibility = Visibility.Collapsed;
                 ManagerStatus.Content = LongVersion;
 
-                void SetManagerStatus(PackageManager manager, bool ShowVersion = false)
+                void SetManagerStatus(IPackageManager manager, bool ShowVersion = false)
                 {
                     ShowVersionButton.Visibility = Visibility.Collapsed;
                     LongVersion.Visibility = Visibility.Collapsed;
@@ -487,13 +469,7 @@ namespace UniGetUI.Interface
         private void DisableWidgetsApi_StateChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
-        private void UseSystemWinget_StateChanged(object sender, EventArgs e)
-        { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
-
         private void DisableDownloadingNewTranslations_StateChanged(object sender, EventArgs e)
-        { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
-
-        private void ForceArmWinget_StateChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
         private void TextboxCard_ValueChanged(object sender, EventArgs e)

@@ -17,7 +17,6 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    // choco search php --exact --all-versions
                     FileName = Manager.Status.ExecutablePath,
                     Arguments = Manager.Properties.ExecutableCallArgs + $" search {package.Id} --exact --all-versions",
                     UseShellExecute = false,
