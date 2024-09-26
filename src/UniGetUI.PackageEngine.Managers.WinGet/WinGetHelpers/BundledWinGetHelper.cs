@@ -17,27 +17,19 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 {
     public IEnumerable<Package> GetAvailableUpdates_UnSafe(WinGet Manager)
     {
-        if (Settings.Get("ForceLegacyBundledWinGet"))
-        {
-            return BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(Manager);
-        }
-
         List<Package> Packages = [];
-
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo
+            StartInfo = new()
             {
-                FileName = "cmd.exe",
-                Arguments = "/C " + Manager.PowerShellPath + " " + Manager.PowerShellPromptArgs,
-                UseShellExecute = false,
+                FileName = Manager.WinGetBundledPath,
+                Arguments = Manager.Properties.ExecutableCallArgs +
+                            " update --include-unknown  --accept-source-agreements",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                RedirectStandardInput = true,
+                UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
-                StandardInputEncoding = new UTF8Encoding(false),
-                StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             }
         };
 
@@ -45,255 +37,244 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         p.Start();
 
-        string command = """
-                         Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
-                         Import-Module Microsoft.WinGet.Client
-                         function Print-WinGetPackage {
-                             param (
-                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
-                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
-                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
-                                 [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
-                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
-                                 [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
-                             )
-                             process {
-                                 if ($IsUpdateAvailable)
-                                 {
-                                     Write-Output("#" + $Name + "`t" + $Id + "`t" + $InstalledVersion + "`t" + $AvailableVersions[0] + "`t" + $Source)
-                                 }
-                             }
-                         }
-
-                         Get-WinGetPackage | Print-WinGetPackage
-
-                         exit
-
-                         """;
-
-        p.StandardInput.Write(command);
-        p.StandardInput.Close();
-        logger.AddToStdIn(command);
-
+        string OldLine = "";
+        int IdIndex = -1;
+        int VersionIndex = -1;
+        int NewVersionIndex = -1;
+        int SourceIndex = -1;
+        bool DashesPassed = false;
         string? line;
         while ((line = p.StandardOutput.ReadLine()) is not null)
         {
             logger.AddToStdOut(line);
-            if (!line.StartsWith("#"))
-            {
-                continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
-            }
 
-            string[] elements = line.Split('\t');
-            if (elements.Length < 5)
+            if (line.Contains("have pins"))
             {
                 continue;
             }
 
-            IManagerSource source = Manager.GetSourceOrDefault(elements[4]);
+            if (!DashesPassed && line.Contains("---"))
+            {
+                string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
+                string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
+                IdIndex = OldLine.IndexOf(HeaderPrefix + "Id", StringComparison.InvariantCulture);
+                VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version", StringComparison.InvariantCulture);
+                NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix, StringComparison.InvariantCulture);
+                SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source", StringComparison.InvariantCulture);
+                DashesPassed = true;
+            }
+            else if (line.Trim() == "")
+            {
+                DashesPassed = false;
+            }
+            else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && NewVersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < NewVersionIndex && NewVersionIndex < line.Length)
+            {
+                int offset = 0; // Account for non-unicode character length
+                while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
+                {
+                    offset++;
+                }
 
-            Packages.Add(new Package(elements[0][1..], elements[1], elements[2], elements[3], source, Manager));
+                string name = line[..(IdIndex - offset)].Trim();
+                string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
+                string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
+                string newVersion;
+                if (SourceIndex != -1)
+                {
+                    newVersion = line[(NewVersionIndex - offset)..(SourceIndex - offset)].Trim();
+                }
+                else
+                {
+                    newVersion = line[(NewVersionIndex - offset)..].Trim().Split(' ')[0];
+                }
+
+                IManagerSource source;
+                if (SourceIndex == -1 || SourceIndex >= line.Length)
+                {
+                    source = Manager.DefaultSource;
+                }
+                else
+                {
+                    string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
+                    source = Manager.GetSourceOrDefault(sourceName);
+                }
+
+                Packages.Add(new Package(name, id, version, newVersion, source, Manager));
+            }
+            OldLine = line;
         }
 
         logger.AddToStdErr(p.StandardError.ReadToEnd());
         p.WaitForExit();
         logger.Close(p.ExitCode);
 
-        if (Packages.Count > 0)
-        {
-            return Packages;
-        }
-
-        Logger.Warn("WinGet updates returned zero packages, attempting legacy...");
-        return BundledWinGetLegacyMethods.GetAvailableUpdates_UnSafe(Manager);
+        return Packages;
     }
 
     public IEnumerable<Package> GetInstalledPackages_UnSafe(WinGet Manager)
     {
-        if (Settings.Get("ForceLegacyBundledWinGet"))
-        {
-            return BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(Manager);
-        }
-
         List<Package> Packages = [];
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo
+            StartInfo = new()
             {
-                FileName = "cmd.exe",
-                Arguments = "/C " + Manager.PowerShellPath + " " + Manager.PowerShellPromptArgs,
-                UseShellExecute = false,
+                FileName = Manager.WinGetBundledPath,
+                Arguments = Manager.Properties.ExecutableCallArgs + " list  --accept-source-agreements",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                RedirectStandardInput = true,
+                UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
-                StandardInputEncoding = new UTF8Encoding(false),
-                StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             }
         };
 
         IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+
         p.Start();
 
-        string command = """
-                         Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
-                         Import-Module Microsoft.WinGet.Client
-                         function Print-WinGetPackage {
-                             param (
-                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
-                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
-                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $InstalledVersion,
-                                 [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
-                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [bool] $IsUpdateAvailable,
-                                 [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
-                             )
-                             process {
-                                 Write-Output("#" + $Name + "`t" + $Id + "`t" + $InstalledVersion + "`t" + $Source)
-                             }
-                         }
-
-                         Get-WinGetPackage | Print-WinGetPackage
-
-
-                         exit
-
-                         """;
-
-        p.StandardInput.Write(command);
-        p.StandardInput.Close();
-        logger.AddToStdIn(command);
-
+        string OldLine = "";
+        int IdIndex = -1;
+        int VersionIndex = -1;
+        int SourceIndex = -1;
+        int NewVersionIndex = -1;
+        bool DashesPassed = false;
         string? line;
         while ((line = p.StandardOutput.ReadLine()) is not null)
         {
-            logger.AddToStdOut(line);
-            if (!line.StartsWith("#"))
+            try
             {
-                continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
-            }
+                logger.AddToStdOut(line);
+                if (!DashesPassed && line.Contains("---"))
+                {
+                    string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
+                    string HeaderSuffix = OldLine.Contains("SearchId") ? "Header" : "";
+                    IdIndex = OldLine.IndexOf(HeaderPrefix + "Id", StringComparison.InvariantCulture);
+                    VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version", StringComparison.InvariantCulture);
+                    NewVersionIndex = OldLine.IndexOf("Available" + HeaderSuffix, StringComparison.InvariantCulture);
+                    SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source", StringComparison.InvariantCulture);
+                    DashesPassed = true;
+                }
+                else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
+                {
+                    int offset = 0; // Account for non-unicode character length
+                    while (((IdIndex - offset) <= line.Length && line[IdIndex - offset - 1] != ' ') || offset > (IdIndex - 5))
+                    {
+                        offset++;
+                    }
 
-            string[] elements = line.Split('\t');
-            if (elements.Length < 4)
-            {
-                continue;
-            }
+                    string name = line[..(IdIndex - offset)].Trim();
+                    string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
+                    if (NewVersionIndex == -1 && SourceIndex != -1)
+                    {
+                        NewVersionIndex = SourceIndex;
+                    }
+                    else if (NewVersionIndex == -1 && SourceIndex == -1)
+                    {
+                        NewVersionIndex = line.Length - 1;
+                    }
 
-            IManagerSource source;
-            if (elements[3] != "")
-            {
-                source = Manager.GetSourceOrDefault(elements[3]);
-            }
-            else
-            {
-                source = Manager.GetLocalSource(elements[1]);
-            }
+                    string version = line[(VersionIndex - offset)..(NewVersionIndex - offset)].Trim();
 
-            Packages.Add(new Package(elements[0][1..], elements[1], elements[2], source, Manager));
+                    IManagerSource source;
+                    if (SourceIndex == -1 || (SourceIndex - offset) >= line.Length)
+                    {
+                        source = Manager.GetLocalSource(id); // Load Winget Local Sources
+                    }
+                    else
+                    {
+                        string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();
+                        source = Manager.GetSourceOrDefault(sourceName);
+                    }
+                    Packages.Add(new Package(name, id, version, source, Manager));
+                }
+                OldLine = line;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
         }
 
         logger.AddToStdErr(p.StandardError.ReadToEnd());
         p.WaitForExit();
         logger.Close(p.ExitCode);
 
-        if (Packages.Count > 0)
-        {
-            return Packages;
-        }
-
-        Logger.Warn("WinGet installed packages returned zero packages, attempting legacy...");
-        return BundledWinGetLegacyMethods.GetInstalledPackages_UnSafe(Manager);
+        return Packages;
     }
 
     public IEnumerable<Package> FindPackages_UnSafe(WinGet Manager, string query)
     {
-        if (Settings.Get("ForceLegacyBundledWinGet"))
-        {
-            return BundledWinGetLegacyMethods.FindPackages_UnSafe(Manager, query);
-        }
-
         List<Package> Packages = [];
-
         Process p = new()
         {
-            StartInfo = new ProcessStartInfo
+            StartInfo = new()
             {
-                FileName = "cmd.exe",
-                Arguments = "/C " + Manager.PowerShellPath + " " + Manager.PowerShellPromptArgs,
-                UseShellExecute = false,
+                FileName = Manager.WinGetBundledPath,
+                Arguments = Manager.Properties.ExecutableCallArgs + " search \"" + query +
+                            "\"  --accept-source-agreements",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                RedirectStandardInput = true,
+                UseShellExecute = false,
                 CreateNoWindow = true,
-                StandardOutputEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
-                StandardInputEncoding = new UTF8Encoding(false),
-                StandardErrorEncoding = CodePagesEncodingProvider.Instance.GetEncoding(CoreData.CODE_PAGE),
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             }
         };
 
-        p.Start();
-
         IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
-        string command = """
-                         Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version
-                         Import-Module Microsoft.WinGet.Client
-                         function Print-WinGetPackage {
-                             param (
-                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
-                                 [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Id,
-                                 [Parameter(ValueFromPipelineByPropertyName)] [string[]] $AvailableVersions,
-                                 [Parameter(ValueFromPipelineByPropertyName)] [string] $Source
-                             )
-                             process {
-                                 Write-Output(""#"" + $Name + ""`t"" + $Id + ""`t"" + $AvailableVersions[0] + ""`t"" + $Source)
-                             }
-                         }
+        p.Start();
 
-                         Find-WinGetPackage -Query {query} | Print-WinGetPackage
-
-                         exit
-
-
-                         """;
-
-        p.StandardInput.Write(command);
-        p.StandardInput.Close();
-        logger.AddToStdIn(command);
-
+        string OldLine = "";
+        int IdIndex = -1;
+        int VersionIndex = -1;
+        int SourceIndex = -1;
+        bool DashesPassed = false;
         string? line;
         while ((line = p.StandardOutput.ReadLine()) is not null)
         {
             logger.AddToStdOut(line);
-            if (!line.StartsWith("#"))
+            if (!DashesPassed && line.Contains("---"))
             {
-                continue; // The PowerShell script appends a '#' to the beginning of each line to identify the output
+                string HeaderPrefix = OldLine.Contains("SearchId") ? "Search" : "";
+                IdIndex = OldLine.IndexOf(HeaderPrefix + "Id", StringComparison.InvariantCulture);
+                VersionIndex = OldLine.IndexOf(HeaderPrefix + "Version", StringComparison.InvariantCulture);
+                SourceIndex = OldLine.IndexOf(HeaderPrefix + "Source", StringComparison.InvariantCulture);
+                DashesPassed = true;
             }
-
-            string[] elements = line.Split('\t');
-            if (elements.Length < 4)
+            else if (DashesPassed && IdIndex > 0 && VersionIndex > 0 && IdIndex < VersionIndex && VersionIndex < line.Length)
             {
-                continue;
+                int offset = 0; // Account for non-unicode character length
+                while (line[IdIndex - offset - 1] != ' ' || offset > (IdIndex - 5))
+                {
+                    offset++;
+                }
+
+                string name = line[..(IdIndex - offset)].Trim();
+                string id = line[(IdIndex - offset)..].Trim().Split(' ')[0];
+                string version = line[(VersionIndex - offset)..].Trim().Split(' ')[0];
+                IManagerSource source;
+                if (SourceIndex == -1 || SourceIndex >= line.Length)
+                {
+                    source = Manager.DefaultSource;
+                }
+                else
+                {
+                    string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
+                    source = Manager.GetSourceOrDefault(sourceName);
+                }
+                Packages.Add(new Package(name, id, version, source, Manager));
             }
-
-            IManagerSource source = Manager.GetSourceOrDefault(elements[3]);
-
-            Packages.Add(new Package(elements[0][1..], elements[1], elements[2], source, Manager));
+            OldLine = line;
         }
 
         logger.AddToStdErr(p.StandardError.ReadToEnd());
         p.WaitForExit();
         logger.Close(p.ExitCode);
 
-        if (Packages.Count > 0)
-        {
-            return Packages;
-        }
-
-        Logger.Warn("WinGet package fetching returned zero packages, attempting legacy...");
-        return BundledWinGetLegacyMethods.FindPackages_UnSafe(Manager, query);
-
+        return Packages;
     }
+
+
 
     public void GetPackageDetails_UnSafe(WinGet Manager, IPackageDetails details)
     {
@@ -324,13 +305,13 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             FileName = Manager.WinGetBundledPath,
             Arguments = Manager.Properties.ExecutableCallArgs + " show " + packageIdentifier +
                         " --disable-interactivity --accept-source-agreements --locale " +
-                        System.Globalization.CultureInfo.CurrentCulture.ToString(),
+                        System.Globalization.CultureInfo.CurrentCulture,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             RedirectStandardInput = true,
             UseShellExecute = false,
             CreateNoWindow = true,
-            StandardOutputEncoding = System.Text.Encoding.UTF8
+            StandardOutputEncoding = Encoding.UTF8
         };
         process.StartInfo = startInfo;
         process.Start();

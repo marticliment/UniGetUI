@@ -20,18 +20,22 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
     public NativeWinGetHelper()
     {
-        if (Settings.Get("ForceUsePowerShellModules"))
-        {
-            throw new InvalidOperationException("User requested to disable the WinGet COM API, crashing...");
-        }
-
         if (CoreTools.IsAdministrator())
         {
             Logger.Info("Running elevated, WinGet class registration is likely to fail unless using lower trust class registration is allowed in settings");
         }
 
-        Factory = new WindowsPackageManagerStandardFactory(allowLowerTrustRegistration:Settings.Get("AllowLowerTrustRegistration"));
-        WinGetManager = Factory.CreatePackageManager();
+        try
+        {
+            Factory = new WindowsPackageManagerStandardFactory();
+            WinGetManager = Factory.CreatePackageManager();
+        }
+        catch
+        {
+            Logger.Warn("Couldn't connect to WinGet API, attempting to connect with lower trust... (Are you running as administrator?)");
+            Factory = new WindowsPackageManagerStandardFactory(allowLowerTrustRegistration: true);
+            WinGetManager = Factory.CreatePackageManager();
+        }
     }
 
     public IEnumerable<Package> FindPackages_UnSafe(WinGet Manager, string query)

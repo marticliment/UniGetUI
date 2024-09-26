@@ -5,23 +5,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
     internal static class WinGetHelper
     {
-        private static IWinGetManagerHelper? __helper;
-        public static IWinGetManagerHelper Instance
-        {
-            get
-            {
-                if (__helper is null)
-                {
-                    __helper = new BundledWinGetHelper();
-                }
-                return __helper;
-            }
-
-            set
-            {
-                __helper = value;
-            }
-        }
+        public static IWinGetManagerHelper Instance = null!;
     }
 
     internal interface IWinGetManagerHelper

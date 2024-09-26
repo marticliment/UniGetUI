@@ -28,50 +28,11 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         public LocalWinGetSource GOGSource { get; }
         public LocalWinGetSource MicrosoftStoreSource { get; }
 
-        public readonly string PowerShellPath;
-        public readonly string PowerShellPromptArgs;
-        public readonly string PowerShellInlineArgs;
         public string WinGetBundledPath;
 
         public WinGet()
         {
-            PowerShellPath = Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe");
-            PowerShellPromptArgs = "-ExecutionPolicy Bypass -NoLogo -NoProfile";
-            PowerShellInlineArgs = "-ExecutionPolicy Bypass -NoLogo -NoProfile -NonInteractive";
-
             WinGetBundledPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "winget-cli_x64", "winget.exe");
-
-            Dependencies = [
-                new ManagerDependency(
-                    "WinGet PowerShell Module",
-                    PowerShellPath,
-                    PowerShellPromptArgs + " -Command \"& {Install-Module -Name Microsoft.WinGet.Client -Force -Confirm:$false -Scope CurrentUser; if($error.count -ne 0){pause}}\"",
-                    "Install-Module -Name Microsoft.WinGet.Client -Scope CurrentUser",
-                    async () =>
-                    {
-                        if (!Settings.Get("ForceUsePowerShellModules") || Settings.Get("ForceLegacyBundledWinGet"))
-                        {
-                            Logger.ImportantInfo("Microsoft.Powershell.Client detection has been forcefully skipped as the module is not required on the current context");
-                            return true;
-                        }
-
-                        Process p = new()
-                        {
-                            StartInfo = new ProcessStartInfo
-                            {
-                                FileName = PowerShellPath,
-                                Arguments = PowerShellPromptArgs,
-                                RedirectStandardInput = true,
-                                CreateNoWindow = true
-                            },
-                        };
-                        p.Start();
-                        await p.StandardInput.WriteAsync("if(Get-Module -ListAvailable -Name \"Microsoft.WinGet.Client\"){exit 0}Else{exit 1}");
-                        p.StandardInput.Close();
-                        await p.WaitForExitAsync();
-                        return p.ExitCode == 0;
-                     })
-            ];
 
             Capabilities = new ManagerCapabilities
             {
@@ -156,7 +117,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 }
 
                 // Check if source is android
-                if(MeaningfulId.Count(x => x == '.') >= 2 && MeaningfulId.All(c => (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '.'))
+                if(MeaningfulId.Count(x => x == '.') >= 2 && MeaningfulId.All(c => (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '.' || c == '…'))
                 {
                     return AndroidSubsystemSource;
                 }
@@ -197,7 +158,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             if (!status.Found)
             {
-                Logger.Error("User does not have WinGet installed");
+                Logger.Error("User does not have WinGet installed, forcing bundled WinGet...");
                 FORCE_BUNDLED = true;
             }
 
@@ -234,45 +195,26 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 Logger.Error("WinGet STDERR not empty: " + error);
             }
 
-            process = new()
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = PowerShellPath,
-                    Arguments = PowerShellInlineArgs + " -Command Write-Output (Get-Module -Name Microsoft.WinGet.Client).Version",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8,
-                    StandardErrorEncoding = System.Text.Encoding.UTF8
-                }
-            };
-            process.Start();
-            status.Version += $"\nMicrosoft.WinGet.Client PSModule version: \"{process.StandardOutput.ReadToEnd().Trim()}\"";
-            error = process.StandardError.ReadToEnd();
-            if (error != "")
-            {
-                Logger.Error("WinGet STDERR not empty: " + error);
-            }
-
             try
             {
                 if (FORCE_BUNDLED)
                 {
-                    throw new InvalidOperationException("Bundled WinGet was forced by the user!");
+                    WinGetHelper.Instance = new BundledWinGetHelper();
+                    status.Version += "\nUsing bundled WinGet helper (CLI parsing)";
                 }
-
-                WinGetHelper.Instance = new NativeWinGetHelper();
-                status.Version += "\nUsing Native WinGet helper (COM Api)";
+                else
+                {
+                    WinGetHelper.Instance = new NativeWinGetHelper();
+                    status.Version += "\nUsing Native WinGet helper (COM Api)";
+                }
             }
             catch (Exception ex)
             {
-                Logger.Warn($"Cannot create native WinGet instance due to error: {ex.Message}");
+                Logger.Warn($"Cannot instantiate {(FORCE_BUNDLED? "Bundled" : "Native")} WinGet Helper due to error: {ex.Message}");
                 Logger.Warn(ex);
                 Logger.Warn("WinGet will resort to using BundledWinGetHelper()");
                 WinGetHelper.Instance = new BundledWinGetHelper();
-                status.Version += "\nUsing bundled WinGet helper (CLI parsing)";
+                status.Version += "\nUsing bundled WinGet helper (CLI parsing, caused by exception)";
             }
 
             return status;
