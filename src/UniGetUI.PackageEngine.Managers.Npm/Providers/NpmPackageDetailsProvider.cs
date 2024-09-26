@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.Text.Json.Nodes;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
@@ -8,6 +9,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.NpmManager
 {
@@ -27,7 +29,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 p.StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Properties.ExecutableCallArgs + " info " + details.Package.Id,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " show " + details.Package.Id + " --json",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -40,55 +42,27 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails, p);
                 p.Start();
 
-                string? outLine;
-                int lineNo = 0;
-                bool ReadingMaintainer = false;
-                while ((outLine = p.StandardOutput.ReadLine()) is not null)
-                {
-                    try
-                    {
-                        lineNo++;
-                        if (lineNo == 2)
-                        {
-                            details.License = outLine.Split("|")[1];
-                        }
-                        else if (lineNo == 3)
-                        {
-                            details.Description = outLine.Trim();
-                        }
-                        else if (lineNo == 4)
-                        {
-                            details.HomepageUrl = new Uri(outLine.Trim());
-                        }
-                        else if (outLine.StartsWith(".tarball"))
-                        {
-                            details.InstallerUrl = new Uri(outLine.Replace(".tarball: ", "").Trim());
-                            details.InstallerSize = CoreTools.GetFileSize(details.InstallerUrl);
-                        }
-                        else if (outLine.StartsWith(".integrity"))
-                        {
-                            details.InstallerHash = outLine.Replace(".integrity: sha512-", "").Replace("==", "").Trim();
-                        }
-                        else if (outLine.StartsWith("maintainers:"))
-                        {
-                            ReadingMaintainer = true;
-                        }
-                        else if (ReadingMaintainer)
-                        {
-                            ReadingMaintainer = false;
-                            details.Author = outLine.Replace("-", "").Split('<')[0].Trim();
-                        }
-                        else if (outLine.StartsWith("published"))
-                        {
-                            details.Publisher = outLine.Split("by").Last().Split('<')[0].Trim();
-                            details.UpdateDate = outLine.Replace("published", "").Split("by")[0].Trim();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        logger.AddToStdErr(e.ToString());
-                    }
-                }
+                string strContents = p.StandardOutput.ReadToEnd();
+                logger.AddToStdOut(strContents);
+                JsonObject? contents = JsonNode.Parse(strContents) as JsonObject;
+
+                details.License = contents?["license"]?.ToString();
+                details.Description = contents?["description"]?.ToString();
+
+                if (Uri.TryCreate(contents?["homepage"]?.ToString() ?? "", UriKind.RelativeOrAbsolute, out var homepageUrl))
+                    details.HomepageUrl = homepageUrl;
+
+                details.Publisher = (contents?["maintainers"] as JsonArray)?[0]?.ToString();
+                details.Author = contents?["author"]?.ToString();
+                details.UpdateDate = contents?["time"]?[contents?["dist-tags"]?["latest"]?.ToString() ?? details.Package.Version]?.ToString();
+
+                if (Uri.TryCreate(contents?["dist"]?["tarball"]?.ToString() ?? "", UriKind.RelativeOrAbsolute, out var installerUrl))
+                    details.InstallerUrl = installerUrl;
+
+                if(int.TryParse(contents?["dist"]?["unpackedSize"]?.ToString() ?? "", NumberStyles.Any, CultureInfo.InvariantCulture, out int installerSize))
+                    details.InstallerSize = installerSize / 1048576d;
+
+                details.InstallerHash = contents?["dist"]?["integrity"]?.ToString();
 
                 logger.AddToStdErr(p.StandardError.ReadToEnd());
                 p.WaitForExit();
@@ -151,7 +125,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             foreach(JsonNode? raw_ver in rawVersions ?? [])
                 if(raw_ver is not null)
                     versions.Add(raw_ver.ToString());
-            
+
             logger.AddToStdErr(p.StandardError.ReadToEnd());
             p.WaitForExit();
             logger.Close(p.ExitCode);
