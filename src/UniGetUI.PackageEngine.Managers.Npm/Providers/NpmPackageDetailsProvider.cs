@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json.Nodes;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -127,7 +128,8 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Properties.ExecutableCallArgs + " show " + package.Id + " versions --json",
+                    Arguments =
+                        Manager.Properties.ExecutableCallArgs + " show " + package.Id + " versions --json",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -138,21 +140,18 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 }
             };
 
-            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions, p);
+            IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
             p.Start();
 
-            string? line;
-            List<string> versions = [];
+            string strContents = p.StandardOutput.ReadToEnd();
+            logger.AddToStdOut(strContents);
+            JsonArray? rawVersions = JsonNode.Parse(strContents) as JsonArray;
 
-            while ((line = p.StandardOutput.ReadLine()) is not null)
-            {
-                logger.AddToStdOut(line);
-                if (line.Contains('"'))
-                {
-                    versions.Add(line.Trim().TrimStart('"').TrimEnd(',').TrimEnd('"'));
-                }
-            }
-
+            List<string> versions = new();
+            foreach(JsonNode? raw_ver in rawVersions ?? [])
+                if(raw_ver is not null)
+                    versions.Add(raw_ver.ToString());
+            
             logger.AddToStdErr(p.StandardError.ReadToEnd());
             p.WaitForExit();
             logger.Close(p.ExitCode);
