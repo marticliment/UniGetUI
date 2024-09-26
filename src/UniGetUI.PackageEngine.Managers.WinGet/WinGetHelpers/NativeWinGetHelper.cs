@@ -408,8 +408,8 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         ProcessStartInfo startInfo = new()
         {
             FileName = Manager.WinGetBundledPath,
-            Arguments = Manager.Properties.ExecutableCallArgs + " show --id " + details.Package.Id +
-                        " --exact --disable-interactivity --accept-source-agreements --source " +
+            Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetOperationProvider.GetIdNamePiece(details.Package) +
+                        " --disable-interactivity --accept-source-agreements --source " +
                         details.Package.Source.Name,
             RedirectStandardOutput = true,
             RedirectStandardError = true,

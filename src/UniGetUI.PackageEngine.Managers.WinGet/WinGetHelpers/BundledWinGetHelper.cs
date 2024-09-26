@@ -296,14 +296,12 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         // Get the output for the best matching locale
         Process process = new();
-        string packageIdentifier = "--id " + details.Package.Id + " --exact";
-
         List<string> output = [];
         bool LocaleFound = true;
         ProcessStartInfo startInfo = new()
         {
             FileName = Manager.WinGetBundledPath,
-            Arguments = Manager.Properties.ExecutableCallArgs + " show " + packageIdentifier +
+            Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetOperationProvider.GetIdNamePiece(details.Package) +
                         " --disable-interactivity --accept-source-agreements --locale " +
                         System.Globalization.CultureInfo.CurrentCulture,
             RedirectStandardOutput = true,
@@ -342,7 +340,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             startInfo = new()
             {
                 FileName = Manager.WinGetBundledPath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " show " + packageIdentifier +
+                Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetOperationProvider.GetIdNamePiece(details.Package) +
                             " --disable-interactivity --accept-source-agreements --locale en-US",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -379,7 +377,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             startInfo = new()
             {
                 FileName = Manager.WinGetBundledPath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " show " + packageIdentifier +
+                Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetOperationProvider.GetIdNamePiece(details.Package) +
                             " --disable-interactivity --accept-source-agreements",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -517,8 +515,8 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             StartInfo = new ProcessStartInfo
             {
                 FileName = Manager.WinGetBundledPath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " show --id " + package.Id +
-                            " --exact --versions --accept-source-agreements",
+                Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetOperationProvider.GetIdNamePiece(package) +
+                            $" --versions --accept-source-agreements",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,

@@ -7,6 +7,17 @@ using UniGetUI.PackageEngine.Interfaces;
 namespace UniGetUI.PackageEngine.Managers.WingetManager;
 internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
 {
+    public static string GetIdNamePiece(IPackage package)
+    {
+        if(!package.Id.EndsWith("…"))
+            return $"--id \"{package.Id.TrimEnd('…')}\" --exact";
+
+        if (!package.Name.EndsWith("…"))
+            return $"--name \"{package.Name}\" --exact";
+
+        return $"--id \"{package.Id.TrimEnd('…')}\"";
+    }
+
     public WinGetOperationProvider(WinGet manager) : base(manager) { }
 
     public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
@@ -17,7 +28,8 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
             OperationType.Uninstall => Manager.Properties.UninstallVerb,
             _ => throw new InvalidDataException("Invalid package operation")
         }];
-        parameters.AddRange(["--id", $"\"{package.Id}\"", "--exact"]);
+
+        parameters.AddRange(GetIdNamePiece(package).Split(" "));
         parameters.AddRange(["--source", package.Source.IsVirtualManager ? "winget" : package.Source.Name]);
         parameters.AddRange(["--accept-source-agreements", "--disable-interactivity"]);
 
