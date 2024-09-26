@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Diagnostics;
 using System.Text.Json.Nodes;
+using System.Threading.Tasks.Dataflow;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -51,141 +53,101 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             logger.AddToStdErr(p.StandardError.ReadToEnd());
 
 
-            if (JsonObject.Parse(JsonString) is not JsonObject RawInfo)
+            if (JsonNode.Parse(JsonString) is not JsonObject contents)
             {
                 throw new InvalidOperationException("Deserialized RawInfo was null");
             }
 
-            try
+            // Load description
+            if (contents["description"] is JsonArray descriptionList)
             {
-                if (RawInfo.ContainsKey("description") && (RawInfo["description"] is JsonArray))
-                {
-                    details.Description = "";
-                    foreach (JsonNode? note in RawInfo["description"] as JsonArray ?? [])
-                    {
-                        details.Description += note?.ToString() + "\n";
-                    }
-
-                    details.Description = details.Description.Replace("\n\n", "\n").Trim();
-                }
-                else if (RawInfo.ContainsKey("description"))
-                {
-                    details.Description = CoreTools.GetStringOrNull(RawInfo["description"]?.ToString());
-                }
+                details.Description = "";
+                foreach (var line in descriptionList)
+                    details.Description += line + "\n";
             }
-            catch (Exception ex) { logger.AddToStdErr("Can't load description: " + ex); }
-
-            try
+            else
             {
-                if (RawInfo.ContainsKey("innosetup"))
-                {
-                    details.InstallerType = "Inno Setup (" + CoreTools.Translate("extracted") + ")";
-                }
+                details.Description = contents["description"]?.ToString();
+            }
+
+            // Load installer type
+            if (contents["innsetup"]?.ToString() == "true")
+                details.InstallerType = "Inno Setup (" + CoreTools.Translate("extracted") + ")";
+            else
+                details.InstallerType = CoreTools.Translate("Scoop package");
+
+            // Load homepage and author
+            if (Uri.TryCreate(contents?["homepage"]?.ToString() ?? "", UriKind.RelativeOrAbsolute, out var homepageUrl))
+            {
+                details.HomepageUrl = homepageUrl;
+
+                if(homepageUrl.ToString().StartsWith("https://github.com/"))
+                    details.Author = homepageUrl.ToString().Replace("https://github.com/", "").Split("/")[0];
                 else
-                {
-                    details.InstallerType = CoreTools.Translate("Scoop package");
-                }
+                    details.Author = homepageUrl.Host.Split(".")[^2];
             }
-            catch (Exception ex) { logger.AddToStdErr("Can't load installer type: " + ex); }
 
-            try
+            // Load notes
+            if (contents?["notes"] is JsonArray notesList)
             {
-                if (RawInfo.ContainsKey("homepage"))
-                {
-                    details.HomepageUrl = CoreTools.GetUriOrNull(RawInfo["homepage"]?.ToString());
-                    if (details.HomepageUrl?.ToString().Contains("https://github.com/") ?? false)
-                    {
-                        details.Author = details.HomepageUrl.ToString().Replace("https://github.com/", "").Split("/")[0];
-                    }
-                    else
-                    {
-                        details.Author = details.HomepageUrl?.Host.Split(".")[^2];
-                    }
-                }
+                details.ReleaseNotes = "";
+                foreach (var line in notesList)
+                    details.ReleaseNotes += line + "\n";
             }
-            catch (Exception ex) { logger.AddToStdErr("Can't load homepage: " + ex); }
-
-            try
+            else
             {
-                if (RawInfo.ContainsKey("notes") && (RawInfo["notes"] is JsonArray))
-                {
-                    details.ReleaseNotes = "";
-                    foreach (JsonNode? note in RawInfo["notes"] as JsonArray ?? [])
-                    {
-                        details.ReleaseNotes += note?.ToString() + "\n";
-                    }
-
-                    details.ReleaseNotes = details.ReleaseNotes.Replace("\n\n", "\n").Trim();
-                }
-                else if (RawInfo.ContainsKey("notes"))
-                {
-                    details.ReleaseNotes = RawInfo["notes"]?.ToString();
-                }
+                details.ReleaseNotes = contents?["notes"]?.ToString();
             }
-            catch (Exception ex) { logger.AddToStdErr("Can't load notes: " + ex); }
 
-            try
+            if (contents?["license"] is JsonObject licenseDetails)
             {
-                if (RawInfo.ContainsKey("license"))
-                {
-                    if (RawInfo["license"] is not JsonValue)
-                    {
-                        details.License = RawInfo["license"]?["identifier"]?.ToString();
-                        details.LicenseUrl = CoreTools.GetUriOrNull(RawInfo["license"]?["url"]?.ToString());
-                    }
-                    else
-                    {
-                        details.License = RawInfo["license"]?.ToString();
-                    }
-                }
+                details.License = licenseDetails["identifier"]?.ToString();
+                if (Uri.TryCreate(licenseDetails["url"]?.ToString(), UriKind.RelativeOrAbsolute, out var licenseUrl))
+                    details.LicenseUrl = licenseUrl;
             }
-            catch (Exception ex) { logger.AddToStdErr("Can't load license: " + ex); }
-
-            try
+            else
             {
-                if (RawInfo.ContainsKey("url") && RawInfo.ContainsKey("hash"))
-                {
-                    if (RawInfo["url"] is JsonArray)
-                    {
-                        details.InstallerUrl = CoreTools.GetUriOrNull(RawInfo["url"]?[0]?.ToString());
-                    }
-                    else
-                    {
-                        details.InstallerUrl = CoreTools.GetUriOrNull(RawInfo["url"]?.ToString());
-                    }
+                details.License = contents?["license"]?.ToString();
+            }
 
-                    if (RawInfo["hash"] is JsonArray)
-                    {
-                        details.InstallerHash = RawInfo["hash"]?[0]?.ToString();
-                    }
-                    else
-                    {
-                        details.InstallerHash = RawInfo["hash"]?.ToString();
-                    }
-                }
-                else if (RawInfo.ContainsKey("architecture"))
-                {
-                    string FirstArch = (RawInfo["architecture"] as JsonObject)?.ElementAt(0).Key ?? "";
-                    details.InstallerHash = RawInfo["architecture"]?[FirstArch]?["hash"]?.ToString();
-                    details.InstallerUrl = CoreTools.GetUriOrNull(RawInfo["architecture"]?[FirstArch]?["url"]?.ToString());
-                }
 
+            // Load installers
+            if (contents?["url"] is JsonArray urlList)
+            {
+                // Only one installer
+                if (Uri.TryCreate(urlList[0]?.ToString(), UriKind.RelativeOrAbsolute, out var installerUrl))
+                    details.InstallerUrl = installerUrl;
+
+                details.InstallerHash = (contents?["hash"] as JsonArray)?[0]?.ToString();
+            }
+            else if (contents?["url"] is JsonValue value)
+            {
+                // Multiple installers
+                if (Uri.TryCreate(value.ToString(), UriKind.RelativeOrAbsolute, out var installerUrl))
+                    details.InstallerUrl = installerUrl;
+
+                details.InstallerHash = contents?["hash"]?.ToString();
+            }
+            else if(contents?["architecture"] is JsonObject archNode)
+            {
+                // Architecture-based installer
+                string arch = archNode.ContainsKey("64bit") ? "64bit" : archNode.First().Key;
+
+                if (Uri.TryCreate(archNode[arch]?["url"]?.ToString(), UriKind.RelativeOrAbsolute, out var installerUrl))
+                    details.InstallerUrl = installerUrl;
+
+                details.InstallerHash = archNode[arch]?["hash"]?.ToString();
+            }
+
+            if (details.InstallerUrl is not null)
                 details.InstallerSize = CoreTools.GetFileSize(details.InstallerUrl);
-            }
-            catch (Exception ex) { logger.AddToStdErr("Can't load installer URL: " + ex); }
 
-            try
-            {
-                if (RawInfo.ContainsKey("checkver") && RawInfo["checkver"] is JsonObject && ((RawInfo["checkver"] as JsonObject)?.ContainsKey("url") ?? false))
-                {
-                    details.ReleaseNotesUrl = CoreTools.GetUriOrNull(RawInfo["checkver"]?["url"]?.ToString() ?? "");
-                }
-            }
-            catch (Exception ex) { logger.AddToStdErr("Can't load notes URL: " + ex); }
+            // Load release notes URL
+            if (contents?["checkver"] is JsonObject checkver && Uri.TryCreate(checkver["url"]?.ToString(), UriKind.RelativeOrAbsolute,
+                    out var releaseNotesUrl))
+                details.ReleaseNotesUrl = releaseNotesUrl;
 
             logger.Close(0);
-            return;
-
         }
 
         protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
