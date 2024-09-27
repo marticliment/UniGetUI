@@ -30,9 +30,9 @@
       <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
       <WindowsPackageType>None</WindowsPackageType>
       <WindowsSdkPackageVersion>10.0.22621.41</WindowsSdkPackageVersion>
-      
-      <PublishTrimmed>true</PublishTrimmed>
-      <TrimMode>full</TrimMode>
+
+      <!--PublishTrimmed>true</PublishTrimmed-->
+      <!--TrimMode>partial</TrimMode-->
       <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
   </PropertyGroup>
 
