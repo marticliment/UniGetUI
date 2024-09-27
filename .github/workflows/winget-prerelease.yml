@@ -3,7 +3,7 @@ name: Publish prereleases to WinGet
 on:
   release:
     types: [published]  # Trigger on published release (includes prereleases)
-  workflow_dispatch:  # Allow manual trigger via GitHub Actions UI
+  workflow_dispatch:
 
 jobs:
   publish:
