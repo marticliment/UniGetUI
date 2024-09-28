@@ -3,8 +3,8 @@
         "total": 11708,
         "done": 5112,
         "packages_with_icon": 5112,
-        "packages_with_screenshot": 585,
-        "total_screenshots": 1820
+        "packages_with_screenshot": 586,
+        "total_screenshots": 1821
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -36651,8 +36651,10 @@
             "images": []
         },
         "sharex": {
-            "icon": "https://community.chocolatey.org/content/packageimages/sharex.15.0.0.png",
-            "images": []
+            "icon": "https://community.chocolatey.org/content/packageimages/sharex.16.1.0.png",
+            "images": [
+                "https://getsharex.com/img/ShareX_Screenshot.png"
+            ]
         },
         "sharik": {
             "icon": "",
