@@ -152,7 +152,7 @@
   "Download succeeded" : "Download voltooid",
   "Download updated language files from GitHub automatically" : "Bijgewerkte taalbestanden automatisch downloaden van GitHub",
   "Downloading" : "Downloaden",
-  "Downloading package metadata..." : "Pakketmetagegevens downloaden…",
+  "Downloading package metadata..." : "Pakket-metagegevens downloaden…",
   "Enable Scoop cleanup on launch" : "Scoop opschonen inschakelen bij de start",
   "Enable WingetUI notifications" : "Meldingen van WingetUI inschakelen",
   "Enable background api (WingetUI Widgets and Sharing, port 7058)" : "Achtergrond-API inschakelen (WingetUI Widgets en Delen, poort 7058)",
