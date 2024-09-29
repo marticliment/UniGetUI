@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11708,
-        "done": 5112,
-        "packages_with_icon": 5112,
-        "packages_with_screenshot": 586,
-        "total_screenshots": 1821
+        "total": 11709,
+        "done": 5113,
+        "packages_with_icon": 5113,
+        "packages_with_screenshot": 587,
+        "total_screenshots": 1827
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -9169,6 +9169,17 @@
         "curlie": {
             "icon": "",
             "images": []
+        },
+        "currencyconverterpowertoys": {
+            "icon": "https://i.postimg.cc/v1FNdgnN/icon-white.png",
+            "images": [
+                "https://raw.githubusercontent.com/Advaith3600/PowerToys-Run-Currency-Converter/refs/heads/main/screenshots/screenshot1.png",
+                "https://raw.githubusercontent.com/Advaith3600/PowerToys-Run-Currency-Converter/main/screenshots/screenshot2.png",
+                "https://raw.githubusercontent.com/Advaith3600/PowerToys-Run-Currency-Converter/6a630ebc3d44ac482fa823362ab5729be4b2fa92/screenshots/screenshot3.png",
+                "https://raw.githubusercontent.com/Advaith3600/PowerToys-Run-Currency-Converter/6a630ebc3d44ac482fa823362ab5729be4b2fa92/screenshots/screenshot4.png",
+                "https://raw.githubusercontent.com/Advaith3600/PowerToys-Run-Currency-Converter/6a630ebc3d44ac482fa823362ab5729be4b2fa92/screenshots/screenshot5.png",
+                "https://raw.githubusercontent.com/Advaith3600/PowerToys-Run-Currency-Converter/6a630ebc3d44ac482fa823362ab5729be4b2fa92/screenshots/screenshot6.png"
+            ]
         },
         "curse-voice": {
             "icon": "",
