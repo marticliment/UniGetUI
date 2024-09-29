@@ -180,9 +180,14 @@ end;
 function InitializeSetup: Boolean;
 begin
   try
-    Dependency_AddVC2015To2022;
-    Dependency_AddWebView2;
-    RaiseException('Your message goes here');
+    if not CmdLineParamExists('/NoVCRedist') then
+    begin
+      Dependency_AddVC2015To2022;
+    end;
+    if not CmdLineParamExists('/NoEdgeWebView') then
+    begin
+      Dependency_AddWebView2;
+    end;
     Result := True;
   except
     Result := True;
