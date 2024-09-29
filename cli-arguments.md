@@ -30,6 +30,8 @@ The installer is inno-setup based. It supports all Inno Setup command-line param
 | Parameter                                           | Description |
 | --------------------------------------------------- | ---------- |
 | `/NoAutoStart` | Will not launch UniGetUI after installation |
+| `/NoVCRedist` | Will not install MS Visual C++ Redistributable x64 (v3.1.2+) |
+| `/NoEdgeWebView` | Will not install Microsoft Edge WebView Runtime (v3.1.2+) |
 | `/ALLUSERS` | Will force the installer to install per-machine (requires administrator privileges) |
 | `/CURRENTUSER` | Will force the installer to install per-user | 
 | `/NoChocolatey` | Do NOT install chocolatey within UniGetUI | 
