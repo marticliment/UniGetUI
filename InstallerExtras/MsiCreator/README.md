@@ -3,7 +3,7 @@ Sometimes, when deploying software through GPO, msi installers are required. How
 In order to obtain a .msi installer, the following guide must be followed.
 
 
-> **Warning**
+> [!Warning]
 > When using MSI Installers, required dependencies will not be installed automatically. The deployer will need to ensure that the following requirements are met on target machines:
 > - Microsoft Visual C++ Redistriutable 2015-2022 (x64)
 > - Microsoft Edge WebView Runtime (x64)
