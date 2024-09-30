@@ -4,7 +4,7 @@
         "done": 5113,
         "packages_with_icon": 5113,
         "packages_with_screenshot": 587,
-        "total_screenshots": 1827
+        "total_screenshots": 1828
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -5352,8 +5352,9 @@
         "bloxstrap": {
             "icon": "https://raw.githubusercontent.com/pizzaboxer/bloxstrap/main/Images/Bloxstrap.png",
             "images": [
-                "https://i.postimg.cc/wvB1ZKtG/image.png",
-                "https://i.postimg.cc/JndsW-TZ4/image.png"
+                "https://i.postimg.cc/yNKgjgKs/image.png",
+                "https://i.postimg.cc/JndsW-TZ4/image.png",
+                "https://i.postimg.cc/wvB1ZKtG/image.png"
             ]
         },
         "blu-rayplayer": {
