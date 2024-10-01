@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11709,
-        "done": 5113,
-        "packages_with_icon": 5113,
-        "packages_with_screenshot": 587,
-        "total_screenshots": 1828
+        "done": 5114,
+        "packages_with_icon": 5114,
+        "packages_with_screenshot": 588,
+        "total_screenshots": 1832
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -11705,8 +11705,13 @@
             "images": []
         },
         "downloadmanager": {
-            "icon": "",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/Download-Manager-Community/Download-Manager/refs/heads/master/Resources/icon.png",
+            "images": [
+                "https://github.com/Download-Manager-Community/Download-Manager/blob/master/.github/images/UniGetUI/DownloadManagerMain.png?raw=true",
+                "https://github.com/Download-Manager-Community/Download-Manager/blob/master/.github/images/UniGetUI/DownloadManagerSettings.png?raw=true",
+                "https://github.com/Download-Manager-Community/Download-Manager/blob/master/.github/images/UniGetUI/DownloadManagerDownload.png?raw=true",
+                "https://github.com/Download-Manager-Community/Download-Manager/blob/master/.github/images/UniGetUI/DownloadManagerExt.png?raw=true"
+            ]
         },
         "downtester": {
             "icon": "https://community.chocolatey.org/content/packageimages/downtester.install.1.30.png",
