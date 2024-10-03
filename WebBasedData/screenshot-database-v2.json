@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11709,
-        "done": 5114,
-        "packages_with_icon": 5114,
+        "done": 5116,
+        "packages_with_icon": 5116,
         "packages_with_screenshot": 588,
         "total_screenshots": 1832
     },
@@ -3523,7 +3523,7 @@
             "images": []
         },
         "autofirma": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Icono_AutoFirma.png",
             "images": []
         },
         "autofixture-automoqprig": {
@@ -16887,7 +16887,7 @@
             "images": []
         },
         "google-play-games-beta": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/5/59/Google_Play_Games.png",
             "images": [
                 "https://www.gstatic.com/play/games/pc/googleplaygames-beta-opengraph-7ab5c9b4.png"
             ]
@@ -31896,7 +31896,7 @@
             "images": []
         },
         "prismlauncher": {
-            "icon": "https://community.chocolatey.org/content/packageimages/prismlauncher.6.3.png",
+            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/prismlauncher.8.4.20240820.png",
             "images": []
         },
         "pritunl-client": {
