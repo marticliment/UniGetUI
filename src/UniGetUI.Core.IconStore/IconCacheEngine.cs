@@ -173,8 +173,8 @@ namespace UniGetUI.Core.IconEngine
             {
                 IconValidationMethod.FileSize => ValidateByImageSize(icon, cachedIconFile),
                 IconValidationMethod.SHA256 => await ValidateBySHA256(icon, cachedIconFile),
-                IconValidationMethod.PackageVersion => await ValidateByVersion(icon, iconVersionFile),
-                IconValidationMethod.UriSource => await ValidateByUri(icon, iconUriFile),
+                IconValidationMethod.PackageVersion => true, // The validation result would be always true
+                IconValidationMethod.UriSource => true, // The validation result would be always true
                 _ => throw new InvalidDataException("Invalid image validation method"),
             };
 
