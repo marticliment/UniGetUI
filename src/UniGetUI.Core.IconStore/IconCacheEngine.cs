@@ -114,7 +114,7 @@ namespace UniGetUI.Core.IconEngine
                     IconValidationMethod.SHA256 => await ValidateBySHA256(icon, cachedIconFile),
                     IconValidationMethod.PackageVersion => await ValidateByVersion(icon, iconVersionFile),
                     IconValidationMethod.UriSource => await ValidateByUri(icon, iconUriFile),
-                    _ => throw new InvalidDataException("Invalid image validation method"),
+                    _ => throw new InvalidDataException("Invalid icon validation method"),
                 };
             }
 
@@ -175,7 +175,7 @@ namespace UniGetUI.Core.IconEngine
                 IconValidationMethod.SHA256 => await ValidateBySHA256(icon, cachedIconFile),
                 IconValidationMethod.PackageVersion => true, // The validation result would be always true
                 IconValidationMethod.UriSource => true, // The validation result would be always true
-                _ => throw new InvalidDataException("Invalid image validation method"),
+                _ => throw new InvalidDataException("Invalid icon validation method"),
             };
 
             if (isNewCacheValid)
