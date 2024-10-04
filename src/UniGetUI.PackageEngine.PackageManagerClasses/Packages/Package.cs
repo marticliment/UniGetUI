@@ -178,11 +178,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 CacheableIcon? icon = Manager.GetPackageIconUrl(this);
-                string path = IconCacheEngine.DownloadIconOrCache(icon, Manager.Name, Id).GetAwaiter().GetResult();
+                string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, Manager.Name, Id).GetAwaiter().GetResult();
 
                 Uri Icon;
-                if (path == "") Icon = new Uri("ms-appx:///Assets/Images/package_color.png");
-                else Icon = new Uri("file:///" + path);
+                if (path is null) Icon = new Uri("ms-appx:///Assets/Images/package_color.png");
+                else              Icon = new Uri("file:///" + path);
 
                 Logger.Debug($"Icon for package {Id} was loaded from {Icon}");
                 return Icon;

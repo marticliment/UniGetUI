@@ -312,20 +312,20 @@ namespace UniGetUI.Interface
                 EnableOrDisableEntries();
 
                 MainLayout.Children.Add(ManagerExpander);
+
+                LoadIconCacheSize();
             }
         }
 
-        public MainWindow GetWindow()
+        private async void LoadIconCacheSize()
         {
-            return MainApp.Instance.MainWindow;
-        }
-        public int GetHwnd()
-        {
-            return (int)WinRT.Interop.WindowNative.GetWindowHandle(GetWindow());
-        }
-
-        private void OpenWelcomeWizard(object sender, EventArgs e)
-        {
+            double realSize = (await Task.Run(() =>
+            {
+                return Directory.GetFiles(CoreData.UniGetUICacheDirectory_Icons, "*", SearchOption.AllDirectories)
+                    .Sum(file => new FileInfo(file).Length);
+            })) / 1048576d;
+            double roundedSize = ((int)(realSize*100))/100d;
+            ResetIconCache.Header = CoreTools.Translate("The local icon cache currently takes {0} MB", roundedSize);
         }
 
         private void ImportSettings(object sender, EventArgs e)
@@ -475,20 +475,6 @@ namespace UniGetUI.Interface
         private void TextboxCard_ValueChanged(object sender, EventArgs e)
         { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
-        private void ResetIconCache_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Directory.Delete(CoreData.UniGetUICacheDirectory_Icons, true);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("An error occurred while deleting icon cache");
-                Logger.Error(ex);
-            }
-            ExperimentalSettingsExpander.ShowRestartRequiredBanner();
-        }
-
         private async void DoBackup_Click(object sender, EventArgs e)
         {
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
@@ -554,6 +540,21 @@ namespace UniGetUI.Interface
         private void UseUserGSudoToggle_StateChanged(object sender, EventArgs e)
         {
             ExperimentalSettingsExpander.ShowRestartRequiredBanner();
+        }
+
+        private void ResetIconCache_OnClick(object? sender, EventArgs e)
+        {
+            try
+            {
+                Directory.Delete(CoreData.UniGetUICacheDirectory_Icons, true);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("An error occurred while deleting icon cache");
+                Logger.Error(ex);
+            }
+            GeneralSettingsExpander.ShowRestartRequiredBanner();
+            LoadIconCacheSize();
         }
     }
 }
