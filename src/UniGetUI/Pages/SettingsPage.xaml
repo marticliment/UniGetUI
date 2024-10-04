@@ -90,8 +90,14 @@
                                 Click="ExportSettings"
                             />
                             <widgets:ButtonCard
+                                Text="Clear the local icon cache"
+                                ButtonText="Clear cache"
+                                x:Name="ResetIconCache"
+                                Click="ResetIconCache_OnClick"
+                            />
+                            <widgets:ButtonCard
                                 Text="Reset WingetUI"
-                                ButtonText="Reset"
+                                ButtonText="Reset UniGetUI"
                                 Click="ResetWingetUI"
                             />
                         </Toolkit:SettingsExpander.Items>
