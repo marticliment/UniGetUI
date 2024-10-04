@@ -39,9 +39,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return GetMicrosoftStoreIcon(package);
             }
 
-            Logger.Warn("Non-MSStore WinGet Native Icons have been forcefully disabled on code");
-            return null;
-            //return await GetWinGetPackageIcon(package);
+            // Logger.Warn("Non-MSStore WinGet Native Icons have been forcefully disabled on code");
+            // return null;
+            return GetWinGetPackageIcon(package);
         }
 
         protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
@@ -222,7 +222,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return new CacheableIcon(new Uri(uri));
         }
 
-        // TODO: Need to work on retrieving WinGet icons
         private static CacheableIcon? GetWinGetPackageIcon(IPackage package)
         {
             if (WinGetHelper.Instance is not NativeWinGetHelper)
@@ -245,7 +244,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             // Connect to catalog
             Catalog.AcceptSourceAgreements = true;
             ConnectResult ConnectResult = Catalog.Connect();
-            // ConnectResult ConnectResult = await Catalog.ConnectAsync();
             if (ConnectResult.Status != ConnectResultStatus.Ok)
             {
                 Logger.Error("[WINGET COM] Failed to connect to catalog " + package.Source.Name);
@@ -264,7 +262,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             if (SearchResult.Matches is null || SearchResult.Matches.Count == 0)
             {
-                Logger.Error("[WINGET COM] Failed to find package " + package.Id + " in catalog " + package.Source.Name);
+                Logger.Error($"[WINGET COM] Package with Id={package.Id} was NOT found in catalog id=" + package.Source.Name);
                 return null;
             }
 
@@ -274,15 +272,18 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             // Extract data from NativeDetails
             CatalogPackageMetadata NativeDetails = NativePackage.DefaultInstallVersion.GetCatalogPackageMetadata();
 
-            CacheableIcon? Icon = null;
-
+            // Get the actual icon and return it
             foreach (Icon? icon in NativeDetails.Icons.ToArray())
             {
-                Icon = new CacheableIcon(new Uri(icon.Url), icon.Sha256);
-                Logger.Debug($"Found WinGet native icon for {package.Id} with URL={icon.Url}");
+                if (icon is not null && icon.Url is not null)
+                {
+                    Logger.Debug($"Found WinGet native icon for {package.Id} with URL={icon.Url}");
+                    return new CacheableIcon(new Uri(icon.Url), icon.Sha256);
+                }
             }
 
-            return Icon;
+            Logger.Debug($"Native WinGet icon for Package={package.Id} on catalog={package.Source.Name} was not found :(");
+            return null;
         }
     }
 }

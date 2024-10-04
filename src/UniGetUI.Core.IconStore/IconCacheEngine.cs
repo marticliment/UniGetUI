@@ -121,29 +121,17 @@ namespace UniGetUI.Core.IconEngine
             // If a valid cache was found, return that cache
             if (isLocalCacheValid)
             {
-                Logger.Debug($"Icon for package {PackageId} on manager {ManagerName} with Uri={icon.Url} has been determined to be VALID through verification method {icon.ValidationMethod}");
+                Logger.Debug($"Icon for package {PackageId} is VALID and won't be downloaded again (verification method is {icon.ValidationMethod})");
                 return cachedIconFile;
                 // Exit the function
             }
             else if (localCacheExists)
             {
-                Logger.Info($"Icon for package {PackageId} on manager {ManagerName} with Uri={icon.Url} has been determined to be NOT VALID through verification method {icon.ValidationMethod}");
+                Logger.ImportantInfo($"Icon for Package={PackageId} Manager={ManagerName} Uri={icon.Url} is NOT VALID (verification method is {icon.ValidationMethod})");
             }
             else
             {
-                Logger.Info($"Icon for package {PackageId} on manager {ManagerName} with Uri={icon.Url} was not found, downloading it...");
-            }
-
-            // If the cache is determined to NOT be valid, delete cache
-            try
-            {
-                File.Delete(cachedIconFile);
-                if (File.Exists(iconVersionFile)) File.Delete(iconVersionFile);
-                if (File.Exists(iconUriFile)) File.Delete(iconUriFile);
-            }
-            catch (Exception e)
-            {
-                Logger.Warn($"An error occurred while deleting old icon cache: {e.Message}");
+                Logger.Debug($"Icon for package {PackageId} on manager {ManagerName} was not found on cache, downloading it...");
             }
 
             // If the cache is determined to NOT be valid, delete cache
@@ -180,12 +168,12 @@ namespace UniGetUI.Core.IconEngine
 
             if (isNewCacheValid)
             {
-                Logger.Info($"DOWNLOADED Icon for package {PackageId} on manager {ManagerName} with Uri={icon.Url} has been determined to be NOT VALID through verification method {icon.ValidationMethod}");
+                Logger.Info($"NEWLY DOWNLOADED Icon for Package={PackageId} Manager={ManagerName} Uri={icon.Url} is VALID (verification method is {icon.ValidationMethod})");
                 return cachedIconFile;
             }
             else
             {
-                Logger.Warn($"Icon for package {PackageId} on manager {ManagerName} with Uri={icon.Url} has been determined to be NOT VALID through verification method {icon.ValidationMethod}, and it was just downloaded");
+                Logger.Warn($"NEWLY DOWNLOADED Icon for Pacakge={PackageId} Manager={ManagerName} Uri={icon.Url} is NOT VALID and will be discarded (verification method is {icon.ValidationMethod})");
                 DeteteCachedFiles(cachedIconFile, iconVersionFile, iconUriFile);
                 return null;
             }
