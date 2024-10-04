@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using ExternalLibraries.Clipboard;
 using Microsoft.UI;
@@ -130,10 +131,6 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        private readonly ContentDialog OutputDialog = new();
-        private readonly ScrollViewer LiveOutputScrollBar = new();
-        private readonly RichTextBlock LiveOutputTextBlock = new();
-
         public OperationStatus Status
         {
             get => __status;
@@ -188,7 +185,20 @@ namespace UniGetUI.PackageEngine.Operations
 
             InitializeComponent();
 
-            OutputDialog = new ContentDialog
+           
+
+            Status = OperationStatus.Pending;
+
+            ActionButton.Click += ActionButtonClicked;
+            OutputViewewBlock.Click += async (_, _) =>
+            {
+                await OpenLiveViewDialog();
+            };
+        }
+
+        public async Task OpenLiveViewDialog()
+        {
+            var OutputDialog = new ContentDialog
             {
                 Style = (Style)Application.Current.Resources["DefaultContentDialogStyle"],
                 XamlRoot = XamlRoot
@@ -196,13 +206,14 @@ namespace UniGetUI.PackageEngine.Operations
             OutputDialog.Resources["ContentDialogMaxWidth"] = 1200;
             OutputDialog.Resources["ContentDialogMaxHeight"] = 1000;
 
-            LiveOutputTextBlock = new RichTextBlock
+            var LiveOutputTextBlock = new RichTextBlock
             {
                 Margin = new Thickness(8),
                 FontFamily = new FontFamily("Consolas")
             };
 
-            LiveOutputScrollBar = new ScrollViewer
+
+            var LiveOutputScrollBar = new ScrollViewer
             {
                 CornerRadius = new CornerRadius(6),
                 Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"],
@@ -210,6 +221,32 @@ namespace UniGetUI.PackageEngine.Operations
                 Width = 600,
                 Content = LiveOutputTextBlock
             };
+
+            NotifyCollectionChangedEventHandler HandleProcessOutputChange = async (_, _) =>
+            {
+                if (!IsDialogOpen)
+                {
+                    return;
+                }
+
+                LiveOutputTextBlock.Blocks.Clear();
+                Paragraph p = new();
+                foreach (OutputLine line in ProcessOutput)
+                {
+                    if (line.Type is OutputLine.LineType.STDOUT)
+                        p.Inlines.Add(new Run { Text = line.Contents + "\x0a" });
+                    else if (line.Type is OutputLine.LineType.Header)
+                        // TODO: Theme-aware colorss
+                        p.Inlines.Add(new Run { Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Azure) });
+                    else
+                        p.Inlines.Add(new Run { Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Red) });
+                }
+                LiveOutputTextBlock.Blocks.Add(p);
+                await Task.Delay(100);
+                LiveOutputScrollBar.ScrollToVerticalOffset(LiveOutputScrollBar.ScrollableHeight);
+            };
+
+            ProcessOutput.CollectionChanged += HandleProcessOutputChange;
 
             OutputDialog.Title = CoreTools.Translate("Live output");
             OutputDialog.CloseButtonText = CoreTools.Translate("Close");
@@ -227,42 +264,6 @@ namespace UniGetUI.PackageEngine.Operations
 
             OutputDialog.Content = LiveOutputScrollBar;
 
-            ProcessOutput.CollectionChanged += async (_, _) =>
-            {
-                if (!IsDialogOpen)
-                {
-                    return;
-                }
-
-                LiveOutputTextBlock.Blocks.Clear();
-                Paragraph p = new();
-                foreach (OutputLine line in ProcessOutput)
-                {
-                    if (line.Type is OutputLine.LineType.STDOUT)
-                        p.Inlines.Add(new Run { Text = line.Contents + "\x0a" });
-                    else if (line.Type is OutputLine.LineType.Header)
-                        // TODO: Theme-aware colorss
-                        p.Inlines.Add(new Run { Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Azure)});
-                    else
-                        p.Inlines.Add(new Run { Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Red)});
-                }
-                LiveOutputTextBlock.Blocks.Add(p);
-                await Task.Delay(100);
-                LiveOutputScrollBar.ScrollToVerticalOffset(LiveOutputScrollBar.ScrollableHeight);
-            };
-
-            Status = OperationStatus.Pending;
-
-            ActionButton.Click += ActionButtonClicked;
-            OutputViewewBlock.Click += (_, _) =>
-            {
-                OpenLiveViewDialog();
-            };
-        }
-
-        public async void OpenLiveViewDialog()
-        {
-            OutputDialog.XamlRoot = XamlRoot;
             LiveOutputTextBlock.Blocks.Clear();
             Paragraph p = new()
             {
@@ -287,6 +288,7 @@ namespace UniGetUI.PackageEngine.Operations
                 WindowsClipboard.SetText(string.Join('\n', ProcessOutput.ToArray()));
             }
             IsDialogOpen = false;
+            ProcessOutput.CollectionChanged -= HandleProcessOutputChange;
         }
 
         public void ActionButtonClicked(object sender, RoutedEventArgs args)
