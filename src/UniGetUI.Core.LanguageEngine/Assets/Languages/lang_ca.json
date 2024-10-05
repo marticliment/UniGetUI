@@ -25,7 +25,7 @@
   "Action when double-clicking packages, hide successful installations" : "Acció en prémer dos cops els paquets, amaga les instal·lacions satisfactòries",
   "Add" : "Afegeix",
   "Add a source to {0}" : "Afegeix una font al {0}",
-  "Add a timestamp to the backup file names" : "Afegeix la data i l'hora ala noms de les còpies de seguretat",
+  "Add a timestamp to the backup file names" : "Afegeix la data i l'hora als noms de les còpies de seguretat",
   "Add a timestamp to the backup files" : "Afegeix una marca de temps a les còpies de seguretat",
   "Add packages or open an existing bundle" : "Afegiu paquets o obriu una col·lecció existent",
   "Add packages or open an existing package bundle" : "Afegiu paquets o obriu una col·lecció",
