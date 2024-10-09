@@ -21,6 +21,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Microsoft.Windows.AppNotifications;
 using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface
@@ -532,7 +533,7 @@ namespace UniGetUI.Interface
 
         public void SharePackage(IPackage? package)
         {
-            if (package is null)
+            if (package is null || package.Source.IsVirtualManager || package is InvalidImportedPackage)
             {
                 return;
             }

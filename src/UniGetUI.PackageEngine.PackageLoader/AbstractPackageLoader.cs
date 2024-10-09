@@ -101,7 +101,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
             foreach (IPackageManager manager in Managers)
             {
-                if (manager.IsEnabled() && manager.Status.Found)
+                if (manager.IsReady())
                 {
                     Task<IEnumerable<IPackage>> task = Task.Run(() => LoadPackagesFromManager(manager));
                     tasks.Add(task);
@@ -114,7 +114,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 {
                     if (!task.IsCompleted)
                     {
-                        await Task.Delay(100);
+                        await Task.Delay(100).ConfigureAwait(false);
                     }
 
                     if (task.IsCompleted)

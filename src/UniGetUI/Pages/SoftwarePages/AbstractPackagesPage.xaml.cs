@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
@@ -572,7 +573,7 @@ namespace UniGetUI.Interface
             }
 
             FilteredPackages.BlockSorting = true;
-            foreach (IPackage match in MatchingList)
+            foreach (IPackage match in MatchingList.ToArray())
             {
                 if (VisibleSources.Contains(match.Source) || (!match.Manager.Capabilities.SupportsCustomSources && VisibleManagers.Contains(match.Manager)))
                 {
@@ -684,12 +685,11 @@ namespace UniGetUI.Interface
 
         protected void ShowDetailsForPackage(IPackage? package)
         {
-            if (package is null)
+            if (package is null || package.Source.IsVirtualManager || package is InvalidImportedPackage)
             {
                 return;
             }
 
-            Logger.Warn(PAGE_ROLE.ToString());
             DialogHelper.ShowPackageDetails(package, PAGE_ROLE);
         }
 
@@ -719,7 +719,7 @@ namespace UniGetUI.Interface
 
         protected async void ShowInstallationOptionsForPackage(IPackage? package)
         {
-            if (package is null)
+            if (package is null || package.Source.IsVirtualManager || package is InvalidImportedPackage)
             {
                 return;
             }
@@ -778,16 +778,16 @@ namespace UniGetUI.Interface
 
         private void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            if (sender is PackageItemContainer container && container.Package is IPackage package)
+            if (sender is PackageItemContainer container && container.Package is not null)
             {
                 PackageList.Select(container.Wrapper.Index);
-                WhenShowingContextMenu(package);
+                WhenShowingContextMenu(container.Package);
             }
         }
 
         private void PackageItemContainer_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            if (sender is PackageItemContainer container)
+            if (sender is PackageItemContainer container && container.Package is not null)
             {
                 PackageList.Select(container.Wrapper.Index);
                 ShowDetailsForPackage(container.Package);
