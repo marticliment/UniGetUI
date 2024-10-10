@@ -319,10 +319,14 @@ public static partial class DialogHelper
                             "windowspowershell\\v1.0\\powershell.exe"),
                     Arguments =
                         "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {" +
-                            "taskkill /im winget.exe /f; " +
-                            "taskkill /im WindowsPackageManagerServer.exe /f; " +
-                            "Get-AppxPackage -Name 'Microsoft.DesktopAppInstaller' | Reset-AppxPackage" +
-                       "}\"",
+                        "taskkill /im winget.exe /f; " +
+                        "taskkill /im WindowsPackageManagerServer.exe /f; " +
+                        "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; " +
+                        "Install-Module Microsoft.WinGet.Client -Force -Scope AllUsers -AllowClobber; " +
+                        "Import-Module Microsoft.WinGet.Client; " +
+                        "Repair-WinGetPackageManager -Force -Latest; " +
+                        "Get-AppxPackage -Name 'Microsoft.DesktopAppInstaller' | Reset-AppxPackage" +
+                        "}\"",
                     UseShellExecute = true,
                     Verb = "runas"
                 }
@@ -332,30 +336,31 @@ public static partial class DialogHelper
             DialogHelper.HideLoadingDialog();
 
             // Toggle bundled WinGet
-            if(Settings.Get("ForceLegacyBundledWinGet"))
+            if (Settings.Get("ForceLegacyBundledWinGet"))
                 Settings.Set("ForceLegacyBundledWinGet", false);
 
             var c = new ContentDialog()
             {
                 Title = CoreTools.Translate("WinGet was repaired successfully"),
-                Content = CoreTools.Translate("It is recommended to restart UniGetUI after WinGet has been repaired") + "\n\n" +
-                          CoreTools.Translate("NOTE: This troubleshooter can be disabled from UniGetUI Settings, on the WinGet section"),
+                Content = CoreTools.Translate("It is recommended to restart UniGetUI after WinGet has been repaired") +
+                          "\n\n" +
+                          CoreTools.Translate(
+                              "NOTE: This troubleshooter can be disabled from UniGetUI Settings, on the WinGet section"),
                 PrimaryButtonText = CoreTools.Translate("Restart"),
                 SecondaryButtonText = CoreTools.Translate("Close"),
                 DefaultButton = ContentDialogButton.Primary,
                 XamlRoot = Window.XamlRoot
             };
 
-            switch (await Window.ShowDialogAsync(c))
+            // Restart UniGetUI or reload packages depending on the user's choice
+            if (await Window.ShowDialogAsync(c) == ContentDialogResult.Primary)
             {
-                case ContentDialogResult.Primary:
-                    MainApp.Instance.KillAndRestart();
-                    break;
-
-                case ContentDialogResult.Secondary:
-                    _ = PEInterface.UpgradablePackagesLoader.ReloadPackages();
-                    _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
-                    break;
+                MainApp.Instance.KillAndRestart();
+            }
+            else
+            {
+                _ = PEInterface.UpgradablePackagesLoader.ReloadPackages();
+                _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
             }
         }
         catch (Exception ex)
