@@ -324,7 +324,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                foreach (IPackage package in Loader.Packages.ToArray())
+                foreach (IPackage package in Loader.Packages.ToList())
                 {
                     AddPackageToSourcesList(package);
                 }
@@ -553,27 +553,27 @@ namespace UniGetUI.Interface
 
             if (QueryIdRadio.IsChecked == true)
             {
-                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name).Contains(treatedQuery));
+                MatchingList = Loader.Packages.ToArray().Where(x => CharsFunc(x.Name).Contains(treatedQuery));
             }
             else if (QueryNameRadio.IsChecked == true)
             {
-                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Id).Contains(treatedQuery));
+                MatchingList = Loader.Packages.ToArray().Where(x => CharsFunc(x.Id).Contains(treatedQuery));
             }
             else if (QueryBothRadio.IsChecked == true)
             {
-                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name).Contains(treatedQuery) | CharsFunc(x.Id).Contains(treatedQuery));
+                MatchingList = Loader.Packages.ToArray().Where(x => CharsFunc(x.Name).Contains(treatedQuery) | CharsFunc(x.Id).Contains(treatedQuery));
             }
             else if (QueryExactMatch.IsChecked == true)
             {
-                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name) == treatedQuery | CharsFunc(x.Id) == treatedQuery);
+                MatchingList = Loader.Packages.ToArray().Where(x => CharsFunc(x.Name) == treatedQuery | CharsFunc(x.Id) == treatedQuery);
             }
             else // QuerySimilarResultsRadio == true
             {
-                MatchingList = Loader.Packages;
+                MatchingList = Loader.Packages.ToArray();
             }
 
             FilteredPackages.BlockSorting = true;
-            foreach (IPackage match in MatchingList.ToArray())
+            foreach (IPackage match in MatchingList)
             {
                 if (VisibleSources.Contains(match.Source) || (!match.Manager.Capabilities.SupportsCustomSources && VisibleManagers.Contains(match.Manager)))
                 {

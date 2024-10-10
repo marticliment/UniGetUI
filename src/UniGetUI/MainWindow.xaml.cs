@@ -39,6 +39,7 @@ namespace UniGetUI.Interface
 
         public MainView NavigationPage = null!;
         public bool BlockLoading;
+        public readonly TextBlock LoadingSthDalogText;
         public readonly ContentDialog LoadingSthDalog;
 
         public int LoadingDialogCount;
@@ -74,13 +75,29 @@ namespace UniGetUI.Interface
             Title = Title + " - DEBUG BUILD";
             AppTitle.Text = Title;
 #endif
+            var panel = new StackPanel()
+            {
+                Width = 400,
+                Orientation = Orientation.Vertical,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Spacing = 20
+            };
+
+            LoadingSthDalogText = new()
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch, TextWrapping = TextWrapping.Wrap
+            };
 
             LoadingSthDalog = new ContentDialog
             {
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
                 Title = CoreTools.Translate("Please wait"),
-                Content = new ProgressBar { IsIndeterminate = true, Width = 300 }
+                Content = panel
             };
+
+            panel.Children.Add(LoadingSthDalogText);
+            panel.Children.Add(new ProgressBar { IsIndeterminate = true, HorizontalAlignment = HorizontalAlignment.Stretch});
 
             foreach (var arg in Environment.GetCommandLineArgs())
             {
@@ -473,10 +490,9 @@ namespace UniGetUI.Interface
         public void SwitchToInterface()
         {
             SetTitleBar(__app_titlebar);
-            ContentRoot = ContentRoot;
 
             NavigationPage = new MainView();
-            Grid.SetRow(NavigationPage, 3);
+            Grid.SetRow(NavigationPage, 4);
             Grid.SetColumn(NavigationPage, 0);
             MainContentGrid.Children.Add(NavigationPage);
 

@@ -14,6 +14,7 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -109,24 +110,35 @@ namespace UniGetUI.Interface
                 ExtraSettingsCards.Add(Manager, []);
             }
 
-            ButtonCard Winget_ResetSources = new() { Text = CoreTools.AutoTranslated("Reset Winget sources (might help if no packages are listed)"), ButtonText = CoreTools.AutoTranslated("Reset") };
-            Winget_ResetSources.Click += (_, _) =>
+            /*ButtonCard WinGet_ResetSources = new() { Text = CoreTools.AutoTranslated("Reset Winget sources (might help if no packages are listed)"), ButtonText = CoreTools.AutoTranslated("Reset") };
+            WinGet_ResetSources.Click += (_, _) =>
             {
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), CoreTools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
-            };
+            };*/
 
-            CheckboxCard Winget_UseBundled = new()
+            CheckboxCard WinGet_UseBundled = new()
             {
                 Text = $"{CoreTools.Translate("Use bundled WinGet instead of system WinGet")} ({CoreTools.Translate("This may help if WinGet packages are not shown")})",
                 SettingName = "ForceLegacyBundledWinGet"
             };
-            Winget_UseBundled.StateChanged += (_, _) =>
+            WinGet_UseBundled.StateChanged += (_, _) =>
             {
                 PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
             };
 
-            ExtraSettingsCards[PEInterface.WinGet].Add(Winget_UseBundled);
-            ExtraSettingsCards[PEInterface.WinGet].Add(Winget_ResetSources);
+            CheckboxCard WinGet_EnableTroubleshooter = new()
+            {
+                Text = CoreTools.Translate("Enable the automatic WinGet troubleshooter"),
+                SettingName = "DisableWinGetMalfunctionDetector"
+            };
+            WinGet_EnableTroubleshooter.StateChanged += (_, _) =>
+            {
+                MainApp.Instance.MainWindow.WinGetWarningBanner.IsOpen = false;
+                _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
+            };
+
+            ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_EnableTroubleshooter);
+            ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_UseBundled);
 
             ButtonCard Scoop_Install = new() { Text = CoreTools.AutoTranslated("Install Scoop"), ButtonText = CoreTools.AutoTranslated("Install") };
             Scoop_Install.Click += (_, _) =>
