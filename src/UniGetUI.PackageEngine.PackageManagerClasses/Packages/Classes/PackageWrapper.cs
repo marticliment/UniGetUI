@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -40,21 +41,27 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         private void Package_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Package.Tag))
+            try
             {
-                WhenTagHasChanged();
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedOpacity)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedComplementaryIconId)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedIconId)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedNameTooltip)));
-            }
-            else if (e.PropertyName == nameof(Package.IsChecked))
+                if (e.PropertyName == nameof(Package.Tag))
+                {
+                    WhenTagHasChanged();
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedOpacity)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedComplementaryIconId)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedIconId)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedNameTooltip)));
+                }
+                else if (e.PropertyName == nameof(Package.IsChecked))
+                {
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsChecked)));
+                }
+                else
+                {
+                    PropertyChanged?.Invoke(this, e);
+                }
+            } catch (COMException)
             {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsChecked)));
-            }
-            else
-            {
-                PropertyChanged?.Invoke(this, e);
+                // ignore
             }
         }
 

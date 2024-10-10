@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Data;
@@ -9,6 +10,7 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
@@ -274,6 +276,17 @@ namespace UniGetUI.Interface.SoftwarePages
                 {
                     _ = BackupPackages();
                 }
+            }
+
+            if(WinGet.NO_PACKAGES_HAVE_BEEN_LOADED && !Settings.Get("DisableWinGetMalfunctionDetector"))
+            {
+                var infoBar = MainApp.Instance.MainWindow.WinGetWarningBanner;
+                infoBar.IsOpen = true;
+                infoBar.Title = CoreTools.Translate("WinGet malfunction detected");
+                infoBar.Message = CoreTools.Translate("It looks like WinGet is not working properly. Do you want to attempt to repair WinGet?");
+                var button = new Button() { Content = CoreTools.Translate("Repair WinGet") };
+                infoBar.ActionButton = button;
+                button.Click += (_, _) => DialogHelper.HandleBrokenWinGet();
             }
         }
 

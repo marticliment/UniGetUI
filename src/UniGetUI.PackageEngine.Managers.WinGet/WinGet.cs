@@ -27,6 +27,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         public LocalWinGetSource UbisoftConnectSource { get; }
         public LocalWinGetSource GOGSource { get; }
         public LocalWinGetSource MicrosoftStoreSource { get; }
+        public static bool NO_PACKAGES_HAVE_BEEN_LOADED { get; private set; }
 
         public string WinGetBundledPath;
 
@@ -96,7 +97,17 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
         {
-            return WinGetHelper.Instance.GetInstalledPackages_UnSafe(this);
+            try
+            {
+                var packages = WinGetHelper.Instance.GetInstalledPackages_UnSafe(this);
+                NO_PACKAGES_HAVE_BEEN_LOADED = !packages.Any();
+                return packages;
+            }
+            catch (Exception)
+            {
+                NO_PACKAGES_HAVE_BEEN_LOADED = true;
+                throw;
+            }
         }
 
         public ManagerSource GetLocalSource(string id)
