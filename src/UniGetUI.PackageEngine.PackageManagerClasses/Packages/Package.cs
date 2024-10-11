@@ -23,6 +23,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         private readonly long __versioned_hash;
         private readonly string ignoredId;
 
+        private Uri? _cachedIcon;
+
         private IPackageDetails? __details;
         public IPackageDetails Details
         {
@@ -174,6 +176,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         public virtual Uri GetIconUrl()
+        {
+            return _cachedIcon ??= LoadIconUrl();
+        }
+
+        private Uri LoadIconUrl()
         {
             try
             {

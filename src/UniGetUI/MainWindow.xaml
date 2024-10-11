@@ -38,7 +38,7 @@
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="12,8,12,8" Spacing="10">
                     <Image VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="16" Height="16" >
                         <Image.Source>
-                            <BitmapImage DecodePixelHeight="16"  UriSource="ms-appx:///Assets/Images/icon.png"/>
+                            <BitmapImage DecodePixelHeight="16" UriSource="ms-appx:///Assets/Images/icon.png"/>
                         </Image.Source>
                     </Image>
                     <widgets:TranslatedTextBlock x:Name="AppTitle" Text="WingetUI" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="12"/>

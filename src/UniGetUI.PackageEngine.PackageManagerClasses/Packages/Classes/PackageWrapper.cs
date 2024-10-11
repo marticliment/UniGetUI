@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using UniGetUI.Core.Classes;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -20,6 +21,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public IconType ListedComplementaryIconId = IconType.Empty;
         public IconType ListedIconId = IconType.Package;
+
+        public Uri? PackageIconIfAny = null;
+        public bool PackageIconIsVisible = false;
+        public bool DefaultIconIsVisible = true;
+
         public string ListedNameTooltip = "";
         public float ListedOpacity = 1.0f;
 
@@ -73,7 +79,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Updates the fields that change how the item template is rendered.
         /// </summary>
-        public void WhenTagHasChanged()
+        public async void WhenTagHasChanged()
         {
             ListedIconId = Package.Tag switch
             {
@@ -127,6 +133,37 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 _ => throw new ArgumentException($"Unknown tag {Package.Tag}"),
             };
 #pragma warning restore CS8524
+
+            if (Settings.Get("DisableIconSupport"))
+                return;
+
+            bool DefaultIconWasShown = DefaultIconIsVisible;
+            if(Package.Tag is PackageTag.Default)
+            {
+                Uri icon = await Task.Run(Package.GetIconUrl);
+                if(icon.ToString() != "ms-appx:///Assets/Images/package_color.png")
+                {
+                    PackageIconIfAny = icon;
+                    PackageIconIsVisible = true;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PackageIconIfAny)));
+                }
+                else
+                {
+                    PackageIconIsVisible = false;
+                    DefaultIconIsVisible = true;
+                }
+            }
+            else
+            {
+                PackageIconIsVisible = false;
+            }
+            DefaultIconIsVisible = !PackageIconIsVisible;
+
+            if (DefaultIconWasShown != DefaultIconIsVisible)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PackageIconIsVisible)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DefaultIconIsVisible)));
+            }
         }
     }
 }

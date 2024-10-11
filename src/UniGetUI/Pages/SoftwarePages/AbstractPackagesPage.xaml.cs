@@ -549,23 +549,23 @@ namespace UniGetUI.Interface
             }
 
             string treatedQuery = CharsFunc(QueryBlock.Text.Trim());
-            IEnumerable<IPackage> MatchingList;
+            IPackage[] MatchingList;
 
             if (QueryIdRadio.IsChecked == true)
             {
-                MatchingList = Loader.Packages.ToArray().Where(x => CharsFunc(x.Name).Contains(treatedQuery));
+                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name).Contains(treatedQuery)).ToArray();
             }
             else if (QueryNameRadio.IsChecked == true)
             {
-                MatchingList = Loader.Packages.ToArray().Where(x => CharsFunc(x.Id).Contains(treatedQuery));
+                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Id).Contains(treatedQuery)).ToArray();
             }
             else if (QueryBothRadio.IsChecked == true)
             {
-                MatchingList = Loader.Packages.ToArray().Where(x => CharsFunc(x.Name).Contains(treatedQuery) | CharsFunc(x.Id).Contains(treatedQuery));
+                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name).Contains(treatedQuery) | CharsFunc(x.Id).Contains(treatedQuery)).ToArray();
             }
             else if (QueryExactMatch.IsChecked == true)
             {
-                MatchingList = Loader.Packages.ToArray().Where(x => CharsFunc(x.Name) == treatedQuery | CharsFunc(x.Id) == treatedQuery);
+                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name) == treatedQuery | CharsFunc(x.Id) == treatedQuery).ToArray();
             }
             else // QuerySimilarResultsRadio == true
             {
@@ -573,6 +573,7 @@ namespace UniGetUI.Interface
             }
 
             FilteredPackages.BlockSorting = true;
+
             foreach (IPackage match in MatchingList)
             {
                 if (VisibleSources.Contains(match.Source) || (!match.Manager.Capabilities.SupportsCustomSources && VisibleManagers.Contains(match.Manager)))

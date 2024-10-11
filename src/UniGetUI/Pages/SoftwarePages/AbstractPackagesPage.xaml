@@ -533,9 +533,21 @@
                         />
                     <widgets:LocalIcon
                         Icon="{x:Bind ListedIconId}" FontWeight="ExtraLight" FontSize="24"
+                        Visibility="{x:Bind DefaultIconIsVisible}"
                         Grid.Column="1" Grid.Row="0"
                         VerticalAlignment="Center"
                         />
+                    <Image
+                        Visibility="{x:Bind PackageIconIsVisible}" MaxWidth="24" MaxHeight="24"
+                        Grid.Column="1" Grid.Row="0"
+                        VerticalAlignment="Center">
+                        <Image.Source>
+                            <BitmapImage
+                                DecodePixelHeight="24"
+                                UriSource="{x:Bind PackageIconIfAny}"
+                                />
+                        </Image.Source>
+                    </Image>
                     <TextBlock
                     Grid.Column="2" Grid.Row="0"
                     VerticalAlignment="Center"
