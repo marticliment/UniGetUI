@@ -187,7 +187,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
             else
             {
-                MainIcon.IconSource = new LocalIconSource(ListedIconId);
+                MainIcon.IconSource = new LocalIconSource(ListedIconId)
+                {
+                    FontSize = 24,
+                };
             }
         }
     }
