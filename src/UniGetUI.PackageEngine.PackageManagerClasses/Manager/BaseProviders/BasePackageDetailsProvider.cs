@@ -34,34 +34,22 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
 
         public CacheableIcon? GetPackageIconUrl(IPackage package)
         {
-            CacheableIcon? Icon = null;
             if (Manager.Capabilities.SupportsCustomPackageIcons)
             {
-                Icon = GetIcon_UnSafe(package);
-                if (Icon is null)
+                var nativeIcon = GetIcon_UnSafe(package);
+                if (nativeIcon is not null)
                 {
-                    Logger.Debug($"Manager {Manager.Name} did not find a native icon for {package.Id}");
+                    return nativeIcon;
                 }
             }
-            else
+
+            string? iconUrl = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
+            if (iconUrl is not null)
             {
-                Logger.Debug($"Manager {Manager.Name} does not support native icons");
+                return new CacheableIcon(new Uri(iconUrl), package.Version);
             }
 
-            if (Icon is null)
-            {
-                string? url = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
-                if (url is not null && url != "") Icon = new CacheableIcon(new Uri(url), package.Version);
-            }
-
-            if (Icon is null)
-            {
-                Logger.Warn($"Icon for package {package.Id} was not found, returning default icon");
-                return null;
-            }
-
-            Logger.Info($"Loaded icon with URL={Icon.ToString()} for package Id={package.Id}");
-            return Icon;
+            return null;
         }
 
         public IEnumerable<Uri> GetPackageScreenshotsUrl(IPackage package)

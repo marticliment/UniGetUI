@@ -33,17 +33,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
             set => Package.IsChecked = value;
         }
 
+        public bool IconWasLoaded = false;
         public bool AlternateIdIconVisible = false;
         public bool ShowCustomPackageIcon = false;
         public bool ShowDefaultPackageIcon = true;
         public IconType MainIconId = IconType.Id;
         public IconType AlternateIconId = IconType.Id;
         public ImageSource? MainIconSource;
-
-        public bool IconHasBeenLoaded
-        {
-            get => CachedPackageIcons.ContainsKey(Package.GetHash());
-        }
 
         public Uri? PackageIcon
         {

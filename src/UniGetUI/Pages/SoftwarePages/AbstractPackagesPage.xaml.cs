@@ -935,7 +935,8 @@ namespace UniGetUI.Interface
             // Get the packages to be updated.
             foreach (var wrapper in FilteredPackages)
             {
-                if (wrapper.IconHasBeenLoaded) continue;
+                if (wrapper.IconWasLoaded) continue;
+                wrapper.IconWasLoaded = true;
                 PackagesWithoutIcon.Add(wrapper);
             }
 
