@@ -345,7 +345,8 @@ namespace UniGetUI.Interface
             LastPackageLoadTime = DateTime.Now;
             WhenPackagesLoaded(ReloadReason.External);
             FilterPackages();
-            _ = LoadIconsForNewPackages();
+            if (!Settings.Get("DisableIconsOnPackageLists"))
+                _ = LoadIconsForNewPackages();
         }
 
         private void Loader_StartedLoading(object? sender, EventArgs e)

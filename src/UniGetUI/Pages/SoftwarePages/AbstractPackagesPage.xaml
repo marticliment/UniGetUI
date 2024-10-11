@@ -523,13 +523,19 @@
                     </Grid.ColumnDefinitions>
                     <CheckBox
                         Grid.Column="0" Grid.Row="0"
-                        VerticalAlignment="Center"
+                        VerticalAlignment="Center" FontSize="24"
                         IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
                     />
-                    <IconSourceElement
+                    <widgets:LocalIcon
                         Grid.Column="1" Grid.Row="0"
                         VerticalAlignment="Center"
-                        IconSource="{x:Bind MainIconSource, Mode=OneWay}"
+                        Icon="Package" Visibility="{x:Bind ShowDefaultPackageIcon, Mode=OneWay}"
+                        />
+                    <Image
+                        Grid.Column="1" Grid.Row="0"
+                        VerticalAlignment="Center"
+                        Source="{x:Bind MainIconSource, Mode=OneWay}"
+                        Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}"
                     />
                     <TextBlock
                         Grid.Column="2" Grid.Row="0"

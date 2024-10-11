@@ -28,10 +28,12 @@ namespace UniGetUI.PackageEngine.PackageClasses
             set => Package.IsChecked = value;
         }
 
-        public bool AlternateIdIconVisible;
+        public bool AlternateIdIconVisible = false;
+        public bool ShowCustomPackageIcon = false;
+        public bool ShowDefaultPackageIcon = true;
         public IconType MainIconId = IconType.Id;
         public IconType AlternateIconId = IconType.Id;
-        public IconSource MainIconSource;
+        public ImageSource? MainIconSource;
 
         public bool IconHasBeenLoaded
         {
@@ -61,7 +63,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public PackageWrapper(IPackage package)
         {
-            MainIconSource = new LocalIconSource(IconType.Package) { FontSize = 24, };
             Package = package;
             Self = this;
             WhenTagHasChanged();
@@ -117,7 +118,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 PackageTag.Unavailable => IconType.Help,
                 _ => throw new ArgumentException($"Unknown tag {Package.Tag}"),
             };
-            UpdatePackageIcon();
 
             AlternateIconId = Package.Tag switch
             {
@@ -167,17 +167,22 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             if (CachedPackageIcons.TryGetValue(Package.GetHash(), out Uri? icon))
             {
-                MainIconSource = new BitmapIconSource()
+                MainIconSource = new BitmapImage()
                 {
                     UriSource = icon,
-                    ShowAsMonochrome = false
+                    DecodePixelWidth = 24,
                 };
+                ShowCustomPackageIcon = true;
+                ShowDefaultPackageIcon = false;
             }
             else
             {
-                MainIconSource = new LocalIconSource(IconType.Package) { FontSize = 24, };
+                ShowCustomPackageIcon = true;
+                ShowDefaultPackageIcon = false;
             }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MainIconSource)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ShowCustomPackageIcon)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ShowDefaultPackageIcon)));
         }
     }
 }
