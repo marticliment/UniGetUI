@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11710,
-        "done": 5118,
-        "packages_with_icon": 5118,
-        "packages_with_screenshot": 589,
-        "total_screenshots": 1833
+        "total": 11712,
+        "done": 5119,
+        "packages_with_icon": 5119,
+        "packages_with_screenshot": 590,
+        "total_screenshots": 1834
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -15471,6 +15471,12 @@
             "icon": "",
             "images": []
         },
+        "g-helper": {
+            "icon": "",
+            "images": [
+                "https://private-user-images.githubusercontent.com/5920850/241183841-4d98465a-63a5-4498-ae14-afb3e67e7e82.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mjg1NTQxMTgsIm5iZiI6MTcyODU1MzgxOCwicGF0aCI6Ii81OTIwODUwLzI0MTE4Mzg0MS00ZDk4NDY1YS02M2E1LTQ0OTgtYWUxNC1hZmIzZTY3ZTdlODIucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MTAxMCUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDEwMTBUMDk1MDE4WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9NmNhOTRlOTQ3ZTgwNjQ5ZTM1YmJjM2FmNWE5MTU5ZTQ2ZTVjNDI0YjEzNTc1ZTY2YThmYzgzYzI4MjY2MDU5NSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.c88Zx0dUZDaqK2jFI_5_9UpAT16ofUH90AAmYR5c9ew"
+            ]
+        },
         "g-desktop-suite": {
             "icon": "",
             "images": []
@@ -17988,6 +17994,10 @@
         },
         "headset": {
             "icon": "https://community.chocolatey.org/content/packageimages/headset.4.2.1.png",
+            "images": []
+        },
+        "headsetcontrol-gui": {
+            "icon": "https://raw.githubusercontent.com/LeoKlaus/HeadsetControl-GUI/refs/heads/main/src/Resources/icons/light/png/headphones.png",
             "images": []
         },
         "heapmemview": {
