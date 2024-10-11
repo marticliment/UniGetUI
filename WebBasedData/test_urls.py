@@ -1,5 +1,4 @@
 import requests, time
-from security import safe_requests
 
 try:
     import os, sys, json
@@ -17,7 +16,7 @@ try:
                     continue
                 if data["icons_and_screenshots"][package]["icon"] != "":
                     print("Package:", package, data["icons_and_screenshots"][package]["icon"])
-                    response = safe_requests.get(data["icons_and_screenshots"][package]["icon"])
+                    response = requests.get(data["icons_and_screenshots"][package]["icon"])
                     if response.status_code == 404:
                         print("Package failed:", package, data["icons_and_screenshots"][package]["icon"])
                         with open("invalid_urls.txt", "a") as f:
@@ -29,11 +28,11 @@ try:
                 time.sleep(0.1)
                 try:
                     if data["icons_and_screenshots"][package]["icon"] != "":
-                        response = safe_requests.get(data["icons_and_screenshots"][package]["icon"])
+                        response = requests.get(data["icons_and_screenshots"][package]["icon"])
                         if response.status_code in (403, 404):
                             print("Package failed:", package, data["icons_and_screenshots"][package]["icon"])
                         elif response.status_code != 200:
-                            response = safe_requests.get(data["icons_and_screenshots"][package]["icon"])
+                            response = requests.get(data["icons_and_screenshots"][package]["icon"])
                             if response.status_code != 200:
                                 print("Failed to resolve DNS for:", data["icons_and_screenshots"][package]["icon"])
                 except requests.exceptions.ConnectionError as e:
