@@ -345,6 +345,7 @@ namespace UniGetUI.Interface
             LastPackageLoadTime = DateTime.Now;
             WhenPackagesLoaded(ReloadReason.External);
             FilterPackages();
+            _ = LoadIconsForNewPackages();
         }
 
         private void Loader_StartedLoading(object? sender, EventArgs e)
@@ -358,14 +359,17 @@ namespace UniGetUI.Interface
             LoadingProgressBar.Visibility = Visibility.Visible;
             UpdatePackageCount();
         }
+
         public void SearchTriggered()
         {
             QueryBlock.Focus(FocusState.Pointer);
         }
+
         public void ReloadTriggered()
         {
             _ = LoadPackages(ReloadReason.Manual);
         }
+
         public void SelectAllTriggered()
         {
             if (QueryBlock.FocusState == FocusState.Unfocused)
@@ -382,6 +386,7 @@ namespace UniGetUI.Interface
                 }
             }
         }
+
         protected void AddPackageToSourcesList(IPackage package)
         {
             IManagerSource source = package.Source;
@@ -923,11 +928,21 @@ namespace UniGetUI.Interface
             PaneIsAnimated = false;
         }
 
-        private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
+        private async Task LoadIconsForNewPackages()
         {
-            if (sender is PackageItemContainer container && container.Child is Grid grid)
+            var PackagesWithoutIcon = new List<PackageWrapper>();
+            // Get the packages to be updated.
+            foreach (var wrapper in FilteredPackages)
             {
-                container.Wrapper.SetMainGrid(grid);
+                if (wrapper.IconHasBeenLoaded) continue;
+                PackagesWithoutIcon.Add(wrapper);
+            }
+
+            // Load their icons, one at a time.
+            foreach (var wrapper in PackagesWithoutIcon)
+            {
+                var icon = await Task.Run(wrapper.Package.GetIconUrlIfAny);
+                if(icon is not null) wrapper.PackageIcon = icon;
             }
         }
     }

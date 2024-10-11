@@ -50,11 +50,8 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
 
             if (Icon is null)
             {
-                string url = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
-                if (url != "")
-                {
-                    Icon = new CacheableIcon(new Uri(url), package.Version);
-                }
+                string? url = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
+                if (url is not null && url != "") Icon = new CacheableIcon(new Uri(url), package.Version);
             }
 
             if (Icon is null)

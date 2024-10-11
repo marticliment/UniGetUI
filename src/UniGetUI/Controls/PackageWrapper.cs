@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Windows.System.RemoteSystems;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -19,6 +20,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// </summary>
     public class PackageWrapper : IIndexableListItem, INotifyPropertyChanged, IDisposable
     {
+        private static Dictionary<long, Uri?> CachedPackageIcons = new();
+
         public bool IsChecked
         {
             get => Package.IsChecked;
@@ -27,9 +30,21 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public IconType ListedComplementaryIconId = IconType.Empty;
         private IconType ListedIconId = IconType.Package;
-        private IconSourceElement? MainIcon;
-        private bool? PackageHasCustomIcon;
-        private Uri? PackageIconIfAny;
+        public IconSource MainIconSource;
+
+        public bool IconHasBeenLoaded
+        {
+            get => CachedPackageIcons.ContainsKey(Package.GetHash());
+        }
+
+        public Uri? PackageIcon
+        {
+            set
+            {
+                CachedPackageIcons[Package.GetHash()] = value;
+                UpdatePackageIcon();
+            }
+        }
 
         public string ListedNameTooltip = "";
         public float ListedOpacity = 1.0f;
@@ -45,6 +60,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public PackageWrapper(IPackage package)
         {
+            MainIconSource = new LocalIconSource(IconType.Package) { FontSize = 24, };
             Package = package;
             Self = this;
             WhenTagHasChanged();
@@ -60,7 +76,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                     WhenTagHasChanged();
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedOpacity)));
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedComplementaryIconId)));
-                    // PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedIconId)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MainIconSource)));
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedNameTooltip)));
                 }
                 else if (e.PropertyName == nameof(Package.IsChecked))
@@ -99,7 +115,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 PackageTag.Unavailable => IconType.Help,
                 _ => throw new ArgumentException($"Unknown tag {Package.Tag}"),
             };
-            SetPackageIcon();
+            UpdatePackageIcon();
 
             ListedComplementaryIconId = Package.Tag switch
             {
@@ -144,53 +160,19 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         }
 
-        public void SetMainGrid(Grid grid)
+        public void UpdatePackageIcon()
         {
-            try
+            if (CachedPackageIcons.TryGetValue(Package.GetHash(), out Uri? icon))
             {
-                MainIcon = (IconSourceElement)grid.Children[2];
-                _ = SetPackageIcon();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
-        }
-
-        public async Task SetPackageIcon()
-        {
-            if (MainIcon is null) return;
-
-
-            // Load the package icon information, if any
-            if (PackageHasCustomIcon is null)
-            {
-                if (Settings.Get("DisableIconOnListsSupport"))
+                MainIconSource = new BitmapIconSource()
                 {
-                    PackageHasCustomIcon = false;
-                }
-                else
-                {
-                    PackageIconIfAny = await Task.Run(Package.GetIconUrlIfAny);
-                    PackageHasCustomIcon = PackageIconIfAny is null;
-                }
-            }
-
-            // Display the appropiate icon
-            if (PackageHasCustomIcon is true)
-            {
-                MainIcon.IconSource = new BitmapIconSource()
-                {
-                    UriSource = PackageIconIfAny,
+                    UriSource = icon,
                     ShowAsMonochrome = false
                 };
             }
             else
             {
-                MainIcon.IconSource = new LocalIconSource(ListedIconId)
-                {
-                    FontSize = 24,
-                };
+                MainIconSource = new LocalIconSource(ListedIconId) { FontSize = 24, };
             }
         }
     }

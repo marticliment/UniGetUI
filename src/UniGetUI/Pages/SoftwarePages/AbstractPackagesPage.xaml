@@ -500,7 +500,6 @@
         <DataTemplate x:Key="PackageTemplate" x:DataType="pkgClasses:PackageWrapper">
             <widgets:PackageItemContainer AutomationProperties.Name="{x:Bind Package.AutomationName}" CornerRadius="4"
                 Package="{x:Bind Package}" Wrapper="{x:Bind Self}"
-                Loaded="FrameworkElement_OnLoaded"
                 RightTapped="PackageItemContainer_RightTapped"
                 DoubleTapped="PackageItemContainer_DoubleTapped"
                 KeyUp="PackageItemContainer_KeyUp">
@@ -535,8 +534,8 @@
                     <IconSourceElement
                         Grid.Column="1" Grid.Row="0"
                         VerticalAlignment="Center"
+                        IconSource="{x:Bind MainIconSource}"
                     />
-
                     <!--widgets:LocalIcon
                         Icon="{x:Bind ListedIconId}" FontWeight="ExtraLight" FontSize="24"
                         Visibility="{x:Bind DefaultIconIsVisible}"
