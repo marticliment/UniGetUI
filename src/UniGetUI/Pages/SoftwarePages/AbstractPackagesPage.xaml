@@ -10,7 +10,7 @@
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     mc:Ignorable="d"
-    Name="DiscoverPage"
+    Name="ABSTRACT_PAGE"
     NavigationCacheMode="Required"
     xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses">
 
@@ -500,6 +500,7 @@
         <DataTemplate x:Key="PackageTemplate" x:DataType="pkgClasses:PackageWrapper">
             <widgets:PackageItemContainer AutomationProperties.Name="{x:Bind Package.AutomationName}" CornerRadius="4"
                 Package="{x:Bind Package}" Wrapper="{x:Bind Self}"
+                Loaded="FrameworkElement_OnLoaded"
                 RightTapped="PackageItemContainer_RightTapped"
                 DoubleTapped="PackageItemContainer_DoubleTapped"
                 KeyUp="PackageItemContainer_KeyUp">
@@ -531,7 +532,12 @@
                         Grid.Column="1" Grid.Row="0" Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
                         VerticalAlignment="Center"
                         />
-                    <widgets:LocalIcon
+                    <IconSourceElement
+                        Grid.Column="1" Grid.Row="0"
+                        VerticalAlignment="Center"
+                    />
+
+                    <!--widgets:LocalIcon
                         Icon="{x:Bind ListedIconId}" FontWeight="ExtraLight" FontSize="24"
                         Visibility="{x:Bind DefaultIconIsVisible}"
                         Grid.Column="1" Grid.Row="0"
@@ -547,7 +553,7 @@
                                 UriSource="{x:Bind PackageIconIfAny}"
                                 />
                         </Image.Source>
-                    </Image>
+                    </Image-->
                     <TextBlock
                     Grid.Column="2" Grid.Row="0"
                     VerticalAlignment="Center"

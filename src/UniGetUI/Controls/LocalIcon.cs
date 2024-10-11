@@ -24,4 +24,24 @@ namespace UniGetUI.Interface.Widgets
             Glyph = $"{(char)icon}";
         }
     }
+
+    public class LocalIconSource : FontIconSource
+    {
+        public static FontFamily font = (FontFamily)Application.Current.Resources["SymbolFont"];
+
+        public IconType Icon
+        {
+            set => Glyph = $"{(char)value}";
+        }
+
+        public LocalIconSource()
+        {
+            FontFamily = font;
+        }
+
+        public LocalIconSource(IconType icon) : this()
+        {
+            Glyph = $"{(char)icon}";
+        }
+    }
 }

@@ -96,7 +96,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// Returns a list containing the checked packages on this collection
         /// </summary>
         public List<IPackage> GetCheckedPackages()
-        { 
+        {
             List<IPackage> packages = [];
             foreach (PackageWrapper wrapper in this)
             {

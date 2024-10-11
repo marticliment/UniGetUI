@@ -549,27 +549,27 @@ namespace UniGetUI.Interface
             }
 
             string treatedQuery = CharsFunc(QueryBlock.Text.Trim());
-            IPackage[] MatchingList;
+            IEnumerable<IPackage> MatchingList;
 
             if (QueryIdRadio.IsChecked == true)
             {
-                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name).Contains(treatedQuery)).ToArray();
+                MatchingList = Loader.Packages.ToList().Where(x => CharsFunc(x.Name).Contains(treatedQuery));
             }
             else if (QueryNameRadio.IsChecked == true)
             {
-                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Id).Contains(treatedQuery)).ToArray();
+                MatchingList = Loader.Packages.ToList().Where(x => CharsFunc(x.Id).Contains(treatedQuery));
             }
             else if (QueryBothRadio.IsChecked == true)
             {
-                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name).Contains(treatedQuery) | CharsFunc(x.Id).Contains(treatedQuery)).ToArray();
+                MatchingList = Loader.Packages.ToList().Where(x => CharsFunc(x.Name).Contains(treatedQuery) | CharsFunc(x.Id).Contains(treatedQuery));
             }
             else if (QueryExactMatch.IsChecked == true)
             {
-                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name) == treatedQuery | CharsFunc(x.Id) == treatedQuery).ToArray();
+                MatchingList = Loader.Packages.ToList().Where(x => CharsFunc(x.Name) == treatedQuery | CharsFunc(x.Id) == treatedQuery);
             }
             else // QuerySimilarResultsRadio == true
             {
-                MatchingList = Loader.Packages.ToArray();
+                MatchingList = Loader.Packages.ToList();
             }
 
             FilteredPackages.BlockSorting = true;
@@ -921,6 +921,14 @@ namespace UniGetUI.Interface
 
             BodyGrid.ColumnDefinitions[0].Width = new GridLength(final_width);
             PaneIsAnimated = false;
+        }
+
+        private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is PackageItemContainer container && container.Child is Grid grid)
+            {
+                container.Wrapper.SetMainGrid(grid);
+            }
         }
     }
 }
