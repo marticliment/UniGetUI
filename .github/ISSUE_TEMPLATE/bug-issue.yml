@@ -45,14 +45,14 @@ body:
     attributes:
       label: UniGetUI Log
       render: "text"
-      placeholder: Paste here your UniGetUI logs. Click the button on the bottom-left corner of UniGetUI -> UniGetUI Log.
+      placeholder: Paste your UniGetUI logs here. Click the button on the bottom-left corner of UniGetUI -> UniGetUI Log.
     validations:
       required: true
   - type: textarea
     attributes:
       label: Package Managers Logs
       render: "text"
-      placeholder: Paste here your Package Manager logs. Click the button on the bottom-left corner of UniGetUI -> Package Manager logs.
+      placeholder: Paste your Package Manager logs here. Click the button on the bottom-left corner of UniGetUI -> Package Manager logs.
     validations:
       required: true
   - type: textarea
