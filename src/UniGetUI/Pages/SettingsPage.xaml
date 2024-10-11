@@ -90,12 +90,6 @@
                                 Click="ExportSettings"
                             />
                             <widgets:ButtonCard
-                                Text="Clear the local icon cache"
-                                ButtonText="Clear cache"
-                                x:Name="ResetIconCache"
-                                Click="ResetIconCache_OnClick"
-                            />
-                            <widgets:ButtonCard
                                 Text="Reset WingetUI"
                                 ButtonText="Reset UniGetUI"
                                 Click="ResetWingetUI"
@@ -107,6 +101,7 @@
                     <widgets:SettingsEntry
                             Text="User interface preferences"
                             UnderText="Action when double-clicking packages, hide successful installations"
+                            x:Name="InterfaceSettingsExpander"
                             Icon="interactive">
                         <Toolkit:SettingsExpander.Items>
                             <widgets:ComboboxCard
@@ -125,6 +120,18 @@
                                 x:Name="DisableSystemTray"
                                 StateChanged="DisableSystemTray_StateChanged"
                                 />
+                            <widgets:CheckboxCard
+                                Text="Show package icons on package lists"
+                                SettingName="DisableIconsOnPackageLists"
+                                x:Name="DisableIconsOnPackageLists"
+                                StateChanged="DisableIconsOnPackageLists_OnStateChanged"
+                            />
+                            <widgets:ButtonCard
+                                Text="Clear the local icon cache"
+                                ButtonText="Clear cache"
+                                x:Name="ResetIconCache"
+                                Click="ResetIconCache_OnClick"
+                            />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
 

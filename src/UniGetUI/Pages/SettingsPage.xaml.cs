@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -565,8 +566,14 @@ namespace UniGetUI.Interface
                 Logger.Error("An error occurred while deleting icon cache");
                 Logger.Error(ex);
             }
-            GeneralSettingsExpander.ShowRestartRequiredBanner();
+            InterfaceSettingsExpander.ShowRestartRequiredBanner();
+            PackageWrapper.ResetIconCache();
             LoadIconCacheSize();
+        }
+
+        private void DisableIconsOnPackageLists_OnStateChanged(object? sender, EventArgs e)
+        {
+            InterfaceSettingsExpander.ShowRestartRequiredBanner();
         }
     }
 }

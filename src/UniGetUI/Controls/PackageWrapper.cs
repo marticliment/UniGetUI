@@ -22,6 +22,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
     {
         private static Dictionary<long, Uri?> CachedPackageIcons = new();
 
+        public static void ResetIconCache()
+        {
+            CachedPackageIcons.Clear();
+        }
+
         public bool IsChecked
         {
             get => Package.IsChecked;
@@ -67,6 +72,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Self = this;
             WhenTagHasChanged();
             Package.PropertyChanged += Package_PropertyChanged;
+            UpdatePackageIcon();
         }
 
         public void Package_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -174,13 +180,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 };
                 ShowCustomPackageIcon = true;
                 ShowDefaultPackageIcon = false;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MainIconSource)));
             }
             else
             {
-                ShowCustomPackageIcon = true;
-                ShowDefaultPackageIcon = false;
+                ShowCustomPackageIcon = false;
+                ShowDefaultPackageIcon = true;
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MainIconSource)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ShowCustomPackageIcon)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ShowDefaultPackageIcon)));
         }

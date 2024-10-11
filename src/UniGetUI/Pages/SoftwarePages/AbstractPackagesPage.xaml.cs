@@ -330,6 +330,8 @@ namespace UniGetUI.Interface
                 }
             }
             FilterPackages();
+            if (!Settings.Get("DisableIconsOnPackageLists"))
+                _ = LoadIconsForNewPackages();
         }
 
         private void Loader_FinishedLoading(object? sender, EventArgs e)
@@ -345,8 +347,6 @@ namespace UniGetUI.Interface
             LastPackageLoadTime = DateTime.Now;
             WhenPackagesLoaded(ReloadReason.External);
             FilterPackages();
-            if (!Settings.Get("DisableIconsOnPackageLists"))
-                _ = LoadIconsForNewPackages();
         }
 
         private void Loader_StartedLoading(object? sender, EventArgs e)
