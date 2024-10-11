@@ -28,8 +28,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             set => Package.IsChecked = value;
         }
 
-        public IconType ListedComplementaryIconId = IconType.Empty;
-        private IconType ListedIconId = IconType.Package;
+        public bool AlternateIdIconVisible;
+        public IconType MainIconId = IconType.Id;
+        public IconType AlternateIconId = IconType.Id;
         public IconSource MainIconSource;
 
         public bool IconHasBeenLoaded
@@ -75,8 +76,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 {
                     WhenTagHasChanged();
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedOpacity)));
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedComplementaryIconId)));
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MainIconSource)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AlternateIconId)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MainIconId)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AlternateIdIconVisible)));
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListedNameTooltip)));
                 }
                 else if (e.PropertyName == nameof(Package.IsChecked))
@@ -103,9 +105,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public void WhenTagHasChanged()
         {
-            ListedIconId = Package.Tag switch
+            MainIconId = Package.Tag switch
             {
-                PackageTag.Default => IconType.Package,
+                PackageTag.Default => IconType.Id,
                 PackageTag.AlreadyInstalled => IconType.Installed,
                 PackageTag.IsUpgradable => IconType.Upgradable,
                 PackageTag.Pinned => IconType.Pin,
@@ -117,7 +119,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             };
             UpdatePackageIcon();
 
-            ListedComplementaryIconId = Package.Tag switch
+            AlternateIconId = Package.Tag switch
             {
                 PackageTag.Default => IconType.Empty,
                 PackageTag.AlreadyInstalled => IconType.Installed_Filled,
@@ -129,6 +131,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 PackageTag.Unavailable => IconType.Empty,
                 _ => throw new ArgumentException($"Unknown tag {Package.Tag}"),
             };
+            AlternateIdIconVisible = AlternateIconId != IconType.Empty;
 
             ListedNameTooltip = Package.Tag switch
             {
@@ -172,8 +175,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
             else
             {
-                MainIconSource = new LocalIconSource(ListedIconId) { FontSize = 24, };
+                MainIconSource = new LocalIconSource(IconType.Package) { FontSize = 24, };
             }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MainIconSource)));
         }
     }
 }

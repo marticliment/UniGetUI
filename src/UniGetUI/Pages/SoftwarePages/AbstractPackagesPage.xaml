@@ -522,64 +522,51 @@
                         <ColumnDefinition Width="*" MaxWidth="150"/>
                     </Grid.ColumnDefinitions>
                     <CheckBox
-                    Grid.Column="0" Grid.Row="0"
-                    VerticalAlignment="Center"
-                    IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
-                    />
-                    <widgets:LocalIcon
-                        Icon="{x:Bind ListedComplementaryIconId}" FontWeight="ExtraLight" FontSize="24"
-                        Grid.Column="1" Grid.Row="0" Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
+                        Grid.Column="0" Grid.Row="0"
                         VerticalAlignment="Center"
-                        />
+                        IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
+                    />
                     <IconSourceElement
                         Grid.Column="1" Grid.Row="0"
                         VerticalAlignment="Center"
-                        IconSource="{x:Bind MainIconSource}"
+                        IconSource="{x:Bind MainIconSource, Mode=OneWay}"
                     />
-                    <!--widgets:LocalIcon
-                        Icon="{x:Bind ListedIconId}" FontWeight="ExtraLight" FontSize="24"
-                        Visibility="{x:Bind DefaultIconIsVisible}"
-                        Grid.Column="1" Grid.Row="0"
+                    <TextBlock
+                        Grid.Column="2" Grid.Row="0"
                         VerticalAlignment="Center"
-                        />
-                    <Image
-                        Visibility="{x:Bind PackageIconIsVisible}" MaxWidth="24" MaxHeight="24"
-                        Grid.Column="1" Grid.Row="0"
-                        VerticalAlignment="Center">
-                        <Image.Source>
-                            <BitmapImage
-                                DecodePixelHeight="24"
-                                UriSource="{x:Bind PackageIconIfAny}"
-                                />
-                        </Image.Source>
-                    </Image-->
+                        Text="{x:Bind Package.Name}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                    />
+
+                    <widgets:LocalIcon
+                        Icon="{x:Bind AlternateIconId, Mode=OneWay}" FontWeight="ExtraLight" FontSize="24"
+                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}"
+                        Grid.Column="3" Grid.Row="0" Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
+                        VerticalAlignment="Center"
+                    />
+
+                    <widgets:LocalIcon
+                        Icon="{x:Bind MainIconId, Mode=OneWay}" FontWeight="ExtraLight" FontSize="24"
+                        Grid.Column="3" Grid.Row="0"
+                        VerticalAlignment="Center"
+                    />
+
                     <TextBlock
-                    Grid.Column="2" Grid.Row="0"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind Package.Name}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Grid.Column="4" Grid.Row="0"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind Package.Id}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                        ToolTipService.ToolTip="{x:Bind Package.Id}"
                     />
                     <widgets:LocalIcon
-                    Icon="id" FontWeight="ExtraLight" FontSize="24"
-                    Grid.Column="3" Grid.Row="0"
-                    VerticalAlignment="Center"
+                        Icon="version" FontWeight="ExtraLight" FontSize="24"
+                        Grid.Column="5" Grid.Row="0"
+                        VerticalAlignment="Center"
                     />
                     <TextBlock
-                    Grid.Column="4" Grid.Row="0"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind Package.Id}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Package.Id}"
-                    />
-                    <widgets:LocalIcon
-                    Icon="version" FontWeight="ExtraLight" FontSize="24"
-                    Grid.Column="5" Grid.Row="0"
-                    VerticalAlignment="Center"
-                    />
-                    <TextBlock
-                    Grid.Column="6" Grid.Row="0"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind Package.Version, Mode=OneWay}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Package.Version}"
+                        Grid.Column="6" Grid.Row="0"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind Package.Version, Mode=OneWay}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                        ToolTipService.ToolTip="{x:Bind Package.Version}"
                     />
                     <widgets:LocalIcon
                         FontWeight="ExtraLight" FontSize="24"
@@ -588,21 +575,21 @@
                         VerticalAlignment="Center"
                     />
                     <TextBlock
-                    Grid.Column="8" Grid.Row="0"
-                    VerticalAlignment="Center" Visibility="{x:Bind Package.IsUpgradable}"
-                    Text="{x:Bind Package.NewVersion}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Package.NewVersion}"
+                        Grid.Column="8" Grid.Row="0"
+                        VerticalAlignment="Center" Visibility="{x:Bind Package.IsUpgradable}"
+                        Text="{x:Bind Package.NewVersion}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                        ToolTipService.ToolTip="{x:Bind Package.NewVersion}"
                     />
                     <widgets:LocalIcon
-                    Grid.Column="9" Grid.Row="0" FontWeight="ExtraLight" FontSize="24"
-                    VerticalAlignment="Center"
-                    Icon="{x:Bind Package.Source.IconId}"
+                        Grid.Column="9" Grid.Row="0" FontWeight="ExtraLight" FontSize="24"
+                        VerticalAlignment="Center"
+                        Icon="{x:Bind Package.Source.IconId}"
                     />
                     <TextBlock
-                    Grid.Column="10" Grid.Row="0"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind Package.Source.AsString_DisplayName}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Package.Source.AsString_DisplayName}"
+                        Grid.Column="10" Grid.Row="0"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind Package.Source.AsString_DisplayName}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                        ToolTipService.ToolTip="{x:Bind Package.Source.AsString_DisplayName}"
                     />
                 </Grid>
             </widgets:PackageItemContainer>
