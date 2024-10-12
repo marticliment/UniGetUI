@@ -222,7 +222,7 @@ For more details, see this issue: https://github.com/microsoft/winget-cli/issues
 
 **Q: My antivirus is telling me that UniGetUI is a virus! / My browser is blocking the download of UniGetUI!**<br>
 
-A: A common reason apps (i.e., executables) get blocked and/or detected as a virus — even when there's nothing malicious about them, like in the case of UniGetUI — is because they're not being used by a relatively large amount of people.
+A: A common reason apps (i.e., executables) get blocked and/or detected as a virus — even when there's nothing malicious about them, like in the case of UniGetUI — is because a relatively large amount of people are not using them.
 
 Combine that with the fact that you might be downloading something recently released, and blocking unknown apps is in many cases a good precaution to take to prevent actual malware.
 
@@ -234,11 +234,10 @@ Since UniGetUI is open source and safe to use, whitelist the app in the settings
 
 A: UniGetUI, Microsoft, and Scoop aren't responsible for the packages available for download, which are provided by third parties and can theoretically be compromised.
 
-Microsoft has implemented a few checks for the software available on Winget to mitigate the risks of downloading malware. Even so, It's recommended to only download software from publishers that you trust. 
+Microsoft has implemented a few checks for the software available on Winget to mitigate the risks of downloading malware. Even so, it's recommended that you only download software from trusted publishers. 
 
 <br><p align="center"><i>Check out the <a href="https://github.com/marticliment/UniGetUI/wiki">Wiki</a> for more information!</i></p>
 
 ## Command-line parameters:
 
-Check out the full list of paramaters [here](https://github.com/marticliment/UniGetUI/blob/main/cli-arguments.md)
-
+Check out the full list of parameters [here](https://github.com/marticliment/UniGetUI/blob/main/cli-arguments.md)
