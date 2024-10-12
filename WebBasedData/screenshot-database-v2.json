@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11712,
-        "done": 5119,
-        "packages_with_icon": 5119,
+        "done": 5118,
+        "packages_with_icon": 5118,
         "packages_with_screenshot": 590,
         "total_screenshots": 1834
     },
@@ -17180,7 +17180,7 @@
             "images": []
         },
         "gradle": {
-            "icon": "https://community.chocolatey.org/content/packageimages/gradle.7.6.png",
+            "icon": "",
             "images": []
         },
         "gradle-bin": {
