@@ -1,6 +1,6 @@
 {
     "package_count": {
-        "total": 11712,
+        "total": 11711,
         "done": 5118,
         "packages_with_icon": 5118,
         "packages_with_screenshot": 590,
@@ -8867,10 +8867,6 @@
             "icon": "",
             "images": []
         },
-        "crow-translate": {
-            "icon": "",
-            "images": []
-        },
         "crowdinspect": {
             "icon": "https://community.chocolatey.org/content/packageimages/crowdinspect.1.5.0.png",
             "images": []
@@ -8892,9 +8888,9 @@
             "images": []
         },
         "crowtranslate": {
-            "icon": "https://crow-translate.github.io/favicon.png",
+            "icon": "https://i.postimg.cc/dt36sNrG/48-apps-crow-translate.png",
             "images": [
-                "https://crow-translate.github.io/screenshots/plasma/main.png"
+                "https://i.postimg.cc/28twVd7M/main-1.png"
             ]
         },
         "crsed": {
