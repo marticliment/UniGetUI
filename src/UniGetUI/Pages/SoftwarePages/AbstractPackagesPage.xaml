@@ -526,6 +526,8 @@
                         VerticalAlignment="Center"
                         IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
                     />
+
+                    <!-- Regular or package icon -->
                     <widgets:LocalIcon
                         Grid.Column="1" Grid.Row="0"
                         VerticalAlignment="Center" FontWeight="ExtraLight" FontSize="24"
@@ -537,26 +539,32 @@
                         Source="{x:Bind MainIconSource, Mode=OneWay}"
                         Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}"
                     />
+
+                    <!-- Package tag icon -->
+                    <widgets:LocalIcon
+                        Icon="{x:Bind AlternateIconId, Mode=OneWay}" FontWeight="ExtraLight" FontSize="16"
+                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}"
+                        Grid.Column="1" Grid.Row="0" Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="16" Width="16"
+                    />
+                    <widgets:LocalIcon
+                        Icon="{x:Bind MainIconId, Mode=OneWay}" FontWeight="ExtraLight" FontSize="16"
+                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}"
+                        Grid.Column="1" Grid.Row="0"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="16" Width="16"
+                    />
+
                     <TextBlock
                         Grid.Column="2" Grid.Row="0"
                         VerticalAlignment="Center"
                         Text="{x:Bind Package.Name}" FontSize="13" FontFamily="Segoe UI Variable Text"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                     />
-
                     <widgets:LocalIcon
-                        Icon="{x:Bind AlternateIconId, Mode=OneWay}" FontWeight="ExtraLight" FontSize="24"
-                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}"
-                        Grid.Column="3" Grid.Row="0" Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
-                        VerticalAlignment="Center"
-                    />
-
-                    <widgets:LocalIcon
-                        Icon="{x:Bind MainIconId, Mode=OneWay}" FontWeight="ExtraLight" FontSize="24"
+                        Icon="Id" FontWeight="ExtraLight" FontSize="24"
                         Grid.Column="3" Grid.Row="0"
                         VerticalAlignment="Center"
                     />
-
                     <TextBlock
                         Grid.Column="4" Grid.Row="0"
                         VerticalAlignment="Center"
@@ -848,7 +856,7 @@
 
 
             <!-- Filters/Packages Splitter -->
-            <Toolkit:GridSplitter Grid.Column="1" Grid.Row="1" Name="FiltersResizer"
+            <Toolkit:GridSplitter Grid.Column="1" Grid.Row="1" x:Name="FiltersResizer"
                     HorizontalAlignment="Left" Width="10" CornerRadius="2" Padding="-2,0,-2,0" Margin="0,1,0,1">
                 <Toolkit:GridSplitter.RenderTransform>
                     <TranslateTransform X="-11" />
