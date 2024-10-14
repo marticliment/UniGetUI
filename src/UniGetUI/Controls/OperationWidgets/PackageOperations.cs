@@ -263,7 +263,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         }
 
-        protected override async Task<AfterFinshAction> HandleSuccess()
+        protected override Task<AfterFinshAction> HandleSuccess()
         {
             LineInfoText = CoreTools.Translate("{package} was installed successfully", new Dictionary<string, object?> { { "package", Package.Name } });
             Package.SetTag(PackageTag.AlreadyInstalled);
@@ -275,7 +275,7 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            return AfterFinshAction.TimeoutClose;
+            return Task.FromResult(AfterFinshAction.TimeoutClose);
         }
 
         protected override async Task Initialize()

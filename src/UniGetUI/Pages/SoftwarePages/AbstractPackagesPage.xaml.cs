@@ -107,7 +107,7 @@ namespace UniGetUI.Interface
         }
         protected string NoMatches_SubtitleText
         {
-            get => FoundPackages_SubtitleText_Base(Loader.Packages.Count(), FilteredPackages.Count) +
+            get => FoundPackages_SubtitleText_Base(Loader.Count(), FilteredPackages.Count) +
                (SHOW_LAST_CHECKED_TIME ? " " + CoreTools.Translate("(Last checked: {0})", LastPackageLoadTime.ToString()) : "");
         }
         protected string FoundPackages_SubtitleText { get => NoMatches_SubtitleText; }
@@ -324,7 +324,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                foreach (IPackage package in Loader.Packages.ToList())
+                foreach (IPackage package in Loader.Packages)
                 {
                     AddPackageToSourcesList(package);
                 }
@@ -553,23 +553,23 @@ namespace UniGetUI.Interface
 
             if (QueryIdRadio.IsChecked == true)
             {
-                MatchingList = Loader.Packages.ToArray().Where(x => CharsFunc(x.Name).Contains(treatedQuery));
+                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name).Contains(treatedQuery));
             }
             else if (QueryNameRadio.IsChecked == true)
             {
-                MatchingList = Loader.Packages.ToArray().Where(x => CharsFunc(x.Id).Contains(treatedQuery));
+                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Id).Contains(treatedQuery));
             }
             else if (QueryBothRadio.IsChecked == true)
             {
-                MatchingList = Loader.Packages.ToArray().Where(x => CharsFunc(x.Name).Contains(treatedQuery) | CharsFunc(x.Id).Contains(treatedQuery));
+                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name).Contains(treatedQuery) | CharsFunc(x.Id).Contains(treatedQuery));
             }
             else if (QueryExactMatch.IsChecked == true)
             {
-                MatchingList = Loader.Packages.ToArray().Where(x => CharsFunc(x.Name) == treatedQuery | CharsFunc(x.Id) == treatedQuery);
+                MatchingList = Loader.Packages.Where(x => CharsFunc(x.Name) == treatedQuery | CharsFunc(x.Id) == treatedQuery);
             }
             else // QuerySimilarResultsRadio == true
             {
-                MatchingList = Loader.Packages.ToArray();
+                MatchingList = Loader.Packages;
             }
 
             FilteredPackages.BlockSorting = true;
@@ -616,7 +616,7 @@ namespace UniGetUI.Interface
             {
                 if (LoadingProgressBar.Visibility == Visibility.Collapsed)
                 {
-                    if (!Loader.Packages.Any())
+                    if (!Loader.Any())
                     {
                         BackgroundText.Text = NoPackages_BackgroundText;
                         SourcesPlaceholderText.Text = NoPackages_SourcesText;
@@ -633,9 +633,9 @@ namespace UniGetUI.Interface
                 }
                 else
                 {
-                    BackgroundText.Visibility = Loader.Packages.Any() ? Visibility.Collapsed : Visibility.Visible;
+                    BackgroundText.Visibility = Loader.Any() ? Visibility.Collapsed : Visibility.Visible;
                     BackgroundText.Text = MainSubtitle_StillLoading;
-                    SourcesPlaceholderText.Visibility = Loader.Packages.Any() ? Visibility.Collapsed : Visibility.Visible;
+                    SourcesPlaceholderText.Visibility = Loader.Any() ? Visibility.Collapsed : Visibility.Visible;
                     SourcesPlaceholderText.Text = MainSubtitle_StillLoading;
                     MainSubtitle.Text = MainSubtitle_StillLoading;
                 }
@@ -643,13 +643,13 @@ namespace UniGetUI.Interface
             else
             {
                 BackgroundText.Text = NoPackages_BackgroundText;
-                BackgroundText.Visibility = Loader.Packages.Any() ? Visibility.Collapsed : Visibility.Visible;
+                BackgroundText.Visibility = Loader.Any() ? Visibility.Collapsed : Visibility.Visible;
                 MainSubtitle.Text = FoundPackages_SubtitleText;
             }
 
             if (ExternalCountBadge is not null)
             {
-                ExternalCountBadge.Visibility = !Loader.Packages.Any() ? Visibility.Collapsed : Visibility.Visible;
+                ExternalCountBadge.Visibility = !Loader.Any() ? Visibility.Collapsed : Visibility.Visible;
                 ExternalCountBadge.Value = Loader.Count();
             }
 

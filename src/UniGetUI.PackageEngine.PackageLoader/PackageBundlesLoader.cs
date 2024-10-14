@@ -73,7 +73,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             foreach(IPackage package in packages)
             {
                 if (!Contains(package)) continue;
-                PackageReference.Remove(HashPackage(package));
+                PackageReference.Remove(HashPackage(package), out IPackage? _);
             }
             InvokePackagesChangedEvent();
         }

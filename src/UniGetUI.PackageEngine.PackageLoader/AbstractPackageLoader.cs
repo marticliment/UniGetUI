@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+using Windows.UI.Composition;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Interfaces;
 
@@ -15,11 +17,20 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public bool IsLoading { get; protected set; }
 
+        public bool Any()
+        {
+            return PackageReference.Any();
+        }
+
         /// <summary>
         /// The collection of currently available packages
         /// </summary>
-        public IEnumerable<IPackage> Packages { get => PackageReference.Values; }
-        protected readonly Dictionary<long, IPackage> PackageReference;
+        public List<IPackage> Packages
+        {
+            get => PackageReference.Values.ToList();
+        }
+
+        protected readonly ConcurrentDictionary<long, IPackage> PackageReference;
 
         /// <summary>
         /// Fires when a block of packages (one package or more) is added or removed to the loader
@@ -45,7 +56,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public AbstractPackageLoader(IEnumerable<IPackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false, bool DisableReload = false)
         {
             Managers = managers;
-            PackageReference = new Dictionary<long, IPackage>();
+            PackageReference = new ConcurrentDictionary<long, IPackage>();
             IsLoaded = false;
             IsLoading = false;
             DISABLE_RELOAD = DisableReload;
@@ -201,12 +212,10 @@ namespace UniGetUI.PackageEngine.PackageLoader
         {
             if (Contains(package))
             {
-                Logger.Error($"ABORTED (Package loader {LOADER_IDENTIFIER}): Internally trying to add package {package.Id} was already found in PackageHash!");
                 return;
             }
 
-            //Packages.Add(package);
-            PackageReference.Add(HashPackage(package), package);
+            PackageReference.TryAdd(HashPackage(package), package);
         }
 
         /// <summary>
@@ -216,11 +225,6 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public void AddForeign(IPackage? package)
         {
             if (package is null)
-            {
-                return;
-            }
-
-            if (Contains(package))
             {
                 return;
             }
@@ -244,7 +248,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 return;
             }
 
-            PackageReference.Remove(HashPackage(package));
+            PackageReference.Remove(HashPackage(package), out IPackage? _);
             InvokePackagesChangedEvent();
         }
 
@@ -260,12 +264,8 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 return null;
             }
 
-            if (!Contains(package))
-            {
-                return null;
-            }
-
-            return PackageReference[HashPackage(package)];
+            PackageReference.TryGetValue(HashPackage(package), out IPackage? eq);
+            return eq;
         }
 
         /// <summary>
