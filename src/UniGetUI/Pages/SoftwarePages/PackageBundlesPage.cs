@@ -272,7 +272,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public async Task<bool> AskForNewBundle()
         {
-            if (!Loader.Packages.Any() || !HasUnsavedChanges)
+            if (!Loader.Any() || !HasUnsavedChanges)
             {
                 // Need to call ClearPackages, this method also clears internal caches
                 Loader.ClearPackages();
