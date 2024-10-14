@@ -22,7 +22,6 @@ namespace UniGetUI.PackageEngine.PackageLoader
             return PackageReference.Any();
         }
 
-
         /// <summary>
         /// The collection of currently available packages
         /// </summary>

@@ -850,9 +850,9 @@ namespace UniGetUI.Interface
         {
             if (PackageList is not null)
             {
-                PackageList.ScrollView?.ScrollTo(0, 1);
+                PackageList.ScrollView?.ScrollBy(0, 1);
                 await Task.Delay(10);
-                PackageList.ScrollView?.ScrollTo(0, 0);
+                PackageList.ScrollView?.ScrollBy(0, -1);
             }
         }
 
