@@ -542,16 +542,16 @@
 
                     <!-- Package tag icon -->
                     <widgets:LocalIcon
-                        Icon="{x:Bind AlternateIconId, Mode=OneWay}" FontWeight="ExtraLight" FontSize="16"
-                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}"
+                        Icon="{x:Bind AlternateIconId, Mode=OneWay}" FontWeight="ExtraLight" FontSize="20"
+                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" Margin="0,0,-4,-2"
                         Grid.Column="1" Grid.Row="0" Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
-                        VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="16" Width="16"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="20" Width="20"
                     />
                     <widgets:LocalIcon
-                        Icon="{x:Bind MainIconId, Mode=OneWay}" FontWeight="ExtraLight" FontSize="16"
-                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}"
+                        Icon="{x:Bind MainIconId, Mode=OneWay}" FontWeight="ExtraLight" FontSize="20"
+                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" Margin="0,0,-4,-2"
                         Grid.Column="1" Grid.Row="0"
-                        VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="16" Width="16"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="20" Width="20"
                     />
 
                     <TextBlock
