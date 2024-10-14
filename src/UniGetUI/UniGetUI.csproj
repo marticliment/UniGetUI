@@ -29,7 +29,7 @@
       <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
       <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
       <WindowsPackageType>None</WindowsPackageType>
-      <WindowsSdkPackageVersion>10.0.22621.41</WindowsSdkPackageVersion>
+      <WindowsSdkPackageVersion>10.0.22621.47</WindowsSdkPackageVersion>
 
       <!--PublishTrimmed>true</PublishTrimmed-->
       <!--TrimMode>partial</TrimMode-->
