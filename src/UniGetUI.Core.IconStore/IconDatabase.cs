@@ -111,9 +111,14 @@ namespace UniGetUI.Core.IconEngine
             }
         }
 
-        public string GetIconUrlForId(string id)
+        public string? GetIconUrlForId(string id)
         {
-            return IconDatabaseData.TryGetValue(id, out var value) ? value.icon : "";
+            if (IconDatabaseData.TryGetValue(id, out var value) && value.icon.Length != 0)
+            {
+                return value.icon;
+            }
+
+            return null;
         }
 
         public string[] GetScreenshotsUrlForId(string id)

@@ -10,7 +10,7 @@
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     mc:Ignorable="d"
-    Name="DiscoverPage"
+    Name="ABSTRACT_PAGE"
     NavigationCacheMode="Required"
     xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses">
 
@@ -522,47 +522,65 @@
                         <ColumnDefinition Width="*" MaxWidth="150"/>
                     </Grid.ColumnDefinitions>
                     <CheckBox
-                    Grid.Column="0" Grid.Row="0"
-                    VerticalAlignment="Center"
-                    IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
-                    />
-                    <widgets:LocalIcon
-                        Icon="{x:Bind ListedComplementaryIconId}" FontWeight="ExtraLight" FontSize="24"
-                        Grid.Column="1" Grid.Row="0" Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
+                        Grid.Column="0" Grid.Row="0"
                         VerticalAlignment="Center"
-                        />
+                        IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
+                    />
+
+                    <!-- Regular or package icon -->
                     <widgets:LocalIcon
-                        Icon="{x:Bind ListedIconId}" FontWeight="ExtraLight" FontSize="24"
+                        Grid.Column="1" Grid.Row="0"
+                        VerticalAlignment="Center" FontWeight="ExtraLight" FontSize="24"
+                        Icon="Package" Visibility="{x:Bind ShowDefaultPackageIcon, Mode=OneWay}"
+                        />
+                    <Image
                         Grid.Column="1" Grid.Row="0"
                         VerticalAlignment="Center"
-                        />
-                    <TextBlock
-                    Grid.Column="2" Grid.Row="0"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind Package.Name}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Source="{x:Bind MainIconSource, Mode=OneWay}"
+                        Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}"
+                    />
+
+                    <!-- Package tag icon -->
+                    <widgets:LocalIcon
+                        Icon="{x:Bind AlternateIconId, Mode=OneWay}" FontWeight="ExtraLight" FontSize="20"
+                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" Margin="0,0,-4,-2"
+                        Grid.Column="1" Grid.Row="0" Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="20" Width="20"
                     />
                     <widgets:LocalIcon
-                    Icon="id" FontWeight="ExtraLight" FontSize="24"
-                    Grid.Column="3" Grid.Row="0"
-                    VerticalAlignment="Center"
+                        Icon="{x:Bind MainIconId, Mode=OneWay}" FontWeight="ExtraLight" FontSize="20"
+                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" Margin="0,0,-4,-2"
+                        Grid.Column="1" Grid.Row="0"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="20" Width="20"
                     />
+
                     <TextBlock
-                    Grid.Column="4" Grid.Row="0"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind Package.Id}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Package.Id}"
+                        Grid.Column="2" Grid.Row="0"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind Package.Name}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                     />
                     <widgets:LocalIcon
-                    Icon="version" FontWeight="ExtraLight" FontSize="24"
-                    Grid.Column="5" Grid.Row="0"
-                    VerticalAlignment="Center"
+                        Icon="Id" FontWeight="ExtraLight" FontSize="24"
+                        Grid.Column="3" Grid.Row="0"
+                        VerticalAlignment="Center"
                     />
                     <TextBlock
-                    Grid.Column="6" Grid.Row="0"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind Package.Version, Mode=OneWay}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Package.Version}"
+                        Grid.Column="4" Grid.Row="0"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind Package.Id}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                        ToolTipService.ToolTip="{x:Bind Package.Id}"
+                    />
+                    <widgets:LocalIcon
+                        Icon="version" FontWeight="ExtraLight" FontSize="24"
+                        Grid.Column="5" Grid.Row="0"
+                        VerticalAlignment="Center"
+                    />
+                    <TextBlock
+                        Grid.Column="6" Grid.Row="0"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind Package.Version, Mode=OneWay}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                        ToolTipService.ToolTip="{x:Bind Package.Version}"
                     />
                     <widgets:LocalIcon
                         FontWeight="ExtraLight" FontSize="24"
@@ -571,21 +589,21 @@
                         VerticalAlignment="Center"
                     />
                     <TextBlock
-                    Grid.Column="8" Grid.Row="0"
-                    VerticalAlignment="Center" Visibility="{x:Bind Package.IsUpgradable}"
-                    Text="{x:Bind Package.NewVersion}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Package.NewVersion}"
+                        Grid.Column="8" Grid.Row="0"
+                        VerticalAlignment="Center" Visibility="{x:Bind Package.IsUpgradable}"
+                        Text="{x:Bind Package.NewVersion}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                        ToolTipService.ToolTip="{x:Bind Package.NewVersion}"
                     />
                     <widgets:LocalIcon
-                    Grid.Column="9" Grid.Row="0" FontWeight="ExtraLight" FontSize="24"
-                    VerticalAlignment="Center"
-                    Icon="{x:Bind Package.Source.IconId}"
+                        Grid.Column="9" Grid.Row="0" FontWeight="ExtraLight" FontSize="24"
+                        VerticalAlignment="Center"
+                        Icon="{x:Bind Package.Source.IconId}"
                     />
                     <TextBlock
-                    Grid.Column="10" Grid.Row="0"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind Package.Source.AsString_DisplayName}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                    ToolTipService.ToolTip="{x:Bind Package.Source.AsString_DisplayName}"
+                        Grid.Column="10" Grid.Row="0"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind Package.Source.AsString_DisplayName}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                        ToolTipService.ToolTip="{x:Bind Package.Source.AsString_DisplayName}"
                     />
                 </Grid>
             </widgets:PackageItemContainer>
@@ -838,7 +856,7 @@
 
 
             <!-- Filters/Packages Splitter -->
-            <Toolkit:GridSplitter Grid.Column="1" Grid.Row="1" Name="FiltersResizer"
+            <Toolkit:GridSplitter Grid.Column="1" Grid.Row="1" x:Name="FiltersResizer"
                     HorizontalAlignment="Left" Width="10" CornerRadius="2" Padding="-2,0,-2,0" Margin="0,1,0,1">
                 <Toolkit:GridSplitter.RenderTransform>
                     <TranslateTransform X="-11" />

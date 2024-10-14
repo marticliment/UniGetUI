@@ -6,6 +6,7 @@ using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUIManagers = UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.WingetManager
@@ -33,15 +34,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
         {
+            if (package.Source.IsVirtualManager)
+                return null;
 
-            if (package.Source.Name == "msstore")
-            {
+            else if (package.Source.Name == "msstore")
                 return GetMicrosoftStoreIcon(package);
-            }
 
-            // Logger.Warn("Non-MSStore WinGet Native Icons have been forcefully disabled on code");
-            // return null;
-            return GetWinGetPackageIcon(package);
+            else
+                return GetWinGetPackageIcon(package);
         }
 
         protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
@@ -225,10 +225,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         private static CacheableIcon? GetWinGetPackageIcon(IPackage package)
         {
             if (WinGetHelper.Instance is not NativeWinGetHelper)
-            {
-                Logger.Warn("WinGet will not attempt to load icon since the helper is using bundled WinGet");
                 return null;
-            }
 
             PackageManager WinGetManager = ((NativeWinGetHelper)WinGetHelper.Instance).WinGetManager;
             WindowsPackageManager.Interop.WindowsPackageManagerFactory Factory = ((NativeWinGetHelper)WinGetHelper.Instance).Factory;

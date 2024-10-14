@@ -330,6 +330,8 @@ namespace UniGetUI.Interface
                 }
             }
             FilterPackages();
+            if (Settings.Get("EnableIconsOnPackageLists"))
+                _ = LoadIconsForNewPackages();
         }
 
         private void Loader_FinishedLoading(object? sender, EventArgs e)
@@ -358,14 +360,17 @@ namespace UniGetUI.Interface
             LoadingProgressBar.Visibility = Visibility.Visible;
             UpdatePackageCount();
         }
+
         public void SearchTriggered()
         {
             QueryBlock.Focus(FocusState.Pointer);
         }
+
         public void ReloadTriggered()
         {
             _ = LoadPackages(ReloadReason.Manual);
         }
+
         public void SelectAllTriggered()
         {
             if (QueryBlock.FocusState == FocusState.Unfocused)
@@ -382,6 +387,7 @@ namespace UniGetUI.Interface
                 }
             }
         }
+
         protected void AddPackageToSourcesList(IPackage package)
         {
             IManagerSource source = package.Source;
@@ -573,6 +579,7 @@ namespace UniGetUI.Interface
             }
 
             FilteredPackages.BlockSorting = true;
+
             foreach (IPackage match in MatchingList)
             {
                 if (VisibleSources.Contains(match.Source) || (!match.Manager.Capabilities.SupportsCustomSources && VisibleManagers.Contains(match.Manager)))
@@ -843,9 +850,9 @@ namespace UniGetUI.Interface
         {
             if (PackageList is not null)
             {
-                PackageList.ScrollView?.ScrollTo(0, 1);
+                PackageList.ScrollView?.ScrollBy(0, 1);
                 await Task.Delay(10);
-                PackageList.ScrollView?.ScrollTo(0, 0);
+                PackageList.ScrollView?.ScrollBy(0, -1);
             }
         }
 
@@ -920,6 +927,25 @@ namespace UniGetUI.Interface
 
             BodyGrid.ColumnDefinitions[0].Width = new GridLength(final_width);
             PaneIsAnimated = false;
+        }
+
+        private async Task LoadIconsForNewPackages()
+        {
+            var PackagesWithoutIcon = new List<PackageWrapper>();
+            // Get the packages to be updated.
+            foreach (var wrapper in FilteredPackages)
+            {
+                if (wrapper.IconWasLoaded) continue;
+                wrapper.IconWasLoaded = true;
+                PackagesWithoutIcon.Add(wrapper);
+            }
+
+            // Load their icons, one at a time.
+            foreach (var wrapper in PackagesWithoutIcon)
+            {
+                var icon = await Task.Run(wrapper.Package.GetIconUrlIfAny);
+                if(icon is not null) wrapper.PackageIcon = icon;
+            }
         }
     }
 }

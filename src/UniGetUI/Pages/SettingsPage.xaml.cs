@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -87,15 +88,17 @@ namespace UniGetUI.Interface
             ThemeSelector.AddItem(CoreTools.AutoTranslated("Follow system color scheme"), "auto");
             ThemeSelector.ShowAddedItems();
 
+            // UI Section
+            EnableIconsOnPackageLists.Text = "[EXPERIMENTAL] " + CoreTools.Translate("Show package icons on package lists");
+
+
             // Backup Section
             BackupDirectoryLabel = (TextBlock)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(0);
             ResetBackupDirectory = (HyperlinkButton)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(1);
             OpenBackupDirectory = (HyperlinkButton)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2);
 
             EnablePackageBackupUI(Settings.Get("EnablePackageBackup"));
-
             ResetBackupDirectory.Content = CoreTools.Translate("Reset");
-
             OpenBackupDirectory.Content = CoreTools.Translate("Open");
 
             // Experimental Settings Section
@@ -565,8 +568,14 @@ namespace UniGetUI.Interface
                 Logger.Error("An error occurred while deleting icon cache");
                 Logger.Error(ex);
             }
-            GeneralSettingsExpander.ShowRestartRequiredBanner();
+            InterfaceSettingsExpander.ShowRestartRequiredBanner();
+            PackageWrapper.ResetIconCache();
             LoadIconCacheSize();
+        }
+
+        private void EnableIconsOnPackageLists_OnStateChanged(object? sender, EventArgs e)
+        {
+            InterfaceSettingsExpander.ShowRestartRequiredBanner();
         }
     }
 }

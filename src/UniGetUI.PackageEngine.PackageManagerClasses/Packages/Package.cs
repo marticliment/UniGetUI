@@ -23,6 +23,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         private readonly long __versioned_hash;
         private readonly string ignoredId;
 
+        private bool IconHasBeenCached = false;
+        private Uri? CachedIcon;
+
         private IPackageDetails? __details;
         public IPackageDetails Details
         {
@@ -175,23 +178,33 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public virtual Uri GetIconUrl()
         {
+            return GetIconUrlIfAny() ?? new Uri("ms-appx:///Assets/Images/package_color.png");
+        }
+
+        public virtual Uri? GetIconUrlIfAny()
+        {
+            if (!IconHasBeenCached)
+            {
+                CachedIcon = LoadIconUrlIfAny();
+                IconHasBeenCached = true;
+            }
+
+            return CachedIcon;
+        }
+
+        private Uri? LoadIconUrlIfAny()
+        {
             try
             {
                 CacheableIcon? icon = Manager.GetPackageIconUrl(this);
                 string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, Manager.Name, Id).GetAwaiter().GetResult();
-
-                Uri Icon;
-                if (path is null) Icon = new Uri("ms-appx:///Assets/Images/package_color.png");
-                else              Icon = new Uri("file:///" + path);
-
-                Logger.Debug($"Icon for package {Id} was loaded from {Icon}");
-                return Icon;
+                return path is null? null: new Uri("file:///" + path);
             }
             catch (Exception ex)
             {
                 Logger.Error($"An error occurred while retrieving the icon for package {Id}");
                 Logger.Error(ex);
-                return new Uri("ms-appx:///Assets/Images/package_color.png");
+                return null;
             }
         }
 
