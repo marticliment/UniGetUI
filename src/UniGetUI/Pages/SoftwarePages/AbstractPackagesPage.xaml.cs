@@ -330,7 +330,7 @@ namespace UniGetUI.Interface
                 }
             }
             FilterPackages();
-            if (!Settings.Get("DisableIconsOnPackageLists"))
+            if (!Settings.Get("EnableIconsOnPackageLists"))
                 _ = LoadIconsForNewPackages();
         }
 
