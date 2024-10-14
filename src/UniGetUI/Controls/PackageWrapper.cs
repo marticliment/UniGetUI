@@ -173,6 +173,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 {
                     UriSource = icon,
                     DecodePixelWidth = 24,
+                    DecodePixelType = DecodePixelType.Logical,
                 };
                 ShowCustomPackageIcon = true;
                 ShowDefaultPackageIcon = false;
