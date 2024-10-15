@@ -24,8 +24,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
 			{
 				Name = "vcpkg",
 				Description = CoreTools.Translate("A popular C/C++ library manager. Full of C/C++ libraries and other C/C++-related utilities<br>Contains: <b>C/C++ libraries and related utilities</b>"),
-				// TODO: IconID
-				// TODO: ColorIconID
+				IconId = IconType.Package, // What I got from discussion #2826 is that for a custom vcpkg icon, Marti has to do it, so this one seems the most 
+				ColorIconId = "vcpkg_color",
 				ExecutableFriendlyName = "vcpkg",
 				InstallVerb = "install",
 				UninstallVerb = "remove",
