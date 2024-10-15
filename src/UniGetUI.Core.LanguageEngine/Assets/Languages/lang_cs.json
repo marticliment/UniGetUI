@@ -100,7 +100,7 @@
   "Clear selection" : "Zrušit výběr",
   "Clearing Scoop cache - WingetUI" : "Mazání mezipaměti Scoop - WingetUI",
   "Clearing Scoop cache..." : "Čistím mezipaměť Scoop...",
-  "Click on Install to begin the installation process. If you skip the installation, UniGetUI may not work as expected." : null,
+  "Click on Install to begin the installation process. If you skip the installation, UniGetUI may not work as expected." : "Klepnutím na tlačítko Instalace zahájíte proces instalace. Pokud instalaci přeskočíte, nemusí UniGetUI fungovat dle očekávání.",
   "Close" : "Zavřít",
   "Close WingetUI to the notification area" : "Skrýt WingetUI do notifikační oblasti",
   "Command-line Output" : "Výstup příkazového řádku",
