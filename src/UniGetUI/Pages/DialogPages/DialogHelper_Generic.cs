@@ -305,10 +305,12 @@ public static partial class DialogHelper
 
     public static async void HandleBrokenWinGet()
     {
+        bool bannerWasOpen = false;
         try
         {
             DialogHelper.ShowLoadingDialog("Attempting to repair WinGet...",
                 "WinGet is being repaired. Please wait until the process finishes.");
+            bannerWasOpen = Window.WinGetWarningBanner.IsOpen;
             Window.WinGetWarningBanner.IsOpen = false;
             Process p = new Process()
             {
@@ -366,7 +368,7 @@ public static partial class DialogHelper
         catch (Exception ex)
         {
             // Show an error message if something goes wrong
-            Window.WinGetWarningBanner.IsOpen = true;
+            Window.WinGetWarningBanner.IsOpen = bannerWasOpen;
             Logger.Error("An error occurred while trying to repair WinGet");
             Logger.Error(ex);
             DialogHelper.HideLoadingDialog();
