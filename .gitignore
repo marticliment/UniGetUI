@@ -82,3 +82,4 @@ src/UniGetUI/choco-cli/extensions/chocolatey-dotnetfx/
 InstallerExtras/MsiCreator/setup.exe
 InstallerExtras/MsiCreator/UniGetUI Installer.msi
 InstallerExtras/MsiCreator/UniGetUISetup.msi
+src/global.json
