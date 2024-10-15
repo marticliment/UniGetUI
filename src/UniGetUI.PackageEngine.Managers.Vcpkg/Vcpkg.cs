@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -72,17 +73,49 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
 
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
+			return [];
             throw new NotImplementedException();
         }
 
         protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
         {
+			return [];
             throw new NotImplementedException();
         }
 
         protected override ManagerStatus LoadManager()
         {
-            throw new NotImplementedException();
+			var (found, path) = CoreTools.Which("vcpkg");
+
+			ManagerStatus status = new ManagerStatus
+			{
+				Found = found,
+				ExecutablePath = path,
+			};
+
+			if (!status.Found)
+            {
+                return status;
+            }
+
+			Process process = new()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " version",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = Encoding.UTF8,
+                    StandardErrorEncoding = Encoding.UTF8
+                }
+            };
+			process.Start();
+			status.Version = (process.StandardOutput.ReadLine() ?? "Unknown").Replace("vcpkg package management program version", "").Trim();
+
+			return status;
         }
     }
 }
