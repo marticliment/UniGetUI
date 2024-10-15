@@ -86,8 +86,63 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
 
         protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
         {
-            return [];
-            throw new NotImplementedException();
+            Process p = new()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " list",
+                    // vcpkg has an --x-json flag that would list installed packages in JSON, but it's expiremental
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = Encoding.UTF8
+                }
+            };
+
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+            string? line;
+            List<Package> Packages = [];
+
+            p.Start();
+
+            Dictionary<string, string> PackageVersions = new();
+            while ((line = p.StandardOutput.ReadLine()) is not null)
+            {
+                logger.AddToStdOut(line);
+
+                // Sample line:
+                // name:triplet (source)             version     description
+                // curl:x64-mingw-dynamic            8.1.2#2     A library for transferring data with URLs
+                // curl[non-http]:x64-mingw-dynamic              Enables protocols beyond HTTP/HTTPS/HTTP2
+                // (note that the suboptions, with the `name[build-option]` syntax have no version)
+
+                //                                           to get rid of many spaces of padding
+                string[] PackageData = Regex.Replace(line, @"\s+", " ").Split(' ');
+                string PackageId = PackageData[0];
+                string PackageName = PackageId.Split(':')[0],
+                    PackageTriplet = PackageId.Split(':')[1],
+                    PackageVersion = PackageData[1];
+                if (PackageId.Contains('[') /* meaning its a suboption, and thus has no version */)
+                {
+                    PackageVersion = PackageVersions[PackageName[..PackageName.IndexOf("[")]];
+                }
+                else
+                {
+                    PackageVersions[PackageName] = PackageVersion;
+                }
+
+                if (!TripletSourceMap.TryGetValue(PackageTriplet, out ManagerSource? value))
+                {
+                    value = new ManagerSource(this, PackageTriplet, URI_VCPKG_IO);
+                    TripletSourceMap[PackageTriplet] = value;
+                }
+
+                Packages.Add(new Package(CoreTools.FormatAsName(PackageName), PackageId, PackageVersion, value, this));
+            }
+
+            return Packages;
         }
 
         protected override ManagerStatus LoadManager()
