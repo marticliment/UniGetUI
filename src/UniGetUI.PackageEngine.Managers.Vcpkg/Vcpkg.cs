@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -20,6 +21,18 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
 				SupportsCustomSources = true, // TODO: check this; are different triplets "different sources"?
 			};
 
+			string DefaultTriplet = Environment.GetEnvironmentVariable("VCPKG_DEFAULT_TRIPLET") ?? "";
+
+			if (DefaultTriplet == "") {
+				if (RuntimeInformation.OSArchitecture == Architecture.X64) DefaultTriplet = "x64-";
+				else if (RuntimeInformation.OSArchitecture == Architecture.X86) DefaultTriplet = "x86-";
+				else if (RuntimeInformation.OSArchitecture == Architecture.Arm64) DefaultTriplet = "arm64-";
+
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) DefaultTriplet += "windows";
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) DefaultTriplet += "osx";
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) DefaultTriplet += "linux";
+			}
+
 			Properties = new ManagerProperties
 			{
 				Name = "vcpkg",
@@ -32,8 +45,20 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
 				UpdateVerb = "update",
 				ExecutableCallArgs = "",
 				// TODO: Sources
-				DefaultSource = new ManagerSource(this, "Windows x64", new Uri("https://vcpkg.io/")),
-                KnownSources = [new ManagerSource(this, "Windows x64", new Uri("https://vcpkg.io/"))],
+				DefaultSource = new ManagerSource(this, DefaultTriplet, new Uri("https://vcpkg.io/")),
+                KnownSources = [
+					new ManagerSource(this, "arm-neon-android", new Uri("https://vcpkg.io/")),
+					new ManagerSource(this, "arm64-android", new Uri("https://vcpkg.io/")),
+					new ManagerSource(this, "arm64-uwp", new Uri("https://vcpkg.io/")),
+					new ManagerSource(this, "arm64-windows", new Uri("https://vcpkg.io/")),
+					new ManagerSource(this, "x64-android", new Uri("https://vcpkg.io/")),
+					new ManagerSource(this, "x64-linux", new Uri("https://vcpkg.io/")),
+					new ManagerSource(this, "x64-osx", new Uri("https://vcpkg.io/")),
+					new ManagerSource(this, "x64-uwp", new Uri("https://vcpkg.io/")),
+					new ManagerSource(this, "x64-windows-static", new Uri("https://vcpkg.io/")),
+					new ManagerSource(this, "x64-windows", new Uri("https://vcpkg.io/")),
+					new ManagerSource(this, "x86-windows", new Uri("https://vcpkg.io/"))
+				],
 			};
 
 			SourceProvider = new VcpkgSourceProvider(this);
