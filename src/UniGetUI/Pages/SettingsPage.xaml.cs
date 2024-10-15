@@ -173,6 +173,18 @@ namespace UniGetUI.Interface
 
             ExtraSettingsCards[PEInterface.Chocolatey].Add(Chocolatey_SystemChoco);
 
+            CheckboxCard Vcpkg_UpdateGitPorts = new()
+            {
+                Text = CoreTools.Translate("Update vcpkg's Git portfiles automatically (requires Git installed)"),
+                SettingName = "UpdateVcpkgGitPorts"
+            };
+            Vcpkg_UpdateGitPorts.StateChanged += (_, _) =>
+            {
+                PackageManagerExpanders[PEInterface.Vcpkg].ShowRestartRequiredBanner();
+            };
+            ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_UpdateGitPorts);
+
+
             foreach (IPackageManager Manager in PEInterface.Managers)
             {
 
