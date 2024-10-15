@@ -7,13 +7,18 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
+using Windows.Security.Authentication.Web.Core;
 
 namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
     public class Vcpkg : PackageManager
     {
+        public Dictionary<string, ManagerSource> TripletSourceMap;
+        public Uri URI_VCPKG_IO = new Uri("https://vcpkg.io/");
+
 		public Vcpkg()
 		{
 			Capabilities = new ManagerCapabilities
@@ -34,37 +39,39 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
 				if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) DefaultTriplet += "linux";
 			}
 
-			Properties = new ManagerProperties
-			{
-				Name = "vcpkg",
-				Description = CoreTools.Translate("A popular C/C++ library manager. Full of C/C++ libraries and other C/C++-related utilities<br>Contains: <b>C/C++ libraries and related utilities</b>"),
-				IconId = IconType.Package, // What I got from discussion #2826 is that for a custom vcpkg icon, Marti has to do it, so this one seems the most 
-				ColorIconId = "vcpkg_color",
-				ExecutableFriendlyName = "vcpkg",
-				InstallVerb = "install",
-				UninstallVerb = "remove",
-				UpdateVerb = "update",
-				ExecutableCallArgs = "",
-				// TODO: Sources
-				DefaultSource = new ManagerSource(this, DefaultTriplet, new Uri("https://vcpkg.io/")),
-                KnownSources = [
-					new ManagerSource(this, "arm-neon-android", new Uri("https://vcpkg.io/")),
-					new ManagerSource(this, "arm64-android", new Uri("https://vcpkg.io/")),
-					new ManagerSource(this, "arm64-uwp", new Uri("https://vcpkg.io/")),
-					new ManagerSource(this, "arm64-windows", new Uri("https://vcpkg.io/")),
-					new ManagerSource(this, "x64-android", new Uri("https://vcpkg.io/")),
-					new ManagerSource(this, "x64-linux", new Uri("https://vcpkg.io/")),
-					new ManagerSource(this, "x64-osx", new Uri("https://vcpkg.io/")),
-					new ManagerSource(this, "x64-uwp", new Uri("https://vcpkg.io/")),
-					new ManagerSource(this, "x64-windows-static", new Uri("https://vcpkg.io/")),
-					new ManagerSource(this, "x64-windows", new Uri("https://vcpkg.io/")),
-					new ManagerSource(this, "x86-windows", new Uri("https://vcpkg.io/"))
-				],
-			};
+            TripletSourceMap = new Dictionary<string, ManagerSource>
+            {
+                { "arm-neon-android",   new ManagerSource(this, "arm-neon-android", URI_VCPKG_IO) },
+                { "arm64-android",      new ManagerSource(this, "arm64-android", URI_VCPKG_IO) },
+                { "arm64-uwp",          new ManagerSource(this, "arm64-uwp", URI_VCPKG_IO) },
+                { "arm64-windows",      new ManagerSource(this, "arm64-windows", URI_VCPKG_IO) },
+                { "x64-android",        new ManagerSource(this, "x64-android", URI_VCPKG_IO) },
+                { "x64-linux",          new ManagerSource(this, "x64-linux", URI_VCPKG_IO) },
+                { "x64-osx",            new ManagerSource(this, "x64-osx", URI_VCPKG_IO) },
+                { "x64-uwp",            new ManagerSource(this, "x64-uwp", URI_VCPKG_IO) },
+                { "x64-windows-static", new ManagerSource(this, "x64-windows-static", URI_VCPKG_IO) },
+                { "x64-windows",        new ManagerSource(this, "x64-windows", URI_VCPKG_IO) },
+                { "x86-windows",        new ManagerSource(this, "x86-windows", URI_VCPKG_IO) }
+            };
 
-			SourceProvider = new VcpkgSourceProvider(this);
-			OperationProvider = new VcpkgOperationProvider(this);
-		}
+            Properties = new ManagerProperties
+            {
+                Name = "vcpkg",
+                Description = CoreTools.Translate("A popular C/C++ library manager. Full of C/C++ libraries and other C/C++-related utilities<br>Contains: <b>C/C++ libraries and related utilities</b>"),
+                IconId = IconType.Package, // What I got from discussion #2826 is that for a custom vcpkg icon, Marti has to do it, so this one seems the most 
+                ColorIconId = "vcpkg_color",
+                ExecutableFriendlyName = "vcpkg",
+                InstallVerb = "install",
+                UninstallVerb = "remove",
+                UpdateVerb = "update",
+                ExecutableCallArgs = "",
+                DefaultSource = new ManagerSource(this, DefaultTriplet, URI_VCPKG_IO),
+                KnownSources = [.. TripletSourceMap.Values],
+            };
+
+            SourceProvider = new VcpkgSourceProvider(this);
+            OperationProvider = new VcpkgOperationProvider(this);
+        }
 
         protected override IEnumerable<Package> FindPackages_UnSafe(string query)
         {
@@ -79,7 +86,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
 
         protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
         {
-			return [];
+            return [];
             throw new NotImplementedException();
         }
 
