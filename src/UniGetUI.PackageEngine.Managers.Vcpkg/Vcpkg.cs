@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
@@ -58,7 +59,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
             {
                 Name = "vcpkg",
                 Description = CoreTools.Translate("A popular C/C++ library manager. Full of C/C++ libraries and other C/C++-related utilities<br>Contains: <b>C/C++ libraries and related utilities</b>"),
-                IconId = IconType.Package, // What I got from discussion #2826 is that for a custom vcpkg icon, Marti has to do it, so this one seems the most 
+                IconId = IconType.Package, // What I got from discussion #2826 is that for a custom vcpkg icon, Marti has to do it, so this one seems the most applicable
                 ColorIconId = "vcpkg_color",
                 ExecutableFriendlyName = "vcpkg",
                 InstallVerb = "install",
@@ -80,8 +81,34 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
 
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
+            var (found, path) = GetVcpkgPath();
+            if (Settings.Get("UpdateVcpkgGitPorts") && found) {
+                // TODO: update portfiles with git
+            }
 			return [];
             throw new NotImplementedException();
+        }
+
+        private Tuple<bool, string> GetVcpkgPath()
+        {
+            var (found, path) = CoreTools.Which("vcpkg");
+            if (found)
+            {
+                return Tuple.Create(found, path);
+            }
+
+            string? vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
+            if (vcpkgRoot != null)
+            {
+                string vcpkgLocation = Path.Join(vcpkgRoot, "vcpkg.exe");
+
+                if (File.Exists(vcpkgLocation))
+                {
+                    return Tuple.Create(true, vcpkgLocation);
+                }
+            }
+
+            return Tuple.Create(false, "");
         }
 
         protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
@@ -147,7 +174,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
 
         protected override ManagerStatus LoadManager()
         {
-			var (found, path) = CoreTools.Which("vcpkg");
+			var (found, path) = GetVcpkgPath();
 
 			ManagerStatus status = new ManagerStatus
 			{
