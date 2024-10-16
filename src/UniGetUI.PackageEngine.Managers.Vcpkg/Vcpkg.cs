@@ -15,31 +15,33 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 using Windows.Security.Authentication.Web.Core;
 
-namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
+namespace UniGetUI.PackageEngine.Managers.VcpkgManager
+{
     public class Vcpkg : PackageManager
     {
         public Dictionary<string, ManagerSource> TripletSourceMap;
         public Uri URI_VCPKG_IO = new Uri("https://vcpkg.io/");
 
-		public Vcpkg()
-		{
-			Capabilities = new ManagerCapabilities
-			{
-				CanRunAsAdmin = false, // TODO: check this; should this be true since we need admin to install to protected directories?
-				SupportsCustomSources = true, // TODO: check this; are different triplets "different sources"?
-			};
+        public Vcpkg()
+        {
+            Capabilities = new ManagerCapabilities
+            {
+                CanRunAsAdmin = false, // TODO: check this; should this be true since we need admin to install to protected directories?
+                SupportsCustomSources = true, // TODO: check this; are different triplets "different sources"?
+            };
 
-			string DefaultTriplet = Environment.GetEnvironmentVariable("VCPKG_DEFAULT_TRIPLET") ?? "";
+            string DefaultTriplet = Environment.GetEnvironmentVariable("VCPKG_DEFAULT_TRIPLET") ?? "";
 
-			if (DefaultTriplet == "") {
-				if (RuntimeInformation.OSArchitecture == Architecture.X64) DefaultTriplet = "x64-";
-				else if (RuntimeInformation.OSArchitecture == Architecture.X86) DefaultTriplet = "x86-";
-				else if (RuntimeInformation.OSArchitecture == Architecture.Arm64) DefaultTriplet = "arm64-";
+            if (DefaultTriplet == "")
+            {
+                if (RuntimeInformation.OSArchitecture == Architecture.X64) DefaultTriplet = "x64-";
+                else if (RuntimeInformation.OSArchitecture == Architecture.X86) DefaultTriplet = "x86-";
+                else if (RuntimeInformation.OSArchitecture == Architecture.Arm64) DefaultTriplet = "arm64-";
 
-				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) DefaultTriplet += "windows";
-				if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) DefaultTriplet += "osx";
-				if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) DefaultTriplet += "linux";
-			}
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) DefaultTriplet += "windows";
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) DefaultTriplet += "osx";
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) DefaultTriplet += "linux";
+            }
 
             TripletSourceMap = new Dictionary<string, ManagerSource>
             {
@@ -85,11 +87,13 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
             var (found, path) = GetVcpkgPath();
             string? vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
 
-            if (Settings.Get("UpdateVcpkgGitPorts") && found) {
+            if (Settings.Get("UpdateVcpkgGitPorts") && found)
+            {
                 var (gitFound, gitPath) = CoreTools.Which("git");
                 if (gitFound && vcpkgRoot != null)
                 {
-                    Process p = new() {
+                    Process p = new()
+                    {
                         StartInfo = new ProcessStartInfo
                         {
                             FileName = gitPath,
@@ -100,13 +104,14 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
                         }
                     };
                     p.Start();
-                } else
+                }
+                else
                 {
                     Logger.Error(new InvalidOperationException("Cannot update vcpkg port files as requested: git was not installed or the VCPKG_ROOT environment variable was not set"));
                 }
             }
 
-			return [];
+            return [];
             throw new NotImplementedException();
         }
 
@@ -195,20 +200,20 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
 
         protected override ManagerStatus LoadManager()
         {
-			var (found, path) = GetVcpkgPath();
+            var (found, path) = GetVcpkgPath();
 
-			ManagerStatus status = new ManagerStatus
-			{
-				Found = found,
-				ExecutablePath = path,
-			};
+            ManagerStatus status = new ManagerStatus
+            {
+                Found = found,
+                ExecutablePath = path,
+            };
 
-			if (!status.Found)
+            if (!status.Found)
             {
                 return status;
             }
 
-			Process process = new()
+            Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -222,10 +227,10 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
                     StandardErrorEncoding = Encoding.UTF8
                 }
             };
-			process.Start();
-			status.Version = (process.StandardOutput.ReadLine() ?? "Unknown").Replace("vcpkg package management program version", "").Trim();
+            process.Start();
+            status.Version = (process.StandardOutput.ReadLine() ?? "Unknown").Replace("vcpkg package management program version", "").Trim();
 
-			return status;
+            return status;
         }
     }
 }
