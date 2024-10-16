@@ -13,7 +13,6 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
-using Windows.Security.Authentication.Web.Core;
 
 namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 {
@@ -92,7 +91,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 var (gitFound, gitPath) = CoreTools.Which("git");
                 if (gitFound && vcpkgRoot != null)
                 {
-                    Process p = new()
+                    Process pullAll = new()
                     {
                         StartInfo = new ProcessStartInfo
                         {
@@ -103,7 +102,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                             CreateNoWindow = true
                         }
                     };
-                    p.Start();
+                    pullAll.Start();
                 }
                 else
                 {
@@ -111,8 +110,54 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 }
             }
 
-            return [];
-            throw new NotImplementedException();
+            List<Package> Packages = [];
+
+            Process p = new()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " update",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                }
+            };
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+
+            p.Start();
+
+            string? line;
+            while ((line = p.StandardOutput.ReadLine()) is not null)
+            {
+                logger.AddToStdOut(line);
+
+                // Sample line:
+                // (spaces) package name: package triplet   current -> latest
+                //         brotli:x64-mingw-dynamic         1.0.9#5 -> 1.1.0#1
+                if (line.StartsWith("\t"))
+                {
+                    line = line.Substring(1);
+                    string[] PackageData = Regex.Replace(line, @"\s+", " ").Split(' ');
+                    string PackageId = PackageData[0];
+                    string PackageName = PackageId.Split(':')[0],
+                        PackageTriplet = PackageId.Split(':')[1],
+                        PackageVersionCurrent = PackageData[1],
+                        PackageVersionLatest = PackageData[3];
+
+                    if (!TripletSourceMap.TryGetValue(PackageTriplet, out ManagerSource? value))
+                    {
+                        value = new ManagerSource(this, PackageTriplet, URI_VCPKG_IO);
+                        TripletSourceMap[PackageTriplet] = value;
+                    }
+
+                    Packages.Add(new Package(CoreTools.FormatAsName(PackageName), PackageId, PackageVersionCurrent, PackageVersionLatest, value, this));
+                }
+            }
+
+            return Packages;
         }
 
         private Tuple<bool, string> GetVcpkgPath()
