@@ -94,9 +94,9 @@ namespace UniGetUI.Core.IconEngine
                 extension = "png";
             }
 
-            string cachedIconFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, ManagerName, $"{PackageId}.{extension}");
-            string iconVersionFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, ManagerName, $"{PackageId}.{extension}.version");
-            string iconUriFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, ManagerName, $"{PackageId}.{extension}.uri");
+            string cachedIconFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, ManagerName, $"{PackageId.Replace("\\", "-")}.{extension.Replace("\\", "-")}");
+            string iconVersionFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, ManagerName, $"{PackageId.Replace("\\", "-")}.{extension.Replace("\\", "-")}.version");
+            string iconUriFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, ManagerName, $"{PackageId.Replace("\\", "-")}.{extension.Replace("\\", "-")}.uri");
             string iconLocation = Path.Join(CoreData.UniGetUICacheDirectory_Icons, ManagerName);
             if (!Directory.Exists(iconLocation))
             {
@@ -143,10 +143,10 @@ namespace UniGetUI.Core.IconEngine
             HttpResponseMessage response = await client.GetAsync(icon.Url);
             response.EnsureSuccessStatusCode();
             using (Stream stream = await response.Content.ReadAsStreamAsync())
-            using (FileStream fileStream = File.Create(cachedIconFile))
-            {
-                await stream.CopyToAsync(fileStream);
-            }
+                using (FileStream fileStream = File.Create(cachedIconFile))
+                {
+                    await stream.CopyToAsync(fileStream);
+                }
 
             if (icon.ValidationMethod is IconValidationMethod.PackageVersion)
                 await File.WriteAllTextAsync(iconVersionFile, icon.Version);
