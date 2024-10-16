@@ -89,7 +89,7 @@ namespace UniGetUI.Interface
             ThemeSelector.ShowAddedItems();
 
             // UI Section
-            EnableIconsOnPackageLists.Text = "[EXPERIMENTAL] " + CoreTools.Translate("Show package icons on package lists");
+            DisableIconsOnPackageLists.Text = "[EXPERIMENTAL] " + CoreTools.Translate("Show package icons on package lists");
 
 
             // Backup Section
@@ -579,7 +579,7 @@ namespace UniGetUI.Interface
             LoadIconCacheSize();
         }
 
-        private void EnableIconsOnPackageLists_OnStateChanged(object? sender, EventArgs e)
+        private void DisableIconsOnPackageLists_OnStateChanged(object? sender, EventArgs e)
         {
             InterfaceSettingsExpander.ShowRestartRequiredBanner();
         }
