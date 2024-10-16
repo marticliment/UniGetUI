@@ -14,6 +14,8 @@ using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
+// TODO: Allow using --vcpkg-root to change the vcpkg root directory based on a custom directory in the settings
+
 namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 {
     public class Vcpkg : PackageManager
