@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Windows.System.RemoteSystems;
@@ -20,7 +21,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// </summary>
     public class PackageWrapper : IIndexableListItem, INotifyPropertyChanged, IDisposable
     {
-        private static Dictionary<long, Uri?> CachedPackageIcons = new();
+        private static ConcurrentDictionary<long, Uri?> CachedPackageIcons = new();
 
         public static void ResetIconCache()
         {

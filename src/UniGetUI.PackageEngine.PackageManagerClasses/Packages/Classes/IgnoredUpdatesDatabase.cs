@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Data;
 using System.Text.Json;
 using UniGetUI.Core.Data;
@@ -8,15 +9,15 @@ namespace UniGetUI.PackageEngine.Classes.Packages.Classes;
 
 public static class IgnoredUpdatesDatabase
 {
-    private static Dictionary<string, string>? IgnoredPackages;
+    private static ConcurrentDictionary<string, string>? IgnoredPackages;
 
-    private static Dictionary<string, string> ReadDatabase()
+    private static ConcurrentDictionary<string, string> ReadDatabase()
     {
         Logger.Info("Ignored updates database was never loaded, so it is going to be loaded now");
         try
         {
             var rawContents = File.ReadAllText(CoreData.IgnoredUpdatesDatabaseFile);
-            return JsonSerializer.Deserialize<Dictionary<string, string>>(rawContents, options: CoreData.SerializingOptions)
+            return JsonSerializer.Deserialize<ConcurrentDictionary<string, string>>(rawContents, options: CoreData.SerializingOptions)
                    ?? throw new InvalidExpressionException("Deserialization of Ignored Updates file returned a null object");
         }
         catch (Exception ex)
@@ -28,7 +29,7 @@ public static class IgnoredUpdatesDatabase
         }
     }
 
-    public static Dictionary<string, string> GetDatabase()
+    public static ConcurrentDictionary<string, string> GetDatabase()
     {
         IgnoredPackages ??= ReadDatabase();
         return IgnoredPackages;
@@ -77,7 +78,7 @@ public static class IgnoredUpdatesDatabase
         if (IgnoredPackages.ContainsKey(ignoredId))
         {
             // Remove the entry and propagate changes to disk
-            IgnoredPackages.Remove(ignoredId);
+            IgnoredPackages.TryRemove(ignoredId, out string? _);
             SaveDatabase();
             return true;
         }

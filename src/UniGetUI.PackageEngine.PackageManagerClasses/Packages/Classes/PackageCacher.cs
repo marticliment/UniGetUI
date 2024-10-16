@@ -1,12 +1,13 @@
+using System.Collections.Concurrent;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Classes.Packages
 {
     internal static class PackageCacher
     {
-        private static readonly Dictionary<long, Package> __available_pkgs = [];
-        private static readonly Dictionary<long, Package> __upgradable_pkgs = [];
-        private static readonly Dictionary<long, Package> __installed_pkgs = [];
+        private static readonly ConcurrentDictionary<long, Package> __available_pkgs = [];
+        private static readonly ConcurrentDictionary<long, Package> __upgradable_pkgs = [];
+        private static readonly ConcurrentDictionary<long, Package> __installed_pkgs = [];
 
         /// <summary>
         /// Will check if a given Package is already in the cache. If not, it will be added to it
@@ -110,10 +111,10 @@ namespace UniGetUI.PackageEngine.Classes.Packages
             return false;
         }
 
-        private static void AddPackageToCache(Package package, Dictionary<long, Package> map)
+        private static void AddPackageToCache(Package package, ConcurrentDictionary<long, Package> map)
         {
             long hash = map == __installed_pkgs ? package.GetVersionedHash() : package.GetHash();
-            map.Add(hash, package);
+            map.TryAdd(hash, package);
         }
     }
 }
