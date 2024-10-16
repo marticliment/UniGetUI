@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -82,9 +83,29 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager {
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
             var (found, path) = GetVcpkgPath();
+            string? vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
+
             if (Settings.Get("UpdateVcpkgGitPorts") && found) {
-                // TODO: update portfiles with git
+                var (gitFound, gitPath) = CoreTools.Which("git");
+                if (gitFound && vcpkgRoot != null)
+                {
+                    Process p = new() {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = gitPath,
+                            WorkingDirectory = vcpkgRoot,
+                            Arguments = Properties.ExecutableCallArgs + " pull --all",
+                            UseShellExecute = false,
+                            CreateNoWindow = true
+                        }
+                    };
+                    p.Start();
+                } else
+                {
+                    Logger.Error(new InvalidOperationException("Cannot update vcpkg port files as requested: git was not installed or the VCPKG_ROOT environment variable was not set"));
+                }
             }
+
 			return [];
             throw new NotImplementedException();
         }
