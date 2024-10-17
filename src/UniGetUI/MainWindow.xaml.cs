@@ -144,6 +144,7 @@ namespace UniGetUI.Interface
                 try
                 {
                     this.Hide(enableEfficiencyMode: true);
+                    AppWindow.Hide();
                 }
                 catch (Exception ex)
                 {
@@ -151,6 +152,7 @@ namespace UniGetUI.Interface
                     Logger.Debug("Windows efficiency mode API crashed, but this was expected");
                     Logger.Debug(ex);
                     this.Hide(enableEfficiencyMode: false);
+                    AppWindow.Hide();
                 }
             }
             else
