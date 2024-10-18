@@ -331,8 +331,8 @@ namespace UniGetUI.Interface
                 }
             }
             FilterPackages();
-            if (!Settings.Get("DisableIconsOnPackageLists"))
-                _ = LoadIconsForNewPackages();
+            /*if (!Settings.Get("DisableIconsOnPackageLists"))
+                _ = LoadIconsForNewPackages();*/
         }
 
         private void Loader_FinishedLoading(object? sender, EventArgs e)
@@ -930,7 +930,7 @@ namespace UniGetUI.Interface
             PaneIsAnimated = false;
         }
 
-        private async Task LoadIconsForNewPackages()
+        /*private async Task LoadIconsForNewPackages()
         {
             var PackagesWithoutIcon = new List<PackageWrapper>();
             // Get the packages to be updated.
@@ -947,6 +947,6 @@ namespace UniGetUI.Interface
                 var icon = await Task.Run(wrapper.Package.GetIconUrlIfAny);
                 if(icon is not null) wrapper.PackageIcon = icon;
             }
-        }
+        }*/
     }
 }
