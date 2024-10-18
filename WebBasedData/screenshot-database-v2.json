@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11711,
-        "done": 5118,
-        "packages_with_icon": 5118,
-        "packages_with_screenshot": 590,
-        "total_screenshots": 1834
+        "total": 11712,
+        "done": 5119,
+        "packages_with_icon": 5119,
+        "packages_with_screenshot": 593,
+        "total_screenshots": 1840
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -7200,7 +7200,23 @@
                 "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
             ]
         },
+        "chrome-exe": {
+            "icon": "https://i.postimg.cc/yd2gGCZY/chrome-icon.png",
+            "images": [
+                "https://i.postimg.cc/5tNCY3J1/chrome-1.png",
+                "https://i.postimg.cc/nVQQDrys/chrome-2.png",
+                "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
+            ]
+        },
         "chrome-beta": {
+            "icon": "https://i.postimg.cc/BnRrthHP/chrome-beta-icon.png",
+            "images": [
+                "https://i.postimg.cc/5tNCY3J1/chrome-1.png",
+                "https://i.postimg.cc/nVQQDrys/chrome-2.png",
+                "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
+            ]
+        },
+        "chrome-beta-exe": {
             "icon": "https://i.postimg.cc/BnRrthHP/chrome-beta-icon.png",
             "images": [
                 "https://i.postimg.cc/5tNCY3J1/chrome-1.png",
@@ -7224,17 +7240,13 @@
                 "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
             ]
         },
-        "chrome-exe": {
-            "icon": "https://i.postimg.cc/yd2gGCZY/chrome-icon.png",
+        "chrome-dev-exe": {
+            "icon": "https://i.postimg.cc/tgPL6hNS/chrome-dev-icon.png",
             "images": [
                 "https://i.postimg.cc/5tNCY3J1/chrome-1.png",
                 "https://i.postimg.cc/nVQQDrys/chrome-2.png",
                 "https://i.postimg.cc/Y0gGKD6N/chrome-3.png"
             ]
-        },
-        "chrome-remote-desktop-host": {
-            "icon": "https://community.chocolatey.org/content/packageimages/chrome-remote-desktop-host.111.0.5563.12.png",
-            "images": []
         },
         "chromecacheview": {
             "icon": "https://community.chocolatey.org/content/packageimages/chromecacheview.2.41.png",
@@ -7260,7 +7272,7 @@
             "icon": "https://community.chocolatey.org/content/packageimages/chromelpass-chrome.2.8.1.png",
             "images": []
         },
-        "chromeremotedesktop": {
+        "chromeremotedesktophost": {
             "icon": "https://i.postimg.cc/PJZQkFwv/cds.png",
             "images": [
                 "https://i.postimg.cc/xTDPPYwv/srd1.png"
@@ -21816,9 +21828,8 @@
             "images": []
         },
         "kodi": {
-            "icon": "https://i.postimg.cc/SNGy2skn/Thumbnail-light.png",
+            "icon": "https://i.postimg.cc/2yyqfsLK/icon.png",
             "images": [
-                "https://ubunlog.com/wp-content/uploads/2015/11/MenuPlacement.png",
                 "https://i.postimg.cc/Y94cdr5z/1.png",
                 "https://i.postimg.cc/gcZFR0qY/2.png",
                 "https://i.postimg.cc/Z5j1ZvZL/3.png",
@@ -26124,8 +26135,10 @@
             "images": []
         },
         "msys2": {
-            "icon": "https://community.chocolatey.org/content/packageimages/msys2.20230127.0.0.png",
-            "images": []
+            "icon": "https://i.postimg.cc/pd1rJ06Q/mingw64.png",
+            "images": [
+                "https://i.postimg.cc/MTCGhnxv/winterm.png"
+            ]
         },
         "msysgit": {
             "icon": "https://community.chocolatey.org/content/packageimages/msysgit.1.7.10.20120526.png",
