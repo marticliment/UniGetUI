@@ -31,12 +31,18 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 }
             }
 
+            string packageId;
+            if(details.Package.Source.Name.Contains("..."))
+                packageId = $"{details.Package.Id}";
+            else
+                packageId = $"{details.Package.Source.Name}/{details.Package.Id}";
+
             Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Properties.ExecutableCallArgs + " cat " + details.Package.Source.Name + "/" + details.Package.Id,
+                    Arguments = Manager.Properties.ExecutableCallArgs + " cat " + packageId,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
