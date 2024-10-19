@@ -36,7 +36,10 @@ robocopy src\UniGetUI\bin\x64\Release\net8.0-windows10.0.22621.0\win-x64\publish
 rem pushd src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish
 pushd unigetui_bin
 
-%SIGNCOMMAND% %cd%\UniGetUI.exe %cd%\UniGetUI.dll
+powershell.exe -Command %SIGNCOMMAND% "%cd%\UniGetUI.exe" 
+powershell.exe -Command %SIGNCOMMAND% "%cd%\UniGetUI.dll"
+powershell.exe -Command %SIGNCOMMAND% "%cd%\UniGetUI.*.dll"
+powershell.exe -Command %SIGNCOMMAND% "%cd%\ExternalLibraries.*.dll"
 
 echo .
 echo .
@@ -55,7 +58,7 @@ set INSTALLATOR="%SYSTEMDRIVE%\Program Files (x86)\Inno Setup 6\ISCC.exe"
 if exist %INSTALLATOR% (
     %INSTALLATOR% "UniGetUI.iss"
     echo You may now sign the installer
-    %SIGNCOMMAND% UniGetUI.Installer.exe
+    %SIGNCOMMAND% "%cd%\UniGetUI` Installer.exe"
     del "WingetUI Installer.exe"
     copy "UniGetUI Installer.exe" "WingetUI Installer.exe" 
     pause
