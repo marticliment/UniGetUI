@@ -36,7 +36,7 @@
                 MinHeight="28" VerticalAlignment="Center"
                 HorizontalAlignment="Center"
                 TextAlignment="Center"
-                TextWrapping="Wrap" Padding="1,4,2,4"
+                TextWrapping="Wrap" Padding="0,4,0,4"
             />
         </Grid>
         <ToggleButton x:Name="ToggleButton"
