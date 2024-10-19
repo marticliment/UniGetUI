@@ -16,7 +16,11 @@ internal sealed class ScoopOperationProvider : BaseOperationProvider<Scoop>
             OperationType.Uninstall => Manager.Properties.UninstallVerb,
             _ => throw new InvalidDataException("Invalid package operation")
         }];
-        parameters.Add($"{package.Source.Name}/{package.Id}");
+
+        if(package.Source.Name.Contains("..."))
+            parameters.Add($"{package.Id}");
+        else
+            parameters.Add($"{package.Source.Name}/{package.Id}");
 
         if (package.OverridenOptions.Scope == PackageScope.Global ||
             (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
@@ -26,7 +30,7 @@ internal sealed class ScoopOperationProvider : BaseOperationProvider<Scoop>
             parameters.Add("--global");
         }
 
-        if(options.CustomParameters is not null)
+        if(options.CustomParameters?.Any() is true)
             parameters.AddRange(options.CustomParameters);
 
         if (operation is OperationType.Uninstall)
