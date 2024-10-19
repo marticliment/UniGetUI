@@ -42,11 +42,11 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
 
         if (operation is OperationType.Uninstall && package.Version != "Unknown")
         {
-            parameters.AddRange(["--version", $"{package.Version}"]);
+            parameters.AddRange(["--version", $"\"{package.Version}\""]);
         }
         else if (operation is OperationType.Install && options.Version != "")
         {
-            parameters.AddRange(["--version", $"{options.Version}"]);
+            parameters.AddRange(["--version", $"\"{options.Version}\""]);
         }
 
         parameters.Add(options.InteractiveInstallation ? "--interactive" : "--silent");
