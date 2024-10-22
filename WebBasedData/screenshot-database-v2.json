@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11712,
-        "done": 5119,
-        "packages_with_icon": 5119,
+        "done": 5120,
+        "packages_with_icon": 5120,
         "packages_with_screenshot": 593,
-        "total_screenshots": 1840
+        "total_screenshots": 1839
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -3358,7 +3358,7 @@
             "images": []
         },
         "audacity": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Audacity_Logo.svg/128px-Audacity_Logo.svg.png",
+            "icon": "https://i.postimg.cc/L5sG56m2/audacity-icon.png",
             "images": [
                 "https://i.postimg.cc/zf3bxXFw/audacity-1.png",
                 "https://i.postimg.cc/63v7NjSy/audacity-2.png",
@@ -11882,10 +11882,9 @@
             "images": []
         },
         "dropbox": {
-            "icon": "https://i.postimg.cc/Yqgfh9Sc/Dropbox.png",
+            "icon": "https://i.postimg.cc/6q5xZffs/dropbox-ico.jpg",
             "images": [
-                "https://aem.dropbox.com/cms/content/dam/dropbox/blog/files/2017/04/screenshot3_1300x760.png",
-                "https://images.ctfassets.net/lzny33ho1g45/5cVkOkmxG4o6iWCiISu5zA/cf60be1721f51cb5441ab5fd5541c96b/dropbox-hidden-features-09-notifications.png",
+                "https://i.postimg.cc/7L8v9knn/drop1.png",
                 "https://i.postimg.cc/P5QWQRZ2/dropp.png"
             ]
         },
@@ -11910,7 +11909,7 @@
             "images": []
         },
         "drupal": {
-            "icon": "https://cdn.worldvectorlogo.com/logos/drupal-3.svg",
+            "icon": "https://i.postimg.cc/9fG6Nnx5/druplicon-small.png",
             "images": []
         },
         "drush-commandline": {
@@ -34766,7 +34765,7 @@
             "images": []
         },
         "ringcentral": {
-            "icon": "",
+            "icon": "https://www.ringcentral.com/content/dam/rc-www/en_us/images/favicon/ringcentral_2.0_icon_favicon.ico",
             "images": []
         },
         "rink": {
