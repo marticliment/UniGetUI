@@ -9,12 +9,16 @@ With this app, you can easily download, install, update, and uninstall any softw
 
 Check out the [Supported Package Managers Table](#supported-package-managers) for more details!
 
-**This is UniGetUI (formerly WingetUI)'s official repository. If you are searching for UniGetUI's homepage, please refer to [https://www.marticliment.com/unigetui/](https://www.marticliment.com/unigetui/)**
-
 **Disclaimer:** This project has no connection with any supported package managers — it's completely unofficial. Be aware that I, the developer of UniGetUI, am NOT responsible for the downloaded software. Proceed with caution
 
 ![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fmarticliment.com%2Fresources%2Fbadges%2Fdev-status.json)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/marticliment/WingetUI/dotnet-test.yml?branch=main&style=for-the-badge&label=Tests)
+
+
+> [!CAUTION]
+> **The OFFICIAL website for UniGetUI is [https://www.marticliment.com/unigetui/](https://www.marticliment.com/unigetui/)**<br>
+> **Any other website should be considered unofficial, despite what they say. Especially, wingetui.com is not an official site for UniGetUI/WingetUI**
+
 
 
 ## Support the developer
