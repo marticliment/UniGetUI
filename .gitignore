@@ -83,3 +83,4 @@ InstallerExtras/MsiCreator/setup.exe
 InstallerExtras/MsiCreator/UniGetUI Installer.msi
 InstallerExtras/MsiCreator/UniGetUISetup.msi
 src/global.json
+UniGetUI.Installer.ms-store-test.exe

@@ -14,7 +14,7 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-UninstallDisplayName="UniGetUI (formerly WingetUI)"
+UninstallDisplayName="UniGetUI"
 AppId={{889610CC-4337-4BDB-AC3B-4F21806C0BDE}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
@@ -242,3 +242,4 @@ Filename: "{app}\{#MyAppExeName}"; Parameters: "--migrate-wingetui-to-unigetui";
 Filename: "{app}\{#MyAppExeName}"; Parameters: "--uninstall-unigetui"; Flags: skipifdoesntexist runhidden;
 Filename: {sys}\taskkill.exe; Parameters: "/f /im WingetUI.exe"; Flags: skipifdoesntexist runhidden;
 Filename: {sys}\taskkill.exe; Parameters: "/f /im UniGetUI.exe"; Flags: skipifdoesntexist runhidden;
+Filename: {sys}\taskkill.exe; Parameters: "/f /im winget.exe"; Flags: skipifdoesntexist runhidden;
