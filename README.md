@@ -55,12 +55,12 @@ It really does make a big difference, and is very much appreciated. Thanks :)<br
 winget install --exact --id MartiCliment.UniGetUI --source winget
 ```
 
-**Install UniGetUI through Scoop:**
+
+**~~Install UniGetUI through Scoop:~~**
 ```cmd
-scoop bucket add extras
-```
-```cmd
-scoop install extras/wingetui
+rem The current UniGetUI scoop package is broken. Please do not install UniGetUI via scoop for the time being
+rem scoop bucket add extras
+rem scoop install extras/wingetui
 ```
 
 **Install UniGetUI through Chocolatey:**    
