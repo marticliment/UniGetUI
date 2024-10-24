@@ -46,8 +46,11 @@ It really does make a big difference, and is very much appreciated. Thanks :)<br
 
 ## Installation
 <p>There are multiple ways to install UniGetUI — choose whichever one you prefer!<br</p>
+**Microsoft Store installation (recommended)**
+<a href="https://apps.microsoft.com/detail/xpfftq032ptphf"><img alt="alt_text" width="240px" src="https://get.microsoft.com/images/en-us%20dark.svg" /></a> 
 
-**Download UniGetUI installer (recommended):**
+ 
+**Download UniGetUI installer:**
 <p align="left"><b><a href="https://github.com/marticliment/UniGetUI/releases/latest/download/WingetUI.Installer.exe">Click here to download UniGetUI</a></b></p>
 
 **Install UniGetUI through Winget:**    
