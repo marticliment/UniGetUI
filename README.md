@@ -45,8 +45,9 @@ It really does make a big difference, and is very much appreciated. Thanks :)<br
 <a href="https://hellogithub.com/repository/46bec642537f449a857215e39a1d64ae" target="_blank"><img src="https://abroad.hellogithub.com/v1/widgets/recommend.svg?rid=46bec642537f449a857215e39a1d64ae&claim_uid=u6sFoX4hC2HztbD&theme=small" alt="Featured｜HelloGitHub" /></a>
 
 ## Installation
-<p>There are multiple ways to install UniGetUI — choose whichever one you prefer!<br</p>
-**Microsoft Store installation (recommended)**
+<p>There are multiple ways to install UniGetUI — choose whichever one you prefer!</p>
+ 
+**Microsoft Store installation (recommended)**<br>
 <a href="https://apps.microsoft.com/detail/xpfftq032ptphf"><img alt="alt_text" width="240px" src="https://get.microsoft.com/images/en-us%20dark.svg" /></a> 
 
  
