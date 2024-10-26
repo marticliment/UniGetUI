@@ -547,7 +547,7 @@
   "Unable to find package": "Paketa nuk mund të gjendet",
   "Unable to load informarion": "Informacioni nuk mund të ngarkohet",
   "UniGetUI is not related to any of the compatible package managers. UniGetUI is an independent project.": "UniGetUI nuk është i lidhur me asnjë nga menaxherët e paketave të pajtueshëm. UniGetUI është një projekt i pavarur.",
-  "UniGetUI requires {0} to operate, but it was not found on your system.": null,
+  "UniGetUI requires {0} to operate, but it was not found on your system.": "UniGetUI kërkon {0} për të punuar, por nuk u gjet në sistemin tënd.",
   "Uninstall": "Çinstalo",
   "Uninstall Scoop (and its packages)": "Çinstalo Scoop (dhe paketat e tija)",
   "Uninstall and remove data": "Çinstalo dhe hiq të dhënat",
