@@ -36,10 +36,10 @@ robocopy src\UniGetUI\bin\x64\Release\net8.0-windows10.0.22621.0\win-x64\publish
 rem pushd src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish
 pushd unigetui_bin
 
-powershell.exe -Command %SIGNCOMMAND% "%cd%\UniGetUI.exe" 
-powershell.exe -Command %SIGNCOMMAND% "%cd%\UniGetUI.dll"
-powershell.exe -Command %SIGNCOMMAND% "%cd%\UniGetUI.*.dll"
-powershell.exe -Command %SIGNCOMMAND% "%cd%\ExternalLibraries.*.dll"
+%SIGNCOMMAND% "%cd%\UniGetUI.exe" 
+%SIGNCOMMAND% "%cd%\UniGetUI.dll"
+%SIGNCOMMAND% "%cd%\UniGetUI.*.dll"
+%SIGNCOMMAND% "%cd%\ExternalLibraries.*.dll"
 
 echo .
 echo .
