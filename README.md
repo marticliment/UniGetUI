@@ -9,12 +9,16 @@ With this app, you can easily download, install, update, and uninstall any softw
 
 Check out the [Supported Package Managers Table](#supported-package-managers) for more details!
 
-**This is UniGetUI (formerly WingetUI)'s official repository. If you are searching for UniGetUI's homepage, please refer to [https://www.marticliment.com/unigetui/](https://www.marticliment.com/unigetui/)**
-
 **Disclaimer:** This project has no connection with any supported package managers — it's completely unofficial. Be aware that I, the developer of UniGetUI, am NOT responsible for the downloaded software. Proceed with caution
 
 ![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fmarticliment.com%2Fresources%2Fbadges%2Fdev-status.json)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/marticliment/WingetUI/dotnet-test.yml?branch=main&style=for-the-badge&label=Tests)
+
+
+> [!CAUTION]
+> **The OFFICIAL website for UniGetUI is [https://www.marticliment.com/unigetui/](https://www.marticliment.com/unigetui/)**<br>
+> **Any other website should be considered unofficial, despite what they may say. Especially, wingetui.com is NOT an official site for UniGetUI (formerly WingetUI)**
+
 
 
 ## Support the developer
@@ -41,9 +45,13 @@ It really does make a big difference, and is very much appreciated. Thanks :)<br
 <a href="https://hellogithub.com/repository/46bec642537f449a857215e39a1d64ae" target="_blank"><img src="https://abroad.hellogithub.com/v1/widgets/recommend.svg?rid=46bec642537f449a857215e39a1d64ae&claim_uid=u6sFoX4hC2HztbD&theme=small" alt="Featured｜HelloGitHub" /></a>
 
 ## Installation
-<p>There are multiple ways to install UniGetUI — choose whichever one you prefer!<br</p>
+<p>There are multiple ways to install UniGetUI — choose whichever one you prefer!</p>
+ 
+**Microsoft Store installation (recommended)**<br>
+<a href="https://apps.microsoft.com/detail/xpfftq032ptphf"><img alt="alt_text" width="240px" src="https://get.microsoft.com/images/en-us%20dark.svg" /></a> 
 
-**Download UniGetUI installer (recommended):**
+ 
+**Download UniGetUI installer:**
 <p align="left"><b><a href="https://github.com/marticliment/UniGetUI/releases/latest/download/WingetUI.Installer.exe">Click here to download UniGetUI</a></b></p>
 
 **Install UniGetUI through Winget:**    
@@ -51,12 +59,12 @@ It really does make a big difference, and is very much appreciated. Thanks :)<br
 winget install --exact --id MartiCliment.UniGetUI --source winget
 ```
 
-**Install UniGetUI through Scoop:**
+
+**~~Install UniGetUI through Scoop:~~**
 ```cmd
-scoop bucket add extras
-```
-```cmd
-scoop install extras/wingetui
+rem The current UniGetUI scoop package is broken. Please do not install UniGetUI via scoop for the time being
+rem scoop bucket add extras
+rem scoop install extras/wingetui
 ```
 
 **Install UniGetUI through Chocolatey:**    
@@ -117,9 +125,11 @@ To translate UniGetUI to other languages or to update an old translation, please
 | Language | Translated | Translator(s) |
 | :-- | :-- | --- |
 | <img src='https://flagcdn.com/sa.svg' width=20> &nbsp; Arabic - عربي‎ | 83% | [Abdu11ahAS](https://github.com/Abdu11ahAS), [Abdullah-Dev115](https://github.com/Abdullah-Dev115), [bassuny3003](https://github.com/bassuny3003), [DaRandomCube](https://github.com/DaRandomCube), [FancyCookin](https://github.com/FancyCookin), [mo9a7i](https://github.com/mo9a7i) |
+| <img src='https://flagcdn.com/sa.svg' width=20> &nbsp; Arabic - عربي‎ | 83% | [Abdu11ahAS](https://github.com/Abdu11ahAS), [Abdullah-Dev115](https://github.com/Abdullah-Dev115), [bassuny3003](https://github.com/bassuny3003), [DaRandomCube](https://github.com/DaRandomCube), [FancyCookin](https://github.com/FancyCookin), [mo9a7i](https://github.com/mo9a7i) |
 | <img src='https://flagcdn.com/bg.svg' width=20> &nbsp; Bulgarian - български | 55% | Vasil Kolev |
 | <img src='https://flagcdn.com/bd.svg' width=20> &nbsp; Bangla - বাংলা | 85% | [fluentmoheshwar](https://github.com/fluentmoheshwar), [itz-rj-here](https://github.com/itz-rj-here), Mushfiq Iqbal Rayon, Nilavra Bhattacharya, [samiulislamsharan](https://github.com/samiulislamsharan) |
 | <img src='https://flagcdn.com/ad.svg' width=20> &nbsp; Catalan - Català | 100% | [marticliment](https://github.com/marticliment) |
+| <img src='https://flagcdn.com/cz.svg' width=20> &nbsp; Czech - Čeština | 95% | [mlisko](https://github.com/mlisko), [panther7](https://github.com/panther7), [xtorlukas](https://github.com/xtorlukas) |
 | <img src='https://flagcdn.com/cz.svg' width=20> &nbsp; Czech - Čeština | 95% | [mlisko](https://github.com/mlisko), [panther7](https://github.com/panther7), [xtorlukas](https://github.com/xtorlukas) |
 | <img src='https://flagcdn.com/dk.svg' width=20> &nbsp; Danish - Dansk | 69% | [AAUCrisp](https://github.com/AAUCrisp), [mikkolukas](https://github.com/mikkolukas), [yrjarv](https://github.com/yrjarv) |
 | <img src='https://flagcdn.com/de.svg' width=20> &nbsp; German - Deutsch | 100% | [1270o1](https://github.com/1270o1), [alxhu-dev](https://github.com/alxhu-dev), [CanePlayz](https://github.com/CanePlayz), [Datacra5H](https://github.com/Datacra5H), [ebnater](https://github.com/ebnater), [michaelmairegger](https://github.com/michaelmairegger), [Seeloewen](https://github.com/Seeloewen), [yrjarv](https://github.com/yrjarv) |
@@ -134,12 +144,15 @@ To translate UniGetUI to other languages or to update an old translation, please
 | <img src='https://flagcdn.com/in.svg' width=20> &nbsp; Hindi - हिंदी | 49% | [atharva_xoxo](https://github.com/atharva_xoxo), [satanarious](https://github.com/satanarious) |
 | <img src='https://flagcdn.com/hr.svg' width=20> &nbsp; Croatian - Hrvatski | 56% | Stjepan Treger |
 | <img src='https://flagcdn.com/il.svg' width=20> &nbsp; Hebrew - עִבְרִית‎ | 94% | [maximunited](https://github.com/maximunited), Oryan Hassidim |
+| <img src='https://flagcdn.com/hr.svg' width=20> &nbsp; Croatian - Hrvatski | 56% | Stjepan Treger |
+| <img src='https://flagcdn.com/il.svg' width=20> &nbsp; Hebrew - עִבְרִית‎ | 94% | [maximunited](https://github.com/maximunited), Oryan Hassidim |
 | <img src='https://flagcdn.com/hu.svg' width=20> &nbsp; Hungarian - Magyar | 93% | [gidano](https://github.com/gidano) |
 | <img src='https://flagcdn.com/it.svg' width=20> &nbsp; Italian - Italiano | 100% | David Senoner, [giacobot](https://github.com/giacobot), [maicol07](https://github.com/maicol07), [mapi68](https://github.com/mapi68), [mrfranza](https://github.com/mrfranza), Rosario Di Mauro |
 | <img src='https://flagcdn.com/id.svg' width=20> &nbsp; Indonesian - Bahasa Indonesia | 77% | [arthackrc](https://github.com/arthackrc), [joenior](https://github.com/joenior) |
 | <img src='https://flagcdn.com/jp.svg' width=20> &nbsp; Japanese - 日本語 | 86% | [nob-swik](https://github.com/nob-swik), sho9029, [tacostea](https://github.com/tacostea), Yuki Takase |
 | <img src='https://flagcdn.com/in.svg' width=20> &nbsp; Kannada - ಕನ್ನಡ | 12% | [skanda890](https://github.com/skanda890) |
 | <img src='https://flagcdn.com/kr.svg' width=20> &nbsp; Korean - 한국어 | 77% | [minbert](https://github.com/minbert), [shblue21](https://github.com/shblue21), [VenusGirl](https://github.com/VenusGirl) |
+| <img src='https://flagcdn.com/lt.svg' width=20> &nbsp; Lithuanian - Lietuvių | 100% | [dziugas1959](https://github.com/dziugas1959), Džiugas Januševičius, [martyn3z](https://github.com/martyn3z) |
 | <img src='https://flagcdn.com/lt.svg' width=20> &nbsp; Lithuanian - Lietuvių | 100% | [dziugas1959](https://github.com/dziugas1959), Džiugas Januševičius, [martyn3z](https://github.com/martyn3z) |
 | <img src='https://flagcdn.com/mk.svg' width=20> &nbsp; Macedonian - Македонски | 58% | LordDeatHunter |
 | <img src='https://flagcdn.com/no.svg' width=20> &nbsp; Norwegian (bokmål) | 93% | [yrjarv](https://github.com/yrjarv) |
@@ -149,10 +162,12 @@ To translate UniGetUI to other languages or to update an old translation, please
 | <img src='https://flagcdn.com/br.svg' width=20> &nbsp; Portuguese (Brazil) | 92% | [maisondasilva](https://github.com/maisondasilva), [ppvnf](https://github.com/ppvnf), [Rodrigo-Matsuura](https://github.com/Rodrigo-Matsuura), [thiagojramos](https://github.com/thiagojramos), [wanderleihuttel](https://github.com/wanderleihuttel) |
 | <img src='https://flagcdn.com/pt.svg' width=20> &nbsp; Portuguese (Portugal) | 93% | [PoetaGA](https://github.com/PoetaGA), [Tiago_Ferreira](https://github.com/Tiago_Ferreira) |
 | <img src='https://flagcdn.com/ro.svg' width=20> &nbsp; Romanian - Română | 100% | [SilverGreen93](https://github.com/SilverGreen93), TZACANEL |
+| <img src='https://flagcdn.com/ro.svg' width=20> &nbsp; Romanian - Română | 100% | [SilverGreen93](https://github.com/SilverGreen93), TZACANEL |
 | <img src='https://flagcdn.com/ru.svg' width=20> &nbsp; Russian - Русский | 92% | [bropines](https://github.com/bropines), [DvladikD](https://github.com/DvladikD), [flatron4eg](https://github.com/flatron4eg), [katrovsky](https://github.com/katrovsky), Sergey, sklart |
 | <img src='https://flagcdn.com/in.svg' width=20> &nbsp; Sanskrit - संस्कृत भाषा | 12% | [skanda890](https://github.com/skanda890) |
 | <img src='https://flagcdn.com/sk.svg' width=20> &nbsp; Slovak - Slovenčina | 11% | [Luk164](https://github.com/Luk164) |
 | <img src='https://flagcdn.com/rs.svg' width=20> &nbsp; Serbian - Srpski | 93% | [daVinci13](https://github.com/daVinci13), [momcilovicluka](https://github.com/momcilovicluka) |
+| <img src='https://flagcdn.com/al.svg' width=20> &nbsp; Albanian - Shqip | 100% | [RDN000](https://github.com/RDN000) |
 | <img src='https://flagcdn.com/al.svg' width=20> &nbsp; Albanian - Shqip | 100% | [RDN000](https://github.com/RDN000) |
 | <img src='https://flagcdn.com/lk.svg' width=20> &nbsp; Sinhala - සිංහල | 8% | [SashikaSandeepa](https://github.com/SashikaSandeepa), [ttheek](https://github.com/ttheek) |
 | <img src='https://flagcdn.com/si.svg' width=20> &nbsp; Slovene - Slovenščina | 87% | [rumplin](https://github.com/rumplin) |
@@ -163,6 +178,7 @@ To translate UniGetUI to other languages or to update an old translation, please
 | <img src='https://flagcdn.com/ua.svg' width=20> &nbsp; Ukrainian - Yкраї́нська | 51% | Artem Moldovanenko, Operator404 |
 | <img src='https://flagcdn.com/ur.svg' width=20> &nbsp; Urdu - اردو | 65% | [digitio](https://github.com/digitio), [digitpk](https://github.com/digitpk) |
 | <img src='https://flagcdn.com/vn.svg' width=20> &nbsp; Vietnamese - Tiếng Việt | 92% | [legendsjoon](https://github.com/legendsjoon), [txavlog](https://github.com/txavlog) |
+| <img src='https://flagcdn.com/cn.svg' width=20> &nbsp; Simplified Chinese (China) | 100% | Aaron Liu, adfnekc, [Ardenet](https://github.com/Ardenet), [arthurfsy2](https://github.com/arthurfsy2), [bai0012](https://github.com/bai0012), BUGP Association, ciaran, CnYeSheng, Cololi, [dongfengweixiao](https://github.com/dongfengweixiao), [seanyu0](https://github.com/seanyu0), [Sigechaishijie](https://github.com/Sigechaishijie), [SpaceTimee](https://github.com/SpaceTimee), Yisme |
 | <img src='https://flagcdn.com/cn.svg' width=20> &nbsp; Simplified Chinese (China) | 100% | Aaron Liu, adfnekc, [Ardenet](https://github.com/Ardenet), [arthurfsy2](https://github.com/arthurfsy2), [bai0012](https://github.com/bai0012), BUGP Association, ciaran, CnYeSheng, Cololi, [dongfengweixiao](https://github.com/dongfengweixiao), [seanyu0](https://github.com/seanyu0), [Sigechaishijie](https://github.com/Sigechaishijie), [SpaceTimee](https://github.com/SpaceTimee), Yisme |
 | <img src='https://flagcdn.com/tw.svg' width=20> &nbsp; Traditional Chinese (Taiwan) | 93% | Aaron Liu, CnYeSheng, Cololi, [Henryliu880922](https://github.com/Henryliu880922), [yrctw](https://github.com/yrctw) |
 
