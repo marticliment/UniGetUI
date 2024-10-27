@@ -57,7 +57,14 @@ namespace UniGetUI.Interface
             InitializeComponent();
 
             ExtendsContentIntoTitleBar = true;
-            SetTitleBar(ContentRoot);
+            try
+            {
+                SetTitleBar(ContentRoot);
+            } catch
+            {
+                Logger.Warn("Could not set the title bar to the content root");
+                MainApp.Instance.DisposeAndQuit(-1);
+            }
 
             SizeChanged += (_, _) => { SaveGeometry(); };
             AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
