@@ -89,7 +89,7 @@ namespace UniGetUI.Interface
             ThemeSelector.ShowAddedItems();
 
             // UI Section
-            DisableIconsOnPackageLists.Text = "[EXPERIMENTAL] " + CoreTools.Translate("Show package icons on package lists");
+            /*DisableIconsOnPackageLists.Text = "[EXPERIMENTAL] " + CoreTools.Translate("Show package icons on package lists");*/
 
 
             // Backup Section

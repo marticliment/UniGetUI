@@ -120,12 +120,12 @@
                                 x:Name="DisableSystemTray"
                                 StateChanged="DisableSystemTray_StateChanged"
                                 />
-                            <widgets:CheckboxCard
+                            <!--widgets:CheckboxCard
                                 Text="Show package icons on package lists"
                                 SettingName="DisableIconsOnPackageLists"
                                 x:Name="DisableIconsOnPackageLists"
                                 StateChanged="DisableIconsOnPackageLists_OnStateChanged"
-                            />
+                            /-->
                             <widgets:ButtonCard
                                 Text="Clear the local icon cache"
                                 ButtonText="Clear cache"
