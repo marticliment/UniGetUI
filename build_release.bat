@@ -24,8 +24,8 @@ if %errorlevel% neq 0 (
 )
 
 rem build executable
-dotnet clean src/UniGetUI.sln
-dotnet publish src/UniGetUI/UniGetUI.csproj /noLogo /property:Configuration=Release /property:Platform=x64
+dotnet clean src/UniGetUI.sln -v m -nologo
+dotnet publish src/UniGetUI/UniGetUI.csproj /noLogo /property:Configuration=Release /property:Platform=x64 -v m
 
 rem sign code
 
@@ -34,31 +34,20 @@ rmdir /Q /S unigetui_bin
 mkdir unigetui_bin
 robocopy src\UniGetUI\bin\x64\Release\net8.0-windows10.0.22621.0\win-x64\publish unigetui_bin *.* /MOVE /E
 rem pushd src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish
-pushd unigetui_bin
 
-%SIGNCOMMAND% "%cd%\UniGetUI.exe" 
-%SIGNCOMMAND% "%cd%\UniGetUI.dll"
-%SIGNCOMMAND% "%cd%\UniGetUI.*.dll"
-%SIGNCOMMAND% "%cd%\ExternalLibraries.*.dll"
+%signcommand% "unigetui_bin/UniGetUI.exe" "unigetui_bin/UniGetUI.dll" "unigetui_bin/UniGetUI.*.dll" "unigetui_bin/ExternalLibraries.*.dll"
+if %errorlevel% neq 0 (
+    echo "Signing has failed!"
+    pause
+)
 
-echo .
-echo .
-echo You may want to sign now the following executables
-cd
-echo UniGetUI.dll
-echo UniGetUI.exe
-echo .
-echo .
-pause
 copy UniGetUI.exe WingetUI.exe
-popd
 
 
 set INSTALLATOR="%SYSTEMDRIVE%\Program Files (x86)\Inno Setup 6\ISCC.exe"
 if exist %INSTALLATOR% (
     %INSTALLATOR% "UniGetUI.iss"
-    echo You may now sign the installer
-    %SIGNCOMMAND% "%cd%\UniGetUI` Installer.exe"
+    %signcommand% "UniGetUI Installer.exe"
     del "WingetUI Installer.exe"
     copy "UniGetUI Installer.exe" "WingetUI Installer.exe" 
     pause
