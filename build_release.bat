@@ -37,13 +37,16 @@ rem pushd src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publis
 
 %signcommand% "unigetui_bin/UniGetUI.exe" "unigetui_bin/UniGetUI.dll" "unigetui_bin/UniGetUI.*.dll" "unigetui_bin/ExternalLibraries.*.dll"
 
+pause
+
 if %errorlevel% neq 0 (
     echo "Signing has failed!"
     pause
 )
 
+pushd unigetui_bin
 copy UniGetUI.exe WingetUI.exe
-
+popd
 
 set INSTALLATOR="%SYSTEMDRIVE%\Program Files (x86)\Inno Setup 6\ISCC.exe"
 if exist %INSTALLATOR% (
@@ -53,17 +56,11 @@ if exist %INSTALLATOR% (
     copy "UniGetUI Installer.exe" "WingetUI Installer.exe" 
     pause
     echo Hash: 
-    pwsh.exe -Command (Get-FileHash '.\UniGetUI Installer.exe').Hash
+    pwsh.exe -Command "(Get-FileHash '.\UniGetUI Installer.exe').Hash"
     echo .
     "UniGetUI Installer.exe"
 ) else (
     echo "Make installer was skipped, because the installer is missing."
 )
 
-goto:end
-
-:error
-echo "Error!"
-
-:end
 pause
