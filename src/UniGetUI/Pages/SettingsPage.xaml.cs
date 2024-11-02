@@ -178,11 +178,13 @@ namespace UniGetUI.Interface
                 Text = CoreTools.Translate("Update vcpkg's Git portfiles automatically (requires Git installed)"),
                 SettingName = "UpdateVcpkgGitPorts"
             };
-            Vcpkg_UpdateGitPorts.StateChanged += (_, _) =>
-            {
-                PackageManagerExpanders[PEInterface.Vcpkg].ShowRestartRequiredBanner();
-            };
             ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_UpdateGitPorts);
+            TextboxCard Vcpkg_CustomVcpkgRoot = new()
+            {
+                Text = CoreTools.Translate("Custom vcpkg root"),
+                SettingName = "CustomVcpkgRoot"
+            };
+            ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_CustomVcpkgRoot);
 
 
             foreach (IPackageManager Manager in PEInterface.Managers)
