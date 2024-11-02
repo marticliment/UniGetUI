@@ -25,7 +25,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         {
             Capabilities = new ManagerCapabilities
             {
-                CanRunAsAdmin = false,
+                CanRunAsAdmin = true,
                 SupportsCustomSources = true,
             };
 
@@ -67,7 +67,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 ExecutableFriendlyName = "vcpkg",
                 InstallVerb = "install",
                 UninstallVerb = "remove",
-                UpdateVerb = "update",
+                UpdateVerb = "upgrade",
                 ExecutableCallArgs = vcpkgRoot == "" ? "" : " --vcpkg-root=\"" + vcpkgRoot + "\"",
                 DefaultSource = new ManagerSource(this, DefaultTriplet, URI_VCPKG_IO),
                 KnownSources = [.. TripletSourceMap.Values],

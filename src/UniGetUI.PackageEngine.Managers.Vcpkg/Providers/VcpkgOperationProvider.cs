@@ -11,7 +11,17 @@ internal sealed class VcpkgOperationProvider : BaseOperationProvider<Vcpkg>
 
     public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
-        throw new NotImplementedException();
+        List<string> parameters = operation switch {
+            OperationType.Install => [Manager.Properties.InstallVerb, package.Id],
+            OperationType.Update => [Manager.Properties.UpdateVerb, package.Id, "--no-dry-run"],
+            OperationType.Uninstall => [Manager.Properties.UninstallVerb, package.Id],
+            _ => throw new InvalidDataException("Invalid package operation")
+        };
+
+        if (options.CustomParameters is not null)
+            parameters.AddRange(options.CustomParameters);
+
+        return parameters;
     }
 
     public override OperationVeredict GetOperationResult(
