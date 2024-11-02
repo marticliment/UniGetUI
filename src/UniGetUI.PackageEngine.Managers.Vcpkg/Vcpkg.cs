@@ -14,8 +14,6 @@ using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.PackageClasses;
 
-// TODO: Allow using --vcpkg-root to change the vcpkg root directory based on a custom directory in the settings
-
 namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 {
     public class Vcpkg : PackageManager
@@ -59,6 +57,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 { "x86-windows",        new ManagerSource(this, "x86-windows", URI_VCPKG_IO) }
             };
 
+            string vcpkgRoot = Settings.GetValue("CustomVcpkgRoot");
             Properties = new ManagerProperties
             {
                 Name = "vcpkg",
@@ -69,7 +68,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 InstallVerb = "install",
                 UninstallVerb = "remove",
                 UpdateVerb = "update",
-                ExecutableCallArgs = "",
+                ExecutableCallArgs = vcpkgRoot == "" ? "" : " --vcpkg-root=\"" + vcpkgRoot + "\"",
                 DefaultSource = new ManagerSource(this, DefaultTriplet, URI_VCPKG_IO),
                 KnownSources = [.. TripletSourceMap.Values],
             };
@@ -81,8 +80,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         protected override IEnumerable<Package> FindPackages_UnSafe(string query)
         {
             // Retrieve all triplets on the system (in %VCPKG_ROOT%\triplets{\community})
-            string? vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
-            if (vcpkgRoot != null)
+            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
+            if (vcpkgRootFound)
             {
                 string tripletLocation = Path.Join(vcpkgRoot, "triplets");
                 string communityTripletLocation = Path.Join(vcpkgRoot, "triplets", "community");
@@ -169,12 +168,12 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
             var (found, path) = GetVcpkgPath();
-            string? vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
+            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
 
-            if (Settings.Get("UpdateVcpkgGitPorts") && found)
+                if (Settings.Get("UpdateVcpkgGitPorts") && found)
             {
                 var (gitFound, gitPath) = CoreTools.Which("git");
-                if (gitFound && vcpkgRoot != null)
+                if (gitFound && vcpkgRootFound)
                 {
                     Process pullAll = new()
                     {
@@ -191,7 +190,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 }
                 else
                 {
-                    Logger.Error(new InvalidOperationException("Cannot update vcpkg port files as requested: git was not installed or the VCPKG_ROOT environment variable was not set"));
+                    Logger.Error(new InvalidOperationException("Cannot update vcpkg port files as requested: git was not installed or the VCPKG_ROOT environment variable the custom vcpkg root setting were not set"));
                 }
             }
 
@@ -253,8 +252,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 return Tuple.Create(found, path);
             }
 
-            string? vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
-            if (vcpkgRoot != null)
+            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
+            if (vcpkgRootFound)
             {
                 string vcpkgLocation = Path.Join(vcpkgRoot, "vcpkg.exe");
 
@@ -265,6 +264,17 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             }
 
             return Tuple.Create(false, "");
+        }
+
+        private Tuple<bool, string> GetVcpkgRoot()
+        {
+            string? vcpkgRoot = Settings.GetValue("CustomVcpkgRoot");
+            if (vcpkgRoot == "")
+            {
+                vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
+            }
+
+            return Tuple.Create(vcpkgRoot != null, vcpkgRoot ?? "");
         }
 
         protected override IEnumerable<Package> GetInstalledPackages_UnSafe()

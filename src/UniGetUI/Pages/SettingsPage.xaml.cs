@@ -184,6 +184,10 @@ namespace UniGetUI.Interface
                 Text = CoreTools.Translate("Custom vcpkg root"),
                 SettingName = "CustomVcpkgRoot"
             };
+            Vcpkg_CustomVcpkgRoot.KeyDown += (_, _) =>
+            {
+                PackageManagerExpanders[PEInterface.Vcpkg].ShowRestartRequiredBanner();
+            };
             ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_CustomVcpkgRoot);
 
 
