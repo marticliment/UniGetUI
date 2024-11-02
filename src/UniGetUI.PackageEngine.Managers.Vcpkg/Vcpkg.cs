@@ -80,7 +80,90 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         protected override IEnumerable<Package> FindPackages_UnSafe(string query)
         {
-            throw new NotImplementedException();
+            // Retrieve all triplets on the system (in %VCPKG_ROOT%\triplets{\community})
+            string? vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
+            if (vcpkgRoot != null)
+            {
+                string tripletLocation = Path.Join(vcpkgRoot, "triplets");
+                string communityTripletLocation = Path.Join(vcpkgRoot, "triplets", "community");
+
+                foreach (string tripletFile in Directory.EnumerateFiles(tripletLocation).Concat(Directory.EnumerateFiles(communityTripletLocation)))
+                {
+                    string triplet = Path.GetFileNameWithoutExtension(tripletFile);
+                    if (!TripletSourceMap.ContainsKey(triplet))
+                    {
+                        TripletSourceMap.Add(triplet, new ManagerSource(this, triplet, URI_VCPKG_IO));
+                    }
+                }
+            }
+
+            Process p = new()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = Status.ExecutablePath,
+                    Arguments = Properties.ExecutableCallArgs + " search \"" + query.Replace("\"", "") + "\"",
+                    // vcpkg has an --x-json flag that would list installed packages in JSON, but it doesn't work for this call (as of 2024-09-30-ab8988503c7cffabfd440b243a383c0a352a023d)
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = Encoding.UTF8
+                }
+            };
+
+            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+            string? line;
+            List<Package> Packages = [];
+
+            p.Start();
+
+            Dictionary<string, string> PackageVersions = new();
+            while ((line = p.StandardOutput.ReadLine()) is not null)
+            {
+                logger.AddToStdOut(line);
+
+                // Sample line:
+                // name(source)             version          description
+                // ffmpeg[sdl2]                              Sdl2 support
+                // sdl1 - net               1.2.8#6          Networking library for SDL
+                // sdl2                     2.30.8           Simple DirectMedia Layer is a cross - platform development library designed...
+                // (note that the suboptions, with the `name[build-option]` syntax have no version)
+
+                //                                           to get rid of many spaces of padding
+                string[] PackageData = Regex.Replace(line, @"\s+", " ").Split(' ');
+                string PackageId = PackageData[0]; // the id with the suboption
+                string PackageName = PackageId; // the actual name (id - suboption)
+                string PackageDetailedName = PackageName; // the name with a reformatted suboption reapplied (display name)
+                string PackageVersion = PackageData[1];
+
+                if (PackageName.Contains('[') /* meaning its a suboption, and thus has no version */)
+                {
+                    PackageName = PackageName[..PackageName.IndexOf("[")];
+                    PackageDetailedName = PackageName + " (option: " +
+                        PackageId[(PackageId.IndexOf("[") + 1)..PackageId.IndexOf("]")] + ")";
+
+                    if (PackageVersions.TryGetValue(PackageName, out string? value))
+                    {
+                        PackageVersion = value;
+                    }
+                    else
+                    {
+                        PackageVersion = "??? (package option)";
+                    }
+                }
+                else
+                {
+                    PackageVersions[PackageName] = PackageVersion;
+                }
+
+                foreach (string triplet in TripletSourceMap.Keys)
+                {
+                    Packages.Add(new Package(CoreTools.FormatAsName(PackageDetailedName), PackageId + ":" + triplet, PackageVersion, TripletSourceMap[triplet], this));
+                }
+            }
+
+            return Packages;
         }
 
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
