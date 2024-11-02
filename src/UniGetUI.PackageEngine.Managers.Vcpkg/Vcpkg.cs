@@ -190,7 +190,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 }
                 else
                 {
-                    Logger.Error(new InvalidOperationException("Cannot update vcpkg port files as requested: git was not installed or the VCPKG_ROOT environment variable the custom vcpkg root setting were not set"));
+                    Logger.Error(new InvalidOperationException("Cannot update vcpkg port files as requested: git was not installed or the VCPKG_ROOT environment variable / the custom vcpkg root setting were not set"));
                 }
             }
 
