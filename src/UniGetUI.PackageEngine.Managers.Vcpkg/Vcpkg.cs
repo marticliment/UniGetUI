@@ -25,8 +25,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         {
             Capabilities = new ManagerCapabilities
             {
-                CanRunAsAdmin = false, // TODO: check this; should this be true since we need admin to install to protected directories?
-                SupportsCustomSources = true, // TODO: check this; are different triplets "different sources"?
+                CanRunAsAdmin = false,
+                SupportsCustomSources = true,
             };
 
             string DefaultTriplet = Environment.GetEnvironmentVariable("VCPKG_DEFAULT_TRIPLET") ?? "";
