@@ -19,7 +19,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
     public class Vcpkg : PackageManager
     {
         public Dictionary<string, ManagerSource> TripletSourceMap;
-        public Uri URI_VCPKG_IO = new Uri("https://vcpkg.io/");
+        public static Uri URI_VCPKG_IO = new Uri("https://vcpkg.io/");
 
         public Vcpkg()
         {
