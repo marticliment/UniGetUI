@@ -58,7 +58,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             BetterMenuItem menuInstall = new()
             {
-                Text = "Update",
+                Text = CoreTools.AutoTranslated("Update"),
                 IconName = IconType.Update,
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
@@ -66,7 +66,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             BetterMenuItem menuInstallSettings = new()
             {
-                Text = "Installation options",
+                Text = CoreTools.AutoTranslated("Installation options"),
                 IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
@@ -74,70 +74,70 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuOpenInstallLocation = new()
             {
-                Text = "Open install location",
+                Text = CoreTools.AutoTranslated("Open install location"),
                 IconName = IconType.Launch,
             };
             MenuOpenInstallLocation.Click += (_, _) => OpenPackageInstallLocation(SelectedItem);
 
             MenuAsAdmin = new BetterMenuItem
             {
-                Text = "Update as administrator",
+                Text = CoreTools.AutoTranslated("Update as administrator"),
                 IconName = IconType.UAC,
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
 
             MenuInteractive = new BetterMenuItem
             {
-                Text = "Interactive update",
+                Text = CoreTools.AutoTranslated("Interactive update"),
                 IconName = IconType.Interactive,
             };
             MenuInteractive.Click += MenuInteractive_Invoked;
 
             MenuskipHash = new BetterMenuItem
             {
-                Text = "Skip hash check",
+                Text = CoreTools.AutoTranslated("Skip hash check"),
                 IconName = IconType.Checksum,
             };
             MenuskipHash.Click += MenuSkipHash_Invoked;
 
             BetterMenuItem menuUpdateAfterUninstall = new()
             {
-                Text = "Uninstall package, then update it",
+                Text = CoreTools.AutoTranslated("Uninstall package, then update it"),
                 IconName = IconType.Undelete,
             };
             menuUpdateAfterUninstall.Click += MenuUpdateAfterUninstall_Invoked;
 
             BetterMenuItem menuUninstall = new()
             {
-                Text = "Uninstall package",
+                Text = CoreTools.AutoTranslated("Uninstall package"),
                 IconName = IconType.Delete,
             };
             menuUninstall.Click += MenuUninstall_Invoked;
 
             BetterMenuItem menuIgnorePackage = new()
             {
-                Text = "Ignore updates for this package",
+                Text = CoreTools.AutoTranslated("Ignore updates for this package"),
                 IconName = IconType.Pin,
             };
             menuIgnorePackage.Click += MenuIgnorePackage_Invoked;
 
             BetterMenuItem menuSkipVersion = new()
             {
-                Text = "Skip this version",
+                Text = CoreTools.AutoTranslated("Skip this version"),
                 IconName = IconType.Skip,
             };
             menuSkipVersion.Click += MenuSkipVersion_Invoked;
 
             BetterMenuItem menuShare = new()
             {
-                Text = "Share this package",
+                Text = CoreTools.AutoTranslated("Share this package"),
                 IconName = IconType.Share,
             };
             menuShare.Click += (_, _) => SharePackage(SelectedItem);
 
             BetterMenuItem menuDetails = new()
             {
-                Text = "Package details",
+                Text = CoreTools.AutoTranslated("Package details"),
                 IconName = IconType.Info_Round,
                 KeyboardAcceleratorTextOverride = "Enter"
             };

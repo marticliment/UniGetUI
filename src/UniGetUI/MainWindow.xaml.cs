@@ -57,7 +57,14 @@ namespace UniGetUI.Interface
             InitializeComponent();
 
             ExtendsContentIntoTitleBar = true;
-            SetTitleBar(ContentRoot);
+            try
+            {
+                SetTitleBar(ContentRoot);
+            } catch
+            {
+                Logger.Warn("Could not set the title bar to the content root");
+                MainApp.Instance.DisposeAndQuit(-1);
+            }
 
             SizeChanged += (_, _) => { SaveGeometry(); };
             AppWindow.SetIcon(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Images", "icon.ico"));
@@ -144,6 +151,7 @@ namespace UniGetUI.Interface
                 try
                 {
                     this.Hide(enableEfficiencyMode: true);
+                    AppWindow.Hide();
                 }
                 catch (Exception ex)
                 {
@@ -151,6 +159,7 @@ namespace UniGetUI.Interface
                     Logger.Debug("Windows efficiency mode API crashed, but this was expected");
                     Logger.Debug(ex);
                     this.Hide(enableEfficiencyMode: false);
+                    AppWindow.Hide();
                 }
             }
             else
@@ -328,17 +337,17 @@ namespace UniGetUI.Interface
 
             Dictionary<XamlUICommand, string> Labels = new()
             {
-                { DiscoverPackages, "Discover Packages" },
-                { AvailableUpdates, "Available Updates" },
-                { InstalledPackages, "Installed Packages" },
-                { AboutUniGetUI, "WingetUI Version {0}" },
-                { ShowUniGetUI, "Show WingetUI" },
-                { QuitUniGetUI, "Quit" },
+                { DiscoverPackages, CoreTools.Translate("Discover Packages") },
+                { AvailableUpdates, CoreTools.Translate("Available Updates") },
+                { InstalledPackages, CoreTools.Translate("Installed Packages") },
+                { AboutUniGetUI, CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName) },
+                { ShowUniGetUI, CoreTools.Translate("Show WingetUI") },
+                { QuitUniGetUI, CoreTools.Translate("Quit") },
             };
 
             foreach (KeyValuePair<XamlUICommand, string> item in Labels)
             {
-                item.Key.Label = CoreTools.Translate(item.Value);
+                item.Key.Label = item.Value;
             }
 
             Dictionary<XamlUICommand, string> Icons = new()

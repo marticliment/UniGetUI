@@ -122,9 +122,9 @@
                                 />
                             <widgets:CheckboxCard
                                 Text="Show package icons on package lists"
-                                SettingName="EnableIconsOnPackageLists"
-                                x:Name="EnableIconsOnPackageLists"
-                                StateChanged="EnableIconsOnPackageLists_OnStateChanged"
+                                SettingName="DisableIconsOnPackageLists"
+                                x:Name="DisableIconsOnPackageLists"
+                                StateChanged="DisableIconsOnPackageLists_OnStateChanged"
                             />
                             <widgets:ButtonCard
                                 Text="Clear the local icon cache"

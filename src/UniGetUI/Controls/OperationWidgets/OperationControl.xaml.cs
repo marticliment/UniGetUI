@@ -394,8 +394,10 @@ namespace UniGetUI.PackageEngine.Operations
                     WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
                 };
 
-                Process = new Process { StartInfo = await BuildProcessInstance(startInfo) };
-                Process.StartInfo = CoreTools.UpdateEnvironmentVariables(Process.StartInfo);
+                Process = new Process();
+
+                Process.StartInfo = await BuildProcessInstance(startInfo);
+                // Process.StartInfo = CoreTools.UpdateEnvironmentVariables(Process.StartInfo);
 
                 foreach (string infoLine in GenerateProcessLogHeader())
                 {

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using UniGetUI.Core.Data;
@@ -15,7 +16,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// </summary>
     public class InstallationOptions : IInstallationOptions
     {
-        private static readonly Dictionary<long, InstallationOptions?> OptionsCache = [];
+        private static readonly ConcurrentDictionary<long, InstallationOptions?> OptionsCache = [];
 
         public bool SkipHashCheck { get; set; }
         public bool InteractiveInstallation { get; set; }
@@ -56,7 +57,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Logger.Debug($"Creating new instance of InstallationOptions for package {package}, as no instance was found in cache");
                 instance = new(package);
                 instance.LoadFromDisk();
-                OptionsCache.Add(package.GetHash(), instance);
+                OptionsCache.TryAdd(package.GetHash(), instance);
             }
 
             if (elevated is not null)

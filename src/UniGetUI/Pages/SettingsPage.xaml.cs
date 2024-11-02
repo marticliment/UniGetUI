@@ -89,7 +89,7 @@ namespace UniGetUI.Interface
             ThemeSelector.ShowAddedItems();
 
             // UI Section
-            EnableIconsOnPackageLists.Text = "[EXPERIMENTAL] " + CoreTools.Translate("Show package icons on package lists");
+            DisableIconsOnPackageLists.Text = "[EXPERIMENTAL] " + CoreTools.Translate("Show package icons on package lists");
 
 
             // Backup Section
@@ -113,11 +113,16 @@ namespace UniGetUI.Interface
                 ExtraSettingsCards.Add(Manager, []);
             }
 
-            /*ButtonCard WinGet_ResetSources = new() { Text = CoreTools.AutoTranslated("Reset Winget sources (might help if no packages are listed)"), ButtonText = CoreTools.AutoTranslated("Reset") };
-            WinGet_ResetSources.Click += (_, _) =>
+            ButtonCard WinGet_ResetWindowsPackageManager = new() {
+                Text = CoreTools.AutoTranslated("Reset WinGet") + $" ({CoreTools.Translate("This may help if no packages are listed")})",
+                ButtonText = CoreTools.AutoTranslated("Reset")
+            };
+
+            WinGet_ResetWindowsPackageManager.Click += (_, _) =>
             {
-                CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), CoreTools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
-            };*/
+                DialogHelper.HandleBrokenWinGet();
+                // CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), CoreTools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
+            };
 
             CheckboxCard WinGet_UseBundled = new()
             {
@@ -141,6 +146,7 @@ namespace UniGetUI.Interface
             };
 
             ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_EnableTroubleshooter);
+            ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_ResetWindowsPackageManager);
             ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_UseBundled);
 
             ButtonCard Scoop_Install = new() { Text = CoreTools.AutoTranslated("Install Scoop"), ButtonText = CoreTools.AutoTranslated("Install") };
@@ -591,7 +597,7 @@ namespace UniGetUI.Interface
             LoadIconCacheSize();
         }
 
-        private void EnableIconsOnPackageLists_OnStateChanged(object? sender, EventArgs e)
+        private void DisableIconsOnPackageLists_OnStateChanged(object? sender, EventArgs e)
         {
             InterfaceSettingsExpander.ShowRestartRequiredBanner();
         }

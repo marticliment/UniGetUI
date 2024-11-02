@@ -29,7 +29,7 @@
       <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
       <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
       <WindowsPackageType>None</WindowsPackageType>
-      <WindowsSdkPackageVersion>10.0.22621.47</WindowsSdkPackageVersion>
+        <WindowsSdkPackageVersion>10.0.26100.53</WindowsSdkPackageVersion>
 
       <!--PublishTrimmed>true</PublishTrimmed-->
       <!--TrimMode>partial</TrimMode-->
@@ -248,9 +248,6 @@
     <Content Update="Assets\Symbols\Font\fonts\UniGetUI-Symbols.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="Assets\Utilities\delete_winget_databases.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Update="Assets\Utilities\gsudo.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -258,9 +255,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\Utilities\install_scoop.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\Utilities\reset_winget_sources.cmd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\Utilities\scoop_cleanup.cmd">

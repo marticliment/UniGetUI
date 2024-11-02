@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 
@@ -5,8 +6,8 @@ namespace UniGetUI.Core.SettingsEngine
 {
     public static class Settings
     {
-        private static Dictionary<string, bool> booleanSettings = new();
-        private static Dictionary<string, string> valueSettings = new();
+        private static ConcurrentDictionary<string, bool> booleanSettings = new();
+        private static ConcurrentDictionary<string, string> valueSettings = new();
 
         public static bool Get(string setting, bool invert = false)
         {
@@ -53,7 +54,7 @@ namespace UniGetUI.Core.SettingsEngine
 
         public static string GetValue(string setting)
         {
-            if (valueSettings.TryGetValue(setting, out string value))
+            if (valueSettings.TryGetValue(setting, out string? value))
             {   // If the setting was cached
                 return value;
             }

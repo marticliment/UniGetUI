@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Diagnostics;
 using Microsoft.UI.Input;
@@ -75,9 +76,9 @@ namespace UniGetUI.Interface
         protected AbstractPackageLoader Loader;
         public ObservablePackageCollection FilteredPackages = [];
         protected List<IPackageManager> UsedManagers = [];
-        protected Dictionary<IPackageManager, List<IManagerSource>> UsedSourcesForManager = [];
-        protected Dictionary<IPackageManager, TreeViewNode> RootNodeForManager = [];
-        protected Dictionary<IManagerSource, TreeViewNode> NodesForSources = [];
+        protected ConcurrentDictionary<IPackageManager, List<IManagerSource>> UsedSourcesForManager = [];
+        protected ConcurrentDictionary<IPackageManager, TreeViewNode> RootNodeForManager = [];
+        protected ConcurrentDictionary<IManagerSource, TreeViewNode> NodesForSources = [];
         private readonly TreeViewNode LocalPackagesNode;
         public InfoBadge? ExternalCountBadge;
 
@@ -330,7 +331,7 @@ namespace UniGetUI.Interface
                 }
             }
             FilterPackages();
-            if (Settings.Get("EnableIconsOnPackageLists"))
+            if (!Settings.Get("DisableIconsOnPackageLists"))
                 _ = LoadIconsForNewPackages();
         }
 
@@ -409,8 +410,8 @@ namespace UniGetUI.Interface
                     SourcesTreeView.SelectedNodes.Add(node);
                 }
 
-                RootNodeForManager.Add(source.Manager, node);
-                UsedSourcesForManager.Add(source.Manager, []);
+                RootNodeForManager.TryAdd(source.Manager, node);
+                UsedSourcesForManager.TryAdd(source.Manager, []);
                 SourcesPlaceholderText.Visibility = Visibility.Collapsed;
                 SourcesTreeViewGrid.Visibility = Visibility.Visible;
             }
@@ -419,7 +420,7 @@ namespace UniGetUI.Interface
             {
                 UsedSourcesForManager[source.Manager].Add(source);
                 TreeViewNode item = new() { Content = source.Name + "                                                                                    ." };
-                NodesForSources.Add(source, item);
+                NodesForSources.TryAdd(source, item);
 
                 if (source.IsVirtualManager)
                 {
@@ -496,11 +497,11 @@ namespace UniGetUI.Interface
             {
                 foreach (TreeViewNode node in SourcesTreeView.SelectedNodes)
                 {
-                    if (NodesForSources.ContainsValue(node))
+                    if (NodesForSources.Values.Contains(node))
                     {
                         VisibleSources.Add(NodesForSources.First(x => x.Value == node).Key);
                     }
-                    else if (RootNodeForManager.ContainsValue(node))
+                    else if (RootNodeForManager.Values.Contains(node))
                     {
                         IPackageManager manager = RootNodeForManager.First(x => x.Value == node).Key;
                         VisibleManagers.Add(manager);

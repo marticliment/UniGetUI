@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Classes.Manager
@@ -5,7 +6,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
     public class SourceFactory : ISourceFactory
     {
         private readonly IPackageManager __manager;
-        private readonly Dictionary<string, IManagerSource> __reference;
+        private readonly ConcurrentDictionary<string, IManagerSource> __reference;
         private readonly Uri __default_uri = new("https://marticliment.com/unigetui/");
 
         public SourceFactory(IPackageManager manager)
@@ -26,13 +27,13 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         /// <returns>A valid ManagerSource</returns>
         public IManagerSource GetSourceOrDefault(string name)
         {
-            if (__reference.TryGetValue(name, out IManagerSource? source) && source is not null)
+            if (__reference.TryGetValue(name, out IManagerSource? source))
             {
                 return source;
             }
 
             ManagerSource new_source = new(__manager, name, __default_uri);
-            __reference.Add(name, new_source);
+            __reference.TryAdd(name, new_source);
             return new_source;
         }
 

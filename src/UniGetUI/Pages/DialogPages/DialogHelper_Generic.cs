@@ -82,7 +82,7 @@ public static partial class DialogHelper
         p.Children.Add(new TextBlock
         {
             Text = CoreTools.Translate(
-                $"UniGetUI requires {dep_name} to operate, but it was not found on your system."),
+                "UniGetUI requires {0} to operate, but it was not found on your system.", dep_name),
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 0, 0, 5)
         });
@@ -231,7 +231,7 @@ public static partial class DialogHelper
 
         //UpdatesDialog.PrimaryButtonText = CoreTools.Translate("Reset");
 
-        UpdatesDialog.DefaultButton = ContentDialogButton.Secondary;
+        UpdatesDialog.DefaultButton = ContentDialogButton.None;
         UpdatesDialog.Title = CoreTools.Translate("Manage ignored updates");
         IgnoredUpdatesManager IgnoredUpdatesPage = new();
         UpdatesDialog.Content = IgnoredUpdatesPage;
@@ -305,10 +305,12 @@ public static partial class DialogHelper
 
     public static async void HandleBrokenWinGet()
     {
+        bool bannerWasOpen = false;
         try
         {
             DialogHelper.ShowLoadingDialog("Attempting to repair WinGet...",
                 "WinGet is being repaired. Please wait until the process finishes.");
+            bannerWasOpen = Window.WinGetWarningBanner.IsOpen;
             Window.WinGetWarningBanner.IsOpen = false;
             Process p = new Process()
             {
@@ -319,6 +321,8 @@ public static partial class DialogHelper
                             "windowspowershell\\v1.0\\powershell.exe"),
                     Arguments =
                         "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {" +
+                        "cmd.exe /C \"rmdir /Q /S `\"%localappdata%\\Temp\\WinGet`\"\"; " +
+                        "cmd.exe /C \"%localappdata%\\Microsoft\\WindowsApps\\winget.exe source reset --force\"; " +
                         "taskkill /im winget.exe /f; " +
                         "taskkill /im WindowsPackageManagerServer.exe /f; " +
                         "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; " +
@@ -346,14 +350,14 @@ public static partial class DialogHelper
                           "\n\n" +
                           CoreTools.Translate(
                               "NOTE: This troubleshooter can be disabled from UniGetUI Settings, on the WinGet section"),
-                PrimaryButtonText = CoreTools.Translate("Restart"),
-                SecondaryButtonText = CoreTools.Translate("Close"),
-                DefaultButton = ContentDialogButton.Primary,
+                PrimaryButtonText = CoreTools.Translate("Close"),
+                SecondaryButtonText = CoreTools.Translate("Restart"),
+                DefaultButton = ContentDialogButton.Secondary,
                 XamlRoot = Window.XamlRoot
             };
 
             // Restart UniGetUI or reload packages depending on the user's choice
-            if (await Window.ShowDialogAsync(c) == ContentDialogResult.Primary)
+            if (await Window.ShowDialogAsync(c) == ContentDialogResult.Secondary)
             {
                 MainApp.Instance.KillAndRestart();
             }
@@ -366,7 +370,7 @@ public static partial class DialogHelper
         catch (Exception ex)
         {
             // Show an error message if something goes wrong
-            Window.WinGetWarningBanner.IsOpen = true;
+            Window.WinGetWarningBanner.IsOpen = bannerWasOpen;
             Logger.Error("An error occurred while trying to repair WinGet");
             Logger.Error(ex);
             DialogHelper.HideLoadingDialog();
