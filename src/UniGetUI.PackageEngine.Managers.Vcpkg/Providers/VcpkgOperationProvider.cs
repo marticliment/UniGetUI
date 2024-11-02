@@ -20,6 +20,11 @@ internal sealed class VcpkgOperationProvider : BaseOperationProvider<Vcpkg>
         IEnumerable<string> processOutput,
         int returnCode)
     {
-        throw new NotImplementedException();
+        if (returnCode == 0)
+        {
+            return OperationVeredict.Succeeded;
+        }
+
+        return OperationVeredict.Failed;
     }
 }
