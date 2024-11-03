@@ -78,7 +78,7 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        protected string INSTALLING_STRING = "THIS NEEDS TO BE REDEFINED ON THE CONSTRUCTOR";
+        protected string INSTALLING_STRING = "THIS NEEDS TO BE REDEFINED IN INITIALIZE";
 
         protected override void PostProcessStartAction()
         {
@@ -121,10 +121,8 @@ namespace UniGetUI.PackageEngine.Operations
         public event EventHandler<EventArgs>? OperationSucceeded;
 
         public AddSourceOperation(IManagerSource source) : base(source)
-        {
-            INSTALLING_STRING = CoreTools.Translate("Adding source {source} to {manager}",
-                new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
-        }
+        { }
+
         protected override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
@@ -193,7 +191,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task Initialize()
         {
-            OperationTitle = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            OperationTitle = INSTALLING_STRING = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
             IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
         }
     }
@@ -204,10 +202,8 @@ namespace UniGetUI.PackageEngine.Operations
         public event EventHandler<EventArgs>? OperationSucceeded;
 
         public RemoveSourceOperation(IManagerSource source) : base(source)
-        {
-            INSTALLING_STRING = CoreTools.Translate("Removing source {source} from {manager}",
-                new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name }});
-        }
+        { }
+
         protected override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
@@ -278,7 +274,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task Initialize()
         {
-            OperationTitle = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            OperationTitle = INSTALLING_STRING = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
             IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
         }
     }

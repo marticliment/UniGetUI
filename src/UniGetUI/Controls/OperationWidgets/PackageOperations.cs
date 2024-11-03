@@ -175,7 +175,7 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        protected string INSTALLING_STRING = "THIS NEEDS TO BE REDEFINED ON THE CONSTRUCTOR";
+        protected string INSTALLING_STRING = "THIS NEEDS TO BE REDEFINED IN INITIALIZE";
 
 
         protected override void PostProcessStartAction()
@@ -221,17 +221,13 @@ namespace UniGetUI.PackageEngine.Operations
             IInstallationOptions options,
             bool IgnoreParallelInstalls = false)
             : base(package, options, OperationType.Install, IgnoreParallelInstalls)
-        {
-            INSTALLING_STRING = CoreTools.Translate("{0} is being installed", package.Name);
-        }
+        { }
 
         public InstallPackageOperation(
             IPackage package,
             bool IgnoreParallelInstalls = false)
             : base(package, OperationType.Install, IgnoreParallelInstalls)
-        {
-            INSTALLING_STRING = CoreTools.Translate("{0} is being installed", package.Name);
-        }
+        { }
 
         protected override string[] GenerateProcessLogHeader()
         {
@@ -280,6 +276,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task Initialize()
         {
+            INSTALLING_STRING = CoreTools.Translate("{0} is being installed", Package.Name);
             OperationTitle = CoreTools.Translate("{package} Installation", new Dictionary<string, object?> { { "package", Package.Name } });
             IconSource = await Task.Run(Package.GetIconUrl);
         }
@@ -293,18 +290,13 @@ namespace UniGetUI.PackageEngine.Operations
             IInstallationOptions options,
             bool IgnoreParallelInstalls = false)
             : base(package, options, OperationType.Update, IgnoreParallelInstalls)
-        {
-            INSTALLING_STRING = CoreTools.Translate("{0} is being updated to version {1}", package.Name, package.NewVersion);
-        }
+        { }
 
         public UpdatePackageOperation(
             IPackage package,
             bool IgnoreParallelInstalls = false)
             : base(package, OperationType.Update, IgnoreParallelInstalls)
-        {
-            INSTALLING_STRING = CoreTools.Translate("{0} is being updated to version {1}", package.Name, package.NewVersion);
-        }
-
+        { }
 
         protected override string[] GenerateProcessLogHeader()
         {
@@ -364,6 +356,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task Initialize()
         {
+            INSTALLING_STRING = CoreTools.Translate("{0} is being updated to version {1}", Package.Name, Package.NewVersion);
             OperationTitle = CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
             IconSource = await Task.Run(Package.GetIconUrl);
         }
@@ -377,16 +370,13 @@ namespace UniGetUI.PackageEngine.Operations
             IInstallationOptions options,
             bool IgnoreParallelInstalls = false)
             : base(package, options, OperationType.Uninstall, IgnoreParallelInstalls)
-        {
-            INSTALLING_STRING = CoreTools.Translate("{0} is being uninstalled", package.Name);
-        }
+        { }
+
         public UninstallPackageOperation(
             IPackage package,
             bool IgnoreParallelInstalls = false)
             : base(package, OperationType.Uninstall, IgnoreParallelInstalls)
-        {
-            INSTALLING_STRING = CoreTools.Translate("{0} is being uninstalled", package.Name);
-        }
+        { }
 
         protected override string[] GenerateProcessLogHeader()
         {
@@ -436,6 +426,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task Initialize()
         {
+            INSTALLING_STRING = CoreTools.Translate("{0} is being uninstalled", Package.Name);
             OperationTitle = CoreTools.Translate("{package} Uninstall", new Dictionary<string, object?> { { "package", Package.Name } });
             IconSource = await Task.Run(Package.GetIconUrl);
         }
