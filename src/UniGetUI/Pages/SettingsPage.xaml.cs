@@ -179,6 +179,26 @@ namespace UniGetUI.Interface
                 SettingName = "UpdateVcpkgGitPorts"
             };
             ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_UpdateGitPorts);
+            // TODO: This thing doesn't change the setting; the default of this setting
+            // (the initial value in the combo box) should be the value of `defaultTriplet`.
+            // It's contents should be the values in `triplets`, and a restart is only
+            // required if the setting won't change next time the search area is entered.
+            ComboboxCard Vcpkg_DefaultTriplet = new()
+            {
+                Text = CoreTools.Translate("Default vcpkg triplet"),
+                SettingName = "DefaultVcpkgTriplet"
+            };
+            Vcpkg_DefaultTriplet.ValueChanged += (_, _) =>
+            {
+                PackageManagerExpanders[PEInterface.Vcpkg].ShowRestartRequiredBanner();
+            };
+            IEnumerable<string> triplets = GetSystemTriplets();
+            string defaultTriplet = Environment.GetEnvironmentVariable("VCPKG_DEFAULT_TRIPLET") ?? triplets.FirstOrDefault("");
+            foreach (string triplet in triplets)
+            {
+                Vcpkg_DefaultTriplet.AddItem(triplet, triplet);
+            }
+            ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_DefaultTriplet);
             TextboxCard Vcpkg_CustomVcpkgRoot = new()
             {
                 Text = CoreTools.Translate("Custom vcpkg root"),
@@ -594,6 +614,37 @@ namespace UniGetUI.Interface
         private void EnableIconsOnPackageLists_OnStateChanged(object? sender, EventArgs e)
         {
             InterfaceSettingsExpander.ShowRestartRequiredBanner();
+        }
+
+        // vcpkg utilities
+
+        private Tuple<bool, string> GetVcpkgRoot()
+        {
+            string? vcpkgRoot = Settings.GetValue("CustomVcpkgRoot");
+            if (vcpkgRoot == "")
+            {
+                vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
+            }
+
+            return Tuple.Create(vcpkgRoot != null, vcpkgRoot ?? "");
+        }
+        private IEnumerable<string> GetSystemTriplets()
+        {
+            List<string> Triplets = [];
+            // Retrieve all triplets on the system (in %VCPKG_ROOT%\triplets{\community})
+            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
+            if (vcpkgRootFound)
+            {
+                string tripletLocation = Path.Join(vcpkgRoot, "triplets");
+                string communityTripletLocation = Path.Join(vcpkgRoot, "triplets", "community");
+
+                foreach (string tripletFile in Directory.EnumerateFiles(tripletLocation).Concat(Directory.EnumerateFiles(communityTripletLocation)))
+                {
+                    string triplet = Path.GetFileNameWithoutExtension(tripletFile);
+                    Triplets.Add(triplet);
+                }
+            }
+            return Triplets;
         }
     }
 }

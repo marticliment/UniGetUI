@@ -29,18 +29,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 SupportsCustomSources = true,
             };
 
-            string DefaultTriplet = Environment.GetEnvironmentVariable("VCPKG_DEFAULT_TRIPLET") ?? "";
-
-            if (DefaultTriplet == "")
-            {
-                if (RuntimeInformation.OSArchitecture == Architecture.X64) DefaultTriplet = "x64-";
-                else if (RuntimeInformation.OSArchitecture == Architecture.X86) DefaultTriplet = "x86-";
-                else if (RuntimeInformation.OSArchitecture == Architecture.Arm64) DefaultTriplet = "arm64-";
-
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) DefaultTriplet += "windows";
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) DefaultTriplet += "osx";
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) DefaultTriplet += "linux";
-            }
+            string DefaultTriplet = GetDefaultTriplet();
 
             TripletSourceMap = new Dictionary<string, ManagerSource>
             {
@@ -79,22 +68,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         protected override IEnumerable<Package> FindPackages_UnSafe(string query)
         {
-            // Retrieve all triplets on the system (in %VCPKG_ROOT%\triplets{\community})
-            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
-            if (vcpkgRootFound)
-            {
-                string tripletLocation = Path.Join(vcpkgRoot, "triplets");
-                string communityTripletLocation = Path.Join(vcpkgRoot, "triplets", "community");
-
-                foreach (string tripletFile in Directory.EnumerateFiles(tripletLocation).Concat(Directory.EnumerateFiles(communityTripletLocation)))
-                {
-                    string triplet = Path.GetFileNameWithoutExtension(tripletFile);
-                    if (!TripletSourceMap.ContainsKey(triplet))
-                    {
-                        TripletSourceMap.Add(triplet, new ManagerSource(this, triplet, URI_VCPKG_IO));
-                    }
-                }
-            }
+            string Triplet = GetDefaultTriplet();
 
             Process p = new()
             {
@@ -156,10 +130,11 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     PackageVersions[PackageName] = PackageVersion;
                 }
 
-                foreach (string triplet in TripletSourceMap.Keys)
+                if (!TripletSourceMap.ContainsKey(Triplet))
                 {
-                    Packages.Add(new Package(CoreTools.FormatAsName(PackageDetailedName), PackageId + ":" + triplet, PackageVersion, TripletSourceMap[triplet], this));
+                    TripletSourceMap[Triplet] = new ManagerSource(this, Triplet, URI_VCPKG_IO);
                 }
+                Packages.Add(new Package(CoreTools.FormatAsName(PackageDetailedName), PackageId + ":" + Triplet, PackageVersion, TripletSourceMap[Triplet], this));
             }
 
             return Packages;
@@ -242,39 +217,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             }
 
             return Packages;
-        }
-
-        private Tuple<bool, string> GetVcpkgPath()
-        {
-            var (found, path) = CoreTools.Which("vcpkg");
-            if (found)
-            {
-                return Tuple.Create(found, path);
-            }
-
-            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
-            if (vcpkgRootFound)
-            {
-                string vcpkgLocation = Path.Join(vcpkgRoot, "vcpkg.exe");
-
-                if (File.Exists(vcpkgLocation))
-                {
-                    return Tuple.Create(true, vcpkgLocation);
-                }
-            }
-
-            return Tuple.Create(false, "");
-        }
-
-        private Tuple<bool, string> GetVcpkgRoot()
-        {
-            string? vcpkgRoot = Settings.GetValue("CustomVcpkgRoot");
-            if (vcpkgRoot == "")
-            {
-                vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
-            }
-
-            return Tuple.Create(vcpkgRoot != null, vcpkgRoot ?? "");
         }
 
         protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
@@ -371,6 +313,61 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             status.Version = (process.StandardOutput.ReadLine() ?? "Unknown").Replace("vcpkg package management program version", "").Trim();
 
             return status;
+        }
+
+        private Tuple<bool, string> GetVcpkgPath()
+        {
+            var (found, path) = CoreTools.Which("vcpkg");
+            if (found)
+            {
+                return Tuple.Create(found, path);
+            }
+
+            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
+            if (vcpkgRootFound)
+            {
+                string vcpkgLocation = Path.Join(vcpkgRoot, "vcpkg.exe");
+
+                if (File.Exists(vcpkgLocation))
+                {
+                    return Tuple.Create(true, vcpkgLocation);
+                }
+            }
+
+            return Tuple.Create(false, "");
+        }
+
+        private Tuple<bool, string> GetVcpkgRoot()
+        {
+            string? vcpkgRoot = Settings.GetValue("CustomVcpkgRoot");
+            if (vcpkgRoot == "")
+            {
+                vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
+            }
+
+            return Tuple.Create(vcpkgRoot != null, vcpkgRoot ?? "");
+        }
+
+        private string GetDefaultTriplet()
+        {
+            string DefaultTriplet = Settings.GetValue("DefaultVcpkgTriplet");
+            if (DefaultTriplet == "")
+            {
+                DefaultTriplet = Environment.GetEnvironmentVariable("VCPKG_DEFAULT_TRIPLET") ?? "";
+            }
+
+            if (DefaultTriplet == "")
+            {
+                if (RuntimeInformation.OSArchitecture == Architecture.X64) DefaultTriplet = "x64-";
+                else if (RuntimeInformation.OSArchitecture == Architecture.X86) DefaultTriplet = "x86-";
+                else if (RuntimeInformation.OSArchitecture == Architecture.Arm64) DefaultTriplet = "arm64-";
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) DefaultTriplet += "windows";
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) DefaultTriplet += "osx";
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) DefaultTriplet += "linux";
+            }
+
+            return DefaultTriplet;
         }
     }
 }
