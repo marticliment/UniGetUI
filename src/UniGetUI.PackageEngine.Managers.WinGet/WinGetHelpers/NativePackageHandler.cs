@@ -109,6 +109,14 @@ public static class NativePackageHandler
         return installerInfo;
     }
 
+    public static void Clear()
+    {
+        __nativePackages.Clear();;
+        __nativeDetails.Clear();;
+        __nativeInstallers_Install.Clear();;
+        __nativeInstallers_Uninstall.Clear();
+    }
+
     private static PackageInstallerInfo? _getInstallationOptionsOnDict(IPackage package, ref ConcurrentDictionary<long, PackageInstallerInfo> source, bool installed)
     {
         if (source.TryGetValue(package.GetHash(), out PackageInstallerInfo? installerInfo))

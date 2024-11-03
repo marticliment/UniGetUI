@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using ABI.System.Collections.Generic;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -230,6 +231,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             return status;
         }
+
+        // For future usage
+        private void ReRegisterCOMServer()
+        {
+            WinGetHelper.Instance = new NativeWinGetHelper();
+            NativePackageHandler.Clear();
+        }
+
 
         public override void RefreshPackageIndexes()
         {
