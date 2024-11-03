@@ -29,10 +29,10 @@
       <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
       <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
       <WindowsPackageType>None</WindowsPackageType>
-        <WindowsSdkPackageVersion>10.0.26100.53</WindowsSdkPackageVersion>
+      <WindowsSdkPackageVersion>10.0.26100.53</WindowsSdkPackageVersion>
 
-      <!--PublishTrimmed>true</PublishTrimmed-->
-      <!--TrimMode>partial</TrimMode-->
+      <!--PublishTrimmed>true</PublishTrimmed>
+      <TrimMode>partial</TrimMode-->
       <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
   </PropertyGroup>
 
