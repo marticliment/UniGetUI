@@ -5,7 +5,7 @@ import re
 import tolgee_requests
 
 root_dir = os.path.join(os.path.dirname(__file__), "..")
-os.chdir(os.path.join(root_dir, "src/UniGetUI/"))
+os.chdir(os.path.join(root_dir, "src/"))
 
 
 __blacklist_strings = [
@@ -24,8 +24,8 @@ def remove_special_chars(string):
 def get_all_strings():
     translation_strings: list[str] = []
 
-    # Find c# translation strings
-    regex1 = r'(?<=Translate\(["\']).+?(?=["\']\))'
+    # Find C# translation strings
+    regex1 = r'Translate\([\r\n ]{0,}["\']((?:\\.|[^\"])+)?["\'][,\) \n]'
     regex2 = r'(?<=AutoTranslated\(["\']).+?(?=["\']\))'
     for (dirpath, _dirnames, filenames) in os.walk(".", topdown=True):
         for file in filenames:
@@ -42,7 +42,6 @@ def get_all_strings():
                     translation_strings.append(match.encode('raw_unicode_escape').decode('unicode_escape'))
 
     # Find XAML translation strings
-
     MAIN_WILDCARD = r'(?:x:|"&#x[a-zA-Z0-9]{4};"|[ a-zA-Z0-9=\"\'\r\n\t_\.\,\:\;\{\}])'
 
     regex_data = {

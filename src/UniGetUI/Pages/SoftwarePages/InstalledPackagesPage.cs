@@ -63,7 +63,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenu menu = new();
             BetterMenuItem menuUninstall = new()
             {
-                Text = "Uninstall",
+                Text = CoreTools.AutoTranslated("Uninstall"),
                 IconName = IconType.Delete,
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
@@ -74,7 +74,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuInstallationOptions = new()
             {
-                Text = "Installation options",
+                Text = CoreTools.AutoTranslated("Installation options"),
                 IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
@@ -83,7 +83,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuOpenInstallLocation = new()
             {
-                Text = "Open install location",
+                Text = CoreTools.AutoTranslated("Open install location"),
                 IconName = IconType.Launch,
             };
             MenuOpenInstallLocation.Click += (_, _) => OpenPackageInstallLocation(SelectedItem);;
@@ -93,7 +93,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuAsAdmin = new BetterMenuItem
             {
-                Text = "Uninstall as administrator",
+                Text = CoreTools.AutoTranslated("Uninstall as administrator"),
                 IconName = IconType.UAC
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
@@ -101,7 +101,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuInteractive = new BetterMenuItem
             {
-                Text = "Interactive uninstall",
+                Text = CoreTools.AutoTranslated("Interactive uninstall"),
                 IconName = IconType.Interactive
             };
             MenuInteractive.Click += MenuInteractive_Invoked;
@@ -109,7 +109,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuRemoveData = new BetterMenuItem
             {
-                Text = "Uninstall and remove data",
+                Text = CoreTools.AutoTranslated("Uninstall and remove data"),
                 IconName = IconType.Close_Round
             };
             MenuRemoveData.Click += MenuRemoveData_Invoked;
@@ -119,7 +119,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuReinstallPackage = new()
             {
-                Text = "Reinstall package",
+                Text = CoreTools.AutoTranslated("Reinstall package"),
                 IconName = IconType.Download
             };
             MenuReinstallPackage.Click += MenuReinstall_Invoked;
@@ -127,7 +127,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuUninstallThenReinstall = new()
             {
-                Text = "Uninstall package, then reinstall it",
+                Text = CoreTools.AutoTranslated("Uninstall package, then reinstall it"),
                 IconName = IconType.Undelete
             };
             MenuUninstallThenReinstall.Click += MenuUninstallThenReinstall_Invoked;
@@ -137,7 +137,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuIgnoreUpdates = new()
             {
-                Text = "Ignore updates for this package",
+                Text = CoreTools.AutoTranslated("Ignore updates for this package"),
                 IconName = IconType.Pin
             };
             MenuIgnoreUpdates.Click += MenuIgnorePackage_Invoked;
@@ -147,7 +147,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuSharePackage = new()
             {
-                Text = "Share this package",
+                Text = CoreTools.AutoTranslated("Share this package"),
                 IconName = IconType.Share
             };
             MenuSharePackage.Click += MenuShare_Invoked;
@@ -155,7 +155,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuPackageDetails = new()
             {
-                Text = "Package details",
+                Text = CoreTools.AutoTranslated("Package details"),
                 IconName = IconType.Info_Round,
                 KeyboardAcceleratorTextOverride = "Enter"
             };

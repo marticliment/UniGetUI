@@ -46,8 +46,8 @@ namespace UniGetUI.Core.Data
             }
         }
 
-        public const string VersionName =  "3.1.2-beta3"; // Do not modify this line, use file scripts/apply_versions.py
-        public const double VersionNumber =  3.1193; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName =  "3.1.4-beta1"; // Do not modify this line, use file scripts/apply_versions.py
+        public const double VersionNumber =  3.14; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 

@@ -248,14 +248,14 @@ namespace UniGetUI.PackageEngine.Operations
 
             ShowErrorNotification(
                 CoreTools.Translate("Removal failed"),
-                CoreTools.Translate("Could not add remove {source} from {manager}",
+                CoreTools.Translate("Could not remove source {source} from {manager}",
                     new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
             );
 
             ContentDialogResult result = await DialogHelper.ShowOperationFailed(
                 ProcessOutput,
                 CoreTools.Translate("Source removal failed"),
-                CoreTools.Translate("Could remove source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
+                CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
             );
 
             return result == ContentDialogResult.Primary ? AfterFinshAction.Retry : AfterFinshAction.ManualClose;

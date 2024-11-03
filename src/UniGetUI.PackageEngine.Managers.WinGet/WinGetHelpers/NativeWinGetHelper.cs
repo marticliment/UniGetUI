@@ -117,7 +117,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
                     var overriden_options = new OverridenInstallationOptions();
 
-                    var installOptions = Factory.CreateInstallOptions();
+                    /*var installOptions = Factory.CreateInstallOptions();
                     if (catPkg.DefaultInstallVersion.HasApplicableInstaller(installOptions))
                     {
                         var options = catPkg.DefaultInstallVersion.GetApplicableInstaller(installOptions);
@@ -125,7 +125,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
                             overriden_options.RunAsAdministrator = true;
                         else if (options.ElevationRequirement is ElevationRequirement.ElevationProhibited)
                             overriden_options.RunAsAdministrator = false;
-                    }
+                    }*/
 
                     Packages.Add(new Package(
                         catPkg.Name,

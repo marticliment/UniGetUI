@@ -217,7 +217,9 @@ namespace UniGetUI.Interface
 
             foreach (Page page in PageButtonReference.Keys)
             {
-                page.Visibility = (page == TargetPage) ? Visibility.Visible : Visibility.Collapsed;
+                bool IS_MAIN_PAGE = (page == TargetPage);
+                page.Visibility =  IS_MAIN_PAGE? Visibility.Visible : Visibility.Collapsed;
+                page.IsEnabled = IS_MAIN_PAGE;
             }
 
             OldPage = CurrentPage;

@@ -80,7 +80,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenu menu = new();
             MenuInstall = new()
             {
-                Text = "Install",
+                Text = CoreTools.AutoTranslated("Install"),
                 IconName = IconType.Download,
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
@@ -91,7 +91,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuInstallOptions = new()
             {
-                Text = "Installation options",
+                Text = CoreTools.AutoTranslated("Installation options"),
                 IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
@@ -102,7 +102,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuAsAdmin = new BetterMenuItem
             {
-                Text = "Install as administrator",
+                Text = CoreTools.AutoTranslated("Install as administrator"),
                 IconName = IconType.UAC
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
@@ -110,7 +110,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuInteractive = new BetterMenuItem
             {
-                Text = "Interactive installation",
+                Text = CoreTools.AutoTranslated("Interactive installation"),
                 IconName = IconType.Interactive
             };
             MenuInteractive.Click += MenuInteractive_Invoked;
@@ -118,7 +118,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuSkipHash = new BetterMenuItem
             {
-                Text = "Skip hash checks",
+                Text = CoreTools.AutoTranslated("Skip hash checks"),
                 IconName = IconType.Checksum
             };
             MenuSkipHash.Click += MenuSkipHash_Invoked;
@@ -128,7 +128,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             BetterMenuItem menuRemoveFromList = new()
             {
-                Text = "Remove from list",
+                Text = CoreTools.AutoTranslated("Remove from list"),
                 IconName = IconType.Delete
             };
             menuRemoveFromList.Click += MenuRemoveFromList_Invoked;
@@ -137,7 +137,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuShare = new()
             {
-                Text = "Share this package",
+                Text = CoreTools.AutoTranslated("Share this package"),
                 IconName = IconType.Share
             };
             MenuShare.Click += MenuShare_Invoked;
@@ -145,7 +145,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuDetails = new()
             {
-                Text = "Package details",
+                Text = CoreTools.AutoTranslated("Package details"),
                 IconName = IconType.Info_Round,
                 KeyboardAcceleratorTextOverride = "Enter"
             };
