@@ -305,6 +305,12 @@
                                 StateChanged="DisableWidgetsApi_StateChanged"
                                 />
                             <widgets:CheckboxCard
+                                x:Name="DisableUniGetUIElevatorToggle"
+                                Text="Enable the new UniGetUI-Branded UAC Elevator"
+                                SettingName="DisableUniGetUIElevator"
+                                StateChanged="UseUserGSudoToggle_StateChanged"
+                            />
+                            <widgets:CheckboxCard
                                 x:Name="UseUserGSudoToggle"
                                 Text="Use installed GSudo instead of the bundled one"
                                 SettingName="UseUserGSudo"

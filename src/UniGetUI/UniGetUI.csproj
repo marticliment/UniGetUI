@@ -248,9 +248,15 @@
     <Content Update="Assets\Symbols\Font\fonts\UniGetUI-Symbols.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="Assets\Utilities\gsudo.exe">
+    <Content Update="Assets\Utilities\UniGetUI Elevator.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+      <Content Update="Assets\Utilities\getfilesiginforedist.dll">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Update="Assets\Utilities\gsudo.exe">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     <Content Update="Assets\Utilities\install_scoop.cmd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
