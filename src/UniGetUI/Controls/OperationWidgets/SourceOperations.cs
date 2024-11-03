@@ -17,16 +17,19 @@ namespace UniGetUI.PackageEngine.Operations
     public abstract class SourceOperation : AbstractOperation
     {
         protected IManagerSource Source;
+        protected string OPERATION_ONGOING_STRING = null!;
+
         public SourceOperation(IManagerSource source)
         {
             Source = source;
             MainProcedure();
+            if (OPERATION_ONGOING_STRING is null)
+            {
+                throw new NullReferenceException("OPERATION_ONGOING_STRING must be set to a non-null value in the Initialize method");
+            }
         }
 
-        protected override async Task HandleCancelation()
-        {
-        }
-
+        protected override Task HandleCancelation() => Task.CompletedTask;
 
         protected void ShowErrorNotification(string title, string body)
         {
@@ -78,8 +81,6 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        protected string INSTALLING_STRING = "THIS NEEDS TO BE REDEFINED ON THE CONSTRUCTOR";
-
         protected override void PostProcessStartAction()
         {
             if (Settings.AreProgressNotificationsDisabled())
@@ -94,7 +95,7 @@ namespace UniGetUI.PackageEngine.Operations
                     .AddProgressBar(new AppNotificationProgressBar()
                         .SetStatus(CoreTools.Translate("Please wait..."))
                         .SetValueStringOverride("\uE002")
-                        .SetTitle(INSTALLING_STRING)
+                        .SetTitle(OPERATION_ONGOING_STRING)
                         .SetValue(1.0))
                     .AddArgument("action", NotificationArguments.Show);
                 AppNotification notification = builder.BuildNotification();
@@ -121,10 +122,8 @@ namespace UniGetUI.PackageEngine.Operations
         public event EventHandler<EventArgs>? OperationSucceeded;
 
         public AddSourceOperation(IManagerSource source) : base(source)
-        {
-            INSTALLING_STRING = CoreTools.Translate("Adding source {source} to {manager}",
-                new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
-        }
+        { }
+
         protected override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
@@ -193,7 +192,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task Initialize()
         {
-            OperationTitle = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            OperationTitle = OPERATION_ONGOING_STRING = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
             IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
         }
     }
@@ -204,10 +203,8 @@ namespace UniGetUI.PackageEngine.Operations
         public event EventHandler<EventArgs>? OperationSucceeded;
 
         public RemoveSourceOperation(IManagerSource source) : base(source)
-        {
-            INSTALLING_STRING = CoreTools.Translate("Removing source {source} from {manager}",
-                new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name }});
-        }
+        { }
+
         protected override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
@@ -278,7 +275,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task Initialize()
         {
-            OperationTitle = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            OperationTitle = OPERATION_ONGOING_STRING = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
             IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
         }
     }
