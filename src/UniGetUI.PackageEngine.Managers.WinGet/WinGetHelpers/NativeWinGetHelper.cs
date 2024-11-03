@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Management.Deployment;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -16,7 +17,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager;
 internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 {
     public WindowsPackageManagerFactory Factory;
+    public static WindowsPackageManagerFactory? ExternalFactory;
     public PackageManager WinGetManager;
+    public static PackageManager? ExternalManager;
 
     public NativeWinGetHelper()
     {
@@ -29,18 +32,22 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         {
             Factory = new WindowsPackageManagerStandardFactory();
             WinGetManager = Factory.CreatePackageManager();
+            ExternalFactory = Factory;
+            ExternalManager = WinGetManager;
         }
         catch
         {
             Logger.Warn("Couldn't connect to WinGet API, attempting to connect with lower trust... (Are you running as administrator?)");
             Factory = new WindowsPackageManagerStandardFactory(allowLowerTrustRegistration: true);
             WinGetManager = Factory.CreatePackageManager();
+            ExternalFactory = Factory;
+            ExternalManager = WinGetManager;
         }
     }
 
     public IEnumerable<Package> FindPackages_UnSafe(WinGet Manager, string query)
     {
-        List<Package> Packages = [];
+        List<Package> packages = [];
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
         Dictionary<(PackageCatalogReference, PackageMatchField), Task<FindPackagesResult>> FindPackageTasks = [];
 
@@ -108,12 +115,12 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
                 IManagerSource source = Manager.GetSourceOrDefault(CatalogTaskPair.Key.Item1.Info.Name);
 
                 FindPackagesResult FoundPackages = CatalogTaskPair.Value.Result;
-                foreach (MatchResult package in FoundPackages.Matches.ToArray())
+                foreach (MatchResult matchResult in FoundPackages.Matches.ToArray())
                 {
-                    CatalogPackage catPkg = package.CatalogPackage;
+                    CatalogPackage nativePackage = matchResult.CatalogPackage;
                     // Create the Package item and add it to the list
                     logger.Log(
-                        $"Found package: {catPkg.Name}|{catPkg.Id}|{catPkg.DefaultInstallVersion.Version} on catalog {source.Name}");
+                        $"Found package: {nativePackage.Name}|{nativePackage.Id}|{nativePackage.DefaultInstallVersion.Version} on catalog {source.Name}");
 
                     var overriden_options = new OverridenInstallationOptions();
 
@@ -126,15 +133,15 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
                         else if (options.ElevationRequirement is ElevationRequirement.ElevationProhibited)
                             overriden_options.RunAsAdministrator = false;
                     }*/
-
-                    Packages.Add(new Package(
-                        catPkg.Name,
-                        catPkg.Id,
-                        catPkg.DefaultInstallVersion.Version,
+                    var UniGetUIPackage = new Package(
+                        nativePackage.Name,
+                        nativePackage.Id,
+                        nativePackage.DefaultInstallVersion.Version,
                         source,
                         Manager,
-                        overriden_options
-                    ));
+                        overriden_options);
+                    NativePackageHandler.AddPackage(UniGetUIPackage, nativePackage);
+                    packages.Add(UniGetUIPackage);
                 }
             }
             catch (Exception e)
@@ -146,7 +153,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         }
 
         logger.Close(0);
-        return Packages;
+        return packages;
     }
 
     public IEnumerable<Package> GetAvailableUpdates_UnSafe(WinGet Manager)
@@ -159,7 +166,16 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             {
                 IManagerSource source;
                 source = Manager.GetSourceOrDefault(nativePackage.DefaultInstallVersion.PackageCatalog.Info.Name);
-                packages.Add(new Package(nativePackage.Name, nativePackage.Id, nativePackage.InstalledVersion.Version, nativePackage.DefaultInstallVersion.Version, source, Manager));
+
+                var UniGetUIPackage = new Package(
+                    nativePackage.Name,
+                    nativePackage.Id,
+                    nativePackage.InstalledVersion.Version,
+                    nativePackage.DefaultInstallVersion.Version,
+                    source,
+                    Manager);
+                NativePackageHandler.AddPackage(UniGetUIPackage, nativePackage);
+                packages.Add(UniGetUIPackage);
                 logger.Log($"Found package {nativePackage.Name} {nativePackage.Id} on source {source.Name}, from version {nativePackage.InstalledVersion.Version} to version {nativePackage.DefaultInstallVersion.Version}");
             }
         }
@@ -185,7 +201,14 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
                 source = Manager.GetLocalSource(nativePackage.Id);
             }
             logger.Log($"Found package {nativePackage.Name} {nativePackage.Id} on source {source.Name}");
-            packages.Add(new Package(nativePackage.Name, nativePackage.Id, nativePackage.InstalledVersion.Version, source, Manager));
+            var UniGetUIPackage = new Package(
+                nativePackage.Name,
+                nativePackage.Id,
+                nativePackage.InstalledVersion.Version,
+                source,
+                Manager);
+            NativePackageHandler.AddPackage(UniGetUIPackage, nativePackage);
+            packages.Add(UniGetUIPackage);
         }
         logger.Close(0);
         return packages;
@@ -258,46 +281,10 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
     {
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions);
 
-        // Find the native package for the given Package object
-        PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
-        if (Catalog is null)
-        {
-            logger.Error("Failed to get catalog " + package.Source.Name + ". Is the package local?");
-            logger.Close(1);
-            return [];
-        }
+        var nativePackage = NativePackageHandler.GetPackage(package);
+        if (nativePackage is null) return [];
 
-        // Connect to catalog
-        Catalog.AcceptSourceAgreements = true;
-        ConnectResult ConnectResult = Catalog.Connect();
-        if (ConnectResult.Status != ConnectResultStatus.Ok)
-        {
-            logger.Error("Failed to connect to catalog " + package.Source.Name);
-            logger.Close(1);
-            return [];
-        }
-
-        // Match only the exact same Id
-        FindPackagesOptions packageMatchFilter = Factory.CreateFindPackagesOptions();
-        PackageMatchFilter filters = Factory.CreatePackageMatchFilter();
-        filters.Field = PackageMatchField.Id;
-        filters.Value = package.Id;
-        filters.Option = PackageFieldMatchOption.Equals;
-        packageMatchFilter.Filters.Add(filters);
-        packageMatchFilter.ResultLimit = 1;
-        var SearchResult = Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
-
-        if (SearchResult?.Result?.Matches is null ||
-            SearchResult.Result.Matches.Count == 0)
-        {
-            logger.Error("Failed to find package " + package.Id + " in catalog " + package.Source.Name);
-            logger.Close(1);
-            return [];
-        }
-
-        // Get the Native Package
-        CatalogPackage NativePackage = SearchResult.Result.Matches.First().CatalogPackage;
-        string[] versions = NativePackage.AvailableVersions.Select(x => x.Version).ToArray();
+        string[] versions = nativePackage.AvailableVersions.Select(x => x.Version).ToArray();
         foreach (string? version in versions)
         {
             logger.Log(version);
@@ -327,53 +314,10 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             details.ManifestUrl = new Uri("https://apps.microsoft.com/detail/" + details.Package.Id);
         }
 
-        // Find the native package for the given Package object
-        PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(details.Package.Source.Name);
-        if (Catalog is null)
-        {
-            logger.Error("Failed to get catalog " + details.Package.Source.Name + ". Is the package local?");
-            logger.Close(1);
-            return;
-        }
-
-        // Connect to catalog
-        Catalog.AcceptSourceAgreements = true;
-        ConnectResult ConnectResult = Catalog.Connect();
-        if (ConnectResult.Status != ConnectResultStatus.Ok)
-        {
-            logger.Error("Failed to connect to catalog " + details.Package.Source.Name);
-            logger.Close(1);
-            return;
-        }
-
-        // Match only the exact same Id
-        FindPackagesOptions packageMatchFilter = Factory.CreateFindPackagesOptions();
-        PackageMatchFilter filters = Factory.CreatePackageMatchFilter();
-        filters.Field = PackageMatchField.Id;
-        filters.Value = details.Package.Id;
-        filters.Option = PackageFieldMatchOption.Equals;
-        packageMatchFilter.Filters.Add(filters);
-        packageMatchFilter.ResultLimit = 1;
-        Task<FindPackagesResult> SearchResult =
-            Task.Run(() => ConnectResult.PackageCatalog.FindPackages(packageMatchFilter));
-
-        if (SearchResult.Result is null || SearchResult.Result.Matches is null ||
-            SearchResult.Result.Matches.Count == 0)
-        {
-            logger.Error("WinGet: Failed to find package " + details.Package.Id + " in catalog " +
-                         details.Package.Source.Name);
-            logger.Close(1);
-            return;
-        }
-
-        // Get the Native Package
-        CatalogPackage NativePackage = SearchResult.Result.Matches.First().CatalogPackage;
+        CatalogPackageMetadata? NativeDetails = NativePackageHandler.GetDetails(details.Package);
+        if (NativeDetails is null) return;
 
         // Extract data from NativeDetails
-        CatalogPackageMetadata NativeDetails =
-            NativePackage.DefaultInstallVersion.GetCatalogPackageMetadata(Windows.System.UserProfile
-                .GlobalizationPreferences.Languages[0]);
-
         if (NativeDetails.Author != "")
             details.Author = NativeDetails.Author;
 

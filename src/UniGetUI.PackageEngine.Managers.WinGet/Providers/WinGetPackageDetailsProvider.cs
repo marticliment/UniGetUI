@@ -14,12 +14,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
     internal sealed class WinGetPackageDetailsProvider : BasePackageDetailsProvider<UniGetUIManagers.PackageManager>
     {
         private static readonly Dictionary<string, string> __msstore_package_manifests = [];
-
-        private struct MicrosoftStoreProductType
-        {
-            public string productIds { get; set; }
-        }
-
+        
         public WinGetPackageDetailsProvider(WinGet manager) : base(manager) { }
 
         protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
@@ -224,50 +219,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         private static CacheableIcon? GetWinGetPackageIcon(IPackage package)
         {
-            if (WinGetHelper.Instance is not NativeWinGetHelper)
-                return null;
-
-            PackageManager WinGetManager = ((NativeWinGetHelper)WinGetHelper.Instance).WinGetManager;
-            WindowsPackageManager.Interop.WindowsPackageManagerFactory Factory = ((NativeWinGetHelper)WinGetHelper.Instance).Factory;
-
-            // Find the native package for the given Package object
-            PackageCatalogReference Catalog = WinGetManager.GetPackageCatalogByName(package.Source.Name);
-            if (Catalog is null)
-            {
-                Logger.Error("[WINGET COM] Failed to get catalog " + package.Source.Name + ". Is the package local?");
-                return null;
-            }
-
-            // Connect to catalog
-            Catalog.AcceptSourceAgreements = true;
-            ConnectResult ConnectResult = Catalog.Connect();
-            if (ConnectResult.Status != ConnectResultStatus.Ok)
-            {
-                Logger.Error("[WINGET COM] Failed to connect to catalog " + package.Source.Name);
-                return null;
-            }
-
-            // Match only the exact same Id
-            FindPackagesOptions packageMatchFilter = Factory.CreateFindPackagesOptions();
-            PackageMatchFilter filters = Factory.CreatePackageMatchFilter();
-            filters.Field = PackageMatchField.Id;
-            filters.Value = package.Id;
-            filters.Option = PackageFieldMatchOption.Equals;
-            packageMatchFilter.Filters.Add(filters);
-            packageMatchFilter.ResultLimit = 1;
-            FindPackagesResult SearchResult = ConnectResult.PackageCatalog.FindPackages(packageMatchFilter);
-
-            if (SearchResult.Matches is null || SearchResult.Matches.Count == 0)
-            {
-                Logger.Error($"[WINGET COM] Package with Id={package.Id} was NOT found in catalog id=" + package.Source.Name);
-                return null;
-            }
-
-            // Get the Native Package
-            CatalogPackage NativePackage = SearchResult.Matches.First().CatalogPackage;
-
-            // Extract data from NativeDetails
-            CatalogPackageMetadata NativeDetails = NativePackage.DefaultInstallVersion.GetCatalogPackageMetadata();
+            CatalogPackageMetadata? NativeDetails = NativePackageHandler.GetDetails(package);
+            if (NativeDetails is null) return null;
 
             // Get the actual icon and return it
             foreach (Icon? icon in NativeDetails.Icons.ToArray())
