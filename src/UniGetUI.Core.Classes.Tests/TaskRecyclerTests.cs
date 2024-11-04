@@ -11,7 +11,14 @@ public class TaskRecyclerTests
     class TestClass
     {
         public TestClass() {}
+
         public string SlowMethod2()
+        {
+            Thread.Sleep(1000);
+            return (new Random()).Next().ToString();
+        }
+
+        public string SlowMethod3()
         {
             Thread.Sleep(1000);
             return (new Random()).Next().ToString();
@@ -74,5 +81,14 @@ public class TaskRecyclerTests
 
         // Ensure the last call was not permanently cached
         Assert.NotEqual(result1, result3);
+
+
+        // The SAME method from two DIFFERENT instances should NOT be
+        // cached, so the results should differ
+        var task7 = TaskRecycler<string>.RunOrAttachAsync(class1.SlowMethod3);
+        var task8 = TaskRecycler<string>.RunOrAttachAsync(class2.SlowMethod2);
+        string result7 = task7.GetAwaiter().GetResult();
+        string result8 = task8.GetAwaiter().GetResult();
+        Assert.NotEqual(result7, result8);
     }
 }
