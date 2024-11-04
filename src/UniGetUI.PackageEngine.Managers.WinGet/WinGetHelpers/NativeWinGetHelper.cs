@@ -163,7 +163,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates);
         List<Package> packages = [];
-        foreach (var nativePackage in GetLocalWinGetPackages(logger))
+        foreach (var nativePackage in TaskRecycler<IEnumerable<CatalogPackage>>.RunOrAttach(GetLocalWinGetPackages))
         {
             if (nativePackage.IsUpdateAvailable)
             {
@@ -192,7 +192,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages);
         List<Package> packages = [];
-        foreach (var nativePackage in GetLocalWinGetPackages(logger))
+        foreach (var nativePackage in TaskRecycler<IEnumerable<CatalogPackage>>.RunOrAttach(GetLocalWinGetPackages))
         {
             IManagerSource source;
             if (nativePackage.DefaultInstallVersion is not null)
@@ -219,7 +219,8 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
     private IEnumerable<CatalogPackage> GetLocalWinGetPackages()
     {
-        var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates);
+        var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.OtherTask);
+        logger.Log("OtherTask: GetWinGetLocalPackages");
         PackageCatalogReference installedSearchCatalogRef;
         CreateCompositePackageCatalogOptions createCompositePackageCatalogOptions = Factory.CreateCreateCompositePackageCatalogOptions();
         foreach (var catalogRef in WinGetManager.GetPackageCatalogs().ToArray())
@@ -252,6 +253,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             foundPackages.Add(match.CatalogPackage);
         }
 
+        logger.Close(0);
         return foundPackages;
     }
 

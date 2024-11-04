@@ -86,5 +86,9 @@ namespace UniGetUI.PackageEngine.Enums
         /// Loads the available versions for a specific package
         /// </summary>
         LoadPackageVersions,
+        /// <summary>
+        /// Other, specific task
+        /// </summary>
+        OtherTask
     }
 }
