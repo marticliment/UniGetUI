@@ -15,7 +15,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
 internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 {
-    public IEnumerable<Package> GetAvailableUpdates_UnSafe(WinGet Manager)
+    private WinGet Manager;
+
+    public BundledWinGetHelper(WinGet manager)
+    {
+        Manager = manager;
+    }
+
+    public IEnumerable<Package> GetAvailableUpdates_UnSafe()
     {
         List<Package> Packages = [];
         Process p = new()
@@ -111,7 +118,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return Packages;
     }
 
-    public IEnumerable<Package> GetInstalledPackages_UnSafe(WinGet Manager)
+    public IEnumerable<Package> GetInstalledPackages_UnSafe()
     {
         List<Package> Packages = [];
         Process p = new()
@@ -202,7 +209,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return Packages;
     }
 
-    public IEnumerable<Package> FindPackages_UnSafe(WinGet Manager, string query)
+    public IEnumerable<Package> FindPackages_UnSafe(string query)
     {
         List<Package> Packages = [];
         Process p = new()
@@ -276,7 +283,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
 
 
-    public void GetPackageDetails_UnSafe(WinGet Manager, IPackageDetails details)
+    public void GetPackageDetails_UnSafe(IPackageDetails details)
     {
         if (details.Package.Source.Name == "winget")
         {
@@ -508,7 +515,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return;
     }
 
-    public IEnumerable<string> GetInstallableVersions_Unsafe(WinGet Manager, IPackage package)
+    public IEnumerable<string> GetInstallableVersions_Unsafe(IPackage package)
     {
         Process p = new()
         {
@@ -555,7 +562,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return versions;
     }
 
-    public IEnumerable<IManagerSource> GetSources_UnSafe(WinGet Manager)
+    public IEnumerable<IManagerSource> GetSources_UnSafe()
     {
         List<IManagerSource> sources = [];
 

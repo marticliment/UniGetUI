@@ -19,14 +19,14 @@ public static class NativePackageHandler
     /// <returns></returns>
     public static CatalogPackage? GetPackage(IPackage package)
     {
-        if (NativeWinGetHelper.ExternalFactory is null || NativeWinGetHelper.ExternalManager is null)
+        if (NativeWinGetHelper.ExternalFactory is null || NativeWinGetHelper.ExternalWinGetManager is null)
             return null;
 
         __nativePackages.TryGetValue(package.GetHash(), out CatalogPackage? catalogPackage);
         if (catalogPackage is not null)
             return catalogPackage;
 
-        PackageCatalogReference Catalog = NativeWinGetHelper.ExternalManager.GetPackageCatalogByName(package.Source.Name);
+        PackageCatalogReference Catalog = NativeWinGetHelper.ExternalWinGetManager.GetPackageCatalogByName(package.Source.Name);
         if (Catalog is null)
         {
             Logger.Error("Failed to get catalog " + package.Source.Name + ". Is the package local?");

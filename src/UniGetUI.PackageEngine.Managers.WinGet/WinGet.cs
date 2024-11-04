@@ -88,19 +88,19 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override IEnumerable<Package> FindPackages_UnSafe(string query)
         {
-            return WinGetHelper.Instance.FindPackages_UnSafe(this, query);
+            return WinGetHelper.Instance.FindPackages_UnSafe(query);
         }
 
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
-            return WinGetHelper.Instance.GetAvailableUpdates_UnSafe(this);
+            return WinGetHelper.Instance.GetAvailableUpdates_UnSafe();
         }
 
         protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
         {
             try
             {
-                var packages = WinGetHelper.Instance.GetInstalledPackages_UnSafe(this);
+                var packages = WinGetHelper.Instance.GetInstalledPackages_UnSafe();
                 NO_PACKAGES_HAVE_BEEN_LOADED = !packages.Any();
                 return packages;
             }
@@ -211,12 +211,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 if (FORCE_BUNDLED)
                 {
-                    WinGetHelper.Instance = new BundledWinGetHelper();
+                    WinGetHelper.Instance = new BundledWinGetHelper(this);
                     status.Version += "\nUsing bundled WinGet helper (CLI parsing)";
                 }
                 else
                 {
-                    WinGetHelper.Instance = new NativeWinGetHelper();
+                    WinGetHelper.Instance = new NativeWinGetHelper(this);
                     status.Version += "\nUsing Native WinGet helper (COM Api)";
                 }
             }
@@ -225,7 +225,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 Logger.Warn($"Cannot instantiate {(FORCE_BUNDLED? "Bundled" : "Native")} WinGet Helper due to error: {ex.Message}");
                 Logger.Warn(ex);
                 Logger.Warn("WinGet will resort to using BundledWinGetHelper()");
-                WinGetHelper.Instance = new BundledWinGetHelper();
+                WinGetHelper.Instance = new BundledWinGetHelper(this);
                 status.Version += "\nUsing bundled WinGet helper (CLI parsing, caused by exception)";
             }
 
@@ -235,7 +235,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         // For future usage
         private void ReRegisterCOMServer()
         {
-            WinGetHelper.Instance = new NativeWinGetHelper();
+            WinGetHelper.Instance = new NativeWinGetHelper(this);
             NativePackageHandler.Clear();
         }
 

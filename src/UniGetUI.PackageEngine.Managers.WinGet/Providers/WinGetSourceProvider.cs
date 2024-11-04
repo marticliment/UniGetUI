@@ -37,12 +37,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override IEnumerable<IManagerSource> GetSources_UnSafe()
         {
-            if (Manager is WinGet manager)
-            {
-                return WinGetHelper.Instance.GetSources_UnSafe(manager);
-            }
-
-            throw new InvalidOperationException("WinGetSourceProvider.GetSources_UnSafe: Manager is supposed to be WinGet");
+            return WinGetHelper.Instance.GetSources_UnSafe();
         }
     }
 }

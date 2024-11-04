@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Management.Deployment;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -19,10 +20,12 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
     public WindowsPackageManagerFactory Factory;
     public static WindowsPackageManagerFactory? ExternalFactory;
     public PackageManager WinGetManager;
-    public static PackageManager? ExternalManager;
+    public static PackageManager? ExternalWinGetManager;
+    private WinGet Manager;
 
-    public NativeWinGetHelper()
+    public NativeWinGetHelper(WinGet manager)
     {
+        Manager = manager;
         if (CoreTools.IsAdministrator())
         {
             Logger.Info("Running elevated, WinGet class registration is likely to fail unless using lower trust class registration is allowed in settings");
@@ -33,7 +36,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             Factory = new WindowsPackageManagerStandardFactory();
             WinGetManager = Factory.CreatePackageManager();
             ExternalFactory = Factory;
-            ExternalManager = WinGetManager;
+            ExternalWinGetManager = WinGetManager;
         }
         catch
         {
@@ -41,11 +44,11 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             Factory = new WindowsPackageManagerStandardFactory(allowLowerTrustRegistration: true);
             WinGetManager = Factory.CreatePackageManager();
             ExternalFactory = Factory;
-            ExternalManager = WinGetManager;
+            ExternalWinGetManager = WinGetManager;
         }
     }
 
-    public IEnumerable<Package> FindPackages_UnSafe(WinGet Manager, string query)
+    public IEnumerable<Package> FindPackages_UnSafe(string query)
     {
         List<Package> packages = [];
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
@@ -156,7 +159,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return packages;
     }
 
-    public IEnumerable<Package> GetAvailableUpdates_UnSafe(WinGet Manager)
+    public IEnumerable<Package> GetAvailableUpdates_UnSafe()
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates);
         List<Package> packages = [];
@@ -185,7 +188,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
     }
 
-    public IEnumerable<Package> GetInstalledPackages_UnSafe(WinGet Manager)
+    public IEnumerable<Package> GetInstalledPackages_UnSafe()
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages);
         List<Package> packages = [];
@@ -214,8 +217,9 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return packages;
     }
 
-    private IEnumerable<CatalogPackage> GetLocalWinGetPackages(INativeTaskLogger logger)
+    private IEnumerable<CatalogPackage> GetLocalWinGetPackages()
     {
+        var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates);
         PackageCatalogReference installedSearchCatalogRef;
         CreateCompositePackageCatalogOptions createCompositePackageCatalogOptions = Factory.CreateCreateCompositePackageCatalogOptions();
         foreach (var catalogRef in WinGetManager.GetPackageCatalogs().ToArray())
@@ -251,7 +255,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return foundPackages;
     }
 
-    public IEnumerable<IManagerSource> GetSources_UnSafe(WinGet Manager)
+    public IEnumerable<IManagerSource> GetSources_UnSafe()
     {
         List<ManagerSource> sources = [];
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources);
@@ -277,7 +281,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return sources;
     }
 
-    public IEnumerable<string> GetInstallableVersions_Unsafe(WinGet Manager, IPackage package)
+    public IEnumerable<string> GetInstallableVersions_Unsafe(IPackage package)
     {
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions);
 
@@ -294,7 +298,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return versions ?? [];
     }
 
-    public void GetPackageDetails_UnSafe(WinGet Manager, IPackageDetails details)
+    public void GetPackageDetails_UnSafe(IPackageDetails details)
     {
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageDetails);
 
