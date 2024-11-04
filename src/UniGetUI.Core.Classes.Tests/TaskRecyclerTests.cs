@@ -25,6 +25,12 @@ public class TaskRecyclerTests
         }
     }
 
+    private int MySlowMethod4(int argument)
+    {
+        Thread.Sleep(1000);
+        return (new Random()).Next() + (argument - argument);
+    }
+
     [Fact]
     public void TestTaskRecycler_Static_Int()
     {
@@ -44,6 +50,29 @@ public class TaskRecyclerTests
 
         // Ensure the last call was not permanently cached
         Assert.NotEqual(result1, result3);
+    }
+
+    [Fact]
+    public void TestTaskRecycler_StaticWithArgument_Int()
+    {
+        // The same static method should be cached, and therefore the return value should be the same
+        var task1 = TaskRecycler<int>.RunOrAttachAsync(MySlowMethod4, 2);
+        var task2 = TaskRecycler<int>.RunOrAttachAsync(MySlowMethod4, 2);
+        var task3 = TaskRecycler<int>.RunOrAttachAsync(MySlowMethod4, 3);
+        int result1 = task1.GetAwaiter().GetResult();
+        int result2 = task2.GetAwaiter().GetResult();
+        int result3 = task3.GetAwaiter().GetResult();
+        Assert.Equal(result1, result2);
+        Assert.NotEqual(result1, result3);
+
+        // The same static method should be cached, and therefore the return value should be the same, but different from previous runs
+        var task4 = TaskRecycler<int>.RunOrAttachAsync(MySlowMethod4, 2);
+        var task5 = TaskRecycler<int>.RunOrAttachAsync(MySlowMethod4, 3);
+        int result4 = task4.GetAwaiter().GetResult();
+        int result5 = task5.GetAwaiter().GetResult();
+        Assert.NotEqual(result4, result5);
+        Assert.NotEqual(result1, result4);
+        Assert.NotEqual(result3, result5);
     }
 
     [Fact]

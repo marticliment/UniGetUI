@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using UniGetUI.Core.Logging;
+using WinRT.Interop;
 
 namespace UniGetUI.Core.Classes;
 
@@ -13,32 +14,68 @@ namespace UniGetUI.Core.Classes;
  * This can apply to getting the locally installed
  * packages, for example.
  */
-public static class TaskRecycler<T>
+public static class TaskRecycler<ReturnT>
 {
-    private static ConcurrentDictionary<int, Task<T>> _tasks = new();
+    private static ConcurrentDictionary<int, Task<ReturnT>> _tasks = new();
 
-    public static async Task<T> RunOrAttachAsync(Func<T> method)
+    /*
+     * Method definitions
+     */
+
+    public static async Task<ReturnT> RunOrAttachAsync(Func<ReturnT> method)
     {
         int hash = method.GetHashCode();
-        if (_tasks.TryGetValue(hash, out Task<T>? currentTask))
+        return await (_getExistingTaskIfAny(hash) ?? _runTaskAndWait(Task.Run(method), hash));
+    }
+
+    public static async Task<ReturnT> RunOrAttachAsync<ParamT>(Func<ParamT, ReturnT> method, ParamT arg1)
+    {
+        int hash = method.GetHashCode() + (arg1?.GetHashCode() ?? 0);
+        return await (_getExistingTaskIfAny(hash) ?? _runTaskAndWait(Task.Run(() => method(arg1)), hash));
+    }
+
+    public static async Task<ReturnT> RunOrAttachAsync<Param1T, Param2T>(Func<Param1T, Param2T, ReturnT> method, Param1T arg1, Param2T arg2)
+    {
+        int hash = method.GetHashCode() + (arg1?.GetHashCode() ?? 0) + + (arg2?.GetHashCode() ?? 0);
+        return await (_getExistingTaskIfAny(hash) ?? _runTaskAndWait(Task.Run(() => method(arg1, arg2)), hash));
+    }
+
+
+    /*
+     * Synchronous wrappers for methods defined above
+     */
+    public static ReturnT RunOrAttach(Func<ReturnT> method)
+        => RunOrAttachAsync(method).GetAwaiter().GetResult();
+
+    public static ReturnT RunOrAttach<ParamT>(Func<ParamT, ReturnT> method, ParamT arg1)
+        => RunOrAttachAsync(method, arg1).GetAwaiter().GetResult();
+
+    public static ReturnT RunOrAttach<Param1T, Param2T>(Func<Param1T, Param2T, ReturnT> method, Param1T arg1, Param2T arg2)
+        => RunOrAttachAsync(method, arg1, arg2).GetAwaiter().GetResult();
+
+
+    /*
+     * Internal methods used to cache and retrieve tasks
+     */
+    private static Task<ReturnT>? _getExistingTaskIfAny(int hash)
+    {
+        _tasks.TryGetValue(hash, out Task<ReturnT>? currentTask);
+        if (currentTask is not null)
         {
             TaskRecyclerTelemetry.DeduplicatedCalls++;
-            Logger.Debug($"[TaskRecycler] One call to function {method.Method.Name} has been deduplicated, for a total of {TaskRecyclerTelemetry.DeduplicatedCalls} deduplicated calls");
-            return await currentTask;
+            Logger.Debug($"[TaskRecycler] One call to a running function has been deduplicated, for a total of {TaskRecyclerTelemetry.DeduplicatedCalls} deduplicated calls");
         }
+        return currentTask;
+    }
 
-        Task<T> task = Task.Run(method);
+    private static async Task<ReturnT> _runTaskAndWait(Task<ReturnT> task, int hash)
+    {
         _tasks[hash] = task;
         /* BEGIN WAIT */
-        T result = await task;
+        ReturnT result = await task;
         /* END WAIT */
         _tasks.Remove(hash, out _);
         return result;
-    }
-
-    public static T RunOrAttach(Func<T> method)
-    {
-        return RunOrAttachAsync(method).GetAwaiter().GetResult();
     }
 
 }
