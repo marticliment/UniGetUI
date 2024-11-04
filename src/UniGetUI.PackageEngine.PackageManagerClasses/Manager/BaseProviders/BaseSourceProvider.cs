@@ -1,3 +1,4 @@
+using UniGetUI.Core.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
@@ -25,6 +26,10 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
         /// </summary>
         protected abstract IEnumerable<IManagerSource> GetSources_UnSafe();
         public virtual IEnumerable<IManagerSource> GetSources()
+            => TaskRecycler<IEnumerable<IManagerSource>>.RunOrAttach(_getSources);
+
+        public virtual IEnumerable<IManagerSource> _getSources()
+
         {
             IEnumerable<IManagerSource> sources = GetSources_UnSafe();
             SourceFactory.Reset();
