@@ -83,7 +83,9 @@ namespace UniGetUI.Core.IconEngine
                 return null;
 
             var icon = _icon.Value;
-            string extension = icon.Url.AbsolutePath[icon.Url.AbsolutePath.LastIndexOf('.')..][1..];
+            string extension;
+            if (icon.Url.AbsolutePath.LastIndexOf('.') >= 0) extension = icon.Url.AbsolutePath[icon.Url.AbsolutePath.LastIndexOf('.')..][1..];
+            else extension = "png";
 
             if (extension.Length > 6)
             {

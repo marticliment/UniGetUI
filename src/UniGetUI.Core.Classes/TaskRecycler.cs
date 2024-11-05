@@ -29,7 +29,10 @@ public static class TaskRecycler<ReturnT>
     public static async Task<ReturnT> RunOrAttachAsync(Func<ReturnT> method)
     {
         int hash = method.GetHashCode();
-        return await (_getExistingTaskIfAny(hash) ?? _runTaskAndWait(Task.Run(method), hash));
+
+        var existingTask = _getExistingTaskIfAny(hash);
+        Logger.Debug($"[TaskRecycler] Deduplicated one call to {method.Method.Name}");
+        return await (existingTask ?? _runTaskAndWait(Task.Run(method), hash));
     }
 
     public static async Task<ReturnT> RunOrAttachOrCacheAsync(Func<ReturnT> method, int cacheTimeSecs)
@@ -82,13 +85,6 @@ public static class TaskRecycler<ReturnT>
     private static Task<ReturnT>? _getExistingTaskIfAny(int hash)
     {
         _tasks.TryGetValue(hash, out Task<ReturnT>? currentTask);
-        if (currentTask is not null)
-        {
-            TaskRecyclerTelemetry.DeduplicatedCalls++;
-            Logger.Debug(
-                $"[TaskRecycler] One call to a running function has been deduplicated, for a total of {TaskRecyclerTelemetry.DeduplicatedCalls} deduplicated calls");
-        }
-
         return currentTask;
     }
 
