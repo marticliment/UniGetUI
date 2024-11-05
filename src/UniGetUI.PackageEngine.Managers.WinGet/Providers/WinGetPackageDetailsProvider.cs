@@ -227,12 +227,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 if (icon is not null && icon.Url is not null)
                 {
-                    Logger.Debug($"Found WinGet native icon for {package.Id} with URL={icon.Url}");
+                    // Logger.Debug($"Found WinGet native icon for {package.Id} with URL={icon.Url}");
                     return new CacheableIcon(new Uri(icon.Url), icon.Sha256);
                 }
             }
 
-            Logger.Debug($"Native WinGet icon for Package={package.Id} on catalog={package.Source.Name} was not found :(");
+            // Logger.Debug($"Native WinGet icon for Package={package.Id} on catalog={package.Source.Name} was not found :(");
             return null;
         }
     }

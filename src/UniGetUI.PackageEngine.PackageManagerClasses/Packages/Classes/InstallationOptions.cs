@@ -228,7 +228,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 }
 
                 FromSerializable(options);
-                Logger.Debug($"InstallationOptions loaded successfully from disk for package {Package.Id}");
             }
             catch (JsonException)
             {
