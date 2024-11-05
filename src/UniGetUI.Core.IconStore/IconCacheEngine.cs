@@ -134,7 +134,7 @@ namespace UniGetUI.Core.IconEngine
             using HttpClient client = new(CoreData.GenericHttpClientParameters);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             HttpResponseMessage response = await client.GetAsync(icon.Url);
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
                 Logger.Warn($"Icon download attempt at {icon.Url} failed with code {response.StatusCode}");
                 return null;
