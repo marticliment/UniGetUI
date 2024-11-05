@@ -13,6 +13,11 @@ namespace UniGetUI.Core.Classes;
  *
  * This can apply to getting the locally installed
  * packages, for example.
+ *
+ *
+ * WARNING: When using TaskRecycler with methods that return instances of classes
+ * the return instance WILL BE THE SAME when the call attaches to an existing call.
+ * Take this into account when handling received objects.
  */
 public static class TaskRecycler<ReturnT>
 {
