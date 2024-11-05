@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -163,7 +164,12 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         continue;
                     }
 
-                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1].Replace("(", "").Replace(")", ""), source, this));
+                    Packages.Add(new Package(
+                        CoreTools.FormatAsName(elements[0]),
+                        elements[0],
+                        elements[1].Replace("(", "").Replace(")", ""),
+                        source,
+                        this));
                 }
             }
             logger.AddToStdErr(p.StandardError.ReadToEnd());
@@ -235,7 +241,14 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     if (InstalledPackages.TryGetValue(elements[0] + "." + elements[1], out IPackage? InstalledPackage))
                     {
                         OverridenInstallationOptions options = new(InstalledPackage.OverridenOptions.Scope);
-                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackage.Source, this, options));
+                        Packages.Add(new Package(
+                            CoreTools.FormatAsName(elements[0]),
+                            elements[0],
+                            elements[1],
+                            elements[2],
+                            InstalledPackage.Source,
+                            this,
+                            options));
                     }
                     else
                     {
@@ -250,6 +263,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         }
 
         protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+            => TaskRecycler<IEnumerable<Package>>.RunOrAttachOrCache(_getInstalledPackages_UnSafe, 15);
+        private IEnumerable<Package> _getInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
 
@@ -303,7 +318,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         line.Contains("Global install") ? PackageScope.Global : PackageScope.User
                     );
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], GetSourceOrDefault(elements[2]), this, options));
+                    Packages.Add(new Package(
+                        CoreTools.FormatAsName(elements[0]),
+                        elements[0],
+                        elements[1],
+                        GetSourceOrDefault(elements[2]),
+                        this,
+                        options));
                 }
             }
             logger.AddToStdErr(p.StandardError.ReadToEnd());

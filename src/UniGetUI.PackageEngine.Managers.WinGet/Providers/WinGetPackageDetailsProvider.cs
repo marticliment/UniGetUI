@@ -14,17 +14,17 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
     internal sealed class WinGetPackageDetailsProvider : BasePackageDetailsProvider<UniGetUIManagers.PackageManager>
     {
         private static readonly Dictionary<string, string> __msstore_package_manifests = [];
-        
+
         public WinGetPackageDetailsProvider(WinGet manager) : base(manager) { }
 
         protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
         {
-            return WinGetHelper.Instance.GetInstallableVersions_Unsafe((WinGet)Manager, package);
+            return WinGetHelper.Instance.GetInstallableVersions_Unsafe(package);
         }
 
         protected override void GetDetails_UnSafe(IPackageDetails details)
         {
-            WinGetHelper.Instance.GetPackageDetails_UnSafe((WinGet)Manager, details);
+            WinGetHelper.Instance.GetPackageDetails_UnSafe(details);
         }
 
         protected override CacheableIcon? GetIcon_UnSafe(IPackage package)
@@ -227,12 +227,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 if (icon is not null && icon.Url is not null)
                 {
-                    Logger.Debug($"Found WinGet native icon for {package.Id} with URL={icon.Url}");
+                    // Logger.Debug($"Found WinGet native icon for {package.Id} with URL={icon.Url}");
                     return new CacheableIcon(new Uri(icon.Url), icon.Sha256);
                 }
             }
 
-            Logger.Debug($"Native WinGet icon for Package={package.Id} on catalog={package.Source.Name} was not found :(");
+            // Logger.Debug($"Native WinGet icon for Package={package.Id} on catalog={package.Source.Name} was not found :(");
             return null;
         }
     }

@@ -80,13 +80,12 @@ namespace UniGetUI.Core.IconEngine
         public static async Task<string?> GetCacheOrDownloadIcon(CacheableIcon? _icon, string ManagerName, string PackageId)
         {
             if (_icon is null)
-            {
                 return null;
-            }
 
-            var icon = (CacheableIcon)_icon;
-
-            string extension = icon.Url.AbsolutePath[icon.Url.AbsolutePath.LastIndexOf('.')..][1..];
+            var icon = _icon.Value;
+            string extension;
+            if (icon.Url.AbsolutePath.LastIndexOf('.') >= 0) extension = icon.Url.AbsolutePath[icon.Url.AbsolutePath.LastIndexOf('.')..][1..];
+            else extension = "png";
 
             if (extension.Length > 6)
             {
@@ -121,17 +120,13 @@ namespace UniGetUI.Core.IconEngine
             // If a valid cache was found, return that cache
             if (isLocalCacheValid)
             {
-                Logger.Debug($"Icon for package {PackageId} is VALID and won't be downloaded again (verification method is {icon.ValidationMethod})");
+                Logger.Debug($"Cached icon for id={PackageId} is valid and won't be downloaded again ({icon.ValidationMethod})");
                 return cachedIconFile;
-                // Exit the function
             }
-            else if (localCacheExists)
+
+            if (localCacheExists)
             {
-                Logger.ImportantInfo($"Icon for Package={PackageId} Manager={ManagerName} Uri={icon.Url} is NOT VALID (verification method is {icon.ValidationMethod})");
-            }
-            else
-            {
-                Logger.Debug($"Icon for package {PackageId} on manager {ManagerName} was not found on cache, downloading it...");
+                Logger.ImportantInfo($"Cached ocon for id={PackageId} is INVALID ({icon.ValidationMethod})");
             }
 
             // If the cache is determined to NOT be valid, delete cache
@@ -141,7 +136,12 @@ namespace UniGetUI.Core.IconEngine
             using HttpClient client = new(CoreData.GenericHttpClientParameters);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             HttpResponseMessage response = await client.GetAsync(icon.Url);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                Logger.Warn($"Icon download attempt at {icon.Url} failed with code {response.StatusCode}");
+                return null;
+            }
+
             using (Stream stream = await response.Content.ReadAsStreamAsync())
                 using (FileStream fileStream = File.Create(cachedIconFile))
                 {
@@ -153,8 +153,6 @@ namespace UniGetUI.Core.IconEngine
 
             if (icon.ValidationMethod is IconValidationMethod.UriSource)
                 await File.WriteAllTextAsync(iconUriFile, icon.Url.ToString());
-
-            Logger.Info($"Icon for package {PackageId} stored on {cachedIconFile}");
 
             // Ensure the new icon has been properly downloaded
             bool isNewCacheValid = icon.ValidationMethod switch
@@ -168,7 +166,6 @@ namespace UniGetUI.Core.IconEngine
 
             if (isNewCacheValid)
             {
-                Logger.Info($"NEWLY DOWNLOADED Icon for Package={PackageId} Manager={ManagerName} Uri={icon.Url} is VALID (verification method is {icon.ValidationMethod})");
                 return cachedIconFile;
             }
             else
