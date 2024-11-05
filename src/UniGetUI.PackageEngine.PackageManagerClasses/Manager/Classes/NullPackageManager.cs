@@ -225,12 +225,12 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             throw new InvalidOperationException("Package manager does not support removing sources");
         }
 
-        public override OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        protected override OperationVeredict _getAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             return OperationVeredict.Failed;
         }
 
-        public override OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        protected override OperationVeredict _getRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             return OperationVeredict.Failed;
         }

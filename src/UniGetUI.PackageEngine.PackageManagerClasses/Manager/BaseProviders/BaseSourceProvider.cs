@@ -18,18 +18,32 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
 
         public abstract string[] GetAddSourceParameters(IManagerSource source);
         public abstract string[] GetRemoveSourceParameters(IManagerSource source);
-        public abstract OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output);
-        public abstract OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output);
+        protected abstract OperationVeredict _getAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output);
+        protected abstract OperationVeredict _getRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output);
+
+        public OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        {
+            TaskRecycler<IEnumerable<IManagerSource>>.RemoveFromCache(_getSources);
+            return _getAddSourceOperationVeredict(source, ReturnCode, Output);
+        }
+
+        public OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        {
+            TaskRecycler<IEnumerable<IManagerSource>>.RemoveFromCache(_getSources);
+            return _getRemoveSourceOperationVeredict(source, ReturnCode, Output);
+        }
+
+
 
         /// <summary>
         /// Loads the sources for the manager. This method SHOULD NOT handle exceptions
         /// </summary>
         protected abstract IEnumerable<IManagerSource> GetSources_UnSafe();
+
         public virtual IEnumerable<IManagerSource> GetSources()
-            => TaskRecycler<IEnumerable<IManagerSource>>.RunOrAttach(_getSources);
+            => TaskRecycler<IEnumerable<IManagerSource>>.RunOrAttachOrCache(_getSources, 15);
 
         public virtual IEnumerable<IManagerSource> _getSources()
-
         {
             IEnumerable<IManagerSource> sources = GetSources_UnSafe();
             SourceFactory.Reset();
