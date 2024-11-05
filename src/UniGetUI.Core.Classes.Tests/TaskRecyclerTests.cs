@@ -53,6 +53,48 @@ public class TaskRecyclerTests
     }
 
     [Fact]
+    public void TestTaskRecycler_Static_Int_WithCache()
+    {
+        // The same static method should be cached, and therefore the return value should be the same
+        var task1 = TaskRecycler<int>.RunOrAttachOrCacheAsync(MySlowMethod1, 2);
+        var task2 = TaskRecycler<int>.RunOrAttachOrCacheAsync(MySlowMethod1, 2);
+        int result1 = task1.GetAwaiter().GetResult();
+        int result2 = task2.GetAwaiter().GetResult();
+        Assert.Equal(result1, result2);
+
+        // The same static method should be cached, and therefore the return value should be the same,
+        // and equal to previous runs due to 3 seconds cache
+        var task3 = TaskRecycler<int>.RunOrAttachOrCacheAsync(MySlowMethod1, 2);
+        var task4 = TaskRecycler<int>.RunOrAttachOrCacheAsync(MySlowMethod1, 2);
+        int result4 = task4.GetAwaiter().GetResult();
+        int result3 = task3.GetAwaiter().GetResult();
+        Assert.Equal(result3, result4);
+        Assert.Equal(result1, result3);
+
+        // Wait for caches to clear
+        Thread.Sleep(3000);
+
+        // The same static method should be cached, but cached runs should have been removed. This results should differ from previous ones
+        var task5 = TaskRecycler<int>.RunOrAttachOrCacheAsync(MySlowMethod1, 2);
+        var task6 = TaskRecycler<int>.RunOrAttachOrCacheAsync(MySlowMethod1, 2);
+        int result5 = task6.GetAwaiter().GetResult();
+        int result6 = task5.GetAwaiter().GetResult();
+        Assert.Equal(result5, result6);
+        Assert.NotEqual(result4, result5);
+
+        // Clear cache
+        TaskRecycler<int>.RemoveFromCache(MySlowMethod1);
+
+        // The same static method should be cached, but cached runs should have been cleared manually. This results should differ from previous ones
+        var task7 = TaskRecycler<int>.RunOrAttachOrCacheAsync(MySlowMethod1, 2);
+        var task8 = TaskRecycler<int>.RunOrAttachOrCacheAsync(MySlowMethod1, 2);
+        int result7 = task7.GetAwaiter().GetResult();
+        int result8 = task8.GetAwaiter().GetResult();
+        Assert.Equal(result7, result8);
+        Assert.NotEqual(result6, result7);
+    }
+
+    [Fact]
     public void TestTaskRecycler_StaticWithArgument_Int()
     {
         // The same static method should be cached, and therefore the return value should be the same

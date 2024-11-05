@@ -21,11 +21,16 @@ public static class TaskRecycler<ReturnT>
     /*
      * Method definitions
      */
-
     public static async Task<ReturnT> RunOrAttachAsync(Func<ReturnT> method)
     {
         int hash = method.GetHashCode();
         return await (_getExistingTaskIfAny(hash) ?? _runTaskAndWait(Task.Run(method), hash));
+    }
+
+    public static async Task<ReturnT> RunOrAttachOrCacheAsync(Func<ReturnT> method, int cacheTimeSecs)
+    {
+        int hash = method.GetHashCode();
+        return await (_getExistingTaskIfAny(hash) ?? _runTaskAndWait(Task.Run(method), hash, cacheTimeSecs));
     }
 
     public static async Task<ReturnT> RunOrAttachAsync<ParamT>(Func<ParamT, ReturnT> method, ParamT arg1)
@@ -34,9 +39,10 @@ public static class TaskRecycler<ReturnT>
         return await (_getExistingTaskIfAny(hash) ?? _runTaskAndWait(Task.Run(() => method(arg1)), hash));
     }
 
-    public static async Task<ReturnT> RunOrAttachAsync<Param1T, Param2T>(Func<Param1T, Param2T, ReturnT> method, Param1T arg1, Param2T arg2)
+    public static async Task<ReturnT> RunOrAttachAsync<Param1T, Param2T>(Func<Param1T, Param2T, ReturnT> method,
+        Param1T arg1, Param2T arg2)
     {
-        int hash = method.GetHashCode() + (arg1?.GetHashCode() ?? 0) + + (arg2?.GetHashCode() ?? 0);
+        int hash = method.GetHashCode() + (arg1?.GetHashCode() ?? 0) + +(arg2?.GetHashCode() ?? 0);
         return await (_getExistingTaskIfAny(hash) ?? _runTaskAndWait(Task.Run(() => method(arg1, arg2)), hash));
     }
 
@@ -50,8 +56,19 @@ public static class TaskRecycler<ReturnT>
     public static ReturnT RunOrAttach<ParamT>(Func<ParamT, ReturnT> method, ParamT arg1)
         => RunOrAttachAsync(method, arg1).GetAwaiter().GetResult();
 
-    public static ReturnT RunOrAttach<Param1T, Param2T>(Func<Param1T, Param2T, ReturnT> method, Param1T arg1, Param2T arg2)
+    public static ReturnT RunOrAttach<Param1T, Param2T>(Func<Param1T, Param2T, ReturnT> method, Param1T arg1,
+        Param2T arg2)
         => RunOrAttachAsync(method, arg1, arg2).GetAwaiter().GetResult();
+
+
+    /*
+     * No-argment entries for cached calls
+     */
+    public static ReturnT RunOrAttachOrCache(Func<ReturnT> method, int cacheTimeSecs)
+        => RunOrAttachOrCacheAsync(method, cacheTimeSecs).GetAwaiter().GetResult();
+
+    public static void RemoveFromCache(Func<ReturnT> method)
+        => _removeFromCache(method.GetHashCode(), 0);
 
 
     /*
@@ -63,21 +80,31 @@ public static class TaskRecycler<ReturnT>
         if (currentTask is not null)
         {
             TaskRecyclerTelemetry.DeduplicatedCalls++;
-            Logger.Debug($"[TaskRecycler] One call to a running function has been deduplicated, for a total of {TaskRecyclerTelemetry.DeduplicatedCalls} deduplicated calls");
+            Logger.Debug(
+                $"[TaskRecycler] One call to a running function has been deduplicated, for a total of {TaskRecyclerTelemetry.DeduplicatedCalls} deduplicated calls");
         }
+
         return currentTask;
     }
 
-    private static async Task<ReturnT> _runTaskAndWait(Task<ReturnT> task, int hash)
+    private static async Task<ReturnT> _runTaskAndWait(Task<ReturnT> task, int hash, int cacheTimeSecs = 0)
     {
         _tasks[hash] = task;
         /* BEGIN WAIT */
         ReturnT result = await task;
-        /* END WAIT */
-        _tasks.Remove(hash, out _);
+
+        /* END WAIT, AND REMOVE FROM CACHE WHEN ASKED  */
+        if (cacheTimeSecs is 0) _tasks.Remove(hash, out _);
+        else _removeFromCache(hash, cacheTimeSecs);
+
         return result;
     }
 
+    private static async void _removeFromCache(int hash, int cacheTimeSecs)
+    {
+        await Task.Delay(cacheTimeSecs * 1000);
+        _tasks.Remove(hash, out _);
+    }
 }
 
 
