@@ -54,7 +54,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
             else
             {
-                Logger.Debug($"Creating new instance of InstallationOptions for package {package}, as no instance was found in cache");
                 instance = new(package);
                 instance.LoadFromDisk();
                 OptionsCache.TryAdd(package.GetHash(), instance);
