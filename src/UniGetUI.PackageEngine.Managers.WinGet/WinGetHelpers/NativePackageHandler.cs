@@ -47,9 +47,9 @@ public static class NativePackageHandler
     /// Get (cached or load) the native package details for the given package, if any;
     /// </summary>
     public static CatalogPackageMetadata? GetDetails(IPackage package)
-        => TaskRecycler<CatalogPackageMetadata?>.RunOrAttach(_getDetails, package);
-
-    private static CatalogPackageMetadata? _getDetails(IPackage package)
+    //    => TaskRecycler<CatalogPackageMetadata?>.RunOrAttach(_getDetails, package);
+    //
+    //private static CatalogPackageMetadata? _getDetails(IPackage package)
     {
         if (__nativeDetails.TryGetValue(package.GetHash(), out CatalogPackageMetadata? metadata))
             return metadata;
@@ -68,9 +68,9 @@ public static class NativePackageHandler
     /// Get (cached or load) the native installer for the given package, if any. The operation type determines wether
     /// </summary>
     public static PackageInstallerInfo? GetInstallationOptions(IPackage package, OperationType operation)
-        =>  TaskRecycler<PackageInstallerInfo?>.RunOrAttach(_getInstallationOptions, package, operation);
-
-    private static PackageInstallerInfo? _getInstallationOptions(IPackage package, OperationType operation)
+    //    =>  TaskRecycler<PackageInstallerInfo?>.RunOrAttach(_getInstallationOptions, package, operation);
+    //
+    //private static PackageInstallerInfo? _getInstallationOptions(IPackage package, OperationType operation)
     {
         if (NativeWinGetHelper.ExternalFactory is null)
             return null;
