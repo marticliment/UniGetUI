@@ -196,14 +196,12 @@ namespace UniGetUI.Interface
                 }
 
                 StringBuilder packages = new();
-                foreach (Package package in PEInterface.UpgradablePackagesLoader.Packages)
+                foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
                 {
                     if (package.Tag is PackageTag.OnQueue or PackageTag.BeingProcessed)
-                    {
                         continue; // Do not show already processed packages on queue
-                    }
 
-                    string icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={package.Id}&packageSource={HttpUtility.UrlEncode(package.Source.Name)}&token={ApiTokenHolder.Token}";
+                    string icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={HttpUtility.UrlEncode(package.Id)}&packageSource={HttpUtility.UrlEncode(package.Source.Name)}&token={ApiTokenHolder.Token}";
                     packages.Append($"{package.Name.Replace('|', '-')}|{package.Id}|{package.Version}|{package.NewVersion}|{package.Source.AsString_DisplayName}|{package.Manager.Name}|{icon}&&");
                 }
 
