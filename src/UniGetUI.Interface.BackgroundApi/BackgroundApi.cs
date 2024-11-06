@@ -3,6 +3,7 @@ using System.Web;
 using Nancy;
 using Nancy.Hosting.Self;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -308,7 +309,10 @@ namespace UniGetUI.Interface
                     Uri iconUrl = await Task.Run(package.GetIconUrl);
                     if (iconUrl.ToString() != "ms-appx:///Assets/Images/package_color.png")
                     {
-                        iconPath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name, $"{package.Id}.{iconUrl.ToString().Split('.')[^1]}");
+                        string mimePath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name,
+                            package.Id, "icon.mime");
+                        iconPath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name, package.Id,
+                            $"icon.{IconCacheEngine.MimeToExtension[await File.ReadAllTextAsync(mimePath)]}");
                     }
                     // else, the iconPath will be the preloaded one (package_color.png)
                 }
@@ -320,7 +324,7 @@ namespace UniGetUI.Interface
                 byte[] fileContents = await File.ReadAllBytesAsync(iconPath);
                 return new Response
                 {
-                    ContentType = $"image/{iconPath.Split('.')[^1]}",
+                    ContentType = IconCacheEngine.ExtensionToMime[iconPath.Split('.')[^1]],
                     Contents = (stream) =>
                     {
                         try
