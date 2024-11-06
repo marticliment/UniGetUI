@@ -1,4 +1,5 @@
 using System.Text;
+using System.Web;
 using Nancy;
 using Nancy.Hosting.Self;
 using UniGetUI.Core.Data;
@@ -201,7 +202,7 @@ namespace UniGetUI.Interface
                         continue; // Do not show already processed packages on queue
                     }
 
-                    string icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={package.Id}&packageSource={package.Source.Name}&token={ApiTokenHolder.Token}";
+                    string icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={package.Id}&packageSource={HttpUtility.UrlEncode(package.Source.Name)}&token={ApiTokenHolder.Token}";
                     packages.Append($"{package.Name.Replace('|', '-')}|{package.Id}|{package.Version}|{package.NewVersion}|{package.Source.AsString_DisplayName}|{package.Manager.Name}|{icon}&&");
                 }
 
