@@ -144,7 +144,7 @@ public partial class Cargo : PackageManager
     private IEnumerable<Package> GetPackages(LoggableTaskType taskType)
     {
         List<Package> Packages = [];
-        foreach(var match in TaskRecycler<List<Match>>.RunOrAttachOrCache(GetInstalledCommandOutput, 15))
+        foreach(var match in TaskRecycler<List<Match>>.RunOrAttach(GetInstalledCommandOutput, 15))
         {
             var id = match.Groups[1].Value.Trim();
             var name = CoreTools.FormatAsName(id);
