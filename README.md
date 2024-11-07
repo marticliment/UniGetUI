@@ -60,11 +60,10 @@ winget install --exact --id MartiCliment.UniGetUI --source winget
 ```
 
 
-**~~Install UniGetUI through Scoop:~~**
+**Install UniGetUI through Scoop:**
 ```cmd
-rem The current UniGetUI scoop package is broken. Please do not install UniGetUI via scoop for the time being
-rem scoop bucket add extras
-rem scoop install extras/wingetui
+scoop bucket add extras
+scoop install extras/unigetui
 ```
 
 **Install UniGetUI through Chocolatey:**    
