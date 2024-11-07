@@ -22,7 +22,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
     public class Scoop : PackageManager
     {
         public static new string[] FALSE_PACKAGE_IDS = ["No"];
-        public static new string[] FALSE_PACKAGE_VERSIONS = ["Matches"];
+        public static new string[] FALSE_PACKAGE_VERSIONS = ["Matches", "Install", "failed", "failed,", "Manifest", "removed", "removed,"];
 
         private long LastScoopSourceUpdateTime;
 
@@ -159,7 +159,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         elements[i] = elements[i].Trim();
                     }
 
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    if (FALSE_PACKAGE_IDS.Contains(elements[0])
+                        || FALSE_PACKAGE_VERSIONS.Contains(elements[1])
+                        || FALSE_PACKAGE_VERSIONS.Contains(elements[2]))
                     {
                         continue;
                     }
@@ -233,7 +235,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         elements[i] = elements[i].Trim();
                     }
 
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    if (FALSE_PACKAGE_IDS.Contains(elements[0])
+                        || FALSE_PACKAGE_VERSIONS.Contains(elements[1])
+                        || FALSE_PACKAGE_VERSIONS.Contains(elements[2]))
                     {
                         continue;
                     }
