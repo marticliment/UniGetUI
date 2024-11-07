@@ -24,7 +24,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Download a hashed icon
             CacheableIcon icon = new(ICON_1, HASH_1);
-            string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId);
+            string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId, 0);
             Assert.NotNull(path);
             Assert.Equal(expectedFile, path);
             Assert.True(File.Exists(path));
@@ -33,7 +33,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Test the same icon, modification date shouldn't change
             icon = new CacheableIcon(ICON_1, HASH_1);
-            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId);
+            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId, 0);
             Assert.NotNull(path);
             DateTime newModificationDate = File.GetLastWriteTime(path);
 
@@ -43,7 +43,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Attempt to retrieve a different icon. The modification date SHOULD have changed
             icon = new CacheableIcon(ICON_2, HASH_2);
-            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId);
+            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId, 0);
             Assert.NotNull(path);
             DateTime newIconModificationDate = File.GetLastWriteTime(path);
 
@@ -53,7 +53,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Give an invalid hash: The icon should not be cached not returned
             icon = new CacheableIcon(ICON_2, HASH_1);
-            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId);
+            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId, 0);
             Assert.Null(path);
             Assert.False(File.Exists(path));
         }
@@ -75,7 +75,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Download an icon through version verification
             CacheableIcon icon = new(URI, VERSION);
-            string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, MANAGER_NAME, PACKAGE_ID);
+            string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, MANAGER_NAME, PACKAGE_ID, 0);
             Assert.NotNull(path);
             Assert.Equal(expectedFile, path);
             Assert.True(File.Exists(path));
@@ -84,7 +84,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Test the same version, the icon should not get touched
             icon = new CacheableIcon(URI, VERSION);
-            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, MANAGER_NAME, PACKAGE_ID);
+            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, MANAGER_NAME, PACKAGE_ID, 0);
             Assert.NotNull(path);
             DateTime newModificationDate = File.GetLastWriteTime(path);
 
@@ -94,7 +94,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Test a new version, the icon should be downloaded again
             icon = new CacheableIcon(URI, VERSION + "-beta0");
-            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, MANAGER_NAME, PACKAGE_ID);
+            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, MANAGER_NAME, PACKAGE_ID, 0);
             Assert.NotNull(path);
             DateTime newNewModificationDate = File.GetLastWriteTime(path);
 
@@ -120,7 +120,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Download an icon through URI verification
             CacheableIcon icon = new(URI_1);
-            string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId);
+            string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId, 0);
             Assert.NotNull(path);
             Assert.Equal(expectedFile, path);
             Assert.True(File.Exists(path));
@@ -129,7 +129,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Test the same URI, the icon should not get touched
             icon = new CacheableIcon(URI_1);
-            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId);
+            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId, 0);
             Assert.NotNull(path);
             DateTime newModificationDate = File.GetLastWriteTime(path);
 
@@ -139,7 +139,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Test a new URI, the icon should be downloaded again
             icon = new CacheableIcon(URI_2);
-            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId);
+            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId, 0);
             Assert.NotNull(path);
             DateTime newNewModificationDate = File.GetLastWriteTime(path);
 
@@ -168,7 +168,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Cache an icon
             CacheableIcon icon = new(ICON_1, ICON_1_SIZE);
-            string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId);
+            string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId, 0);
             Assert.NotNull(path);
             Assert.Equal(expectedFile, path);
             Assert.True(File.Exists(path));
@@ -177,7 +177,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Attempt to retrieve the same icon again.
             icon = new CacheableIcon(ICON_1, ICON_1_SIZE);
-            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId);
+            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId, 0);
             Assert.NotNull(path);
             DateTime newModificationDate = File.GetLastWriteTime(path);
 
@@ -188,7 +188,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Attempt to retrieve a different icon. The modification date SHOULD have changed
             icon = new CacheableIcon(ICON_2, ICON_2_SIZE);
-            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId);
+            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId, 0);
             Assert.NotNull(path);
             DateTime newIconModificationDate = File.GetLastWriteTime(path);
 
@@ -198,7 +198,7 @@ namespace UniGetUI.Core.IconEngine.Tests
 
             // Give an invalid size: The icon should not be cached not returned
             icon = new CacheableIcon(ICON_1, ICON_1_SIZE + 1);
-            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId);
+            path = IconCacheEngine.GetCacheOrDownloadIcon(icon, managerName, packageId, 0);
             Assert.Null(path);
             Assert.False(File.Exists(path));
         }

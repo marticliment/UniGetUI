@@ -39,7 +39,7 @@ namespace UniGetUI.Core.IconEngine
             Url = uri;
             this.SHA256 = Sha256;
             ValidationMethod = IconValidationMethod.SHA256;
-            _hashCode = uri.ToString().GetHashCode();
+            _hashCode = uri.ToString().GetHashCode() + Sha256[0] + Sha256[1] + Sha256[2] + Sha256[3];
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace UniGetUI.Core.IconEngine
             Url = uri;
             Version = version;
             ValidationMethod = IconValidationMethod.PackageVersion;
-            _hashCode = uri.ToString().GetHashCode();
+            _hashCode = uri.ToString().GetHashCode() + version.GetHashCode();
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace UniGetUI.Core.IconEngine
             Url = uri;
             Size = size;
             ValidationMethod = IconValidationMethod.FileSize;
-            _hashCode = uri.ToString().GetHashCode();
+            _hashCode = uri.ToString().GetHashCode() + (int)size;
         }
 
         /// <summary>
@@ -93,9 +93,10 @@ namespace UniGetUI.Core.IconEngine
         /// <param name="icon">a CacheableIcon object representing the object</param>
         /// <param name="ManagerName">The name of the PackageManager</param>
         /// <param name="PackageId">the Id of the package</param>
+        /// <param name="cacheInterval">the Time to store the icons on the TaskRecycler cache</param>
         /// <returns>A path to a local icon file</returns>
-        public static string? GetCacheOrDownloadIcon(CacheableIcon? icon, string ManagerName, string PackageId)
-            => TaskRecycler<string?>.RunOrAttach(_getCacheOrDownloadIcon, icon, ManagerName, PackageId, 30);
+        public static string? GetCacheOrDownloadIcon(CacheableIcon? icon, string ManagerName, string PackageId, int cacheInterval = 30)
+            => TaskRecycler<string?>.RunOrAttach(_getCacheOrDownloadIcon, icon, ManagerName, PackageId, cacheInterval);
 
         private static string? _getCacheOrDownloadIcon(CacheableIcon? _icon, string ManagerName, string PackageId)
         {
