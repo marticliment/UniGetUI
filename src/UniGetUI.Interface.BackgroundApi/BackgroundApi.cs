@@ -192,7 +192,7 @@ namespace UniGetUI.Interface
 
                 while (PEInterface.UpgradablePackagesLoader.IsLoading)
                 {
-                    await Task.Delay(500); // Wait for the updates to be reported before showing anything
+                    await Task.Delay(100); // Wait for the updates to be reported before showing anything
                 }
 
                 StringBuilder packages = new();

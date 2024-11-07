@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Security.Cryptography;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -20,6 +21,7 @@ namespace UniGetUI.Core.IconEngine
         public readonly byte[] SHA256 = [];
         public readonly string Version = "";
         public readonly long Size = -1;
+        private readonly int _hashCode = -1;
         public readonly IconValidationMethod ValidationMethod;
 
         /// <summary>
@@ -32,6 +34,7 @@ namespace UniGetUI.Core.IconEngine
             Url = uri;
             this.SHA256 = Sha256;
             ValidationMethod = IconValidationMethod.SHA256;
+            _hashCode = uri.ToString().GetHashCode();
         }
 
         /// <summary>
@@ -44,6 +47,7 @@ namespace UniGetUI.Core.IconEngine
             Url = uri;
             Version = version;
             ValidationMethod = IconValidationMethod.PackageVersion;
+            _hashCode = uri.ToString().GetHashCode();
         }
 
         /// <summary>
@@ -56,16 +60,23 @@ namespace UniGetUI.Core.IconEngine
             Url = uri;
             Size = size;
             ValidationMethod = IconValidationMethod.FileSize;
+            _hashCode = uri.ToString().GetHashCode();
         }
 
         /// <summary>
         /// Build a cacheable icon with Uri verification
         /// </summary>
-        /// <param name="icon"></param>
-        public CacheableIcon(Uri icon)
+        /// <param name="uri"></param>
+        public CacheableIcon(Uri uri)
         {
-            Url = icon;
+            Url = uri;
             ValidationMethod = IconValidationMethod.UriSource;
+            _hashCode = uri.ToString().GetHashCode();
+        }
+
+        public override int GetHashCode()
+        {
+            return _hashCode;
         }
     }
 
@@ -74,11 +85,14 @@ namespace UniGetUI.Core.IconEngine
         /// <summary>
         /// Returns the path to the icon file, downloading it if necessary
         /// </summary>
-        /// <param name="_icon">a CacheableIcon object representing the object</param>
+        /// <param name="icon">a CacheableIcon object representing the object</param>
         /// <param name="ManagerName">The name of the PackageManager</param>
         /// <param name="PackageId">the Id of the package</param>
         /// <returns>A path to a local icon file</returns>
-        public static string? GetCacheOrDownloadIcon(CacheableIcon? _icon, string ManagerName, string PackageId)
+        public static string? GetCacheOrDownloadIcon(CacheableIcon? icon, string ManagerName, string PackageId)
+            => TaskRecycler<string?>.RunOrAttach(_getCacheOrDownloadIcon, icon, ManagerName, PackageId, 30);
+
+        private static string? _getCacheOrDownloadIcon(CacheableIcon? _icon, string ManagerName, string PackageId)
         {
             if (_icon is null)
                 return null;
