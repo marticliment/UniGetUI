@@ -41,7 +41,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
         protected abstract IEnumerable<IManagerSource> GetSources_UnSafe();
 
         public virtual IEnumerable<IManagerSource> GetSources()
-            => TaskRecycler<IEnumerable<IManagerSource>>.RunOrAttachOrCache(_getSources, 15);
+            => TaskRecycler<IEnumerable<IManagerSource>>.RunOrAttach(_getSources, 15);
 
         public virtual IEnumerable<IManagerSource> _getSources()
         {

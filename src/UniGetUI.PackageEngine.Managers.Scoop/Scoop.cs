@@ -263,7 +263,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         }
 
         protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
-            => TaskRecycler<IEnumerable<Package>>.RunOrAttachOrCache(_getInstalledPackages_UnSafe, 15);
+            => TaskRecycler<IEnumerable<Package>>.RunOrAttach(_getInstalledPackages_UnSafe, 15);
         private IEnumerable<Package> _getInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];

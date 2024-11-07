@@ -1,7 +1,9 @@
 using System.Text;
+using System.Web;
 using Nancy;
 using Nancy.Hosting.Self;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -190,18 +192,16 @@ namespace UniGetUI.Interface
 
                 while (PEInterface.UpgradablePackagesLoader.IsLoading)
                 {
-                    await Task.Delay(500); // Wait for the updates to be reported before showing anything
+                    await Task.Delay(100); // Wait for the updates to be reported before showing anything
                 }
 
                 StringBuilder packages = new();
-                foreach (Package package in PEInterface.UpgradablePackagesLoader.Packages)
+                foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
                 {
                     if (package.Tag is PackageTag.OnQueue or PackageTag.BeingProcessed)
-                    {
                         continue; // Do not show already processed packages on queue
-                    }
 
-                    string icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={package.Id}&packageSource={package.Source.Name}&token={ApiTokenHolder.Token}";
+                    string icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={HttpUtility.UrlEncode(package.Id)}&packageSource={HttpUtility.UrlEncode(package.Source.Name)}&token={ApiTokenHolder.Token}";
                     packages.Append($"{package.Name.Replace('|', '-')}|{package.Id}|{package.Version}|{package.NewVersion}|{package.Source.AsString_DisplayName}|{package.Manager.Name}|{icon}&&");
                 }
 
@@ -307,7 +307,10 @@ namespace UniGetUI.Interface
                     Uri iconUrl = await Task.Run(package.GetIconUrl);
                     if (iconUrl.ToString() != "ms-appx:///Assets/Images/package_color.png")
                     {
-                        iconPath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name, $"{package.Id}.{iconUrl.ToString().Split('.')[^1]}");
+                        string mimePath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name,
+                            package.Id, "icon.mime");
+                        iconPath = Path.Join(CoreData.UniGetUICacheDirectory_Icons, package.Manager.Name, package.Id,
+                            $"icon.{IconCacheEngine.MimeToExtension[await File.ReadAllTextAsync(mimePath)]}");
                     }
                     // else, the iconPath will be the preloaded one (package_color.png)
                 }
@@ -319,7 +322,7 @@ namespace UniGetUI.Interface
                 byte[] fileContents = await File.ReadAllBytesAsync(iconPath);
                 return new Response
                 {
-                    ContentType = $"image/{iconPath.Split('.')[^1]}",
+                    ContentType = IconCacheEngine.ExtensionToMime[iconPath.Split('.')[^1]],
                     Contents = (stream) =>
                     {
                         try

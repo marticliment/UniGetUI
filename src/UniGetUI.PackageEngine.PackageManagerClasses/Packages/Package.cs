@@ -164,7 +164,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             if (!IconHasBeenCached)
             {
-                CachedIcon = TaskRecycler<Uri?>.RunOrAttachOrCache(LoadIconUrlIfAny, 30);
+                CachedIcon = LoadIconUrlIfAny();
                 IconHasBeenCached = true;
             }
 
@@ -175,8 +175,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             try
             {
-                CacheableIcon? icon = Manager.GetPackageIconUrl(this);
-                string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, Manager.Name, Id).GetAwaiter().GetResult();
+                CacheableIcon? icon = TaskRecycler<CacheableIcon?>.RunOrAttach(Manager.GetPackageIconUrl, this);
+                string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, Manager.Name, Id);
                 return path is null? null: new Uri("file:///" + path);
             }
             catch (Exception ex)
