@@ -1,5 +1,10 @@
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Security.Cryptography;
+using Windows.ApplicationModel;
+using Windows.Graphics.Imaging;
+using Windows.UI;
+using PhotoSauce.MagicScaler;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
@@ -178,8 +183,10 @@ namespace UniGetUI.Core.IconEngine
             string mimeType = response.Content.Headers.GetValues("Content-Type").First();
             if (!MimeToExtension.TryGetValue(mimeType, out string? extension))
             {
-                Logger.Warn($"Unknown mimetype {mimeType} for icon {icon.Url}");
+                Logger.Warn($"Unknown mimetype {mimeType} for icon {icon.Url}, aborting download");
+                return null;
             }
+
             string cachedIconFile = Path.Join(iconLocation, $"icon.{extension}");
             string iconFileMime = Path.Join(iconLocation, $"icon.mime");
             File.WriteAllText(iconFileMime, mimeType);
@@ -207,19 +214,77 @@ namespace UniGetUI.Core.IconEngine
             };
 
             if (isNewCacheValid)
+            {
+                if (icon.ValidationMethod is IconValidationMethod.PackageVersion or IconValidationMethod.UriSource
+                    && new[] { "png", "webp", "tif", "avif" }.Contains(extension))
+                {
+                    DownsizeImage(cachedIconFile, extension);
+                }
+
+                Logger.Debug($"Icon for Location={iconLocation} has been downloaded and verified properly (if applicable) ({icon.ValidationMethod})");
                 return cachedIconFile;
+            }
 
             Logger.Warn($"NEWLY DOWNLOADED Icon for Location={iconLocation} Uri={icon.Url} is NOT VALID and will be discarded (verification method is {icon.ValidationMethod})");
             DeteteCachedFiles(iconLocation);
             return null;
         }
 
+
+        /// <summary>
+        /// The given image will be downsized to the expected size of an icon, if required
+        /// </summary>
+        private static void DownsizeImage(string cachedIconFile, string extension)
+        {   // Yes, the extension parameter could be extracted from cachedIconFile
+            try
+            {
+                const int MAX_SIDE = 192;
+                int width, height;
+
+                using (var fileStream = new FileStream(cachedIconFile, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var image = Image.FromStream(fileStream, false, false))
+                {
+                    height = image.Height;
+                    width = image.Width;
+                }
+
+                // Calculate target size for the icon to be at max 192x192.
+                if (width > MAX_SIDE || height > MAX_SIDE)
+                {
+                    File.Move(cachedIconFile, $"{cachedIconFile}.copy");
+                    var image = MagicImageProcessor.BuildPipeline($"{cachedIconFile}.copy", new ProcessImageSettings()
+                    {
+                        Width = MAX_SIDE,
+                        Height = MAX_SIDE,
+                        ResizeMode = CropScaleMode.Contain,
+                    });
+
+                    // Apply changes and save the image to disk
+                    using (FileStream fileStream = File.Create(cachedIconFile))
+                    {
+                        image.WriteOutput(fileStream);
+                    }
+                    Logger.Debug($"File {cachedIconFile} was downsized from {width}x{height} to {image.Settings.Width}x{image.Settings.Height}");
+                    image.Dispose();
+                    File.Delete($"{cachedIconFile}.copy");
+                }
+                else
+                {
+                    Logger.Debug($"File {cachedIconFile} had an already appropiate size of {width}x{height}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"An error occurred while downsizing the image file {cachedIconFile}");
+                Logger.Error(ex);
+            }
+
+        }
+
+
         /// <summary>
         /// Checks whether a cached image is valid or not depending on the size (in bytes) of the image
         /// </summary>
-        /// <param name="icon"></param>
-        /// <param name="cachedIconPath"></param>
-        /// <returns></returns>
         private static bool ValidateByImageSize(CacheableIcon icon, string cachedIconPath)
         {
             try
@@ -237,9 +302,6 @@ namespace UniGetUI.Core.IconEngine
         /// <summary>
         /// Checks whether a cached image is valid or not depending on its SHA256 hash
         /// </summary>
-        /// <param name="icon"></param>
-        /// <param name="cachedIconPath"></param>
-        /// <returns></returns>
         private static bool ValidateBySHA256(CacheableIcon icon, string cachedIconPath)
         {
             try
@@ -258,9 +320,6 @@ namespace UniGetUI.Core.IconEngine
         /// <summary>
         /// Checks whether a cached image is valid or not depending on the package version it was pulled from
         /// </summary>
-        /// <param name="icon"></param>
-        /// <param name="versionPath"></param>
-        /// <returns></returns>
         private static bool ValidateByVersion(CacheableIcon icon, string versionPath)
         {
             try
@@ -277,9 +336,6 @@ namespace UniGetUI.Core.IconEngine
         /// <summary>
         /// Checks whether a cached image is valid or not depending on the URI it was pulled from
         /// </summary>
-        /// <param name="icon"></param>
-        /// <param name="uriPath"></param>
-        /// <returns></returns>
         private static bool ValidateByUri(CacheableIcon icon, string uriPath)
         {
             try
@@ -293,6 +349,9 @@ namespace UniGetUI.Core.IconEngine
             }
         }
 
+        /// <summary>
+        /// Deletes all the cache files for a [icon] directory
+        /// </summary>
         private static void DeteteCachedFiles(string iconLocation)
         {
             try
@@ -310,8 +369,8 @@ namespace UniGetUI.Core.IconEngine
         {
             {"image/avif", "avif"},
             {"image/gif", "gif"},
-            {"image/bmp", "bmp"},
-            {"image/jpeg", "jpg"},
+         // {"image/bmp", "bmp"}, Should non-transparent types be allowed?
+         // {"image/jpeg", "jpg"},
             {"image/png", "png"},
             {"image/webp", "webp"},
             {"image/svg+xml", "svg"},
@@ -325,8 +384,8 @@ namespace UniGetUI.Core.IconEngine
         {
             {"avif", "image/avif"},
             {"gif", "image/gif"},
-            {"bmp", "image/bmp"},
-            {"jpg", "image/jpeg"},
+         // {"bmp", "image/bmp"}, Should non-transparent types be allowed
+         // {"jpg", "image/jpeg"},
             {"png", "image/png"},
             {"webp", "image/webp"},
             {"svg", "image/svg+xml"},
