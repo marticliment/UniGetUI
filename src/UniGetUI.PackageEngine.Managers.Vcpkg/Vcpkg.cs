@@ -397,7 +397,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Tuple.Create(vcpkgRoot != null, vcpkgRoot ?? "");
         }
 
-        private static string GetDefaultTriplet()
+        public static string GetDefaultTriplet()
         {
             string DefaultTriplet = Settings.GetValue("DefaultVcpkgTriplet");
             if (DefaultTriplet == "")
