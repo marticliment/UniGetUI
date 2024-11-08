@@ -8,7 +8,7 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 {
-    internal sealed class VcpkgSourceProvider : BaseSourceProvider<PackageManager>
+    /*internal sealed class VcpkgSourceProvider : BaseSourceProvider<PackageManager>
     {
         public VcpkgSourceProvider(Vcpkg manager) : base(manager) { }
 
@@ -58,5 +58,5 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         }
 
         public static Uri URI_VCPKG_IO = new Uri("https://vcpkg.io/");
-    }
+    }*/
 }

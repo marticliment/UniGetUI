@@ -23,7 +23,11 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         public Vcpkg()
         {
-            Capabilities = new ManagerCapabilities { CanRunAsAdmin = true, SupportsCustomSources = true, };
+            Capabilities = new ManagerCapabilities
+            {
+                CanRunAsAdmin = true,
+                SupportsCustomSources = false,
+            };
 
             string DefaultTriplet = GetDefaultTriplet();
 
@@ -46,22 +50,20 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             Properties = new ManagerProperties
             {
                 Name = "vcpkg",
-                Description =
-                    CoreTools.Translate(
+                Description = CoreTools.Translate(
                         "A popular C/C++ library manager. Full of C/C++ libraries and other C/C++-related utilities<br>Contains: <b>C/C++ libraries and related utilities</b>"),
-                IconId =
-                    IconType.Vcpkg, // What I got from discussion #2826 is that for a custom vcpkg icon, Marti has to do it, so this one seems the most applicable
+                IconId = IconType.Vcpkg,
                 ColorIconId = "vcpkg_color",
                 ExecutableFriendlyName = "vcpkg",
                 InstallVerb = "install",
                 UninstallVerb = "remove",
                 UpdateVerb = "upgrade",
-                ExecutableCallArgs = vcpkgRoot == "" ? "" : " --vcpkg-root=\"" + vcpkgRoot + "\"",
+                ExecutableCallArgs = vcpkgRoot == "" ? "" : $" --vcpkg-root=\"{vcpkgRoot}\"",
                 DefaultSource = new ManagerSource(this, DefaultTriplet, URI_VCPKG_IO),
                 KnownSources = [.. TripletSourceMap.Values],
             };
 
-            SourceProvider = new VcpkgSourceProvider(this);
+            // SourceProvider = new VcpkgSourceProvider(this);
             OperationProvider = new VcpkgOperationProvider(this);
         }
 
@@ -271,9 +273,31 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         protected override ManagerStatus LoadManager()
         {
-            var (found, path) = GetVcpkgPath();
+            var (exeFound, exePath) = GetVcpkgPath();
+            var (rootFound, rootPath) = GetVcpkgRoot();
 
-            ManagerStatus status = new ManagerStatus { Found = found, ExecutablePath = path, };
+            if (!exeFound)
+            {
+                return new()
+                {
+                    Found = false,
+                    ExecutablePath = exePath,
+                    Version = CoreTools.Translate(
+                        "Vcpkg was not found on your systen."),
+                };
+            }
+
+            if (!rootFound)
+            {
+                return new()
+                {
+                    Found = false,
+                    ExecutablePath = CoreTools.Translate(
+                        "Vcpkg root was not found. Please define the %VCPKG_ROOT% environment variable or define it from UniGetUI Settings"),
+                };
+            }
+
+            ManagerStatus status = new ManagerStatus { Found = exeFound, ExecutablePath = exePath, };
 
             if (!status.Found)
             {
@@ -295,8 +319,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 }
             };
             process.Start();
-            status.Version = (process.StandardOutput.ReadLine() ?? "Unknown")
-                .Replace("vcpkg package management program version", "").Trim();
+            status.Version = process.StandardOutput.ReadLine()?.Trim() ?? "";
+            status.Version += $"\n%VCPKG_ROOT% = {rootPath}";
 
             return status;
         }
@@ -307,15 +331,15 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
             var (gitFound, gitPath) = CoreTools.Which("git");
 
-            // TODO: Check if Settings.Get("UpdateVcpkgGitPorts") is still needed
-            if (!found || !gitFound || !vcpkgRootFound || !Settings.Get("UpdateVcpkgGitPorts"))
+            // TODO: Check if Settings.Get("DisableUpdateVcpkgGitPorts") is still needed
+            if (!found || !gitFound || !vcpkgRootFound || Settings.Get("DisableUpdateVcpkgGitPorts"))
             {
                 INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
-                if(!Settings.Get("UpdateVcpkgGitPorts")) logger.Error("User has disabled updating sources");
+                if(Settings.Get("DisableUpdateVcpkgGitPorts")) logger.Error("User has disabled updating sources");
                 if(!found) logger.Error("Vcpkg was not found???");
                 if(!gitFound) logger.Error("Vcpkg sources won't be updated since git was not found");
                 if(!vcpkgRootFound) logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable / the custom vcpkg root setting were not set");
-                logger.Close(Settings.Get("UpdateVcpkgGitPorts")? 1: 0);
+                logger.Close(Settings.Get("DisableUpdateVcpkgGitPorts")? 0: 1);
                 return;
             }
 
@@ -325,7 +349,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 {
                     FileName = gitPath,
                     WorkingDirectory = vcpkgRoot,
-                    Arguments = Properties.ExecutableCallArgs + " pull --all",
+                    Arguments = "pull --all",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -393,6 +417,25 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             }
 
             return DefaultTriplet;
+        }
+
+        public static List<string> GetSystemTriplets()
+        {
+            List<string> Triplets = [];
+            // Retrieve all triplets on the system (in %VCPKG_ROOT%\triplets{\community})
+            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
+            if (vcpkgRootFound)
+            {
+                string tripletLocation = Path.Join(vcpkgRoot, "triplets");
+                string communityTripletLocation = Path.Join(vcpkgRoot, "triplets", "community");
+
+                foreach (string tripletFile in Directory.EnumerateFiles(tripletLocation).Concat(Directory.EnumerateFiles(communityTripletLocation)))
+                {
+                    string triplet = Path.GetFileNameWithoutExtension(tripletFile);
+                    Triplets.Add(triplet);
+                }
+            }
+            return Triplets;
         }
     }
 }

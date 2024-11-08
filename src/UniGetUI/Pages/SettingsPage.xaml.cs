@@ -15,6 +15,7 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Managers.VcpkgManager;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
 
@@ -114,6 +115,10 @@ namespace UniGetUI.Interface
                 ExtraSettingsCards.Add(Manager, []);
             }
 
+
+            // ----------------------------------------------------------------------------------------
+
+
             ButtonCard WinGet_ResetWindowsPackageManager = new() {
                 Text = CoreTools.AutoTranslated("Reset WinGet") + $" ({CoreTools.Translate("This may help if no packages are listed")})",
                 ButtonText = CoreTools.AutoTranslated("Reset")
@@ -150,6 +155,10 @@ namespace UniGetUI.Interface
             ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_ResetWindowsPackageManager);
             ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_UseBundled);
 
+
+            // ----------------------------------------------------------------------------------------
+
+
             ButtonCard Scoop_Install = new() { Text = CoreTools.AutoTranslated("Install Scoop"), ButtonText = CoreTools.AutoTranslated("Install") };
             Scoop_Install.Click += (_, _) =>
             {
@@ -172,6 +181,10 @@ namespace UniGetUI.Interface
             ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_Uninstall);
             ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_ResetAppCache);
 
+
+            // ----------------------------------------------------------------------------------------
+
+
             CheckboxCard Chocolatey_SystemChoco = new() { Text = CoreTools.AutoTranslated("Use system Chocolatey"), SettingName = "UseSystemChocolatey" };
             Chocolatey_SystemChoco.StateChanged += (_, _) =>
             {
@@ -180,10 +193,14 @@ namespace UniGetUI.Interface
 
             ExtraSettingsCards[PEInterface.Chocolatey].Add(Chocolatey_SystemChoco);
 
+
+            // ----------------------------------------------------------------------------------------
+
+
             CheckboxCard Vcpkg_UpdateGitPorts = new()
             {
                 Text = CoreTools.Translate("Update vcpkg's Git portfiles automatically (requires Git installed)"),
-                SettingName = "UpdateVcpkgGitPorts"
+                SettingName = "DisableUpdateVcpkgGitPorts"
             };
             ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_UpdateGitPorts);
             // TODO: This thing doesn't change the setting; the default of this setting
@@ -196,26 +213,75 @@ namespace UniGetUI.Interface
                 SettingName = "DefaultVcpkgTriplet"
             };
             Vcpkg_DefaultTriplet.ValueChanged += (_, _) =>
-            {
-                PackageManagerExpanders[PEInterface.Vcpkg].ShowRestartRequiredBanner();
-            };
-            IEnumerable<string> triplets = GetSystemTriplets();
-            string defaultTriplet = Environment.GetEnvironmentVariable("VCPKG_DEFAULT_TRIPLET") ?? triplets.FirstOrDefault("");
-            foreach (string triplet in triplets)
+            { PackageManagerExpanders[PEInterface.Vcpkg].ShowRestartRequiredBanner(); };
+            foreach (string triplet in Vcpkg.GetSystemTriplets())
             {
                 Vcpkg_DefaultTriplet.AddItem(triplet, triplet);
             }
+            Vcpkg_DefaultTriplet.ShowAddedItems();
             ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_DefaultTriplet);
-            TextboxCard Vcpkg_CustomVcpkgRoot = new()
+
+            ButtonCard Vcpkg_CustomVcpkgRoot = new()
             {
-                Text = CoreTools.Translate("Custom vcpkg root"),
-                SettingName = "CustomVcpkgRoot"
+                Text="Change vcpkg root location",
+                ButtonText="Select",
             };
-            Vcpkg_CustomVcpkgRoot.KeyDown += (_, _) =>
+            StackPanel p = new() { Orientation = Orientation.Horizontal, Spacing = 5, };
+            var VcPkgRootLabel = new TextBlock() { VerticalAlignment = VerticalAlignment.Center };
+            var ResetVcPkgRootLabel = new HyperlinkButton() { Content = CoreTools.Translate("Reset") };
+            var OpenVcPkgRootLabel = new HyperlinkButton() { Content = CoreTools.Translate("Open") };
+
+            VcPkgRootLabel.Text = Settings.Get("CustomVcpkgRoot")? Settings.GetValue("CustomVcpkgRoot"): "%VCPKG_ROOT%";
+            OpenVcPkgRootLabel.IsEnabled = Settings.Get("CustomVcpkgRoot");
+            ResetVcPkgRootLabel.IsEnabled = Settings.Get("CustomVcpkgRoot");
+
+            ResetVcPkgRootLabel.Click += (_, _) =>
+            {
+                VcPkgRootLabel.Text = "%VCPKG_ROOT%";
+                Settings.Set("CustomVcpkgRoot", false);
+                ResetVcPkgRootLabel.IsEnabled = false;
+                OpenVcPkgRootLabel.IsEnabled = false;
+            };
+
+            OpenVcPkgRootLabel.Click += (_, _) =>
+            {
+                string directory = Settings.GetValue("CustomVcpkgRoot").Replace("/", "\\");
+                if(directory.Any()) Process.Start("explorer.exe", directory);
+            };
+
+            Vcpkg_CustomVcpkgRoot.Click += (_, _) =>
+            {
+                ExternalLibraries.Pickers.FolderPicker openPicker = new(MainApp.Instance.MainWindow.GetWindowHandle());
+                string folder = openPicker.Show();
+                if (folder != string.Empty)
+                {
+                    Settings.SetValue("CustomVcpkgRoot", folder);
+                    VcPkgRootLabel.Text = folder;
+                    ResetVcPkgRootLabel.IsEnabled = true;
+                    OpenVcPkgRootLabel.IsEnabled = true;
+                }
+            };
+
+
+            p.Children.Add(VcPkgRootLabel);
+            p.Children.Add(ResetVcPkgRootLabel);
+            p.Children.Add(OpenVcPkgRootLabel);
+            Vcpkg_CustomVcpkgRoot.Description = p;
+
+
+
+            Vcpkg_CustomVcpkgRoot.Click += (_, _) =>
             {
                 PackageManagerExpanders[PEInterface.Vcpkg].ShowRestartRequiredBanner();
             };
+
+
             ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_CustomVcpkgRoot);
+
+
+
+            // ----------------------------------------------------------------------------------------
+
 
 
             foreach (IPackageManager Manager in PEInterface.Managers)
@@ -376,6 +442,11 @@ namespace UniGetUI.Interface
 
                 LoadIconCacheSize();
             }
+        }
+
+        private void SetDefaultVcpkgRoot(object? sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private async void LoadIconCacheSize()
@@ -619,37 +690,6 @@ namespace UniGetUI.Interface
         {
             if(InterfaceLoaded)
                 InterfaceSettingsExpander.ShowRestartRequiredBanner();
-        }
-
-        // vcpkg utilities
-
-        private Tuple<bool, string> GetVcpkgRoot()
-        {
-            string? vcpkgRoot = Settings.GetValue("CustomVcpkgRoot");
-            if (vcpkgRoot == "")
-            {
-                vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
-            }
-
-            return Tuple.Create(vcpkgRoot != null, vcpkgRoot ?? "");
-        }
-        private IEnumerable<string> GetSystemTriplets()
-        {
-            List<string> Triplets = [];
-            // Retrieve all triplets on the system (in %VCPKG_ROOT%\triplets{\community})
-            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
-            if (vcpkgRootFound)
-            {
-                string tripletLocation = Path.Join(vcpkgRoot, "triplets");
-                string communityTripletLocation = Path.Join(vcpkgRoot, "triplets", "community");
-
-                foreach (string tripletFile in Directory.EnumerateFiles(tripletLocation).Concat(Directory.EnumerateFiles(communityTripletLocation)))
-                {
-                    string triplet = Path.GetFileNameWithoutExtension(tripletFile);
-                    Triplets.Add(triplet);
-                }
-            }
-            return Triplets;
         }
     }
 }
