@@ -321,8 +321,8 @@ public static partial class DialogHelper
                             "windowspowershell\\v1.0\\powershell.exe"),
                     Arguments =
                         "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {" +
-                        "cmd.exe /C \"rmdir /Q /S `\"%localappdata%\\Temp\\WinGet`\"\"; " +
-                        "cmd.exe /C \"%localappdata%\\Microsoft\\WindowsApps\\winget.exe source reset --force\"; " +
+                        "cmd.exe /C \"rmdir /Q /S `\"%temp%\\WinGet`\"\"; " +
+                        "cmd.exe /C \"`\"%localappdata%\\Microsoft\\WindowsApps\\winget.exe`\" source reset --force\"; " +
                         "taskkill /im winget.exe /f; " +
                         "taskkill /im WindowsPackageManagerServer.exe /f; " +
                         "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; " +

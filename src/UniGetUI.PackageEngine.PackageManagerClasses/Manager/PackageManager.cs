@@ -188,6 +188,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
         public IEnumerable<IPackage> GetAvailableUpdates()
+        /*    => TaskRecycler<IEnumerable<IPackage>>.RunOrAttach(_getAvailableUpdates, Properties.Name.GetHashCode());
+
+        private IEnumerable<IPackage> _getAvailableUpdates(int _uselessParam)*/
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetAvailableUpdates was called"); return []; }
             try
@@ -221,6 +224,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
         public IEnumerable<IPackage> GetInstalledPackages()
+        /*    => TaskRecycler<IEnumerable<IPackage>>.RunOrAttach(_getInstalledPackages, Properties.Name.GetHashCode());
+
+        private IEnumerable<IPackage> _getInstalledPackages(int _uselessParam)*/
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetInstalledPackages was called"); return []; }
             try

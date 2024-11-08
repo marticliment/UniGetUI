@@ -25,24 +25,19 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return ["source", "remove", "--name", source.Name, "--disable-interactivity"];
         }
 
-        public override OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        protected override OperationVeredict _getAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
-        public override OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        protected override OperationVeredict _getRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
 
         protected override IEnumerable<IManagerSource> GetSources_UnSafe()
         {
-            if (Manager is WinGet manager)
-            {
-                return WinGetHelper.Instance.GetSources_UnSafe(manager);
-            }
-
-            throw new InvalidOperationException("WinGetSourceProvider.GetSources_UnSafe: Manager is supposed to be WinGet");
+            return WinGetHelper.Instance.GetSources_UnSafe();
         }
     }
 }

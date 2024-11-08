@@ -3,6 +3,9 @@ using System.Collections.Specialized;
 
 namespace UniGetUI.Core.Classes
 {
+    /*
+     * An observable sorted collection that keeps IIndexableListItem indexes up to date
+     */
     public class SortableObservableCollection<T> : ObservableCollection<T> where T : IIndexableListItem
     {
         public Func<T, object>? SortingSelector { get; set; }

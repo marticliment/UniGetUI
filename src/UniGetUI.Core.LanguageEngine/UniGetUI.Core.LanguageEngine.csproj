@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MessageFormat" Version="7.1.0" />
+    <PackageReference Include="MessageFormat" Version="7.1.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -54,7 +54,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
             else
             {
-                Logger.Debug($"Creating new instance of InstallationOptions for package {package}, as no instance was found in cache");
                 instance = new(package);
                 instance.LoadFromDisk();
                 OptionsCache.TryAdd(package.GetHash(), instance);
@@ -229,7 +228,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 }
 
                 FromSerializable(options);
-                Logger.Debug($"InstallationOptions loaded successfully from disk for package {Package.Id}");
             }
             catch (JsonException)
             {

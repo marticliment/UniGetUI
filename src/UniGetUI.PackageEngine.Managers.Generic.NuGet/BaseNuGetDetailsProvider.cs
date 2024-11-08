@@ -130,13 +130,13 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             Match possibleIconUrl = Regex.Match(ManifestContent, "<(?:d\\:)?IconUrl>(.*)<(?:\\/d:)?IconUrl>");
 
-            if (!possibleIconUrl.Success)
+            if (!possibleIconUrl.Success || possibleIconUrl.Groups[1].Value == "")
             {
-                Logger.Warn($"No Icon URL could be parsed on the manifest Url={NuGetManifestLoader.GetManifestUrl(package).ToString()}");
+                // Logger.Warn($"No Icon URL could be parsed on the manifest Url={NuGetManifestLoader.GetManifestUrl(package).ToString()}");
                 return null;
             }
 
-            Logger.Debug($"A native icon with Url={possibleIconUrl.Groups[1].Value} was found");
+            // Logger.Debug($"A native icon with Url={possibleIconUrl.Groups[1].Value} was found");
             return new CacheableIcon(new Uri(possibleIconUrl.Groups[1].Value), package.Version);
         }
 

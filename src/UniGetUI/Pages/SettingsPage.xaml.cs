@@ -31,6 +31,7 @@ namespace UniGetUI.Interface
         private readonly HyperlinkButton ResetBackupDirectory;
         private readonly HyperlinkButton OpenBackupDirectory;
         private readonly TextBlock BackupDirectoryLabel;
+        private bool InterfaceLoaded = false;
 
         public SettingsInterface()
         {
@@ -89,7 +90,7 @@ namespace UniGetUI.Interface
             ThemeSelector.ShowAddedItems();
 
             // UI Section
-            DisableIconsOnPackageLists.Text = "[EXPERIMENTAL] " + CoreTools.Translate("Show package icons on package lists");
+            // DisableIconsOnPackageLists.Text = "[EXPERIMENTAL] " + CoreTools.Translate("Show package icons on package lists");
 
 
             // Backup Section
@@ -371,6 +372,7 @@ namespace UniGetUI.Interface
                 EnableOrDisableEntries();
 
                 MainLayout.Children.Add(ManagerExpander);
+                InterfaceLoaded = true;
 
                 LoadIconCacheSize();
             }
@@ -462,12 +464,12 @@ namespace UniGetUI.Interface
 
         private void LanguageSelector_ValueChanged(object sender, EventArgs e)
         {
-            GeneralSettingsExpander.ShowRestartRequiredBanner();
+            if(InterfaceLoaded) GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
         private void UpdatesCheckIntervalSelector_ValueChanged(object sender, EventArgs e)
         {
-            GeneralSettingsExpander.ShowRestartRequiredBanner();
+            if(InterfaceLoaded) GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
         private void ThemeSelector_ValueChanged(object sender, EventArgs e)
@@ -520,19 +522,14 @@ namespace UniGetUI.Interface
             _ = CoreTools.ResetUACForCurrentProcess();
         }
 
-        private void UseSystemGSudo_StateChanged(object sender, EventArgs e)
-        {
-            AdminSettingsExpander.ShowRestartRequiredBanner();
-        }
-
         private void DisableWidgetsApi_StateChanged(object sender, EventArgs e)
-        { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
+        { if(InterfaceLoaded) ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
         private void DisableDownloadingNewTranslations_StateChanged(object sender, EventArgs e)
-        { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
+        { if(InterfaceLoaded) ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
         private void TextboxCard_ValueChanged(object sender, EventArgs e)
-        { ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
+        { if(InterfaceLoaded) ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
         private async void DoBackup_Click(object sender, EventArgs e)
         {
@@ -566,7 +563,7 @@ namespace UniGetUI.Interface
 
         private void EnablePackageBackupCheckBox_StateChanged(object sender, EventArgs e)
         {
-            EnablePackageBackupUI(EnablePackageBackupCheckBox.Checked);
+            if(InterfaceLoaded) EnablePackageBackupUI(EnablePackageBackupCheckBox.Checked);
         }
 
         public void EnablePackageBackupUI(bool enabled)
@@ -598,7 +595,8 @@ namespace UniGetUI.Interface
 
         private void UseUserGSudoToggle_StateChanged(object sender, EventArgs e)
         {
-            ExperimentalSettingsExpander.ShowRestartRequiredBanner();
+            if(InterfaceLoaded)
+                ExperimentalSettingsExpander.ShowRestartRequiredBanner();
         }
 
         private void ResetIconCache_OnClick(object? sender, EventArgs e)
@@ -619,7 +617,8 @@ namespace UniGetUI.Interface
 
         private void DisableIconsOnPackageLists_OnStateChanged(object? sender, EventArgs e)
         {
-            InterfaceSettingsExpander.ShowRestartRequiredBanner();
+            if(InterfaceLoaded)
+                InterfaceSettingsExpander.ShowRestartRequiredBanner();
         }
 
         // vcpkg utilities
