@@ -18,9 +18,7 @@ internal sealed class VcpkgOperationProvider : BaseOperationProvider<Vcpkg>
             _ => throw new InvalidDataException("Invalid package operation")
         };
 
-        if (options.CustomParameters is not null)
-            parameters.AddRange(options.CustomParameters);
-
+        parameters.AddRange(options.CustomParameters);
         return parameters;
     }
 
@@ -30,11 +28,6 @@ internal sealed class VcpkgOperationProvider : BaseOperationProvider<Vcpkg>
         IEnumerable<string> processOutput,
         int returnCode)
     {
-        if (returnCode == 0)
-        {
-            return OperationVeredict.Succeeded;
-        }
-
-        return OperationVeredict.Failed;
+        return returnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
     }
 }

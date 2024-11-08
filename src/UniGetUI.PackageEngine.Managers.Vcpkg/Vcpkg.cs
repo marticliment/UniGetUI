@@ -340,7 +340,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             processLogger.Close(p.ExitCode);
         }
 
-        private static Tuple<bool, string> GetVcpkgPath()
+        public static Tuple<bool, string> GetVcpkgPath()
         {
             var (found, path) = CoreTools.Which("vcpkg");
             if (found)
@@ -362,7 +362,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Tuple.Create(false, "");
         }
 
-        private static Tuple<bool, string> GetVcpkgRoot()
+        public static Tuple<bool, string> GetVcpkgRoot()
         {
             string? vcpkgRoot = Settings.GetValue("CustomVcpkgRoot");
             if (vcpkgRoot == "")
