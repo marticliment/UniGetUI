@@ -203,17 +203,11 @@ namespace UniGetUI.Interface
                 SettingName = "DisableUpdateVcpkgGitPorts"
             };
             ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_UpdateGitPorts);
-            // TODO: This thing doesn't change the setting; the default of this setting
-            // (the initial value in the combo box) should be the value of `defaultTriplet`.
-            // It's contents should be the values in `triplets`, and a restart is only
-            // required if the setting won't change next time the search area is entered.
             ComboboxCard Vcpkg_DefaultTriplet = new()
             {
                 Text = CoreTools.Translate("Default vcpkg triplet"),
                 SettingName = "DefaultVcpkgTriplet"
             };
-            Vcpkg_DefaultTriplet.ValueChanged += (_, _) =>
-            { PackageManagerExpanders[PEInterface.Vcpkg].ShowRestartRequiredBanner(); };
             foreach (string triplet in Vcpkg.GetSystemTriplets())
             {
                 Vcpkg_DefaultTriplet.AddItem(triplet, triplet);
