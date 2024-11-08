@@ -142,6 +142,9 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     PackageVersion, source, this));
             }
 
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
+            logger.Close(p.ExitCode);
             return Packages;
         }
 
@@ -195,6 +198,9 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 }
             }
 
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
+            logger.Close(p.ExitCode);
             return Packages;
         }
 
@@ -207,6 +213,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " list",
                     // vcpkg has an --x-json flag that would list installed packages in JSON, but it's expiremental
+                    // TODO: Once --x-json is stable migrate to --x-json
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -240,7 +247,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     PackageVersion = PackageData[1];
                 if (PackageId.Contains('[') /* meaning its a suboption, and thus has no version */)
                 {
-                    PackageVersion = PackageVersions[PackageName[..PackageName.IndexOf("[")]];
+                    PackageVersion = PackageVersions[PackageName.Split("[")[0]];
                 }
                 else
                 {
@@ -256,6 +263,9 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 Packages.Add(new Package(CoreTools.FormatAsName(PackageName), PackageId, PackageVersion, value, this));
             }
 
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            p.WaitForExit();
+            logger.Close(p.ExitCode);
             return Packages;
         }
 
@@ -291,28 +301,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return status;
         }
 
-        private Tuple<bool, string> GetVcpkgPath()
-        {
-            var (found, path) = CoreTools.Which("vcpkg");
-            if (found)
-            {
-                return Tuple.Create(found, path);
-            }
-
-            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
-            if (vcpkgRootFound)
-            {
-                string vcpkgLocation = Path.Join(vcpkgRoot, "vcpkg.exe");
-
-                if (File.Exists(vcpkgLocation))
-                {
-                    return Tuple.Create(true, vcpkgLocation);
-                }
-            }
-
-            return Tuple.Create(false, "");
-        }
-
         public override void RefreshPackageIndexes()
         {
             var (found, path) = GetVcpkgPath();
@@ -320,38 +308,16 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             var (gitFound, gitPath) = CoreTools.Which("git");
 
             // TODO: Check if Settings.Get("UpdateVcpkgGitPorts") is still needed
-            if (!Settings.Get("UpdateVcpkgGitPorts"))
+            if (!found || !gitFound || !vcpkgRootFound || !Settings.Get("UpdateVcpkgGitPorts"))
             {
                 INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
-                logger.Error("The user has disabled updating vcpkg sources.");
-                logger.Close(0);
+                if(!Settings.Get("UpdateVcpkgGitPorts")) logger.Error("User has disabled updating sources");
+                if(!found) logger.Error("Vcpkg was not found???");
+                if(!gitFound) logger.Error("Vcpkg sources won't be updated since git was not found");
+                if(!vcpkgRootFound) logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable / the custom vcpkg root setting were not set");
+                logger.Close(Settings.Get("UpdateVcpkgGitPorts")? 1: 0);
                 return;
             }
-
-            if (!found)
-            {
-                INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
-                logger.Error("Vcpkg was not found???");
-                logger.Close(1);
-                return;
-            }
-
-            if (!gitFound)
-            {
-                INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
-                logger.Error("Vcpkg sources won't be updated since git was not found");
-                logger.Close(1);
-                return;
-            }
-
-            if (!vcpkgRootFound)
-            {
-                INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
-                logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable / the custom vcpkg root setting were not set");
-                logger.Close(1);
-                return;
-            }
-
 
             Process p = new()
             {
@@ -374,7 +340,29 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             processLogger.Close(p.ExitCode);
         }
 
-        private Tuple<bool, string> GetVcpkgRoot()
+        private static Tuple<bool, string> GetVcpkgPath()
+        {
+            var (found, path) = CoreTools.Which("vcpkg");
+            if (found)
+            {
+                return Tuple.Create(found, path);
+            }
+
+            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
+            if (vcpkgRootFound)
+            {
+                string vcpkgLocation = Path.Join(vcpkgRoot, "vcpkg.exe");
+
+                if (File.Exists(vcpkgLocation))
+                {
+                    return Tuple.Create(true, vcpkgLocation);
+                }
+            }
+
+            return Tuple.Create(false, "");
+        }
+
+        private static Tuple<bool, string> GetVcpkgRoot()
         {
             string? vcpkgRoot = Settings.GetValue("CustomVcpkgRoot");
             if (vcpkgRoot == "")
@@ -385,7 +373,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Tuple.Create(vcpkgRoot != null, vcpkgRoot ?? "");
         }
 
-        private string GetDefaultTriplet()
+        private static string GetDefaultTriplet()
         {
             string DefaultTriplet = Settings.GetValue("DefaultVcpkgTriplet");
             if (DefaultTriplet == "")
