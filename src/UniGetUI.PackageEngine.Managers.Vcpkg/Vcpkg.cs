@@ -23,35 +23,34 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         public Vcpkg()
         {
-            Capabilities = new ManagerCapabilities
-            {
-                CanRunAsAdmin = true,
-                SupportsCustomSources = true,
-            };
+            Capabilities = new ManagerCapabilities { CanRunAsAdmin = true, SupportsCustomSources = true, };
 
             string DefaultTriplet = GetDefaultTriplet();
 
             TripletSourceMap = new Dictionary<string, ManagerSource>
             {
-                { "arm-neon-android",   new ManagerSource(this, "arm-neon-android", URI_VCPKG_IO) },
-                { "arm64-android",      new ManagerSource(this, "arm64-android", URI_VCPKG_IO) },
-                { "arm64-uwp",          new ManagerSource(this, "arm64-uwp", URI_VCPKG_IO) },
-                { "arm64-windows",      new ManagerSource(this, "arm64-windows", URI_VCPKG_IO) },
-                { "x64-android",        new ManagerSource(this, "x64-android", URI_VCPKG_IO) },
-                { "x64-linux",          new ManagerSource(this, "x64-linux", URI_VCPKG_IO) },
-                { "x64-osx",            new ManagerSource(this, "x64-osx", URI_VCPKG_IO) },
-                { "x64-uwp",            new ManagerSource(this, "x64-uwp", URI_VCPKG_IO) },
+                { "arm-neon-android", new ManagerSource(this, "arm-neon-android", URI_VCPKG_IO) },
+                { "arm64-android", new ManagerSource(this, "arm64-android", URI_VCPKG_IO) },
+                { "arm64-uwp", new ManagerSource(this, "arm64-uwp", URI_VCPKG_IO) },
+                { "arm64-windows", new ManagerSource(this, "arm64-windows", URI_VCPKG_IO) },
+                { "x64-android", new ManagerSource(this, "x64-android", URI_VCPKG_IO) },
+                { "x64-linux", new ManagerSource(this, "x64-linux", URI_VCPKG_IO) },
+                { "x64-osx", new ManagerSource(this, "x64-osx", URI_VCPKG_IO) },
+                { "x64-uwp", new ManagerSource(this, "x64-uwp", URI_VCPKG_IO) },
                 { "x64-windows-static", new ManagerSource(this, "x64-windows-static", URI_VCPKG_IO) },
-                { "x64-windows",        new ManagerSource(this, "x64-windows", URI_VCPKG_IO) },
-                { "x86-windows",        new ManagerSource(this, "x86-windows", URI_VCPKG_IO) }
+                { "x64-windows", new ManagerSource(this, "x64-windows", URI_VCPKG_IO) },
+                { "x86-windows", new ManagerSource(this, "x86-windows", URI_VCPKG_IO) }
             };
 
             string vcpkgRoot = Settings.GetValue("CustomVcpkgRoot");
             Properties = new ManagerProperties
             {
                 Name = "vcpkg",
-                Description = CoreTools.Translate("A popular C/C++ library manager. Full of C/C++ libraries and other C/C++-related utilities<br>Contains: <b>C/C++ libraries and related utilities</b>"),
-                IconId = IconType.Package, // What I got from discussion #2826 is that for a custom vcpkg icon, Marti has to do it, so this one seems the most applicable
+                Description =
+                    CoreTools.Translate(
+                        "A popular C/C++ library manager. Full of C/C++ libraries and other C/C++-related utilities<br>Contains: <b>C/C++ libraries and related utilities</b>"),
+                IconId =
+                    IconType.Vcpkg, // What I got from discussion #2826 is that for a custom vcpkg icon, Marti has to do it, so this one seems the most applicable
                 ColorIconId = "vcpkg_color",
                 ExecutableFriendlyName = "vcpkg",
                 InstallVerb = "install",
@@ -75,8 +74,9 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " search \"" + query.Replace("\"", "") + "\"",
+                    Arguments = Properties.ExecutableCallArgs + $" search \"{CoreTools.EnsureSafeQueryString(query)}\"",
                     // vcpkg has an --x-json flag that would list installed packages in JSON, but it doesn't work for this call (as of 2024-09-30-ab8988503c7cffabfd440b243a383c0a352a023d)
+                    // TODO: Perhaps use --x-json when it is fixed
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -92,6 +92,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             p.Start();
 
             Dictionary<string, string> PackageVersions = new();
+            string optionString = CoreTools.Translate("option");
+            string unknownVersion = CoreTools.Translate("Unknown");
             while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
@@ -107,14 +109,14 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 string[] PackageData = Regex.Replace(line, @"\s+", " ").Split(' ');
                 string PackageId = PackageData[0]; // the id with the suboption
                 string PackageName = PackageId; // the actual name (id - suboption)
-                string PackageDetailedName = PackageName; // the name with a reformatted suboption reapplied (display name)
+                string
+                    PackageDetailedName = PackageName; // the name with a reformatted suboption reapplied (display name)
                 string PackageVersion = PackageData[1];
 
                 if (PackageName.Contains('[') /* meaning its a suboption, and thus has no version */)
                 {
-                    PackageName = PackageName[..PackageName.IndexOf("[")];
-                    PackageDetailedName = PackageName + " (option: " +
-                        PackageId[(PackageId.IndexOf("[") + 1)..PackageId.IndexOf("]")] + ")";
+                    PackageName = PackageId.Split('[')[0]; //..PackageName.IndexOf("[", StringComparison.Ordinal)];
+                    PackageDetailedName = PackageName + $" ({optionString}: {PackageId.Split('[')[1][..^1]})";
 
                     if (PackageVersions.TryGetValue(PackageName, out string? value))
                     {
@@ -122,19 +124,22 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     }
                     else
                     {
-                        PackageVersion = "??? (package option)";
+                        PackageVersion = unknownVersion;
                     }
                 }
-                else
+                else // If the package has a specified version (it is not a suboption)
                 {
                     PackageVersions[PackageName] = PackageVersion;
                 }
 
-                if (!TripletSourceMap.ContainsKey(Triplet))
+                if (!TripletSourceMap.TryGetValue(Triplet, out ManagerSource? source))
                 {
-                    TripletSourceMap[Triplet] = new ManagerSource(this, Triplet, URI_VCPKG_IO);
+                    source = new ManagerSource(this, Triplet, URI_VCPKG_IO);
+                    TripletSourceMap.Add(Triplet, source);
                 }
-                Packages.Add(new Package(CoreTools.FormatAsName(PackageDetailedName), PackageId + ":" + Triplet, PackageVersion, TripletSourceMap[Triplet], this));
+
+                Packages.Add(new Package(CoreTools.FormatAsName(PackageDetailedName), PackageId + ":" + Triplet,
+                    PackageVersion, source, this));
             }
 
             return Packages;
@@ -142,33 +147,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
-            var (found, path) = GetVcpkgPath();
-            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
-
-                if (Settings.Get("UpdateVcpkgGitPorts") && found)
-            {
-                var (gitFound, gitPath) = CoreTools.Which("git");
-                if (gitFound && vcpkgRootFound)
-                {
-                    Process pullAll = new()
-                    {
-                        StartInfo = new ProcessStartInfo
-                        {
-                            FileName = gitPath,
-                            WorkingDirectory = vcpkgRoot,
-                            Arguments = Properties.ExecutableCallArgs + " pull --all",
-                            UseShellExecute = false,
-                            CreateNoWindow = true
-                        }
-                    };
-                    pullAll.Start();
-                }
-                else
-                {
-                    Logger.Error(new InvalidOperationException("Cannot update vcpkg port files as requested: git was not installed or the VCPKG_ROOT environment variable / the custom vcpkg root setting were not set"));
-                }
-            }
-
             List<Package> Packages = [];
 
             Process p = new()
@@ -212,7 +190,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                         TripletSourceMap[PackageTriplet] = value;
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(PackageName), PackageId, PackageVersionCurrent, PackageVersionLatest, value, this));
+                    Packages.Add(new Package(CoreTools.FormatAsName(PackageName), PackageId, PackageVersionCurrent,
+                        PackageVersionLatest, value, this));
                 }
             }
 
@@ -284,11 +263,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         {
             var (found, path) = GetVcpkgPath();
 
-            ManagerStatus status = new ManagerStatus
-            {
-                Found = found,
-                ExecutablePath = path,
-            };
+            ManagerStatus status = new ManagerStatus { Found = found, ExecutablePath = path, };
 
             if (!status.Found)
             {
@@ -310,7 +285,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 }
             };
             process.Start();
-            status.Version = (process.StandardOutput.ReadLine() ?? "Unknown").Replace("vcpkg package management program version", "").Trim();
+            status.Version = (process.StandardOutput.ReadLine() ?? "Unknown")
+                .Replace("vcpkg package management program version", "").Trim();
 
             return status;
         }
@@ -335,6 +311,67 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             }
 
             return Tuple.Create(false, "");
+        }
+
+        public override void RefreshPackageIndexes()
+        {
+            var (found, path) = GetVcpkgPath();
+            var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
+            var (gitFound, gitPath) = CoreTools.Which("git");
+
+            // TODO: Check if Settings.Get("UpdateVcpkgGitPorts") is still needed
+            if (!Settings.Get("UpdateVcpkgGitPorts"))
+            {
+                INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
+                logger.Error("The user has disabled updating vcpkg sources.");
+                logger.Close(0);
+                return;
+            }
+
+            if (!found)
+            {
+                INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
+                logger.Error("Vcpkg was not found???");
+                logger.Close(1);
+                return;
+            }
+
+            if (!gitFound)
+            {
+                INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
+                logger.Error("Vcpkg sources won't be updated since git was not found");
+                logger.Close(1);
+                return;
+            }
+
+            if (!vcpkgRootFound)
+            {
+                INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
+                logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable / the custom vcpkg root setting were not set");
+                logger.Close(1);
+                return;
+            }
+
+
+            Process p = new()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = gitPath,
+                    WorkingDirectory = vcpkgRoot,
+                    Arguments = Properties.ExecutableCallArgs + " pull --all",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                }
+            };
+            IProcessTaskLogger processLogger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+            p.Start();
+            p.WaitForExit();
+            processLogger.AddToStdOut(p.StandardOutput.ReadToEnd());
+            processLogger.AddToStdErr(p.StandardError.ReadToEnd());
+            processLogger.Close(p.ExitCode);
         }
 
         private Tuple<bool, string> GetVcpkgRoot()

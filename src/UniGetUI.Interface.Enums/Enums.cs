@@ -83,6 +83,7 @@ namespace UniGetUI.Interface.Enums
         Warning_Round = '\uE93F',
         WinGet = '\uE940',
         Rust = '\uE941',
+        Vcpkg = '\uE916' // TODO: Needs to be replaced
     }
 
     public class NotificationArguments
