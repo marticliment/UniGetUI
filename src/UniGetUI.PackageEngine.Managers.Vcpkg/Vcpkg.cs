@@ -283,7 +283,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     Found = false,
                     ExecutablePath = exePath,
                     Version = CoreTools.Translate(
-                        "Vcpkg was not found on your systen."),
+                        "Vcpkg was not found on your system."),
                 };
             }
 
