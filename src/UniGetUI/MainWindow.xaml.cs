@@ -399,16 +399,12 @@ namespace UniGetUI.Interface
             TrayIcon = new TaskbarIcon();
             ContentRoot.Children.Add(TrayIcon);
             Closed += (_, _) => TrayIcon.Dispose();
-            TrayIcon.ContextMenuMode = H.NotifyIcon.ContextMenuMode.PopupMenu;
+            TrayIcon.ContextMenuMode = ContextMenuMode.PopupMenu;
 
             XamlUICommand ShowHideCommand = new();
             ShowHideCommand.ExecuteRequested += (_, _) =>
             {
-                if (MainApp.Instance.TooltipStatus.AvailableUpdates > 0)
-                {
-                    MainApp.Instance?.MainWindow?.NavigationPage?.UpdatesNavButton?.ForceClick();
-                }
-
+                NavigationPage?.LoadDefaultPage();
                 Activate();
             };
 

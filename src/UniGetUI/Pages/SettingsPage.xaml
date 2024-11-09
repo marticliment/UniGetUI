@@ -112,12 +112,8 @@
                                 />
                             <widgets:ComboboxCard
                                 x:Name="StartupPageSelector"
-                                Text="Startup page:"
+                                Text="UniGetUI startup page:"
                                 SettingName="StartupPage"
-                                />
-                            <widgets:CheckboxCard
-                                Text="Do not remove successful operations from the list automatically"
-                                SettingName="MaintainSuccessfulInstalls"
                                 />
                             <widgets:CheckboxCard
                                 Text="Show UniGetUI on the system tray"
@@ -137,6 +133,10 @@
                                 x:Name="ResetIconCache"
                                 Click="ResetIconCache_OnClick"
                             />
+                            <widgets:CheckboxCard
+                                Text="Do not remove successful operations from the list automatically"
+                                SettingName="MaintainSuccessfulInstalls"
+                                />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
 
