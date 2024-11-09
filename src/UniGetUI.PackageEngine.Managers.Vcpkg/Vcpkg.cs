@@ -7,6 +7,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
+using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -23,6 +24,17 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         public Vcpkg()
         {
+            Dependencies = [
+                // GIT is required for vcpkg updates to work
+                new ManagerDependency(
+                    "Git",
+                    Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                    "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {winget install --id Git.Git --exact "
+                        + "--accept-source-agreements --accept-package-agreements --force; if($error.count -ne 0){pause}}\"",
+                    "scoop install main/git",
+                    async () => (await CoreTools.WhichAsync("git.exe")).Item1)
+            ];
+
             Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
