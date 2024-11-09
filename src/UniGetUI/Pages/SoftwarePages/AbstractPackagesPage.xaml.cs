@@ -947,6 +947,8 @@ namespace UniGetUI.Interface
                 var icon = await Task.Run(wrapper.Package.GetIconUrlIfAny);
                 if(icon is not null) wrapper.PackageIcon = icon;
             }
+
+            FilterPackages();
         }
     }
 }

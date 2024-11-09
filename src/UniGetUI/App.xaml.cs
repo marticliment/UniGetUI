@@ -19,6 +19,7 @@ using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using WinRT.Interop;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 namespace UniGetUI
@@ -84,13 +85,23 @@ namespace UniGetUI
 
         private static async void LoadGSudo()
         {
-            if (Settings.Get("UseUserGSudo"))
+#if DEBUG
+            bool DEBUG = true;
+#else
+            bool DEBUG = false;
+#endif
+            if (!DEBUG && !Settings.Get("DisableUniGetUIElevator"))
             {
-                Tuple<bool, string> gsudo_result = await CoreTools.WhichAsync("gsudo.exe");
-                if (gsudo_result.Item1 != false)
+                Logger.ImportantInfo("Using built-in UniGetUI Elevator");
+                CoreData.GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "UniGetUI Elevator.exe");
+            }
+            else if (Settings.Get("UseUserGSudo"))
+            {
+                var(found, gsudo_path) = await CoreTools.WhichAsync("gsudo.exe");
+                if (found)
                 {
-                    Logger.Info($"Using System GSudo at {gsudo_result.Item2}");
-                    CoreData.GSudoPath = gsudo_result.Item2;
+                    Logger.Info($"Using System GSudo at {gsudo_path}");
+                    CoreData.GSudoPath = gsudo_path;
                 }
                 else
                 {
@@ -100,8 +111,8 @@ namespace UniGetUI
             }
             else
             {
+                Logger.Warn($"Using bundled GSudo at {CoreData.GSudoPath} since UniGetUI Elevator is not available!");
                 CoreData.GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
-                Logger.Info($"Using bundled GSudo at {CoreData.GSudoPath}");
             }
         }
 

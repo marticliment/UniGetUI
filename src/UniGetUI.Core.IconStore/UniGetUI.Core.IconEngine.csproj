@@ -32,4 +32,9 @@
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PhotoSauce.MagicScaler" Version="0.14.2" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.10" />
+  </ItemGroup>
 </Project>

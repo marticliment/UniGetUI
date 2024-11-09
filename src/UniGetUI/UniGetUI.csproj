@@ -6,7 +6,7 @@
     <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
     <Platforms>ARM64;x64</Platforms>
     <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
-   <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <Authors>Martí Climent and the contributors</Authors>
     <PublisherName>Martí Climent</PublisherName>
     <Nullable>enable</Nullable>
@@ -29,10 +29,10 @@
       <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
       <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
       <WindowsPackageType>None</WindowsPackageType>
-        <WindowsSdkPackageVersion>10.0.26100.53</WindowsSdkPackageVersion>
+      <WindowsSdkPackageVersion>10.0.26100.53</WindowsSdkPackageVersion>
 
-      <!--PublishTrimmed>true</PublishTrimmed-->
-      <!--TrimMode>partial</TrimMode-->
+      <!--PublishTrimmed>true</PublishTrimmed>
+      <TrimMode>partial</TrimMode-->
       <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
   </PropertyGroup>
 
@@ -73,11 +73,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Common" Version="8.3.2" />
     <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.1.240916" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.1.240916" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.1.240916" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.1.240916" />
-    <PackageReference Include="H.NotifyIcon.WinUI" Version="2.1.3" />
+    <PackageReference Include="H.NotifyIcon.WinUI" Version="2.1.4" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
@@ -248,9 +249,15 @@
     <Content Update="Assets\Symbols\Font\fonts\UniGetUI-Symbols.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="Assets\Utilities\gsudo.exe">
+    <Content Update="Assets\Utilities\UniGetUI Elevator.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+      <Content Update="Assets\Utilities\getfilesiginforedist.dll">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Update="Assets\Utilities\gsudo.exe">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     <Content Update="Assets\Utilities\install_scoop.cmd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

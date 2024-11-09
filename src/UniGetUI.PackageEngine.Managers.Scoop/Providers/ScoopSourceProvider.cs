@@ -14,7 +14,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
     {
         public ScoopSourceProvider(Scoop manager) : base(manager) { }
 
-        public override OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        protected override OperationVeredict _getAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
@@ -24,7 +24,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return ["bucket", "add", source.Name, source.Url.ToString()];
         }
 
-        public override OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
+        protected override OperationVeredict _getRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
         }
