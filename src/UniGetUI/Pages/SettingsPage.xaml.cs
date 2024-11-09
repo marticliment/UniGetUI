@@ -11,6 +11,7 @@ using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Interfaces;
@@ -26,7 +27,7 @@ namespace UniGetUI.Interface
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SettingsInterface : Page
+    public sealed partial class SettingsInterface : IEnterLeaveListener
     {
         private readonly HyperlinkButton ResetBackupDirectory;
         private readonly HyperlinkButton OpenBackupDirectory;
@@ -336,12 +337,11 @@ namespace UniGetUI.Interface
 
                 SetManagerStatus(Manager);
                 EnableOrDisableEntries();
-
                 MainLayout.Children.Add(ManagerExpander);
-                InterfaceLoaded = true;
 
-                LoadIconCacheSize();
             }
+
+            InterfaceLoaded = true;
         }
 
         private async void LoadIconCacheSize()
@@ -585,6 +585,20 @@ namespace UniGetUI.Interface
         {
             if(InterfaceLoaded)
                 InterfaceSettingsExpander.ShowRestartRequiredBanner();
+        }
+
+        public void OnEnter()
+        {
+            LoadIconCacheSize();
+        }
+
+        public void OnLeave()
+        {
+            foreach (var item in MainLayout.Children)
+            {
+                if (item is SettingsEntry expander)
+                    expander.IsExpanded = false;
+            }
         }
     }
 }
