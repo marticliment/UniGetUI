@@ -220,6 +220,8 @@ namespace UniGetUI.Interface
 
         private void NavigateToPage(Page TargetPage)
         {
+            if (CurrentPage == TargetPage) return;
+
             if (!PageButtonReference.TryGetValue(TargetPage, out var pageButton))
             {
                 PageButtonReference.Add(TargetPage, MoreNavButton);
@@ -229,7 +231,6 @@ namespace UniGetUI.Interface
             }
             foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
             {
-
                 button.ToggleButton.IsChecked = button == pageButton;
             }
 
