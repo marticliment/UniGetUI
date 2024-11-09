@@ -113,7 +113,12 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
             return OperationVeredict.Failed;
         }
 
-        if (uintCode == 0x8A15002B || uintCode == 0x8A15010D || uintCode == 0x8A15004F || uintCode == 0x8A15010E)
+		if (uintCode == 0x8A15002B)
+		{
+			return OperationVeredict.Failed;
+		}
+
+        if (uintCode == 0x8A15010D || uintCode == 0x8A15004F || uintCode == 0x8A15010E)
         {
             // Application is already installed
             return OperationVeredict.Succeeded;
