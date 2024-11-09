@@ -55,7 +55,7 @@ namespace UniGetUI.Interface
             PageButtonReference.Add(SettingsPage, SettingsNavButton);
             PageButtonReference.Add(BundlesPage, BundlesNavButton);
 
-            DiscoverNavButton.ForceClick();
+            LoadDefaultPage();
 
             if (CoreTools.IsAdministrator() && !Settings.Get("AlreadyWarnedAboutAdmin"))
             {
@@ -137,25 +137,45 @@ namespace UniGetUI.Interface
             };
         }
 
-        private void DiscoverNavButton_Click(object sender, EventArgs e)
+        public void LoadDefaultPage()
         {
-            NavigateToPage(DiscoverPage);
+            switch (Settings.GetValue("StartupPage"))
+            {
+                case "discover":
+                    NavigateToPage(DiscoverPage);
+                    break;
+                case "updates":
+                    NavigateToPage(UpdatesPage);
+                    break;
+                case "installed":
+                    NavigateToPage(InstalledPage);
+                    break;
+                case "bundles":
+                    NavigateToPage(BundlesPage);
+                    break;
+                case "settings":
+                    NavigateToPage(SettingsPage);
+                    break;
+                default:
+                    if (MainApp.Instance.TooltipStatus.AvailableUpdates > 0)
+                        NavigateToPage(UpdatesPage);
+                    else
+                        NavigateToPage(DiscoverPage);
+                    break;
+            }
         }
+
+        private void DiscoverNavButton_Click(object sender, EventArgs e)
+            => NavigateToPage(DiscoverPage);
 
         private void InstalledNavButton_Click(object sender, EventArgs e)
-        {
-            NavigateToPage(InstalledPage);
-        }
+            => NavigateToPage(InstalledPage);
 
         private void UpdatesNavButton_Click(object sender, EventArgs e)
-        {
-            NavigateToPage(UpdatesPage);
-        }
+            => NavigateToPage(UpdatesPage);
 
         private void BundlesNavButton_Click(object sender, EventArgs e)
-        {
-            NavigateToPage(BundlesPage);
-        }
+            => NavigateToPage(BundlesPage);
 
         private void MoreNavButton_Click(object sender, EventArgs e)
         {
@@ -180,9 +200,7 @@ namespace UniGetUI.Interface
         }
 
         private void SettingsNavButton_Click(object sender, EventArgs e)
-        {
-            NavigateToPage(SettingsPage);
-        }
+            => NavigateToPage(SettingsPage);
 
         private async void AboutNavButton_Click(object sender, EventArgs e)
         {
@@ -202,6 +220,8 @@ namespace UniGetUI.Interface
 
         private void NavigateToPage(Page TargetPage)
         {
+            if (CurrentPage == TargetPage) return;
+
             if (!PageButtonReference.TryGetValue(TargetPage, out var pageButton))
             {
                 PageButtonReference.Add(TargetPage, MoreNavButton);
@@ -211,7 +231,6 @@ namespace UniGetUI.Interface
             }
             foreach (NavButton button in MainApp.Instance.MainWindow.NavButtonList)
             {
-
                 button.ToggleButton.IsChecked = button == pageButton;
             }
 
@@ -229,9 +248,7 @@ namespace UniGetUI.Interface
         }
 
         private void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
-        {
-            DialogHelper.ShowReleaseNotes();
-        }
+            => DialogHelper.ShowReleaseNotes();
 
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
         {
@@ -252,15 +269,9 @@ namespace UniGetUI.Interface
         {
             ShowHelp();
         }
-        public void ShowHelp()
-        {
-            if (HelpPage is null)
-            {
-                HelpPage = new HelpDialog();
-            }
 
-            NavigateToPage(HelpPage);
-        }
+        public void ShowHelp()
+            => NavigateToPage(HelpPage ??= new HelpDialog());
 
         private void QuitUniGetUI_Click(object sender, RoutedEventArgs e)
         {

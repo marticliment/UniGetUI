@@ -31,7 +31,7 @@ namespace UniGetUI.Interface
         private readonly HyperlinkButton ResetBackupDirectory;
         private readonly HyperlinkButton OpenBackupDirectory;
         private readonly TextBlock BackupDirectoryLabel;
-        private bool InterfaceLoaded = false;
+        private bool InterfaceLoaded;
 
         public SettingsInterface()
         {
@@ -51,7 +51,7 @@ namespace UniGetUI.Interface
             bool isFirst = true;
             foreach (KeyValuePair<string, string> entry in lang_dict)
             {
-                LanguageSelector.AddItem(entry.Value, entry.Key.ToString(), isFirst);
+                LanguageSelector.AddItem(entry.Value, entry.Key, isFirst);
                 isFirst = false;
             }
             LanguageSelector.ShowAddedItems();
@@ -89,9 +89,13 @@ namespace UniGetUI.Interface
             ThemeSelector.AddItem(CoreTools.AutoTranslated("Follow system color scheme"), "auto");
             ThemeSelector.ShowAddedItems();
 
-            // UI Section
-            // DisableIconsOnPackageLists.Text = "[EXPERIMENTAL] " + CoreTools.Translate("Show package icons on package lists");
-
+            StartupPageSelector.AddItem(CoreTools.AutoTranslated("Default"), "default");
+            StartupPageSelector.AddItem(CoreTools.AutoTranslated("Discover Packages"), "discover");
+            StartupPageSelector.AddItem(CoreTools.AutoTranslated("Software Updates"), "updates");
+            StartupPageSelector.AddItem(CoreTools.AutoTranslated("Installed Packages"), "installed");
+            StartupPageSelector.AddItem(CoreTools.AutoTranslated("Package Bundles"), "bundles");
+            StartupPageSelector.AddItem(CoreTools.AutoTranslated("Settings"), "settings");
+            StartupPageSelector.ShowAddedItems();
 
             // Backup Section
             BackupDirectoryLabel = (TextBlock)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(0);
