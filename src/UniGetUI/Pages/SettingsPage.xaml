@@ -110,6 +110,11 @@
                                 SettingName="PreferredTheme"
                                 ValueChanged="ThemeSelector_ValueChanged"
                                 />
+                            <widgets:ComboboxCard
+                                x:Name="StartupPage"
+                                Text="Startup page:"
+                                SettingName="StartupPage"
+                                />
                             <widgets:CheckboxCard
                                 Text="Do not remove successful operations from the list automatically"
                                 SettingName="MaintainSuccessfulInstalls"

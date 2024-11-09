@@ -57,6 +57,28 @@ namespace UniGetUI.Interface
 
             DiscoverNavButton.ForceClick();
 
+            string StartupPage = Settings.GetValue("StartupPage");
+            switch (StartupPage)
+            {
+                case "discover":
+                    NavigateToPage(DiscoverPage);
+                    break;
+                case "updates":
+                    NavigateToPage(UpdatesPage);
+                    break;
+                case "installed":
+                    NavigateToPage(InstalledPage);
+                    break;
+                case "bundles":
+                    NavigateToPage(BundlesPage);
+                    break;
+                case "settings":
+                    NavigateToPage(SettingsPage);
+                    break;
+                default: // setting not set or setting set to `default` (
+                    break;
+            }
+
             if (CoreTools.IsAdministrator() && !Settings.Get("AlreadyWarnedAboutAdmin"))
             {
                 Settings.Set("AlreadyWarnedAboutAdmin", true);

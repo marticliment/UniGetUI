@@ -89,6 +89,15 @@ namespace UniGetUI.Interface
             ThemeSelector.AddItem(CoreTools.AutoTranslated("Follow system color scheme"), "auto");
             ThemeSelector.ShowAddedItems();
 
+            StartupPage.AddItem(CoreTools.AutoTranslated("Discover Packages"), "discover");
+            StartupPage.AddItem(CoreTools.AutoTranslated("Software Updates"), "updates");
+            StartupPage.AddItem(CoreTools.AutoTranslated("Installed Packages"), "installed");
+            StartupPage.AddItem(CoreTools.AutoTranslated("Package Bundles"), "bundles");
+            StartupPage.AddItem(CoreTools.AutoTranslated("Settings"), "settings");
+			// At the moment this is just discover (`DiscoverNavButton.ForceClick();` in MainView.xaml.cs), but that might change
+            StartupPage.AddItem(CoreTools.AutoTranslated("Default"), "default");
+            StartupPage.ShowAddedItems();
+
             // UI Section
             // DisableIconsOnPackageLists.Text = "[EXPERIMENTAL] " + CoreTools.Translate("Show package icons on package lists");
 
