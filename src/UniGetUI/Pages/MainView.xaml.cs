@@ -124,15 +124,15 @@ namespace UniGetUI.Interface
                 }
                 else if (e.Key == Windows.System.VirtualKey.F5 || (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.R))
                 {
-                    (CurrentPage as IPageWithKeyboardShortcuts)?.ReloadTriggered();
+                    (CurrentPage as IKeyboardShortcutListener)?.ReloadTriggered();
                 }
                 else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.F)
                 {
-                    (CurrentPage as IPageWithKeyboardShortcuts)?.SearchTriggered();
+                    (CurrentPage as IKeyboardShortcutListener)?.SearchTriggered();
                 }
                 else if (IS_CONTROL_PRESSED && e.Key == Windows.System.VirtualKey.A)
                 {
-                    (CurrentPage as IPageWithKeyboardShortcuts)?.SelectAllTriggered();
+                    (CurrentPage as IKeyboardShortcutListener)?.SelectAllTriggered();
                 }
             };
         }
@@ -245,6 +245,8 @@ namespace UniGetUI.Interface
             CurrentPage = TargetPage;
 
             (CurrentPage as AbstractPackagesPage)?.FocusPackageList();
+            (CurrentPage as IEnterLeaveListener)?.OnEnter();
+            (OldPage as IEnterLeaveListener)?.OnLeave();
         }
 
         private void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)

@@ -15,7 +15,7 @@ namespace UniGetUI.Interface.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public abstract partial class BaseLogPage : IPageWithKeyboardShortcuts
+    public abstract partial class BaseLogPage : IKeyboardShortcutListener
     {
         protected int LOG_LEVEL = 4;
         private readonly bool LogLevelEnabled;

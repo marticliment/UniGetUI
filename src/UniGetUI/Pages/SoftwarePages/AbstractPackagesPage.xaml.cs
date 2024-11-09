@@ -24,7 +24,7 @@ using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface
 {
-    public abstract partial class AbstractPackagesPage : IPageWithKeyboardShortcuts
+    public abstract partial class AbstractPackagesPage : IKeyboardShortcutListener, IEnterLeaveListener
     {
 
         protected struct PackagesPageData
@@ -950,6 +950,18 @@ namespace UniGetUI.Interface
             }
 
             FilterPackages();
+        }
+
+        public void OnEnter()
+        {
+            Visibility = Visibility.Visible;
+            IsEnabled = true;
+        }
+
+        public void OnLeave()
+        {
+            Visibility = Visibility.Collapsed;
+            IsEnabled = false;
         }
     }
 }
