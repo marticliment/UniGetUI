@@ -26,7 +26,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
-                SupportsCustomSources = false,
+                SupportsCustomSources = true,
             };
 
             string DefaultTriplet = GetDefaultTriplet();
@@ -63,7 +63,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 KnownSources = [.. TripletSourceMap.Values],
             };
 
-            // SourceProvider = new VcpkgSourceProvider(this);
+            SourceProvider = new VcpkgSourceProvider(this);
             OperationProvider = new VcpkgOperationProvider(this);
         }
 

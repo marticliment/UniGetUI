@@ -8,34 +8,21 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 {
-    /*internal sealed class VcpkgSourceProvider : BaseSourceProvider<PackageManager>
+    internal sealed class VcpkgSourceProvider : BaseSourceProvider<PackageManager>
     {
         public VcpkgSourceProvider(Vcpkg manager) : base(manager) { }
 
         public override string[] GetAddSourceParameters(IManagerSource source)
-        {
-            return [];
-        }
+            => throw new NotImplementedException();
 
         public override string[] GetRemoveSourceParameters(IManagerSource source)
-        {
-            return [];
-        }
+            => throw new NotImplementedException();
 
         protected override OperationVeredict _getAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
-        {
-            var (vcpkgRootFound, vcpkgRoot) = Vcpkg.GetVcpkgRoot();
-            string tripletLocation = Path.Join(vcpkgRoot, "triplets");
-            string communityTripletLocation = Path.Join(vcpkgRoot, "triplets", "community");
-            return vcpkgRootFound && (File.Exists(Path.Join(tripletLocation, source.Name + ".cmake")) ||
-                File.Exists(Path.Join(communityTripletLocation, source.Name + ".cmake"))) ?
-                OperationVeredict.Succeeded : OperationVeredict.Failed;
-        }
+            => throw new NotImplementedException();
 
         protected override OperationVeredict _getRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
-        {
-            return OperationVeredict.Succeeded;
-        }
+            => throw new NotImplementedException();
 
         protected override IEnumerable<IManagerSource> GetSources_UnSafe()
         {
@@ -50,13 +37,12 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 foreach (string tripletFile in Directory.EnumerateFiles(tripletLocation).Concat(Directory.EnumerateFiles(communityTripletLocation)))
                 {
                     string triplet = Path.GetFileNameWithoutExtension(tripletFile);
-                    Sources.Add(new ManagerSource(Manager, triplet, URI_VCPKG_IO));
+                    Sources.Add(new ManagerSource(Manager, triplet, Vcpkg.URI_VCPKG_IO));
                 }
             }
 
             return Sources;
         }
 
-        public static Uri URI_VCPKG_IO = new Uri("https://vcpkg.io/");
-    }*/
+    }
 }

@@ -92,8 +92,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             AutomationName = CoreTools.Translate("Package {name} from {manager}",
                 new Dictionary<string, object?> { { "name", Name }, { "manager", Source.AsString_DisplayName } });
 
-            __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id);
-            __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + (this as Package).Version);
+            __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.AsString_DisplayName + "\\" + Id);
+            __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.AsString_DisplayName + "\\" + Id + "\\" + (this as Package).Version);
             IsUpgradable = false;
 
             ignoredId = IgnoredUpdatesDatabase.GetIgnoredIdForPackage(this);

@@ -414,7 +414,7 @@ namespace UniGetUI.Interface
                 ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
                 ExtraSettingsCards[Manager].Insert(index++, ParallelCard);
 
-                if (Manager.Capabilities.SupportsCustomSources)
+                if (Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
                 {
                     SettingsCard SourceManagerCard = new();
                     SourceManagerCard.Resources["SettingsCardLeftIndention"] = 10;
@@ -439,11 +439,6 @@ namespace UniGetUI.Interface
 
                 LoadIconCacheSize();
             }
-        }
-
-        private void SetDefaultVcpkgRoot(object? sender, EventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         private async void LoadIconCacheSize()
