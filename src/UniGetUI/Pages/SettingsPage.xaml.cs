@@ -203,6 +203,9 @@ namespace UniGetUI.Interface
                 SettingName = "DisableUpdateVcpkgGitPorts"
             };
             ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_UpdateGitPorts);
+
+            // GetDefaultTriplet factors in the `DefaultVcpkgTriplet` setting as its first priority
+            Settings.SetValue("DefaultVcpkgTriplet", Vcpkg.GetDefaultTriplet());
             ComboboxCard Vcpkg_DefaultTriplet = new()
             {
                 Text = CoreTools.Translate("Default vcpkg triplet"),
