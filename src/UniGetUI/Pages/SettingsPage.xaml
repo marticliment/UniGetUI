@@ -111,7 +111,7 @@
                                 ValueChanged="ThemeSelector_ValueChanged"
                                 />
                             <widgets:ComboboxCard
-                                x:Name="StartupPage"
+                                x:Name="StartupPageSelector"
                                 Text="Startup page:"
                                 SettingName="StartupPage"
                                 />
