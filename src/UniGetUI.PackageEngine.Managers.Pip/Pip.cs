@@ -20,7 +20,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         public Pip()
         {
             Dependencies = [
-                // GIT is required for vcpkg updates to work
+                // parse_pip_search is required for pip package finding to work
                 new ManagerDependency(
                     "parse-pip-search",
                     Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
