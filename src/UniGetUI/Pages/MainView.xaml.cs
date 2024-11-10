@@ -11,6 +11,7 @@ using UniGetUI.Interface.Pages.LogPage;
 using UniGetUI.Interface.SoftwarePages;
 using UniGetUI.Interface.Widgets;
 using Windows.UI.Core;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -24,8 +25,11 @@ namespace UniGetUI.Interface
         public DiscoverSoftwarePage DiscoverPage;
         public SoftwareUpdatesPage UpdatesPage;
         public InstalledPackagesPage InstalledPage;
-        public HelpDialog? HelpPage;
         public PackageBundlesPage BundlesPage;
+        public UniGetUILogPage? UniGetUILogPage;
+        public ManagerLogsPage? ManagerLogPage;
+        public OperationHistoryPage? OperationHistoryPage;
+        public HelpDialog? HelpPage;
         public Page? OldPage;
         public Page? CurrentPage;
         private readonly Dictionary<Page, NavButton> PageButtonReference = [];
@@ -254,17 +258,24 @@ namespace UniGetUI.Interface
 
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
         {
-            NavigateToPage(new OperationHistoryPage());
+            OperationHistoryPage ??= new OperationHistoryPage();
+            NavigateToPage(OperationHistoryPage);
         }
 
         private void ManagerLogsMenu_Click(object sender, RoutedEventArgs e)
+            => OpenPackageManagerLogs();
+
+        public void OpenPackageManagerLogs(PackageManager? manager = null)
         {
-            NavigateToPage(new ManagerLogsPage());
+            ManagerLogPage ??= new ManagerLogsPage();
+            NavigateToPage(ManagerLogPage);
+            if(manager is not null) ManagerLogPage.LoadForManager(manager);
         }
 
         public void UniGetUILogs_Click(object sender, RoutedEventArgs e)
         {
-            NavigateToPage(new AppLogPage());
+            UniGetUILogPage ??= new UniGetUILogPage();
+            NavigateToPage(UniGetUILogPage);
         }
 
         private void HelpMenu_Click(object sender, RoutedEventArgs e)

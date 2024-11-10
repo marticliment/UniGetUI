@@ -14,47 +14,53 @@ namespace UniGetUI.Interface.Pages.LogPage
         {
 
         }
-        public override void LoadLog()
+
+        public void LoadForManager(PackageManager manager)
         {
             bool IS_DARK = ActualTheme == Microsoft.UI.Xaml.ElementTheme.Dark;
-
             bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains(CoreTools.Translate("Verbose")) ?? false;
+
+            IManagerLogger TaskLogger = manager.TaskLogger;
+            LogTextBox.Blocks.Clear();
+            Paragraph versionParagraph = new();
+            versionParagraph.Inlines.Add(new Run { Text = $"Manager {manager.DisplayName} with version:\n" });
+            versionParagraph.Inlines.Add(new Run { Text = manager.Status.Version });
+            versionParagraph.Inlines.Add(new Run { Text = "\n\n——————————————————————————————————————————\n\n" });
+            LogTextBox.Blocks.Add(versionParagraph);
+
+            foreach (ITaskLogger operation in TaskLogger.Operations)
+            {
+                Paragraph p = new();
+                foreach (string line in operation.AsColoredString(verbose))
+                {
+                    Brush color = line[0] switch
+                    {
+                        '0' => new SolidColorBrush { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE },
+                        '1' => new SolidColorBrush { Color = IS_DARK ? DARK_LIGHT_GREY : LIGHT_LIGHT_GREY },
+                        '2' => new SolidColorBrush { Color = IS_DARK ? DARK_RED : LIGHT_RED },
+                        '3' => new SolidColorBrush { Color = IS_DARK ? DARK_BLUE : LIGHT_BLUE },
+                        '4' => new SolidColorBrush { Color = IS_DARK ? DARK_GREEN : LIGHT_GREEN },
+                        '5' => new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW },
+                        _ => new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW },
+                    };
+                    p.Inlines.Add(new Run { Text = line[1..] + "\n", Foreground = color });
+                }
+                ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
+                LogTextBox.Blocks.Add(p);
+            }
+        }
+
+        public override void LoadLog(bool isReload = false)
+        {
             foreach (PackageManager manager in PEInterface.Managers)
             {
                 if (LogLevelCombo.SelectedValue?.ToString()?.Contains(manager.DisplayName) ?? false)
                 {
-                    IManagerLogger TaskLogger = manager.TaskLogger;
-                    LogTextBox.Blocks.Clear();
-                    Paragraph versionParagraph = new();
-                    versionParagraph.Inlines.Add(new Run { Text = $"Manager {manager.DisplayName} with version:\n" });
-                    versionParagraph.Inlines.Add(new Run { Text = manager.Status.Version });
-                    versionParagraph.Inlines.Add(new Run { Text = "\n\n——————————————————————————————————————————\n\n" });
-                    LogTextBox.Blocks.Add(versionParagraph);
-
-                    foreach (ITaskLogger operation in TaskLogger.Operations)
-                    {
-                        Paragraph p = new();
-                        foreach (string line in operation.AsColoredString(verbose))
-                        {
-                            Brush color = line[0] switch
-                            {
-                                '0' => new SolidColorBrush { Color = IS_DARK ? DARK_WHITE : LIGHT_WHITE },
-                                '1' => new SolidColorBrush { Color = IS_DARK ? DARK_LIGHT_GREY : LIGHT_LIGHT_GREY },
-                                '2' => new SolidColorBrush { Color = IS_DARK ? DARK_RED : LIGHT_RED },
-                                '3' => new SolidColorBrush { Color = IS_DARK ? DARK_BLUE : LIGHT_BLUE },
-                                '4' => new SolidColorBrush { Color = IS_DARK ? DARK_GREEN : LIGHT_GREEN },
-                                '5' => new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW },
-                                _ => new SolidColorBrush { Color = IS_DARK ? DARK_YELLOW : LIGHT_YELLOW },
-                            };
-                            p.Inlines.Add(new Run { Text = line[1..] + "\n", Foreground = color });
-                        }
-                        ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
-                        LogTextBox.Blocks.Add(p);
-                    }
+                    LoadForManager(manager);
                     break;
                 }
 
-                MainScroller.ScrollToVerticalOffset(MainScroller.ScrollableHeight);
+                if(isReload) MainScroller.ScrollToVerticalOffset(MainScroller.ScrollableHeight);
             }
         }
 
