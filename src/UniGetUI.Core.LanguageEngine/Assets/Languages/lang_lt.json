@@ -727,7 +727,7 @@
   "{pm} could not be found": "Nepavyko rasti „{pm}“",
   "{pm} found: {state}": "„{pm}“ rasta/-s: „{state}“",
   "{pm} is disabled": "„{pm}“  išjungta/išgalinta (-s)",
-  "{pm} is enabled and ready to go": "„{pm}“ yra įjungta/išgalinta (-s) ir pasiruošusi/-ęs",
+  "{pm} is enabled and ready to go": "„{pm}“ yra įjungta/įgalinta (-s) ir pasiruošusi/-ęs",
   "{pm} package manager specific preferences": "„{pm}“ paketų tvarkytuvei/-ui specifinės parinktys",
   "{pm} preferences": "„{pm}“ parinktys",
   "{pm} version:": "„{pm}“ versija:",
