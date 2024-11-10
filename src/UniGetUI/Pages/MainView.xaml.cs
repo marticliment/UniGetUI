@@ -279,16 +279,12 @@ namespace UniGetUI.Interface
         }
 
         private void HelpMenu_Click(object sender, RoutedEventArgs e)
-        {
-            ShowHelp();
-        }
+            => ShowHelp();
 
         public void ShowHelp()
             => NavigateToPage(HelpPage ??= new HelpDialog());
 
         private void QuitUniGetUI_Click(object sender, RoutedEventArgs e)
-        {
-            MainApp.Instance.DisposeAndQuit();
-        }
+            => MainApp.Instance.DisposeAndQuit();
     }
 }

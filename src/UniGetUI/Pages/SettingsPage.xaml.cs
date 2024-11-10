@@ -11,7 +11,9 @@ using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Pages;
+using UniGetUI.Interface.Pages.LogPage;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Interfaces;
@@ -187,13 +189,16 @@ namespace UniGetUI.Interface
 
             foreach (IPackageManager Manager in PEInterface.Managers)
             {
-
+                // Creation of the actual expander
                 SettingsEntry ManagerExpander = new()
                 {
                     Text = Manager.DisplayName,
                     Description = Manager.Properties.Description.Replace("<br>", "\n").Replace("<b>", "").Replace("</b>", "")
                 };
                 PackageManagerExpanders.Add(Manager, ManagerExpander);
+                ManagerExpander.HeaderIcon = new LocalIcon(Manager.Properties.IconId);
+
+                // Creation of the status footer
 
                 InfoBar ManagerStatus = new();
 
@@ -211,6 +216,41 @@ namespace UniGetUI.Interface
                 LongVersion.FontFamily = new FontFamily("Consolas");
                 LongVersion.Visibility = Visibility.Collapsed;
                 ManagerStatus.Content = LongVersion;
+
+                ManagerStatus.IsClosable = false;
+                ManagerStatus.IsOpen = true;
+                ManagerStatus.CornerRadius = new CornerRadius(0);
+                ManagerStatus.BorderThickness = new (0, 1, 0, 0);
+
+                Button managerLogs = new Button()
+                {
+                    Content = new LocalIcon(IconType.Console),
+                    CornerRadius = new(0),
+                    Padding = new(14, 4, 14, 4),
+                    BorderThickness = new (0),
+                    Margin = new (0, 1, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                    HorizontalAlignment = HorizontalAlignment.Stretch
+                };
+                managerLogs.Click += (_, _) =>
+                {
+                    MainApp.Instance.MainWindow.NavigationPage.OpenPackageManagerLogs(Manager as PackageManager);
+                };
+
+                Grid g = new()
+                {
+                    ColumnSpacing = 1, Margin = new(0, 0, 0, 0),
+                    ColumnDefinitions =
+                    {
+                        new() {Width = new GridLength(1, GridUnitType.Star)},
+                        new() {Width = GridLength.Auto}
+                    }
+                };
+                g.Children.Add(ManagerStatus);
+                g.Children.Add(managerLogs);
+                Grid.SetColumn(ManagerStatus, 0);
+                Grid.SetColumn(managerLogs, 1);
+                ManagerExpander.ItemsFooter = g;
 
                 void SetManagerStatus(IPackageManager manager, bool ShowVersion = false)
                 {
@@ -250,13 +290,7 @@ namespace UniGetUI.Interface
                     }
                 }
 
-                ManagerStatus.IsClosable = false;
-                ManagerStatus.IsOpen = true;
-                ManagerStatus.CornerRadius = new CornerRadius(0);
-                ManagerStatus.BorderThickness = new Thickness(0, 1, 0, 0);
-                ManagerExpander.ItemsFooter = ManagerStatus;
-
-                ManagerExpander.HeaderIcon = new LocalIcon(Manager.Properties.IconId);
+                // Switch to enable/disable said manager
 
                 ToggleSwitch ManagerSwitch = new()
                 {
@@ -296,9 +330,13 @@ namespace UniGetUI.Interface
                     IsClickEnabled = true,
                     ActionIcon = new SymbolIcon(Symbol.Copy)
                 };
-                ManagerPath.Click += (_, _) =>
+
+                ManagerPath.Click += async (_, _) =>
                 {
                     WindowsClipboard.SetText(ManagerPath.Description.ToString() ?? "");
+                    ManagerPath.ActionIcon = new FontIcon() {Glyph = "\uE73E"};
+                    await Task.Delay(1000);
+                    ManagerPath.ActionIcon = new SymbolIcon(Symbol.Copy);
                 };
                 ExtraSettingsCards[Manager].Insert(index++, ManagerPath);
 
