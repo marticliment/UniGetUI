@@ -1,9 +1,10 @@
 @font-face {
   font-family: 'UniGetUI-Symbols';
-  src:
-    url('fonts/UniGetUI-Symbols.ttf?ut936y') format('truetype'),
-    url('fonts/UniGetUI-Symbols.woff?ut936y') format('woff'),
-    url('fonts/UniGetUI-Symbols.svg?ut936y#UniGetUI-Symbols') format('svg');
+  src:  url('fonts/UniGetUI-Symbols.eot?ktqh67');
+  src:  url('fonts/UniGetUI-Symbols.eot?ktqh67#iefix') format('embedded-opentype'),
+    url('fonts/UniGetUI-Symbols.ttf?ktqh67') format('truetype'),
+    url('fonts/UniGetUI-Symbols.woff?ktqh67') format('woff'),
+    url('fonts/UniGetUI-Symbols.svg?ktqh67#UniGetUI-Symbols') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -221,4 +222,7 @@
 }
 .icon-rust:before {
   content: "\e941";
+}
+.icon-vcpkg:before {
+  content: "\e942";
 }

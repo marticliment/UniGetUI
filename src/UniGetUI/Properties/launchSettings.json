@@ -1,9 +1,9 @@
 {
   "profiles": {
-    "ModernWindow (Package)": {
+    "UniGetUI (Package)": {
       "commandName": "MsixPackage"
     },
-    "ModernWindow (Unpackaged)": {
+    "UniGetUI (Unpackaged)": {
       "commandName": "Project"
     }
   }

@@ -9,6 +9,7 @@ using UniGetUI.PackageEngine.Managers.PowerShell7Manager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.Managers.ScoopManager;
 using UniGetUI.PackageEngine.Managers.WingetManager;
+using UniGetUI.PackageEngine.Managers.VcpkgManager;
 using UniGetUI.PackageEngine.PackageLoader;
 
 namespace UniGetUI.PackageEngine
@@ -29,8 +30,9 @@ namespace UniGetUI.PackageEngine
         public static readonly PowerShell PowerShell = new();
         public static readonly PowerShell7 PowerShell7 = new();
         public static readonly Cargo Cargo = new();
+		public static readonly Vcpkg Vcpkg = new();
 
-        public static readonly IPackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, Cargo, DotNet, PowerShell, PowerShell7];
+        public static readonly IPackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, Cargo, Vcpkg, DotNet, PowerShell, PowerShell7];
 
         public static readonly DiscoverablePackagesLoader DiscoveredPackagesLoader = new(Managers);
         public static readonly UpgradablePackagesLoader UpgradablePackagesLoader = new(Managers);

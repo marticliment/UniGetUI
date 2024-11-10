@@ -160,8 +160,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     }
 
                     if (FALSE_PACKAGE_IDS.Contains(elements[0])
-                        || FALSE_PACKAGE_VERSIONS.Contains(elements[1])
-                        || FALSE_PACKAGE_VERSIONS.Contains(elements[2]))
+                        || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                     {
                         continue;
                     }

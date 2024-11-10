@@ -15,6 +15,7 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Managers.VcpkgManager;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
 
@@ -118,6 +119,10 @@ namespace UniGetUI.Interface
                 ExtraSettingsCards.Add(Manager, []);
             }
 
+
+            // ----------------------------------------------------------------------------------------
+
+
             ButtonCard WinGet_ResetWindowsPackageManager = new() {
                 Text = CoreTools.AutoTranslated("Reset WinGet") + $" ({CoreTools.Translate("This may help if no packages are listed")})",
                 ButtonText = CoreTools.AutoTranslated("Reset")
@@ -154,6 +159,10 @@ namespace UniGetUI.Interface
             ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_ResetWindowsPackageManager);
             ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_UseBundled);
 
+
+            // ----------------------------------------------------------------------------------------
+
+
             ButtonCard Scoop_Install = new() { Text = CoreTools.AutoTranslated("Install Scoop"), ButtonText = CoreTools.AutoTranslated("Install") };
             Scoop_Install.Click += (_, _) =>
             {
@@ -176,6 +185,10 @@ namespace UniGetUI.Interface
             ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_Uninstall);
             ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_ResetAppCache);
 
+
+            // ----------------------------------------------------------------------------------------
+
+
             CheckboxCard Chocolatey_SystemChoco = new() { Text = CoreTools.AutoTranslated("Use system Chocolatey"), SettingName = "UseSystemChocolatey" };
             Chocolatey_SystemChoco.StateChanged += (_, _) =>
             {
@@ -183,6 +196,94 @@ namespace UniGetUI.Interface
             };
 
             ExtraSettingsCards[PEInterface.Chocolatey].Add(Chocolatey_SystemChoco);
+
+
+            // ----------------------------------------------------------------------------------------
+
+
+            CheckboxCard Vcpkg_UpdateGitPorts = new()
+            {
+                Text = CoreTools.Translate("Update vcpkg's Git portfiles automatically (requires Git installed)"),
+                SettingName = "DisableUpdateVcpkgGitPorts"
+            };
+            ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_UpdateGitPorts);
+
+            // GetDefaultTriplet factors in the `DefaultVcpkgTriplet` setting as its first priority
+            Settings.SetValue("DefaultVcpkgTriplet", Vcpkg.GetDefaultTriplet());
+            ComboboxCard Vcpkg_DefaultTriplet = new()
+            {
+                Text = CoreTools.Translate("Default vcpkg triplet"),
+                SettingName = "DefaultVcpkgTriplet"
+            };
+            foreach (string triplet in Vcpkg.GetSystemTriplets())
+            {
+                Vcpkg_DefaultTriplet.AddItem(triplet, triplet);
+            }
+            Vcpkg_DefaultTriplet.ShowAddedItems();
+            ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_DefaultTriplet);
+
+            ButtonCard Vcpkg_CustomVcpkgRoot = new()
+            {
+                Text="Change vcpkg root location",
+                ButtonText="Select",
+            };
+            StackPanel p = new() { Orientation = Orientation.Horizontal, Spacing = 5, };
+            var VcPkgRootLabel = new TextBlock() { VerticalAlignment = VerticalAlignment.Center };
+            var ResetVcPkgRootLabel = new HyperlinkButton() { Content = CoreTools.Translate("Reset") };
+            var OpenVcPkgRootLabel = new HyperlinkButton() { Content = CoreTools.Translate("Open") };
+
+            VcPkgRootLabel.Text = Settings.Get("CustomVcpkgRoot")? Settings.GetValue("CustomVcpkgRoot"): "%VCPKG_ROOT%";
+            OpenVcPkgRootLabel.IsEnabled = Settings.Get("CustomVcpkgRoot");
+            ResetVcPkgRootLabel.IsEnabled = Settings.Get("CustomVcpkgRoot");
+
+            ResetVcPkgRootLabel.Click += (_, _) =>
+            {
+                VcPkgRootLabel.Text = "%VCPKG_ROOT%";
+                Settings.Set("CustomVcpkgRoot", false);
+                ResetVcPkgRootLabel.IsEnabled = false;
+                OpenVcPkgRootLabel.IsEnabled = false;
+            };
+
+            OpenVcPkgRootLabel.Click += (_, _) =>
+            {
+                string directory = Settings.GetValue("CustomVcpkgRoot").Replace("/", "\\");
+                if(directory.Any()) Process.Start("explorer.exe", directory);
+            };
+
+            Vcpkg_CustomVcpkgRoot.Click += (_, _) =>
+            {
+                ExternalLibraries.Pickers.FolderPicker openPicker = new(MainApp.Instance.MainWindow.GetWindowHandle());
+                string folder = openPicker.Show();
+                if (folder != string.Empty)
+                {
+                    Settings.SetValue("CustomVcpkgRoot", folder);
+                    VcPkgRootLabel.Text = folder;
+                    ResetVcPkgRootLabel.IsEnabled = true;
+                    OpenVcPkgRootLabel.IsEnabled = true;
+                }
+            };
+
+
+            p.Children.Add(VcPkgRootLabel);
+            p.Children.Add(ResetVcPkgRootLabel);
+            p.Children.Add(OpenVcPkgRootLabel);
+            Vcpkg_CustomVcpkgRoot.Description = p;
+
+
+
+            Vcpkg_CustomVcpkgRoot.Click += (_, _) =>
+            {
+                PackageManagerExpanders[PEInterface.Vcpkg].ShowRestartRequiredBanner();
+            };
+
+
+            ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_CustomVcpkgRoot);
+
+
+
+            // ----------------------------------------------------------------------------------------
+
+
 
             foreach (IPackageManager Manager in PEInterface.Managers)
             {
@@ -317,7 +418,7 @@ namespace UniGetUI.Interface
                 ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
                 ExtraSettingsCards[Manager].Insert(index++, ParallelCard);
 
-                if (Manager.Capabilities.SupportsCustomSources)
+                if (Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
                 {
                     SettingsCard SourceManagerCard = new();
                     SourceManagerCard.Resources["SettingsCardLeftIndention"] = 10;
