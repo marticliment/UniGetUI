@@ -106,7 +106,7 @@ UniGetUI has a built-in autoupdater. However, it can also be updated like any ot
 | **PowerShell 5.x** 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| ❌ 	| ✅ 	| 2.2.0 	|
 | **PowerShell 7.x** 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| ❌ 	| ✅ 	| 3.1.1 	|
 | **Cargo** 	         | ✅ 	| ❌ 	| ❌ 	| ❌ 	| ❌ 	| ❌ 	| ❌ 	| ❌ 	| ❌ 	| 3.1.2 	|
-| **vcpkg** 	         | ✅ 	| ❌ 	| ❌ 	| ❌ 	| ❌ 	| ☑️ 	| ❌ 	| ❌ 	| ☑️ 	| 3.1.4 (not out yet) 	|
+| **vcpkg** 	         | ✅ 	| ❌ 	| ❌ 	| ❌ 	| ❌ 	| ☑️ 	| ☑️ 	| ❌ 	| ☑️ 	| 3.1.4 (not out yet) 	|
 
 ✅: Supported on UniGetUI<br>
 ☑️: Not directly supported but can be easily achieved<br>
