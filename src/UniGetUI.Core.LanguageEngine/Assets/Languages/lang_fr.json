@@ -447,7 +447,7 @@
   "Show a notification when an operation fails": "Afficher une notification lorsqu'une opération échoue",
   "Show a notification when an operation finishes successfully": "Afficher une notification lorsqu'une opération se termine avec succès",
   "Show a notification when there are available updates": "Afficher une notification quand des mises à jour sont disponibles",
-  "Show a silent notification when an operation is running": "Afficher une nouvelle silencieuse lorsqu'une opération est en cours",
+  "Show a silent notification when an operation is running": "Afficher une notification silencieuse lorsqu'une opération est en cours",
   "Show details": "Afficher les détails",
   "Show info about the package on the Updates tab": "Afficher les informations du paquet sur l'onglet Mises à jour logicielles",
   "Show missing translation strings": "Afficher les traductions manquantes",

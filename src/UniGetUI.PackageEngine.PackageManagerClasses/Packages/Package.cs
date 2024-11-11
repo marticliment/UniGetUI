@@ -1,5 +1,7 @@
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Xml;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
@@ -25,8 +27,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         private readonly string ignoredId;
         private readonly string _iconId;
 
-        private bool IconHasBeenCached = false;
-        private Uri? CachedIcon;
+        private static ConcurrentDictionary<int, Uri?> _cachedIconPaths = new();
 
         private IPackageDetails? __details;
         public IPackageDetails Details
@@ -92,8 +93,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             AutomationName = CoreTools.Translate("Package {name} from {manager}",
                 new Dictionary<string, object?> { { "name", Name }, { "manager", Source.AsString_DisplayName } });
 
-            __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id);
-            __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + (this as Package).Version);
+            __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.AsString_DisplayName + "\\" + Id);
+            __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.AsString_DisplayName + "\\" + Id + "\\" + (this as Package).Version);
             IsUpgradable = false;
 
             ignoredId = IgnoredUpdatesDatabase.GetIgnoredIdForPackage(this);
@@ -162,12 +163,12 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public virtual Uri? GetIconUrlIfAny()
         {
-            if (!IconHasBeenCached)
+            if (_cachedIconPaths.TryGetValue(this.GetHashCode(), out Uri? path))
             {
-                CachedIcon = LoadIconUrlIfAny();
-                IconHasBeenCached = true;
+                return path;
             }
-
+            var CachedIcon = LoadIconUrlIfAny();
+            _cachedIconPaths.TryAdd(this.GetHashCode(), CachedIcon);
             return CachedIcon;
         }
 
@@ -314,6 +315,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Version = Version,
                 Source = Source.Name,
             };
+        }
+
+        public static void ResetIconCache()
+        {
+            _cachedIconPaths.Clear();
         }
     }
 }

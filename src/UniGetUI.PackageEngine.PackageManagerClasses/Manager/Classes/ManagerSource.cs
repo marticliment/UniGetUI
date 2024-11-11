@@ -34,11 +34,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             RefreshSourceNames();
         }
 
-        public override string ToString()
-        {
-            throw new NotImplementedException("Use the `AsString` attribute instead");
-        }
-
+        public override string ToString() => AsString;
         /// <summary>
         /// Replaces the current URL with the new one. Must be used only when a placeholder URL is used.
         /// </summary>
