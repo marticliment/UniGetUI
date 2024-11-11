@@ -30,14 +30,14 @@ namespace UniGetUI.Interface
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SettingsInterface : IEnterLeaveListener
+    public sealed partial class SettingsPage : IEnterLeaveListener
     {
         private readonly HyperlinkButton ResetBackupDirectory;
         private readonly HyperlinkButton OpenBackupDirectory;
         private readonly TextBlock BackupDirectoryLabel;
         private bool InterfaceLoaded;
 
-        public SettingsInterface()
+        public SettingsPage()
         {
             InitializeComponent();
 

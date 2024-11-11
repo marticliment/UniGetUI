@@ -42,7 +42,7 @@ namespace UniGetUI
 
         public bool RaiseExceptionAsFatal = true;
 
-        public SettingsInterface settings = null!;
+        public SettingsPage settings = null!;
         public MainWindow MainWindow = null!;
         public ThemeListener ThemeListener = null!;
 
