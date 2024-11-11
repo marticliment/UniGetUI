@@ -679,6 +679,7 @@ namespace UniGetUI.Interface
             }
             InterfaceSettingsExpander.ShowRestartRequiredBanner();
             PackageWrapper.ResetIconCache();
+            Package.ResetIconCache();
             LoadIconCacheSize();
         }
 
