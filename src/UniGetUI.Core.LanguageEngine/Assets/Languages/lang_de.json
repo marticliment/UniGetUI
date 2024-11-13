@@ -514,7 +514,7 @@
   "The size of the backup is estimated to be less than 1MB.": "Die voraussichtliche Größe der Sicherung beträgt weniger als 1MB.",
   "The source {source} was added to {manager} successfully": "Die Quelle {source} wurde erfolgreich zu {manager} hinzugefügt",
   "The source {source} was removed from {manager} successfully": "Die Quelle {source} wurde erfolgreich von {manager} entfernt",
-  "The update will be installed upon closing WingetUI": "Das Update wird nach dem Schließen von WindgetUI installiert",
+  "The update will be installed upon closing WingetUI": "Das Update wird nach dem Schließen von UniGetUI installiert",
   "The update will not continue.": "Das Update wird nicht fortgesetzt.",
   "There are ongoing operations. Quitting WingetUI may cause them to fail. Do you want to continue?": "Laufende Vorgänge gefunden. Wenn Sie WingetUI beenden, können diese fehlschlagen. Möchten Sie fortfahren?",
   "There are some great videos on YouTube that showcase WingetUI and its capabilities. You could learn useful tricks and tips!": "Es gibt einige tolle Videos auf YouTube, die WingetUI und seine Funktionen vorstellen. Sie können nützliche Tricks und Tipps entdecken!",
