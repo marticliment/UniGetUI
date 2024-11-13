@@ -16,6 +16,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
 using Windows.UI.Core;
+using UniGetUI.Interface.Pages;
 using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -23,7 +24,7 @@ using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface
 {
-    public abstract partial class AbstractPackagesPage
+    public abstract partial class AbstractPackagesPage : IKeyboardShortcutListener, IEnterLeaveListener
     {
 
         protected struct PackagesPageData
@@ -949,6 +950,18 @@ namespace UniGetUI.Interface
             }
 
             FilterPackages();
+        }
+
+        public void OnEnter()
+        {
+            Visibility = Visibility.Visible;
+            IsEnabled = true;
+        }
+
+        public void OnLeave()
+        {
+            Visibility = Visibility.Collapsed;
+            IsEnabled = false;
         }
     }
 }

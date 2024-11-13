@@ -42,7 +42,7 @@ namespace UniGetUI
 
         public bool RaiseExceptionAsFatal = true;
 
-        public SettingsInterface settings = null!;
+        public SettingsPage settings = null!;
         public MainWindow MainWindow = null!;
         public ThemeListener ThemeListener = null!;
 
@@ -239,40 +239,38 @@ namespace UniGetUI
 
                 // Bind the background api to the main interface
 
-                BackgroundApi.OnOpenWindow += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                {
-                    MainWindow.Activate();
-                });
-
-                BackgroundApi.OnOpenUpdatesPage += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                {
-                    MainWindow?.NavigationPage?.UpdatesNavButton.ForceClick();
-                    MainWindow?.Activate();
-                });
-
-                BackgroundApi.OnShowSharedPackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                {
-                    MainWindow?.NavigationPage?.DiscoverPage.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
-                    MainWindow?.Activate();
-                });
-
-                BackgroundApi.OnUpgradeAll += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                {
-                    MainWindow?.NavigationPage?.UpdatesPage.UpdateAll();
-                });
-
-                BackgroundApi.OnUpgradeAllForManager += (_, manager) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                {
-                    MainWindow?.NavigationPage?.UpdatesPage.UpdateAllPackagesForManager(manager);
-                });
-
-                BackgroundApi.OnUpgradePackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                {
-                    MainWindow?.NavigationPage?.UpdatesPage.UpdatePackageForId(package);
-                });
-
                 if (!Settings.Get("DisableApi"))
                 {
+
+                    BackgroundApi.OnOpenWindow += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() => MainWindow.Activate());
+
+                    BackgroundApi.OnOpenUpdatesPage += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        MainWindow?.NavigationPage?.NavigateTo(PageType.Updates);
+                        MainWindow?.Activate();
+                    });
+
+                    BackgroundApi.OnShowSharedPackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        MainWindow?.NavigationPage?.DiscoverPage.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
+                        MainWindow?.Activate();
+                    });
+
+                    BackgroundApi.OnUpgradeAll += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        MainWindow?.NavigationPage?.UpdatesPage.UpdateAll();
+                    });
+
+                    BackgroundApi.OnUpgradeAllForManager += (_, manager) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        MainWindow?.NavigationPage?.UpdatesPage.UpdateAllPackagesForManager(manager);
+                    });
+
+                    BackgroundApi.OnUpgradePackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        MainWindow?.NavigationPage?.UpdatesPage.UpdatePackageForId(package);
+                    });
+
                     _ = BackgroundApi.Start();
                 }
 

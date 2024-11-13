@@ -49,16 +49,18 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS;
         readonly bool DISABLE_RELOAD;
+        private readonly bool PACKAGES_CHECKED_BY_DEFAULT;
         protected string LOADER_IDENTIFIER;
         private int LoadOperationIdentifier;
         protected IEnumerable<IPackageManager> Managers { get; private set; }
 
-        public AbstractPackageLoader(IEnumerable<IPackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false, bool DisableReload = false)
+        public AbstractPackageLoader(IEnumerable<IPackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false, bool DisableReload = false, bool CheckedBydefault = false)
         {
             Managers = managers;
             PackageReference = new ConcurrentDictionary<long, IPackage>();
             IsLoaded = false;
             IsLoading = false;
+            PACKAGES_CHECKED_BY_DEFAULT = CheckedBydefault;
             DISABLE_RELOAD = DisableReload;
             ALLOW_MULTIPLE_PACKAGE_VERSIONS = AllowMultiplePackageVersions;
             LOADER_IDENTIFIER = identifier;
@@ -215,6 +217,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 return;
             }
 
+            package.IsChecked = PACKAGES_CHECKED_BY_DEFAULT;
             PackageReference.TryAdd(HashPackage(package), package);
         }
 

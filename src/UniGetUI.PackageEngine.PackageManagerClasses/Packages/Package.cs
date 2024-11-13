@@ -38,13 +38,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public PackageTag Tag
         {
             get => __tag;
-            set { __tag = value; OnPropertyChanged(nameof(Tag)); }
+            set { __tag = value; OnPropertyChanged(); }
         }
 
         public bool IsChecked
         {
             get => __is_checked;
-            set { __is_checked = value; OnPropertyChanged(nameof(IsChecked)); }
+            set { __is_checked = value; OnPropertyChanged(); }
         }
 
         private OverridenInstallationOptions _overriden_options;
@@ -124,9 +124,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
             IsUpgradable = true;
             NewVersion = new_version;
             NewVersionAsFloat = CoreTools.GetVersionStringAsFloat(new_version);
-
-            // Packages in the updates tab are checked by default
-            IsChecked = true;
         }
 
         public long GetHash()

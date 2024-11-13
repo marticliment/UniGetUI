@@ -1,10 +1,10 @@
 ﻿namespace UniGetUI.Interface.Pages
 {
     /// <summary>
-    /// Any object that can perform any of the following listed actions should 
+    /// Any object that can perform any of the following listed actions should
     /// implement this class, to allow proper keyboard bindings on the interface.
     /// </summary>
-    internal interface IPageWithKeyboardShortcuts
+    internal interface IKeyboardShortcutListener
     {
         /// <summary>
         /// Handles when a search-like automation was triggered (Ctrl+F, etc.)

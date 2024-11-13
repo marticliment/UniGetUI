@@ -5,9 +5,9 @@ using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Pages.LogPage
 {
-    internal sealed class AppLogPage : BaseLogPage
+    public sealed class UniGetUILogPage : BaseLogPage
     {
-        public AppLogPage() : base(true)
+        public UniGetUILogPage() : base(true)
         {
         }
 
@@ -22,7 +22,7 @@ namespace UniGetUI.Interface.Pages.LogPage
             LogLevelCombo.SelectedIndex = 3;
         }
 
-        public override void LoadLog()
+        public override void LoadLog(bool isReload = false)
         {
             bool IS_DARK = ActualTheme == Microsoft.UI.Xaml.ElementTheme.Dark;
 
@@ -81,7 +81,7 @@ namespace UniGetUI.Interface.Pages.LogPage
                 } ((Run)p.Inlines[^1]).Text = ((Run)p.Inlines[^1]).Text.TrimEnd();
                 LogTextBox.Blocks.Add(p);
             }
-            MainScroller.ScrollToVerticalOffset(MainScroller.ScrollableHeight);
+            if (isReload) MainScroller.ScrollToVerticalOffset(MainScroller.ScrollableHeight);
         }
     }
 }

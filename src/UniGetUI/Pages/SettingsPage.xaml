@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="UniGetUI.Interface.SettingsInterface"
+    x:Class="UniGetUI.Interface.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniGetUI"
@@ -173,6 +173,7 @@
                     <!-- Startup options -->
                     <widgets:SettingsEntry
                             Text="Startup options"
+                            x:Name="StartupOptionsExpander"
                             UnderText="WingetUI autostart behaviour, application launch settings"
                             Icon="launch">
                         <Toolkit:SettingsExpander.Items>
@@ -195,6 +196,7 @@
                     <!-- Updates Settings -->
                     <widgets:SettingsEntry
                             Text="Updates preferences"
+                            x:Name="UpdatesOptionsExpander"
                             UnderText="Change how UniGetUI checks and installs available updates for your packages"
                             Icon="update">
                         <Toolkit:SettingsExpander.Items>
@@ -219,6 +221,7 @@
                     <!-- Backup packages -->
                     <widgets:SettingsEntry
                             Text="Backup installed packages"
+                            x:Name="BackupOptionsExpander"
                             UnderText="Automatically save a list of all your installed packages to easily restore them."
                             Icon="disk">
                         <Toolkit:SettingsExpander.Items>
