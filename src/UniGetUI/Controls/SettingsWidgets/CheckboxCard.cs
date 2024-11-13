@@ -20,9 +20,11 @@ namespace UniGetUI.Interface.Widgets
             set {
                 setting_name = value;
                 IS_INVERTED = value.StartsWith("Disable");
-                _checkbox.IsChecked = Settings.Get(setting_name) ^ IS_INVERTED;
+                _checkbox.IsChecked = Settings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
             }
         }
+
+        public bool ForceInversion { get; set; }
 
         public bool Checked
         {
@@ -46,8 +48,8 @@ namespace UniGetUI.Interface.Widgets
             DefaultStyleKey = typeof(CheckboxCard);
             Content = _checkbox;
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            _checkbox.Checked += (_, _) => { Settings.Set(setting_name, true ^ IS_INVERTED); StateChanged?.Invoke(this, EventArgs.Empty); };
-            _checkbox.Unchecked += (_, _) => { Settings.Set(setting_name, false ^ IS_INVERTED); StateChanged?.Invoke(this, EventArgs.Empty); };
+            _checkbox.Checked += (_, _) => { Settings.Set(setting_name, true ^ IS_INVERTED ^ ForceInversion); StateChanged?.Invoke(this, EventArgs.Empty); };
+            _checkbox.Unchecked += (_, _) => { Settings.Set(setting_name, false ^ IS_INVERTED ^ ForceInversion); StateChanged?.Invoke(this, EventArgs.Empty); };
         }
     }
 }

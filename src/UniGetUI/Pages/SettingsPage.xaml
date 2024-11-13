@@ -134,7 +134,14 @@
                                 Click="ResetIconCache_OnClick"
                             />
                             <widgets:CheckboxCard
-                                Text="Do not remove successful operations from the list automatically"
+                                Name="DisableSelectingUpdatesByDefault"
+                                Text="Select upgradable packages by default"
+                                SettingName="DisableSelectingUpdatesByDefault"
+                                StateChanged="DisableSelectingUpdatesByDefault_OnClick"
+                            />
+                            <widgets:CheckboxCard
+                                ForceInversion="True"
+                                Text="Clear successful operations from the operation list after a 5 second delay"
                                 SettingName="MaintainSuccessfulInstalls"
                                 />
                         </Toolkit:SettingsExpander.Items>

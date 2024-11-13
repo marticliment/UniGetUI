@@ -740,5 +740,10 @@ namespace UniGetUI.Interface
                     expander.IsExpanded = false;
             }
         }
+
+        private void DisableSelectingUpdatesByDefault_OnClick(object sender, EventArgs e)
+        {
+            if (InterfaceLoaded) InterfaceSettingsExpander.ShowRestartRequiredBanner();
+        }
     }
 }
