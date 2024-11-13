@@ -17,6 +17,8 @@ namespace UniGetUI.Interface.Pages.LogPage
 
         public void LoadForManager(PackageManager manager)
         {
+            SelectLogLevelByName(manager.DisplayName);
+
             bool IS_DARK = ActualTheme == Microsoft.UI.Xaml.ElementTheme.Dark;
             bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains(CoreTools.Translate("Verbose")) ?? false;
 

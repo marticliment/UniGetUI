@@ -29,6 +29,11 @@ namespace UniGetUI.Interface.Pages
             if (log_level_enabled) LoadLogLevels();
         }
 
+        protected void SelectLogLevelByName(string name)
+        {
+            LogLevelCombo.SelectedValue = name;
+        }
+
         public void ReloadTriggered()
             => LoadLog(isReload: true);
 
