@@ -123,7 +123,7 @@ namespace UniGetUI.Interface
             }
             else if (action == NotificationArguments.ShowOnUpdatesTab)
             {
-                NavigationPage.UpdatesNavButton.ForceClick();
+                NavigationPage.NavigateTo(PageType.Updates);
                 Activate();
             }
             else if (action == NotificationArguments.Show)
@@ -225,15 +225,15 @@ namespace UniGetUI.Interface
             }
             else if (baseUrl.StartsWith("showDiscoverPage"))
             {
-                NavigationPage.DiscoverNavButton.ForceClick();
+                NavigationPage.NavigateTo(PageType.Discover);
             }
             else if (baseUrl.StartsWith("showUpdatesPage"))
             {
-                NavigationPage.UpdatesNavButton.ForceClick();
+                NavigationPage.NavigateTo(PageType.Updates);
             }
             else if (baseUrl.StartsWith("showInstalledPage"))
             {
-                NavigationPage.InstalledNavButton.ForceClick();
+                NavigationPage.NavigateTo(PageType.Installed);
             }
             else
             {
@@ -279,7 +279,7 @@ namespace UniGetUI.Interface
                     {
                         // Handle potential JSON files
                         Logger.ImportantInfo("Begin attempt to open the package bundle " + param);
-                        NavigationPage.BundlesNavButton.ForceClick();
+                        NavigationPage.NavigateTo(PageType.Bundles);
                         _ = NavigationPage.BundlesPage.OpenFromFile(param);
                     }
                     else if (param.EndsWith("UniGetUI.exe") || param.EndsWith("UniGetUI.dll"))
@@ -367,17 +367,17 @@ namespace UniGetUI.Interface
 
             DiscoverPackages.ExecuteRequested += (_, _) =>
             {
-                NavigationPage.DiscoverNavButton.ForceClick();
+                NavigationPage.NavigateTo(PageType.Discover);
                 Activate();
             };
             AvailableUpdates.ExecuteRequested += (_, _) =>
             {
-                NavigationPage.UpdatesNavButton.ForceClick();
+                NavigationPage.NavigateTo(PageType.Updates);
                 Activate();
             };
             InstalledPackages.ExecuteRequested += (_, _) =>
             {
-                NavigationPage.InstalledNavButton.ForceClick();
+                NavigationPage.NavigateTo(PageType.Installed);
                 Activate();
             };
             AboutUniGetUI.Label = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);

@@ -246,7 +246,7 @@ namespace UniGetUI
 
                     BackgroundApi.OnOpenUpdatesPage += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        MainWindow?.NavigationPage?.UpdatesNavButton.ForceClick();
+                        MainWindow?.NavigationPage?.NavigateTo(PageType.Updates);
                         MainWindow?.Activate();
                     });
 

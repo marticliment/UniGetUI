@@ -283,7 +283,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
-            MainApp.Instance.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
+            MainApp.Instance.MainWindow.NavigationPage.NavigateTo(PageType.Bundles);
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
             DialogHelper.HideLoadingDialog();

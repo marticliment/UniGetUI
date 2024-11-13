@@ -20,7 +20,7 @@ using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface
 {
-    internal enum PageType
+    public enum PageType
     {
         Discover,
         Updates,
@@ -78,11 +78,11 @@ namespace UniGetUI.Interface
                 Page currentPage = GetPageForType(CurrentPage_t);
                 if (e.Key is VirtualKey.Tab && IS_CONTROL_PRESSED)
                 {
-                    NavigateToPage(IS_SHIFT_PRESSED ? GetPreviousPage(CurrentPage_t) : GetNextPage(CurrentPage_t));
+                    NavigateTo(IS_SHIFT_PRESSED ? GetPreviousPage(CurrentPage_t) : GetNextPage(CurrentPage_t));
                 }
                 else if (e.Key == VirtualKey.F1)
                 {
-                    NavigateToPage(PageType.Help);
+                    NavigateTo(PageType.Help);
                 }
                 else if ((e.Key is VirtualKey.Q or VirtualKey.W) && IS_CONTROL_PRESSED)
                 {
@@ -122,20 +122,20 @@ namespace UniGetUI.Interface
                 "settings" => PageType.Settings,
                 _ => MainApp.Instance.TooltipStatus.AvailableUpdates > 0 ? PageType.Updates : PageType.Discover
             };
-            NavigateToPage(type);
+            NavigateTo(type);
         }
 
         private void DiscoverNavButton_Click(object sender, EventArgs e)
-            => NavigateToPage(PageType.Discover);
+            => NavigateTo(PageType.Discover);
 
         private void InstalledNavButton_Click(object sender, EventArgs e)
-            => NavigateToPage(PageType.Installed);
+            => NavigateTo(PageType.Installed);
 
         private void UpdatesNavButton_Click(object sender, EventArgs e)
-            => NavigateToPage(PageType.Updates);
+            => NavigateTo(PageType.Updates);
 
         private void BundlesNavButton_Click(object sender, EventArgs e)
-            => NavigateToPage(PageType.Bundles);
+            => NavigateTo(PageType.Bundles);
 
         private void MoreNavButton_Click(object sender, EventArgs e)
         {
@@ -200,7 +200,7 @@ namespace UniGetUI.Interface
 
 
         private void SettingsNavButton_Click(object sender, EventArgs e)
-            => NavigateToPage(PageType.Settings);
+            => NavigateTo(PageType.Settings);
 
         private void SelectNavButtonForPage(PageType page)
         {
@@ -222,7 +222,7 @@ namespace UniGetUI.Interface
             SelectNavButtonForPage(CurrentPage_t);
         }
 
-        private void NavigateToPage(PageType NewPage_t)
+        public void NavigateTo(PageType NewPage_t)
         {
             SelectNavButtonForPage(NewPage_t);
             if (CurrentPage_t == NewPage_t) return;
@@ -260,25 +260,25 @@ namespace UniGetUI.Interface
             => DialogHelper.ShowReleaseNotes();
 
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
-            => NavigateToPage(PageType.OperationHistory);
+            => NavigateTo(PageType.OperationHistory);
 
         private void ManagerLogsMenu_Click(object sender, RoutedEventArgs e)
             => OpenPackageManagerLogs();
 
         public void OpenPackageManagerLogs(PackageManager? manager = null)
         {
-            NavigateToPage(PageType.ManagerLog);
+            NavigateTo(PageType.ManagerLog);
             if(manager is not null) ManagerLogPage?.LoadForManager(manager);
         }
 
         public void UniGetUILogs_Click(object sender, RoutedEventArgs e)
-            => NavigateToPage(PageType.OwnLog);
+            => NavigateTo(PageType.OwnLog);
 
         private void HelpMenu_Click(object sender, RoutedEventArgs e)
             => ShowHelp();
 
         public void ShowHelp()
-            => NavigateToPage(PageType.Help);
+            => NavigateTo(PageType.Help);
 
         private void QuitUniGetUI_Click(object sender, RoutedEventArgs e)
             => MainApp.Instance.DisposeAndQuit();
