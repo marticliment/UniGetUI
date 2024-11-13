@@ -10,7 +10,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         private System.Timers.Timer? UpdatesTimer;
 
         public UpgradablePackagesLoader(IEnumerable<IPackageManager> managers)
-        : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false)
+        : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false, CheckedBydefault: true)
         {
             FinishedLoading += (_, _) => StartAutoCheckTimeout();
         }

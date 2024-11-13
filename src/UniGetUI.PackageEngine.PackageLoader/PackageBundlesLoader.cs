@@ -8,7 +8,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
     public class PackageBundlesLoader : AbstractPackageLoader
     {
         public PackageBundlesLoader(IEnumerable<IPackageManager> managers)
-        : base(managers, "PACKAGE_BUNDLES", AllowMultiplePackageVersions: true, DisableReload: true)
+        : base(managers, "PACKAGE_BUNDLES", AllowMultiplePackageVersions: true, DisableReload: true, CheckedBydefault: false)
         {
         }
 
