@@ -158,6 +158,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// also include similar results. This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
         public IEnumerable<IPackage> FindPackages(string query)
+            => _findPackages(query, false);
+        
+        private IEnumerable<IPackage> _findPackages(string query, bool SecondAttempt)
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet FindPackages was called"); return []; }
             try
@@ -177,9 +180,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
             catch (Exception e)
             {
-                Logger.Error("Error finding packages on manager " + Name + " with query " + query);
-                Logger.Error(e);
-                return [];
+                if (!SecondAttempt)
+                    return _findPackages(query, true);
+                else
+                {
+                    Logger.Error("Error finding packages on manager " + Name + " with query " + query);
+                    Logger.Error(e);
+                    return [];
+                }
             }
         }
 
@@ -188,9 +196,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
         public IEnumerable<IPackage> GetAvailableUpdates()
-        /*    => TaskRecycler<IEnumerable<IPackage>>.RunOrAttach(_getAvailableUpdates, Properties.Name.GetHashCode());
+            => _getAvailableUpdates(false);
 
-        private IEnumerable<IPackage> _getAvailableUpdates(int _uselessParam)*/
+        private IEnumerable<IPackage> _getAvailableUpdates(bool SecondAttempt)
+            /*    => TaskRecycler<IEnumerable<IPackage>>.RunOrAttach(_getAvailableUpdates, Properties.Name.GetHashCode());
+
+            private IEnumerable<IPackage> _getAvailableUpdates(int _uselessParam)*/
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetAvailableUpdates was called"); return []; }
             try
@@ -213,9 +224,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
             catch (Exception e)
             {
-                Logger.Error("Error finding updates on manager " + Name);
-                Logger.Error(e);
-                return [];
+                if (!SecondAttempt)
+                    return _getAvailableUpdates(true);
+                else
+                {
+                    Logger.Error("Error finding updates on manager " + Name);
+                    Logger.Error(e);
+                    return [];
+                }
             }
         }
 
@@ -224,9 +240,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
         public IEnumerable<IPackage> GetInstalledPackages()
-        /*    => TaskRecycler<IEnumerable<IPackage>>.RunOrAttach(_getInstalledPackages, Properties.Name.GetHashCode());
+            => _getInstalledPackages(false);
 
-        private IEnumerable<IPackage> _getInstalledPackages(int _uselessParam)*/
+        private IEnumerable<IPackage> _getInstalledPackages(bool SecondAttempt)
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetInstalledPackages was called"); return []; }
             try
@@ -247,9 +263,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             }
             catch (Exception e)
             {
-                Logger.Error("Error finding installed packages on manager " + Name);
-                Logger.Error(e);
-                return [];
+                if (!SecondAttempt)
+                    return _getInstalledPackages(true);
+                else
+                {
+                    Logger.Error("Error finding installed packages on manager " + Name);
+                    Logger.Error(e);
+                    return [];
+                }
             }
         }
 
