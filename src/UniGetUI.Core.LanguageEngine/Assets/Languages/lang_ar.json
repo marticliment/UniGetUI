@@ -47,7 +47,7 @@
   "Always run {pm} operations with administrator rights": "السماح دائماً بشتغيل عمليات {pm} بصلاحيات المسؤول",
   "An error occurred": "حدث خطأ",
   "An error occurred when adding the source: ": "حدث خطأ عند إضافة المصدر:",
-  "An error occurred when attempting to show the package with Id {0}": null,
+  "An error occurred when attempting to show the package with Id {0}": "حصل خطأ عند محاولة عرض الحزمة مع المعرف {0}",
   "An error occurred when checking for updates: ": "حدث خطأ عند البحث عن التحديثات:",
   "An error occurred while processing this package": "حدث خطاُ وقت معالجة هذه الحزمة",
   "An error occurred:": "حدث خطأ:",
