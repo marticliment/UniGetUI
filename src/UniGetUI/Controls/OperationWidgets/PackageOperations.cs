@@ -60,8 +60,11 @@ namespace UniGetUI.PackageEngine.Operations
         {
             string operation_args = string.Join(" ", Package.Manager.GetOperationParameters(Package, Options, Role));
 
-            if (Package.OverridenOptions.RunAsAdministrator == true || Options.RunAsAdministrator ||
-                Settings.Get("AlwaysElevate" + Package.Manager.Name))
+            if (Package.OverridenOptions.RunAsAdministrator == true
+                || Options.RunAsAdministrator
+                || (Settings.Get("AlwaysElevate" + Package.Manager.Name)
+                    && !Package.OverridenOptions.RunAsAdministrator is false)
+                )
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {

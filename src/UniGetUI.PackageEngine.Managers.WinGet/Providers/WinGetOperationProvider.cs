@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using Microsoft.Management.Deployment;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
@@ -82,6 +83,26 @@ internal sealed class WinGetOperationProvider : BaseOperationProvider<WinGet>
                 Architecture.Arm64 => ["--architecture", "arm64"],
                 _ => []
             });
+        }
+
+        var installOptions = NativePackageHandler.GetInstallationOptions(package, operation);
+        if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationRequired
+            or ElevationRequirement.ElevatesSelf)
+        {
+            package.OverridenOptions.RunAsAdministrator = true;
+        }
+        else if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationProhibited)
+        {
+            if (CoreTools.IsAdministrator())
+                throw new UnauthorizedAccessException(
+                    CoreTools.Translate("This package cannot be installed from an elevated context.")
+                  + CoreTools.Translate("Please run UniGetUI as a regular user and try again."));
+
+            if (options.RunAsAdministrator)
+                throw new UnauthorizedAccessException(
+                    CoreTools.Translate("This package cannot be installed from an elevated context.")
+                    + CoreTools.Translate("Please check the installation options for this package and try again"));
+            package.OverridenOptions.RunAsAdministrator = false;
         }
 
         return parameters;
