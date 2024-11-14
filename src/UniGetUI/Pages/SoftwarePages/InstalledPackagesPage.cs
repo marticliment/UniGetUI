@@ -251,10 +251,11 @@ namespace UniGetUI.Interface.SoftwarePages
             IgnoreSelected.Click += async (_, _) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
-                {
-                    PEInterface.UpgradablePackagesLoader.Remove(package);
-                    await package.AddToIgnoredUpdatesAsync();
-                }
+                    if(!package.Source.IsVirtualManager)
+                    {
+                        PEInterface.UpgradablePackagesLoader.Remove(package);
+                        await package.AddToIgnoredUpdatesAsync();
+                    }
             };
 
             UninstallSelected.Click += (_, _) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
