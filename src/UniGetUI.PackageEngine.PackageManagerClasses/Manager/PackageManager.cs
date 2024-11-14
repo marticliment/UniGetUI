@@ -159,7 +159,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// </summary>
         public IEnumerable<IPackage> FindPackages(string query)
             => _findPackages(query, false);
-        
+
         private IEnumerable<IPackage> _findPackages(string query, bool SecondAttempt)
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet FindPackages was called"); return []; }
