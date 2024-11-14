@@ -411,7 +411,7 @@ namespace UniGetUI.PackageEngine.Operations
 
                 Process.OutputDataReceived += (_, e) => DispatcherQueue.TryEnqueue(async () =>
                 {
-                    if (e.Data?.Trim() is string line && line != String.Empty && line.Length > 3)
+                    if (e.Data?.Trim() is string line && line != String.Empty)
                     {
                         if (line.Contains("For the question below") ||
                             line.Contains("Would remove:")) // Mitigate chocolatey timeouts
@@ -422,19 +422,19 @@ namespace UniGetUI.PackageEngine.Operations
                         if (Status is not OperationStatus.Canceled)
                         {
                             LineInfoText = line;
-                            ProcessOutput.Add(new(line, OutputLine.LineType.STDOUT));
+                            if(line.Length > 3) ProcessOutput.Add(new(line, OutputLine.LineType.STDOUT));
                         }
                     }
                 });
 
                 Process.ErrorDataReceived += (_, e) => DispatcherQueue.TryEnqueue(async () =>
                 {
-                    if (e.Data?.Trim() is string line && line != String.Empty && line.Length > 3)
+                    if (e.Data?.Trim() is string line && line != String.Empty)
                     {
                         if (Status is not OperationStatus.Canceled)
                         {
                             LineInfoText = line;
-                            ProcessOutput.Add(new(line, OutputLine.LineType.STDERR));
+                            if(line.Length > 3) ProcessOutput.Add(new(line, OutputLine.LineType.STDERR));
                         }
                     }
                 });
