@@ -291,7 +291,7 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        protected override void WhenShowingContextMenu(IPackage package)
+        protected override async void WhenShowingContextMenu(IPackage package)
         {
             if (MenuAsAdmin is null
                 || MenuInteractive is null
@@ -317,11 +317,25 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuInstallationOptions.IsEnabled = !IS_LOCAL;
             MenuReinstallPackage.IsEnabled = !IS_LOCAL;
             MenuUninstallThenReinstall.IsEnabled = !IS_LOCAL;
-            MenuIgnoreUpdates.IsEnabled = !IS_LOCAL;
+            MenuIgnoreUpdates.IsEnabled = false; //!IS_LOCAL;
             MenuSharePackage.IsEnabled = !IS_LOCAL;
             MenuPackageDetails.IsEnabled = !IS_LOCAL;
 
             MenuOpenInstallLocation.IsEnabled = package.Manager.GetPackageInstallLocation(package) is not null;
+            if (!IS_LOCAL)
+            {
+                if (await package.HasUpdatesIgnoredAsync())
+                {
+                    MenuIgnoreUpdates.Text = CoreTools.Translate("Do not ignore updates for this package anymore");
+                    MenuIgnoreUpdates.Icon = new FontIcon() { Glyph = "\uE77A" };
+                }
+                else
+                {
+                    MenuIgnoreUpdates.Text = CoreTools.Translate("Ignore updates for this package");
+                    MenuIgnoreUpdates.Icon = new FontIcon() { Glyph = "\uE718" };
+                }
+                MenuIgnoreUpdates.IsEnabled = true;
+            }
         }
 
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
@@ -470,7 +484,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, IgnoreParallelInstalls: true));
 
         }
-        private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)
+        private async void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
             if (package is null)
@@ -478,8 +492,13 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            _ = package.AddToIgnoredUpdatesAsync();
-            PEInterface.UpgradablePackagesLoader.Remove(package);
+            if(await package.HasUpdatesIgnoredAsync())
+                await package.RemoveFromIgnoredUpdatesAsync();
+            else
+            {
+                await package.AddToIgnoredUpdatesAsync();
+                PEInterface.UpgradablePackagesLoader.Remove(package);
+            }
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)
