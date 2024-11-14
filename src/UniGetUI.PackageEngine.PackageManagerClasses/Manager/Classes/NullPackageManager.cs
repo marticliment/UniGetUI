@@ -208,6 +208,11 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         {
             throw new NotImplementedException();
         }
+
+        public void AttemptFastRepair()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     internal sealed class NullSourceProvider : BaseSourceProvider<IPackageManager>

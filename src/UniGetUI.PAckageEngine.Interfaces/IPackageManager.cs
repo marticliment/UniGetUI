@@ -59,6 +59,15 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// </summary>
         public void RefreshPackageIndexes();
 
+        /// <summary>
+        /// This method should attempt to resolve issues
+        /// such as COM API disconnect or similar issues that
+        /// can easily be resolved by reconnecting to a client and/or
+        /// clearing some internal caches. See the WinGet implementation for
+        /// an example
+        /// </summary>
+        public void AttemptFastRepair();
+
         public IManagerSource GetSourceOrDefault(string SourceName);
         public IManagerSource? GetSourceIfExists(string SourceName);
     }

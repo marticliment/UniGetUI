@@ -239,6 +239,28 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             NativePackageHandler.Clear();
         }
 
+        public override void AttemptFastRepair()
+        {
+            try
+            {
+                if (WinGetHelper.Instance is NativeWinGetHelper)
+                {
+                    Logger.ImportantInfo("Attempting to reconnec to WinGet COM Server...");
+                    ReRegisterCOMServer();
+                    NO_PACKAGES_HAVE_BEEN_LOADED = false;
+                }
+                else
+                {
+                    Logger.Warn("Attempted to reconnect to COM Server but Bundled WinGet is being used.");
+                }
+            } catch (Exception ex)
+            {
+                Logger.Error("An error ocurred while attempting to reconnect to COM Server");
+                Logger.Error(ex);
+            }
+        }
+
+
 
         public override void RefreshPackageIndexes()
         {

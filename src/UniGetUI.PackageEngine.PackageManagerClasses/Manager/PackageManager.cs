@@ -181,7 +181,13 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             catch (Exception e)
             {
                 if (!SecondAttempt)
+                {
+                    while (e is AggregateException) e = e.InnerException ?? new("How did we get here?");
+                    Logger.Warn($"Manager {DisplayName} failed to find packages with exception {e.GetType().Name}: {e.Message}");
+                    Logger.Warn($"Since this was the first attempt, {Name}.AttemptFastRepair() will be called and the procedure will be restarted");
+                    AttemptFastRepair();
                     return _findPackages(query, true);
+                }
                 else
                 {
                     Logger.Error("Error finding packages on manager " + Name + " with query " + query);
@@ -199,9 +205,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             => _getAvailableUpdates(false);
 
         private IEnumerable<IPackage> _getAvailableUpdates(bool SecondAttempt)
-            /*    => TaskRecycler<IEnumerable<IPackage>>.RunOrAttach(_getAvailableUpdates, Properties.Name.GetHashCode());
-
-            private IEnumerable<IPackage> _getAvailableUpdates(int _uselessParam)*/
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetAvailableUpdates was called"); return []; }
             try
@@ -225,7 +228,13 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             catch (Exception e)
             {
                 if (!SecondAttempt)
+                {
+                    while (e is AggregateException) e = e.InnerException ?? new("How did we get here?");
+                    Logger.Warn($"Manager {DisplayName} failed to list available updates with exception {e.GetType().Name}: {e.Message}");
+                    Logger.Warn($"Since this was the first attempt, {Name}.AttemptFastRepair() will be called and the procedure will be restarted");
+                    AttemptFastRepair();
                     return _getAvailableUpdates(true);
+                }
                 else
                 {
                     Logger.Error("Error finding updates on manager " + Name);
@@ -264,7 +273,13 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             catch (Exception e)
             {
                 if (!SecondAttempt)
+                {
+                    while (e is AggregateException) e = e.InnerException ?? new("How did we get here?");
+                    Logger.Warn($"Manager {DisplayName} failed to list installed packages with exception {e.GetType().Name}: {e.Message}");
+                    Logger.Warn($"Since this was the first attempt, {Name}.AttemptFastRepair() will be called and the procedure will be restarted");
+                    AttemptFastRepair();
                     return _getInstalledPackages(true);
+                }
                 else
                 {
                     Logger.Error("Error finding installed packages on manager " + Name);
@@ -305,6 +320,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             Logger.Debug($"Manager {Name} has not implemented RefreshPackageIndexes");
             await Task.CompletedTask;
         }
+
+        public virtual void AttemptFastRepair()
+        {
+            // Implementing this method is optional
+        }
+
 
         // BEGIN SOURCE-RELATED METHODS
 
