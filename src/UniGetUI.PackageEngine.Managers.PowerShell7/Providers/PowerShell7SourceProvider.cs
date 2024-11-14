@@ -48,7 +48,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 StartInfo = new()
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Properties.ExecutableCallArgs + " Get-PSRepository",
+                    Arguments = Manager.Properties.ExecutableCallArgs + " \"Get-PSRepository | Format-Table -Property Name,SourceLocation\"",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
