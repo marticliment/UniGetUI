@@ -411,7 +411,7 @@ namespace UniGetUI.PackageEngine.Operations
 
                 Process.OutputDataReceived += (_, e) => DispatcherQueue.TryEnqueue(async () =>
                 {
-                    if (e.Data?.Trim() is string line && line != String.Empty)
+                    if (e.Data?.Trim() is string line && line != String.Empty && line.Length > 3)
                     {
                         if (line.Contains("For the question below") ||
                             line.Contains("Would remove:")) // Mitigate chocolatey timeouts
@@ -429,7 +429,7 @@ namespace UniGetUI.PackageEngine.Operations
 
                 Process.ErrorDataReceived += (_, e) => DispatcherQueue.TryEnqueue(async () =>
                 {
-                    if (e.Data?.Trim() is string line && line != String.Empty)
+                    if (e.Data?.Trim() is string line && line != String.Empty && line.Length > 3)
                     {
                         if (Status is not OperationStatus.Canceled)
                         {
