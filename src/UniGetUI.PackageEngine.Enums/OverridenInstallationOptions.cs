@@ -5,7 +5,7 @@ public struct OverridenInstallationOptions
 {
     public PackageScope? Scope;
     public bool? RunAsAdministrator;
-    // public bool ForceDisablePackageScope = false;
+    public bool PowerShell_DoNotSetScopeParameter = false;
 
     public OverridenInstallationOptions(PackageScope? scope = null, bool? runAsAdministrator = null)
     {

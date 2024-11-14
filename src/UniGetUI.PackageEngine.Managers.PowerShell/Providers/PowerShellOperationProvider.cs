@@ -25,11 +25,15 @@ internal sealed class PowerShellOperationProvider : BaseOperationProvider<PowerS
             if (options.PreRelease)
                 parameters.Add("-AllowPrerelease");
 
-            if (package.OverridenOptions.Scope == PackageScope.Global ||
-                (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
-                parameters.AddRange(["-Scope", "AllUsers"]);
-            else
-                parameters.AddRange(["-Scope", "CurrentUser"]);
+
+            if (!package.OverridenOptions.PowerShell_DoNotSetScopeParameter)
+            {
+                if (package.OverridenOptions.Scope == PackageScope.Global ||
+                    (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
+                    parameters.AddRange(["-Scope", "AllUsers"]);
+                else
+                    parameters.AddRange(["-Scope", "CurrentUser"]);
+            }
         }
 
         if(operation is OperationType.Install)
@@ -55,6 +59,12 @@ internal sealed class PowerShellOperationProvider : BaseOperationProvider<PowerS
         if (!package.OverridenOptions.RunAsAdministrator != true && output_string.Contains("AdminPrivilegesAreRequired"))
         {
             package.OverridenOptions.RunAsAdministrator = true;
+            return OperationVeredict.AutoRetry;
+        }
+
+        if (output_string.Contains("'Scope'") && output_string.Contains("ParameterBindingException") && !package.OverridenOptions.PowerShell_DoNotSetScopeParameter)
+        {
+            package.OverridenOptions.PowerShell_DoNotSetScopeParameter = true;
             return OperationVeredict.AutoRetry;
         }
 
