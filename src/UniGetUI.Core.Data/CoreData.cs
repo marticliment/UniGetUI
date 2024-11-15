@@ -169,6 +169,7 @@ namespace UniGetUI.Core.Data
         /// The ID of the notification that is used to inform the user that updates are available
         /// </summary>
         public const int UpdatesAvailableNotificationTag = 1234;
+        public const int UniGetUICanBeUpdated = 1235;
 
 
         /// <summary>

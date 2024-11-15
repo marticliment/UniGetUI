@@ -130,10 +130,14 @@ namespace UniGetUI.Interface
             {
                 Activate();
             }
+            else if (action == NotificationArguments.ReleaseSelfUpdateLock)
+            {
+                AutoUpdater.ReleaseLockForAutoupdate_Notification = true;
+            }
             else
             {
                 throw new ArgumentException(
-                    "args.Argument was not set to a value present in Enums.NotificationArguments");
+                    $"args.Argument was not set to a value present in Enums.NotificationArguments (value is {action})");
             }
 
             Logger.Debug("Notification activated: " + args.Arguments);
