@@ -90,6 +90,8 @@ namespace UniGetUI.Interface
         public string Id { get; }
         public string Name { get; }
         public string Version { get; }
+        public string Upgradeable { get; }
+        public string UpgradeDetails { get; }
         public IPackageManager Manager { get; }
         private ObservableCollection<IgnoredPackageEntry> List { get; }
         public IgnoredPackageEntry(string id, string version, IPackageManager manager, ObservableCollection<IgnoredPackageEntry> list)
@@ -107,6 +109,21 @@ namespace UniGetUI.Interface
             {
                 Version = version;
             }
+
+            string CurrentVersion = PEInterface.InstalledPackagesLoader.GetPackageForId(id)?.Version ?? "Unknown";
+            string? NewVersion = null;
+
+            foreach (IPackage Package in PEInterface.UpgradablePackagesLoader.UpdateIgnoredPackages) {
+                if (Package.Id == Id)
+                {
+                    NewVersion = Package.NewVersion;
+                    break;
+                }
+            }
+            bool NewVersionAvailable = NewVersion != null && NewVersion != CurrentVersion;
+
+            Upgradeable = NewVersionAvailable ? NewVersion : CoreTools.Translate("Up-to-date");
+            UpgradeDetails = NewVersionAvailable ? CurrentVersion + " -> " + NewVersion : CurrentVersion;
 
             Manager = manager;
             List = list;

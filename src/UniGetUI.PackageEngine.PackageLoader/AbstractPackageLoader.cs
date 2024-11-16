@@ -30,6 +30,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
             get => PackageReference.Values.ToList();
         }
 
+        /// <summary>
+        /// The collection of packages with updates ignored
+        /// </summary>
+        public List<IPackage> UpdateIgnoredPackages = [];
+
         protected readonly ConcurrentDictionary<long, IPackage> PackageReference;
 
         /// <summary>
@@ -138,6 +143,10 @@ namespace UniGetUI.PackageEngine.PackageLoader
                             {
                                 if (Contains(package) || !await IsPackageValid(package))
                                 {
+                                    if (await package.HasUpdatesIgnoredAsync(package.NewVersion))
+                                    {
+                                        UpdateIgnoredPackages.Add(package);
+                                    }
                                     continue;
                                 }
 
