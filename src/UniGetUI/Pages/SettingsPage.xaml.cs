@@ -745,5 +745,11 @@ namespace UniGetUI.Interface
         {
             if (InterfaceLoaded) InterfaceSettingsExpander.ShowRestartRequiredBanner();
         }
+
+        private void ForceUpdateUniGetUI_OnClick(object? sender, RoutedEventArgs e)
+        {
+            _ = AutoUpdater.CheckAndInstallUpdates(MainApp.Instance.MainWindow, MainApp.Instance.MainWindow.UpdatesBanner,
+                true);
+        }
     }
 }

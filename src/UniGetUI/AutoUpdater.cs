@@ -53,7 +53,7 @@ public class AutoUpdater
                 Logger.Warn("User has disabled updates");
                 return;
             }
-            bool updateSucceeded = await CheckAndInstallUpdates(window, banner, IsFirstLaunch);
+            bool updateSucceeded = await CheckAndInstallUpdates(window, banner, false, IsFirstLaunch);
             IsFirstLaunch = false;
             await Task.Delay(TimeSpan.FromMinutes(updateSucceeded ? 60 : 10));
         }
