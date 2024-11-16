@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Net.NetworkInformation;
 using System.Security.Cryptography;
+using H.NotifyIcon;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.AppNotifications;
@@ -25,22 +27,62 @@ public class AutoUpdater
     private const string STABLE_INSTALLER_URL = "https://github.com/marticliment/UniGetUI/releases/latest/download/UniGetUI.Installer.exe";
     private const string BETA_INSTALLER_URL = "https://github.com/marticliment/UniGetUI/releases/download/$TAG/UniGetUI.Installer.exe";
     //------------------------------------------------------------------------------------------------------------------
-    private static bool _installerHasBeenLaunched;
     public static bool ReleaseLockForAutoupdate_Notification;
-    public static bool AnUpdateIsAwaitingWindowClose { get; private set; }
+    public static bool ReleaseLockForAutoupdate_Window;
+    public static bool ReleaseLockForAutoupdate_UpdateBanner;
+    public static bool UpdateReadyToBeInstalled { get; private set; }
 
     public static async Task UpdateCheckLoop(Window window, InfoBar banner)
     {
+        if (Settings.Get("DisableAutoUpdateWingetUI"))
+        {
+            Logger.Warn("User has disabled updates");
+            return;
+        }
+
+        bool IsFirstLaunch = true;
         Window = window;
         Banner = banner;
 
-        bool result = await CheckAndInstallUpdates(window, banner, false);
+        await WaitForInternetConnection();
+        while (true)
+        {
+            // User could have disabled updates on runtime
+            if (Settings.Get("DisableAutoUpdateWingetUI"))
+            {
+                Logger.Warn("User has disabled updates");
+                return;
+            }
+            bool updateSucceeded = await CheckAndInstallUpdates(window, banner, IsFirstLaunch);
+            IsFirstLaunch = false;
+            await Task.Delay(TimeSpan.FromMinutes(updateSucceeded ? 60 : 10));
+        }
+    }
 
-        // TODO: Wait for internet connection
-
-        // Check for updates
-
-        // Set timer to check again in X time, X = ERROR ? 10min : 120min
+    /// <summary>
+    /// Pings the update server and 3 well-known sites to check for internet availability
+    /// </summary>
+    public static async Task WaitForInternetConnection()
+    {
+        Logger.Debug("Checking for internet connectivity. Pinging google.com, microsoft.com, couldflare.com and marticliment.com");
+        string[] hosts = ["google.com", "microsoft.com", "cloudflare.com", "marticliment.com"];
+        while (true)
+        {
+            using (var pinger = new Ping())
+            {
+                foreach (var host in hosts)
+                {
+                    PingReply reply = await pinger.SendPingAsync(host);
+                    if (reply.Status is IPStatus.Success)
+                    {
+                        Logger.Debug($"{host} responded successfully to ping, internet connection was validated.");
+                        return;
+                    }
+                    Logger.Debug($"Could not ping {host}!");
+                }
+            }
+            await Task.Delay(TimeSpan.FromSeconds(5));
+        }
     }
 
     /// <summary>
@@ -50,6 +92,7 @@ public class AutoUpdater
     {
         Window = window;
         Banner = banner;
+        bool WasCheckingForUpdates = true;
 
         try
         {
@@ -67,6 +110,7 @@ public class AutoUpdater
 
             if (IsUpgradable)
             {
+                WasCheckingForUpdates = false;
                 InstallerDownloadUrl = InstallerDownloadUrl.Replace("$TAG", LatestVersion);
 
                 Logger.Info($"An update to UniGetUI version {LatestVersion} is available");
@@ -121,7 +165,10 @@ public class AutoUpdater
         }
         catch (Exception e)
         {
-            ShowMessage_ThreadSafe(
+            Logger.Error("An error occurred while checking for updates: ");
+            Logger.Error(e);
+            // We don't want an error popping if updates can't
+            if(Verbose || !WasCheckingForUpdates) ShowMessage_ThreadSafe(
                 CoreTools.Translate("An error occurred when checking for updates: "),
                 e.Message,
                 InfoBarSeverity.Error,
@@ -180,6 +227,9 @@ public class AutoUpdater
         }
     }
 
+    /// <summary>
+    /// Downloads the given installer to the given location
+    /// </summary>
     private static async Task DownloadInstaller(string downloadUrl, string installerLocation)
     {
         Logger.Debug($"Downloading installer from {downloadUrl} to {installerLocation}");
@@ -200,13 +250,22 @@ public class AutoUpdater
     private static async Task<bool> PrepairToLaunchInstaller(string installerLocation, string NewVersion, bool AutoLaunch)
     {
         Logger.Debug("Starting the process to launch the installer.");
-        AnUpdateIsAwaitingWindowClose = true;
+        UpdateReadyToBeInstalled = true;
+        ReleaseLockForAutoupdate_Window = false;
+        ReleaseLockForAutoupdate_Notification = false;
+
+        // Check if the user has disabled updates
+        if (Settings.Get("DisableAutoUpdateWingetUI"))
+        {
+            Logger.Warn("User disabled updates!");
+            return true;
+        }
 
         Window.DispatcherQueue.TryEnqueue(() =>
         {
             // Set the banner to Restart UniGetUI to update
             var UpdateNowButton = new Button { Content = CoreTools.Translate("Update now") };
-            UpdateNowButton.Click += (_, _) => LaunchInstallerAndQuit(installerLocation);
+            UpdateNowButton.Click += (_, _) => ReleaseLockForAutoupdate_UpdateBanner = true;
             ShowMessage_ThreadSafe(
                 CoreTools.Translate("UniGetUI {0} is ready to be installed.", NewVersion),
                 CoreTools.Translate("The update process will start after closing UniGetUI"),
@@ -230,23 +289,29 @@ public class AutoUpdater
 
         });
 
-        // Check if the user has disabled updates
-        if (Settings.Get("DisableAutoUpdateWingetUI"))
+        if (AutoLaunch && !Window.Visible)
         {
-            Logger.Warn("User disabled updates!");
-            return true;
-        }
-
-        if (AutoLaunch)
-        {
-            Logger.Debug("Waiting for mainWindow to be hidden or for user to trigger the update from the notification...");
-            while (Window.Visible && !ReleaseLockForAutoupdate_Notification) await Task.Delay(100);
+            Logger.Debug("AutoLaunch is enabled and the Window is hidden, launching installer...");
         }
         else
         {
-            Logger.Debug("Waiting for user to trigger the update from the notification...");
-            while (!ReleaseLockForAutoupdate_Notification) await Task.Delay(100);
+            Logger.Debug("Waiting for mainWindow to be closed or for user to trigger the update from the notification...");
+            while (
+                !ReleaseLockForAutoupdate_Window &&
+                !ReleaseLockForAutoupdate_Notification &&
+                !ReleaseLockForAutoupdate_UpdateBanner)
+            {
+                await Task.Delay(100);
+            }
+            Logger.Debug("Autoupdater lock released, launching installer...");
         }
+
+        if (Settings.Get("DisableAutoUpdateWingetUI"))
+        {
+            Logger.Warn("User has disabled updates");
+            return true;
+        }
+
         LaunchInstallerAndQuit(installerLocation);
         return true;
     }
@@ -256,12 +321,6 @@ public class AutoUpdater
     /// </summary>
     private static void LaunchInstallerAndQuit(string installerLocation)
     {
-        if (_installerHasBeenLaunched)
-        {
-            Logger.Warn("The installer has already been launched, something went wrong if you are seeing this.");
-            return;
-        }
-
         Logger.Debug("Launching the updater...");
         Process p = new()
         {
@@ -274,8 +333,6 @@ public class AutoUpdater
             }
         };
         p.Start();
-        _installerHasBeenLaunched = true;
-        MainApp.Instance.DisposeAndQuit(0);
     }
 
     private static void ShowMessage_ThreadSafe(string Title, string Message, InfoBarSeverity MessageSeverity, bool BannerClosable, Button? ActionButton = null)
@@ -293,8 +350,4 @@ public class AutoUpdater
         Banner.ActionButton = ActionButton;
         Banner.IsOpen = true;
     }
-
-
-
-
 }

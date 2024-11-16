@@ -228,12 +228,6 @@ namespace UniGetUI
         {
             try
             {
-                // Run other initializations asynchronously
-                if (!Settings.Get("DisableAutoUpdateWingetUI"))
-                {
-                    UpdateUniGetUIIfPossible();
-                }
-
                 IconDatabase.InitializeInstance();
                 IconDatabase.Instance.LoadIconAndScreenshotsDatabase();
 
