@@ -22,8 +22,8 @@ public class AutoUpdater
     public static Window Window = null!;
     public static InfoBar Banner = null!;
     //------------------------------------------------------------------------------------------------------------------
-    private const string STABLE_ENDPOINT = "https://www.marticliment.com/versions/unigetui-stable.ver";
-    private const string BETA_ENDPOINT = "https://www.marticliment.com/versions/unigetui-beta.ver";
+    private const string STABLE_ENDPOINT = "https://www.marticliment.com/versions/unigetui/stable.ver";
+    private const string BETA_ENDPOINT = "https://www.marticliment.com/versions/unigetui/beta.ver";
     private const string STABLE_INSTALLER_URL = "https://github.com/marticliment/UniGetUI/releases/latest/download/UniGetUI.Installer.exe";
     private const string BETA_INSTALLER_URL = "https://github.com/marticliment/UniGetUI/releases/download/$TAG/UniGetUI.Installer.exe";
     //------------------------------------------------------------------------------------------------------------------
@@ -192,20 +192,20 @@ public class AutoUpdater
         {
             client.Timeout = TimeSpan.FromSeconds(600);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-            UpdateResponse = (await client.GetStringAsync(endpoint)).Split("///");
+            UpdateResponse = (await client.GetStringAsync(endpoint)).Split("////");
         }
 
-        if (UpdateResponse.Length >= 2)
+        if (UpdateResponse.Length >= 3)
         {
-            double LatestVersion = double.Parse(UpdateResponse[0].Replace("\n", "").Replace("\r", "").Trim(), CultureInfo.InvariantCulture);
+            int LatestVersion = int.Parse(UpdateResponse[0].Replace("\n", "").Replace("\r", "").Trim());
             string InstallerHash = UpdateResponse[1].Replace("\n", "").Replace("\r", "").Trim();
-            string VersionName = UpdateResponse.Length >= 3 ? UpdateResponse[2] : LatestVersion.ToString(CultureInfo.InvariantCulture);
+            string VersionName = UpdateResponse[2].Replace("\n", "").Replace("\r", "").Trim();
             Logger.Debug($"Got response from endpoint: ({LatestVersion}, {VersionName}, {InstallerHash})");
-            return (LatestVersion > CoreData.VersionNumber, VersionName, InstallerHash);
+            return (LatestVersion > CoreData.BuildNumber, VersionName, InstallerHash);
         }
 
         Logger.Warn($"Received update string is {UpdateResponse[0]}");
-        throw new FormatException("The updates file does not follow the FloatVersion///Sha256Hash[///VersionName] format");
+        throw new FormatException("The updates file does not follow the FloatVersion////Sha256Hash////VersionName format");
    }
 
     /// <summary>
@@ -333,7 +333,7 @@ public class AutoUpdater
                 CreateNoWindow = true,
             }
         };
-        p.Start();
+        // p.Start();
     }
 
     private static void ShowMessage_ThreadSafe(string Title, string Message, InfoBarSeverity MessageSeverity, bool BannerClosable, Button? ActionButton = null)
