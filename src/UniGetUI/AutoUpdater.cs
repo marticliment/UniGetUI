@@ -253,6 +253,7 @@ public class AutoUpdater
         UpdateReadyToBeInstalled = true;
         ReleaseLockForAutoupdate_Window = false;
         ReleaseLockForAutoupdate_Notification = false;
+        ReleaseLockForAutoupdate_UpdateBanner = false;
 
         // Check if the user has disabled updates
         if (Settings.Get("DisableAutoUpdateWingetUI"))
