@@ -44,7 +44,7 @@ public class AutoUpdater
         Window = window;
         Banner = banner;
 
-        await WaitForInternetConnection();
+        await CoreTools.WaitForInternetConnection();
         while (true)
         {
             // User could have disabled updates on runtime
@@ -56,32 +56,6 @@ public class AutoUpdater
             bool updateSucceeded = await CheckAndInstallUpdates(window, banner, false, IsFirstLaunch);
             IsFirstLaunch = false;
             await Task.Delay(TimeSpan.FromMinutes(updateSucceeded ? 60 : 10));
-        }
-    }
-
-    /// <summary>
-    /// Pings the update server and 3 well-known sites to check for internet availability
-    /// </summary>
-    public static async Task WaitForInternetConnection()
-    {
-        Logger.Debug("Checking for internet connectivity. Pinging google.com, microsoft.com, couldflare.com and marticliment.com");
-        string[] hosts = ["google.com", "microsoft.com", "cloudflare.com", "marticliment.com"];
-        while (true)
-        {
-            using (var pinger = new Ping())
-            {
-                foreach (var host in hosts)
-                {
-                    PingReply reply = await pinger.SendPingAsync(host);
-                    if (reply.Status is IPStatus.Success)
-                    {
-                        Logger.Debug($"{host} responded successfully to ping, internet connection was validated.");
-                        return;
-                    }
-                    Logger.Debug($"Could not ping {host}!");
-                }
-            }
-            await Task.Delay(TimeSpan.FromSeconds(5));
         }
     }
 

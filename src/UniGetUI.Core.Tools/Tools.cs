@@ -2,9 +2,11 @@ using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
@@ -541,6 +543,44 @@ Crash Traceback:
                 }
             }
             return info;
+        }
+
+
+        /// <summary>
+        /// Pings the update server and 3 well-known sites to check for internet availability
+        /// </summary>
+        public static async Task WaitForInternetConnection()
+            => await (await TaskRecycler<Task>.RunOrAttachAsync(_waitForInternetConnection));
+
+        public static async Task _waitForInternetConnection()
+        {
+            Logger.Debug("Checking for internet connectivity. Pinging google.com, microsoft.com, couldflare.com and marticliment.com");
+            string[] hosts = ["google.com", "microsoft.com", "cloudflare.com", "marticliment.com"];
+            while (true)
+            {
+                foreach (var host in hosts)
+                {
+                    using (var pinger = new Ping())
+                    {
+                        try
+                        {
+                            PingReply reply = await pinger.SendPingAsync(host, 10);
+                            if (reply.Status is IPStatus.Success)
+                            {
+                                Logger.Debug($"{host} responded successfully to ping, internet connection was validated.");
+                                return;
+                            }
+
+                            Logger.Debug($"Could not ping {host}!");
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Debug($"Could not ping {host} with error {ex.Message}. Are you connected to the internet?");
+                        }
+                    }
+                }
+                await Task.Delay(TimeSpan.FromSeconds(5));
+            }
         }
     }
 }
