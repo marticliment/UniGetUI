@@ -114,7 +114,7 @@ public class AutoUpdater
                 InstallerDownloadUrl = InstallerDownloadUrl.Replace("$TAG", LatestVersion);
 
                 Logger.Info($"An update to UniGetUI version {LatestVersion} is available");
-                string InstallerPath = Path.Join(CoreData.UniGetUIDataDirectory, "Updater.exe");
+                string InstallerPath = Path.Join(CoreData.UniGetUIDataDirectory, "UniGetUI Updater.exe");
 
                 if (File.Exists(InstallerPath)
                     && await CheckInstallerHash(InstallerPath, InstallerHash))
@@ -238,6 +238,7 @@ public class AutoUpdater
             client.Timeout = TimeSpan.FromSeconds(600);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             HttpResponseMessage result = await client.GetAsync(downloadUrl);
+            result.EnsureSuccessStatusCode();
             using FileStream fs = new(installerLocation, FileMode.OpenOrCreate);
             await result.Content.CopyToAsync(fs);
         }
@@ -258,6 +259,7 @@ public class AutoUpdater
         // Check if the user has disabled updates
         if (Settings.Get("DisableAutoUpdateWingetUI"))
         {
+            Banner.IsOpen = false;
             Logger.Warn("User disabled updates!");
             return true;
         }
@@ -313,14 +315,14 @@ public class AutoUpdater
             return true;
         }
 
-        LaunchInstallerAndQuit(installerLocation);
+        await LaunchInstallerAndQuit(installerLocation);
         return true;
     }
 
     /// <summary>
     /// Launches the installer located on the installerLocation argument and quits UniGetUI
     /// </summary>
-    private static void LaunchInstallerAndQuit(string installerLocation)
+    private static async Task LaunchInstallerAndQuit(string installerLocation)
     {
         Logger.Debug("Launching the updater...");
         Process p = new()
@@ -333,22 +335,44 @@ public class AutoUpdater
                 CreateNoWindow = true,
             }
         };
-        // p.Start();
+        p.Start();
+        ShowMessage_ThreadSafe(
+            CoreTools.Translate("UniGetUI is being updated..."),
+            CoreTools.Translate("This may take a minute or two"),
+            InfoBarSeverity.Informational,
+            false
+        );
+        await p.WaitForExitAsync();
+        ShowMessage_ThreadSafe(
+            CoreTools.Translate("Something went wrong while launching the updater."),
+            CoreTools.Translate("Please try again later"),
+            InfoBarSeverity.Error,
+            true
+        );
     }
 
     private static void ShowMessage_ThreadSafe(string Title, string Message, InfoBarSeverity MessageSeverity, bool BannerClosable, Button? ActionButton = null)
     {
-        if (Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() is null)
+        try
         {
-            Window.DispatcherQueue.TryEnqueue(() => ShowMessage_ThreadSafe(Title, Message, MessageSeverity, BannerClosable, ActionButton));
-            return;
+            if (Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() is null)
+            {
+                Window.DispatcherQueue.TryEnqueue(() =>
+                    ShowMessage_ThreadSafe(Title, Message, MessageSeverity, BannerClosable, ActionButton));
+                return;
+            }
+
+            Banner.Title = Title;
+            Banner.Message = Message;
+            Banner.Severity = MessageSeverity;
+            Banner.IsClosable = BannerClosable;
+            Banner.ActionButton = ActionButton;
+            Banner.IsOpen = true;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
         }
 
-        Banner.Title = Title;
-        Banner.Message = Message;
-        Banner.Severity = MessageSeverity;
-        Banner.IsClosable = BannerClosable;
-        Banner.ActionButton = ActionButton;
-        Banner.IsOpen = true;
     }
 }

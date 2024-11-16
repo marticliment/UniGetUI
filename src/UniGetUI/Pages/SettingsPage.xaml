@@ -79,7 +79,6 @@
                                 CheckboxText="Update WingetUI automatically"
                                 ButtonText="Check for updates"
                                 SettingName="DisableAutoUpdateWingetUI"
-                                ButtonAlwaysOn="True"
                                 Click="ForceUpdateUniGetUI_OnClick"
                                 />
                             <widgets:CheckboxCard

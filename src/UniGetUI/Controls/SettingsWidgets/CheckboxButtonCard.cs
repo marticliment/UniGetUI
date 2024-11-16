@@ -22,6 +22,7 @@ namespace UniGetUI.Interface.Widgets
                 setting_name = value;
                 IS_INVERTED = value.StartsWith("Disable");
                 CheckBox.IsChecked = Settings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
+                Button.IsEnabled = (CheckBox.IsChecked ?? false) || _buttonAlwaysOn ;
             }
         }
 
@@ -77,6 +78,7 @@ namespace UniGetUI.Interface.Widgets
                 StateChanged?.Invoke(this, EventArgs.Empty);
                 Button.IsEnabled = _buttonAlwaysOn;
             };
+
 
             Button.MinWidth = 200;
             Button.Click += (s, e) => Click?.Invoke(s, e);
