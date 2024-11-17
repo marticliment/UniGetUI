@@ -112,7 +112,7 @@ namespace UniGetUI.Interface
             string CurrentVersion = PEInterface.InstalledPackagesLoader.GetPackageForId(id)?.Version ?? "Unknown";
 
             if (PEInterface.UpgradablePackagesLoader.IgnoredPackages.TryGetValue(Id, out IPackage? package)
-                && package.NewVersion != package.Version && CurrentVersion != "Unknown")
+                && package.NewVersion != package.Version)
             {
                 NewVersion = CurrentVersion + " \u27a4 " + package.NewVersion;
             }
@@ -122,7 +122,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                NewVersion = "Unknown";
+                NewVersion = CoreTools.Translate("Unknown");
             }
 
             Manager = manager;
