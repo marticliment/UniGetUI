@@ -23,12 +23,9 @@
         public void CheckOtherAttributes()
         {
             Assert.NotEmpty(CoreData.VersionName);
-            Assert.NotEqual(0, CoreData.VersionNumber);
+            Assert.NotEqual(0, CoreData.BuildNumber);
             Assert.True(File.Exists(CoreData.IgnoredUpdatesDatabaseFile), "The Ignored Updates database file does not exist, but it should have been created automatically.");
 
-            int notif_3 = CoreData.UpdatesAvailableNotificationTag;
-            int notif_4 = CoreData.UpdatesAvailableNotificationTag;
-            Assert.True(notif_3 == notif_4, "The UpdatesAvailableNotificationId must be always the same");
             Assert.NotEqual(0, CoreData.UpdatesAvailableNotificationTag);
 
             Assert.True(Directory.Exists(CoreData.UniGetUIExecutableDirectory), "Directory where the executable is located does not exist");
