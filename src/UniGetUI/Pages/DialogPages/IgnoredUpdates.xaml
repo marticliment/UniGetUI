@@ -75,7 +75,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*" MaxWidth="120"/>
                                     <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*" MaxWidth="120"/>
+                                    <ColumnDefinition Width="170"/>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*" MaxWidth="80"/>
                                     <ColumnDefinition Width="Auto"/>
@@ -87,11 +87,7 @@
                                 <widgets:LocalIcon Icon="version" Grid.Column="4" Height="24" Width="24"/>
                                 <TextBlock Text="{x:Bind Version}" Grid.Column="5" VerticalAlignment="Center"/>
                                 <widgets:LocalIcon Icon="Upgradable" Grid.Column="6" Height="24" Width="24"/>
-                                <TextBlock Text="{x:Bind Upgradeable}" Grid.Column="7" VerticalAlignment="Center">
-                                    <ToolTipService.ToolTip>
-                                        <ToolTip Content="{x:Bind UpgradeDetails}"/>
-                                    </ToolTipService.ToolTip>
-                                </TextBlock>
+                                <TextBlock Text="{x:Bind NewVersion}" Grid.Column="7" VerticalAlignment="Center"/>
                                 <widgets:LocalIcon Icon="{x:Bind Manager.Properties.IconId}" Grid.Column="8" Height="24" Width="24"/>
                                 <TextBlock Text="{x:Bind Manager.DisplayName}" Grid.Column="9" VerticalAlignment="Center"/>
                                 <Button Click="{x:Bind RemoveFromIgnoredUpdates}" Height="32" Width="32" Padding="0" Grid.Column="10">

@@ -90,8 +90,7 @@ namespace UniGetUI.Interface
         public string Id { get; }
         public string Name { get; }
         public string Version { get; }
-        public string Upgradeable { get; }
-        public string UpgradeDetails { get; }
+        public string NewVersion { get; }
         public IPackageManager Manager { get; }
         private ObservableCollection<IgnoredPackageEntry> List { get; }
         public IgnoredPackageEntry(string id, string version, IPackageManager manager, ObservableCollection<IgnoredPackageEntry> list)
@@ -111,19 +110,20 @@ namespace UniGetUI.Interface
             }
 
             string CurrentVersion = PEInterface.InstalledPackagesLoader.GetPackageForId(id)?.Version ?? "Unknown";
-            string? NewVersion = null;
 
-            foreach (IPackage Package in PEInterface.UpgradablePackagesLoader.UpdateIgnoredPackages) {
-                if (Package.Id == Id)
-                {
-                    NewVersion = Package.NewVersion;
-                    break;
-                }
+            if (PEInterface.UpgradablePackagesLoader.IgnoredPackages.TryGetValue(Id, out IPackage? package)
+                && package.NewVersion != package.Version && CurrentVersion != "Unknown")
+            {
+                NewVersion = CurrentVersion + " \u27a4 " + package.NewVersion;
             }
-            bool NewVersionAvailable = NewVersion != null && NewVersion != CurrentVersion;
-
-            Upgradeable = NewVersionAvailable ? NewVersion : CoreTools.Translate("Up-to-date");
-            UpgradeDetails = NewVersionAvailable ? CurrentVersion + " -> " + NewVersion : CurrentVersion;
+            else if (CurrentVersion != "Unknown")
+            {
+                NewVersion = CoreTools.Translate("Up to date") + $" ({CurrentVersion})";;
+            }
+            else
+            {
+                NewVersion = "Unknown";
+            }
 
             Manager = manager;
             List = list;
@@ -133,6 +133,13 @@ namespace UniGetUI.Interface
         {
             string ignoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
             await Task.Run(() => IgnoredUpdatesDatabase.Remove(ignoredId));
+
+            // If possible, add the package to the software updates tab again
+            if (PEInterface.UpgradablePackagesLoader.IgnoredPackages.TryRemove(Id, out IPackage? nativePackage)
+                && nativePackage.NewVersion != nativePackage.Version)
+            {
+                PEInterface.UpgradablePackagesLoader.AddForeign(nativePackage);
+            }
 
             foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)
             {
