@@ -110,6 +110,8 @@ namespace UniGetUI.Interface
             {
                 ParametersToProcess.Enqueue(arg);
             }
+
+            _ = AutoUpdater.UpdateCheckLoop(this, UpdatesBanner);
         }
 
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)
@@ -130,10 +132,14 @@ namespace UniGetUI.Interface
             {
                 Activate();
             }
+            else if (action == NotificationArguments.ReleaseSelfUpdateLock)
+            {
+                AutoUpdater.ReleaseLockForAutoupdate_Notification = true;
+            }
             else
             {
                 throw new ArgumentException(
-                    "args.Argument was not set to a value present in Enums.NotificationArguments");
+                    $"args.Argument was not set to a value present in Enums.NotificationArguments (value is {action})");
             }
 
             Logger.Debug("Notification activated: " + args.Arguments);
@@ -144,8 +150,9 @@ namespace UniGetUI.Interface
         /// </summary>
         public async void HandleClosingEvent(AppWindow sender, AppWindowClosingEventArgs args)
         {
+            AutoUpdater.ReleaseLockForAutoupdate_Window = true;
             SaveGeometry(Force: true);
-            if (!Settings.Get("DisableSystemTray"))
+            if (!Settings.Get("DisableSystemTray") || AutoUpdater.UpdateReadyToBeInstalled)
             {
                 args.Cancel = true;
                 try

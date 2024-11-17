@@ -75,9 +75,15 @@
                                 Click="OpenWelcomeWizard"
                                 IsEnabled="False"
                             /-->
-                            <widgets:CheckboxCard
-                                Text="Update WingetUI automatically"
+                            <widgets:CheckboxButtonCard
+                                CheckboxText="Update WingetUI automatically"
+                                ButtonText="Check for updates"
                                 SettingName="DisableAutoUpdateWingetUI"
+                                Click="ForceUpdateUniGetUI_OnClick"
+                                />
+                            <widgets:CheckboxCard
+                                Text="Install preview (beta) versions of UniGetUI"
+                                SettingName="EnableUniGetUIBeta"
                                 />
                             <widgets:ButtonCard
                                 Text="Import settings from a local file"
