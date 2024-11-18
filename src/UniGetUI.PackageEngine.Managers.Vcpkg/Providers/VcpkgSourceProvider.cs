@@ -27,19 +27,10 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         protected override IEnumerable<IManagerSource> GetSources_UnSafe()
         {
             List<ManagerSource> Sources = [];
-            // Retrieve all triplets on the system (in %VCPKG_ROOT%\triplets{\community})
-            var (vcpkgRootFound, vcpkgRoot) = Vcpkg.GetVcpkgRoot();
-            if (vcpkgRootFound)
-            {
-                string tripletLocation = Path.Join(vcpkgRoot, "triplets");
-                string communityTripletLocation = Path.Join(vcpkgRoot, "triplets", "community");
-
-                foreach (string tripletFile in Directory.EnumerateFiles(tripletLocation).Concat(Directory.EnumerateFiles(communityTripletLocation)))
-                {
-                    string triplet = Path.GetFileNameWithoutExtension(tripletFile);
-                    Sources.Add(new ManagerSource(Manager, triplet, Vcpkg.URI_VCPKG_IO));
-                }
-            }
+            
+			foreach (string Triplet in Vcpkg.GetSystemTriplets()) {
+				Sources.Add(new ManagerSource(Manager, Triplet, Vcpkg.URI_VCPKG_IO));
+			}
 
             return Sources;
         }
