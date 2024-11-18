@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.IconEngine;
@@ -76,7 +77,16 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         protected override string? GetInstallLocation_UnSafe(IPackage package)
         {
-            throw new NotImplementedException();
+            var (rootFound, rootPath) = Vcpkg.GetVcpkgRoot();
+            if (!rootFound)
+            {
+                return null;
+            }
+            
+            string PackageId = Regex.Replace(package.Id.Replace(":", "_"), @"\[.*\]", String.Empty);
+            var PackagePath = Path.Join(rootPath, "packages", PackageId);
+            var VcpkgInstalledPath = Path.Join(rootPath, "installed", package.Id.Split(":")[1]);
+            return Directory.Exists(PackagePath) ? PackagePath : (Directory.Exists(VcpkgInstalledPath) ? VcpkgInstalledPath : Path.GetDirectoryName(PackageId));
         }
 
         protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
