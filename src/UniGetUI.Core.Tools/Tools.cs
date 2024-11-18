@@ -193,6 +193,7 @@ namespace UniGetUI.Core.Tools
                APP Version: {CoreData.VersionName}
                 Executable: {Environment.ProcessPath}
 
+Crash HResult: {(uint)e.HResult}
 Crash Message: {e.Message}
 
 Crash Traceback:
