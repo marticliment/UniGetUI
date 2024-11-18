@@ -76,6 +76,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             };
 
             SourceProvider = new VcpkgSourceProvider(this);
+            PackageDetailsProvider = new VcpkgPackageDetailsProvider(this);
             OperationProvider = new VcpkgOperationProvider(this);
         }
 
