@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppVersion "3.1.4-beta1"
-#define MyAppName "UniGetUI (formerly WingetUI)"
+#define MyAppName "UniGetUI"
 #define MyAppPublisher "Martí Climent"
 #define MyAppURL "https://github.com/marticliment/UniGetUI"
 #define MyAppExeName "UniGetUI.exe"
