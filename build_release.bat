@@ -33,15 +33,15 @@ rmdir /Q /S unigetui_bin
 
 mkdir unigetui_bin
 robocopy src\UniGetUI\bin\x64\Release\net8.0-windows10.0.22621.0\win-x64\publish unigetui_bin *.* /MOVE /E
-rem pushd src\UniGetUI\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish
 
-%signcommand% "unigetui_bin/UniGetUI.exe" "unigetui_bin/UniGetUI.dll" "unigetui_bin/UniGetUI.*.dll" "unigetui_bin/ExternalLibraries.*.dll"
+set /p signfiles="Do you want to sign the files? [Y/n]: "
+if /i "%signfiles%" neq "n" (
+    %signcommand% "unigetui_bin/UniGetUI.exe" "unigetui_bin/UniGetUI.dll" "unigetui_bin/UniGetUI.*.dll" "unigetui_bin/ExternalLibraries.*.dll"
 
-pause
-
-if %errorlevel% neq 0 (
-    echo "Signing has failed!"
-    pause
+    if %errorlevel% neq 0 (
+        echo "Signing has failed!"
+        pause
+    )
 )
 
 pushd unigetui_bin

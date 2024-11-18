@@ -22,9 +22,11 @@ try:
     print(f"Build number set to {BuildNumber+1}")
     with open("scripts/BuildNumber", "w") as f:
         f.write(str(BuildNumber+1))
-    
+
 
     versionISS = str(input("Enter version     (X.X.X.X) : "))
+    while not versionISS.count('.') == 3: 
+        versionISS = str(input("Incorrect format. Enter version (X.X.X.X) : "))
 
     def fileReplaceLinesWith(filename: str, list: dict[str, str], encoding="utf-8"):
         with open(filename, "r+", encoding=encoding, errors="ignore") as f:
@@ -47,6 +49,7 @@ try:
         "        public const int BuildNumber = ": f" {BuildNumber+1}; // Do not modify this line, use file scripts/apply_versions.py\n",
     }, encoding="utf-8-sig")
 
+
     fileReplaceLinesWith("src/SharedAssemblyInfo.cs", {
         "[assembly: AssemblyVersion(\"": f"{versionISS}\")]\n",
         "[assembly: AssemblyFileVersion(\"": f"{versionISS}\")]\n",
@@ -59,6 +62,15 @@ try:
     fileReplaceLinesWith("UniGetUI.iss", {
         "#define MyAppVersion": f" \"{versionName}\"\n",
         "VersionInfoVersion=": f"{versionISS}\n",
+    }, encoding="utf-8-sig")
+
+    IS_BETA = (input("Is this a beta release? [y/N]: ").lower().strip() == "y")
+
+    BETA_APP_NAME = "UniGetUI (PreRelease)"
+    STABLE_APP_NAME = "UniGetUI"
+    
+    fileReplaceLinesWith("UniGetUI.iss", {
+        "UninstallDisplayName=\"": f"{BETA_APP_NAME if IS_BETA else STABLE_APP_NAME}\"\n",
     }, encoding="utf-8-sig")
 
     fileReplaceLinesWith("src/UniGetUI/app.manifest", {
