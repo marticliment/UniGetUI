@@ -82,7 +82,7 @@
                                 Click="ForceUpdateUniGetUI_OnClick"
                                 />
                             <widgets:CheckboxCard
-                                Text="Install preview (beta) versions of UniGetUI"
+                                Text="Install prerelease versions of UniGetUI"
                                 SettingName="EnableUniGetUIBeta"
                                 />
                             <widgets:ButtonCard
