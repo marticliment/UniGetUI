@@ -19,28 +19,27 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public ManagerProperties Properties { get; set; } = new(IsDummy: true);
         public ManagerCapabilities Capabilities { get; set; } = new(IsDummy: true);
         public ManagerStatus Status { get; set; } = new() { Found = false };
-        public string Name { get => Properties.Name ?? "Unset"; }
+        public string Name { get => Properties.Name; }
         public string DisplayName { get => Properties.DisplayName ?? Name; }
         public IManagerSource DefaultSource { get => Properties.DefaultSource; }
-
-        public static string[] FALSE_PACKAGE_NAMES = [""];
-        public static string[] FALSE_PACKAGE_IDS = [""];
-        public static string[] FALSE_PACKAGE_VERSIONS = [""];
         public bool ManagerReady { get; set; }
         public IManagerLogger TaskLogger { get; }
-
         public IEnumerable<ManagerDependency> Dependencies { get; protected set; } = [];
+        public IMultiSourceHelper SourcesHelper { get; protected set; } = new NullSourceHelper();
+        public IPackageDetailsHelper DetailsHelper { get; protected set; } = null!;
+        public IPackageOperationHelper OperationHelper { get; protected set; } = null!;
 
-        public IMultiSourceHelper SourcesHelper { get; set; } = new NullSourceHelper();
-        public IPackageDetailsHelper DetailsHelper { get; set; } = new NullPkgDetailsHelper();
-        public IPackageOperationHelper OperationHelper { get; set; } = new NullPkgOperationHelper();
-
-        private readonly bool __base_constructor_called;
+        private readonly bool _baseConstructorCalled;
 
         public PackageManager()
         {
-            __base_constructor_called = true;
+            _baseConstructorCalled = true;
             TaskLogger = new ManagerLogger(this);
+        }
+
+        private static void Throw(string message)
+        {
+            throw new InvalidDataException(message);
         }
 
         /// <summary>
@@ -49,30 +48,15 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public virtual void Initialize()
         {
             // BEGIN integrity check
-            if (!__base_constructor_called)
-            {
-                throw new InvalidOperationException($"The Manager {Properties.Name} has not called the base constructor.");
-            }
+            if (!_baseConstructorCalled) Throw($"The Manager {Properties.Name} has not called the base constructor.");
+            if (Capabilities.IsDummy) Throw($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Capabilities object");
+            if (Properties.IsDummy) Throw($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Properties object");
 
-            if (Capabilities.IsDummy)
-            {
-                throw new InvalidOperationException($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Capabilities object");
-            }
-
-            if (Properties.IsDummy)
-            {
-                throw new InvalidOperationException($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Properties object");
-            }
+            if (OperationHelper is NullPkgOperationHelper) Throw($"Manager {Name} does not have an OperationProvider");
+            if (DetailsHelper is NullPkgDetailsHelper) Throw($"Manager {Name} does not have a valid DetailsHelper");
 
             if (Capabilities.SupportsCustomSources && SourcesHelper is NullSourceHelper)
-            {
-                throw new InvalidOperationException($"Manager {Name} has been declared as SupportsCustomSources but has no helper associated with it");
-            }
-
-            if (OperationHelper is NullPkgOperationHelper)
-            {
-                throw new InvalidOperationException($"Manager {Name} does not have an OperationProvider");
-            }
+                Throw($"Manager {Name} has been declared as SupportsCustomSources but has no helper associated with it");
             // END integrity check
 
             Properties.DefaultSource.RefreshSourceNames();
