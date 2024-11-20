@@ -45,21 +45,17 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             // TODO: since each change results in a new commit to the file, you could determine the `UpdateDate` via figuring out the date of the last commit that changed the file was.
             // Unfortunately, the GitHub API doesn't seem to allow getting the commit that changed a file, but you can get the date of a commit with
             // https://api.github.com/repos/{VCPKG_REPO}/commits/{CommitHash}
-            
+
             List<string> Tags = [];
-            if (contents?["supports"] != null)
-            {
-                Tags.Add(contents?["supports"]?.ToString());
-            }
             // TODO: the "features" and "dependencies" keys could also be good candgidates for tags, however their type specifications are all over -
             // strings, dictionaries, arrays - so one would first have to figure out how to handle that.
             // See https://learn.microsoft.com/en-us/vcpkg/reference/vcpkg-json
-            if (PackagePrefix.Contains("["))
+            if (PackagePrefix.Contains('['))
             {
-                Tags.Add("library: " + PackagePrefix[..PackagePrefix.IndexOf("[")]);
-                Tags.Add("feature: " + PackagePrefix[(PackagePrefix.IndexOf("[") + 1)..PackagePrefix.IndexOf("]")]);
+                Tags.Add($"{CoreTools.Translate("library")}: " + PackageName);
+                Tags.Add($"{CoreTools.Translate("feature")}: " + PackagePrefix.Split('[')[^1][..^1]);
             }
-            
+
             details.Tags = Tags.ToArray();
 
             logger.Close(0);
@@ -82,7 +78,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             {
                 return null;
             }
-            
+
             string PackageId = Regex.Replace(package.Id.Replace(":", "_"), @"\[.*\]", String.Empty);
             var PackagePath = Path.Join(rootPath, "packages", PackageId);
             var VcpkgInstalledPath = Path.Join(rootPath, "installed", package.Id.Split(":")[1]);
