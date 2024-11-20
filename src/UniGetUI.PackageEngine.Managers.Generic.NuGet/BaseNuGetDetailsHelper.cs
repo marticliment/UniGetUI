@@ -11,7 +11,7 @@ using UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
-    public abstract class BaseNuGetDetailsHelper : BasePkgDetailsHelper<PackageManager>
+    public abstract class BaseNuGetDetailsHelper : BasePkgDetailsHelper
     {
         public BaseNuGetDetailsHelper(BaseNuGet manager) : base(manager) { }
 
