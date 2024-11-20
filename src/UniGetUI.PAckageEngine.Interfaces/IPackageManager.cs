@@ -1,3 +1,4 @@
+using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
@@ -18,6 +19,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         public IMultiSourceHelper SourcesHelper { get; }
         public IPackageDetailsHelper DetailsHelper { get; }
         public IPackageOperationHelper OperationHelper { get; }
+        public IEnumerable<ManagerDependency> Dependencies { get; }
 
         /// <summary>
         /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.

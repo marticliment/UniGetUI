@@ -3,6 +3,7 @@ using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
+using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Enums;
@@ -28,6 +29,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         public IMultiSourceHelper SourcesHelper { get; }
         public IPackageDetailsHelper DetailsHelper { get; }
         public IPackageOperationHelper OperationHelper { get; }
+        public IEnumerable<ManagerDependency> Dependencies { get; }
 
         public NullPackageManager()
         {
@@ -58,6 +60,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
                 Found = false,
                 Version = "0"
             };
+            Dependencies = [];
         }
 
         public IEnumerable<IPackage> FindPackages(string query) => throw new NotImplementedException();

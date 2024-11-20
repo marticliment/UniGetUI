@@ -295,10 +295,8 @@ namespace UniGetUI
         {
             // Check for missing dependencies on package managers
             List<ManagerDependency> missing_deps = [];
-            foreach (IPackageManager imanager in PEInterface.Managers)
+            foreach (IPackageManager manager in PEInterface.Managers)
             {
-                if (imanager is not PackageManager manager) continue;
-
                 if (!manager.IsReady())
                 {
                     continue;
