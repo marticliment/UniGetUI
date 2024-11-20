@@ -35,6 +35,6 @@
 
   <ItemGroup>
     <PackageReference Include="PhotoSauce.MagicScaler" Version="0.14.2" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.10" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
   </ItemGroup>
 </Project>
