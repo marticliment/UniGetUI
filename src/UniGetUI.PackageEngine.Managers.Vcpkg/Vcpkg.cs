@@ -76,6 +76,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             };
 
             SourceProvider = new VcpkgSourceProvider(this);
+            PackageDetailsProvider = new VcpkgPackageDetailsProvider(this);
             OperationProvider = new VcpkgOperationProvider(this);
         }
 
@@ -343,7 +344,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
             var (gitFound, gitPath) = CoreTools.Which("git");
 
-            // TODO: Check if Settings.Get("DisableUpdateVcpkgGitPorts") is still needed
             if (!found || !gitFound || !vcpkgRootFound || Settings.Get("DisableUpdateVcpkgGitPorts"))
             {
                 INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
