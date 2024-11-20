@@ -57,9 +57,9 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
             };
 
-            SourceProvider = new ChocolateySourceProvider(this);
-            PackageDetailsProvider = new ChocolateyDetailsProvider(this);
-            OperationProvider = new ChocolateyOperationProvider(this);
+            SourcesHelper = new ChocolateySourceHelper(this);
+            DetailsHelper = new ChocolateyDetailsHelper(this);
+            OperationHelper = new ChocolateyPkgOperationHelper(this);
         }
 
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()

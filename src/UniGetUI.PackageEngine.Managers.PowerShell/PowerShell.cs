@@ -6,6 +6,7 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Managers.Chocolatey;
@@ -50,9 +51,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
             };
 
-            PackageDetailsProvider = new PowerShellDetailsProvider(this);
-            SourceProvider = new PowerShellSourceProvider(this);
-            OperationProvider = new PowerShellOperationProvider(this);
+            DetailsHelper = new PowerShellDetailsHelper(this);
+            SourcesHelper = new PowerShellSourceHelper(this);
+            OperationHelper = new PowerShellPkgOperationHelper(this);
         }
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
@@ -130,7 +131,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     continue;
                 }
 
-                Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], GetSourceOrDefault(elements[3]), this));
+                Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
+                    elements[2], SourcesHelper.Factory.GetSourceOrDefault(elements[3]), this));
             }
 
             logger.AddToStdErr(p.StandardError.ReadToEnd());
@@ -186,7 +188,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                         elements[i] = elements[i].Trim();
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[1]), elements[1], elements[0], GetSourceOrDefault(elements[2]), this));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[1]), elements[1], elements[0],
+                        SourcesHelper.Factory.GetSourceOrDefault(elements[2]), this));
                 }
             }
 
@@ -220,7 +223,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                    StandardOutputEncoding = Encoding.UTF8
                 }
             };
             process.Start();

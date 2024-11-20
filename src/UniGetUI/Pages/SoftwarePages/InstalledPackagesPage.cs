@@ -321,7 +321,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuSharePackage.IsEnabled = !IS_LOCAL;
             MenuPackageDetails.IsEnabled = !IS_LOCAL;
 
-            MenuOpenInstallLocation.IsEnabled = package.Manager.GetPackageInstallLocation(package) is not null;
+            MenuOpenInstallLocation.IsEnabled = package.Manager.DetailsHelper.GetInstallLocation(package) is not null;
             if (!IS_LOCAL)
             {
                 if (await package.HasUpdatesIgnoredAsync())

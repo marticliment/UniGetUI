@@ -13,7 +13,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
     {
         public sealed override void Initialize()
         {
-            if (PackageDetailsProvider is not BaseNuGetDetailsProvider)
+            if (DetailsHelper is not BaseNuGetDetailsHelper)
             {
                 throw new InvalidOperationException("NuGet-based package managers must not reassign the PackageDetailsProvider property");
             }
@@ -46,7 +46,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             IEnumerable<IManagerSource> sources;
             if (Capabilities.SupportsCustomSources)
             {
-                sources = GetSources();
+                sources = SourcesHelper.GetSources();
             }
             else
             {

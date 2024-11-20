@@ -306,7 +306,7 @@ namespace UniGetUI.Interface.Dialogs
             }
 
             CommandTextBlock.Text = Package.Manager.Properties.ExecutableFriendlyName + " " +
-                string.Join(' ', Package.Manager.GetOperationParameters(Package, await InstallationOptions.FromPackageAsync(Package), OperationRole));
+                string.Join(' ', Package.Manager.OperationHelper.GetParameters(Package, await InstallationOptions.FromPackageAsync(Package), OperationRole));
 
             LoadingIndicator.Visibility = Visibility.Collapsed;
 
