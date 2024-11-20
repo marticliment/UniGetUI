@@ -54,8 +54,8 @@ public partial class Cargo : PackageManager
             KnownSources = [cratesIo]
         };
 
-        PackageDetailsProvider = new CargoPackageDetailsProvider(this);
-        OperationProvider = new CargoOperationProvider(this);
+        DetailsHelper = new CargoPkgDetailsHelper(this);
+        OperationHelper = new CargoPkgOperationHelper(this);
     }
 
     protected override IEnumerable<Package> FindPackages_UnSafe(string query)

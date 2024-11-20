@@ -115,7 +115,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             try
             {
                 // Get the source for the catalog
-                IManagerSource source = Manager.SourceProvider.Factory.GetSourceOrDefault(CatalogTaskPair.Key.Item1.Info.Name);
+                IManagerSource source = Manager.SourcesHelper.Factory.GetSourceOrDefault(CatalogTaskPair.Key.Item1.Info.Name);
 
                 FindPackagesResult FoundPackages = CatalogTaskPair.Value.Result;
                 foreach (MatchResult matchResult in FoundPackages.Matches.ToArray())
@@ -159,7 +159,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             if (nativePackage.IsUpdateAvailable)
             {
                 IManagerSource source;
-                source = Manager.SourceProvider.Factory.GetSourceOrDefault(nativePackage.DefaultInstallVersion.PackageCatalog.Info.Name);
+                source = Manager.SourcesHelper.Factory.GetSourceOrDefault(nativePackage.DefaultInstallVersion.PackageCatalog.Info.Name);
 
                 var UniGetUIPackage = new Package(
                     nativePackage.Name,
@@ -188,7 +188,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             IManagerSource source;
             if (nativePackage.DefaultInstallVersion is not null)
             {
-                source = Manager.SourceProvider.Factory.GetSourceOrDefault(nativePackage.DefaultInstallVersion.PackageCatalog.Info.Name);
+                source = Manager.SourcesHelper.Factory.GetSourceOrDefault(nativePackage.DefaultInstallVersion.PackageCatalog.Info.Name);
             }
             else
             {
@@ -349,7 +349,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         ProcessStartInfo startInfo = new()
         {
             FileName = Manager.WinGetBundledPath,
-            Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetOperationProvider.GetIdNamePiece(details.Package) +
+            Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetPkgOperationHelper.GetIdNamePiece(details.Package) +
                         " --disable-interactivity --accept-source-agreements --source " +
                         details.Package.Source.Name,
             RedirectStandardOutput = true,

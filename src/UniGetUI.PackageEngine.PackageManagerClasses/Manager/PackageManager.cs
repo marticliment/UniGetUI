@@ -29,11 +29,11 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public bool ManagerReady { get; set; }
         public IManagerLogger TaskLogger { get; }
 
-        public ISourceProvider? SourceProvider { get; set; }
         public IEnumerable<ManagerDependency> Dependencies { get; protected set; } = [];
 
-        public IPackageDetailsProvider PackageDetailsProvider { get; set; }
-        public IOperationProvider OperationProvider { get; set; }
+        public IMultiSourceHelper SourcesHelper { get; set; } = new NullSourceHelper();
+        public IPackageDetailsHelper DetailsHelper { get; set; } = new NullPkgDetailsHelper();
+        public IPackageOperationHelper OperationHelper { get; set; } = new NullPkgOperationHelper();
 
         private readonly bool __base_constructor_called;
 
@@ -41,9 +41,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         {
             __base_constructor_called = true;
             TaskLogger = new ManagerLogger(this);
-            SourceProvider = new NullSourceProvider(this);
-            PackageDetailsProvider = new NullPackageDetailsProvider(this);
-            OperationProvider = new NullOperationProvider(this);
         }
 
         /// <summary>
@@ -67,12 +64,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 throw new InvalidOperationException($"The current instance of PackageManager with name ${Properties.Name} does not have a valid Properties object");
             }
 
-            if (Capabilities.SupportsCustomSources && SourceProvider is NullSourceProvider)
+            if (Capabilities.SupportsCustomSources && SourcesHelper is NullSourceHelper)
             {
                 throw new InvalidOperationException($"Manager {Name} has been declared as SupportsCustomSources but has no helper associated with it");
             }
 
-            if (OperationProvider is NullOperationProvider)
+            if (OperationHelper is NullPkgOperationHelper)
             {
                 throw new InvalidOperationException($"Manager {Name} does not have an OperationProvider");
             }
@@ -87,12 +84,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
                 if (IsReady() && Capabilities.SupportsCustomSources)
                 {
-                    Task<IEnumerable<IManagerSource>> sourcesTask = Task.Run(() => SourceProvider.GetSources());
+                    Task<IEnumerable<IManagerSource>> sourcesTask = Task.Run(() => SourcesHelper.GetSources());
 
                     if (sourcesTask.Wait(TimeSpan.FromSeconds(15)))
                     {
                         foreach (var source in sourcesTask.Result)
-                            SourceProvider?.Factory.AddSource(source);
+                            SourcesHelper?.Factory.AddSource(source);
                     }
                     else
                     {

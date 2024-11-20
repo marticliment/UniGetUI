@@ -58,7 +58,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected sealed override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
-            string operation_args = string.Join(" ", Package.Manager.OperationProvider.GetOperationParameters(Package, Options, Role));
+            string operation_args = string.Join(" ", Package.Manager.OperationHelper.GetParameters(Package, Options, Role));
 
             if (Package.OverridenOptions.RunAsAdministrator == true
                 || Options.RunAsAdministrator
@@ -92,7 +92,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected sealed override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
-            return Task.FromResult(Package.Manager.OperationProvider.GetOperationResult(Package, Role, Output, ReturnCode));
+            return Task.FromResult(Package.Manager.OperationHelper.GetResult(Package, Role, Output, ReturnCode));
         }
 
         protected override async Task WaitForAvailability()

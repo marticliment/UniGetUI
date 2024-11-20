@@ -75,9 +75,9 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 KnownSources = [.. TripletSourceMap.Values],
             };
 
-            SourceProvider = new VcpkgSourceProvider(this);
-            PackageDetailsProvider = new VcpkgPackageDetailsProvider(this);
-            OperationProvider = new VcpkgOperationProvider(this);
+            SourcesHelper = new VcpkgSourceHelper(this);
+            DetailsHelper = new VcpkgPkgDetailsHelper(this);
+            OperationHelper = new VcpkgPkgOperationHelper(this);
         }
 
         protected override IEnumerable<Package> FindPackages_UnSafe(string query)

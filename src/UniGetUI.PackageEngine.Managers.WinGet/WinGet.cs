@@ -74,9 +74,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 DefaultSource = new ManagerSource(this, "winget", new Uri("https://cdn.winget.microsoft.com/cache"))
             };
 
-            SourceProvider = new WinGetSourceProvider(this);
-            PackageDetailsProvider = new WinGetPackageDetailsProvider(this);
-            OperationProvider = new WinGetOperationProvider(this);
+            SourcesHelper = new WinGetSourceHelper(this);
+            DetailsHelper = new WinGetPkgDetailsHelper(this);
+            OperationHelper = new WinGetPkgOperationHelper(this);
 
             LocalPcSource = new LocalWinGetSource(this, CoreTools.Translate("Local PC"), IconType.LocalPc);
             AndroidSubsystemSource = new(this, CoreTools.Translate("Android Subsystem"), IconType.Android);

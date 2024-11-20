@@ -166,7 +166,7 @@ namespace UniGetUI.Interface.Widgets
 
             LoadingBar.Visibility = Visibility.Visible;
             Sources.Clear();
-            foreach (IManagerSource source in await Task.Run(Manager.SourceProvider.GetSources))
+            foreach (IManagerSource source in await Task.Run(Manager.SourcesHelper.GetSources))
             {
                 Sources.Add(new SourceItem(this, source));
             }

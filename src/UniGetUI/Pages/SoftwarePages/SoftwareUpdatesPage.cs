@@ -179,7 +179,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
             MenuskipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
 
-            MenuOpenInstallLocation.IsEnabled = package.Manager.PackageDetailsProvider.GetPackageInstallLocation(package) is not null;
+            MenuOpenInstallLocation.IsEnabled = package.Manager.DetailsHelper.GetInstallLocation(package) is not null;
         }
 
         public override void GenerateToolBar()

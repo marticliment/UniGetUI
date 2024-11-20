@@ -51,9 +51,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
             };
 
-            PackageDetailsProvider = new PowerShellDetailsProvider(this);
-            SourceProvider = new PowerShellSourceProvider(this);
-            OperationProvider = new PowerShellOperationProvider(this);
+            DetailsHelper = new PowerShellDetailsHelper(this);
+            SourcesHelper = new PowerShellSourceHelper(this);
+            OperationHelper = new PowerShellPkgOperationHelper(this);
         }
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
@@ -132,7 +132,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 }
 
                 Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
-                    elements[2], SourceProvider.Factory.GetSourceOrDefault(elements[3]), this));
+                    elements[2], SourcesHelper.Factory.GetSourceOrDefault(elements[3]), this));
             }
 
             logger.AddToStdErr(p.StandardError.ReadToEnd());
@@ -189,7 +189,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     }
 
                     Packages.Add(new Package(CoreTools.FormatAsName(elements[1]), elements[1], elements[0],
-                        SourceProvider.Factory.GetSourceOrDefault(elements[2]), this));
+                        SourcesHelper.Factory.GetSourceOrDefault(elements[2]), this));
                 }
             }
 

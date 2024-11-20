@@ -103,7 +103,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 else
                 {
                     string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
-                    source = Manager.SourceProvider.Factory.GetSourceOrDefault(sourceName);
+                    source = Manager.SourcesHelper.Factory.GetSourceOrDefault(sourceName);
                 }
 
                 Packages.Add(new Package(name, id, version, newVersion, source, Manager));
@@ -190,7 +190,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                     else
                     {
                         string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();
-                        source = Manager.SourceProvider.Factory.GetSourceOrDefault(sourceName);
+                        source = Manager.SourcesHelper.Factory.GetSourceOrDefault(sourceName);
                     }
                     Packages.Add(new Package(name, id, version, source, Manager));
                 }
@@ -267,7 +267,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 else
                 {
                     string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
-                    source = Manager.SourceProvider.Factory.GetSourceOrDefault(sourceName);
+                    source = Manager.SourcesHelper.Factory.GetSourceOrDefault(sourceName);
                 }
                 Packages.Add(new Package(name, id, version, source, Manager));
             }
@@ -308,7 +308,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         ProcessStartInfo startInfo = new()
         {
             FileName = Manager.WinGetBundledPath,
-            Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetOperationProvider.GetIdNamePiece(details.Package) +
+            Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetPkgOperationHelper.GetIdNamePiece(details.Package) +
                         " --disable-interactivity --accept-source-agreements --locale " +
                         System.Globalization.CultureInfo.CurrentCulture,
             RedirectStandardOutput = true,
@@ -347,7 +347,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             startInfo = new()
             {
                 FileName = Manager.WinGetBundledPath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetOperationProvider.GetIdNamePiece(details.Package) +
+                Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetPkgOperationHelper.GetIdNamePiece(details.Package) +
                             " --disable-interactivity --accept-source-agreements --locale en-US",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -384,7 +384,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             startInfo = new()
             {
                 FileName = Manager.WinGetBundledPath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetOperationProvider.GetIdNamePiece(details.Package) +
+                Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetPkgOperationHelper.GetIdNamePiece(details.Package) +
                             " --disable-interactivity --accept-source-agreements",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -522,7 +522,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             StartInfo = new ProcessStartInfo
             {
                 FileName = Manager.WinGetBundledPath,
-                Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetOperationProvider.GetIdNamePiece(package) +
+                Arguments = Manager.Properties.ExecutableCallArgs + " show " + WinGetPkgOperationHelper.GetIdNamePiece(package) +
                             $" --versions --accept-source-agreements",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,

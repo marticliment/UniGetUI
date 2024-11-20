@@ -85,9 +85,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 DefaultSource = new ManagerSource(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
             };
 
-            SourceProvider = new ScoopSourceProvider(this);
-            PackageDetailsProvider = new ScoopPackageDetailsProvider(this);
-            OperationProvider = new ScoopOperationProvider(this);
+            SourcesHelper = new ScoopSourceHelper(this);
+            DetailsHelper = new ScoopPkgDetailsHelper(this);
+            OperationHelper = new ScoopPkgOperationHelper(this);
         }
 
         protected override IEnumerable<Package> FindPackages_UnSafe(string query)
@@ -144,7 +144,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 if (line.StartsWith("'"))
                 {
                     string sourceName = line.Split(" ")[0].Replace("'", "");
-                    source = SourceProvider.Factory.GetSourceOrDefault(sourceName);
+                    source = SourcesHelper.Factory.GetSourceOrDefault(sourceName);
                 }
                 else if (line.Trim() != "")
                 {
@@ -325,7 +325,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         CoreTools.FormatAsName(elements[0]),
                         elements[0],
                         elements[1],
-                        SourceProvider.Factory.GetSourceOrDefault(elements[2]),
+                        SourcesHelper.Factory.GetSourceOrDefault(elements[2]),
                         this,
                         options));
                 }

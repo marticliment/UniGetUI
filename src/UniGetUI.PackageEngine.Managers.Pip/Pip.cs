@@ -54,8 +54,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             };
 
-            PackageDetailsProvider = new PipPackageDetailsProvider(this);
-            OperationProvider = new PipOperationProvider(this);
+            DetailsHelper = new PipPkgDetailsHelper(this);
+            OperationHelper = new PipPkgOperationHelper(this);
         }
 
         protected override IEnumerable<Package> FindPackages_UnSafe(string query)
