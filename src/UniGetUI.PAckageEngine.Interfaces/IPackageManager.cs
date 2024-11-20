@@ -5,7 +5,7 @@ using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Interfaces
 {
-    public interface IPackageManager : ISourceProvider, IPackageDetailsProvider, IOperationProvider
+    public interface IPackageManager
     {
         public ManagerProperties Properties { get; }
         public ManagerCapabilities Capabilities { get; }
@@ -15,10 +15,9 @@ namespace UniGetUI.PackageEngine.Interfaces
         public IManagerSource DefaultSource { get; }
         public bool ManagerReady { get; }
         public IManagerLogger TaskLogger { get; }
-
         public ISourceProvider? SourceProvider { get; }
-        public IPackageDetailsProvider? PackageDetailsProvider { get; }
-        public IOperationProvider? OperationProvider { get; }
+        public IPackageDetailsProvider PackageDetailsProvider { get; }
+        public IOperationProvider OperationProvider { get; }
 
         /// <summary>
         /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.
@@ -67,8 +66,5 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// an example
         /// </summary>
         public void AttemptFastRepair();
-
-        public IManagerSource GetSourceOrDefault(string SourceName);
-        public IManagerSource? GetSourceIfExists(string SourceName);
     }
 }

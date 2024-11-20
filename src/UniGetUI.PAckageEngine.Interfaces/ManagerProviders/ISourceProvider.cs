@@ -4,7 +4,7 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
 {
     public interface ISourceProvider
     {
-        public ISourceFactory SourceFactory { get; }
+        public ISourceFactory Factory { get; }
 
         /// <summary>
         /// Returns the command-line parameters required to add the given source to the manager.
@@ -43,5 +43,7 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// </summary>
         /// <returns>An array of ManagerSource objects</returns>
         public IEnumerable<IManagerSource> GetSources();
+
+
     }
 }

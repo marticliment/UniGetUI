@@ -508,7 +508,7 @@ namespace UniGetUI.Interface
                         VisibleManagers.Add(manager);
                         if (manager.Capabilities.SupportsCustomSources)
                         {
-                            foreach (IManagerSource source in manager.SourceFactory.GetAvailableSources())
+                            foreach (IManagerSource source in manager.SourceProvider.Factory.GetAvailableSources())
                                 if (!VisibleSources.Contains(source)) VisibleSources.Add(source);
                         }
                     }
@@ -704,7 +704,7 @@ namespace UniGetUI.Interface
 
         protected void OpenPackageInstallLocation(IPackage? package)
         {
-            string? path = package?.Manager.GetPackageInstallLocation(package);
+            string? path = package?.Manager.PackageDetailsProvider.GetPackageInstallLocation(package);
 
             if(path is not null)
                 Process.Start(new ProcessStartInfo

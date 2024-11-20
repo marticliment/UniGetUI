@@ -16,71 +16,109 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
 
         public void GetPackageDetails(IPackageDetails details)
         {
-            GetDetails_UnSafe(details);
+            if (!Manager.IsReady()) { Logger.Warn($"Manager {Manager.Name} is disabled but yet GetPackageDetails was called"); return; }
+            try
+            {
+                GetDetails_UnSafe(details);
+                Logger.Info($"Loaded details for package {details.Package.Id} on manager {Manager.Name}");
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Error finding installed packages on manager " + Manager.Name);
+                Logger.Error(e);
+            }
         }
 
         public IEnumerable<string> GetPackageVersions(IPackage package)
         {
-            if (Manager.Capabilities.SupportsCustomVersions)
+            if (!Manager.IsReady())
             {
-                var result = GetInstallableVersions_UnSafe(package);
-                Logger.Debug($"Found {result.Count()} versions for package Id={package.Id} on manager {Manager.Name}");
-                return result;
+                Logger.Warn($"Manager {Manager.Name} is disabled but yet GetPackageVersions was called");
+                return [];
             }
+            try
+            {
+                if (Manager.Capabilities.SupportsCustomVersions)
+                {
+                    var result = GetInstallableVersions_UnSafe(package);
+                    Logger.Debug($"Found {result.Count()} versions for package Id={package.Id} on manager {Manager.Name}");
+                    return result;
+                }
 
-            Logger.Warn($"Manager {Manager.Name} does not support version retrieving, this method should have not been called");
-            return [];
+                Logger.Warn($"Manager {Manager.Name} does not support version retrieving, this method should have not been called");
+                return [];
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Error finding available package versions for package {package.Id} on manager " + Manager.Name);
+                Logger.Error(e);
+                return [];
+            }
         }
 
         public CacheableIcon? GetPackageIconUrl(IPackage package)
         {
-            if (Manager.Capabilities.SupportsCustomPackageIcons)
+            try
             {
-                var nativeIcon = GetIcon_UnSafe(package);
-                if (nativeIcon is not null)
+                if (Manager.Capabilities.SupportsCustomPackageIcons)
                 {
-                    return nativeIcon;
+                    var nativeIcon = GetIcon_UnSafe(package);
+                    if (nativeIcon is not null)
+                    {
+                        return nativeIcon;
+                    }
                 }
-            }
 
-            string? iconUrl = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
-            if (iconUrl is not null)
+                string? iconUrl = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
+                if (iconUrl is not null)
+                {
+                    return new CacheableIcon(new Uri(iconUrl), package.Version);
+                }
+
+                return null;
+            } catch (Exception e)
             {
-                return new CacheableIcon(new Uri(iconUrl), package.Version);
+                Logger.Error($"Error when loading the package icon for the package {package.Id} on manager " + Manager.Name);
+                Logger.Error(e);
+                return null;
             }
-
-            return null;
         }
 
         public IEnumerable<Uri> GetPackageScreenshotsUrl(IPackage package)
         {
-            IEnumerable<Uri> URIs = [];
+            try
+            {
+                IEnumerable<Uri> URIs = [];
 
-            if (Manager.Capabilities.SupportsCustomPackageScreenshots)
-            {
-                URIs = GetScreenshots_UnSafe(package);
-            }
-            else
-            {
-                Logger.Debug($"Manager {Manager.Name} does not support native screenshots");
-            }
-
-            if (!URIs.Any())
-            {
-                string[] UrlArray = IconDatabase.Instance.GetScreenshotsUrlForId(package.GetIconId());
-                List<Uri> UriList = [];
-                foreach (string url in UrlArray)
+                if (Manager.Capabilities.SupportsCustomPackageScreenshots)
                 {
-                    if (url != "")
-                    {
-                        UriList.Add(new Uri(url));
-                    }
+                    URIs = GetScreenshots_UnSafe(package);
+                }
+                else
+                {
+                    Logger.Debug($"Manager {Manager.Name} does not support native screenshots");
                 }
 
-                URIs = UriList;
+                if (!URIs.Any())
+                {
+                    string[] UrlArray = IconDatabase.Instance.GetScreenshotsUrlForId(package.GetIconId());
+                    List<Uri> UriList = [];
+                    foreach (string url in UrlArray)
+                    {
+                        if (url != "") UriList.Add(new Uri(url));
+                    }
+                    URIs = UriList;
+                }
+
+                Logger.Info($"Found {URIs.Count()} screenshots for package Id={package.Id}");
+                return URIs;
             }
-            Logger.Info($"Found {URIs.Count()} screenshots for package Id={package.Id}");
-            return URIs;
+            catch (Exception e)
+            {
+                Logger.Error($"Error when loading the package icon for the package {package.Id} on manager " + Manager.Name);
+                Logger.Error(e);
+                return [];
+            }
         }
 
         protected abstract void GetDetails_UnSafe(IPackageDetails details);
@@ -109,7 +147,5 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                 return null;
             }
         }
-
-
     }
 }

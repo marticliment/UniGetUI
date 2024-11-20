@@ -284,12 +284,12 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         {
         }
 
-        public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+        protected override IEnumerable<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
         {
             return Array.Empty<string>();
         }
 
-        public override OperationVeredict GetOperationResult(IPackage package, OperationType operation, IEnumerable<string> processOutput, int returnCode)
+        protected override OperationVeredict _getOperationResult(IPackage package, OperationType operation, IEnumerable<string> processOutput, int returnCode)
         {
             return OperationVeredict.Failed;
         }

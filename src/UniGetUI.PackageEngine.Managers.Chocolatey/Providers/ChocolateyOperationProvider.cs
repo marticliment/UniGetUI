@@ -8,7 +8,7 @@ internal sealed class ChocolateyOperationProvider : BaseOperationProvider<Chocol
 {
     public ChocolateyOperationProvider(Chocolatey manager) : base(manager) { }
 
-    public override IEnumerable<string> GetOperationParameters(
+    protected override IEnumerable<string> _getOperationParameters(
         IPackage package,
         IInstallationOptions options,
         OperationType operation)
@@ -47,7 +47,7 @@ internal sealed class ChocolateyOperationProvider : BaseOperationProvider<Chocol
         return parameters;
     }
 
-    public override OperationVeredict GetOperationResult(
+    protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
         IEnumerable<string> processOutput,

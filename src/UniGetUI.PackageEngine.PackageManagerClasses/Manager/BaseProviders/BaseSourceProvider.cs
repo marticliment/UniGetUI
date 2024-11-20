@@ -1,4 +1,5 @@
 using UniGetUI.Core.Classes;
+using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Interfaces.ManagerProviders;
@@ -7,13 +8,13 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
 {
     public abstract class BaseSourceProvider<ManagerT> : ISourceProvider where ManagerT : IPackageManager
     {
-        public ISourceFactory SourceFactory { get; }
+        public ISourceFactory Factory { get; }
         protected ManagerT Manager;
 
         public BaseSourceProvider(ManagerT manager)
         {
             Manager = manager;
-            SourceFactory = new SourceFactory(manager);
+            Factory = new SourceFactory(manager);
         }
 
         public abstract string[] GetAddSourceParameters(IManagerSource source);
@@ -24,16 +25,24 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
         public OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             TaskRecycler<IEnumerable<IManagerSource>>.RemoveFromCache(_getSources);
+            if (ReturnCode is 999 && Output.Last() == "Error: The operation was canceled by the user.")
+            {
+                Logger.Warn("Elevator [or GSudo] UAC prompt was canceled, not showing error message...");
+                return OperationVeredict.Canceled;
+            }
             return _getAddSourceOperationVeredict(source, ReturnCode, Output);
         }
 
         public OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
             TaskRecycler<IEnumerable<IManagerSource>>.RemoveFromCache(_getSources);
+            if (ReturnCode is 999 && Output.Last() == "Error: The operation was canceled by the user.")
+            {
+                Logger.Warn("Elevator [or GSudo] UAC prompt was canceled, not showing error message...");
+                return OperationVeredict.Canceled;
+            }
             return _getRemoveSourceOperationVeredict(source, ReturnCode, Output);
         }
-
-
 
         /// <summary>
         /// Loads the sources for the manager. This method SHOULD NOT handle exceptions
@@ -45,13 +54,27 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
 
         public virtual IEnumerable<IManagerSource> _getSources()
         {
-            IEnumerable<IManagerSource> sources = GetSources_UnSafe();
-            SourceFactory.Reset();
+            if (!Manager.IsReady()) { Logger.Warn($"Manager {Manager.Name} is disabled but yet GetSources was called"); return []; }
 
-            foreach (IManagerSource source in sources)
-                SourceFactory.AddSource(source);
+            try
+            {
+                IEnumerable<IManagerSource> sources = GetSources_UnSafe().ToArray();
+                Factory.Reset();
 
-            return sources;
+                foreach (IManagerSource source in sources)
+                    Factory.AddSource(source);
+
+                Logger.Debug($"Loaded {sources.Count()} sources for manager {Manager.Name}");
+                return sources;
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Error finding sources for manager " + Manager.Name);
+                Logger.Error(e);
+                return [];
+            }
+
+
         }
     }
 }

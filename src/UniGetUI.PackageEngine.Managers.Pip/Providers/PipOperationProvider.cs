@@ -7,7 +7,7 @@ internal sealed class PipOperationProvider : BaseOperationProvider<Pip>
 {
     public PipOperationProvider(Pip manager) : base(manager) { }
 
-    public override IEnumerable<string> GetOperationParameters(
+    protected override IEnumerable<string> _getOperationParameters(
         IPackage package,
         IInstallationOptions options,
         OperationType operation)
@@ -46,7 +46,7 @@ internal sealed class PipOperationProvider : BaseOperationProvider<Pip>
         return parameters;
     }
 
-    public override OperationVeredict GetOperationResult(
+    protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
         IEnumerable<string> processOutput,

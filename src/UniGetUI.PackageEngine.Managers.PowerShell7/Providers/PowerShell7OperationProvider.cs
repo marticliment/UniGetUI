@@ -7,7 +7,7 @@ internal sealed class PowerShell7OperationProvider : BaseOperationProvider<Power
 {
     public PowerShell7OperationProvider(PowerShell7 manager) : base(manager) { }
 
-    public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IEnumerable<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
         List<string> parameters = [operation switch {
             OperationType.Install => Manager.Properties.InstallVerb,
@@ -44,7 +44,7 @@ internal sealed class PowerShell7OperationProvider : BaseOperationProvider<Power
         return parameters;
     }
 
-    public override OperationVeredict GetOperationResult(
+    protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
         IEnumerable<string> processOutput,

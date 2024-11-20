@@ -103,7 +103,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 else
                 {
                     string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
-                    source = Manager.GetSourceOrDefault(sourceName);
+                    source = Manager.SourceProvider.Factory.GetSourceOrDefault(sourceName);
                 }
 
                 Packages.Add(new Package(name, id, version, newVersion, source, Manager));
@@ -190,7 +190,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                     else
                     {
                         string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0].Trim();
-                        source = Manager.GetSourceOrDefault(sourceName);
+                        source = Manager.SourceProvider.Factory.GetSourceOrDefault(sourceName);
                     }
                     Packages.Add(new Package(name, id, version, source, Manager));
                 }
@@ -267,7 +267,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 else
                 {
                     string sourceName = line[(SourceIndex - offset)..].Trim().Split(' ')[0];
-                    source = Manager.GetSourceOrDefault(sourceName);
+                    source = Manager.SourceProvider.Factory.GetSourceOrDefault(sourceName);
                 }
                 Packages.Add(new Package(name, id, version, source, Manager));
             }

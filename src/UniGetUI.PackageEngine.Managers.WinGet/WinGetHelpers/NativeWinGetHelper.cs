@@ -115,7 +115,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             try
             {
                 // Get the source for the catalog
-                IManagerSource source = Manager.GetSourceOrDefault(CatalogTaskPair.Key.Item1.Info.Name);
+                IManagerSource source = Manager.SourceProvider.Factory.GetSourceOrDefault(CatalogTaskPair.Key.Item1.Info.Name);
 
                 FindPackagesResult FoundPackages = CatalogTaskPair.Value.Result;
                 foreach (MatchResult matchResult in FoundPackages.Matches.ToArray())
@@ -127,15 +127,6 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
                     var overriden_options = new OverridenInstallationOptions();
 
-                    /*var installOptions = Factory.CreateInstallOptions();
-                    if (catPkg.DefaultInstallVersion.HasApplicableInstaller(installOptions))
-                    {
-                        var options = catPkg.DefaultInstallVersion.GetApplicableInstaller(installOptions);
-                        if (options.ElevationRequirement is ElevationRequirement.ElevationRequired or ElevationRequirement.ElevatesSelf)
-                            overriden_options.RunAsAdministrator = true;
-                        else if (options.ElevationRequirement is ElevationRequirement.ElevationProhibited)
-                            overriden_options.RunAsAdministrator = false;
-                    }*/
                     var UniGetUIPackage = new Package(
                         nativePackage.Name,
                         nativePackage.Id,
@@ -168,7 +159,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             if (nativePackage.IsUpdateAvailable)
             {
                 IManagerSource source;
-                source = Manager.GetSourceOrDefault(nativePackage.DefaultInstallVersion.PackageCatalog.Info.Name);
+                source = Manager.SourceProvider.Factory.GetSourceOrDefault(nativePackage.DefaultInstallVersion.PackageCatalog.Info.Name);
 
                 var UniGetUIPackage = new Package(
                     nativePackage.Name,
@@ -197,7 +188,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             IManagerSource source;
             if (nativePackage.DefaultInstallVersion is not null)
             {
-                source = Manager.GetSourceOrDefault(nativePackage.DefaultInstallVersion.PackageCatalog.Info.Name);
+                source = Manager.SourceProvider.Factory.GetSourceOrDefault(nativePackage.DefaultInstallVersion.PackageCatalog.Info.Name);
             }
             else
             {

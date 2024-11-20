@@ -29,11 +29,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public bool ManagerReady { get; set; }
         public IManagerLogger TaskLogger { get; }
 
-        public ISourceProvider SourceProvider { get; set; }
-        public ISourceFactory SourceFactory { get => SourceProvider.SourceFactory; }
+        public ISourceProvider? SourceProvider { get; set; }
         public IEnumerable<ManagerDependency> Dependencies { get; protected set; } = [];
 
-        public IPackageDetailsProvider? PackageDetailsProvider { get; set; }
+        public IPackageDetailsProvider PackageDetailsProvider { get; set; }
         public IOperationProvider OperationProvider { get; set; }
 
         private readonly bool __base_constructor_called;
@@ -88,12 +87,12 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
                 if (IsReady() && Capabilities.SupportsCustomSources)
                 {
-                    Task<IEnumerable<IManagerSource>> sourcesTask = Task.Run(() => GetSources());
+                    Task<IEnumerable<IManagerSource>> sourcesTask = Task.Run(() => SourceProvider.GetSources());
 
                     if (sourcesTask.Wait(TimeSpan.FromSeconds(15)))
                     {
                         foreach (var source in sourcesTask.Result)
-                            SourceFactory.AddSource(source);
+                            SourceProvider?.Factory.AddSource(source);
                     }
                     else
                     {
@@ -325,213 +324,5 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         {
             // Implementing this method is optional
         }
-
-
-        // BEGIN SOURCE-RELATED METHODS
-
-        /// <summary>
-        /// Will check if the Manager supports custom sources, and throw an exception if not
-        /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
-        private void AssertSourceCompatibility(string MethodName)
-        {
-            if (!Capabilities.SupportsCustomSources)
-            {
-                throw new InvalidOperationException($"Manager {Name} does not support custom sources but yet {MethodName} method was called.\n {Environment.StackTrace}");
-            }
-
-            if (SourceProvider is null)
-            {
-                throw new InvalidOperationException($"Manager {Name} does support custom sources but yet the source helper is null");
-            }
-        }
-        public IManagerSource GetSourceOrDefault(string SourceName)
-        {
-            AssertSourceCompatibility("GetSourceFromName");
-            return SourceProvider.SourceFactory.GetSourceOrDefault(SourceName);
-        }
-        public IManagerSource? GetSourceIfExists(string SourceName)
-        {
-            AssertSourceCompatibility("GetSourceIfExists");
-            return SourceProvider.SourceFactory.GetSourceIfExists(SourceName);
-        }
-        public string[] GetAddSourceParameters(IManagerSource source)
-        {
-            AssertSourceCompatibility("GetAddSourceParameters");
-            return SourceProvider.GetAddSourceParameters(source);
-        }
-        public string[] GetRemoveSourceParameters(IManagerSource source)
-        {
-            AssertSourceCompatibility("GetRemoveSourceParameters");
-            return SourceProvider.GetRemoveSourceParameters(source);
-        }
-        public OperationVeredict GetAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
-        {
-            AssertSourceCompatibility("GetAddSourceOperationVeredict");
-
-            if (ReturnCode is 999 && Output.Last() == "Error: The operation was canceled by the user.")
-            {
-                Logger.Warn("Elevator [or GSudo] UAC prompt was canceled, not showing error message...");
-                return OperationVeredict.Canceled;
-            }
-            return SourceProvider.GetAddSourceOperationVeredict(source, ReturnCode, Output);
-        }
-
-        public OperationVeredict GetRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
-        {
-            AssertSourceCompatibility("GetRemoveSourceOperationVeredict");
-
-            if (ReturnCode is 999 && Output.Last() == "Error: The operation was canceled by the user.")
-            {
-                Logger.Warn("Elevator [or GSudo] UAC prompt was canceled, not showing error message...");
-                return OperationVeredict.Canceled;
-            }
-            return SourceProvider.GetRemoveSourceOperationVeredict(source, ReturnCode, Output);
-        }
-
-        public virtual IEnumerable<IManagerSource> GetSources()
-        {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetSources was called"); return []; }
-            try
-            {
-                AssertSourceCompatibility("GetSources");
-                var result = SourceProvider.GetSources();
-                Logger.Debug($"Loaded {result.Count()} sources for manager {Name}");
-                return result;
-            }
-            catch (Exception e)
-            {
-                Logger.Error("Error finding sources for manager " + Name);
-                Logger.Error(e);
-                return [];
-            }
-        }
-        // END SOURCE-RELATED METHODS
-
-        // BEGIN PACKAGEDEAILS-RELATED METHODS
-        private void AssertPackageDetailsCompatibility(string methodName)
-        {
-            if (PackageDetailsProvider is null)
-            {
-                throw new InvalidOperationException($"Manager {Name} does not have a valid PackageDetailsProvider helper, when attemtping to call {methodName}");
-            }
-        }
-
-        public void GetPackageDetails(IPackageDetails details)
-        {
-            if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetPackageDetails was called"); return; }
-            try
-            {
-                AssertPackageDetailsCompatibility("GetPackageDetails");
-                PackageDetailsProvider?.GetPackageDetails(details);
-                Logger.Info($"Loaded details for package {details.Package.Id} on manager {Name}");
-            }
-            catch (Exception e)
-            {
-                Logger.Error("Error finding installed packages on manager " + Name);
-                Logger.Error(e);
-            }
-        }
-
-        public IEnumerable<string> GetPackageVersions(IPackage package)
-        {
-            if (!IsReady())
-            {
-                Logger.Warn($"Manager {Name} is disabled but yet GetPackageVersions was called");
-                return [];
-            }
-            try
-            {
-                AssertPackageDetailsCompatibility("GetPackageVersions");
-                if (package.Manager.Capabilities.SupportsCustomVersions)
-                {
-                    return PackageDetailsProvider?.GetPackageVersions(package) ?? [];
-                }
-
-                return [];
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"Error finding available package versions for package {package.Id} on manager " + Name);
-                Logger.Error(e);
-                return [];
-            }
-        }
-
-        public CacheableIcon? GetPackageIconUrl(IPackage package)
-        {
-            try
-            {
-                AssertPackageDetailsCompatibility("GetPackageIcon");
-                return PackageDetailsProvider?.GetPackageIconUrl(package);
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"Error when loading the package icon for the package {package.Id} on manager " + Name);
-                Logger.Error(e);
-                return null;
-            }
-        }
-
-        public IEnumerable<Uri> GetPackageScreenshotsUrl(IPackage package)
-        {
-            try
-            {
-                AssertPackageDetailsCompatibility("GetPackageScreenshots");
-                return PackageDetailsProvider?.GetPackageScreenshotsUrl(package) ?? [];
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"Error when loading the package icon for the package {package.Id} on manager " + Name);
-                Logger.Error(e);
-                return [];
-            }
-        }
-
-        public string? GetPackageInstallLocation(IPackage package)
-        {
-            return PackageDetailsProvider?.GetPackageInstallLocation(package);
-        }
-        // END PACKAGEDETAILS-RELATED METHODS
-
-
-        // BEGIN OPERATION-RELATED METHODS
-        public IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
-        {
-            try
-            {
-                var parameters = OperationProvider.GetOperationParameters(package, options, operation);
-                Logger.Info($"Loaded operation parameters for package id={package.Id} on manager {Name} and operation {operation}: " + string.Join(' ', parameters));
-                return parameters;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"A fatal error ocurred while loading operation parameters for package id={package.Id} on manager {Name} and operation {operation}");
-                Logger.Error(ex);
-                return [];
-            }
-        }
-
-        public OperationVeredict GetOperationResult(IPackage package, OperationType operation, IEnumerable<string> processOutput, int returnCode)
-        {
-            try
-            {
-                if (returnCode is 999 && processOutput.Last() == "Error: The operation was canceled by the user.")
-                {
-                    Logger.Warn("Elevator [or GSudo] UAC prompt was canceled, not showing error message...");
-                    return OperationVeredict.Canceled;
-                }
-
-                return OperationProvider.GetOperationResult(package, operation, processOutput, returnCode);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"A fatal error ocurred while loading operation parameters for package id={package.Id} on manager {Name} and operation {operation}");
-                Logger.Error(ex);
-                return OperationVeredict.Failed;
-            }
-        }
-        // END OPERATION-RELATED METHODS
-#pragma warning restore CS8602
     }
 }

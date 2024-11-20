@@ -46,7 +46,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             IEnumerable<IManagerSource> sources;
             if (Capabilities.SupportsCustomSources)
             {
-                sources = GetSources();
+                sources = SourceProvider.GetSources();
             }
             else
             {

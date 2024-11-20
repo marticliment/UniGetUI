@@ -144,7 +144,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 if (line.StartsWith("'"))
                 {
                     string sourceName = line.Split(" ")[0].Replace("'", "");
-                    source = GetSourceOrDefault(sourceName);
+                    source = SourceProvider.Factory.GetSourceOrDefault(sourceName);
                 }
                 else if (line.Trim() != "")
                 {
@@ -325,7 +325,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         CoreTools.FormatAsName(elements[0]),
                         elements[0],
                         elements[1],
-                        GetSourceOrDefault(elements[2]),
+                        SourceProvider.Factory.GetSourceOrDefault(elements[2]),
                         this,
                         options));
                 }

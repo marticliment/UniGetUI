@@ -6,7 +6,7 @@ namespace UniGetUI.PackageEngine.Managers.CargoManager;
 
 internal sealed class CargoOperationProvider(Cargo cargo) : BaseOperationProvider<Cargo>(cargo)
 {
-    public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IEnumerable<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
         var version = options.Version == string.Empty ? package.Version : options.Version;
         List<string> parameters = operation switch
@@ -20,7 +20,7 @@ internal sealed class CargoOperationProvider(Cargo cargo) : BaseOperationProvide
         return parameters;
     }
 
-    public override OperationVeredict GetOperationResult(IPackage package, OperationType operation, IEnumerable<string> processOutput, int returnCode)
+    protected override OperationVeredict _getOperationResult(IPackage package, OperationType operation, IEnumerable<string> processOutput, int returnCode)
     {
         return returnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
     }

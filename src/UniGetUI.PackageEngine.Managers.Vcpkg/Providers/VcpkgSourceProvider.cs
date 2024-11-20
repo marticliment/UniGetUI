@@ -27,7 +27,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         protected override IEnumerable<IManagerSource> GetSources_UnSafe()
         {
             List<ManagerSource> Sources = [];
-            
+
 			foreach (string Triplet in Vcpkg.GetSystemTriplets()) {
 				Sources.Add(new ManagerSource(Manager, Triplet, Vcpkg.URI_VCPKG_IO));
 			}

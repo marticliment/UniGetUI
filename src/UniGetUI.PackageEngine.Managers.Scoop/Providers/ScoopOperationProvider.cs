@@ -8,7 +8,7 @@ internal sealed class ScoopOperationProvider : BaseOperationProvider<Scoop>
 {
     public ScoopOperationProvider(Scoop manager) : base(manager) { }
 
-    public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IEnumerable<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
         List<string> parameters = [operation switch {
             OperationType.Install => Manager.Properties.InstallVerb,
@@ -55,7 +55,7 @@ internal sealed class ScoopOperationProvider : BaseOperationProvider<Scoop>
         return parameters;
     }
 
-    public override OperationVeredict GetOperationResult(
+    protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
         IEnumerable<string> processOutput,

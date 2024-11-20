@@ -650,7 +650,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             if (manager?.Capabilities.SupportsCustomSources == true)
             {
-                source = manager?.SourceProvider?.SourceFactory.GetSourceIfExists(raw_package.Source);
+                source = manager?.SourceProvider?.Factory.GetSourceIfExists(raw_package.Source);
             }
             else
                 source = manager?.DefaultSource;

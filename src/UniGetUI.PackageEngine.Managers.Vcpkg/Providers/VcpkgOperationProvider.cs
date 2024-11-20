@@ -9,7 +9,7 @@ internal sealed class VcpkgOperationProvider : BaseOperationProvider<Vcpkg>
 {
     public VcpkgOperationProvider(Vcpkg manager) : base(manager) { }
 
-    public override IEnumerable<string> GetOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IEnumerable<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
         List<string> parameters = operation switch {
             OperationType.Install => [Manager.Properties.InstallVerb, package.Id],
@@ -22,7 +22,7 @@ internal sealed class VcpkgOperationProvider : BaseOperationProvider<Vcpkg>
         return parameters;
     }
 
-    public override OperationVeredict GetOperationResult(
+    protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
         IEnumerable<string> processOutput,

@@ -8,7 +8,7 @@ internal sealed class DotNetOperationProvider : BaseOperationProvider<DotNet>
 {
     public DotNetOperationProvider(DotNet manager) : base(manager) { }
 
-    public override IEnumerable<string> GetOperationParameters(
+    protected override IEnumerable<string> _getOperationParameters(
         IPackage package,
         IInstallationOptions options,
         OperationType operation)
@@ -46,7 +46,7 @@ internal sealed class DotNetOperationProvider : BaseOperationProvider<DotNet>
         return parameters;
     }
 
-    public override OperationVeredict GetOperationResult(
+    protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
         IEnumerable<string> processOutput,
