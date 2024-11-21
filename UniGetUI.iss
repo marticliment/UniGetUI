@@ -242,4 +242,3 @@ Filename: "{app}\{#MyAppExeName}"; Parameters: "--migrate-wingetui-to-unigetui";
 Filename: "{app}\{#MyAppExeName}"; Parameters: "--uninstall-unigetui"; Flags: skipifdoesntexist runhidden;
 Filename: {sys}\taskkill.exe; Parameters: "/f /im WingetUI.exe"; Flags: skipifdoesntexist runhidden;
 Filename: {sys}\taskkill.exe; Parameters: "/f /im UniGetUI.exe"; Flags: skipifdoesntexist runhidden;
-Filename: {sys}\taskkill.exe; Parameters: "/f /im winget.exe"; Flags: skipifdoesntexist runhidden;
