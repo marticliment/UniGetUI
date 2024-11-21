@@ -341,7 +341,7 @@
   "Perform a backup now": "立刻执行一次备份",
   "Performing backup, please wait...": "正在备份中，请稍候...",
   "Periodically perform a backup of the installed packages": "定期对已安装软件包进行备份 ",
-  "Please click on \"Continue\" to continue": "请点击“继续”以继续",
+  "Please click on \"Continue\" to continue": "请点击“继续”执行后续操作",
   "Please enter at least 3 characters": "请至少输入 3 个字符",
   "Please note that certain packages might not be installable, due to the package managers that are enabled on this machine.": "请注意，由于系统中已启用了包管理器，某些软件包可能无法安装。",
   "Please note that packages from certain sources may be not exportable. They have been greyed out and won't be exported.": "请注意，来自某些来源的包可能无法导出。它们已标记为灰色且无法导出。",
