@@ -119,7 +119,8 @@ public static class DesktopShortcutsDatabase
     /// Get a list of shortcuts (.lnk files only) currently on the user's desktop
     /// </summary>
     /// <returns>A list of desktop shortcut paths</returns>
-    public static List<string> GetDesktopShortcuts() {
+    public static List<string> GetDesktopShortcuts()
+    {
         string DesktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         // If you want to search in other places for desktop files, for example the start menu, just add to this list
         IEnumerable<string> Files = Directory.EnumerateFiles(DesktopPath);
