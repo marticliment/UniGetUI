@@ -50,6 +50,12 @@ public static class DesktopShortcutsDatabase
         File.WriteAllText(CoreData.DesktopShortcutsDatabaseFile, rawContents);
     }
 
+    public static void ResetDatabase()
+    {
+        DeletableDesktopShortcuts.Clear();
+        SaveDatabase();
+    }
+
     /// <summary>
     /// Adds a desktop shortcut to the deletable desktop shortcuts database
     /// </summary>
