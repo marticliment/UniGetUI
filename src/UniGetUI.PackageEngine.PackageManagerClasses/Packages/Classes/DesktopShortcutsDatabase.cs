@@ -99,6 +99,34 @@ public static class DesktopShortcutsDatabase
     }
 
     /// <summary>
+    /// Attempts to reset the configuration of a given shortcut path from the database.
+    /// This will make it so the user is asked about it the next time it is discovered.
+    /// Different from `Remove` as Remove simply marks it as non-deletable, whereas this removes the configuration entirely.
+    /// </summary>
+    /// <param name="shortcutPath">The path of the shortcut to delete</param>
+    /// <returns>True if the shortcut was completely removed, false if it was not there from the beginning</returns>
+    public static bool Reset(string shortcutPath)
+    {
+        // Update the database if it is null
+        DeletableDesktopShortcuts ??= ReadDatabase();
+
+        // Remove the entry if present
+        if (DeletableDesktopShortcuts.ContainsKey(shortcutPath))
+        {
+            // Remove the entry and propagate changes to disk
+            DeletableDesktopShortcuts.Remove(shortcutPath, out _);
+            SaveDatabase();
+            return true;
+        }
+        else
+        {
+            // Do nothing if the entry was not there
+            Logger.Warn($"Attempted to reset a deletable desktop shortcut {{shortcutPath={shortcutPath}}} that was not found there");
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Attempts to delete the given shortcut path off the disk
     /// </summary>
     /// <param name="shortcutPath">The path of the shortcut to delete</param>
