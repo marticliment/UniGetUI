@@ -16,6 +16,7 @@ public static class DesktopShortcutsDatabase
     }
 
     private static ConcurrentDictionary<string, bool>? DeletableDesktopShortcuts;
+    private static List<string> AwaitingVerdictShortcuts = [];
 
     private static ConcurrentDictionary<string, bool> ReadDatabase()
     {
@@ -92,6 +93,26 @@ public static class DesktopShortcutsDatabase
     }
 
     /// <summary>
+    /// Attempts to delete the given shortcut path off the disk
+    /// </summary>
+    /// <param name="shortcutPath">The path of the shortcut to delete</param>
+    /// <returns>True if the shortcut was deleted, false if it was not (or didn't exist)</returns>
+    public static bool DeleteShortcut(string shortcutPath)
+    {
+        Logger.Info("Deleting shortcut " + shortcutPath);
+        try
+        {
+            File.Delete(shortcutPath);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Failed to delete shortcut {{shortcutPath={shortcutPath}}}: {e.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Checks whether a given shortcut can be deleted.
     /// If a user has provided on opinion on whether or not the shortcut can be deleted, it will be returned.
     /// Otherwise, `ShortcutDeletableStatus.Unknown` will be returned and the shortcut should not be deleted
@@ -135,5 +156,33 @@ public static class DesktopShortcutsDatabase
         }
 
         return DesktopShortcuts;
+    }
+
+    /// <summary>
+    /// Add a shortcut to a list of shortcuts whose deletion verdicts are unknown (as in, the user needs to be asked about deleting them when their operations finish)
+    /// </summary>
+    /// <param name="shortcutPath">The path of the shortcut to be asked about deletion</param>
+    public static void AddToAwaitingVerdicts(string shortcutPath)
+    {
+        AwaitingVerdictShortcuts.Add(shortcutPath);
+    }
+
+    /// <summary>
+    /// Remove a shortcut from the list of shortcuts whose deletion verdicts are unknown (as in, the user needs to be asked about deleting them when their operations finish)
+    /// </summary>
+    /// <param name="shortcutPath">The path of the shortcut to be asked about deletion</param>
+    /// <returns>True if it was found, false otherwise</returns>
+    public static bool RemoveFromAwaitingVerdicts(string shortcutPath)
+    {
+        return AwaitingVerdictShortcuts.Remove(shortcutPath);
+    }
+
+    /// <summary>
+    /// Get the list of shortcuts whose deletion verdicts are unknown (as in, the user needs to be asked about deleting them when their operations finish)
+    /// </summary>
+    /// <returns>The list of shortcuts awaiting verdicts</returns>
+    public static List<string> GetAwaitingVerdicts()
+    {
+        return AwaitingVerdictShortcuts;
     }
 }

@@ -241,6 +241,28 @@ public static partial class DialogHelper
         await Window.ShowDialogAsync(UpdatesDialog);
     }
 
+    public static async Task HandleNewDesktopShortcuts()
+    {
+        ContentDialog? ShortcutsDialog = new()
+        {
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            XamlRoot = Window.XamlRoot
+        };
+        ShortcutsDialog.Resources["ContentDialogMaxWidth"] = 1400;
+        ShortcutsDialog.Resources["ContentDialogMaxHeight"] = 1000;
+
+        ShortcutsDialog.Title = CoreTools.Translate("Handle new deletable shortcuts");
+        NewDesktopShortcutsManager DesktopShortcutsPage = new();
+        ShortcutsDialog.Content = DesktopShortcutsPage;
+        DesktopShortcutsPage.Close += (_, _) => ShortcutsDialog.Hide();
+
+        ShortcutsDialog.PrimaryButtonText = CoreTools.Translate("Continue");
+        ShortcutsDialog.DefaultButton = ContentDialogButton.Primary;
+        ShortcutsDialog.PrimaryButtonClick += DesktopShortcutsPage.ContinueButton_Click;
+
+        _ = DesktopShortcutsPage.UpdateData();
+        await Window.ShowDialogAsync(ShortcutsDialog);
+    }
 
     public static async void WarnAboutAdminRights()
     {

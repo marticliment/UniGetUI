@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="UniGetUI.Interface.NewDesktopShortcutsManager"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:UniGetUI.Interface"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    mc:Ignorable="d"
+    MaxWidth="1100" Width="900">
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <StackPanel Spacing="8" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
+                </Grid.ColumnDefinitions>
+                <widgets:TranslatedTextBlock
+                    Text="The selected desktop shortcuts will be automatically deleted after an update recreates them."/>
+                <Button
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    Name="EnableAllButton"
+                    Click="EnableAllButton_Click">
+                    <widgets:TranslatedTextBlock Text="Enable All"/>
+                </Button>
+                <Button
+                    Grid.Column="2"
+                    HorizontalAlignment="Stretch"
+                    Name="DisableAllButton"
+                    Click="DisableAllButton_Click"
+                    Margin="10,0,0,0">
+                    <widgets:TranslatedTextBlock Text="Disable All"/>
+                </Button>
+            </Grid>
+            <ScrollViewer>
+                <ListView
+                    Name="DeletableDesktopShortcutsList"
+                    Height="350"
+                    HorizontalAlignment="Stretch"
+                    Padding="2,4,2,4"
+                    CornerRadius="6"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    SelectionMode="Multiple">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="local:ShortcutEntry">
+                            <Grid ColumnSpacing="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <widgets:LocalIcon Icon="localpc" Grid.Column="0" Height="24" Width="24"/>
+                                <TextBlock Text="{x:Bind ShortcutPath}" Grid.Column="1" VerticalAlignment="Center"/>
+                                <Button Click="{x:Bind OpenShortcutPath}" Height="32" Width="32" Padding="0" Grid.Column="2">
+                                    <widgets:LocalIcon Icon="launch" Grid.Column="0" Height="24" Width="24"/>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+        </StackPanel>
+        <!-- Close Button -->
+        <widgets:DialogCloseButton Margin="0,-63,-24,0" Click="CloseButton_Click"/>
+    </Grid>
+</Page>

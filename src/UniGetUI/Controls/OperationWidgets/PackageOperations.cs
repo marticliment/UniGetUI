@@ -7,6 +7,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -289,6 +290,7 @@ namespace UniGetUI.PackageEngine.Operations
 
     public class UpdatePackageOperation : PackageOperation
     {
+        List<string> DesktopShortcutsPreUpdate = [];
 
         public UpdatePackageOperation(
             IPackage package,
@@ -356,6 +358,31 @@ namespace UniGetUI.PackageEngine.Operations
                 await Package.AddToIgnoredUpdatesAsync(Package.NewVersion);
             }
 
+            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            {
+                List<string> DesktopShortcutsPostUpdate = DesktopShortcutsDatabase.GetDesktopShortcuts();
+
+                foreach (string shortcut in DesktopShortcutsPostUpdate)
+                {
+                    if (!DesktopShortcutsPreUpdate.Contains(shortcut))
+                    {
+                        switch (DesktopShortcutsDatabase.CanShortcutBeDeleted(shortcut))
+                        {
+                            case DesktopShortcutsDatabase.ShortcutDeletableStatus.Deletable:
+                                DesktopShortcutsDatabase.DeleteShortcut(shortcut);
+                                break;
+                            case DesktopShortcutsDatabase.ShortcutDeletableStatus.Undeletable:
+                                Logger.Debug("Refraining from deleting new shortcut " + shortcut + ": user disabled its deletion");
+                                break;
+                            case DesktopShortcutsDatabase.ShortcutDeletableStatus.Unknown:
+                                Logger.Info("Marking the shortcut " + shortcut + " to be asked to be deleted");
+                                DesktopShortcutsDatabase.AddToAwaitingVerdicts(shortcut);
+                                break;
+                        }
+                    }
+                }
+            }
+
             return AfterFinshAction.TimeoutClose;
         }
 
@@ -364,6 +391,11 @@ namespace UniGetUI.PackageEngine.Operations
             ONGOING_PROGRESS_STRING = CoreTools.Translate("{0} is being updated to version {1}", Package.Name, Package.NewVersion);
             OperationTitle = CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
             IconSource = await Task.Run(Package.GetIconUrl);
+
+            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            {
+                DesktopShortcutsPreUpdate = DesktopShortcutsDatabase.GetDesktopShortcuts();
+            }
         }
     }
 
