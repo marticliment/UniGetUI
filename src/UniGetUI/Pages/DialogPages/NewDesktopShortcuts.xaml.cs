@@ -20,7 +20,7 @@ namespace UniGetUI.Interface
         public NewDesktopShortcutsManager()
         {
             InitializeComponent();
-            DeletableDesktopShortcutsList.ItemsSource = desktopShortcuts;
+            NewDeletableDesktopShortcutsList.ItemsSource = desktopShortcuts;
         }
 
         public async Task UpdateData()
@@ -31,7 +31,7 @@ namespace UniGetUI.Interface
             {
                 var shortcutEntry = new ShortcutEntry(shortcutPath, desktopShortcuts);
                 desktopShortcuts.Add(shortcutEntry);
-                DeletableDesktopShortcutsList.SelectedItems.Add(shortcutEntry);
+                NewDeletableDesktopShortcutsList.SelectedItems.Add(shortcutEntry);
             }
 
         }
@@ -45,7 +45,7 @@ namespace UniGetUI.Interface
         {
             Close?.Invoke(this, EventArgs.Empty);
 
-            foreach (ShortcutEntry shortcut in DeletableDesktopShortcutsList.SelectedItems)
+            foreach (ShortcutEntry shortcut in NewDeletableDesktopShortcutsList.SelectedItems)
             {
                 DesktopShortcutsDatabase.Add(shortcut.ShortcutPath);
                 DesktopShortcutsDatabase.DeleteShortcut(shortcut.ShortcutPath);
@@ -61,13 +61,13 @@ namespace UniGetUI.Interface
         {
             foreach (var shortcut in desktopShortcuts)
             {
-                DeletableDesktopShortcutsList.SelectedItems.Add(shortcut);
+                NewDeletableDesktopShortcutsList.SelectedItems.Add(shortcut);
             }
         }
 
         private void DisableAllButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            DeletableDesktopShortcutsList.SelectedItems.Clear();
+            NewDeletableDesktopShortcutsList.SelectedItems.Clear();
         }
     }
 
