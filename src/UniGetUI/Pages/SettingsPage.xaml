@@ -225,7 +225,7 @@
                             <widgets:CheckboxCard
                                 Text="Ask to delete new desktop shortcuts after packages update"
                                 SettingName="AskToDeleteNewDesktopShortcuts"
-								/> <!-- UniGetUI will only delete desktop shortcuts that were newly added after an update operation and that were explicitly approved -->
+                                /> <!-- UniGetUI will only delete desktop shortcuts that were newly added after an update operation and that were explicitly approved -->
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
 
