@@ -187,6 +187,10 @@ namespace UniGetUI.Core.Data
         /// The ID of the notification that is used to inform the user that updates are available
         /// </summary>
         public const int UpdatesAvailableNotificationTag = 1234;
+        /// <summary>
+        /// The ID of the notification that is used to inform the user that shortcuts are available for deletion
+        /// </summary>
+        public const int NewShortcutsNotificationTag = 1235;
 
 
         /// <summary>

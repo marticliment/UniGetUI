@@ -3,13 +3,17 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
 using UniGetUI.Interface.Dialogs;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
 
 namespace UniGetUI.Pages.DialogPages;
 
@@ -285,6 +289,52 @@ public static partial class DialogHelper
         ShortcutsDialog.PrimaryButtonClick += DesktopShortcutsPage.ContinueButton_Click;
 
         _ = DesktopShortcutsPage.UpdateData();
+
+        if (!Settings.AreShortcutsNotificationsDisabled())
+        {
+            AppNotificationManager.Default.RemoveByTagAsync(CoreData.NewShortcutsNotificationTag.ToString());
+
+            AppNotification notification;
+
+            if (DesktopShortcutsDatabase.GetAwaitingVerdicts().Count == 1)
+            {
+                AppNotificationBuilder builder = new AppNotificationBuilder()
+                    .SetScenario(AppNotificationScenario.Default)
+                    .SetTag(CoreData.NewShortcutsNotificationTag.ToString())
+                    .AddText(CoreTools.Translate("New shortcut found!"))
+                    .AddText(CoreTools.Translate("A new desktop shortcut was found"))
+                    .SetAttributionText(DesktopShortcutsDatabase.GetAwaitingVerdicts().First())
+                    .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI"))
+                        .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
+                    )
+                    .AddArgument("action", NotificationArguments.ShowOnUpdatesTab);
+
+                notification = builder.BuildNotification();
+            }
+            else
+            {
+                string attribution = "";
+                foreach (string shortcut in DesktopShortcutsDatabase.GetAwaitingVerdicts()) attribution += shortcut + ", ";
+                attribution = attribution.TrimEnd(' ').TrimEnd(',');
+
+                AppNotificationBuilder builder = new AppNotificationBuilder()
+                    .SetScenario(AppNotificationScenario.Default)
+                    .SetTag(CoreData.NewShortcutsNotificationTag.ToString())
+                    .AddText(CoreTools.Translate("New shortcuts found!"))
+                    .AddText(CoreTools.Translate("{0} new desktop shortcuts were found", DesktopShortcutsDatabase.GetAwaitingVerdicts().Count))
+                    .SetAttributionText(attribution)
+                    .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI"))
+                        .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
+                    )
+                    .AddArgument("action", NotificationArguments.ShowOnUpdatesTab);
+
+                notification = builder.BuildNotification();
+            }
+
+            notification.ExpiresOnReboot = true;
+            AppNotificationManager.Default.Show(notification);
+        }
+
         await Window.ShowDialogAsync(ShortcutsDialog);
     }
 

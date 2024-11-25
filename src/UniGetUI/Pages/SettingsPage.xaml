@@ -163,6 +163,10 @@
                                 SettingName="DisableUpdatesNotifications"
                                 />
                             <widgets:CheckboxCard
+                                Text="Show a notification when there are new desktop shortcuts"
+                                SettingName="DisableShortcutNotifications"
+                                />
+                            <widgets:CheckboxCard
                                 Text="Show a notification when an operation fails"
                                 SettingName="DisableErrorNotifications"
                                 />
