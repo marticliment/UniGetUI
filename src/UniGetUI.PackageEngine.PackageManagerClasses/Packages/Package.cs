@@ -173,7 +173,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             try
             {
-                CacheableIcon? icon = TaskRecycler<CacheableIcon?>.RunOrAttach(Manager.GetPackageIconUrl, this);
+                CacheableIcon? icon = TaskRecycler<CacheableIcon?>.RunOrAttach(Manager.DetailsHelper.GetIcon, this);
                 string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, Manager.Name, Id);
                 return path is null? null: new Uri("file:///" + path);
             }
@@ -187,7 +187,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public virtual IEnumerable<Uri> GetScreenshots()
         {
-            return Manager.GetPackageScreenshotsUrl(this);
+            return Manager.DetailsHelper.GetScreenshots(this);
         }
 
         public virtual async Task AddToIgnoredUpdatesAsync(string version = "*")

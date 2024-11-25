@@ -51,9 +51,9 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
             };
 
-            PackageDetailsProvider = new PowerShell7DetailsProvider(this);
-            SourceProvider = new PowerShell7SourceProvider(this);
-            OperationProvider = new PowerShell7OperationProvider(this);
+            DetailsHelper = new PowerShell7DetailsHelper(this);
+            SourcesHelper = new PowerShell7SourceHelper(this);
+            OperationHelper = new PowerShell7PkgOperationHelper(this);
         }
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
@@ -131,7 +131,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                     continue;
                 }
 
-                Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], GetSourceOrDefault(elements[3]), this));
+                Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
+                    elements[2], SourcesHelper.Factory.GetSourceOrDefault(elements[3]), this));
             }
 
             logger.AddToStdErr(p.StandardError.ReadToEnd());
@@ -187,7 +188,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                         elements[i] = elements[i].Trim();
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], GetSourceOrDefault(elements[2]), this));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
+                        SourcesHelper.Factory.GetSourceOrDefault(elements[2]), this));
                 }
             }
 

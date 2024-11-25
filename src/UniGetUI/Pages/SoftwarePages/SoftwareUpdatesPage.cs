@@ -179,7 +179,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
             MenuskipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
 
-            MenuOpenInstallLocation.IsEnabled = package.Manager.GetPackageInstallLocation(package) is not null;
+            MenuOpenInstallLocation.IsEnabled = package.Manager.DetailsHelper.GetInstallLocation(package) is not null;
         }
 
         public override void GenerateToolBar()
@@ -275,6 +275,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 {
                     await package.AddToIgnoredUpdatesAsync();
                     PEInterface.UpgradablePackagesLoader.Remove(package);
+                    PEInterface.UpgradablePackagesLoader.IgnoredPackages[package.Id] = package;
                 }
             };
 
@@ -535,6 +536,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             _ = package.AddToIgnoredUpdatesAsync();
             PEInterface.UpgradablePackagesLoader.Remove(package);
+            PEInterface.UpgradablePackagesLoader.IgnoredPackages[package.Id] = package;
         }
 
         private void MenuSkipVersion_Invoked(object sender, RoutedEventArgs e)
@@ -547,6 +549,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             _ = package.AddToIgnoredUpdatesAsync(package.NewVersion);
             PEInterface.UpgradablePackagesLoader.Remove(package);
+            PEInterface.UpgradablePackagesLoader.IgnoredPackages[package.Id] = package;
         }
 
         public void UpdatePackageForId(string id)

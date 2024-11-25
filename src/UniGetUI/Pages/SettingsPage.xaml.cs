@@ -114,7 +114,7 @@ namespace UniGetUI.Interface
             ExperimentalSettingsExpander.HideRestartRequiredBanner();
 
             // Package Manager banners;
-            Dictionary<IPackageManager, SettingsEntry> PackageManagerExpanders = [];
+            Dictionary<IPackageManager, SettingsEntry> IPackageManagerExpanders = [];
             Dictionary<IPackageManager, List<SettingsCard>> ExtraSettingsCards = [];
 
             foreach (IPackageManager Manager in PEInterface.Managers)
@@ -126,12 +126,12 @@ namespace UniGetUI.Interface
             // ----------------------------------------------------------------------------------------
 
 
-            ButtonCard WinGet_ResetWindowsPackageManager = new() {
+            ButtonCard WinGet_ResetWindowsIPackageManager = new() {
                 Text = CoreTools.AutoTranslated("Reset WinGet") + $" ({CoreTools.Translate("This may help if no packages are listed")})",
                 ButtonText = CoreTools.AutoTranslated("Reset")
             };
 
-            WinGet_ResetWindowsPackageManager.Click += (_, _) =>
+            WinGet_ResetWindowsIPackageManager.Click += (_, _) =>
             {
                 DialogHelper.HandleBrokenWinGet();
                 // CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), CoreTools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
@@ -144,7 +144,7 @@ namespace UniGetUI.Interface
             };
             WinGet_UseBundled.StateChanged += (_, _) =>
             {
-                PackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
+                IPackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
             };
 
             CheckboxCard WinGet_EnableTroubleshooter = new()
@@ -159,7 +159,7 @@ namespace UniGetUI.Interface
             };
 
             ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_EnableTroubleshooter);
-            ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_ResetWindowsPackageManager);
+            ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_ResetWindowsIPackageManager);
             ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_UseBundled);
 
 
@@ -170,13 +170,13 @@ namespace UniGetUI.Interface
             Scoop_Install.Click += (_, _) =>
             {
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"), CoreTools.Translate("Scoop Installer - WingetUI"));
-                PackageManagerExpanders[PEInterface.Scoop].ShowRestartRequiredBanner();
+                IPackageManagerExpanders[PEInterface.Scoop].ShowRestartRequiredBanner();
             };
             ButtonCard Scoop_Uninstall = new() { Text = CoreTools.AutoTranslated("Uninstall Scoop (and its packages)"), ButtonText = CoreTools.AutoTranslated("Uninstall") };
             Scoop_Uninstall.Click += (_, _) =>
             {
                 CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"), CoreTools.Translate("Scoop Uninstaller - WingetUI"));
-                PackageManagerExpanders[PEInterface.Scoop].ShowRestartRequiredBanner();
+                IPackageManagerExpanders[PEInterface.Scoop].ShowRestartRequiredBanner();
             };
             ButtonCard Scoop_ResetAppCache = new() { Text = CoreTools.AutoTranslated("Run cleanup and clear cache"), ButtonText = CoreTools.AutoTranslated("Run") };
             Scoop_ResetAppCache.Click += (_, _) =>
@@ -195,7 +195,7 @@ namespace UniGetUI.Interface
             CheckboxCard Chocolatey_SystemChoco = new() { Text = CoreTools.AutoTranslated("Use system Chocolatey"), SettingName = "UseSystemChocolatey" };
             Chocolatey_SystemChoco.StateChanged += (_, _) =>
             {
-                PackageManagerExpanders[PEInterface.Chocolatey].ShowRestartRequiredBanner();
+                IPackageManagerExpanders[PEInterface.Chocolatey].ShowRestartRequiredBanner();
             };
 
             ExtraSettingsCards[PEInterface.Chocolatey].Add(Chocolatey_SystemChoco);
@@ -276,7 +276,7 @@ namespace UniGetUI.Interface
 
             Vcpkg_CustomVcpkgRoot.Click += (_, _) =>
             {
-                PackageManagerExpanders[PEInterface.Vcpkg].ShowRestartRequiredBanner();
+                IPackageManagerExpanders[PEInterface.Vcpkg].ShowRestartRequiredBanner();
             };
 
 
@@ -296,7 +296,7 @@ namespace UniGetUI.Interface
                     Text = Manager.DisplayName,
                     Description = Manager.Properties.Description.Replace("<br>", "\n").Replace("<b>", "").Replace("</b>", "")
                 };
-                PackageManagerExpanders.Add(Manager, ManagerExpander);
+                IPackageManagerExpanders.Add(Manager, ManagerExpander);
                 ManagerExpander.HeaderIcon = new LocalIcon(Manager.Properties.IconId);
 
                 // Creation of the status footer
@@ -335,7 +335,7 @@ namespace UniGetUI.Interface
                 };
                 managerLogs.Click += (_, _) =>
                 {
-                    MainApp.Instance.MainWindow.NavigationPage.OpenPackageManagerLogs(Manager as PackageManager);
+                    MainApp.Instance.MainWindow.NavigationPage.OpenManagerLogs(Manager as IPackageManager);
                 };
 
                 Grid g = new()
@@ -744,6 +744,12 @@ namespace UniGetUI.Interface
         private void DisableSelectingUpdatesByDefault_OnClick(object sender, EventArgs e)
         {
             if (InterfaceLoaded) InterfaceSettingsExpander.ShowRestartRequiredBanner();
+        }
+
+        private void ForceUpdateUniGetUI_OnClick(object? sender, RoutedEventArgs e)
+        {
+            _ = AutoUpdater.CheckAndInstallUpdates(MainApp.Instance.MainWindow, MainApp.Instance.MainWindow.UpdatesBanner,
+                true);
         }
     }
 }

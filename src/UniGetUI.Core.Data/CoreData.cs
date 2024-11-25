@@ -47,7 +47,7 @@ namespace UniGetUI.Core.Data
         }
 
         public const string VersionName =  "3.1.4-beta1"; // Do not modify this line, use file scripts/apply_versions.py
-        public const double VersionNumber =  3.14; // Do not modify this line, use file scripts/apply_versions.py
+        public const int BuildNumber =  71; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 
@@ -188,9 +188,13 @@ namespace UniGetUI.Core.Data
         /// </summary>
         public const int UpdatesAvailableNotificationTag = 1234;
         /// <summary>
+        /// The ID of the notification that is used to inform the user that UniGetUI can be updated
+        /// </summary>
+        public const int UniGetUICanBeUpdated = 1235;
+        /// <summary>
         /// The ID of the notification that is used to inform the user that shortcuts are available for deletion
         /// </summary>
-        public const int NewShortcutsNotificationTag = 1235;
+        public const int NewShortcutsNotificationTag = 1236;
 
 
         /// <summary>

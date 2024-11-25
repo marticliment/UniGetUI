@@ -7,7 +7,7 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>ModernWindow (Unpackaged)</ActiveDebugProfile>
+    <ActiveDebugProfile>UniGetUI (Unpackaged)</ActiveDebugProfile>
   </PropertyGroup>
   <ItemGroup>
     <None Update="App.xaml">

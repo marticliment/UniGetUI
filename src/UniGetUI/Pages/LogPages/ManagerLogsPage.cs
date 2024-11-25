@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
@@ -15,7 +16,7 @@ namespace UniGetUI.Interface.Pages.LogPage
 
         }
 
-        public void LoadForManager(PackageManager manager)
+        public void LoadForManager(IPackageManager manager)
         {
             bool IS_DARK = ActualTheme == Microsoft.UI.Xaml.ElementTheme.Dark;
             bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains(CoreTools.Translate("Verbose")) ?? false;
@@ -54,7 +55,7 @@ namespace UniGetUI.Interface.Pages.LogPage
 
         public override void LoadLog(bool isReload = false)
         {
-            foreach (PackageManager manager in PEInterface.Managers)
+            foreach (IPackageManager manager in PEInterface.Managers)
             {
                 if (LogLevelCombo.SelectedValue?.ToString()?.Contains(manager.DisplayName) ?? false)
                 {
@@ -69,7 +70,7 @@ namespace UniGetUI.Interface.Pages.LogPage
         protected override void LoadLogLevels()
         {
             LogLevelCombo.Items.Clear();
-            foreach (PackageManager manager in PEInterface.Managers)
+            foreach (IPackageManager manager in PEInterface.Managers)
             {
                 LogLevelCombo.Items.Add(manager.DisplayName);
                 LogLevelCombo.Items.Add($"{manager.DisplayName} ({CoreTools.Translate("Verbose")})");

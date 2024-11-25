@@ -420,11 +420,11 @@ public static partial class DialogHelper
                         "cmd.exe /C \"rmdir /Q /S `\"%temp%\\WinGet`\"\"; " +
                         "cmd.exe /C \"`\"%localappdata%\\Microsoft\\WindowsApps\\winget.exe`\" source reset --force\"; " +
                         "taskkill /im winget.exe /f; " +
-                        "taskkill /im WindowsPackageManagerServer.exe /f; " +
+                        "taskkill /im WindowsIPackageManagerServer.exe /f; " +
                         "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; " +
                         "Install-Module Microsoft.WinGet.Client -Force -Scope AllUsers -AllowClobber; " +
                         "Import-Module Microsoft.WinGet.Client; " +
-                        "Repair-WinGetPackageManager -Force -Latest; " +
+                        "Repair-WinGetIPackageManager -Force -Latest; " +
                         "Get-AppxPackage -Name 'Microsoft.DesktopAppInstaller' | Reset-AppxPackage" +
                         "}\"",
                     UseShellExecute = true,

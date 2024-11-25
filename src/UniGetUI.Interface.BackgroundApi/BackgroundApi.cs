@@ -174,7 +174,7 @@ namespace UniGetUI.Interface
                     return 401;
                 }
 
-                return CoreData.VersionNumber.ToString();
+                return CoreData.BuildNumber.ToString();
             });
 
             // Return found updates

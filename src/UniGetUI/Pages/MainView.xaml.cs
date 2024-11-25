@@ -12,6 +12,7 @@ using UniGetUI.Interface.Pages.LogPage;
 using UniGetUI.Interface.SoftwarePages;
 using UniGetUI.Interface.Widgets;
 using Windows.UI.Core;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.Pages.DialogPages;
 
@@ -263,9 +264,9 @@ namespace UniGetUI.Interface
             => NavigateTo(PageType.OperationHistory);
 
         private void ManagerLogsMenu_Click(object sender, RoutedEventArgs e)
-            => OpenPackageManagerLogs();
+            => OpenManagerLogs();
 
-        public void OpenPackageManagerLogs(PackageManager? manager = null)
+        public void OpenManagerLogs(IPackageManager? manager = null)
         {
             NavigateTo(PageType.ManagerLog);
             if(manager is not null) ManagerLogPage?.LoadForManager(manager);
