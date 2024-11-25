@@ -55,7 +55,7 @@
                                 <widgets:LocalIcon Icon="localpc" Grid.Column="0" Height="24" Width="24"/>
                                 <TextBlock Text="{x:Bind ShortcutPath}" Grid.Column="1" VerticalAlignment="Center"/>
                                 <Button Click="{x:Bind OpenShortcutPath}" Height="32" Width="32" Padding="0" Grid.Column="2">
-                                    <widgets:LocalIcon Icon="launch" Grid.Column="0" Height="24" Width="24"/>
+                                    <widgets:LocalIcon Icon="launch" Height="24" Width="24"/>
                                 </Button>
                             </Grid>
                         </DataTemplate>
