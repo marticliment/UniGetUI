@@ -612,7 +612,8 @@
 
     <Grid
         Padding="0"
-        BorderThickness="1,1,0,0">
+        BorderThickness="1,1,0,0"
+        KeyDown="{x:Bind PackageList_KeyDown}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>

@@ -114,6 +114,10 @@ namespace UniGetUI.Interface
         }
         protected string FoundPackages_SubtitleText { get => NoMatches_SubtitleText; }
 
+        private string TypeQuery = "";
+        private int LastKeyDown;
+        private readonly int QUERY_SEPARATION_TIME = 1000; // 500ms between keypresses starts a new query
+
         protected AbstractPackagesPage(PackagesPageData data)
         {
             InitializeComponent();
@@ -480,6 +484,65 @@ namespace UniGetUI.Interface
                 await Loader.ReloadPackages();
             }
             Loader_PackagesChanged(this, EventArgs.Empty);
+        }
+
+        public void PackageList_KeyDown(object sender, KeyRoutedEventArgs args)
+        {
+            string key = ((char)args.Key).ToString().ToLower();
+            if ("abcdefghijklmnopqrsztuvwxyz1234567890".IndexOf(key) > -1)
+            {
+                if (Environment.TickCount - LastKeyDown > QUERY_SEPARATION_TIME)
+                {
+                    TypeQuery = key;
+                }
+                else
+                {
+                    TypeQuery += key;
+                }
+
+                int IdQueryIndex = -1;
+                int NameSimilarityIndex = -1;
+                int IdSimilarityIndex = -1;
+                bool SelectedPackage = false;
+                for (int i = 0; i < FilteredPackages.Count; i++)
+                {
+                    if (FilteredPackages[i].Package.Name.ToLower().StartsWith(TypeQuery))
+                    {
+                        PackageList.Select(i);
+                        PackageList.ScrollView?.ScrollTo(0, Math.Max(0, (i - 3) * 39), new ScrollingScrollOptions
+                        (
+                            ScrollingAnimationMode.Disabled,
+                            ScrollingSnapPointsMode.Ignore
+                        ));
+                        SelectedPackage = true;
+                        break;
+                    }
+                    // To avoid jumping back high up because an ID matched it (prevent typing "wi" focusing id:"WildfireGames.0AD" instead of name:"Windows")
+                    if (IdQueryIndex == -1 && FilteredPackages[i].Package.Id.ToLower().StartsWith(TypeQuery))
+                    {
+                        IdQueryIndex = i;
+                    }
+                    if (NameSimilarityIndex == -1 && FilteredPackages[i].Package.Name.ToLower().Contains(TypeQuery))
+                    {
+                        NameSimilarityIndex = i;
+                    }
+                    if (IdSimilarityIndex == -1 && FilteredPackages[i].Package.Id.ToLower().Contains(TypeQuery))
+                    {
+                        IdSimilarityIndex = i;
+                    }
+                }
+                int QueryIndex = IdQueryIndex > -1 ? IdQueryIndex : (NameSimilarityIndex > -1 ? NameSimilarityIndex : IdSimilarityIndex);
+                if (!SelectedPackage && QueryIndex > -1)
+                {
+                    PackageList.Select(QueryIndex);
+                    PackageList.ScrollView?.ScrollTo(0, Math.Max(0, (QueryIndex - 3) * 39), new ScrollingScrollOptions
+                    (
+                        ScrollingAnimationMode.Disabled,
+                        ScrollingSnapPointsMode.Ignore
+                    ));
+                }
+            }
+            LastKeyDown = Environment.TickCount;
         }
 
         /// <summary>
