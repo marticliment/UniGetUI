@@ -196,6 +196,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             AppBarButton IgnoreSelected = new();
             AppBarButton ManageIgnored = new();
+            AppBarButton ManageShortcuts = new();
 
             AppBarButton HelpButton = new();
 
@@ -211,11 +212,13 @@ namespace UniGetUI.Interface.SoftwarePages
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(IgnoreSelected);
             ToolBar.PrimaryCommands.Add(ManageIgnored);
+            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+                ToolBar.PrimaryCommands.Add(ManageShortcuts);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(HelpButton);
 
             Dictionary<AppBarButton, string> Labels = new()
-            { // Entries with a trailing space are collapsed
+            { // Entries with a leading space are collapsed
               // Their texts will be used as the tooltip
                 { UpdateSelected,       CoreTools.Translate("Update selected packages") },
                 { UpdateAsAdmin,        " " + CoreTools.Translate("Update as administrator") },
@@ -226,6 +229,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 { SharePackage,         " " + CoreTools.Translate("Share") },
                 { IgnoreSelected,       CoreTools.Translate("Ignore selected packages") },
                 { ManageIgnored,        CoreTools.Translate("Manage ignored updates") },
+                { ManageShortcuts,      CoreTools.Translate("Manage desktop shortcuts") },
                 { HelpButton,           CoreTools.Translate("Help") }
             };
 
@@ -251,6 +255,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 { SharePackage,         IconType.Share },
                 { IgnoreSelected,       IconType.Pin },
                 { ManageIgnored,        IconType.ClipboardList },
+                { ManageShortcuts,      IconType.LocalPc },
                 { HelpButton,           IconType.Help }
             };
 
@@ -263,6 +268,7 @@ namespace UniGetUI.Interface.SoftwarePages
             HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
             InstallationSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
             ManageIgnored.Click += async (_, _) => await DialogHelper.ManageIgnoredUpdates();
+            ManageShortcuts.Click += async (_, _) => await DialogHelper.ManageDesktopShortcuts();
             IgnoreSelected.Click += async (_, _) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())

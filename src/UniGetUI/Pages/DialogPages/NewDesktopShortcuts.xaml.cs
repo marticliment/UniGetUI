@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using UniGetUI.Core.Logging;
@@ -29,11 +28,10 @@ namespace UniGetUI.Interface
 
             foreach (var shortcutPath in DesktopShortcutsDatabase.GetAwaitingVerdicts())
             {
-                var shortcutEntry = new ShortcutEntry(shortcutPath, desktopShortcuts);
+                var shortcutEntry = new ShortcutEntry(shortcutPath, true, desktopShortcuts);
                 desktopShortcuts.Add(shortcutEntry);
                 NewDeletableDesktopShortcutsList.SelectedItems.Add(shortcutEntry);
             }
-
         }
 
         private void CloseButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -52,10 +50,13 @@ namespace UniGetUI.Interface
             }
             foreach (var shortcut in desktopShortcuts)
             {
+                if (DesktopShortcutsDatabase.CanShortcutBeDeleted(shortcut.ShortcutPath) == DesktopShortcutsDatabase.ShortcutDeletableStatus.Unknown)
+                {
+                    DesktopShortcutsDatabase.Add(shortcut.ShortcutPath, false);
+                }
                 DesktopShortcutsDatabase.RemoveFromAwaitingVerdicts(shortcut.ShortcutPath);
             }
         }
-
 
         private async void EnableAllButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
@@ -68,23 +69,6 @@ namespace UniGetUI.Interface
         private void DisableAllButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             NewDeletableDesktopShortcutsList.SelectedItems.Clear();
-        }
-    }
-
-    public class ShortcutEntry
-    {
-        public string ShortcutPath { get; }
-        private ObservableCollection<ShortcutEntry> List { get; }
-
-        public ShortcutEntry(string shortcutPath, ObservableCollection<ShortcutEntry> list)
-        {
-            ShortcutPath = shortcutPath;
-            List = list;
-        }
-
-        public void OpenShortcutPath()
-        {
-            Process.Start("explorer.exe", "/select," + $"\"{ShortcutPath}\"");
         }
     }
 }
