@@ -60,13 +60,14 @@ public static class DesktopShortcutsDatabase
     /// Adds a desktop shortcut to the deletable desktop shortcuts database
     /// </summary>
     /// <param name="shortcutPath">The path of the shortcut to delete</param>
-    public static void Add(string shortcutPath)
+    /// <param name="deletable">Whether or not to mark this entry as deletable in the databse. Defaults to true</param>
+    public static void Add(string shortcutPath, bool deletable = true)
     {
         // Update the database if it is null
         DeletableDesktopShortcuts ??= ReadDatabase();
 
         // Add/update the new entry
-        DeletableDesktopShortcuts[shortcutPath] = true;
+        DeletableDesktopShortcuts[shortcutPath] = deletable;
 
         // Propagate changes to disk
         SaveDatabase();
