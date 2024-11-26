@@ -13,6 +13,7 @@
     Name="ABSTRACT_PAGE"
     NavigationCacheMode="Required"
     xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses"
+    PreviewKeyDown="{x:Bind PackageList_PreviewKeyDown}"
     KeyDown="{x:Bind PackageList_KeyDown}">
 
     <animations:Implicit.ShowAnimations>

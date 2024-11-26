@@ -496,6 +496,50 @@ namespace UniGetUI.Interface
             ));
         }
 
+        // To avoid the default arrow key behavior
+        public void PackageList_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            int SelectedIndex = -1;
+            if (PackageList.SelectedItem is not null)
+            {
+                SelectedIndex = ((PackageWrapper)PackageList.SelectedItem).Index;
+            }
+
+            switch (e.Key)
+            {
+                case VirtualKey.Up:
+                    e.Handled = true;
+                    if (SelectedIndex < 0)
+                    {
+                        SelectAndScrollTo(FilteredPackages.Count - 1);
+                    }
+                    else if (SelectedIndex == 0)
+                    {
+                        SelectAndScrollTo(FilteredPackages.Count - 1);
+                    }
+                    else
+                    {
+                        SelectAndScrollTo(SelectedIndex - 1);
+                    }
+                    break;
+                case VirtualKey.Down:
+                    e.Handled = true;
+                    if (SelectedIndex < 0)
+                    {
+                        SelectAndScrollTo(0);
+                    }
+                    else if (SelectedIndex == FilteredPackages.Count - 1)
+                    {
+                        SelectAndScrollTo(0);
+                    }
+                    else
+                    {
+                        SelectAndScrollTo(SelectedIndex + 1);
+                    }
+                    break;
+            }
+        }
+
         public void PackageList_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             string key = ((char)e.Key).ToString().ToLower();
