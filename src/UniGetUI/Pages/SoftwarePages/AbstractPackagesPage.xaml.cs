@@ -486,9 +486,19 @@ namespace UniGetUI.Interface
             Loader_PackagesChanged(this, EventArgs.Empty);
         }
 
-        public void PackageList_KeyDown(object sender, KeyRoutedEventArgs args)
+        private void SelectAndScrollTo(int index)
         {
-            string key = ((char)args.Key).ToString().ToLower();
+            PackageList.Select(index);
+            PackageList.ScrollView?.ScrollTo(0, Math.Max(0, (index - 3) * 39), new ScrollingScrollOptions
+            (
+                ScrollingAnimationMode.Disabled,
+                ScrollingSnapPointsMode.Ignore
+            ));
+        }
+
+        public void PackageList_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            string key = ((char)e.Key).ToString().ToLower();
             if ("abcdefghijklmnopqrsztuvwxyz1234567890".IndexOf(key) > -1)
             {
                 if (Environment.TickCount - LastKeyDown > QUERY_SEPARATION_TIME)
@@ -508,12 +518,7 @@ namespace UniGetUI.Interface
                 {
                     if (FilteredPackages[i].Package.Name.ToLower().StartsWith(TypeQuery))
                     {
-                        PackageList.Select(i);
-                        PackageList.ScrollView?.ScrollTo(0, Math.Max(0, (i - 3) * 39), new ScrollingScrollOptions
-                        (
-                            ScrollingAnimationMode.Disabled,
-                            ScrollingSnapPointsMode.Ignore
-                        ));
+                        SelectAndScrollTo(i);
                         SelectedPackage = true;
                         break;
                     }
@@ -534,12 +539,7 @@ namespace UniGetUI.Interface
                 int QueryIndex = IdQueryIndex > -1 ? IdQueryIndex : (NameSimilarityIndex > -1 ? NameSimilarityIndex : IdSimilarityIndex);
                 if (!SelectedPackage && QueryIndex > -1)
                 {
-                    PackageList.Select(QueryIndex);
-                    PackageList.ScrollView?.ScrollTo(0, Math.Max(0, (QueryIndex - 3) * 39), new ScrollingScrollOptions
-                    (
-                        ScrollingAnimationMode.Disabled,
-                        ScrollingSnapPointsMode.Ignore
-                    ));
+                    SelectAndScrollTo(QueryIndex);
                 }
             }
             LastKeyDown = Environment.TickCount;
