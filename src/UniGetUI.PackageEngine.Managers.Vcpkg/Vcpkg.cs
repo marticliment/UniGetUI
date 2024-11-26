@@ -75,8 +75,9 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 KnownSources = [.. TripletSourceMap.Values],
             };
 
-            SourceProvider = new VcpkgSourceProvider(this);
-            OperationProvider = new VcpkgOperationProvider(this);
+            SourcesHelper = new VcpkgSourceHelper(this);
+            DetailsHelper = new VcpkgPkgDetailsHelper(this);
+            OperationHelper = new VcpkgPkgOperationHelper(this);
         }
 
         protected override IEnumerable<Package> FindPackages_UnSafe(string query)
@@ -343,7 +344,6 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
             var (gitFound, gitPath) = CoreTools.Which("git");
 
-            // TODO: Check if Settings.Get("DisableUpdateVcpkgGitPorts") is still needed
             if (!found || !gitFound || !vcpkgRootFound || Settings.Get("DisableUpdateVcpkgGitPorts"))
             {
                 INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);

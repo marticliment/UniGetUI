@@ -41,8 +41,8 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
             };
 
-            PackageDetailsProvider = new NpmPackageDetailsProvider(this);
-            OperationProvider = new NpmOperationProvider(this);
+            DetailsHelper = new NpmPkgDetailsHelper(this);
+            OperationHelper = new NpmPkgOperationHelper(this);
         }
 
         protected override IEnumerable<Package> FindPackages_UnSafe(string query)

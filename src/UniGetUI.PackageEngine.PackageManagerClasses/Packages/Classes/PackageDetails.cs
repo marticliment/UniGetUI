@@ -103,7 +103,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             try
             {
-                await Task.Run(() => Package.Manager.GetPackageDetails(this));
+                await Task.Run(() => Package.Manager.DetailsHelper.GetDetails(this));
                 IsPopulated = true;
             }
             catch (Exception ex)
