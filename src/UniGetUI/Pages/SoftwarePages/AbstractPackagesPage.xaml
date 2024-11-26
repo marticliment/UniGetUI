@@ -12,7 +12,8 @@
     mc:Ignorable="d"
     Name="ABSTRACT_PAGE"
     NavigationCacheMode="Required"
-    xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses">
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses"
+    KeyDown="{x:Bind PackageList_KeyDown}">
 
     <animations:Implicit.ShowAnimations>
         <animations:TranslationAnimation Duration="0:0:0.25" From="0,100,0" To="0"/>
@@ -612,8 +613,7 @@
 
     <Grid
         Padding="0"
-        BorderThickness="1,1,0,0"
-        KeyDown="{x:Bind PackageList_KeyDown}">
+        BorderThickness="1,1,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
