@@ -559,6 +559,7 @@
                     <TextBlock
                         Grid.Column="2" Grid.Row="0"
                         VerticalAlignment="Center"
+                        Name="PackageName"
                         Text="{x:Bind Package.Name}" FontSize="13" FontFamily="Segoe UI Variable Text"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                     />

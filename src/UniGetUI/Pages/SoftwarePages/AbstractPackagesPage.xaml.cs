@@ -509,11 +509,8 @@ namespace UniGetUI.Interface
             {
                 case VirtualKey.Up:
                     e.Handled = true;
-                    if (SelectedIndex < 0)
-                    {
-                        SelectAndScrollTo(FilteredPackages.Count - 1);
-                    }
-                    else if (SelectedIndex == 0)
+                    // no selection or first selected item
+                    if (SelectedIndex <= 0)
                     {
                         SelectAndScrollTo(FilteredPackages.Count - 1);
                     }
@@ -524,11 +521,8 @@ namespace UniGetUI.Interface
                     break;
                 case VirtualKey.Down:
                     e.Handled = true;
-                    if (SelectedIndex < 0)
-                    {
-                        SelectAndScrollTo(0);
-                    }
-                    else if (SelectedIndex == FilteredPackages.Count - 1)
+                    // no selection or last selected item
+                    if (SelectedIndex < 0 || SelectedIndex == FilteredPackages.Count - 1)
                     {
                         SelectAndScrollTo(0);
                     }
