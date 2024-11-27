@@ -497,42 +497,42 @@ namespace UniGetUI.Interface
         }
 
         // To avoid the default arrow key behavior
-        public void PackageList_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            int SelectedIndex = -1;
-            if (PackageList.SelectedItem is not null)
-            {
-                SelectedIndex = ((PackageWrapper)PackageList.SelectedItem).Index;
-            }
+        // public void PackageList_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        // {
+        //     int SelectedIndex = -1;
+        //     if (PackageList.SelectedItem is not null)
+        //     {
+        //         SelectedIndex = ((PackageWrapper)PackageList.SelectedItem).Index;
+        //     }
 
-            switch (e.Key)
-            {
-                case VirtualKey.Up:
-                    e.Handled = true;
-                    // no selection or first selected item
-                    if (SelectedIndex <= 0)
-                    {
-                        SelectAndScrollTo(FilteredPackages.Count - 1);
-                    }
-                    else
-                    {
-                        SelectAndScrollTo(SelectedIndex - 1);
-                    }
-                    break;
-                case VirtualKey.Down:
-                    e.Handled = true;
-                    // no selection or last selected item
-                    if (SelectedIndex < 0 || SelectedIndex == FilteredPackages.Count - 1)
-                    {
-                        SelectAndScrollTo(0);
-                    }
-                    else
-                    {
-                        SelectAndScrollTo(SelectedIndex + 1);
-                    }
-                    break;
-            }
-        }
+        //     switch (e.Key)
+        //     {
+        //         case VirtualKey.Up:
+        //             e.Handled = true;
+        //             // no selection or first selected item
+        //             if (SelectedIndex <= 0)
+        //             {
+        //                 SelectAndScrollTo(FilteredPackages.Count - 1);
+        //             }
+        //             else
+        //             {
+        //                 SelectAndScrollTo(SelectedIndex - 1);
+        //             }
+        //             break;
+        //         case VirtualKey.Down:
+        //             e.Handled = true;
+        //             // no selection or last selected item
+        //             if (SelectedIndex < 0 || SelectedIndex == FilteredPackages.Count - 1)
+        //             {
+        //                 SelectAndScrollTo(0);
+        //             }
+        //             else
+        //             {
+        //                 SelectAndScrollTo(SelectedIndex + 1);
+        //             }
+        //             break;
+        //     }
+        // }
 
         public void PackageList_KeyDown(object sender, KeyRoutedEventArgs e)
         {
