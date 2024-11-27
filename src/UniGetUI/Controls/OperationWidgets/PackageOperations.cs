@@ -46,6 +46,12 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 throw new NullReferenceException("ONGOING_PROGRESS_STRING must be set to a non-null value in the Initialize method");
             }
+
+            OutputDialog.SecondaryButtonText = CoreTools.Translate("Package Details");
+            OutputDialog.SecondaryButtonClick += (_, _) =>
+            {
+                DialogHelper.ShowPackageDetails(Package, Role);
+            };
         }
 
         public PackageOperation(
