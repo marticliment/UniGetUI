@@ -1,7 +1,7 @@
 using UniGetUI.Core.Data;
 using UniGetUI.Core.SettingsEngine;
 
-namespace UniGetUI.Core.SettingsEgine.Tests
+namespace UniGetUI.Core.SettingsEngine.Tests
 {
     public class SettingsTest
     {
