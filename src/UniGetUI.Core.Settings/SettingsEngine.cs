@@ -156,10 +156,20 @@ namespace UniGetUI.Core.SettingsEngine
 
             try
             {
-                File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), "");
-                foreach (T item in value)
+                if (value.Count > 0)
                 {
-                    File.AppendAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), JsonSerializer.Serialize(item) + "\n");
+                    File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), "");
+                    foreach (T item in value)
+                    {
+                        File.AppendAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), JsonSerializer.Serialize(item) + "\n");
+                    }
+                }
+                else
+                {
+                    if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+                    {
+                        File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, setting));
+                    }
                 }
             }
             catch (Exception e)
