@@ -183,7 +183,7 @@ namespace UniGetUI.Core.SettingsEngine
         {
             List<T>? list = GetListInternal<T>(setting);
             if (list == null) return default;
-            if (list.Count >= index)
+            if (list.Count <= index)
             {
                 Logger.Error($"Index {index} out of range for list setting {setting}");
                 return default;
