@@ -23,6 +23,7 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
 
 namespace UniGetUI.Interface
 {
@@ -112,6 +113,8 @@ namespace UniGetUI.Interface
             }
 
             _ = AutoUpdater.UpdateCheckLoop(this, UpdatesBanner);
+
+            IgnoredUpdatesDatabase.TransferOldFormat();
         }
 
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)
