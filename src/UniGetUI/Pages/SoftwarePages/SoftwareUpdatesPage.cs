@@ -202,6 +202,7 @@ namespace UniGetUI.Interface.SoftwarePages
             AppBarButton HelpButton = new();
 
             ToolBar.PrimaryCommands.Add(CancelAllOperations);
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(UpdateSelected);
             ToolBar.PrimaryCommands.Add(UpdateAsAdmin);
             ToolBar.PrimaryCommands.Add(UpdateSkipHash);
