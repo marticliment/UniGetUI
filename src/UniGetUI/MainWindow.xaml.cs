@@ -144,9 +144,16 @@ namespace UniGetUI.Interface
                 if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"DisableInstantSearch{Page}Tab")))
                     File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, $"DisableInstantSearch{Page}Tab"));
 
-                Settings.SetDictionaryItem("SidepanelWidths", Page, int.Parse(Settings.GetValue($"SidepanelWidth{Page}Tab")));
-                if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"SidepanelWidth{Page}Tab")))
-                    File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, $"SidepanelWidth{Page}Tab"));
+                try
+                {
+                    Settings.SetDictionaryItem("SidepanelWidths", Page, int.Parse(Settings.GetValue($"SidepanelWidth{Page}Page")));
+                }
+                catch (FormatException)
+                {
+                    Settings.SetDictionaryItem("SidepanelWidths", Page, 250);
+                }
+                if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"SidepanelWidth{Page}Page")))
+                    File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, $"SidepanelWidth{Page}Page"));
             }
 
             Settings.Set("TransferredOldSettings", true);
