@@ -132,7 +132,14 @@ namespace UniGetUI.Interface
                 }
             }
 
-            // Dependency checks don't need to be transferred, because the worst case scenario is the user has to click "don't remind me again" again
+            // Dependency checks don't need to be transferred, because the worst case scenario is the user has to click the "don't show again" again
+
+            foreach (string Page in new string[] { "Discover", "Installed", "Bundles", "Updates" })
+            {
+                Settings.SetDictionaryItem("HideToggleFilters", Page, Settings.Get($"HideToggleFilters{Page}Page"));
+                if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"HideToggleFilters{Page}Page")))
+                    File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, $"HideToggleFilters{Page}Page"));
+            }
 
             // Settings.Set("TransferredOldSettings", true);
         }

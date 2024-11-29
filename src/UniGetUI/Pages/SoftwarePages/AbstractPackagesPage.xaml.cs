@@ -280,7 +280,7 @@ namespace UniGetUI.Interface
                 BackgroundText.Visibility = Visibility.Collapsed;
             }
 
-            if (Settings.Get($"HideToggleFilters{PAGE_NAME}Page"))
+            if (Settings.GetDictionaryItem<string, bool>("HideToggleFilters", PAGE_NAME))
             {
                 HideFilteringPane(skipAnimation: true);
             }
@@ -860,7 +860,7 @@ namespace UniGetUI.Interface
 
         private void ToggleFiltersButton_Click(object sender, RoutedEventArgs e)
         {
-            Settings.Set($"HideToggleFilters{PAGE_NAME}Page", !ToggleFiltersButton.IsChecked ?? false);
+            Settings.SetDictionaryItem("HideToggleFilters", PAGE_NAME, !ToggleFiltersButton.IsChecked ?? false);
             if (ToggleFiltersButton.IsChecked ?? false)
             {
                 ShowFilteringPane();
