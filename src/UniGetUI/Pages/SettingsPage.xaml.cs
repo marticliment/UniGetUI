@@ -501,11 +501,22 @@ namespace UniGetUI.Interface
 
             if (file != string.Empty)
             {
+                if (Path.GetDirectoryName(file) == CoreData.UniGetUIDataDirectory)
+                {
+                    Directory.CreateDirectory(Path.Join(CoreData.UniGetUIDataDirectory, "import-temp"));
+                    File.Copy(file, Path.Join(CoreData.UniGetUIDataDirectory, "import-temp", Path.GetFileName(file)));
+                    file = Path.Join(CoreData.UniGetUIDataDirectory, "import-temp", Path.GetFileName(file));
+                }
                 ResetWingetUI(sender, e);
                 Dictionary<string, string> settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file)) ?? [];
                 foreach (KeyValuePair<string, string> entry in settings)
                 {
                     File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, entry.Key), entry.Value);
+                }
+
+                if (Directory.Exists(Path.Join(CoreData.UniGetUIDataDirectory, "import-temp")))
+                {
+                    Directory.Delete(Path.Join(CoreData.UniGetUIDataDirectory, "import-temp"), true);
                 }
 
                 GeneralSettingsExpander.ShowRestartRequiredBanner();
