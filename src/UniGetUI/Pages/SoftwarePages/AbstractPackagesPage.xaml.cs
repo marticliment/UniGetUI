@@ -194,7 +194,7 @@ namespace UniGetUI.Interface
             // Handle showing the MegaQueryBlock
             QueryBlock.TextChanged += (_, _) =>
             {
-                if (InstantSearchCheckbox.IsChecked)
+                if (InstantSearchCheckbox.IsChecked == true)
                 {
                     if (!DISABLE_FILTER_ON_QUERY_CHANGE)
                         FilterPackages();
