@@ -143,9 +143,13 @@ namespace UniGetUI.Interface
                 Settings.SetDictionaryItem("DisableInstantSearch", Page, Settings.Get($"DisableInstantSearch{Page}Tab"));
                 if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"DisableInstantSearch{Page}Tab")))
                     File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, $"DisableInstantSearch{Page}Tab"));
+
+                Settings.SetDictionaryItem("SidepanelWidths", Page, int.Parse(Settings.GetValue($"SidepanelWidth{Page}Tab")));
+                if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"SidepanelWidth{Page}Tab")))
+                    File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, $"SidepanelWidth{Page}Tab"));
             }
 
-            // Settings.Set("TransferredOldSettings", true);
+            Settings.Set("TransferredOldSettings", true);
         }
 
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)

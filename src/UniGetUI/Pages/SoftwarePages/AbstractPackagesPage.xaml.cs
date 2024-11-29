@@ -62,7 +62,6 @@ namespace UniGetUI.Interface
         protected readonly bool MEGA_QUERY_BOX_ENABLED;
         protected readonly bool SHOW_LAST_CHECKED_TIME;
         protected readonly bool DISABLE_FILTER_ON_QUERY_CHANGE;
-        public readonly string SIDEPANEL_WIDTH_SETTING_NAME;
         protected readonly string PAGE_NAME;
         public readonly bool RoleIsUpdateLike;
         protected DateTime LastPackageLoadTime { get; private set; }
@@ -132,7 +131,6 @@ namespace UniGetUI.Interface
             Loader = data.Loader;
 
             PAGE_NAME = data.PageName;
-            SIDEPANEL_WIDTH_SETTING_NAME = $"SidepanelWidth{PAGE_NAME}Page";
 
             MainTitle.Text = data.PageTitle;
             HeaderIcon.Glyph = data.Glyph;
@@ -751,11 +749,11 @@ namespace UniGetUI.Interface
             if ((int)e.NewSize.Width < 30)
             {
                 HideFilteringPane();
-                Settings.SetValue(SIDEPANEL_WIDTH_SETTING_NAME, "250");
+                Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, 250);
             }
             else
             {
-                Settings.SetValue(SIDEPANEL_WIDTH_SETTING_NAME, ((int)e.NewSize.Width).ToString());
+                Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, (int)e.NewSize.Width);
             }
         }
 
@@ -907,11 +905,11 @@ namespace UniGetUI.Interface
             int final_width = 250;
             try
             {
-                final_width = int.Parse(Settings.GetValue(SIDEPANEL_WIDTH_SETTING_NAME));
+                final_width = Settings.GetDictionaryItem<string, int>("SidepanelWidths", PAGE_NAME);
             }
             catch
             {
-                Settings.SetValue(SIDEPANEL_WIDTH_SETTING_NAME, "250");
+                Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, 250);
             }
 
             if (!skipAnimation)
