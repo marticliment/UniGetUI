@@ -109,7 +109,15 @@ namespace UniGetUI.Core.SettingsEngine
             where K : notnull
         {
             Dictionary<K, V>? dictionary = GetDictionaryInternal<K, V>(setting);
-            if (dictionary == null) return default;
+            if (dictionary == null)
+            {
+                dictionary = new()
+                {
+                    { key, value }
+                };
+                SetDictionary(setting, dictionary);
+                return default;
+            }
 
             if (dictionary.TryGetValue(key, out V? oldValue))
             {

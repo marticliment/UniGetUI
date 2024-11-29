@@ -165,6 +165,9 @@ namespace UniGetUI.Core.SettingsEngine.Tests
                 );
             }
 
+            string randStr = new Random().Next().ToString();
+            Settings.SetDictionaryItem(randStr, "key", 12);
+            Assert.Equal(12, Settings.GetDictionaryItem<string, int>(randStr, "key"));
             Settings.SetDictionary(SettingName, test);
             Assert.Equal(JsonSerializer.Serialize(test), File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, SettingName))[0]);
             Assert.Equal(test[keyArray[0]]?.sub.count, Settings.GetDictionary<string, SerializableTest?>(SettingName)?[keyArray[0]]?.sub.count);
