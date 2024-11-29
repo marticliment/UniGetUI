@@ -62,7 +62,6 @@ namespace UniGetUI.Interface
         protected readonly bool MEGA_QUERY_BOX_ENABLED;
         protected readonly bool SHOW_LAST_CHECKED_TIME;
         protected readonly bool DISABLE_FILTER_ON_QUERY_CHANGE;
-        public readonly string INSTANT_SEARCH_SETTING_NAME;
         public readonly string SIDEPANEL_WIDTH_SETTING_NAME;
         protected readonly string PAGE_NAME;
         public readonly bool RoleIsUpdateLike;
@@ -133,7 +132,6 @@ namespace UniGetUI.Interface
             Loader = data.Loader;
 
             PAGE_NAME = data.PageName;
-            INSTANT_SEARCH_SETTING_NAME = $"DisableInstantSearch{PAGE_NAME}Tab";
             SIDEPANEL_WIDTH_SETTING_NAME = $"SidepanelWidth{PAGE_NAME}Page";
 
             MainTitle.Text = data.PageTitle;
@@ -198,9 +196,9 @@ namespace UniGetUI.Interface
             // Handle showing the MegaQueryBlock
             QueryBlock.TextChanged += (_, _) =>
             {
-                if (InstantSearchCheckbox.IsChecked == true)
+                if (InstantSearchCheckbox.IsChecked)
                 {
-                    if(!DISABLE_FILTER_ON_QUERY_CHANGE)
+                    if (!DISABLE_FILTER_ON_QUERY_CHANGE)
                         FilterPackages();
                 }
 
@@ -291,7 +289,7 @@ namespace UniGetUI.Interface
 
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
             MegaQueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
-            InstantSearchCheckbox.IsChecked = !Settings.Get(INSTANT_SEARCH_SETTING_NAME);
+            InstantSearchCheckbox.IsChecked = !Settings.GetDictionaryItem<string, bool>("DisableInstantSearch", PAGE_NAME);
 
             HeaderIcon.FontWeight = new Windows.UI.Text.FontWeight(700);
             NameHeader.Content = CoreTools.Translate("Package Name");
@@ -450,7 +448,7 @@ namespace UniGetUI.Interface
         }
 
         private void InstantSearchValueChanged(object sender, RoutedEventArgs e)
-        { Settings.Set(INSTANT_SEARCH_SETTING_NAME, InstantSearchCheckbox.IsChecked == false); }
+        { Settings.SetDictionaryItem("DisableInstantSearch", PAGE_NAME, !InstantSearchCheckbox.IsChecked); }
         private void SourcesTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
         { FilterPackages(); }
 

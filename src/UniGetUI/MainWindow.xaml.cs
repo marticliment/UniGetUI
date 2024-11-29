@@ -139,6 +139,10 @@ namespace UniGetUI.Interface
                 Settings.SetDictionaryItem("HideToggleFilters", Page, Settings.Get($"HideToggleFilters{Page}Page"));
                 if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"HideToggleFilters{Page}Page")))
                     File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, $"HideToggleFilters{Page}Page"));
+
+                Settings.SetDictionaryItem("DisableInstantSearch", Page, Settings.Get($"DisableInstantSearch{Page}Tab"));
+                if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"DisableInstantSearch{Page}Tab")))
+                    File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, $"DisableInstantSearch{Page}Tab"));
             }
 
             // Settings.Set("TransferredOldSettings", true);
