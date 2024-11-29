@@ -122,7 +122,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// </summary>
         public bool IsEnabled()
         {
-            return !Settings.Get("Disable" + Name);
+            if (!Settings.DictionaryContainsKey<string, bool>("ManagersEnabled", Name)) return true;
+            return Settings.GetDictionaryItem<string, bool>("ManagersEnabled", Name);
         }
 
         /// <summary>

@@ -114,7 +114,25 @@ namespace UniGetUI.Interface
 
             _ = AutoUpdater.UpdateCheckLoop(this, UpdatesBanner);
 
+            if (!Settings.Get("TransferredOldSettings"))
+                TransferOldSettingsFormats();
+        }
+
+        private static void TransferOldSettingsFormats()
+        {
             IgnoredUpdatesDatabase.TransferOldFormat();
+
+            foreach (IPackageManager Manager in PEInterface.Managers)
+            {
+                string SettingName = "Disable" + Manager.Name;
+                Settings.SetDictionaryItem("ManagersEnabled", Manager.Name, !Settings.Get(SettingName));
+                if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)))
+                {
+                    File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, SettingName));
+                }
+            }
+
+            //Settings.Set("TransferredOldSettings", true);
         }
 
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)
