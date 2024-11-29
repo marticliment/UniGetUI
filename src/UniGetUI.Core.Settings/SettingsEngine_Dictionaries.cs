@@ -105,13 +105,24 @@ namespace UniGetUI.Core.SettingsEngine
         }
 
         // Also works as `Add`
-        public static void SetDictionaryItem<K, V>(string setting, K key, V value)
+        public static V? SetDictionaryItem<K, V>(string setting, K key, V value)
             where K : notnull
         {
             Dictionary<K, V>? dictionary = GetDictionaryInternal<K, V>(setting);
-            if (dictionary == null) return;
+            if (dictionary == null) return default;
 
-            dictionary[key] = value;
+            if (dictionary.TryGetValue(key, out V? oldValue))
+            {
+                dictionary[key] = value;
+                SetDictionary(setting, dictionary);
+                return oldValue;
+            }
+            else
+            {
+                dictionary.Add(key, value);
+                SetDictionary(setting, dictionary);
+                return default;
+            }
         }
 
         public static V? RemoveDictionaryKey<K, V>(string setting, K key)
@@ -120,8 +131,12 @@ namespace UniGetUI.Core.SettingsEngine
             Dictionary<K, V>? dictionary = GetDictionaryInternal<K, V>(setting);
             if (dictionary == null) return default;
 
-            V? value = dictionary[key];
-            bool success = dictionary.Remove(key);
+            bool success = false;
+            if (dictionary.TryGetValue(key, out V? value))
+            {
+                success = dictionary.Remove(key);
+                SetDictionary(setting, dictionary);
+            }
 
             if (!success) return default;
             return value;
