@@ -132,7 +132,9 @@ namespace UniGetUI.Interface
                 }
             }
 
-            //Settings.Set("TransferredOldSettings", true);
+            // Dependency checks don't need to be transferred, because the worst case scenario is the user has to click "don't remind me again" again
+
+            // Settings.Set("TransferredOldSettings", true);
         }
 
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)
