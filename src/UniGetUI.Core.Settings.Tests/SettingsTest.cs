@@ -4,13 +4,13 @@ using UniGetUI.Core.Data;
 namespace UniGetUI.Core.SettingsEngine.Tests
 {
 
-    class SerializableTestSub
+    public sealed class SerializableTestSub
     {
         public SerializableTestSub(string s, int c) { sub = s; count = c; }
         public string sub { get; set; }
         public int count { get; set; }
     }
-    class SerializableTest
+    public sealed class SerializableTest
     {
         public SerializableTest(string t, int c, SerializableTestSub s) { title = t; count = c; sub = s; }
         public string title { get; set; }
@@ -137,6 +137,72 @@ namespace UniGetUI.Core.SettingsEngine.Tests
 
             Settings.ClearList(SettingName); // Cleanup
             Assert.Empty(Settings.GetList<object>(SettingName) ?? ["this shouldn't be null; something's wrong"]);
+            Assert.False(File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+        }
+
+        [Theory]
+        [InlineData("dTestSetting1", new string[] { "UpdatedFirstValue", "RandomString1", "RandomTestValue", "AnotherRandomValue" }, new int[] { 9, 15, 21, 1001, 4567 }, new string[] { "itemA", "itemB", "itemC" })]
+        [InlineData("dktjgshdfsd", new string[] { "newValue1", "updatedString", "emptyString", "randomSymbols@123" }, new int[] { 42, 23, 17, 98765, 3482 }, new string[] { "itemX", "itemY", "itemZ" })]
+        [InlineData("dª", new string[] { "UniqueVal1", "NewVal2", "AnotherVal3", "TestVal4" }, new int[] { 123, 456, 789, 321, 654 }, new string[] { "item1", "item2", "item3" })]
+        [InlineData("dTestSettingEntry With A  Space", new string[] { "ChangedFirstValue", "AlteredSecondVal", "TestedValue", "FinalVal" }, new int[] { 23, 98, 456, 753, 951 }, new string[] { "testA", "testB", "testC" })]
+        [InlineData("dVeryVeryLongTestSettingEntrySoTheClassCanReallyBeStressedOut", new string[] { "newCharacterSet\x99\x01\x02", "UpdatedRandomValue", "TestEmptyString", "FinalTestValue" }, new int[] { 0b11001100, 1234, 5678, 1000000 }, new string[] { "finalTest1", "finalTest2", "finalTest3" })]
+        public void TestDictionarySettings(string SettingName, string[] keyArray, int[] intArray, string[] strArray)
+        {
+            Dictionary<string, SerializableTest?> test = [];
+            Dictionary<string, string> emptyDictionary = [];
+            Dictionary<string, SerializableTest?> nonEmptyDictionary = [];
+            nonEmptyDictionary["this should not be null; something's wrong"] = null;
+
+            for (int idx = 0; idx < keyArray.Length; idx++)
+            {
+                test[keyArray[idx]] = new SerializableTest(
+                    strArray[idx % strArray.Length],
+                    intArray[idx % intArray.Length],
+                    new SerializableTestSub(
+                        strArray[(idx + 1) % strArray.Length],
+                        intArray[(idx + 1) % intArray.Length]
+                    )
+                );
+            }
+
+            Settings.SetDictionary(SettingName, test);
+            Assert.Equal(JsonSerializer.Serialize(test), File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, SettingName))[0]);
+            Assert.Equal(test[keyArray[0]]?.sub.count, Settings.GetDictionary<string, SerializableTest?>(SettingName)?[keyArray[0]]?.sub.count);
+            Assert.Equal(test[keyArray[1]]?.sub.count, Settings.GetDictionaryItem<string, SerializableTest?>(SettingName, keyArray[1])?.sub.count);
+            Settings.SetDictionaryItem(SettingName, keyArray[0], test[keyArray[1]]);
+            Assert.Equal(test[keyArray[1]]?.sub.count, Settings.GetDictionaryItem<string, SerializableTest?>(SettingName, keyArray[0])?.sub.count);
+            Assert.NotEqual(test[keyArray[0]]?.sub.count, Settings.GetDictionaryItem<string, SerializableTest?>(SettingName, keyArray[0])?.sub.count);
+            Assert.Equal(test[keyArray[1]]?.sub.count, Settings.GetDictionaryItem<string, SerializableTest?>(SettingName, keyArray[1])?.sub.count);
+            Assert.Equal(test[keyArray[1]]?.count, Settings.SetDictionaryItem(
+                SettingName,
+                keyArray[0],
+                new SerializableTest(
+                    "this is not test data",
+                    -12000,
+                    new SerializableTestSub("this sub is not test data", -13000)
+                )
+            )?.count);
+            Assert.Equal(-12000, Settings.GetDictionaryItem<string, SerializableTest?>(SettingName, keyArray[0])?.count);
+            Assert.Equal("this is not test data", Settings.GetDictionaryItem<string, SerializableTest?>(SettingName, keyArray[0])?.title);
+            Assert.Equal(-13000, Settings.GetDictionaryItem<string, SerializableTest?>(SettingName, keyArray[0])?.sub.count);
+            Settings.SetDictionaryItem(SettingName, "this is not a test data key", test[keyArray[0]]);
+            Assert.Equal(test[keyArray[0]]?.title, Settings.GetDictionaryItem<string, SerializableTest?>(SettingName, "this is not a test data key")?.title);
+            Assert.Equal(test[keyArray[0]]?.sub.count, Settings.GetDictionaryItem<string, SerializableTest?>(SettingName, "this is not a test data key")?.sub.count);
+            Assert.True(Settings.DictionaryContainsKey<string, SerializableTest?>(SettingName, "this is not a test data key"));
+            Assert.True(Settings.DictionaryContainsValue<string, SerializableTest?>(SettingName, test[keyArray[0]]));
+            Assert.NotNull(Settings.RemoveDictionaryKey<string, SerializableTest?>(SettingName, "this is not a test data key"));
+            Assert.Null(Settings.RemoveDictionaryKey<string, SerializableTest?>(SettingName, "this is not a test data key"));
+            Assert.False(Settings.DictionaryContainsKey<string, SerializableTest?>(SettingName, "this is not a test data key"));
+            Assert.False(Settings.DictionaryContainsValue<string, SerializableTest?>(SettingName, test[keyArray[0]]));
+            Assert.True(Settings.DictionaryContainsValue<string, SerializableTest?>(SettingName, test[keyArray[2]]));
+
+            Assert.Equal(
+                JsonSerializer.Serialize(Settings.GetDictionary<string, SerializableTest>(SettingName)),
+                File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, SettingName))[0]
+            );
+
+            Settings.ClearDictionary(SettingName); // Cleanup
+            Assert.Empty(Settings.GetDictionary<string, SerializableTest?>(SettingName) ?? nonEmptyDictionary);
             Assert.False(File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
         }
     }
