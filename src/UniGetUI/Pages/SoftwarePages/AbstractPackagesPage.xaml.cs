@@ -575,9 +575,45 @@ namespace UniGetUI.Interface
                     }
                 }
                 int QueryIndex = IdQueryIndex > -1 ? IdQueryIndex : (NameSimilarityIndex > -1 ? NameSimilarityIndex : IdSimilarityIndex);
-                if (!SelectedPackage && QueryIndex > -1)
+                if (!SelectedPackage)
                 {
-                    SelectAndScrollTo(QueryIndex);
+                    bool SameChars = true;
+                    char LastChar = TypeQuery.ToCharArray()[0];
+                    foreach (var c in TypeQuery)
+                    {
+                        if (c != LastChar)
+                        {
+                            SameChars = false;
+                            break;
+                        }
+                        LastChar = c;
+                    }
+
+                    if (SameChars)
+                    {
+                        int IndexOffset = TypeQuery.Length - 1;
+                        int FirstIdx = -1;
+                        int LastIdx = -1;
+                        for (int idx = 0; idx < FilteredPackages.Count; idx++)
+                        {
+                            if (FilteredPackages[idx].Package.Name.ToLower().StartsWith(LastChar))
+                            {
+                                if (FirstIdx == -1) FirstIdx = idx;
+                                LastIdx = idx;
+                            }
+                            else if (FirstIdx > -1)
+                            {
+                                // Break after the LastIdx has been set
+                                break;
+                            }
+                        }
+
+                        SelectAndScrollTo(FirstIdx + (IndexOffset % (LastIdx - FirstIdx + 1)));
+                    }
+                    else if (QueryIndex > -1)
+                    {
+                        SelectAndScrollTo(QueryIndex);
+                    }
                 }
             }
             LastKeyDown = Environment.TickCount;
