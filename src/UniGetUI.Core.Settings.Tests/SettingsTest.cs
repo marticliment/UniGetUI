@@ -112,7 +112,9 @@ namespace UniGetUI.Core.SettingsEngine.Tests
             Settings.AddToList(SettingName, "this is now a test case");
             Assert.Equal("this is now a test case", Settings.GetListItem<string>(SettingName, 3));
             Assert.Null(Settings.GetListItem<string>(SettingName, 4));
-            Assert.Equal(JsonSerializer.Serialize(Settings.GetListItem<string>(SettingName, 0)), File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, SettingName))[0]);
+
+            Assert.Equal(JsonSerializer.Serialize(Settings.GetListItem<string>(SettingName, 0)), File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json"))[0]);
+
             Settings.ClearList(SettingName);
             Assert.Empty(Settings.GetList<object>(SettingName) ?? ["this shouldn't be null; something's wrong"]);
 
@@ -128,16 +130,16 @@ namespace UniGetUI.Core.SettingsEngine.Tests
 
             Settings.SetList(SettingName, ls3);
             Assert.Equal(ls3.Count, Settings.GetList<SerializableTest>(SettingName)?.Count);
-            Assert.Equal(JsonSerializer.Serialize(ls3[0]), File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, SettingName))[0]);
+            Assert.Equal(JsonSerializer.Serialize(ls3[0]), File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json"))[0]);
             Assert.Equal(ls3[1].sub.sub, Settings.GetListItem<SerializableTest>(SettingName, 1)?.sub.sub);
             Assert.True(Settings.RemoveFromList(SettingName, ls3[0]));
             Assert.False(Settings.RemoveFromList(SettingName, ls3[0]));
             Assert.Equal(ls3[1].sub.sub, Settings.GetListItem<SerializableTest>(SettingName, 0)?.sub.sub);
-            Assert.Equal(JsonSerializer.Serialize(ls3[2]), File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, SettingName))[1]);
+            Assert.Equal(JsonSerializer.Serialize(ls3[2]), File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json"))[1]);
 
             Settings.ClearList(SettingName); // Cleanup
             Assert.Empty(Settings.GetList<object>(SettingName) ?? ["this shouldn't be null; something's wrong"]);
-            Assert.False(File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.False(File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json")));
         }
 
         [Theory]
@@ -169,7 +171,7 @@ namespace UniGetUI.Core.SettingsEngine.Tests
             Settings.SetDictionaryItem(randStr, "key", 12);
             Assert.Equal(12, Settings.GetDictionaryItem<string, int>(randStr, "key"));
             Settings.SetDictionary(SettingName, test);
-            Assert.Equal(JsonSerializer.Serialize(test), File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, SettingName))[0]);
+            Assert.Equal(JsonSerializer.Serialize(test), File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json"))[0]);
             Assert.Equal(test[keyArray[0]]?.sub.count, Settings.GetDictionary<string, SerializableTest?>(SettingName)?[keyArray[0]]?.sub.count);
             Assert.Equal(test[keyArray[1]]?.sub.count, Settings.GetDictionaryItem<string, SerializableTest?>(SettingName, keyArray[1])?.sub.count);
             Settings.SetDictionaryItem(SettingName, keyArray[0], test[keyArray[1]]);
@@ -201,12 +203,12 @@ namespace UniGetUI.Core.SettingsEngine.Tests
 
             Assert.Equal(
                 JsonSerializer.Serialize(Settings.GetDictionary<string, SerializableTest>(SettingName)),
-                File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, SettingName))[0]
+                File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json"))[0]
             );
 
             Settings.ClearDictionary(SettingName); // Cleanup
             Assert.Empty(Settings.GetDictionary<string, SerializableTest?>(SettingName) ?? nonEmptyDictionary);
-            Assert.False(File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.False(File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json")));
         }
     }
 }

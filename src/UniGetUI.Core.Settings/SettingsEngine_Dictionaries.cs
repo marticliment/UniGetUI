@@ -74,19 +74,11 @@ namespace UniGetUI.Core.SettingsEngine
                 kvp => (object?)kvp.Value
             );
 
+            var file = Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json");
             try
             {
-                if (value.Count > 0)
-                {
-                    File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json"), JsonSerializer.Serialize(value));
-                }
-                else
-                {
-                    if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json")))
-                    {
-                        File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json"));
-                    }
-                }
+                if (value.Any()) File.WriteAllText(file, JsonSerializer.Serialize(value));
+                else if (File.Exists(file)) File.Delete(file);
             }
             catch (Exception e)
             {
