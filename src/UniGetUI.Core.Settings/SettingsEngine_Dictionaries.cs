@@ -10,7 +10,7 @@ namespace UniGetUI.Core.SettingsEngine
         private static ConcurrentDictionary<string, Dictionary<object, object?>> dictionarySettings = new();
 
         // Returns an empty dictionary if the setting doesn't exist and null if the types are invalid
-        private static Dictionary<K, V>? GetDictionaryInternal<K, V>(string setting)
+        private static Dictionary<K, V>? _getDictionary<K, V>(string setting)
             where K : notnull
         {
             try
@@ -32,9 +32,9 @@ namespace UniGetUI.Core.SettingsEngine
 
             // Otherwhise, load the setting from disk and cache that setting
             Dictionary<K, V> value = new();
-            if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+            if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json")))
             {
-                string result = File.ReadAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting));
+                string result = File.ReadAllText(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json"));
                 try
                 {
                     if (result != "")
@@ -63,7 +63,7 @@ namespace UniGetUI.Core.SettingsEngine
         public static IReadOnlyDictionary<K, V>? GetDictionary<K, V>(string setting)
             where K : notnull
         {
-            return GetDictionaryInternal<K, V>(setting);
+            return _getDictionary<K, V>(setting);
         }
 
         public static void SetDictionary<K, V>(string setting, Dictionary<K, V> value)
@@ -78,13 +78,13 @@ namespace UniGetUI.Core.SettingsEngine
             {
                 if (value.Count > 0)
                 {
-                    File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), JsonSerializer.Serialize(value));
+                    File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json"), JsonSerializer.Serialize(value));
                 }
                 else
                 {
-                    if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+                    if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json")))
                     {
-                        File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, setting));
+                        File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json"));
                     }
                 }
             }
@@ -98,7 +98,7 @@ namespace UniGetUI.Core.SettingsEngine
         public static V? GetDictionaryItem<K, V>(string setting, K key)
             where K : notnull
         {
-            Dictionary<K, V>? dictionary = GetDictionaryInternal<K, V>(setting);
+            Dictionary<K, V>? dictionary = _getDictionary<K, V>(setting);
             if (dictionary == null || !dictionary.TryGetValue(key, out V? value)) return default;
 
             return value;
@@ -108,7 +108,7 @@ namespace UniGetUI.Core.SettingsEngine
         public static V? SetDictionaryItem<K, V>(string setting, K key, V value)
             where K : notnull
         {
-            Dictionary<K, V>? dictionary = GetDictionaryInternal<K, V>(setting);
+            Dictionary<K, V>? dictionary = _getDictionary<K, V>(setting);
             if (dictionary == null)
             {
                 dictionary = new()
@@ -136,7 +136,7 @@ namespace UniGetUI.Core.SettingsEngine
         public static V? RemoveDictionaryKey<K, V>(string setting, K key)
             where K : notnull
         {
-            Dictionary<K, V>? dictionary = GetDictionaryInternal<K, V>(setting);
+            Dictionary<K, V>? dictionary = _getDictionary<K, V>(setting);
             if (dictionary == null) return default;
 
             bool success = false;
@@ -153,7 +153,7 @@ namespace UniGetUI.Core.SettingsEngine
         public static bool DictionaryContainsKey<K, V>(string setting, K key)
             where K : notnull
         {
-            Dictionary<K, V>? dictionary = GetDictionaryInternal<K, V>(setting);
+            Dictionary<K, V>? dictionary = _getDictionary<K, V>(setting);
             if (dictionary == null) return false;
 
             return dictionary.ContainsKey(key);
@@ -162,7 +162,7 @@ namespace UniGetUI.Core.SettingsEngine
         public static bool DictionaryContainsValue<K, V>(string setting, V value)
             where K : notnull
         {
-            Dictionary<K, V>? dictionary = GetDictionaryInternal<K, V>(setting);
+            Dictionary<K, V>? dictionary = _getDictionary<K, V>(setting);
             if (dictionary == null) return false;
 
             return dictionary.ContainsValue(value);
