@@ -41,7 +41,7 @@ namespace UniGetUI.Interface
 
             ignoredPackages.Clear();
 
-            var rawIgnoredPackages = await Task.Run(() => IgnoredUpdatesDatabase.GetDatabase());
+            var rawIgnoredPackages = IgnoredUpdatesDatabase.GetDatabase();
 
             foreach (var(ignoredId, version) in rawIgnoredPackages)
             {
