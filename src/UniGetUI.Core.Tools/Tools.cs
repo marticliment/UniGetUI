@@ -108,8 +108,6 @@ namespace UniGetUI.Core.Tools
 
             try
             {
-
-
                 process.Start();
                 string? line = process.StandardOutput.ReadLine();
                 string output;
@@ -146,7 +144,7 @@ namespace UniGetUI.Core.Tools
             string newName = "";
             for (int i = 0; i < name.Length; i++)
             {
-                if (i == 0 || name[i - 1] == ' ')
+                if (i == 0 || name[i - 1] == ' ' || name[i - 1] == '[' /* for vcpkg options */)
                 {
                     newName += name[i].ToString().ToUpper();
                 }
@@ -155,6 +153,7 @@ namespace UniGetUI.Core.Tools
                     newName += name[i];
                 }
             }
+            newName = newName.Replace(" [", "[").Replace("[", " [");
             return newName;
         }
 

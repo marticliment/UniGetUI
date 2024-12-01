@@ -3,43 +3,16 @@ using System.Data;
 using System.Text.Json;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Classes.Packages.Classes;
 
 public static class IgnoredUpdatesDatabase
 {
-    private static ConcurrentDictionary<string, string>? IgnoredPackages;
-
-    private static ConcurrentDictionary<string, string> ReadDatabase()
+    public static IReadOnlyDictionary<string, string> GetDatabase()
     {
-        Logger.Info("Ignored updates database was never loaded, so it is going to be loaded now");
-        try
-        {
-            var rawContents = File.ReadAllText(CoreData.IgnoredUpdatesDatabaseFile);
-            return JsonSerializer.Deserialize<ConcurrentDictionary<string, string>>(rawContents, options: CoreData.SerializingOptions)
-                   ?? throw new InvalidExpressionException("Deserialization of Ignored Updates file returned a null object");
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-            Logger.Warn("The ignored packages database was corrupt, so it has been reset.");
-            Logger.Debug("NOTE: Changes will only be reflected on-disk if the database is saved");
-            return new();
-        }
-    }
-
-    public static ConcurrentDictionary<string, string> GetDatabase()
-    {
-        IgnoredPackages ??= ReadDatabase();
-        return IgnoredPackages;
-    }
-
-    private static void SaveDatabase()
-    {
-        // Serialize and save to disk
-        string rawContents = JsonSerializer.Serialize(IgnoredPackages, options: CoreData.SerializingOptions);
-        File.WriteAllText(CoreData.IgnoredUpdatesDatabaseFile, rawContents);
+        return Settings.GetDictionary<string, string>("IgnoredPackageUpdates") ?? new Dictionary<string, string>();
     }
 
     public static string GetIgnoredIdForPackage(IPackage package)
@@ -54,14 +27,7 @@ public static class IgnoredUpdatesDatabase
     /// <param name="version">The version to ignore. Use wildcard (`*`) to ignore all versions</param>
     public static void Add(string ignoredId, string version = "*")
     {
-        // Update the database if it is null
-        IgnoredPackages ??= ReadDatabase();
-
-        // Add/update the new entry
-        IgnoredPackages[ignoredId] = version;
-
-        // Propagate changes to disk
-        SaveDatabase();
+        Settings.SetDictionaryItem("IgnoredPackageUpdates", ignoredId, version);
     }
 
     /// <summary>
@@ -71,16 +37,11 @@ public static class IgnoredUpdatesDatabase
     /// <returns>True if the package was removed, false if it was not there from the beginning</returns>
     public static bool Remove(string ignoredId)
     {
-        // Update the database if it is null
-        IgnoredPackages ??= ReadDatabase();
-
         // Remove the entry if present
-        if (IgnoredPackages.ContainsKey(ignoredId))
+        if (Settings.DictionaryContainsKey<string, string>("IgnoredPackageUpdates", ignoredId))
         {
             // Remove the entry and propagate changes to disk
-            IgnoredPackages.TryRemove(ignoredId, out string? _);
-            SaveDatabase();
-            return true;
+            return Settings.RemoveDictionaryKey<string, string>("IgnoredPackageUpdates", ignoredId) != null;
         }
         else
         {
@@ -104,18 +65,10 @@ public static class IgnoredUpdatesDatabase
     /// <returns>True if the package is ignored, false otherwhise</returns>
     public static bool HasUpdatesIgnored(string ignoredId, string version = "*")
     {
-        // Update the database if it is null
-        IgnoredPackages ??= ReadDatabase();
+        string? ignoredVersion = Settings.GetDictionaryItem<string, string>("IgnoredPackageUpdates", ignoredId);
 
         // Check if the package is ignored
-        if (IgnoredPackages.TryGetValue(ignoredId, out string? ignoredVersion))
-        {
-            return ignoredVersion == "*" || ignoredVersion == version;
-        }
-        else
-        {
-            return false;
-        }
+        return ignoredVersion == "*" || ignoredVersion == version;
     }
 
     /// <summary>
@@ -127,12 +80,23 @@ public static class IgnoredUpdatesDatabase
     /// If **no** versions are ignored, null will be returned.</returns>
     public static string? GetIgnoredVersion(string ignoredId)
     {
-        // Update the database if it is null
-        IgnoredPackages ??= ReadDatabase();
+        return Settings.GetDictionaryItem<string, string>("IgnoredPackageUpdates", ignoredId);
+    }
 
-        if (IgnoredPackages.TryGetValue(ignoredId, out string? ignoredVersion))
-            return ignoredVersion;
-
-        return null;
+    /// <summary>
+    /// Transfers the old ignored updates format (IgnoredPackageUpdates.json) to the new one
+    /// </summary>
+    public static void TransferOldFormat()
+    {
+        string OldFile = Path.Join(CoreData.UniGetUIDataDirectory, "IgnoredPackageUpdates.json");
+        if (File.Exists(OldFile))
+        {
+            Dictionary<string, string>? OldDB = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(CoreData.IgnoredUpdatesDatabaseFile), options: CoreData.SerializingOptions);
+            if (OldDB != null)
+            {
+                Settings.SetDictionary("IgnoredPackageUpdates", OldDB);
+                File.Delete(OldFile);
+            }
+        }
     }
 }

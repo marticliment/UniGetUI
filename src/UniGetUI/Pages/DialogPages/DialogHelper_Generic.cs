@@ -58,18 +58,15 @@ public static partial class DialogHelper
     {
         ContentDialog dialog = new();
 
-        string PREVIOUSLY_ATTEMPTED_PREF = $"AlreadyAttemptedToInstall{dep_name}";
-        string DEP_SKIPPED_PREF = $"SkippedInstalling{dep_name}";
-
-        if (Settings.Get(DEP_SKIPPED_PREF))
+        if (Settings.GetDictionaryItem<string, string>("DependencyManagement", dep_name) == "skipped")
         {
             Logger.Error(
-                $"Dependency {dep_name} was not found, and the user set it to not be reminded of the midding dependency");
+                $"Dependency {dep_name} was not found, and the user set it to not be reminded of the missing dependency");
             return;
         }
 
-        bool NotFirstTime = Settings.Get(PREVIOUSLY_ATTEMPTED_PREF);
-        Settings.Set(PREVIOUSLY_ATTEMPTED_PREF, true);
+        bool NotFirstTime = Settings.GetDictionaryItem<string, string>("DependencyManagement", dep_name) == "attempted";
+        Settings.SetDictionaryItem("DependencyManagement", dep_name, "attempted");
 
         dialog.XamlRoot = Window.MainContentGrid.XamlRoot;
         dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -129,8 +126,8 @@ public static partial class DialogHelper
         {
             c.Content = CoreTools.Translate("Do not show this dialog again for {0}", dep_name);
             c.IsChecked = false;
-            c.Checked += (_, _) => Settings.Set(DEP_SKIPPED_PREF, true);
-            c.Unchecked += (_, _) => Settings.Set(DEP_SKIPPED_PREF, false);
+            c.Checked += (_, _) => Settings.SetDictionaryItem("DependencyManagement", dep_name, "skipped");
+            c.Unchecked += (_, _) => Settings.SetDictionaryItem("DependencyManagement", dep_name, "attempted");
             p.Children.Add(c);
         }
 
