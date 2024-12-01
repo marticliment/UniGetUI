@@ -3,6 +3,7 @@ using System.Data;
 using System.Text.Json;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI.PackageEngine.Classes.Packages.Classes;
 
@@ -15,45 +16,16 @@ public static class DesktopShortcutsDatabase
         Unknown, // The user has not said whether they want this shortcut to be deleted
     }
 
-    private static ConcurrentDictionary<string, bool>? DeletableDesktopShortcuts;
     private static List<string> AwaitingVerdictShortcuts = [];
 
-    private static ConcurrentDictionary<string, bool> ReadDatabase()
+    public static IReadOnlyDictionary<string, bool> GetDatabase()
     {
-        Logger.Info("Deletable desktop shortcuts database was never loaded, so it is going to be loaded now");
-
-        try
-        {
-            var rawContents = File.ReadAllText(CoreData.DesktopShortcutsDatabaseFile);
-            return JsonSerializer.Deserialize<ConcurrentDictionary<string, bool>>(rawContents, options: CoreData.SerializingOptions)
-                   ?? throw new InvalidExpressionException("Deserialization of Desktop Shortcuts file returned a null object");
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-            Logger.Warn("The deletable desktop shortcuts database was corrupt, so it has been reset.");
-            Logger.Debug("NOTE: Changes will only be reflected on-disk if the database is saved");
-            return new();
-        }
-    }
-
-    public static ConcurrentDictionary<string, bool> GetDatabase()
-    {
-        DeletableDesktopShortcuts ??= ReadDatabase();
-        return DeletableDesktopShortcuts;
-    }
-
-    private static void SaveDatabase()
-    {
-        // Serialize and save to disk
-        string rawContents = JsonSerializer.Serialize(DeletableDesktopShortcuts, options: CoreData.SerializingOptions);
-        File.WriteAllText(CoreData.DesktopShortcutsDatabaseFile, rawContents);
+        return Settings.GetDictionary<string, bool>("DeletableDesktopShortcuts") ?? new Dictionary<string, bool>();
     }
 
     public static void ResetDatabase()
     {
-        DeletableDesktopShortcuts.Clear();
-        SaveDatabase();
+        Settings.ClearDictionary("DeletableDesktopShortcuts");
     }
 
     /// <summary>
@@ -63,14 +35,7 @@ public static class DesktopShortcutsDatabase
     /// <param name="deletable">Whether or not to mark this entry as deletable in the databse. Defaults to true</param>
     public static void Add(string shortcutPath, bool deletable = true)
     {
-        // Update the database if it is null
-        DeletableDesktopShortcuts ??= ReadDatabase();
-
-        // Add/update the new entry
-        DeletableDesktopShortcuts[shortcutPath] = deletable;
-
-        // Propagate changes to disk
-        SaveDatabase();
+        Settings.SetDictionaryItem("DeletableDesktopShortcuts", shortcutPath, deletable);
     }
 
     /// <summary>
@@ -80,15 +45,11 @@ public static class DesktopShortcutsDatabase
     /// <returns>True if the shortcut was removed, false if it was not there from the beginning</returns>
     public static bool Remove(string shortcutPath)
     {
-        // Update the database if it is null
-        DeletableDesktopShortcuts ??= ReadDatabase();
-
         // Remove the entry if present
-        if (DeletableDesktopShortcuts.ContainsKey(shortcutPath))
+        if (Settings.DictionaryContainsKey<string, bool>("DeletableDesktopShortcuts", shortcutPath))
         {
             // Remove the entry and propagate changes to disk
-            DeletableDesktopShortcuts[shortcutPath] = false;
-            SaveDatabase();
+            Settings.SetDictionaryItem("DeletableDesktopShortcuts", shortcutPath, false);
             return true;
         }
         else
@@ -108,15 +69,11 @@ public static class DesktopShortcutsDatabase
     /// <returns>True if the shortcut was completely removed, false if it was not there from the beginning</returns>
     public static bool Reset(string shortcutPath)
     {
-        // Update the database if it is null
-        DeletableDesktopShortcuts ??= ReadDatabase();
-
         // Remove the entry if present
-        if (DeletableDesktopShortcuts.ContainsKey(shortcutPath))
+        if (Settings.DictionaryContainsKey<string, bool>("DeletableDesktopShortcuts", shortcutPath))
         {
             // Remove the entry and propagate changes to disk
-            DeletableDesktopShortcuts.Remove(shortcutPath, out _);
-            SaveDatabase();
+            Settings.RemoveDictionaryKey<string, bool>("DeletableDesktopShortcuts", shortcutPath);
             return true;
         }
         else
@@ -157,12 +114,10 @@ public static class DesktopShortcutsDatabase
     /// <returns>True if the package is ignored, false otherwhise</returns>
     public static ShortcutDeletableStatus CanShortcutBeDeleted(string shortcutPath)
     {
-        // Update the database if it is null
-        DeletableDesktopShortcuts ??= ReadDatabase();
-
         // Check if the package is ignored
-        if (DeletableDesktopShortcuts.TryGetValue(shortcutPath, out bool canDelete))
+        if (Settings.DictionaryContainsKey<string, bool>("DeletableDesktopShortcuts", shortcutPath))
         {
+            bool canDelete = Settings.GetDictionaryItem<string, bool>("DeletableDesktopShortcuts", shortcutPath);
             return canDelete ? ShortcutDeletableStatus.Deletable : ShortcutDeletableStatus.Undeletable;
         }
         else
