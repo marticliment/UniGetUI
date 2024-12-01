@@ -10,7 +10,7 @@ namespace UniGetUI.Core.SettingsEngine
         private static ConcurrentDictionary<string, List<object>> listSettings = new();
 
         // Returns an empty list if the setting doesn't exist and null if the type is invalid
-        private static List<T>? GetListInternal<T>(string setting)
+        private static List<T>? _getList<T>(string setting)
         {
             try
             {
@@ -28,25 +28,25 @@ namespace UniGetUI.Core.SettingsEngine
 
             // Otherwhise, load the setting from disk and cache that setting
             List<T> value = [];
-            if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+
+            var file = Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json");
+            if (File.Exists(file))
             {
-                foreach (var result in File.ReadAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting)).Split("\n"))
+                string result = File.ReadAllText(file);
+                try
                 {
-                    try
+                    if (result != "")
                     {
-                        if (result != "")
+                        List<T>? item = JsonSerializer.Deserialize<List<T>>(result);
+                        if (item is not null)
                         {
-                            T? item = JsonSerializer.Deserialize<T>(result);
-                            if (item is not null)
-                            {
-                                value.Add(item);
-                            }
+                            value = item;
                         }
                     }
-                    catch (InvalidCastException)
-                    {
-                        Logger.Error($"Tried to get a list setting as type {typeof(T)}, but the setting on disk {result} cannot be deserialized to {typeof(T)}");
-                    }
+                }
+                catch (InvalidCastException)
+                {
+                    Logger.Error($"Tried to get a list setting as type {typeof(T)}, but the setting on disk {result} cannot be deserialized to {typeof(T)}");
                 }
             }
 
@@ -57,30 +57,17 @@ namespace UniGetUI.Core.SettingsEngine
         // Returns an empty list if the setting doesn't exist and null if the type is invalid
         public static IReadOnlyList<T>? GetList<T>(string setting)
         {
-            return GetListInternal<T>(setting);
+            return _getList<T>(setting);
         }
 
         public static void SetList<T>(string setting, List<T> value)
         {
             listSettings[setting] = value.Cast<object>().ToList();
-
+            var file = Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json");
             try
             {
-                if (value.Count > 0)
-                {
-                    File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), "");
-                    foreach (T item in value)
-                    {
-                        File.AppendAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), JsonSerializer.Serialize(item) + "\n");
-                    }
-                }
-                else
-                {
-                    if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
-                    {
-                        File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, setting));
-                    }
-                }
+                if (value.Any()) File.WriteAllText(file, JsonSerializer.Serialize(value));
+                else if (File.Exists(file)) File.Delete(file);
             }
             catch (Exception e)
             {
@@ -91,7 +78,7 @@ namespace UniGetUI.Core.SettingsEngine
 
         public static T? GetListItem<T>(string setting, int index)
         {
-            List<T>? list = GetListInternal<T>(setting);
+            List<T>? list = _getList<T>(setting);
             if (list == null) return default;
             if (list.Count <= index)
             {
@@ -104,7 +91,7 @@ namespace UniGetUI.Core.SettingsEngine
 
         public static void AddToList<T>(string setting, T value)
         {
-            List<T>? list = GetListInternal<T>(setting);
+            List<T>? list = _getList<T>(setting);
             if (list == null) return;
 
             list.Add(value);
@@ -113,7 +100,7 @@ namespace UniGetUI.Core.SettingsEngine
 
         public static bool RemoveFromList<T>(string setting, T value)
         {
-            List<T>? list = GetListInternal<T>(setting);
+            List<T>? list = _getList<T>(setting);
             if (list == null) return false;
 
             bool result = list.Remove(value);
@@ -123,7 +110,7 @@ namespace UniGetUI.Core.SettingsEngine
 
         public static bool ListContains<T>(string setting, T value)
         {
-            List<T>? list = GetListInternal<T>(setting);
+            List<T>? list = _getList<T>(setting);
             if (list == null) return false;
             return list.Contains(value);
         }

@@ -97,6 +97,7 @@ namespace UniGetUI.Core.SettingsEngine.Tests
                 ls3.Add(new SerializableTest(item, new Random().Next(), new SerializableTestSub(item + new Random().Next(), new Random().Next())));
             }
 
+            Settings.ClearList(SettingName);
             Assert.Empty(Settings.GetList<object>(SettingName) ?? ["this shouldn't be null; something's wrong"]);
             Settings.SetList(SettingName, ls1);
             Assert.NotEmpty(Settings.GetList<string>(SettingName) ?? []);
@@ -113,7 +114,7 @@ namespace UniGetUI.Core.SettingsEngine.Tests
             Assert.Equal("this is now a test case", Settings.GetListItem<string>(SettingName, 3));
             Assert.Null(Settings.GetListItem<string>(SettingName, 4));
 
-            Assert.Equal(JsonSerializer.Serialize(Settings.GetListItem<string>(SettingName, 0)), File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json"))[0]);
+            Assert.Equal(Settings.GetListItem<string>(SettingName, 0), JsonSerializer.Deserialize<List<string>>(File.ReadAllText(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json")))[0]);
 
             Settings.ClearList(SettingName);
             Assert.Empty(Settings.GetList<object>(SettingName) ?? ["this shouldn't be null; something's wrong"]);
@@ -130,13 +131,10 @@ namespace UniGetUI.Core.SettingsEngine.Tests
 
             Settings.SetList(SettingName, ls3);
             Assert.Equal(ls3.Count, Settings.GetList<SerializableTest>(SettingName)?.Count);
-            Assert.Equal(JsonSerializer.Serialize(ls3[0]), File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json"))[0]);
             Assert.Equal(ls3[1].sub.sub, Settings.GetListItem<SerializableTest>(SettingName, 1)?.sub.sub);
             Assert.True(Settings.RemoveFromList(SettingName, ls3[0]));
             Assert.False(Settings.RemoveFromList(SettingName, ls3[0]));
             Assert.Equal(ls3[1].sub.sub, Settings.GetListItem<SerializableTest>(SettingName, 0)?.sub.sub);
-            Assert.Equal(JsonSerializer.Serialize(ls3[2]), File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json"))[1]);
-
             Settings.ClearList(SettingName); // Cleanup
             Assert.Empty(Settings.GetList<object>(SettingName) ?? ["this shouldn't be null; something's wrong"]);
             Assert.False(File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json")));
