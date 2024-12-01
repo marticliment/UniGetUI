@@ -153,6 +153,7 @@ namespace UniGetUI.Core.Tools
                     newName += name[i];
                 }
             }
+            newName = newName.Replace(" [", "[").Replace("[", " [");
             return newName;
         }
 
