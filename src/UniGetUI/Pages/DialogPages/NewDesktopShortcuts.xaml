@@ -18,7 +18,7 @@
                     <ColumnDefinition Width="200"/>
                 </Grid.ColumnDefinitions>
                 <widgets:TranslatedTextBlock
-                    Text="The selected desktop shortcuts will be automatically deleted after an installation creates or update recreates them."/>
+                    Text="The selected desktop shortcuts will be automatically deleted after an update recreates them."/>
                 <Button
                     Grid.Column="1"
                     HorizontalAlignment="Stretch"
