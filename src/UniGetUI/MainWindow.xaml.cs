@@ -134,7 +134,7 @@ namespace UniGetUI.Interface
 
             // Dependency checks don't need to be transferred, because the worst case scenario is the user has to click the "don't show again" again
 
-            foreach (string Page in new string[] { "Discover", "Installed", "Bundles", "Updates" })
+            foreach (string Page in new[]{ "Discover", "Installed", "Bundles", "Updates"})
             {
                 if (Settings.Get($"HideToggleFilters{Page}Page"))
                 {
