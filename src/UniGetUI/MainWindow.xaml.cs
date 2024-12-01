@@ -125,10 +125,10 @@ namespace UniGetUI.Interface
             foreach (IPackageManager Manager in PEInterface.Managers)
             {
                 string SettingName = "Disable" + Manager.Name;
-                Settings.SetDictionaryItem("ManagersEnabled", Manager.Name, !Settings.Get(SettingName));
-                if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)))
+                if (Settings.Get(SettingName))
                 {
-                    File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, SettingName));
+                    Settings.SetDictionaryItem("DisabledManagers", Manager.Name, true);
+                    Settings.Set(SettingName, false);
                 }
             }
 

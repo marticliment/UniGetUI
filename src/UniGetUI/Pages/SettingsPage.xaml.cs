@@ -399,7 +399,7 @@ namespace UniGetUI.Interface
                 };
                 ManagerSwitch.Toggled += (_, _) =>
                 {
-                    Settings.SetDictionaryItem("ManagersEnabled", Manager.Name, ManagerSwitch.IsOn);
+                    Settings.SetDictionaryItem("DisabledManagers", Manager.Name, !ManagerSwitch.IsOn);
                     SetManagerStatus(Manager);
                     EnableOrDisableEntries();
                 };
