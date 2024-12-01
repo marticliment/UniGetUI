@@ -136,24 +136,21 @@ namespace UniGetUI.Interface
 
             foreach (string Page in new string[] { "Discover", "Installed", "Bundles", "Updates" })
             {
-                Settings.SetDictionaryItem("HideToggleFilters", Page, Settings.Get($"HideToggleFilters{Page}Page"));
-                if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"HideToggleFilters{Page}Page")))
-                    File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, $"HideToggleFilters{Page}Page"));
-
-                Settings.SetDictionaryItem("DisableInstantSearch", Page, Settings.Get($"DisableInstantSearch{Page}Tab"));
-                if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"DisableInstantSearch{Page}Tab")))
-                    File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, $"DisableInstantSearch{Page}Tab"));
-
-                try
+                if (Settings.Get($"HideToggleFilters{Page}Page"))
                 {
-                    Settings.SetDictionaryItem("SidepanelWidths", Page, int.Parse(Settings.GetValue($"SidepanelWidth{Page}Page")));
+                    Settings.SetDictionaryItem("HideToggleFilters", Page, true);
+                    Settings.Set($"HideToggleFilters{Page}Page", false);
                 }
-                catch (FormatException)
+
+                if (Settings.Get($"DisableInstantSearch{Page}Tab"))
                 {
-                    Settings.SetDictionaryItem("SidepanelWidths", Page, 250);
+                    Settings.SetDictionaryItem("DisableInstantSearch", Page, true);
+                    Settings.Set($"DisableInstantSearch{Page}Tab", false);
                 }
-                if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"SidepanelWidth{Page}Page")))
-                    File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, $"SidepanelWidth{Page}Page"));
+
+                if (!int.TryParse(Settings.GetValue($"SidepanelWidth{Page}Page"), out int sidepanelWidth)) sidepanelWidth = 250;
+                Settings.SetDictionaryItem("SidepanelWidths", Page, sidepanelWidth);
+                Settings.Set($"SidepanelWidth{Page}Page", false);
             }
 
             Settings.Set("TransferredOldSettings", true);
