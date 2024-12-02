@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using Microsoft.Management.Deployment;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
@@ -120,6 +121,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
         if (uintCode == 0x8A150109)
         {
             // If the user is required to restart the system to complete the installation
+            if(operation is OperationType.Update) MarkUpgradeAsDone(package);
             return OperationVeredict.RestartRequired;
         }
 
@@ -142,6 +144,14 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
         if (uintCode == 0x8A15010D || uintCode == 0x8A15004F || uintCode == 0x8A15010E)
         {
             // Application is already installed
+            if(operation is OperationType.Update) MarkUpgradeAsDone(package);
+            return OperationVeredict.Succeeded;
+        }
+
+        if (returnCode == 0)
+        {
+            // Operation succeeded
+            if(operation is OperationType.Update) MarkUpgradeAsDone(package);
             return OperationVeredict.Succeeded;
         }
 
@@ -159,6 +169,16 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             return OperationVeredict.AutoRetry;
         }
 
-        return returnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+        return OperationVeredict.Failed;
+    }
+
+    private static void MarkUpgradeAsDone(IPackage package)
+    {
+        Settings.SetDictionaryItem<string, string>("WinGetAlreadyUpgradedPackages", package.Id, package.NewVersion);
+    }
+
+    public static bool UpdateAlreadyInstalled(IPackage package)
+    {
+        return Settings.GetDictionaryItem<string, string>("WinGetAlreadyUpgradedPackages", package.Id) == package.NewVersion;
     }
 }
