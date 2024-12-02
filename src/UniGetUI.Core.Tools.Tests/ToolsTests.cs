@@ -59,6 +59,8 @@ namespace UniGetUI.Core.Tools.Tests
         [InlineData("!helloWorld", "!helloWorld")]
         [InlineData("@stylistic/eslint-plugin", "Eslint Plugin")]
         [InlineData("Flask-RESTful", "Flask RESTful")]
+        [InlineData("vcpkg-item[option]", "Vcpkg Item [Option]")]
+        [InlineData("vcpkg-item[multi-option]", "Vcpkg Item [Multi Option]")]
         public void TestFormatAsName(string id, string name)
         {
             Assert.Equal(name, CoreTools.FormatAsName(id));

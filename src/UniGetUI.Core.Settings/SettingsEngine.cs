@@ -4,7 +4,7 @@ using UniGetUI.Core.Logging;
 
 namespace UniGetUI.Core.SettingsEngine
 {
-    public static class Settings
+    public static partial class Settings
     {
         private static ConcurrentDictionary<string, bool> booleanSettings = new();
         private static ConcurrentDictionary<string, string> valueSettings = new();
