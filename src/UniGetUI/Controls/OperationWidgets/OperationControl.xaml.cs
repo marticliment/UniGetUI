@@ -130,7 +130,7 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        private readonly ContentDialog OutputDialog = new();
+        protected readonly ContentDialog OutputDialog = new();
         private readonly ScrollViewer LiveOutputScrollBar = new();
         private readonly RichTextBlock LiveOutputTextBlock = new();
 
