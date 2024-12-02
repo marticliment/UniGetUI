@@ -62,8 +62,6 @@ namespace UniGetUI.Interface
         protected readonly bool MEGA_QUERY_BOX_ENABLED;
         protected readonly bool SHOW_LAST_CHECKED_TIME;
         protected readonly bool DISABLE_FILTER_ON_QUERY_CHANGE;
-        public readonly string INSTANT_SEARCH_SETTING_NAME;
-        public readonly string SIDEPANEL_WIDTH_SETTING_NAME;
         protected readonly string PAGE_NAME;
         public readonly bool RoleIsUpdateLike;
         protected DateTime LastPackageLoadTime { get; private set; }
@@ -137,8 +135,6 @@ namespace UniGetUI.Interface
             Loader = data.Loader;
 
             PAGE_NAME = data.PageName;
-            INSTANT_SEARCH_SETTING_NAME = $"DisableInstantSearch{PAGE_NAME}Tab";
-            SIDEPANEL_WIDTH_SETTING_NAME = $"SidepanelWidth{PAGE_NAME}Page";
 
             MainTitle.Text = data.PageTitle;
             HeaderIcon.Glyph = data.Glyph;
@@ -204,7 +200,7 @@ namespace UniGetUI.Interface
             {
                 if (InstantSearchCheckbox.IsChecked == true)
                 {
-                    if(!DISABLE_FILTER_ON_QUERY_CHANGE)
+                    if (!DISABLE_FILTER_ON_QUERY_CHANGE)
                         FilterPackages();
                 }
 
@@ -284,7 +280,7 @@ namespace UniGetUI.Interface
                 BackgroundText.Visibility = Visibility.Collapsed;
             }
 
-            if (Settings.Get($"HideToggleFilters{PAGE_NAME}Page"))
+            if (Settings.GetDictionaryItem<string, bool>("HideToggleFilters", PAGE_NAME))
             {
                 HideFilteringPane(skipAnimation: true);
             }
@@ -295,7 +291,7 @@ namespace UniGetUI.Interface
 
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
             MegaQueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
-            InstantSearchCheckbox.IsChecked = !Settings.Get(INSTANT_SEARCH_SETTING_NAME);
+            InstantSearchCheckbox.IsChecked = !Settings.GetDictionaryItem<string, bool>("DisableInstantSearch", PAGE_NAME);
 
             HeaderIcon.FontWeight = new Windows.UI.Text.FontWeight(700);
             NameHeader.Content = CoreTools.Translate("Package Name");
@@ -454,7 +450,7 @@ namespace UniGetUI.Interface
         }
 
         private void InstantSearchValueChanged(object sender, RoutedEventArgs e)
-        { Settings.Set(INSTANT_SEARCH_SETTING_NAME, InstantSearchCheckbox.IsChecked == false); }
+        { Settings.SetDictionaryItem("DisableInstantSearch", PAGE_NAME, !InstantSearchCheckbox.IsChecked); }
         private void SourcesTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
         { FilterPackages(); }
 
@@ -537,9 +533,45 @@ namespace UniGetUI.Interface
                     }
                 }
                 int QueryIndex = IdQueryIndex > -1 ? IdQueryIndex : (NameSimilarityIndex > -1 ? NameSimilarityIndex : IdSimilarityIndex);
-                if (!SelectedPackage && QueryIndex > -1)
+                if (!SelectedPackage)
                 {
-                    SelectAndScrollTo(QueryIndex);
+                    bool SameChars = true;
+                    char LastChar = TypeQuery.ToCharArray()[0];
+                    foreach (var c in TypeQuery)
+                    {
+                        if (c != LastChar)
+                        {
+                            SameChars = false;
+                            break;
+                        }
+                        LastChar = c;
+                    }
+
+                    if (SameChars)
+                    {
+                        int IndexOffset = TypeQuery.Length - 1;
+                        int FirstIdx = -1;
+                        int LastIdx = -1;
+                        for (int idx = 0; idx < FilteredPackages.Count; idx++)
+                        {
+                            if (FilteredPackages[idx].Package.Name.ToLower().StartsWith(LastChar))
+                            {
+                                if (FirstIdx == -1) FirstIdx = idx;
+                                LastIdx = idx;
+                            }
+                            else if (FirstIdx > -1)
+                            {
+                                // Break after the LastIdx has been set
+                                break;
+                            }
+                        }
+
+                        SelectAndScrollTo(FirstIdx + (IndexOffset % (LastIdx - FirstIdx + 1)));
+                    }
+                    else if (QueryIndex > -1)
+                    {
+                        SelectAndScrollTo(QueryIndex);
+                    }
                 }
             }
             LastKeyDown = Environment.TickCount;
@@ -816,11 +848,11 @@ namespace UniGetUI.Interface
             if ((int)e.NewSize.Width < 30)
             {
                 HideFilteringPane();
-                Settings.SetValue(SIDEPANEL_WIDTH_SETTING_NAME, "250");
+                Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, 250);
             }
             else
             {
-                Settings.SetValue(SIDEPANEL_WIDTH_SETTING_NAME, ((int)e.NewSize.Width).ToString());
+                Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, (int)e.NewSize.Width);
             }
         }
 
@@ -923,7 +955,7 @@ namespace UniGetUI.Interface
 
         private void ToggleFiltersButton_Click(object sender, RoutedEventArgs e)
         {
-            Settings.Set($"HideToggleFilters{PAGE_NAME}Page", !ToggleFiltersButton.IsChecked ?? false);
+            Settings.SetDictionaryItem("HideToggleFilters", PAGE_NAME, !ToggleFiltersButton.IsChecked ?? false);
             if (ToggleFiltersButton.IsChecked ?? false)
             {
                 ShowFilteringPane();
@@ -972,11 +1004,11 @@ namespace UniGetUI.Interface
             int final_width = 250;
             try
             {
-                final_width = int.Parse(Settings.GetValue(SIDEPANEL_WIDTH_SETTING_NAME));
+                final_width = Settings.GetDictionaryItem<string, int>("SidepanelWidths", PAGE_NAME);
             }
             catch
             {
-                Settings.SetValue(SIDEPANEL_WIDTH_SETTING_NAME, "250");
+                Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, 250);
             }
 
             if (!skipAnimation)
