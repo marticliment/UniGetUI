@@ -120,8 +120,6 @@ namespace UniGetUI.Interface
 
         private static void TransferOldSettingsFormats()
         {
-            IgnoredUpdatesDatabase.TransferOldFormat();
-
             foreach (IPackageManager Manager in PEInterface.Managers)
             {
                 string SettingName = "Disable" + Manager.Name;

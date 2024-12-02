@@ -357,11 +357,6 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            if (Package.Version == "Unknown")
-            {
-                await Package.AddToIgnoredUpdatesAsync(Package.NewVersion);
-            }
-
             return AfterFinshAction.TimeoutClose;
         }
 

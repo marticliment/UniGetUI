@@ -82,21 +82,4 @@ public static class IgnoredUpdatesDatabase
     {
         return Settings.GetDictionaryItem<string, string>("IgnoredPackageUpdates", ignoredId);
     }
-
-    /// <summary>
-    /// Transfers the old ignored updates format (IgnoredPackageUpdates.json) to the new one
-    /// </summary>
-    public static void TransferOldFormat()
-    {
-        string OldFile = Path.Join(CoreData.UniGetUIDataDirectory, "IgnoredPackageUpdates.json");
-        if (File.Exists(OldFile))
-        {
-            Dictionary<string, string>? OldDB = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(CoreData.IgnoredUpdatesDatabaseFile), options: CoreData.SerializingOptions);
-            if (OldDB != null)
-            {
-                Settings.SetDictionary("IgnoredPackageUpdates", OldDB);
-                File.Delete(OldFile);
-            }
-        }
-    }
 }
