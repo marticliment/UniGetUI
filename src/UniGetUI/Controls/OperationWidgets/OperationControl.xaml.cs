@@ -532,7 +532,7 @@ namespace UniGetUI.PackageEngine.Operations
                         break;
                 }
 
-                if (MainApp.Instance.OperationQueue.Count == 0 && DesktopShortcutsDatabase.GetAwaitingVerdicts().Count > 0)
+                if (MainApp.Instance.OperationQueue.Count == 0 && DesktopShortcutsDatabase.GetUnknownShortcuts().Any() && Settings.Get("AskToDeleteNewDesktopShortcuts"))
                 {
                     await DialogHelper.HandleNewDesktopShortcuts();
                 }

@@ -17,7 +17,7 @@
                     <ColumnDefinition Width="200"/>
                 </Grid.ColumnDefinitions>
                 <widgets:TranslatedTextBlock
-                    Text="The shortcuts listed here will be either deleted or ignored if they're added after an update operation, depending on the value of the checkbox. Double-click them or click the button on their right for UniGetUI to ask you what to do next time they're detected."/>
+                    Text="Here you can change UniGetUI's behaviour regarding the following shortcuts. Checking a shortcut will make UniGetUI delete it if if gets created on a future upgrade. Unchecking it will keep the shortcut intact"/>
                 <Button
                     Grid.Column="2"
                     HorizontalAlignment="Stretch"
@@ -39,7 +39,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock
                                     Grid.ColumnSpan="2"
-                                    Text="Do you really want to reset the deletable shortcuts list? This action cannot be reverted"
+                                    Text="Do you really want to reset this list? This action cannot be reverted."
                                     Margin="0,0,0,0"
                                     TextWrapping="WrapWholeWords"
                                     />
@@ -76,14 +76,14 @@
                         <DataTemplate x:DataType="local:ShortcutEntry">
                             <Grid ColumnSpacing="4">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="24"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <CheckBox IsChecked="{x:Bind Enabled}" Checked="{x:Bind Enable}" Unchecked="{x:Bind Disable}" Grid.Column="0"/>
-                                <widgets:LocalIcon Icon="localpc" Grid.Column="1" Height="24" Width="24"/>
+                                <CheckBox IsChecked="{x:Bind IsChecked, Mode=TwoWay}" Grid.Column="0"/>
+                                <widgets:LocalIcon Icon="Launch" Grid.Column="1" Height="24" Width="24"/>
                                 <TextBlock Text="{x:Bind ShortcutPath}" Grid.Column="2" VerticalAlignment="Center"/>
                                 <Button Click="{x:Bind OpenShortcutPath}" Height="32" Width="32" Padding="0" Grid.Column="3" IsEnabled="{x:Bind ShortcutExists}">
                                     <widgets:LocalIcon Icon="launch" Height="24" Width="24"/>

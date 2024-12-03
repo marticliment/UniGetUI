@@ -33,7 +33,7 @@ public static class DesktopShortcutsDatabase
     /// </summary>
     /// <param name="shortcutPath">The path of the shortcut to delete</param>
     /// <param name="deletable">Whether or not to mark this entry as deletable in the databse. Defaults to true</param>
-    public static void Add(string shortcutPath, bool deletable = true)
+    public static void AddToDatabase(string shortcutPath, bool deletable = true)
     {
         Settings.SetDictionaryItem("DeletableDesktopShortcuts", shortcutPath, deletable);
     }
@@ -67,7 +67,7 @@ public static class DesktopShortcutsDatabase
     /// </summary>
     /// <param name="shortcutPath">The path of the shortcut to delete</param>
     /// <returns>True if the shortcut was completely removed, false if it was not there from the beginning</returns>
-    public static bool Reset(string shortcutPath)
+    public static bool ResetShortcut(string shortcutPath)
     {
         // Remove the entry if present
         if (Settings.DictionaryContainsKey<string, bool>("DeletableDesktopShortcuts", shortcutPath))
@@ -89,7 +89,7 @@ public static class DesktopShortcutsDatabase
     /// </summary>
     /// <param name="shortcutPath">The path of the shortcut to delete</param>
     /// <returns>True if the shortcut was deleted, false if it was not (or didn't exist)</returns>
-    public static bool DeleteShortcut(string shortcutPath)
+    public static bool DeleteFromDisk(string shortcutPath)
     {
         Logger.Info("Deleting shortcut " + shortcutPath);
         try
@@ -132,8 +132,21 @@ public static class DesktopShortcutsDatabase
     /// <returns>A list of desktop shortcut paths</returns>
     public static List<string> GetShortcuts()
     {
-        string DesktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-        return Directory.EnumerateFiles(DesktopPath, "*.lnk").ToList();
+        string UserDesktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+        string CommonDesktop = Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory);
+        List<string> shortcuts = new();
+
+        foreach (var shortcut in Directory.EnumerateFiles(UserDesktop, "*.lnk"))
+        {
+            shortcuts.Add(Path.Join(UserDesktop, shortcut));
+        }
+
+        foreach (var shortcut in Directory.EnumerateFiles(CommonDesktop, "*.lnk"))
+        {
+            shortcuts.Add(Path.Join(CommonDesktop, shortcut));
+        }
+
+        return shortcuts;
     }
 
     /// <summary>
@@ -150,7 +163,7 @@ public static class DesktopShortcutsDatabase
     /// Get the list of shortcuts whose deletion verdicts are unknown (as in, the user needs to be asked about deleting them when their operations finish)
     /// </summary>
     /// <returns>The list of shortcuts awaiting verdicts</returns>
-    public static List<string> GetAwaitingVerdicts()
+    public static List<string> GetUnknownShortcuts()
     {
         return UnknownShortcuts;
     }
@@ -169,7 +182,7 @@ public static class DesktopShortcutsDatabase
             switch (DesktopShortcutsDatabase.GetStatus(shortcut))
             {
                 case Status.Delete:
-                    DesktopShortcutsDatabase.DeleteShortcut(shortcut);
+                    DesktopShortcutsDatabase.DeleteFromDisk(shortcut);
                     break;
                 case Status.Maintain:
                     Logger.Debug("Refraining from deleting new shortcut " + shortcut + ": user disabled its deletion");

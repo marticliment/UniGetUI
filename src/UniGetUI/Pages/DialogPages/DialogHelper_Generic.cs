@@ -237,12 +237,10 @@ public static partial class DialogHelper
         IgnoredUpdatesManager IgnoredUpdatesPage = new();
         UpdatesDialog.Content = IgnoredUpdatesPage;
         IgnoredUpdatesPage.Close += (_, _) => UpdatesDialog.Hide();
-
-        _ = IgnoredUpdatesPage.UpdateData();
         await Window.ShowDialogAsync(UpdatesDialog);
     }
 
-    public static async Task ManageDesktopShortcuts()
+    public static async Task ManageDesktopShortcuts(List<string>? NewShortucts = null)
     {
         ContentDialog? ShortcutsDialog = new()
         {
@@ -251,74 +249,54 @@ public static partial class DialogHelper
         };
         ShortcutsDialog.Resources["ContentDialogMaxWidth"] = 1400;
         ShortcutsDialog.Resources["ContentDialogMaxHeight"] = 1000;
+        ShortcutsDialog.Title = CoreTools.Translate("Automatic desktop shortcut remover");
 
-        ShortcutsDialog.SecondaryButtonText = CoreTools.Translate("Close");
-
-        //ShortcutsDialog.PrimaryButtonText = CoreTools.Translate("Reset");
-
-        ShortcutsDialog.DefaultButton = ContentDialogButton.None;
-        ShortcutsDialog.Title = CoreTools.Translate("Manage deletable shortcuts");
-        DesktopShortcutsManager DesktopShortcutsPage = new();
-        ShortcutsDialog.Content = DesktopShortcutsPage;
+        DesktopShortcutsManager DesktopShortcutsPage = new(NewShortucts);
         DesktopShortcutsPage.Close += (_, _) => ShortcutsDialog.Hide();
 
-        _ = DesktopShortcutsPage.UpdateData();
+        ShortcutsDialog.Content = DesktopShortcutsPage;
+        ShortcutsDialog.SecondaryButtonText = CoreTools.Translate("Save and close");
+        ShortcutsDialog.DefaultButton = ContentDialogButton.None;
+        ShortcutsDialog.SecondaryButtonClick += (_, _) => DesktopShortcutsPage.SaveChangesAndClose();
+
         await Window.ShowDialogAsync(ShortcutsDialog);
     }
 
     public static async Task HandleNewDesktopShortcuts()
     {
-        ContentDialog? ShortcutsDialog = new()
-        {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            XamlRoot = Window.XamlRoot
-        };
-        ShortcutsDialog.Resources["ContentDialogMaxWidth"] = 1400;
-        ShortcutsDialog.Resources["ContentDialogMaxHeight"] = 1000;
+        var UnknownShortcuts = DesktopShortcutsDatabase.GetUnknownShortcuts();
 
-        ShortcutsDialog.Title = CoreTools.Translate("Handle new deletable shortcuts");
-        NewDesktopShortcutsManager DesktopShortcutsPage = new();
-        ShortcutsDialog.Content = DesktopShortcutsPage;
-        DesktopShortcutsPage.Close += (_, _) => ShortcutsDialog.Hide();
-
-        ShortcutsDialog.PrimaryButtonText = CoreTools.Translate("Continue");
-        ShortcutsDialog.DefaultButton = ContentDialogButton.Primary;
-        ShortcutsDialog.PrimaryButtonClick += DesktopShortcutsPage.ContinueButton_Click;
-
-        _ = DesktopShortcutsPage.UpdateData();
-
-        if (!Settings.AreShortcutsNotificationsDisabled())
+        if (!Settings.AreNotificationsDisabled())
         {
             AppNotificationManager.Default.RemoveByTagAsync(CoreData.NewShortcutsNotificationTag.ToString());
-
             AppNotification notification;
 
-            if (DesktopShortcutsDatabase.GetAwaitingVerdicts().Count == 1)
+            if (UnknownShortcuts.Count == 1)
             {
                 AppNotificationBuilder builder = new AppNotificationBuilder()
                     .SetScenario(AppNotificationScenario.Default)
                     .SetTag(CoreData.NewShortcutsNotificationTag.ToString())
-                    .AddText(CoreTools.Translate("New shortcut found!"))
-                    .AddText(CoreTools.Translate("A new desktop shortcut was found"))
-                    .SetAttributionText(DesktopShortcutsDatabase.GetAwaitingVerdicts().First())
+                    .AddText(CoreTools.Translate("Desktop shortcut created"))
+                    .AddText(CoreTools.Translate("UniGetUI has detected a new desktop shortcut that can be deleted automatically."))
+                    .SetAttributionText(UnknownShortcuts.First().Split("\\").Last())
                     .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI"))
-                        .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
+                        .AddArgument("action", NotificationArguments.Show)
                     )
-                    .AddArgument("action", NotificationArguments.ShowOnUpdatesTab);
+                    .AddArgument("action", NotificationArguments.Show);
 
                 notification = builder.BuildNotification();
             }
             else
             {
                 string attribution = "";
-                foreach (string shortcut in DesktopShortcutsDatabase.GetAwaitingVerdicts()) attribution += shortcut + ", ";
+                foreach (string shortcut in UnknownShortcuts) attribution += shortcut.Split("\\").Last() + ", ";
                 attribution = attribution.TrimEnd(' ').TrimEnd(',');
 
                 AppNotificationBuilder builder = new AppNotificationBuilder()
                     .SetScenario(AppNotificationScenario.Default)
                     .SetTag(CoreData.NewShortcutsNotificationTag.ToString())
-                    .AddText(CoreTools.Translate("New shortcuts found!"))
-                    .AddText(CoreTools.Translate("{0} new desktop shortcuts were found", DesktopShortcutsDatabase.GetAwaitingVerdicts().Count))
+                    .AddText(CoreTools.Translate("{0} desktop shortcuts created", UnknownShortcuts.Count))
+                    .AddText(CoreTools.Translate("UniGetUI has detected {0} new desktop shortcuts that can be deleted automatically.", UnknownShortcuts.Count))
                     .SetAttributionText(attribution)
                     .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI"))
                         .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
@@ -332,7 +310,7 @@ public static partial class DialogHelper
             AppNotificationManager.Default.Show(notification);
         }
 
-        await Window.ShowDialogAsync(ShortcutsDialog);
+        await ManageDesktopShortcuts(UnknownShortcuts);
     }
 
     public static async void WarnAboutAdminRights()

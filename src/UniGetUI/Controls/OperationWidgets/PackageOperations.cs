@@ -370,12 +370,10 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
                 DesktopShortcutsDatabase.TryRemoveNewShortcuts(DesktopShortcutsBeforeStart);
             }
-
 
             return AfterFinshAction.TimeoutClose;
         }

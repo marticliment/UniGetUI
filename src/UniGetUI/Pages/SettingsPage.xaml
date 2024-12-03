@@ -169,10 +169,6 @@
                                 SettingName="DisableUpdatesNotifications"
                                 />
                             <widgets:CheckboxCard
-                                Text="Show a notification when there are new desktop shortcuts"
-                                SettingName="DisableShortcutNotifications"
-                                />
-                            <widgets:CheckboxCard
                                 Text="Show a notification when an operation fails"
                                 SettingName="DisableErrorNotifications"
                                 />
@@ -232,9 +228,11 @@
                                 Text="Install available updates automatically"
                                 SettingName="AutomaticallyUpdatePackages"
                                 />
-                            <widgets:CheckboxCard
-                                Text="Ask to delete new desktop shortcuts after packages update"
+                            <widgets:CheckboxButtonCard
+                                CheckboxText="Ask to delete desktop shortcuts created during an install or upgrade."
                                 SettingName="AskToDeleteNewDesktopShortcuts"
+                                ButtonText="Manage shortcuts"
+                                Click="CheckboxButtonCard_OnClick"
                                 /> <!-- UniGetUI will only delete desktop shortcuts that were newly added after an update operation and that were explicitly approved -->
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>

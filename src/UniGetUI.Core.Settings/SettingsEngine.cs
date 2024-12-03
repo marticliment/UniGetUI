@@ -110,10 +110,10 @@ namespace UniGetUI.Core.SettingsEngine
             return AreNotificationsDisabled() || Get("DisableUpdatesNotifications");
         }
 
-        public static bool AreShortcutsNotificationsDisabled()
+        /*public static bool AreShortcutsNotificationsDisabled()
         {
             return AreNotificationsDisabled() || Get("DisableShortcutNotifications");
-        }
+        }*/
 
         public static bool AreErrorNotificationsDisabled()
         {

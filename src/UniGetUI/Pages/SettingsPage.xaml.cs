@@ -762,5 +762,10 @@ namespace UniGetUI.Interface
             _ = AutoUpdater.CheckAndInstallUpdates(MainApp.Instance.MainWindow, MainApp.Instance.MainWindow.UpdatesBanner,
                 true);
         }
+
+        private void CheckboxButtonCard_OnClick(object? sender, RoutedEventArgs e)
+        {
+            _ = DialogHelper.ManageDesktopShortcuts();
+        }
     }
 }
