@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Data;
@@ -9,6 +10,7 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
@@ -61,7 +63,7 @@ namespace UniGetUI.Interface.SoftwarePages
             BetterMenu menu = new();
             BetterMenuItem menuUninstall = new()
             {
-                Text = "Uninstall",
+                Text = CoreTools.AutoTranslated("Uninstall"),
                 IconName = IconType.Delete,
                 KeyboardAcceleratorTextOverride = "Ctrl+Enter"
             };
@@ -72,7 +74,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuInstallationOptions = new()
             {
-                Text = "Installation options",
+                Text = CoreTools.AutoTranslated("Installation options"),
                 IconName = IconType.Options,
                 KeyboardAcceleratorTextOverride = "Alt+Enter"
             };
@@ -81,7 +83,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuOpenInstallLocation = new()
             {
-                Text = "Open install location",
+                Text = CoreTools.AutoTranslated("Open install location"),
                 IconName = IconType.Launch,
             };
             MenuOpenInstallLocation.Click += (_, _) => OpenPackageInstallLocation(SelectedItem);;
@@ -91,7 +93,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuAsAdmin = new BetterMenuItem
             {
-                Text = "Uninstall as administrator",
+                Text = CoreTools.AutoTranslated("Uninstall as administrator"),
                 IconName = IconType.UAC
             };
             MenuAsAdmin.Click += MenuAsAdmin_Invoked;
@@ -99,7 +101,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuInteractive = new BetterMenuItem
             {
-                Text = "Interactive uninstall",
+                Text = CoreTools.AutoTranslated("Interactive uninstall"),
                 IconName = IconType.Interactive
             };
             MenuInteractive.Click += MenuInteractive_Invoked;
@@ -107,7 +109,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuRemoveData = new BetterMenuItem
             {
-                Text = "Uninstall and remove data",
+                Text = CoreTools.AutoTranslated("Uninstall and remove data"),
                 IconName = IconType.Close_Round
             };
             MenuRemoveData.Click += MenuRemoveData_Invoked;
@@ -117,7 +119,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuReinstallPackage = new()
             {
-                Text = "Reinstall package",
+                Text = CoreTools.AutoTranslated("Reinstall package"),
                 IconName = IconType.Download
             };
             MenuReinstallPackage.Click += MenuReinstall_Invoked;
@@ -125,7 +127,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuUninstallThenReinstall = new()
             {
-                Text = "Uninstall package, then reinstall it",
+                Text = CoreTools.AutoTranslated("Uninstall package, then reinstall it"),
                 IconName = IconType.Undelete
             };
             MenuUninstallThenReinstall.Click += MenuUninstallThenReinstall_Invoked;
@@ -135,7 +137,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuIgnoreUpdates = new()
             {
-                Text = "Ignore updates for this package",
+                Text = CoreTools.AutoTranslated("Ignore updates for this package"),
                 IconName = IconType.Pin
             };
             MenuIgnoreUpdates.Click += MenuIgnorePackage_Invoked;
@@ -145,7 +147,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuSharePackage = new()
             {
-                Text = "Share this package",
+                Text = CoreTools.AutoTranslated("Share this package"),
                 IconName = IconType.Share
             };
             MenuSharePackage.Click += MenuShare_Invoked;
@@ -153,7 +155,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             MenuPackageDetails = new()
             {
-                Text = "Package details",
+                Text = CoreTools.AutoTranslated("Package details"),
                 IconName = IconType.Info_Round,
                 KeyboardAcceleratorTextOverride = "Enter"
             };
@@ -249,10 +251,11 @@ namespace UniGetUI.Interface.SoftwarePages
             IgnoreSelected.Click += async (_, _) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
-                {
-                    PEInterface.UpgradablePackagesLoader.Remove(package);
-                    await package.AddToIgnoredUpdatesAsync();
-                }
+                    if(!package.Source.IsVirtualManager)
+                    {
+                        PEInterface.UpgradablePackagesLoader.Remove(package);
+                        await package.AddToIgnoredUpdatesAsync();
+                    }
             };
 
             UninstallSelected.Click += (_, _) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
@@ -275,9 +278,20 @@ namespace UniGetUI.Interface.SoftwarePages
                     _ = BackupPackages();
                 }
             }
+
+            if(WinGet.NO_PACKAGES_HAVE_BEEN_LOADED && !Settings.Get("DisableWinGetMalfunctionDetector"))
+            {
+                var infoBar = MainApp.Instance.MainWindow.WinGetWarningBanner;
+                infoBar.IsOpen = true;
+                infoBar.Title = CoreTools.Translate("WinGet malfunction detected");
+                infoBar.Message = CoreTools.Translate("It looks like WinGet is not working properly. Do you want to attempt to repair WinGet?");
+                var button = new Button() { Content = CoreTools.Translate("Repair WinGet") };
+                infoBar.ActionButton = button;
+                button.Click += (_, _) => DialogHelper.HandleBrokenWinGet();
+            }
         }
 
-        protected override void WhenShowingContextMenu(IPackage package)
+        protected override async void WhenShowingContextMenu(IPackage package)
         {
             if (MenuAsAdmin is null
                 || MenuInteractive is null
@@ -303,16 +317,30 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuInstallationOptions.IsEnabled = !IS_LOCAL;
             MenuReinstallPackage.IsEnabled = !IS_LOCAL;
             MenuUninstallThenReinstall.IsEnabled = !IS_LOCAL;
-            MenuIgnoreUpdates.IsEnabled = !IS_LOCAL;
+            MenuIgnoreUpdates.IsEnabled = false; //!IS_LOCAL;
             MenuSharePackage.IsEnabled = !IS_LOCAL;
             MenuPackageDetails.IsEnabled = !IS_LOCAL;
 
-            MenuOpenInstallLocation.IsEnabled = package.Manager.GetPackageInstallLocation(package) is not null;
+            MenuOpenInstallLocation.IsEnabled = package.Manager.DetailsHelper.GetInstallLocation(package) is not null;
+            if (!IS_LOCAL)
+            {
+                if (await package.HasUpdatesIgnoredAsync())
+                {
+                    MenuIgnoreUpdates.Text = CoreTools.Translate("Do not ignore updates for this package anymore");
+                    MenuIgnoreUpdates.Icon = new FontIcon() { Glyph = "\uE77A" };
+                }
+                else
+                {
+                    MenuIgnoreUpdates.Text = CoreTools.Translate("Ignore updates for this package");
+                    MenuIgnoreUpdates.Icon = new FontIcon() { Glyph = "\uE718" };
+                }
+                MenuIgnoreUpdates.IsEnabled = true;
+            }
         }
 
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
         {
-            MainApp.Instance.MainWindow.NavigationPage.BundlesNavButton.ForceClick();
+            MainApp.Instance.MainWindow.NavigationPage.NavigateTo(PageType.Bundles);
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
             DialogHelper.HideLoadingDialog();
@@ -456,7 +484,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, IgnoreParallelInstalls: true));
 
         }
-        private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)
+        private async void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
             if (package is null)
@@ -464,8 +492,13 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            _ = package.AddToIgnoredUpdatesAsync();
-            PEInterface.UpgradablePackagesLoader.Remove(package);
+            if(await package.HasUpdatesIgnoredAsync())
+                await package.RemoveFromIgnoredUpdatesAsync();
+            else
+            {
+                await package.AddToIgnoredUpdatesAsync();
+                PEInterface.UpgradablePackagesLoader.Remove(package);
+            }
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)

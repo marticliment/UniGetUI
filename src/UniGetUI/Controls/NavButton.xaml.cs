@@ -24,6 +24,12 @@ namespace UniGetUI.Interface.Widgets
             set => IconBlock.Glyph = value;
         }
 
+        public bool IsChecked
+        {
+            get => ToggleButton.IsChecked ?? false;
+            set => ToggleButton.IsChecked = value;
+        }
+
         public event EventHandler<EventArgs>? Click;
 
         public NavButton()

@@ -66,13 +66,11 @@
                 <StackPanel Width="70" Grid.Row="0" Grid.Column="0"
                 Spacing="4" Orientation="Vertical" VerticalAlignment="Top">
                     <widgets:NavButton x:Name="DiscoverNavButton"
-                        x:FieldModifier="public"
                         Text="Discover Packages"
                         Glyph="&#xF6FA;" Click="DiscoverNavButton_Click"
                         />
                     <Grid>
                         <widgets:NavButton x:Name="UpdatesNavButton"
-                            x:FieldModifier="public"
                             Text="Software Updates"
                             Glyph="&#xE895;" Click="UpdatesNavButton_Click"
                         />
@@ -88,13 +86,11 @@
                             Margin="0,1.5,1.5,0"/>
                     </Grid>
                     <widgets:NavButton x:Name="InstalledNavButton"
-                        x:FieldModifier="public"
                         Text="Installed Packages"
                         Glyph="&#xE977;" Click="InstalledNavButton_Click"
                     />
                     <Grid>
                         <widgets:NavButton x:Name="BundlesNavButton"
-                            x:FieldModifier="public"
                             Text="Package Bundles"
                             Glyph="&#xF133;" Click="BundlesNavButton_Click"
                         />
@@ -125,17 +121,14 @@
                     Spacing="4" Orientation="Vertical" VerticalAlignment="Bottom">
                     <widgets:NavButton
                         Text="About" x:Name="AboutNavButton"
-                        x:FieldModifier="public"
                         Glyph="&#xE946;" Click="AboutNavButton_Click"
                         />
                     <widgets:NavButton
                         Text="Settings" x:Name="SettingsNavButton"
-                        x:FieldModifier="public"
                         Glyph="&#xE713;" Click="SettingsNavButton_Click"
                         />
                     <widgets:NavButton
                         Text="More" x:Name="MoreNavButton"
-                        x:FieldModifier="public"
                         Glyph="&#xE712;" Click="MoreNavButton_Click"
                         />
                 </StackPanel>

@@ -1,12 +1,15 @@
 using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
 using UniGetUI.Interface.Dialogs;
+using UniGetUI.PackageEngine;
 
 namespace UniGetUI.Pages.DialogPages;
 
@@ -16,9 +19,15 @@ public static partial class DialogHelper
 
     public static void ShowLoadingDialog(string text)
     {
+        ShowLoadingDialog(text, "");
+    }
+
+    public static void ShowLoadingDialog(string title, string description)
+    {
         if (Window.LoadingDialogCount == 0 && Window.DialogQueue.Count == 0)
         {
-            Window.LoadingSthDalog.Title = text;
+            Window.LoadingSthDalog.Title = title;
+            Window.LoadingSthDalogText.Text = description;
             Window.LoadingSthDalog.XamlRoot = Window.NavigationPage.XamlRoot;
             _ = Window.ShowDialogAsync(Window.LoadingSthDalog, HighPriority: true);
         }
@@ -45,18 +54,15 @@ public static partial class DialogHelper
     {
         ContentDialog dialog = new();
 
-        string PREVIOUSLY_ATTEMPTED_PREF = $"AlreadyAttemptedToInstall{dep_name}";
-        string DEP_SKIPPED_PREF = $"SkippedInstalling{dep_name}";
-
-        if (Settings.Get(DEP_SKIPPED_PREF))
+        if (Settings.GetDictionaryItem<string, string>("DependencyManagement", dep_name) == "skipped")
         {
             Logger.Error(
-                $"Dependency {dep_name} was not found, and the user set it to not be reminded of the midding dependency");
+                $"Dependency {dep_name} was not found, and the user set it to not be reminded of the missing dependency");
             return;
         }
 
-        bool NotFirstTime = Settings.Get(PREVIOUSLY_ATTEMPTED_PREF);
-        Settings.Set(PREVIOUSLY_ATTEMPTED_PREF, true);
+        bool NotFirstTime = Settings.GetDictionaryItem<string, string>("DependencyManagement", dep_name) == "attempted";
+        Settings.SetDictionaryItem("DependencyManagement", dep_name, "attempted");
 
         dialog.XamlRoot = Window.MainContentGrid.XamlRoot;
         dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -73,7 +79,7 @@ public static partial class DialogHelper
         p.Children.Add(new TextBlock
         {
             Text = CoreTools.Translate(
-                $"UniGetUI requires {dep_name} to operate, but it was not found on your system."),
+                "UniGetUI requires {0} to operate, but it was not found on your system.", dep_name),
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 0, 0, 5)
         });
@@ -116,8 +122,8 @@ public static partial class DialogHelper
         {
             c.Content = CoreTools.Translate("Do not show this dialog again for {0}", dep_name);
             c.IsChecked = false;
-            c.Checked += (_, _) => Settings.Set(DEP_SKIPPED_PREF, true);
-            c.Unchecked += (_, _) => Settings.Set(DEP_SKIPPED_PREF, false);
+            c.Checked += (_, _) => Settings.SetDictionaryItem("DependencyManagement", dep_name, "skipped");
+            c.Unchecked += (_, _) => Settings.SetDictionaryItem("DependencyManagement", dep_name, "attempted");
             p.Children.Add(c);
         }
 
@@ -222,7 +228,7 @@ public static partial class DialogHelper
 
         //UpdatesDialog.PrimaryButtonText = CoreTools.Translate("Reset");
 
-        UpdatesDialog.DefaultButton = ContentDialogButton.Secondary;
+        UpdatesDialog.DefaultButton = ContentDialogButton.None;
         UpdatesDialog.Title = CoreTools.Translate("Manage ignored updates");
         IgnoredUpdatesManager IgnoredUpdatesPage = new();
         UpdatesDialog.Content = IgnoredUpdatesPage;
@@ -292,6 +298,95 @@ public static partial class DialogHelper
         };
 
         await Window.ShowDialogAsync(NotesDialog);
+    }
+
+    public static async void HandleBrokenWinGet()
+    {
+        bool bannerWasOpen = false;
+        try
+        {
+            DialogHelper.ShowLoadingDialog("Attempting to repair WinGet...",
+                "WinGet is being repaired. Please wait until the process finishes.");
+            bannerWasOpen = Window.WinGetWarningBanner.IsOpen;
+            Window.WinGetWarningBanner.IsOpen = false;
+            Process p = new Process()
+            {
+                StartInfo = new()
+                {
+                    FileName =
+                        Path.Join(Environment.SystemDirectory,
+                            "windowspowershell\\v1.0\\powershell.exe"),
+                    Arguments =
+                        "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {" +
+                        "cmd.exe /C \"rmdir /Q /S `\"%temp%\\WinGet`\"\"; " +
+                        "cmd.exe /C \"`\"%localappdata%\\Microsoft\\WindowsApps\\winget.exe`\" source reset --force\"; " +
+                        "taskkill /im winget.exe /f; " +
+                        "taskkill /im WindowsIPackageManagerServer.exe /f; " +
+                        "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; " +
+                        "Install-Module Microsoft.WinGet.Client -Force -Scope AllUsers -AllowClobber; " +
+                        "Import-Module Microsoft.WinGet.Client; " +
+                        "Repair-WinGetIPackageManager -Force -Latest; " +
+                        "Get-AppxPackage -Name 'Microsoft.DesktopAppInstaller' | Reset-AppxPackage" +
+                        "}\"",
+                    UseShellExecute = true,
+                    Verb = "runas"
+                }
+            };
+            p.Start();
+            await p.WaitForExitAsync();
+            DialogHelper.HideLoadingDialog();
+
+            // Toggle bundled WinGet
+            if (Settings.Get("ForceLegacyBundledWinGet"))
+                Settings.Set("ForceLegacyBundledWinGet", false);
+
+            var c = new ContentDialog()
+            {
+                Title = CoreTools.Translate("WinGet was repaired successfully"),
+                Content = CoreTools.Translate("It is recommended to restart UniGetUI after WinGet has been repaired") +
+                          "\n\n" +
+                          CoreTools.Translate(
+                              "NOTE: This troubleshooter can be disabled from UniGetUI Settings, on the WinGet section"),
+                PrimaryButtonText = CoreTools.Translate("Close"),
+                SecondaryButtonText = CoreTools.Translate("Restart"),
+                DefaultButton = ContentDialogButton.Secondary,
+                XamlRoot = Window.XamlRoot
+            };
+
+            // Restart UniGetUI or reload packages depending on the user's choice
+            if (await Window.ShowDialogAsync(c) == ContentDialogResult.Secondary)
+            {
+                MainApp.Instance.KillAndRestart();
+            }
+            else
+            {
+                _ = PEInterface.UpgradablePackagesLoader.ReloadPackages();
+                _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Show an error message if something goes wrong
+            Window.WinGetWarningBanner.IsOpen = bannerWasOpen;
+            Logger.Error("An error occurred while trying to repair WinGet");
+            Logger.Error(ex);
+            DialogHelper.HideLoadingDialog();
+
+            var c = new ContentDialog()
+            {
+                Title = CoreTools.Translate("WinGet could not be repaired"),
+                Content =
+                    CoreTools.Translate("An unexpected issue occurred while attempting to repair WinGet. Please try again later") +
+                    "\n\n" + ex.Message + "\n\n" +
+                    CoreTools.Translate("NOTE: This troubleshooter can be disabled from UniGetUI Settings, on the WinGet section"),
+                PrimaryButtonText = CoreTools.Translate("Close"),
+                DefaultButton = ContentDialogButton.None,
+                XamlRoot = Window.XamlRoot
+            };
+
+            await Window.ShowDialogAsync(c);
+        }
+
     }
 }
 

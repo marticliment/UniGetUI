@@ -18,9 +18,9 @@ On a system where UniGetUI 3.1.2+ is installed, the following deep links can be 
 | --------------------------------------------------- | ---------- |
 | `unigetui://showPackage?id={}&managerName={}&sourceName={}` | Show the Package Details page with the provided package. <br>The parameters `id`, `managerName` and `sourceName` are<br> required and cannot be empty |
 | `unigetui://showUniGetUI` | Shows UniGetUI and brings the window to the front |
-| `unigetui://showDiscoverPage` | Shows UniGetUI and loads the Updates page | 
+| `unigetui://showDiscoverPage` | Shows UniGetUI and loads the Discover page | 
 | `unigetui://showUpdatesPage` | Shows UniGetUI and loads the Updates page | 
-| `unigetui://showInstalledPage` | Shows UniGetUI and loads the Updates page | 
+| `unigetui://showInstalledPage` | Shows UniGetUI and loads the Installed page | 
 
 <br><br>
 
@@ -32,7 +32,7 @@ The installer is inno-setup based. It supports all Inno Setup command-line param
 | `/NoAutoStart` | Will not launch UniGetUI after installation |
 | `/NoVCRedist` | Will not install MS Visual C++ Redistributable x64 (v3.1.2+) |
 | `/NoEdgeWebView` | Will not install Microsoft Edge WebView Runtime (v3.1.2+) |
-| `/ALLUSERS` | Will force the installer to install per-machine (requires administrator privileges) |
-| `/CURRENTUSER` | Will force the installer to install per-user | 
 | `/NoChocolatey` | Do NOT install chocolatey within UniGetUI | 
 | `/NoWinGet` | Do NOT install WinGet and Microsoft.WinGet.Client if not installed **(not recommended)** | 
+| `/ALLUSERS` | Will force the installer to install per-machine (requires administrator privileges) |
+| `/CURRENTUSER` | Will force the installer to install per-user | 

@@ -116,9 +116,14 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return new Uri("ms-appx:///Assets/Images/package_color.png");
         }
 
-        public async Task<string> GetIgnoredUpdatesVersionAsync()
+        public Uri? GetIconUrlIfAny()
         {
-            return "";
+            return null;
+        }
+
+        public Task<string> GetIgnoredUpdatesVersionAsync()
+        {
+            return Task.FromResult(String.Empty);
         }
 
         public IPackage? GetInstalledPackage()

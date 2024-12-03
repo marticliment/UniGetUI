@@ -7,7 +7,7 @@
     <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
     <Platforms>x64</Platforms>
    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-<WindowsSdkPackageVersion>10.0.22621.41</WindowsSdkPackageVersion>
+  <WindowsSdkPackageVersion>10.0.26100.53</WindowsSdkPackageVersion>
     <SdkVersion>8.0.401</SdkVersion>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <PublishSelfContained>true</PublishSelfContained>
@@ -31,5 +31,10 @@
 
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PhotoSauce.MagicScaler" Version="0.14.2" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
   </ItemGroup>
 </Project>

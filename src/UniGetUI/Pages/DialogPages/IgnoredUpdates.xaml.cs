@@ -41,7 +41,7 @@ namespace UniGetUI.Interface
 
             ignoredPackages.Clear();
 
-            var rawIgnoredPackages = await Task.Run(() => IgnoredUpdatesDatabase.GetDatabase());
+            var rawIgnoredPackages = IgnoredUpdatesDatabase.GetDatabase();
 
             foreach (var(ignoredId, version) in rawIgnoredPackages)
             {
@@ -90,6 +90,7 @@ namespace UniGetUI.Interface
         public string Id { get; }
         public string Name { get; }
         public string Version { get; }
+        public string NewVersion { get; }
         public IPackageManager Manager { get; }
         private ObservableCollection<IgnoredPackageEntry> List { get; }
         public IgnoredPackageEntry(string id, string version, IPackageManager manager, ObservableCollection<IgnoredPackageEntry> list)
@@ -108,6 +109,22 @@ namespace UniGetUI.Interface
                 Version = version;
             }
 
+            string CurrentVersion = PEInterface.InstalledPackagesLoader.GetPackageForId(id)?.Version ?? "Unknown";
+
+            if (PEInterface.UpgradablePackagesLoader.IgnoredPackages.TryGetValue(Id, out IPackage? package)
+                && package.NewVersion != package.Version)
+            {
+                NewVersion = CurrentVersion + " \u27a4 " + package.NewVersion;
+            }
+            else if (CurrentVersion != "Unknown")
+            {
+                NewVersion = CoreTools.Translate("Up to date") + $" ({CurrentVersion})";;
+            }
+            else
+            {
+                NewVersion = CoreTools.Translate("Unknown");
+            }
+
             Manager = manager;
             List = list;
         }
@@ -116,6 +133,13 @@ namespace UniGetUI.Interface
         {
             string ignoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
             await Task.Run(() => IgnoredUpdatesDatabase.Remove(ignoredId));
+
+            // If possible, add the package to the software updates tab again
+            if (PEInterface.UpgradablePackagesLoader.IgnoredPackages.TryRemove(Id, out IPackage? nativePackage)
+                && nativePackage.NewVersion != nativePackage.Version)
+            {
+                PEInterface.UpgradablePackagesLoader.AddForeign(nativePackage);
+            }
 
             foreach (IPackage package in PEInterface.InstalledPackagesLoader.Packages)
             {

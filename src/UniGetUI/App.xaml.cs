@@ -19,6 +19,7 @@ using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using WinRT.Interop;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 namespace UniGetUI
@@ -41,7 +42,7 @@ namespace UniGetUI
 
         public bool RaiseExceptionAsFatal = true;
 
-        public SettingsInterface settings = null!;
+        public SettingsPage settings = null!;
         public MainWindow MainWindow = null!;
         public ThemeListener ThemeListener = null!;
 
@@ -84,13 +85,23 @@ namespace UniGetUI
 
         private static async void LoadGSudo()
         {
-            if (Settings.Get("UseUserGSudo"))
+#if DEBUG
+            bool DEBUG = true;
+#else
+            bool DEBUG = false;
+#endif
+            if (!DEBUG && !Settings.Get("DisableUniGetUIElevator"))
             {
-                Tuple<bool, string> gsudo_result = await CoreTools.WhichAsync("gsudo.exe");
-                if (gsudo_result.Item1 != false)
+                Logger.ImportantInfo("Using built-in UniGetUI Elevator");
+                CoreData.GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "UniGetUI Elevator.exe");
+            }
+            else if (Settings.Get("UseUserGSudo"))
+            {
+                var(found, gsudo_path) = await CoreTools.WhichAsync("gsudo.exe");
+                if (found)
                 {
-                    Logger.Info($"Using System GSudo at {gsudo_result.Item2}");
-                    CoreData.GSudoPath = gsudo_result.Item2;
+                    Logger.Info($"Using System GSudo at {gsudo_path}");
+                    CoreData.GSudoPath = gsudo_path;
                 }
                 else
                 {
@@ -100,8 +111,8 @@ namespace UniGetUI
             }
             else
             {
+                Logger.Warn($"Using bundled GSudo at {CoreData.GSudoPath} since UniGetUI Elevator is not available!");
                 CoreData.GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
-                Logger.Info($"Using bundled GSudo at {CoreData.GSudoPath}");
             }
         }
 
@@ -217,51 +228,43 @@ namespace UniGetUI
         {
             try
             {
-                // Run other initializations asynchronously
-                if (!Settings.Get("DisableAutoUpdateWingetUI"))
-                {
-                    UpdateUniGetUIIfPossible();
-                }
-
                 IconDatabase.InitializeInstance();
                 IconDatabase.Instance.LoadIconAndScreenshotsDatabase();
 
                 // Bind the background api to the main interface
 
-                BackgroundApi.OnOpenWindow += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                {
-                    MainWindow.Activate();
-                });
-
-                BackgroundApi.OnOpenUpdatesPage += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                {
-                    MainWindow?.NavigationPage?.UpdatesNavButton.ForceClick();
-                    MainWindow?.Activate();
-                });
-
-                BackgroundApi.OnShowSharedPackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                {
-                    MainWindow?.NavigationPage?.DiscoverPage.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
-                    MainWindow?.Activate();
-                });
-
-                BackgroundApi.OnUpgradeAll += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                {
-                    MainWindow?.NavigationPage?.UpdatesPage.UpdateAll();
-                });
-
-                BackgroundApi.OnUpgradeAllForManager += (_, manager) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                {
-                    MainWindow?.NavigationPage?.UpdatesPage.UpdateAllPackagesForManager(manager);
-                });
-
-                BackgroundApi.OnUpgradePackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
-                {
-                    MainWindow?.NavigationPage?.UpdatesPage.UpdatePackageForId(package);
-                });
-
                 if (!Settings.Get("DisableApi"))
                 {
+
+                    BackgroundApi.OnOpenWindow += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() => MainWindow.Activate());
+
+                    BackgroundApi.OnOpenUpdatesPage += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        MainWindow?.NavigationPage?.NavigateTo(PageType.Updates);
+                        MainWindow?.Activate();
+                    });
+
+                    BackgroundApi.OnShowSharedPackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        MainWindow?.NavigationPage?.DiscoverPage.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
+                        MainWindow?.Activate();
+                    });
+
+                    BackgroundApi.OnUpgradeAll += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        MainWindow?.NavigationPage?.UpdatesPage.UpdateAll();
+                    });
+
+                    BackgroundApi.OnUpgradeAllForManager += (_, manager) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        MainWindow?.NavigationPage?.UpdatesPage.UpdateAllPackagesForManager(manager);
+                    });
+
+                    BackgroundApi.OnUpgradePackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        MainWindow?.NavigationPage?.UpdatesPage.UpdatePackageForId(package);
+                    });
+
                     _ = BackgroundApi.Start();
                 }
 
@@ -292,10 +295,8 @@ namespace UniGetUI
         {
             // Check for missing dependencies on package managers
             List<ManagerDependency> missing_deps = [];
-            foreach (IPackageManager imanager in PEInterface.Managers)
+            foreach (IPackageManager manager in PEInterface.Managers)
             {
-                if (imanager is not PackageManager manager) continue;
-
                 if (!manager.IsReady())
                 {
                     continue;
@@ -317,9 +318,9 @@ namespace UniGetUI
 
                     if (!isInstalled)
                     {
-                        if (Settings.Get($"SkippedInstalling{dependency.Name}"))
+                        if (Settings.GetDictionaryItem<string, string>("DependencyManagement", dependency.Name) == "skipped")
                         {
-                            Logger.Error($"Dependency {dependency.Name} was not found, and the user set it to not be reminded of the midding dependency");
+                            Logger.Error($"Dependency {dependency.Name} was not found, and the user set it to not be reminded of the missing dependency");
                         }
                         else
                         {
@@ -393,147 +394,6 @@ namespace UniGetUI
             Exit();
             await Task.Delay(100);
             Environment.Exit(outputCode);
-        }
-
-        private async void UpdateUniGetUIIfPossible(int round = 0)
-        {
-            InfoBar? banner = null;
-            try
-            {
-                Logger.Debug("Starting update check");
-
-                string fileContents;
-
-                using (HttpClient client = new(CoreData.GenericHttpClientParameters))
-                {
-                    client.Timeout = TimeSpan.FromSeconds(600);
-                    client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-                    fileContents = await client.GetStringAsync("https://www.marticliment.com/versions/unigetui.ver");
-                }
-
-                if (!fileContents.Contains("///"))
-                {
-                    throw new FormatException("The updates file does not follow the FloatVersion///Sha256Hash format");
-                }
-
-                float LatestVersion = float.Parse(fileContents.Split("///")[0].Replace("\n", "").Trim(), CultureInfo.InvariantCulture);
-                string InstallerHash = fileContents.Split("///")[1].Replace("\n", "").Trim().ToLower();
-
-                if (LatestVersion > CoreData.VersionNumber)
-                {
-                    Logger.Info("Updates found, downloading installer...");
-                    Logger.Info("Current version: " + CoreData.VersionNumber.ToString(CultureInfo.InvariantCulture));
-                    Logger.Info("Latest version : " + LatestVersion.ToString(CultureInfo.InvariantCulture));
-
-                    banner = MainWindow.UpdatesBanner;
-                    banner.Title = CoreTools.Translate("WingetUI version {0} is being downloaded.", LatestVersion.ToString(CultureInfo.InvariantCulture));
-                    banner.Message = CoreTools.Translate("This may take a minute or two");
-                    banner.Severity = InfoBarSeverity.Informational;
-                    banner.IsOpen = true;
-                    banner.IsClosable = false;
-
-                    Uri DownloadUrl = new("https://github.com/marticliment/WingetUI/releases/latest/download/UniGetUI.Installer.exe");
-                    string InstallerPath = Path.Join(Directory.CreateTempSubdirectory().FullName, "unigetui-updater.exe");
-
-                    using (HttpClient client = new(CoreData.GenericHttpClientParameters))
-                    {
-                        client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-                        HttpResponseMessage result = await client.GetAsync(DownloadUrl);
-                        using FileStream fs = new(InstallerPath, FileMode.CreateNew);
-                        await result.Content.CopyToAsync(fs);
-                    }
-
-                    string Hash = "";
-                    SHA256 Sha256 = SHA256.Create();
-                    using (FileStream stream = File.OpenRead(InstallerPath))
-                    {
-                        Hash = Convert.ToHexString(Sha256.ComputeHash(stream)).ToLower();
-                    }
-
-                    if (Hash == InstallerHash)
-                    {
-
-                        banner.Title = CoreTools.Translate("WingetUI {0} is ready to be installed.", LatestVersion.ToString(CultureInfo.InvariantCulture));
-                        banner.Message = CoreTools.Translate("The update will be installed upon closing WingetUI");
-                        banner.ActionButton = new Button
-                        {
-                            Content = CoreTools.Translate("Update now")
-                        };
-                        banner.ActionButton.Click += (_, _) => { MainWindow.HideWindow(); };
-                        banner.Severity = InfoBarSeverity.Success;
-                        banner.IsOpen = true;
-                        banner.IsClosable = true;
-
-                        if (MainWindow.Visible)
-                        {
-                            Logger.Debug("Waiting for mainWindow to be hidden");
-                        }
-
-                        while (MainWindow.Visible)
-                        {
-                            await Task.Delay(100);
-                        }
-
-                        if (Settings.Get("DisableAutoUpdateWingetUI"))
-                        {
-                            Logger.Warn("User disabled updates!");
-                            return;
-                        }
-
-                        Logger.ImportantInfo("The hash matches the expected value, starting update process...");
-                        Process p = new();
-                        p.StartInfo.FileName = "cmd.exe";
-                        p.StartInfo.Arguments = $"/c start /B \"\" \"{InstallerPath}\" /silent";
-                        p.StartInfo.UseShellExecute = true;
-                        p.StartInfo.CreateNoWindow = true;
-                        p.Start();
-                        DisposeAndQuit();
-                    }
-                    else
-                    {
-                        Logger.Error("Hash mismatch, not updating!");
-                        Logger.Error("Current hash : " + Hash);
-                        Logger.Error("Expected hash: " + InstallerHash);
-                        File.Delete(InstallerPath);
-
-                        banner.Title = CoreTools.Translate("The installer hash does not match the expected value.");
-                        banner.Message = CoreTools.Translate("The update will not continue.");
-                        banner.Severity = InfoBarSeverity.Error;
-                        banner.IsOpen = true;
-                        banner.IsClosable = true;
-
-                        await Task.Delay(3600000); // Check again in 1 hour
-                        UpdateUniGetUIIfPossible();
-                    }
-                }
-                else
-                {
-                    Logger.Info("UniGetUI is up to date");
-                    await Task.Delay(3600000); // Check again in 1 hour
-                    UpdateUniGetUIIfPossible();
-                }
-            }
-            catch (Exception e)
-            {
-                if (banner is not null)
-                {
-                    banner.Title = CoreTools.Translate("An error occurred when checking for updates: ");
-                    banner.Message = e.Message;
-                    banner.Severity = InfoBarSeverity.Error;
-                    banner.IsOpen = true;
-                    banner.IsClosable = true;
-                }
-
-                Logger.Error(e);
-
-                if (round >= 3)
-                {
-                    return;
-                }
-
-                await Task.Delay(600000); // Try again in 10 minutes
-                UpdateUniGetUIIfPossible(round + 1);
-            }
         }
 
         public void KillAndRestart()

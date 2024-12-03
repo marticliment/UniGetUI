@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager;
@@ -53,8 +54,8 @@ public partial class Cargo : PackageManager
             KnownSources = [cratesIo]
         };
 
-        PackageDetailsProvider = new CargoPackageDetailsProvider(this);
-        OperationProvider = new CargoOperationProvider(this);
+        DetailsHelper = new CargoPkgDetailsHelper(this);
+        OperationHelper = new CargoPkgOperationHelper(this);
     }
 
     protected override IEnumerable<Package> FindPackages_UnSafe(string query)
@@ -143,9 +144,26 @@ public partial class Cargo : PackageManager
     private IEnumerable<Package> GetPackages(LoggableTaskType taskType)
     {
         List<Package> Packages = [];
+        foreach(var match in TaskRecycler<List<Match>>.RunOrAttach(GetInstalledCommandOutput, 15))
+        {
+            var id = match.Groups[1].Value.Trim();
+            var name = CoreTools.FormatAsName(id);
+            var oldVersion = match.Groups[2].Value;
+            var newVersion = match.Groups[3].Value;
+            if(taskType is LoggableTaskType.ListUpdates && oldVersion != newVersion)
+                Packages.Add(new Package(name, id, oldVersion, newVersion, DefaultSource, this));
+            else if(taskType is LoggableTaskType.ListInstalledPackages)
+                Packages.Add(new Package(name, id, oldVersion, DefaultSource, this));
+        }
+        return Packages;
+    }
 
+    private List<Match> GetInstalledCommandOutput()
+    {
+        List<Match> output = new();
         Process p = GetProcess(Status.ExecutablePath, "install-update --list");
-        IProcessTaskLogger logger = TaskLogger.CreateNew(taskType, p);
+        IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.OtherTask, p);
+        logger.AddToStdOut("Other task: Call the install-update command");
         p.Start();
 
         string? line;
@@ -155,20 +173,13 @@ public partial class Cargo : PackageManager
             var match = UpdateLineRegex().Match(line);
             if (match.Success)
             {
-                var id = match.Groups[1].Value.Trim();
-                var name = CoreTools.FormatAsName(id);
-                var oldVersion = match.Groups[2].Value;
-                var newVersion = match.Groups[3].Value;
-                if(taskType is LoggableTaskType.ListUpdates && oldVersion != newVersion)
-                    Packages.Add(new Package(name, id, oldVersion, newVersion, DefaultSource, this));
-                else if(taskType is LoggableTaskType.ListInstalledPackages)
-                    Packages.Add(new Package(name, id, oldVersion, DefaultSource, this));
+                output.Add(match);
             }
         }
         logger.AddToStdErr(p.StandardError.ReadToEnd());
         p.WaitForExit();
         logger.Close(p.ExitCode);
-        return Packages;
+        return output;
     }
 
     private Process GetProcess(string fileName, string extraArguments)

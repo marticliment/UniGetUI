@@ -396,8 +396,10 @@ namespace UniGetUI.PackageEngine.Operations
                     WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
                 };
 
-                Process = new Process { StartInfo = await BuildProcessInstance(startInfo) };
-                Process.StartInfo = CoreTools.UpdateEnvironmentVariables(Process.StartInfo);
+                Process = new Process();
+
+                Process.StartInfo = await BuildProcessInstance(startInfo);
+                // Process.StartInfo = CoreTools.UpdateEnvironmentVariables(Process.StartInfo);
 
                 foreach (string infoLine in GenerateProcessLogHeader())
                 {
@@ -422,7 +424,7 @@ namespace UniGetUI.PackageEngine.Operations
                         if (Status is not OperationStatus.Canceled)
                         {
                             LineInfoText = line;
-                            ProcessOutput.Add(new(line, OutputLine.LineType.STDOUT));
+                            if(line.Length > 3) ProcessOutput.Add(new(line, OutputLine.LineType.STDOUT));
                         }
                     }
                 });
@@ -434,7 +436,7 @@ namespace UniGetUI.PackageEngine.Operations
                         if (Status is not OperationStatus.Canceled)
                         {
                             LineInfoText = line;
-                            ProcessOutput.Add(new(line, OutputLine.LineType.STDERR));
+                            if(line.Length > 3) ProcessOutput.Add(new(line, OutputLine.LineType.STDERR));
                         }
                     }
                 });

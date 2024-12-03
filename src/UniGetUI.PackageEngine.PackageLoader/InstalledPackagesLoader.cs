@@ -7,7 +7,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
     public class InstalledPackagesLoader : AbstractPackageLoader
     {
         public InstalledPackagesLoader(IEnumerable<IPackageManager> managers)
-        : base(managers, "INSTALLED_PACKAGES", AllowMultiplePackageVersions: true)
+        : base(managers, "INSTALLED_PACKAGES", AllowMultiplePackageVersions: true, CheckedBydefault: false)
         {
         }
 

@@ -76,7 +76,9 @@ languageFlagsRemap = {
     "zh": "cn",
     "bn": "bd",
     "tg": "ph",
-    "sq": "al"
+    "sq": "al",
+    "kn": "in",
+    "sa": "in"
 }
 
 

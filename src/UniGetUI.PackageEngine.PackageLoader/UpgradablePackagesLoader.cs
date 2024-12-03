@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Interface.Enums;
@@ -9,24 +10,26 @@ namespace UniGetUI.PackageEngine.PackageLoader
     {
         private System.Timers.Timer? UpdatesTimer;
 
+        /// <summary>
+        /// The collection of packages with updates ignored
+        /// </summary>
+        public ConcurrentDictionary<string, IPackage> IgnoredPackages = new();
+
         public UpgradablePackagesLoader(IEnumerable<IPackageManager> managers)
-        : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false)
+        : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false, CheckedBydefault: !Settings.Get("DisableSelectingUpdatesByDefault"))
         {
             FinishedLoading += (_, _) => StartAutoCheckTimeout();
         }
 
         protected override async Task<bool> IsPackageValid(IPackage package)
         {
+            if (package.Version == package.NewVersion) return false;
             if (await package.HasUpdatesIgnoredAsync(package.NewVersion))
             {
+                IgnoredPackages[package.Id] = package;
                 return false;
             }
-
-            if (package.IsUpgradable && package.NewerVersionIsInstalled())
-            {
-                return false;
-            }
-
+            if (package.NewerVersionIsInstalled()) return false;
             return true;
         }
 

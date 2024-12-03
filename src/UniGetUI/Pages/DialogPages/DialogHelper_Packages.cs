@@ -124,13 +124,13 @@ public static partial class DialogHelper
             XamlRoot = Window.XamlRoot,
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
             Title = CoreTools.Translate("Are you sure?"),
-            PrimaryButtonText = CoreTools.Translate("No"),
-            SecondaryButtonText = CoreTools.Translate("Yes"),
-            DefaultButton = ContentDialogButton.Primary,
+            PrimaryButtonText = CoreTools.Translate("Yes"),
+            SecondaryButtonText = CoreTools.Translate("No"),
+            DefaultButton = ContentDialogButton.Secondary,
             Content = CoreTools.Translate("Do you really want to uninstall {0}?", package.Name)
         };
 
-        return await Window.ShowDialogAsync(dialog) is ContentDialogResult.Secondary;
+        return await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary;
     }
 
 
@@ -151,9 +151,9 @@ public static partial class DialogHelper
             XamlRoot = Window.XamlRoot,
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
             Title = CoreTools.Translate("Are you sure?"),
-            PrimaryButtonText = CoreTools.Translate("No"),
-            SecondaryButtonText = CoreTools.Translate("Yes"),
-            DefaultButton = ContentDialogButton.Primary
+            PrimaryButtonText = CoreTools.Translate("Yes"),
+            SecondaryButtonText = CoreTools.Translate("No"),
+            DefaultButton = ContentDialogButton.Secondary,
         };
 
         StackPanel p = new();
@@ -176,7 +176,7 @@ public static partial class DialogHelper
 
         dialog.Content = p;
 
-        return await Window.ShowDialogAsync(dialog) is ContentDialogResult.Secondary;
+        return await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary;
     }
 
     public static async Task<ContentDialogResult> ShowOperationFailed(

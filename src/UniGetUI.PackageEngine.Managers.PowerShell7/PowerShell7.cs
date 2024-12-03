@@ -42,18 +42,18 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 IconId = IconType.PowerShell,
                 ColorIconId = "powershell_color",
                 ExecutableFriendlyName = "pwsh.exe",
-                InstallVerb = "Install-Module",
-                UninstallVerb = "Uninstall-Module",
-                UpdateVerb = "Update-Module",
+                InstallVerb = "Install-PSResource",
+                UninstallVerb = "Uninstall-PSResource",
+                UpdateVerb = "Update-PSResource",
                 ExecutableCallArgs = " -NoProfile -Command",
                 KnownSources = [new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
                                 new ManagerSource(this, "PoshTestGallery", new Uri("https://www.poshtestgallery.com/api/v2"))],
                 DefaultSource = new ManagerSource(this, "PSGallery", new Uri("https://www.powershellgallery.com/api/v2")),
             };
 
-            PackageDetailsProvider = new PowerShell7DetailsProvider(this);
-            SourceProvider = new PowerShell7SourceProvider(this);
-            OperationProvider = new PowerShell7OperationProvider(this);
+            DetailsHelper = new PowerShell7DetailsHelper(this);
+            SourcesHelper = new PowerShell7SourceHelper(this);
+            OperationHelper = new PowerShell7PkgOperationHelper(this);
         }
         protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
         {
@@ -87,7 +87,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                     )
                     process {
                         $URLs = @{}
-                        @(Get-PSRepository).ForEach({$URLs[$_.Name] = $_.SourceLocation})
+                        @(Get-PSRepository).ForEach({$URLs[$_.Name] = If ($_.Uri) {$_.Uri.AbsoluteUri} Else {$_.SourceLocation}})
                         $page = Invoke-WebRequest -Uri ($URLs[$Repository] + "/package/$Name") -UseBasicParsing -ea Ignore
                         [version]$latest = Split-Path -Path ($page.BaseResponse.RequestMessage.RequestUri -replace "$Name." -replace ".nupkg") -Leaf
                         $needsupdate = $Latest -gt $Version
@@ -96,7 +96,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                         }
                     }
                 }
-                Get-InstalledModule | Test-GalleryModuleUpdate
+                Get-PSResource | Test-GalleryModuleUpdate
 
 
                 exit
@@ -131,7 +131,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                     continue;
                 }
 
-                Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], GetSourceOrDefault(elements[3]), this));
+                Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
+                    elements[2], SourcesHelper.Factory.GetSourceOrDefault(elements[3]), this));
             }
 
             logger.AddToStdErr(p.StandardError.ReadToEnd());
@@ -148,13 +149,13 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " Get-InstalledModule",
+                    Arguments = Properties.ExecutableCallArgs + " \"Get-InstalledPSResource | Format-Table -Property Name,Version,Repository\"",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                    StandardOutputEncoding = Encoding.UTF8
                 }
             };
 
@@ -187,7 +188,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                         elements[i] = elements[i].Trim();
                     }
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[1]), elements[1], elements[0], GetSourceOrDefault(elements[2]), this));
+                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
+                        SourcesHelper.Factory.GetSourceOrDefault(elements[2]), this));
                 }
             }
 

@@ -7,7 +7,7 @@
     <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
     <Platforms>x64</Platforms>
    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-<WindowsSdkPackageVersion>10.0.22621.41</WindowsSdkPackageVersion>
+  <WindowsSdkPackageVersion>10.0.26100.53</WindowsSdkPackageVersion>
     <SdkVersion>8.0.401</SdkVersion>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <PublishSelfContained>true</PublishSelfContained>
@@ -29,8 +29,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -55,7 +55,7 @@ namespace UniGetUI
 
                 Logger.ImportantInfo(textart);
                 Logger.ImportantInfo("  ");
-                Logger.ImportantInfo($"Version Code:  {CoreData.VersionNumber}");
+                Logger.ImportantInfo($"Build {CoreData.BuildNumber}");
                 Logger.ImportantInfo($"Encoding Code Page set to {CoreData.CODE_PAGE}");
 
                 // WinRT single-instance fancy stuff
@@ -155,12 +155,12 @@ namespace UniGetUI
 
                 foreach (string path in BasePaths)
                 {
-                    foreach (string old_wingetui_icon in new[] { "WingetUI.lnk", "WingetUI .lnk", "UniGetUI (formerly WingetUI) .lnk" })
+                    foreach (string old_wingetui_icon in new[] { "WingetUI.lnk", "WingetUI .lnk", "UniGetUI (formerly WingetUI) .lnk", "UniGetUI (formerly WingetUI).lnk" })
                     {
                         try
                         {
                             string old_file = Path.Join(path, old_wingetui_icon);
-                            string new_file = Path.Join(path, "UniGetUI (formerly WingetUI).lnk");
+                            string new_file = Path.Join(path, "UniGetUI.lnk");
                             if (!File.Exists(old_file))
                             {
                                 continue;

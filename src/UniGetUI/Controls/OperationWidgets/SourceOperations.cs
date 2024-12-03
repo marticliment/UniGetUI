@@ -17,16 +17,19 @@ namespace UniGetUI.PackageEngine.Operations
     public abstract class SourceOperation : AbstractOperation
     {
         protected IManagerSource Source;
+        protected string OPERATION_ONGOING_STRING = null!;
+
         public SourceOperation(IManagerSource source)
         {
             Source = source;
             MainProcedure();
+            if (OPERATION_ONGOING_STRING is null)
+            {
+                throw new NullReferenceException("OPERATION_ONGOING_STRING must be set to a non-null value in the Initialize method");
+            }
         }
 
-        protected override async Task HandleCancelation()
-        {
-        }
-
+        protected override Task HandleCancelation() => Task.CompletedTask;
 
         protected void ShowErrorNotification(string title, string body)
         {
@@ -78,8 +81,6 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        protected string INSTALLING_STRING = "THIS NEEDS TO BE REDEFINED ON THE CONSTRUCTOR";
-
         protected override void PostProcessStartAction()
         {
             if (Settings.AreProgressNotificationsDisabled())
@@ -94,7 +95,7 @@ namespace UniGetUI.PackageEngine.Operations
                     .AddProgressBar(new AppNotificationProgressBar()
                         .SetStatus(CoreTools.Translate("Please wait..."))
                         .SetValueStringOverride("\uE002")
-                        .SetTitle(INSTALLING_STRING)
+                        .SetTitle(OPERATION_ONGOING_STRING)
                         .SetValue(1.0))
                     .AddArgument("action", NotificationArguments.Show);
                 AppNotification notification = builder.BuildNotification();
@@ -121,10 +122,8 @@ namespace UniGetUI.PackageEngine.Operations
         public event EventHandler<EventArgs>? OperationSucceeded;
 
         public AddSourceOperation(IManagerSource source) : base(source)
-        {
-            INSTALLING_STRING = CoreTools.Translate("Adding source {source} to {manager}",
-                new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
-        }
+        { }
+
         protected override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
@@ -134,12 +133,12 @@ namespace UniGetUI.PackageEngine.Operations
                     await CoreTools.CacheUACForCurrentProcess();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetAddSourceParameters(Source));
+                startInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetAddSourceParameters(Source));
             }
             else
             {
                 startInfo.FileName = Source.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetAddSourceParameters(Source));
+                startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetAddSourceParameters(Source));
             }
 
             return startInfo;
@@ -155,7 +154,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
-            return Task.Run(() => Source.Manager.GetAddSourceOperationVeredict(Source, ReturnCode, Output));
+            return Task.Run(() => Source.Manager.SourcesHelper.GetAddOperationVeredict(Source, ReturnCode, Output));
         }
 
         protected override async Task<AfterFinshAction> HandleFailure()
@@ -193,7 +192,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task Initialize()
         {
-            OperationTitle = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            OperationTitle = OPERATION_ONGOING_STRING = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
             IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
         }
     }
@@ -204,10 +203,8 @@ namespace UniGetUI.PackageEngine.Operations
         public event EventHandler<EventArgs>? OperationSucceeded;
 
         public RemoveSourceOperation(IManagerSource source) : base(source)
-        {
-            INSTALLING_STRING = CoreTools.Translate("Removing source {source} from {manager}",
-                new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name }});
-        }
+        { }
+
         protected override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
@@ -217,13 +214,13 @@ namespace UniGetUI.PackageEngine.Operations
                     await CoreTools.CacheUACForCurrentProcess();
                 }
                 startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetRemoveSourceParameters(Source));
+                startInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetRemoveSourceParameters(Source));
 
             }
             else
             {
                 startInfo.FileName = Source.Manager.Status.ExecutablePath;
-                startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.GetRemoveSourceParameters(Source));
+                startInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetRemoveSourceParameters(Source));
             }
 
             return startInfo;
@@ -239,7 +236,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
-            return Task.Run(() => Source.Manager.GetRemoveSourceOperationVeredict(Source, ReturnCode, Output));
+            return Task.Run(() => Source.Manager.SourcesHelper.GetRemoveOperationVeredict(Source, ReturnCode, Output));
         }
 
         protected override async Task<AfterFinshAction> HandleFailure()
@@ -248,14 +245,14 @@ namespace UniGetUI.PackageEngine.Operations
 
             ShowErrorNotification(
                 CoreTools.Translate("Removal failed"),
-                CoreTools.Translate("Could not add remove {source} from {manager}",
+                CoreTools.Translate("Could not remove source {source} from {manager}",
                     new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
             );
 
             ContentDialogResult result = await DialogHelper.ShowOperationFailed(
                 ProcessOutput,
                 CoreTools.Translate("Source removal failed"),
-                CoreTools.Translate("Could remove source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
+                CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
             );
 
             return result == ContentDialogResult.Primary ? AfterFinshAction.Retry : AfterFinshAction.ManualClose;
@@ -278,7 +275,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task Initialize()
         {
-            OperationTitle = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            OperationTitle = OPERATION_ONGOING_STRING = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
             IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
         }
     }

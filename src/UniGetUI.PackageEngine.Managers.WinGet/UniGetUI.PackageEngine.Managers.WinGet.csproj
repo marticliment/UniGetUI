@@ -7,8 +7,8 @@
     <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
     <Platforms>x64</Platforms>
    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-<WindowsSdkPackageVersion>10.0.22621.41</WindowsSdkPackageVersion>
-      <WindowsSdkPackageVersion>10.0.22621.41</WindowsSdkPackageVersion>
+  <WindowsSdkPackageVersion>10.0.26100.53</WindowsSdkPackageVersion>
+        <WindowsSdkPackageVersion>10.0.26100.53</WindowsSdkPackageVersion>
     <SdkVersion>8.0.401</SdkVersion>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <PublishSelfContained>true</PublishSelfContained>

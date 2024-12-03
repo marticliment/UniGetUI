@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -21,7 +22,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
     public class Scoop : PackageManager
     {
         public static new string[] FALSE_PACKAGE_IDS = ["No"];
-        public static new string[] FALSE_PACKAGE_VERSIONS = ["Matches"];
+        public static new string[] FALSE_PACKAGE_VERSIONS = ["Matches", "Install", "failed", "failed,", "Manifest", "removed", "removed,"];
 
         private long LastScoopSourceUpdateTime;
 
@@ -84,9 +85,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 DefaultSource = new ManagerSource(this, "main", new Uri("https://github.com/ScoopInstaller/Main")),
             };
 
-            SourceProvider = new ScoopSourceProvider(this);
-            PackageDetailsProvider = new ScoopPackageDetailsProvider(this);
-            OperationProvider = new ScoopOperationProvider(this);
+            SourcesHelper = new ScoopSourceHelper(this);
+            DetailsHelper = new ScoopPkgDetailsHelper(this);
+            OperationHelper = new ScoopPkgOperationHelper(this);
         }
 
         protected override IEnumerable<Package> FindPackages_UnSafe(string query)
@@ -143,7 +144,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 if (line.StartsWith("'"))
                 {
                     string sourceName = line.Split(" ")[0].Replace("'", "");
-                    source = GetSourceOrDefault(sourceName);
+                    source = SourcesHelper.Factory.GetSourceOrDefault(sourceName);
                 }
                 else if (line.Trim() != "")
                 {
@@ -158,12 +159,18 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         elements[i] = elements[i].Trim();
                     }
 
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    if (FALSE_PACKAGE_IDS.Contains(elements[0])
+                        || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
                     {
                         continue;
                     }
 
-                    Packages.Add(new Package(Core.Tools.CoreTools.FormatAsName(elements[0]), elements[0], elements[1].Replace("(", "").Replace(")", ""), source, this));
+                    Packages.Add(new Package(
+                        CoreTools.FormatAsName(elements[0]),
+                        elements[0],
+                        elements[1].Replace("(", "").Replace(")", ""),
+                        source,
+                        this));
                 }
             }
             logger.AddToStdErr(p.StandardError.ReadToEnd());
@@ -227,7 +234,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         elements[i] = elements[i].Trim();
                     }
 
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
+                    if (FALSE_PACKAGE_IDS.Contains(elements[0])
+                        || FALSE_PACKAGE_VERSIONS.Contains(elements[1])
+                        || FALSE_PACKAGE_VERSIONS.Contains(elements[2]))
                     {
                         continue;
                     }
@@ -235,7 +244,14 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                     if (InstalledPackages.TryGetValue(elements[0] + "." + elements[1], out IPackage? InstalledPackage))
                     {
                         OverridenInstallationOptions options = new(InstalledPackage.OverridenOptions.Scope);
-                        Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], elements[2], InstalledPackage.Source, this, options));
+                        Packages.Add(new Package(
+                            CoreTools.FormatAsName(elements[0]),
+                            elements[0],
+                            elements[1],
+                            elements[2],
+                            InstalledPackage.Source,
+                            this,
+                            options));
                     }
                     else
                     {
@@ -250,6 +266,8 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         }
 
         protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+            => TaskRecycler<IEnumerable<Package>>.RunOrAttach(_getInstalledPackages_UnSafe, 15);
+        private IEnumerable<Package> _getInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
 
@@ -303,7 +321,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                         line.Contains("Global install") ? PackageScope.Global : PackageScope.User
                     );
 
-                    Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1], GetSourceOrDefault(elements[2]), this, options));
+                    Packages.Add(new Package(
+                        CoreTools.FormatAsName(elements[0]),
+                        elements[0],
+                        elements[1],
+                        SourcesHelper.Factory.GetSourceOrDefault(elements[2]),
+                        this,
+                        options));
                 }
             }
             logger.AddToStdErr(p.StandardError.ReadToEnd());

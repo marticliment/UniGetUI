@@ -83,6 +83,7 @@ namespace UniGetUI.Interface.Enums
         Warning_Round = '\uE93F',
         WinGet = '\uE940',
         Rust = '\uE941',
+        Vcpkg = '\uE942'
     }
 
     public class NotificationArguments
@@ -90,5 +91,6 @@ namespace UniGetUI.Interface.Enums
         public const string Show = "openUniGetUI";
         public const string ShowOnUpdatesTab = "openUniGetUIOnUpdatesTab";
         public const string UpdateAllPackages = "updateAll";
+        public const string ReleaseSelfUpdateLock = "releaseSelfUpdateLock";
     }
 }

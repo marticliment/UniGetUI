@@ -9,7 +9,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         private string QUERY_TEXT = string.Empty;
 
         public DiscoverablePackagesLoader(IEnumerable<IPackageManager> managers)
-        : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false)
+        : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false, CheckedBydefault: false)
         { }
 
         public async Task ReloadPackages(string query)

@@ -15,45 +15,33 @@ namespace UniGetUI.Interface.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public abstract partial class BaseLogPage : Page, IPageWithKeyboardShortcuts
+    public abstract partial class BaseLogPage : IKeyboardShortcutListener, IEnterLeaveListener
     {
         protected int LOG_LEVEL = 4;
-        private readonly bool LogLevelEnabled;
 
         protected abstract void LoadLogLevels();
-        public abstract void LoadLog();
+        public abstract void LoadLog(bool isReload = false);
 
         public BaseLogPage(bool log_level_enabled)
         {
-            LogLevelEnabled = log_level_enabled;
             InitializeComponent();
-            if (LogLevelEnabled)
-            {
-                LoadLogLevels();
-            }
-            else
-            {
-                LogLevelPane.Visibility = Visibility.Collapsed;
-            }
-            LoadLog();
+            LogLevelPane.Visibility = log_level_enabled ? Visibility.Visible : Visibility.Collapsed;
+            if (log_level_enabled) LoadLogLevels();
+        }
+
+        protected void SelectLogLevelByName(string name)
+        {
+            LogLevelCombo.SelectedValue = name;
         }
 
         public void ReloadTriggered()
-        {
-            LoadLog();
-        }
+            => LoadLog(isReload: true);
 
         public void SelectAllTriggered()
-        {
-            LogTextBox.SelectAll();
-        }
+            => LogTextBox.SelectAll();
 
         public void SearchTriggered()
         { }
-
-        public void SetText(string body)
-        {
-        }
 
         // Dark theme colors
         protected Color DARK_GREY = Color.FromArgb(255, 130, 130, 130);
@@ -101,19 +89,22 @@ namespace UniGetUI.Interface.Pages
                     FileName = "explorer.exe",
                     Arguments = @$"/select, ""{file.Path}"""
                 });
-
             }
         }
 
         public void ReloadButton_Click(object sender, RoutedEventArgs e)
-        {
-            LoadLog();
-        }
+            => LoadLog();
 
         private void LogLevelCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             LOG_LEVEL = LogLevelCombo.SelectedIndex + 1;
             LoadLog();
         }
+
+        public void OnEnter()
+            => LoadLog();
+
+        public void OnLeave()
+            => LogTextBox.Blocks.Clear();
     }
 }

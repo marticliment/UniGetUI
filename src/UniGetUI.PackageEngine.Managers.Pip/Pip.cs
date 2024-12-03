@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
+using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
@@ -18,6 +19,17 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         public Pip()
         {
+            Dependencies = [
+                // parse_pip_search is required for pip package finding to work
+                new ManagerDependency(
+                    "parse-pip-search",
+                    Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                    "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {python.exe "
+                        + "-m pip install parse_pip_search; if($error.count -ne 0){pause}}\"",
+                    "python -m pip install parse_pip_search",
+                    async () => (await CoreTools.WhichAsync("parse_pip_search.exe")).Item1)
+            ];
+
             Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
@@ -42,8 +54,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
             };
 
-            PackageDetailsProvider = new PipPackageDetailsProvider(this);
-            OperationProvider = new PipOperationProvider(this);
+            DetailsHelper = new PipPkgDetailsHelper(this);
+            OperationHelper = new PipPkgOperationHelper(this);
         }
 
         protected override IEnumerable<Package> FindPackages_UnSafe(string query)

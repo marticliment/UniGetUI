@@ -11,6 +11,7 @@ namespace UniGetUI.Core.Data
             {"H.NotifyIcon",            "MIT"},
             {"Windows App Sdk",         "MIT"},
             {"NancyFx",                 "MIT"},
+            {"PhotoSauce.MagicScaler",  "MIT"},
             {"YamlDotNet",              "MIT"},
             {"InnoDependencyInstaller", "CPOL 1.02" },
 
@@ -40,6 +41,7 @@ namespace UniGetUI.Core.Data
             {"H.NotifyIcon",            new Uri("https://github.com/HavenDV/H.NotifyIcon/blob/master/LICENSE.md")},
             {"Windows App Sdk",         new Uri("https://github.com/microsoft/WindowsAppSDK/blob/main/LICENSE")},
             {"NancyFx",                 new Uri("https://github.com/NancyFx/Nancy/blob/master/license.txt")},
+            {"PhotoSauce.MagicScaler",  new Uri("https://github.com/saucecontrol/PhotoSauce/blob/master/license")},
             {"YamlDotNet",              new Uri("https://github.com/aaubry/YamlDotNet/blob/master/LICENSE.txt") },
             {"InnoDependencyInstaller", new Uri("https://github.com/DomGries/InnoDependencyInstaller/blob/master/LICENSE.md") },
 
@@ -69,6 +71,7 @@ namespace UniGetUI.Core.Data
             {"H.NotifyIcon",            new Uri("https://github.com/HavenDV/H.NotifyIcon/")},
             {"Windows App Sdk",         new Uri("https://github.com/microsoft/WindowsAppSDK/")},
             {"NancyFx",                 new Uri("https://github.com/NancyFx/Nancy/")},
+            {"PhotoSauce.MagicScaler",  new Uri("https://github.com/saucecontrol/PhotoSauce/")},
             {"YamlDotNet",              new Uri("https://github.com/aaubry/YamlDotNet/") },
             {"InnoDependencyInstaller", new Uri("https://github.com/DomGries/InnoDependencyInstaller")},
 

@@ -1,5 +1,8 @@
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Xml;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -22,6 +25,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         private readonly long __hash;
         private readonly long __versioned_hash;
         private readonly string ignoredId;
+        private readonly string _iconId;
+
+        private static ConcurrentDictionary<int, Uri?> _cachedIconPaths = new();
 
         private IPackageDetails? __details;
         public IPackageDetails Details
@@ -32,17 +38,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public PackageTag Tag
         {
             get => __tag;
-            set
-            {
-                __tag = value;
-                OnPropertyChanged(nameof(Tag));
-            }
+            set { __tag = value; OnPropertyChanged(); }
         }
 
         public bool IsChecked
         {
-            get { return __is_checked; }
-            set { __is_checked = value; OnPropertyChanged(nameof(IsChecked)); }
+            get => __is_checked;
+            set { __is_checked = value; OnPropertyChanged(); }
         }
 
         private OverridenInstallationOptions _overriden_options;
@@ -91,11 +93,19 @@ namespace UniGetUI.PackageEngine.PackageClasses
             AutomationName = CoreTools.Translate("Package {name} from {manager}",
                 new Dictionary<string, object?> { { "name", Name }, { "manager", Source.AsString_DisplayName } });
 
-            __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id);
-            __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.Name + "\\" + Id + "\\" + (this as Package).Version);
+            __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.AsString_DisplayName + "\\" + Id);
+            __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.AsString_DisplayName + "\\" + Id + "\\" + (this as Package).Version);
             IsUpgradable = false;
 
             ignoredId = IgnoredUpdatesDatabase.GetIgnoredIdForPackage(this);
+
+            _iconId = Manager.Name switch
+            {
+                "Winget" => string.Join('.', id.ToLower().Split(".")[1..]),
+                "Scoop" => id.ToLower().Replace(".app", ""),
+                "Chocolatey" => id.ToLower().Replace(".install", "").Replace(".portable", ""),
+                _ => id.ToLower()
+            };
         }
 
         /// <summary>
@@ -114,30 +124,19 @@ namespace UniGetUI.PackageEngine.PackageClasses
             IsUpgradable = true;
             NewVersion = new_version;
             NewVersionAsFloat = CoreTools.GetVersionStringAsFloat(new_version);
-
-            // Packages in the updates tab are checked by default
-            IsChecked = true;
         }
 
         public long GetHash()
-        {
-            return __hash;
-        }
+            => __hash;
 
         public long GetVersionedHash()
-        {
-            return __versioned_hash;
-        }
+            => __versioned_hash;
 
         public bool Equals(IPackage? other)
-        {
-            return __versioned_hash == other?.GetHash();
-        }
+            => __versioned_hash == other?.GetHash();
 
         public override int GetHashCode()
-        {
-            return (int)__versioned_hash;
-        }
+            => (int)__versioned_hash;
 
         /// <summary>
         /// Check whether two package instances represent the same package.
@@ -149,55 +148,46 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <param name="other">A package</param>
         /// <returns>Whether the two instances refer to the same instance</returns>
         public bool IsEquivalentTo(IPackage? other)
-        {
-            return __hash == other?.GetHash();
-        }
+            => __hash == other?.GetHash();
 
         public string GetIconId()
-        {
-            string iconId = Id.ToLower();
-            if (Manager.Name == "Winget")
-            {
-                iconId = string.Join('.', iconId.Split(".")[1..]);
-            }
-            else if (Manager.Name == "Chocolatey")
-            {
-                iconId = iconId.Replace(".install", "").Replace(".portable", "");
-            }
-            else if (Manager.Name == "Scoop")
-            {
-                iconId = iconId.Replace(".app", "");
-            }
-
-            Logger.Debug($"Icon id for package={Id} is {iconId}");
-            return iconId;
-        }
+            => _iconId;
 
         public virtual Uri GetIconUrl()
         {
+            return GetIconUrlIfAny() ?? new Uri("ms-appx:///Assets/Images/package_color.png");
+        }
+
+        public virtual Uri? GetIconUrlIfAny()
+        {
+            if (_cachedIconPaths.TryGetValue(this.GetHashCode(), out Uri? path))
+            {
+                return path;
+            }
+            var CachedIcon = LoadIconUrlIfAny();
+            _cachedIconPaths.TryAdd(this.GetHashCode(), CachedIcon);
+            return CachedIcon;
+        }
+
+        private Uri? LoadIconUrlIfAny()
+        {
             try
             {
-                CacheableIcon? icon = Manager.GetPackageIconUrl(this);
-                string path = IconCacheEngine.DownloadIconOrCache(icon, Manager.Name, Id).GetAwaiter().GetResult();
-
-                Uri Icon;
-                if (path == "") Icon = new Uri("ms-appx:///Assets/Images/package_color.png");
-                else Icon = new Uri("file:///" + path);
-
-                Logger.Debug($"Icon for package {Id} was loaded from {Icon}");
-                return Icon;
+                CacheableIcon? icon = TaskRecycler<CacheableIcon?>.RunOrAttach(Manager.DetailsHelper.GetIcon, this);
+                string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, Manager.Name, Id);
+                return path is null? null: new Uri("file:///" + path);
             }
             catch (Exception ex)
             {
                 Logger.Error($"An error occurred while retrieving the icon for package {Id}");
                 Logger.Error(ex);
-                return new Uri("ms-appx:///Assets/Images/package_color.png");
+                return null;
             }
         }
 
         public virtual IEnumerable<Uri> GetScreenshots()
         {
-            return Manager.GetPackageScreenshotsUrl(this);
+            return Manager.DetailsHelper.GetScreenshots(this);
         }
 
         public virtual async Task AddToIgnoredUpdatesAsync(string version = "*")
@@ -274,19 +264,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
         }
 
         public IPackage? GetInstalledPackage()
-        {
-            return PackageCacher.GetInstalledPackageOrNull(this);
-        }
+            => PackageCacher.GetInstalledPackageOrNull(this);
 
         public IPackage? GetAvailablePackage()
-        {
-            return PackageCacher.GetAvailablePackageOrNull(this);
-        }
+            => PackageCacher.GetAvailablePackageOrNull(this);
 
         public IPackage? GetUpgradablePackage()
-        {
-            return PackageCacher.GetUpgradablePackageOrNull(this);
-        }
+            => PackageCacher.GetUpgradablePackageOrNull(this);
 
         public virtual void SetTag(PackageTag tag)
         {
@@ -296,9 +280,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public virtual bool NewerVersionIsInstalled()
         {
             if (!IsUpgradable)
-            {
                 return false;
-            }
 
             return PackageCacher.NewerVersionIsInstalled(this);
         }
@@ -330,6 +312,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Version = Version,
                 Source = Source.Name,
             };
+        }
+
+        public static void ResetIconCache()
+        {
+            _cachedIconPaths.Clear();
         }
     }
 }

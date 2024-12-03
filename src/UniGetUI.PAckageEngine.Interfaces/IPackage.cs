@@ -75,6 +75,14 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// <returns>An always-valid URI object, pointing to a file:// or to a ms-appx:// URL</returns>
         public Uri GetIconUrl();
 
+
+        /// <summary>
+        /// Get the package's icon url. If the package has no icon, null is returned.
+        /// After calling this method, the returned URL (if any) points to a location on the local machine
+        /// </summary>
+        /// <returns>An always-valid URI object, pointing to a file:// or to a ms-appx:// URL</returns>
+        public Uri? GetIconUrlIfAny();
+
         /// <summary>
         /// Retrieves a list og URIs representing the available screenshots for this package.
         /// </summary>
