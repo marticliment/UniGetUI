@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Data;
 using System.Text.Json;
+using Microsoft.VisualBasic.CompilerServices;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -132,20 +133,11 @@ public static class DesktopShortcutsDatabase
     /// <returns>A list of desktop shortcut paths</returns>
     public static List<string> GetShortcuts()
     {
+        List<string> shortcuts = new();
         string UserDesktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
         string CommonDesktop = Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory);
-        List<string> shortcuts = new();
-
-        foreach (var shortcut in Directory.EnumerateFiles(UserDesktop, "*.lnk"))
-        {
-            shortcuts.Add(Path.Join(UserDesktop, shortcut));
-        }
-
-        foreach (var shortcut in Directory.EnumerateFiles(CommonDesktop, "*.lnk"))
-        {
-            shortcuts.Add(Path.Join(CommonDesktop, shortcut));
-        }
-
+        shortcuts.AddRange(Directory.EnumerateFiles(UserDesktop, "*.lnk"));
+        shortcuts.AddRange(Directory.EnumerateFiles(CommonDesktop, "*.lnk"));
         return shortcuts;
     }
 
@@ -188,6 +180,7 @@ public static class DesktopShortcutsDatabase
                     Logger.Debug("Refraining from deleting new shortcut " + shortcut + ": user disabled its deletion");
                     break;
                 case Status.Unknown:
+                    if(UnknownShortcuts.Contains(shortcut)) continue;
                     Logger.Info("Marking the shortcut " + shortcut + " to be asked to be deleted");
                     UnknownShortcuts.Add(shortcut);
                     break;

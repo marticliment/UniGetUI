@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using UniGetUI.Core.Logging;
@@ -26,20 +27,18 @@ namespace UniGetUI.Interface
         public event EventHandler? Close;
         private ObservableCollection<ShortcutEntry> desktopShortcuts = new ObservableCollection<ShortcutEntry>();
 
-        private bool NewOnly = false;
+        private bool NewOnly;
 
         public DesktopShortcutsManager(List<string>? NewShortcuts)
         {
             if (NewShortcuts is not null) NewOnly = true;
-
-
             InitializeComponent();
             DeletableDesktopShortcutsList.ItemsSource = desktopShortcuts;
             DeletableDesktopShortcutsList.DoubleTapped += DeletableDesktopShortcutsList_DoubleTapped;
             UpdateData(NewShortcuts);
         }
 
-        public void UpdateData(List<string>? NewShortcuts)
+        private void UpdateData(List<string>? NewShortcuts)
         {
             desktopShortcuts.Clear();
 
@@ -73,12 +72,12 @@ namespace UniGetUI.Interface
             }
         }
 
-        private void CloseButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close?.Invoke(this, EventArgs.Empty);
         }
 
-        private void YesResetButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void YesResetButton_Click(object sender, RoutedEventArgs e)
         {
             foreach (ShortcutEntry shortcut in desktopShortcuts.ToArray())
             {
