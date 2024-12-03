@@ -20297,7 +20297,7 @@
             "images": []
         },
         "javaruntimeenvironment": {
-            "icon": "https://www.eclipse.org/xtend/images/java8_logo.png",
+            "icon": "https://cdn-icons-png.flaticon.com/256/226/226777.png",
             "images": []
         },
         "javascriptsnippetpack": {
@@ -47801,7 +47801,7 @@
             "images": []
         },
         "wsl": {
-            "icon": "https://community.chocolatey.org/content/packageimages/wsl.1.0.1.png",
+            "icon": "https://i.postimg.cc/c4TB1sTf/wsl-icon.png",
             "images": []
         },
         "wsl-alpine": {
