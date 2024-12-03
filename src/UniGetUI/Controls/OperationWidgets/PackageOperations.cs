@@ -27,6 +27,8 @@ namespace UniGetUI.PackageEngine.Operations
 
     public abstract class PackageOperation : AbstractOperation
     {
+        protected List<string> DesktopShortcutsBeforeStart = [];
+
         protected readonly IPackage Package;
         protected readonly IInstallationOptions Options;
         protected readonly OperationType Role;
@@ -283,6 +285,11 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
+            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            {
+                DesktopShortcutsDatabase.TryRemoveNewShortcuts(DesktopShortcutsBeforeStart);
+            }
+
             return Task.FromResult(AfterFinshAction.TimeoutClose);
         }
 
@@ -291,12 +298,16 @@ namespace UniGetUI.PackageEngine.Operations
             ONGOING_PROGRESS_STRING = CoreTools.Translate("{0} is being installed", Package.Name);
             OperationTitle = CoreTools.Translate("{package} Installation", new Dictionary<string, object?> { { "package", Package.Name } });
             IconSource = await Task.Run(Package.GetIconUrl);
+
+            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            {
+                DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcuts();
+            }
         }
     }
 
     public class UpdatePackageOperation : PackageOperation
     {
-        List<string> DesktopShortcutsPreUpdate = [];
 
         public UpdatePackageOperation(
             IPackage package,
@@ -362,28 +373,9 @@ namespace UniGetUI.PackageEngine.Operations
 
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
-                List<string> DesktopShortcutsPostUpdate = DesktopShortcutsDatabase.GetDesktopShortcuts();
-
-                foreach (string shortcut in DesktopShortcutsPostUpdate)
-                {
-                    if (!DesktopShortcutsPreUpdate.Contains(shortcut))
-                    {
-                        switch (DesktopShortcutsDatabase.CanShortcutBeDeleted(shortcut))
-                        {
-                            case DesktopShortcutsDatabase.ShortcutDeletableStatus.Deletable:
-                                DesktopShortcutsDatabase.DeleteShortcut(shortcut);
-                                break;
-                            case DesktopShortcutsDatabase.ShortcutDeletableStatus.Undeletable:
-                                Logger.Debug("Refraining from deleting new shortcut " + shortcut + ": user disabled its deletion");
-                                break;
-                            case DesktopShortcutsDatabase.ShortcutDeletableStatus.Unknown:
-                                Logger.Info("Marking the shortcut " + shortcut + " to be asked to be deleted");
-                                DesktopShortcutsDatabase.AddToAwaitingVerdicts(shortcut);
-                                break;
-                        }
-                    }
-                }
+                DesktopShortcutsDatabase.TryRemoveNewShortcuts(DesktopShortcutsBeforeStart);
             }
+
 
             return AfterFinshAction.TimeoutClose;
         }
@@ -396,7 +388,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
-                DesktopShortcutsPreUpdate = DesktopShortcutsDatabase.GetDesktopShortcuts();
+                DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcuts();
             }
         }
     }
