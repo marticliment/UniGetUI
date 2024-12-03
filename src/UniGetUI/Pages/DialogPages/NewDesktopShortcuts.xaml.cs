@@ -50,11 +50,11 @@ namespace UniGetUI.Interface
             }
             foreach (var shortcut in desktopShortcuts)
             {
-                if (DesktopShortcutsDatabase.CanShortcutBeDeleted(shortcut.ShortcutPath) == DesktopShortcutsDatabase.ShortcutDeletableStatus.Unknown)
+                if (DesktopShortcutsDatabase.GetStatus(shortcut.ShortcutPath) == DesktopShortcutsDatabase.Status.Unknown)
                 {
                     DesktopShortcutsDatabase.Add(shortcut.ShortcutPath, false);
                 }
-                DesktopShortcutsDatabase.RemoveFromAwaitingVerdicts(shortcut.ShortcutPath);
+                DesktopShortcutsDatabase.RemoveFromUnknownShortcuts(shortcut.ShortcutPath);
             }
         }
 

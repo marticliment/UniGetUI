@@ -9,14 +9,14 @@ namespace UniGetUI.PackageEngine.Classes.Packages.Classes;
 
 public static class DesktopShortcutsDatabase
 {
-    public enum ShortcutDeletableStatus
+    public enum Status
     {
-        Undeletable, // The user has explicitly requested this shortcut not be deleted
-        Deletable, // The user has allowed the shortcut to be deleted
+        Maintain, // The user has explicitly requested this shortcut not be deleted
+        Delete, // The user has allowed the shortcut to be deleted
         Unknown, // The user has not said whether they want this shortcut to be deleted
     }
 
-    private static List<string> AwaitingVerdictShortcuts = [];
+    private static List<string> UnknownShortcuts = [];
 
     public static IReadOnlyDictionary<string, bool> GetDatabase()
     {
@@ -112,17 +112,17 @@ public static class DesktopShortcutsDatabase
     /// </summary>
     /// <param name="shortcutPath">The path of the shortcut to be deleted</param>
     /// <returns>True if the package is ignored, false otherwhise</returns>
-    public static ShortcutDeletableStatus CanShortcutBeDeleted(string shortcutPath)
+    public static Status GetStatus(string shortcutPath)
     {
         // Check if the package is ignored
         if (Settings.DictionaryContainsKey<string, bool>("DeletableDesktopShortcuts", shortcutPath))
         {
             bool canDelete = Settings.GetDictionaryItem<string, bool>("DeletableDesktopShortcuts", shortcutPath);
-            return canDelete ? ShortcutDeletableStatus.Deletable : ShortcutDeletableStatus.Undeletable;
+            return canDelete ? Status.Delete : Status.Maintain;
         }
         else
         {
-            return ShortcutDeletableStatus.Unknown;
+            return Status.Unknown;
         }
     }
 
@@ -130,31 +130,10 @@ public static class DesktopShortcutsDatabase
     /// Get a list of shortcuts (.lnk files only) currently on the user's desktop
     /// </summary>
     /// <returns>A list of desktop shortcut paths</returns>
-    public static List<string> GetDesktopShortcuts()
+    public static List<string> GetShortcuts()
     {
         string DesktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-        // If you want to search in other places for desktop files, for example the start menu, just add to this list
-        IEnumerable<string> Files = Directory.EnumerateFiles(DesktopPath);
-        List<string> DesktopShortcuts = [];
-
-        foreach (string file in Files)
-        {
-            if (Path.GetExtension(file) == ".lnk")
-            {
-                DesktopShortcuts.Add(file);
-            }
-        }
-
-        return DesktopShortcuts;
-    }
-
-    /// <summary>
-    /// Add a shortcut to a list of shortcuts whose deletion verdicts are unknown (as in, the user needs to be asked about deleting them when their operations finish)
-    /// </summary>
-    /// <param name="shortcutPath">The path of the shortcut to be asked about deletion</param>
-    public static void AddToAwaitingVerdicts(string shortcutPath)
-    {
-        AwaitingVerdictShortcuts.Add(shortcutPath);
+        return Directory.EnumerateFiles(DesktopPath, "*.lnk").ToList();
     }
 
     /// <summary>
@@ -162,9 +141,9 @@ public static class DesktopShortcutsDatabase
     /// </summary>
     /// <param name="shortcutPath">The path of the shortcut to be asked about deletion</param>
     /// <returns>True if it was found, false otherwise</returns>
-    public static bool RemoveFromAwaitingVerdicts(string shortcutPath)
+    public static bool RemoveFromUnknownShortcuts(string shortcutPath)
     {
-        return AwaitingVerdictShortcuts.Remove(shortcutPath);
+        return UnknownShortcuts.Remove(shortcutPath);
     }
 
     /// <summary>
@@ -173,6 +152,33 @@ public static class DesktopShortcutsDatabase
     /// <returns>The list of shortcuts awaiting verdicts</returns>
     public static List<string> GetAwaitingVerdicts()
     {
-        return AwaitingVerdictShortcuts;
+        return UnknownShortcuts;
+    }
+
+    /// <summary>
+    /// Will attempt to remove new desktop shortcuts, if applicable.
+    /// </summary>
+    /// <param name="PreviousShortCutList"></param>
+    public static void TryRemoveNewShortcuts(IEnumerable<string> PreviousShortCutList)
+    {
+        HashSet<string> ShortcutSet = PreviousShortCutList.ToHashSet();
+        List<string> CurrentShortcutList = DesktopShortcutsDatabase.GetShortcuts();
+        foreach (string shortcut in CurrentShortcutList)
+        {
+            if (ShortcutSet.Contains(shortcut)) continue;
+            switch (DesktopShortcutsDatabase.GetStatus(shortcut))
+            {
+                case Status.Delete:
+                    DesktopShortcutsDatabase.DeleteShortcut(shortcut);
+                    break;
+                case Status.Maintain:
+                    Logger.Debug("Refraining from deleting new shortcut " + shortcut + ": user disabled its deletion");
+                    break;
+                case Status.Unknown:
+                    Logger.Info("Marking the shortcut " + shortcut + " to be asked to be deleted");
+                    UnknownShortcuts.Add(shortcut);
+                    break;
+            }
+        }
     }
 }
