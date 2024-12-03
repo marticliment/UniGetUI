@@ -145,42 +145,6 @@ namespace UniGetUI.Core.Data
             }
         }
 
-        /// <summary>
-        /// The file where the ignored package updates database is stored. If the file does not exist, it will be created automatically.
-        /// </summary>
-        public static string IgnoredUpdatesDatabaseFile
-        {
-            get
-            {
-                // Calling the UniGetUIDataDirectory will create the directory if it does not exist
-                string file_path = Path.Join(UniGetUIDataDirectory, "IgnoredPackageUpdates.json");
-                if (!File.Exists(file_path))
-                {
-                    File.WriteAllText(file_path, "{}");
-                }
-
-                return file_path;
-            }
-        }
-
-        /// <summary>
-        /// The file where the deletable desktop shortcuts database is stored. If the file does not exist, it will be created automatically.
-        /// </summary>
-        public static string DesktopShortcutsDatabaseFile
-        {
-            get
-            {
-                // Calling the UniGetUIDataDirectory will create the directory if it does not exist
-                string file_path = Path.Join(UniGetUIDataDirectory, "DeletableDesktopShortcuts.json");
-                if (!File.Exists(file_path))
-                {
-                    File.WriteAllText(file_path, "{}");
-                }
-
-                return file_path;
-            }
-        }
-
         public static bool IsDaemon;
 
         /// <summary>
