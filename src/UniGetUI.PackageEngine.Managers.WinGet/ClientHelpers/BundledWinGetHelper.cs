@@ -106,7 +106,15 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                     source = Manager.SourcesHelper.Factory.GetSourceOrDefault(sourceName);
                 }
 
-                Packages.Add(new Package(name, id, version, newVersion, source, Manager));
+                var package = new Package(name, id, version, newVersion, source, Manager);
+                if (!WinGetPkgOperationHelper.UpdateAlreadyInstalled(package))
+                {
+                    Packages.Add(package);
+                }
+                else
+                {
+                    Logger.Warn($"WinGet package {package.Id} not being shown as an updated as this version has already been marked as installed");
+                }
             }
             OldLine = line;
         }

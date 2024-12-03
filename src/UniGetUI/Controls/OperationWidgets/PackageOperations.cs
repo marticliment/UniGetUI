@@ -47,6 +47,12 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 throw new NullReferenceException("ONGOING_PROGRESS_STRING must be set to a non-null value in the Initialize method");
             }
+
+            OutputDialog.SecondaryButtonText = CoreTools.Translate("Package details");
+            OutputDialog.SecondaryButtonClick += (_, _) =>
+            {
+                DialogHelper.ShowPackageDetails(Package, Role);
+            };
         }
 
         public PackageOperation(
@@ -353,10 +359,6 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            if (Package.Version == "Unknown")
-            {
-                await Package.AddToIgnoredUpdatesAsync(Package.NewVersion);
-            }
 
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {

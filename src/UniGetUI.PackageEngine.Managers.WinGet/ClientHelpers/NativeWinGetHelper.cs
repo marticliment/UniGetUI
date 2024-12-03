@@ -159,7 +159,8 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             if (nativePackage.IsUpdateAvailable)
             {
                 IManagerSource source;
-                source = Manager.SourcesHelper.Factory.GetSourceOrDefault(nativePackage.DefaultInstallVersion.PackageCatalog.Info.Name);
+                source = Manager.SourcesHelper.Factory.GetSourceOrDefault(nativePackage.DefaultInstallVersion
+                    .PackageCatalog.Info.Name);
 
                 var UniGetUIPackage = new Package(
                     nativePackage.Name,
@@ -168,9 +169,18 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
                     nativePackage.DefaultInstallVersion.Version,
                     source,
                     Manager);
-                NativePackageHandler.AddPackage(UniGetUIPackage, nativePackage);
-                packages.Add(UniGetUIPackage);
-                logger.Log($"Found package {nativePackage.Name} {nativePackage.Id} on source {source.Name}, from version {nativePackage.InstalledVersion.Version} to version {nativePackage.DefaultInstallVersion.Version}");
+
+                if (!WinGetPkgOperationHelper.UpdateAlreadyInstalled(UniGetUIPackage))
+                {
+                    NativePackageHandler.AddPackage(UniGetUIPackage, nativePackage);
+                    packages.Add(UniGetUIPackage);
+                    logger.Log(
+                        $"Found package {nativePackage.Name} {nativePackage.Id} on source {source.Name}, from version {nativePackage.InstalledVersion.Version} to version {nativePackage.DefaultInstallVersion.Version}");
+                }
+                else
+                {
+                    Logger.Warn($"WinGet package {nativePackage.Id} not being shown as an updated as this version has already been marked as installed");
+                }
             }
         }
 
