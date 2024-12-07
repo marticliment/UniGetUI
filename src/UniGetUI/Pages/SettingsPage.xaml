@@ -228,6 +228,12 @@
                                 Text="Install available updates automatically"
                                 SettingName="AutomaticallyUpdatePackages"
                                 />
+                            <widgets:CheckboxButtonCard
+                                CheckboxText="Ask to delete desktop shortcuts created during an install or upgrade."
+                                SettingName="AskToDeleteNewDesktopShortcuts"
+                                ButtonText="Manage shortcuts"
+                                Click="CheckboxButtonCard_OnClick"
+                                /> <!-- UniGetUI will only delete desktop shortcuts that were newly added after an update operation and that were explicitly approved -->
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
 

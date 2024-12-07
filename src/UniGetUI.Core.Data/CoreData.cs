@@ -145,31 +145,20 @@ namespace UniGetUI.Core.Data
             }
         }
 
-        /// <summary>
-        /// The file where the screenshot metadata is stored. If the file does not exist, it will be created automatically.
-        /// </summary>
-        public static string IgnoredUpdatesDatabaseFile
-        {
-            get
-            {
-                // Calling the UniGetUIDataDirectory will create the directory if it does not exist
-                string file_path = Path.Join(UniGetUIDataDirectory, "IgnoredPackageUpdates.json");
-                if (!File.Exists(file_path))
-                {
-                    File.WriteAllText(file_path, "{}");
-                }
-
-                return file_path;
-            }
-        }
-
         public static bool IsDaemon;
 
         /// <summary>
         /// The ID of the notification that is used to inform the user that updates are available
         /// </summary>
         public const int UpdatesAvailableNotificationTag = 1234;
+        /// <summary>
+        /// The ID of the notification that is used to inform the user that UniGetUI can be updated
+        /// </summary>
         public const int UniGetUICanBeUpdated = 1235;
+        /// <summary>
+        /// The ID of the notification that is used to inform the user that shortcuts are available for deletion
+        /// </summary>
+        public const int NewShortcutsNotificationTag = 1236;
 
 
         /// <summary>

@@ -10,7 +10,9 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -528,6 +530,11 @@ namespace UniGetUI.PackageEngine.Operations
                     case AfterFinshAction.Retry:
                         Retry();
                         break;
+                }
+
+                if (MainApp.Instance.OperationQueue.Count == 0 && DesktopShortcutsDatabase.GetUnknownShortcuts().Any() && Settings.Get("AskToDeleteNewDesktopShortcuts"))
+                {
+                    await DialogHelper.HandleNewDesktopShortcuts();
                 }
 
                 List<string> rawOutput = RawProcessOutput.ToList();

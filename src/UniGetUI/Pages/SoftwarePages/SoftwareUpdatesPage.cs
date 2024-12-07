@@ -215,7 +215,7 @@ namespace UniGetUI.Interface.SoftwarePages
             ToolBar.PrimaryCommands.Add(HelpButton);
 
             Dictionary<AppBarButton, string> Labels = new()
-            { // Entries with a trailing space are collapsed
+            { // Entries with a leading space are collapsed
               // Their texts will be used as the tooltip
                 { UpdateSelected,       CoreTools.Translate("Update selected packages") },
                 { UpdateAsAdmin,        " " + CoreTools.Translate("Update as administrator") },

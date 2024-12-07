@@ -24,8 +24,6 @@
         {
             Assert.NotEmpty(CoreData.VersionName);
             Assert.NotEqual(0, CoreData.BuildNumber);
-            Assert.True(File.Exists(CoreData.IgnoredUpdatesDatabaseFile), "The Ignored Updates database file does not exist, but it should have been created automatically.");
-
             Assert.NotEqual(0, CoreData.UpdatesAvailableNotificationTag);
 
             Assert.True(Directory.Exists(CoreData.UniGetUIExecutableDirectory), "Directory where the executable is located does not exist");
