@@ -88,7 +88,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <CheckBox IsChecked="{x:Bind IsChecked, Mode=TwoWay}" Grid.Column="0"/>
-                                <widgets:LocalIcon Icon="Launch" Grid.Column="1" Height="24" Width="24"/>
+                                <FontIcon Glyph="&#xECAA;" Grid.Column="1" Height="24" Width="24"/>
                                 <TextBlock Text="{x:Bind ShortcutPath}" Grid.Column="2" VerticalAlignment="Center"/>
                                 <Button Click="{x:Bind OpenShortcutPath}" Height="32" Width="32" Padding="0" Grid.Column="3" IsEnabled="{x:Bind ShortcutExists}">
                                     <widgets:LocalIcon Icon="launch" Height="24" Width="24"/>
