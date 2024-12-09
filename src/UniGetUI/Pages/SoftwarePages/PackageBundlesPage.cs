@@ -31,7 +31,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuInteractive;
         private BetterMenuItem? MenuSkipHash;
 
-        private bool _hasUnsavedChanges = false;
+        private bool _hasUnsavedChanges;
         private bool HasUnsavedChanges
         {
             get => _hasUnsavedChanges;

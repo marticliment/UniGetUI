@@ -58,7 +58,6 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             logger.AddToStdOut(JsonString);
             logger.AddToStdErr(p.StandardError.ReadToEnd());
 
-
             if (JsonNode.Parse(JsonString) is not JsonObject contents)
             {
                 throw new InvalidOperationException("Deserialized RawInfo was null");
@@ -115,7 +114,6 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             {
                 details.License = contents?["license"]?.ToString();
             }
-
 
             // Load installers
             if (contents?["url"] is JsonArray urlList)

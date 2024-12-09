@@ -481,10 +481,7 @@ Crash Traceback:
             };
 
             Process? p = Process.Start(startInfo);
-            if (p is not null)
-            {
-                p.WaitForExit();
-            }
+            p?.WaitForExit();
 
             if (p is null || p.ExitCode != 0)
             {
@@ -518,7 +515,6 @@ Crash Traceback:
             return UpdateEnvironmentVariables(new ProcessStartInfo());
         }
 
-
         /// <summary>
         /// Returns the updated environment variables on the returned ProcessStartInfo object
         /// </summary>
@@ -544,7 +540,6 @@ Crash Traceback:
             }
             return info;
         }
-
 
         /// <summary>
         /// Pings the update server and 3 well-known sites to check for internet availability

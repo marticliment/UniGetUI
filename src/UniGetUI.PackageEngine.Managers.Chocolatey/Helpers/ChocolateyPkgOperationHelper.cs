@@ -63,7 +63,6 @@ internal sealed class ChocolateyPkgOperationHelper : PackagePkgOperationHelper
             return OperationVeredict.Succeeded;
         }
 
-
         string output_string = string.Join("\n", processOutput);
         if (!package.OverridenOptions.RunAsAdministrator != true &&
             (output_string.Contains("Run as administrator")

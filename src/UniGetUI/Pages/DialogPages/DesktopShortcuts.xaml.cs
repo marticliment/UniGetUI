@@ -56,7 +56,7 @@ namespace UniGetUI.Interface
             {
                 shortcut.OnReset += (sender, path) =>
                 {
-                    if (sender is not ShortcutEntry sh) throw new Exception();
+                    if (sender is not ShortcutEntry sh) throw new InvalidOperationException();
                     DesktopShortcutsDatabase.ResetShortcut(sh.ShortcutPath);
                     desktopShortcuts.Remove(sh);
                 };

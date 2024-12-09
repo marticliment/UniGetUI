@@ -34,9 +34,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             set => Package.IsChecked = value;
         }
 
-        public bool IconWasLoaded = false;
-        public bool AlternateIdIconVisible = false;
-        public bool ShowCustomPackageIcon = false;
+        public bool IconWasLoaded;
+        public bool AlternateIdIconVisible;
+        public bool ShowCustomPackageIcon;
         public bool ShowDefaultPackageIcon = true;
         public IconType MainIconId = IconType.Id;
         public IconType AlternateIconId = IconType.Id;
