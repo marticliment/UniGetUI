@@ -230,7 +230,6 @@ namespace UniGetUI.Core.IconEngine
             return null;
         }
 
-
         /// <summary>
         /// The given image will be downsized to the expected size of an icon, if required
         /// </summary>
@@ -278,9 +277,7 @@ namespace UniGetUI.Core.IconEngine
                 Logger.Error($"An error occurred while downsizing the image file {cachedIconFile}");
                 Logger.Error(ex);
             }
-
         }
-
 
         /// <summary>
         /// Checks whether a cached image is valid or not depending on the size (in bytes) of the image

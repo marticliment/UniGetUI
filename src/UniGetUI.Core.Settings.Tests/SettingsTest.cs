@@ -149,7 +149,6 @@ namespace UniGetUI.Core.SettingsEngine.Tests
         public void TestDictionarySettings(string SettingName, string[] keyArray, int[] intArray, string[] strArray)
         {
             Dictionary<string, SerializableTest?> test = [];
-            Dictionary<string, string> emptyDictionary = [];
             Dictionary<string, SerializableTest?> nonEmptyDictionary = [];
             nonEmptyDictionary["this should not be null; something's wrong"] = null;
 

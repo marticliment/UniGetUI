@@ -32,7 +32,7 @@ namespace UniGetUI.Interface.Widgets
     public sealed partial class SourceManager : UserControl
     {
         private IPackageManager Manager { get; set; }
-        private ObservableCollection<SourceItem> Sources = new();
+        private readonly ObservableCollection<SourceItem> Sources = new();
 
         private ListView _datagrid { get; set; }
         public SourceManager(IPackageManager Manager)

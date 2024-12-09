@@ -124,7 +124,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 Architecture = null;
             }
 
-
             if (options.InstallationScope != "" && CommonTranslations.InvertedScopeNames_NonLang.TryGetValue(options.InstallationScope, out var value))
             {
                 InstallationScope = value;

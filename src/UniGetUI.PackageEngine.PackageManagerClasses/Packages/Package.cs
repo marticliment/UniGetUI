@@ -27,7 +27,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         private readonly string ignoredId;
         private readonly string _iconId;
 
-        private static ConcurrentDictionary<int, Uri?> _cachedIconPaths = new();
+        private static readonly ConcurrentDictionary<int, Uri?> _cachedIconPaths = new();
 
         private IPackageDetails? __details;
         public IPackageDetails Details

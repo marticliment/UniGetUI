@@ -145,7 +145,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             throw new NotImplementedException();
         }
 
-
         protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             Uri SearchUrl = new($"{package.Source.Url}/FindPackagesById()?id='{package.Id}'");

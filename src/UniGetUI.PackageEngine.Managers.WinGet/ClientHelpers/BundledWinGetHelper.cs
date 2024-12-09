@@ -15,7 +15,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
 internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 {
-    private WinGet Manager;
+    private readonly WinGet Manager;
 
     public BundledWinGetHelper(WinGet manager)
     {
@@ -288,8 +288,6 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         return Packages;
     }
-
-
 
     public void GetPackageDetails_UnSafe(IPackageDetails details)
     {

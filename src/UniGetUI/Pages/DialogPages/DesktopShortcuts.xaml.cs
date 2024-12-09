@@ -25,7 +25,7 @@ namespace UniGetUI.Interface
     public sealed partial class DesktopShortcutsManager : Page
     {
         public event EventHandler? Close;
-        private ObservableCollection<ShortcutEntry> desktopShortcuts = new ObservableCollection<ShortcutEntry>();
+        private readonly ObservableCollection<ShortcutEntry> desktopShortcuts = new ObservableCollection<ShortcutEntry>();
 
         private bool NewOnly;
 
@@ -56,7 +56,7 @@ namespace UniGetUI.Interface
             {
                 shortcut.OnReset += (sender, path) =>
                 {
-                    if (sender is not ShortcutEntry sh) throw new Exception();
+                    if (sender is not ShortcutEntry sh) throw new InvalidOperationException();
                     DesktopShortcutsDatabase.ResetShortcut(sh.ShortcutPath);
                     desktopShortcuts.Remove(sh);
                 };

@@ -25,7 +25,6 @@ public abstract class PackagePkgOperationHelper : IPackageOperationHelper
         IEnumerable<string> processOutput,
         int returnCode);
 
-
     public IEnumerable<string> GetParameters(
         IPackage package,
         IInstallationOptions options,

@@ -21,11 +21,9 @@ namespace UniGetUI.Core.Classes;
  */
 public static class TaskRecycler<ReturnT>
 {
-    private static ConcurrentDictionary<int, Task<ReturnT>> _tasks = new();
-
+    private static readonly ConcurrentDictionary<int, Task<ReturnT>> _tasks = new();
 
     // ---------------------------------------------------------------------------------------------------------------
-
 
     /// Asynchronous entry point for 0 parameters
     public static Task<ReturnT> RunOrAttachAsync(Func<ReturnT> method, int cacheTimeSecs = 0)
@@ -57,9 +55,7 @@ public static class TaskRecycler<ReturnT>
         return _runTaskAndWait(new Task<ReturnT>(() => method(arg1, arg2, arg3)), hash, cacheTimeSecs);
     }
 
-
     // ---------------------------------------------------------------------------------------------------------------
-
 
     /// Synchronous entry point for 0 parameters
     public static ReturnT RunOrAttach(Func<ReturnT> method, int cacheTimeSecs = 0)
@@ -79,9 +75,7 @@ public static class TaskRecycler<ReturnT>
         Param2T arg2, Param3T arg3, int cacheTimeSecs = 0)
         => RunOrAttachAsync(method, arg1, arg2, arg3, cacheTimeSecs).GetAwaiter().GetResult();
 
-
     // ---------------------------------------------------------------------------------------------------------------
-
 
     /// <summary>
     /// Instantly removes a function call from the cache, even if the associated task has not
@@ -93,9 +87,7 @@ public static class TaskRecycler<ReturnT>
     public static void RemoveFromCache(Func<ReturnT> method)
         => _removeFromCache(method.GetHashCode(), 0);
 
-
     // ---------------------------------------------------------------------------------------------------------------
-
 
     /// <summary>
     /// Handles running the task if no such task was found on cache, and returning the cached task if it was found.
@@ -134,15 +126,14 @@ public static class TaskRecycler<ReturnT>
     /// </summary>
     private static async void _removeFromCache(int hash, int cacheTimeSecsSecs)
     {
-        if(cacheTimeSecsSecs > 0)
+        if (cacheTimeSecsSecs > 0)
             await Task.Delay(cacheTimeSecsSecs * 1000);
 
         _tasks.Remove(hash, out _);
     }
 }
 
-
 public static class TaskRecyclerTelemetry
 {
-    public static int DeduplicatedCalls = 0;
+    public static int DeduplicatedCalls;
 }

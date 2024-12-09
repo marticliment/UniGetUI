@@ -21,7 +21,7 @@ namespace UniGetUI.Interface
     public sealed partial class IgnoredUpdatesManager : Page
     {
         public event EventHandler? Close;
-        private ObservableCollection<IgnoredPackageEntry> ignoredPackages = new ObservableCollection<IgnoredPackageEntry>();
+        private readonly ObservableCollection<IgnoredPackageEntry> ignoredPackages = new ObservableCollection<IgnoredPackageEntry>();
 
         public IgnoredUpdatesManager()
         {
@@ -68,7 +68,6 @@ namespace UniGetUI.Interface
         {
             Close?.Invoke(this, EventArgs.Empty);
         }
-
 
         private async void YesResetButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
