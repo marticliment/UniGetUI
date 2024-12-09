@@ -6,6 +6,7 @@ on:
       - '**.cs'
       - '**.csproj'
       - '**.sln'
+      - '.github/workflows/dotnet-test.yml'
 
   pull_request:
     branches: [ "main" ]
@@ -13,6 +14,7 @@ on:
       - '**.cs'
       - '**.csproj'
       - '**.sln'
+      - '.github/workflows/dotnet-test.yml'
 
   workflow_dispatch:
 
