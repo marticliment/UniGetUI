@@ -17,7 +17,7 @@ public static class DesktopShortcutsDatabase
         Unknown, // The user has not said whether they want this shortcut to be deleted
     }
 
-    private static List<string> UnknownShortcuts = [];
+    private static readonly List<string> UnknownShortcuts = [];
 
     public static IReadOnlyDictionary<string, bool> GetDatabase()
     {
