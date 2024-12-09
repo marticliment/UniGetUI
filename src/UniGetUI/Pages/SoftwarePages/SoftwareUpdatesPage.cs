@@ -23,6 +23,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuInteractive;
         private BetterMenuItem? MenuskipHash;
         private BetterMenuItem? MenuOpenInstallLocation;
+        private AppBarButton CancelAllOperations;
 
         private int LastNotificationUpdateCount = -1;
 
@@ -184,6 +185,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public override void GenerateToolBar()
         {
+            CancelAllOperations = new();
             AppBarButton UpdateSelected = new();
             AppBarButton UpdateAsAdmin = new();
             AppBarButton UpdateSkipHash = new();
@@ -199,6 +201,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
             AppBarButton HelpButton = new();
 
+            ToolBar.PrimaryCommands.Add(CancelAllOperations);
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(UpdateSelected);
             ToolBar.PrimaryCommands.Add(UpdateAsAdmin);
             ToolBar.PrimaryCommands.Add(UpdateSkipHash);
@@ -217,6 +221,7 @@ namespace UniGetUI.Interface.SoftwarePages
             Dictionary<AppBarButton, string> Labels = new()
             { // Entries with a leading space are collapsed
               // Their texts will be used as the tooltip
+                { CancelAllOperations,  CoreTools.Translate("Cancel All Operations") },
                 { UpdateSelected,       CoreTools.Translate("Update selected packages") },
                 { UpdateAsAdmin,        " " + CoreTools.Translate("Update as administrator") },
                 { UpdateSkipHash,       " " + CoreTools.Translate("Skip integrity checks") },
@@ -242,6 +247,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             Dictionary<AppBarButton, IconType> Icons = new()
             {
+                { CancelAllOperations,  IconType.Cross },
                 { UpdateSelected,       IconType.Update },
                 { UpdateAsAdmin,        IconType.UAC },
                 { UpdateSkipHash,       IconType.Checksum },
@@ -309,6 +315,15 @@ namespace UniGetUI.Interface.SoftwarePages
             };
 
             SharePackage.Click += (_, _) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
+
+            CancelAllOperations.Click += (_, _) =>
+            {
+                foreach (AbstractOperation operation in MainApp.Instance.MainWindow.NavigationPage.OperationStackPanel.Children)
+                {
+                    operation.CancelButtonClicked();
+                }
+                MainApp.Instance.MainWindow.NavigationPage.OperationStackPanel.Children.Clear();
+            };
         }
 
         protected override void WhenPackageCountUpdated()
