@@ -62,7 +62,7 @@ internal sealed class PowerShellPkgOperationHelper : PackagePkgOperationHelper
             return OperationVeredict.AutoRetry;
         }
 
-        if (output_string.Contains("'Scope'") && output_string.Contains("ParameterBindingException") && !package.OverridenOptions.PowerShell_DoNotSetScopeParameter)
+        if (output_string.Contains("-Scope") && output_string.Contains("NamedParameterNotFound") && !package.OverridenOptions.PowerShell_DoNotSetScopeParameter)
         {
             package.OverridenOptions.PowerShell_DoNotSetScopeParameter = true;
             return OperationVeredict.AutoRetry;
