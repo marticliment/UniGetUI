@@ -47,4 +47,4 @@ jobs:
 
     - name: Run Tests
       working-directory: src
-      run: dotnet test -v q --nologo
+      run: dotnet test --no-restore --verbosity q --nologo
