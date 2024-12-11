@@ -7,7 +7,7 @@ namespace UniGetUI.Core.SettingsEngine
 {
     public static partial class Settings
     {
-        private static readonly ConcurrentDictionary<string, List<object>> listSettings = new();
+        private static ConcurrentDictionary<string, List<object>> listSettings = new();
 
         // Returns an empty list if the setting doesn't exist and null if the type is invalid
         private static List<T>? _getList<T>(string setting)

@@ -21,7 +21,7 @@ namespace UniGetUI.Core.Classes;
  */
 public static class TaskRecycler<ReturnT>
 {
-    private static readonly ConcurrentDictionary<int, Task<ReturnT>> _tasks = new();
+    private static ConcurrentDictionary<int, Task<ReturnT>> _tasks = new();
 
     // ---------------------------------------------------------------------------------------------------------------
 

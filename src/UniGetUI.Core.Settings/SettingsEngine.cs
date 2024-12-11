@@ -6,8 +6,8 @@ namespace UniGetUI.Core.SettingsEngine
 {
     public static partial class Settings
     {
-        private static readonly ConcurrentDictionary<string, bool> booleanSettings = new();
-        private static readonly ConcurrentDictionary<string, string> valueSettings = new();
+        private static ConcurrentDictionary<string, bool> booleanSettings = new();
+        private static ConcurrentDictionary<string, string> valueSettings = new();
 
         public static bool Get(string setting, bool invert = false)
         {
