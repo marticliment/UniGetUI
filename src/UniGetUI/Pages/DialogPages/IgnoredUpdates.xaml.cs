@@ -69,6 +69,7 @@ namespace UniGetUI.Interface
             Close?.Invoke(this, EventArgs.Empty);
         }
 
+
         private async void YesResetButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             foreach (IgnoredPackageEntry package in ignoredPackages.ToArray())

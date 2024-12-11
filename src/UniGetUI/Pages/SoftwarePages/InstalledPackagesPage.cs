@@ -21,9 +21,9 @@ namespace UniGetUI.Interface.SoftwarePages
     {
         private bool HasDoneBackup;
 
-        private BetterMenuItem? MenuAsAdmin;
-        private BetterMenuItem? MenuInteractive;
-        private BetterMenuItem? MenuRemoveData;
+        BetterMenuItem? MenuAsAdmin;
+        BetterMenuItem? MenuInteractive;
+        BetterMenuItem? MenuRemoveData;
         private BetterMenuItem? MenuInstallationOptions;
         private BetterMenuItem? MenuReinstallPackage;
         private BetterMenuItem? MenuUninstallThenReinstall;

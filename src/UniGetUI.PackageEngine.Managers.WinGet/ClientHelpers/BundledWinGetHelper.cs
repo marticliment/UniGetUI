@@ -289,6 +289,8 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return Packages;
     }
 
+
+
     public void GetPackageDetails_UnSafe(IPackageDetails details)
     {
         if (details.Package.Source.Name == "winget")

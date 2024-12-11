@@ -47,8 +47,8 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public event EventHandler<EventArgs>? StartedLoading;
 
-        private readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS;
-        private readonly bool DISABLE_RELOAD;
+        readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS;
+        readonly bool DISABLE_RELOAD;
         private readonly bool PACKAGES_CHECKED_BY_DEFAULT;
         protected string LOADER_IDENTIFIER;
         private int LoadOperationIdentifier;

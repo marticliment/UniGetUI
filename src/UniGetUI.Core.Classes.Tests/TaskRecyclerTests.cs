@@ -8,20 +8,20 @@ public class TaskRecyclerTests
         return (new Random()).Next();
     }
 
-    private class TestClass
+    class TestClass
     {
         public TestClass() {}
 
         public string SlowMethod2()
         {
             Thread.Sleep(1000);
-            return new Random().Next().ToString();
+            return (new Random()).Next().ToString();
         }
 
         public string SlowMethod3()
         {
             Thread.Sleep(1000);
-            return new Random().Next().ToString();
+            return (new Random()).Next().ToString();
         }
     }
 
@@ -131,6 +131,7 @@ public class TaskRecyclerTests
         string result2 = task2.GetAwaiter().GetResult();
         Assert.Equal(result1, result2);
 
+
         var class1_copy = class1;
 
         // The SAME method from the SAME instance, even when called
@@ -151,6 +152,7 @@ public class TaskRecyclerTests
 
         // Ensure the last call was not permanently cached
         Assert.NotEqual(result1, result3);
+
 
         // The SAME method from two DIFFERENT instances should NOT be
         // cached, so the results should differ
