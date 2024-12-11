@@ -542,10 +542,21 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        public static async Task<string> CreateBundle(IEnumerable<IPackage> packages, BundleFormatType formatType = BundleFormatType.JSON)
+        public static async Task<string> CreateBundle(IEnumerable<IPackage> unsorted_packages, BundleFormatType formatType = BundleFormatType.JSON)
         {
             SerializableBundle_v1 exportable = new();
             exportable.export_version = 2.0;
+
+            List<IPackage> packages = unsorted_packages.ToList();
+            packages.Sort(Comparison);
+
+            int Comparison(IPackage x, IPackage y)
+            {
+                if(x.Id != y.Id) return String.Compare(x.Id, y.Id, StringComparison.Ordinal);
+                if(x.Name != y.Name) return String.Compare(x.Name, y.Name, StringComparison.Ordinal);
+                return (x.VersionAsFloat > y.VersionAsFloat) ? -1 : 1;
+            }
+
             foreach (IPackage package in packages)
                 if (package is Package && !package.Source.IsVirtualManager)
                     exportable.packages.Add(await Task.Run(package.AsSerializable));
