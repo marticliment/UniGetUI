@@ -298,6 +298,12 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             process.Start();
             status.Version = process.StandardOutput.ReadToEnd().Trim();
 
+            if (process.ExitCode == 9009)
+            {
+                status.Found = false;
+                return status;
+            }
+
             return status;
         }
     }
