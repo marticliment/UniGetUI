@@ -35,7 +35,7 @@ namespace UniGetUI.Interface
         private readonly HyperlinkButton ResetBackupDirectory;
         private readonly HyperlinkButton OpenBackupDirectory;
         private readonly TextBlock BackupDirectoryLabel;
-        private readonly bool InterfaceLoaded;
+        private bool InterfaceLoaded;
 
         public SettingsPage()
         {
