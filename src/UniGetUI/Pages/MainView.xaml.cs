@@ -199,7 +199,6 @@ namespace UniGetUI.Interface
                 _ => throw new InvalidDataException($"Unknown page type {type}")
             };
 
-
         private void SettingsNavButton_Click(object sender, EventArgs e)
             => NavigateTo(PageType.Settings);
 

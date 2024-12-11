@@ -68,7 +68,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
                 if (IsReady() && Capabilities.SupportsCustomSources)
                 {
-                    Task<IEnumerable<IManagerSource>> sourcesTask = Task.Run(() => SourcesHelper.GetSources());
+                    Task<IEnumerable<IManagerSource>> sourcesTask = Task.Run(SourcesHelper.GetSources);
 
                     if (sourcesTask.Wait(TimeSpan.FromSeconds(15)))
                     {
@@ -162,7 +162,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             {
                 if (!SecondAttempt)
                 {
-                    while (e is AggregateException) e = e.InnerException ?? new("How did we get here?");
+                    while (e is AggregateException) e = e.InnerException ?? new InvalidOperationException("How did we get here?");
                     Logger.Warn($"Manager {DisplayName} failed to find packages with exception {e.GetType().Name}: {e.Message}");
                     Logger.Warn($"Since this was the first attempt, {Name}.AttemptFastRepair() will be called and the procedure will be restarted");
                     AttemptFastRepair();
@@ -209,7 +209,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             {
                 if (!SecondAttempt)
                 {
-                    while (e is AggregateException) e = e.InnerException ?? new("How did we get here?");
+                    while (e is AggregateException) e = e.InnerException ?? new InvalidOperationException("How did we get here?");
                     Logger.Warn($"Manager {DisplayName} failed to list available updates with exception {e.GetType().Name}: {e.Message}");
                     Logger.Warn($"Since this was the first attempt, {Name}.AttemptFastRepair() will be called and the procedure will be restarted");
                     AttemptFastRepair();
@@ -254,7 +254,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             {
                 if (!SecondAttempt)
                 {
-                    while (e is AggregateException) e = e.InnerException ?? new("How did we get here?");
+                    while (e is AggregateException) e = e.InnerException ?? new InvalidOperationException("How did we get here?");
                     Logger.Warn($"Manager {DisplayName} failed to list installed packages with exception {e.GetType().Name}: {e.Message}");
                     Logger.Warn($"Since this was the first attempt, {Name}.AttemptFastRepair() will be called and the procedure will be restarted");
                     AttemptFastRepair();

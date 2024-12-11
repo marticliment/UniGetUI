@@ -53,7 +53,6 @@ namespace UniGetUI.Interface
 
                 ignoredPackages.Add(new IgnoredPackageEntry(ignoredId.Split("\\")[^1], version, manager, ignoredPackages));
             }
-
         }
 
         private async void IgnoredUpdatesList_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
@@ -68,7 +67,6 @@ namespace UniGetUI.Interface
         {
             Close?.Invoke(this, EventArgs.Empty);
         }
-
 
         private async void YesResetButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {

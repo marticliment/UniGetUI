@@ -122,9 +122,7 @@ namespace UniGetUI.Interface
                 ExtraSettingsCards.Add(Manager, []);
             }
 
-
             // ----------------------------------------------------------------------------------------
-
 
             ButtonCard WinGet_ResetWindowsIPackageManager = new() {
                 Text = CoreTools.AutoTranslated("Reset WinGet") + $" ({CoreTools.Translate("This may help if no packages are listed")})",
@@ -162,9 +160,7 @@ namespace UniGetUI.Interface
             ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_ResetWindowsIPackageManager);
             ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_UseBundled);
 
-
             // ----------------------------------------------------------------------------------------
-
 
             ButtonCard Scoop_Install = new() { Text = CoreTools.AutoTranslated("Install Scoop"), ButtonText = CoreTools.AutoTranslated("Install") };
             Scoop_Install.Click += (_, _) =>
@@ -188,9 +184,7 @@ namespace UniGetUI.Interface
             ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_Uninstall);
             ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_ResetAppCache);
 
-
             // ----------------------------------------------------------------------------------------
-
 
             CheckboxCard Chocolatey_SystemChoco = new() { Text = CoreTools.AutoTranslated("Use system Chocolatey"), SettingName = "UseSystemChocolatey" };
             Chocolatey_SystemChoco.StateChanged += (_, _) =>
@@ -200,9 +194,7 @@ namespace UniGetUI.Interface
 
             ExtraSettingsCards[PEInterface.Chocolatey].Add(Chocolatey_SystemChoco);
 
-
             // ----------------------------------------------------------------------------------------
-
 
             CheckboxCard Vcpkg_UpdateGitPorts = new()
             {
@@ -266,27 +258,19 @@ namespace UniGetUI.Interface
                 }
             };
 
-
             p.Children.Add(VcPkgRootLabel);
             p.Children.Add(ResetVcPkgRootLabel);
             p.Children.Add(OpenVcPkgRootLabel);
             Vcpkg_CustomVcpkgRoot.Description = p;
-
-
 
             Vcpkg_CustomVcpkgRoot.Click += (_, _) =>
             {
                 IPackageManagerExpanders[PEInterface.Vcpkg].ShowRestartRequiredBanner();
             };
 
-
             ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_CustomVcpkgRoot);
 
-
-
             // ----------------------------------------------------------------------------------------
-
-
 
             foreach (IPackageManager Manager in PEInterface.Managers)
             {
@@ -375,7 +359,6 @@ namespace UniGetUI.Interface
                             ManagerStatus.Message = "";
                             ShowVersionButton.Visibility = Visibility.Visible;
                         }
-
                     }
                     else if (manager.IsEnabled() && !manager.Status.Found)
                     {
@@ -477,7 +460,6 @@ namespace UniGetUI.Interface
                 SetManagerStatus(Manager);
                 EnableOrDisableEntries();
                 MainLayout.Children.Add(ManagerExpander);
-
             }
 
             InterfaceLoaded = true;
@@ -558,7 +540,6 @@ namespace UniGetUI.Interface
                 Logger.Error("An error occurred when exporting settings");
                 Logger.Error(ex);
             }
-
         }
 
         private void ResetWingetUI(object sender, EventArgs e)
@@ -611,7 +592,6 @@ namespace UniGetUI.Interface
                 BackupDirectoryLabel.Text = folder;
                 ResetBackupDirectory.IsEnabled = true;
             }
-
         }
 
         private void OpenBackupPath_Click(object sender, RoutedEventArgs e)
@@ -630,7 +610,6 @@ namespace UniGetUI.Interface
             }
 
             Process.Start("explorer.exe", directory);
-
         }
 
         private void DoCacheAdminRights_StateChanged(object sender, EventArgs e)
