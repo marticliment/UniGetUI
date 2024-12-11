@@ -21,7 +21,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
     public static WindowsPackageManagerFactory? ExternalFactory;
     public PackageManager WinGetManager;
     public static PackageManager? ExternalWinGetManager;
-    private readonly WinGet Manager;
+    private WinGet Manager;
 
     public NativeWinGetHelper(WinGet manager)
     {

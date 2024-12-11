@@ -8,7 +8,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
     {
         private readonly IPackageManager Manager;
 
-        private readonly List<TaskLogger> operations = new();
+        private List<TaskLogger> operations = new();
         public IEnumerable<ITaskLogger> Operations { get => (IEnumerable<ITaskLogger>)operations; }
 
         public ManagerLogger(IPackageManager manager)
