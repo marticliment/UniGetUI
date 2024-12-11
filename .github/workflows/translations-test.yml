@@ -27,4 +27,3 @@ jobs:
       uses: hmarr/auto-approve-action@v4
       with:
         review-message: "Tolgee-CI Changes have been approved since they passed testing"
-
