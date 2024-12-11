@@ -141,6 +141,8 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                         continue;
                     }
 
+                    if(elements[2].Trim() == "") continue;
+
                     Packages.Add(new Package(
                         CoreTools.FormatAsName(elements[0]),
                         elements[0],
