@@ -5,13 +5,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using UniGetUI.Core.Logging;
-using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Enums;
-using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
-using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Managers.WingetManager;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

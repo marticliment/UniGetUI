@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Xml;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;

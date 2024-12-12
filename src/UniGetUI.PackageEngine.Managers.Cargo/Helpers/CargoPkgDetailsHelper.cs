@@ -2,7 +2,6 @@ using UniGetUI.Core.IconEngine;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.CargoManager;
 internal sealed class CargoPkgDetailsHelper(Cargo manager) : BasePkgDetailsHelper(manager)

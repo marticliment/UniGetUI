@@ -1,8 +1,3 @@
-using System.Collections.Concurrent;
-using System.Data;
-using System.Text.Json;
-using Microsoft.VisualBasic.CompilerServices;
-using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 

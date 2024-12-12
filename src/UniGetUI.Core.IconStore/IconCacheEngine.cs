@@ -1,13 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Security.Cryptography;
-using Windows.ApplicationModel;
-using Windows.Graphics.Imaging;
-using Windows.UI;
 using PhotoSauce.MagicScaler;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Core.IconEngine
 {

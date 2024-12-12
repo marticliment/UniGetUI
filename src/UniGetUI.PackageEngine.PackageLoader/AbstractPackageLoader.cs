@@ -1,6 +1,4 @@
 using System.Collections.Concurrent;
-using Windows.UI.Composition;
-using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.PackageLoader

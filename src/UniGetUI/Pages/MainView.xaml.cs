@@ -10,10 +10,8 @@ using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Pages.LogPage;
 using UniGetUI.Interface.SoftwarePages;
-using UniGetUI.Interface.Widgets;
 using Windows.UI.Core;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,

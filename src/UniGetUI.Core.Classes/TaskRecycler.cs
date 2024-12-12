@@ -1,7 +1,4 @@
 using System.Collections.Concurrent;
-using System.Diagnostics;
-using UniGetUI.Core.Logging;
-using WinRT.Interop;
 
 namespace UniGetUI.Core.Classes;
 
