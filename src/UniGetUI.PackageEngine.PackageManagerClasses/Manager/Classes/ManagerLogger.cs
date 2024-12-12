@@ -6,7 +6,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
 {
     public class ManagerLogger : IManagerLogger
     {
-        readonly IPackageManager Manager;
+        private readonly IPackageManager Manager;
 
         private List<TaskLogger> operations = new();
         public IEnumerable<ITaskLogger> Operations { get => (IEnumerable<ITaskLogger>)operations; }

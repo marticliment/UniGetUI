@@ -23,13 +23,13 @@ namespace UniGetUI.Interface.SoftwarePages
 {
     public class PackageBundlesPage : AbstractPackagesPage
     {
-        BetterMenuItem? MenuInstallOptions;
-        BetterMenuItem? MenuInstall;
-        BetterMenuItem? MenuShare;
-        BetterMenuItem? MenuDetails;
-        BetterMenuItem? MenuAsAdmin;
-        BetterMenuItem? MenuInteractive;
-        BetterMenuItem? MenuSkipHash;
+        private BetterMenuItem? MenuInstallOptions;
+        private BetterMenuItem? MenuInstall;
+        private BetterMenuItem? MenuShare;
+        private BetterMenuItem? MenuDetails;
+        private BetterMenuItem? MenuAsAdmin;
+        private BetterMenuItem? MenuInteractive;
+        private BetterMenuItem? MenuSkipHash;
 
         private bool _hasUnsavedChanges;
         private bool HasUnsavedChanges
@@ -426,7 +426,6 @@ namespace UniGetUI.Interface.SoftwarePages
             Loader.Remove(package);
         }
 
-
         public async Task OpenFromFile(string? file = null)
         {
             try
@@ -540,8 +539,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 DialogHelper.HideLoadingDialog();
                 await MainApp.Instance.MainWindow.ShowDialogAsync(warningDialog);
-
-
             }
         }
 
@@ -680,5 +677,3 @@ namespace UniGetUI.Interface.SoftwarePages
         }
     }
 }
-
-

@@ -15,7 +15,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// </summary>
     public class PackageWrapper : IIndexableListItem, INotifyPropertyChanged, IDisposable
     {
-        private static ConcurrentDictionary<long, Uri?> CachedPackageIcons = new();
+        private static readonly ConcurrentDictionary<long, Uri?> CachedPackageIcons = new();
 
         public static void ResetIconCache()
         {

@@ -8,7 +8,7 @@ public class TaskRecyclerTests
         return new Random().Next();
     }
 
-    class TestClass
+    private class TestClass
     {
         public TestClass() {}
 

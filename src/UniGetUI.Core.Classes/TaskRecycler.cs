@@ -132,5 +132,5 @@ public static class TaskRecycler<ReturnT>
 
 public static class TaskRecyclerTelemetry
 {
-    public static int DeduplicatedCalls = 0;
+    public static int DeduplicatedCalls;
 }
