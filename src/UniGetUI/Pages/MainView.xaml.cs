@@ -47,7 +47,7 @@ namespace UniGetUI.Interface
 
         private PageType OldPage_t = PageType.Null;
         private PageType CurrentPage_t = PageType.Null;
-        private HashSet<Page> AddedPages = new();
+        private readonly HashSet<Page> AddedPages = new();
 
         public MainView()
         {

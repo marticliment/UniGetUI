@@ -13,7 +13,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
 internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 {
-    private WinGet Manager;
+    private readonly WinGet Manager;
 
     public BundledWinGetHelper(WinGet manager)
     {

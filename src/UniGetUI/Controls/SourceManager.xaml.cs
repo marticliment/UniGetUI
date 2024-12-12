@@ -22,6 +22,7 @@ namespace UniGetUI.Interface.Widgets
             this.Parent = Parent;
             this.Source = Source;
         }
+
         public void Remove(object sender, RoutedEventArgs e)
         {
             RemoveSourceOperation op = new(Source);
@@ -29,12 +30,15 @@ namespace UniGetUI.Interface.Widgets
             op.OperationSucceeded += (_, _) => { Parent.RemoveSourceItem(this); };
         }
     }
+
     public sealed partial class SourceManager : UserControl
     {
         private IPackageManager Manager { get; set; }
-        private readonly ObservableCollection<SourceItem> Sources = new();
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private ObservableCollection<SourceItem> Sources = new();
 
         private ListView _datagrid { get; set; }
+
         public SourceManager(IPackageManager Manager)
         {
             this.Manager = Manager;
@@ -51,7 +55,6 @@ namespace UniGetUI.Interface.Widgets
             {
                 try
                 {
-
                     ContentDialog d = new()
                     {
                         Title = CoreTools.Translate("Add source")
@@ -170,6 +173,7 @@ namespace UniGetUI.Interface.Widgets
             {
                 Sources.Add(new SourceItem(this, source));
             }
+
             if (Sources.Count > 0)
             {
                 _datagrid.SelectedIndex = 0;
