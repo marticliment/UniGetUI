@@ -13,7 +13,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public SerializableUpdatesOptions_v1 updates_options;
         public SerializableInstallationOptions_v1 installation_options;
 
-        private string _version;
+        private readonly string _version;
 
         public override string Version
         {

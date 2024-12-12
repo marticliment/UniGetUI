@@ -23,8 +23,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
             set { __is_checked = value; OnPropertyChanged(nameof(IsChecked)); }
         }
 
-        private long __hash;
-        private long __extended_hash;
+        private readonly long __hash;
+        private readonly long __extended_hash;
 
         private static OverridenInstallationOptions __overriden_options;
         public ref OverridenInstallationOptions OverridenOptions { get => ref __overriden_options; }

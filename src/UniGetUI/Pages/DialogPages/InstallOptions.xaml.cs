@@ -20,7 +20,7 @@ namespace UniGetUI.Interface.Dialogs
         public SerializableInstallationOptions_v1 Options;
         public IPackage Package;
         public event EventHandler? Close;
-        private OperationType Operation;
+        private readonly OperationType Operation;
 
         public InstallOptionsPage(IPackage package, SerializableInstallationOptions_v1 options) : this(package, OperationType.None, options) { }
         public InstallOptionsPage(IPackage package, OperationType operation, SerializableInstallationOptions_v1 options)

@@ -7,7 +7,6 @@ using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.PipManager
 {

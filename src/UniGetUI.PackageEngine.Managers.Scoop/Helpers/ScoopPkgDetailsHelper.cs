@@ -1,14 +1,11 @@
-using System.Collections;
 using System.Diagnostics;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks.Dataflow;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.ScoopManager
 {
@@ -57,7 +54,6 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             string JsonString = p.StandardOutput.ReadToEnd();
             logger.AddToStdOut(JsonString);
             logger.AddToStdErr(p.StandardError.ReadToEnd());
-
 
             if (JsonNode.Parse(JsonString) is not JsonObject contents)
             {
@@ -115,7 +111,6 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             {
                 details.License = contents?["license"]?.ToString();
             }
-
 
             // Load installers
             if (contents?["url"] is JsonArray urlList)

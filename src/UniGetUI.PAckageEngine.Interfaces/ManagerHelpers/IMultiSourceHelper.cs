@@ -46,7 +46,5 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// </summary>
         /// <returns>An array of ManagerSource objects</returns>
         public IEnumerable<IManagerSource> GetSources();
-
-
     }
 }

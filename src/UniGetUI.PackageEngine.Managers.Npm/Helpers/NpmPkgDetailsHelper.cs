@@ -3,13 +3,10 @@ using System.Globalization;
 using System.Text.Json.Nodes;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Managers.NpmManager
 {

@@ -73,8 +73,6 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
                 Logger.Error(e);
                 return [];
             }
-
-
         }
     }
 }

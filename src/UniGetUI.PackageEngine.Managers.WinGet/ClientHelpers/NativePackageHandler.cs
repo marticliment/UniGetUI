@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using Microsoft.Management.Deployment;
-using UniGetUI.Core.Classes;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -9,9 +8,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
 public static class NativePackageHandler
 {
-    private static ConcurrentDictionary<long, CatalogPackage> __nativePackages = new();
-    private static ConcurrentDictionary<long, CatalogPackageMetadata> __nativeDetails = new();
-    private static ConcurrentDictionary<long, PackageInstallerInfo> __nativeInstallers_Install = new();
+    private static readonly ConcurrentDictionary<long, CatalogPackage> __nativePackages = new();
+    private static readonly ConcurrentDictionary<long, CatalogPackageMetadata> __nativeDetails = new();
+    private static readonly ConcurrentDictionary<long, PackageInstallerInfo> __nativeInstallers_Install = new();
     private static ConcurrentDictionary<long, PackageInstallerInfo> __nativeInstallers_Uninstall = new();
 
     /// <summary>

@@ -10,7 +10,6 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.Interface
 {

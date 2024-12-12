@@ -10,10 +10,8 @@ using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Pages.LogPage;
 using UniGetUI.Interface.SoftwarePages;
-using UniGetUI.Interface.Widgets;
 using Windows.UI.Core;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -49,7 +47,7 @@ namespace UniGetUI.Interface
 
         private PageType OldPage_t = PageType.Null;
         private PageType CurrentPage_t = PageType.Null;
-        private HashSet<Page> AddedPages = new();
+        private readonly HashSet<Page> AddedPages = new();
 
         public MainView()
         {
@@ -198,7 +196,6 @@ namespace UniGetUI.Interface
                 PageType.Null => PageType.Discover,
                 _ => throw new InvalidDataException($"Unknown page type {type}")
             };
-
 
         private void SettingsNavButton_Click(object sender, EventArgs e)
             => NavigateTo(PageType.Settings);

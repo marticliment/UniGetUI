@@ -1,11 +1,8 @@
-using System.Diagnostics;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
-using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
-using UniGetUI.PackageEngine.Classes.Manager.Providers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Interfaces.ManagerProviders;

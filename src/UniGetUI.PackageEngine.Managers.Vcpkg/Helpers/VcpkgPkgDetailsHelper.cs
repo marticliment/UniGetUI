@@ -1,16 +1,12 @@
-using System.Diagnostics;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Data;
-using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.IconEngine;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 
 namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 {

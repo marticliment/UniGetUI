@@ -1,8 +1,3 @@
-using System.Collections.Concurrent;
-using System.Data;
-using System.Text.Json;
-using Microsoft.VisualBasic.CompilerServices;
-using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 
@@ -17,7 +12,7 @@ public static class DesktopShortcutsDatabase
         Unknown, // The user has not said whether they want this shortcut to be deleted
     }
 
-    private static List<string> UnknownShortcuts = [];
+    private static readonly List<string> UnknownShortcuts = [];
 
     public static IReadOnlyDictionary<string, bool> GetDatabase()
     {

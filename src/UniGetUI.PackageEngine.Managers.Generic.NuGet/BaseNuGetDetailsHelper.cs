@@ -6,7 +6,6 @@ using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal;
 
 namespace UniGetUI.PackageEngine.Managers.PowerShellManager
@@ -144,7 +143,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         {
             throw new NotImplementedException();
         }
-
 
         protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
         {

@@ -33,7 +33,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// </summary>
         public async Task SaveToDiskAsync()
         {
-            await Task.Run(() => SaveToDisk());
+            await Task.Run(SaveToDisk);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// </summary>
         public async Task LoadFromDiskAsync()
         {
-            await Task.Run(() => LoadFromDisk());
+            await Task.Run(LoadFromDisk);
         }
 
         /// <summary>
