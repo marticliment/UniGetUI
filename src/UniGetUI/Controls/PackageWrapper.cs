@@ -1,17 +1,11 @@
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using Windows.System.RemoteSystems;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using UniGetUI.Core.Classes;
-using UniGetUI.Core.Logging;
-using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
-using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.PackageClasses
@@ -21,7 +15,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// </summary>
     public class PackageWrapper : IIndexableListItem, INotifyPropertyChanged, IDisposable
     {
-        private static ConcurrentDictionary<long, Uri?> CachedPackageIcons = new();
+        private static readonly ConcurrentDictionary<long, Uri?> CachedPackageIcons = new();
 
         public static void ResetIconCache()
         {
@@ -34,9 +28,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             set => Package.IsChecked = value;
         }
 
-        public bool IconWasLoaded = false;
-        public bool AlternateIdIconVisible = false;
-        public bool ShowCustomPackageIcon = false;
+        public bool IconWasLoaded;
+        public bool AlternateIdIconVisible;
+        public bool ShowCustomPackageIcon;
         public bool ShowDefaultPackageIcon = true;
         public IconType MainIconId = IconType.Id;
         public IconType AlternateIconId = IconType.Id;

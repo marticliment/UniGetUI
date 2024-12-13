@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
@@ -159,7 +159,6 @@ namespace UniGetUI.Core.Data
         /// The ID of the notification that is used to inform the user that shortcuts are available for deletion
         /// </summary>
         public const int NewShortcutsNotificationTag = 1236;
-
 
         /// <summary>
         /// A path pointing to the location where the app is installed

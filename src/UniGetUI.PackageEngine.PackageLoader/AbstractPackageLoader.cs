@@ -1,6 +1,4 @@
 using System.Collections.Concurrent;
-using Windows.UI.Composition;
-using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.PackageLoader
@@ -47,8 +45,8 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public event EventHandler<EventArgs>? StartedLoading;
 
-        readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS;
-        readonly bool DISABLE_RELOAD;
+        private readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS;
+        private readonly bool DISABLE_RELOAD;
         private readonly bool PACKAGES_CHECKED_BY_DEFAULT;
         protected string LOADER_IDENTIFIER;
         private int LoadOperationIdentifier;

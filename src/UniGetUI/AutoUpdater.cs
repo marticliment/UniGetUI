@@ -1,8 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
-using System.Net.NetworkInformation;
 using System.Security.Cryptography;
-using H.NotifyIcon;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.AppNotifications;
@@ -11,9 +9,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface;
 using UniGetUI.Interface.Enums;
-using Version = YamlDotNet.Core.Version;
 
 namespace UniGetUI;
 
