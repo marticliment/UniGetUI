@@ -25,12 +25,13 @@ namespace UniGetUI.Interface
 
         public IgnoredUpdatesManager()
         {
+            UpdateData();
             InitializeComponent();
             IgnoredUpdatesList.ItemsSource = ignoredPackages;
-            IgnoredUpdatesList.DoubleTapped += IgnoredUpdatesList_DoubleTapped;
+            // IgnoredUpdatesList.DoubleTapped += IgnoredUpdatesList_DoubleTapped;
         }
 
-        public async Task UpdateData()
+        private void UpdateData()
         {
             Dictionary<string, IPackageManager> ManagerNameReference = [];
 

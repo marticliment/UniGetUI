@@ -63,7 +63,7 @@
                 </Button>
             </Grid>
             <ScrollViewer>
-                <ListView Name="IgnoredUpdatesList" Height="350" HorizontalAlignment="Stretch" Padding="2,4,2,4" CornerRadius="6" DoubleTapped="IgnoredUpdatesList_DoubleTapped" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <ListView Name="IgnoredUpdatesList" Height="350" HorizontalAlignment="Stretch" Padding="2,4,2,4" CornerRadius="6" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local:IgnoredPackageEntry">
                             <Grid ColumnSpacing="4">
