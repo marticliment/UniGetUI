@@ -21,19 +21,18 @@
     <StartupObject>UniGetUI.EntryPoint</StartupObject>
     <SignAssembly>False</SignAssembly>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <Nullable>enable</Nullable>
 
-      <!-- .NET & AppSdk publish options -->
-      <PublishSelfContained>true</PublishSelfContained>
-      <SdkVersion>8.0.401</SdkVersion>
-      <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-      <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
-      <WindowsPackageType>None</WindowsPackageType>
-      <WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion>
+    <!-- .NET & AppSdk publish options -->
+    <PublishSelfContained>true</PublishSelfContained>
+    <SdkVersion>8.0.401</SdkVersion>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion>
 
-      <!--PublishTrimmed>true</PublishTrimmed>
-      <TrimMode>partial</TrimMode-->
-      <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <!--PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>partial</TrimMode-->
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
   </PropertyGroup>
 
   <ItemGroup>

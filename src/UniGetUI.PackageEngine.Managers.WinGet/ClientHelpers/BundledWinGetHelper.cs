@@ -1,9 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
-using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager;
 using UniGetUI.PackageEngine.Enums;
@@ -15,7 +13,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager;
 
 internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 {
-    private WinGet Manager;
+    private readonly WinGet Manager;
 
     public BundledWinGetHelper(WinGet manager)
     {
@@ -288,8 +286,6 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         return Packages;
     }
-
-
 
     public void GetPackageDetails_UnSafe(IPackageDetails details)
     {

@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Data;
@@ -21,9 +20,9 @@ namespace UniGetUI.Interface.SoftwarePages
     {
         private bool HasDoneBackup;
 
-        BetterMenuItem? MenuAsAdmin;
-        BetterMenuItem? MenuInteractive;
-        BetterMenuItem? MenuRemoveData;
+        private BetterMenuItem? MenuAsAdmin;
+        private BetterMenuItem? MenuInteractive;
+        private BetterMenuItem? MenuRemoveData;
         private BetterMenuItem? MenuInstallationOptions;
         private BetterMenuItem? MenuReinstallPackage;
         private BetterMenuItem? MenuUninstallThenReinstall;

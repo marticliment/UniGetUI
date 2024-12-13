@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine;
@@ -21,7 +20,7 @@ namespace UniGetUI.Interface
     public sealed partial class IgnoredUpdatesManager : Page
     {
         public event EventHandler? Close;
-        private ObservableCollection<IgnoredPackageEntry> ignoredPackages = new ObservableCollection<IgnoredPackageEntry>();
+        private readonly ObservableCollection<IgnoredPackageEntry> ignoredPackages = new ObservableCollection<IgnoredPackageEntry>();
 
         public IgnoredUpdatesManager()
         {
@@ -54,7 +53,6 @@ namespace UniGetUI.Interface
 
                 ignoredPackages.Add(new IgnoredPackageEntry(ignoredId.Split("\\")[^1], version, manager, ignoredPackages));
             }
-
         }
 
         private async void IgnoredUpdatesList_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
@@ -69,7 +67,6 @@ namespace UniGetUI.Interface
         {
             Close?.Invoke(this, EventArgs.Empty);
         }
-
 
         private async void YesResetButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {

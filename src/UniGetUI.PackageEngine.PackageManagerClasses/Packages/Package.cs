@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Xml;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.Core.Logging;
@@ -27,7 +26,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         private readonly string ignoredId;
         private readonly string _iconId;
 
-        private static ConcurrentDictionary<int, Uri?> _cachedIconPaths = new();
+        private static readonly ConcurrentDictionary<int, Uri?> _cachedIconPaths = new();
 
         private IPackageDetails? __details;
         public IPackageDetails Details

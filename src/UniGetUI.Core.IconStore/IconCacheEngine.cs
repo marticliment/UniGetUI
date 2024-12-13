@@ -1,13 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Security.Cryptography;
-using Windows.ApplicationModel;
-using Windows.Graphics.Imaging;
-using Windows.UI;
 using PhotoSauce.MagicScaler;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Core.IconEngine
 {
@@ -230,7 +226,6 @@ namespace UniGetUI.Core.IconEngine
             return null;
         }
 
-
         /// <summary>
         /// The given image will be downsized to the expected size of an icon, if required
         /// </summary>
@@ -278,9 +273,7 @@ namespace UniGetUI.Core.IconEngine
                 Logger.Error($"An error occurred while downsizing the image file {cachedIconFile}");
                 Logger.Error(ex);
             }
-
         }
-
 
         /// <summary>
         /// Checks whether a cached image is valid or not depending on the size (in bytes) of the image

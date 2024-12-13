@@ -81,7 +81,6 @@ namespace UniGetUI.Core.Language
 
                 Dictionary<string, string> LangDict = BundledContents.ToDictionary(x => x.Key, x => x.Value?.ToString() ?? "");
 
-
                 string CachedLangFileToLoad = Path.Join(CoreData.UniGetUICacheDirectory_Lang, "lang_" + LangKey + ".json");
 
                 if (Settings.Get("DisableLangAutoUpdater"))

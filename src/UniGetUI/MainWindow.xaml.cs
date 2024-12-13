@@ -23,7 +23,6 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
-using UniGetUI.PackageEngine.Classes.Packages.Classes;
 
 namespace UniGetUI.Interface
 {

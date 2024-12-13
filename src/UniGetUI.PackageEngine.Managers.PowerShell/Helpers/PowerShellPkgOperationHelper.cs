@@ -25,7 +25,6 @@ internal sealed class PowerShellPkgOperationHelper : PackagePkgOperationHelper
             if (options.PreRelease)
                 parameters.Add("-AllowPrerelease");
 
-
             if (!package.OverridenOptions.PowerShell_DoNotSetScopeParameter)
             {
                 if (package.OverridenOptions.Scope == PackageScope.Global ||
