@@ -196,10 +196,6 @@
                                 Click="EditAutostartSettings_Click"
                             />
                             <widgets:CheckboxCard
-                                Text="Update package indexes on launch"
-                                SettingName="DisableUpdateIndexes"
-                                />
-                            <widgets:CheckboxCard
                                 Text="Enable Scoop cleanup on launch"
                                 SettingName="EnableScoopCleanup"
                                 />
