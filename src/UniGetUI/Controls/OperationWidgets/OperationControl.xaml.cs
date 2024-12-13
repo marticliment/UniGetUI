@@ -574,10 +574,7 @@ namespace UniGetUI.PackageEngine.Operations
             }
 
             RemoveFromQueue();
-            if (MainApp.Instance.MainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
-            {
-                MainApp.Instance.MainWindow.NavigationPage.OperationStackPanel.Children.Remove(this);
-            }
+            MainApp.Instance.MainWindow.NavigationPage.RemoveOperation(this);
         }
 
         protected abstract Task Initialize();

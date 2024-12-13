@@ -7,25 +7,27 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:interface="using:UniGetUI.Interface"
-    xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets" xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d"
     MinHeight="200"
-    MinWidth="200"
-    >
+    MinWidth="200">
 
     <UserControl.Resources>
-        <widgets:BetterMenu x:Name="MoreNavButtonMenu" Placement="Right">
-            <widgets:BetterMenuItem Text="Help" IconName="help" Name="HelpMenu" Click="HelpMenu_Click" />
-            <MenuFlyoutSeparator Height="5"/>
-            <widgets:BetterMenuItem Text="WingetUI Log" IconName="buggy" Name="WingetUILogs" Click="UniGetUILogs_Click" />
-            <widgets:BetterMenuItem Text="Package Manager logs" IconName="console" Name="ManagerLogsMenu" Click="ManagerLogsMenu_Click" />
-            <widgets:BetterMenuItem Text="Operation history" IconName="history" Name="OperationHistoryMenu" Click="OperationHistoryMenu_Click" />
-            <MenuFlyoutSeparator Height="5"/>
-            <widgets:BetterMenuItem x:Name="VersionMenuItem" IconName="info_round" IsEnabled="False" />
-            <widgets:BetterMenuItem Text="Release notes" IconName="megaphone" Name="ReleaseNotesMenu" Click="ReleaseNotesMenu_Click" />
-            <MenuFlyoutSeparator Height="5"/>
-            <widgets:BetterMenuItem Text="Quit WingetUI" IconName="close_round" Name="QuitWingetUI" Click="QuitUniGetUI_Click" />
-        </widgets:BetterMenu>
+
+        <ResourceDictionary>
+            <widgets:BetterMenu x:Name="MoreNavButtonMenu" Placement="Right">
+                <widgets:BetterMenuItem Text="Help" IconName="help" Name="HelpMenu" Click="HelpMenu_Click" />
+                <MenuFlyoutSeparator Height="5"/>
+                <widgets:BetterMenuItem Text="WingetUI Log" IconName="buggy" Name="WingetUILogs" Click="UniGetUILogs_Click" />
+                <widgets:BetterMenuItem Text="Package Manager logs" IconName="console" Name="ManagerLogsMenu" Click="ManagerLogsMenu_Click" />
+                <widgets:BetterMenuItem Text="Operation history" IconName="history" Name="OperationHistoryMenu" Click="OperationHistoryMenu_Click" />
+                <MenuFlyoutSeparator Height="5"/>
+                <widgets:BetterMenuItem x:Name="VersionMenuItem" IconName="info_round" IsEnabled="False" />
+                <widgets:BetterMenuItem Text="Release notes" IconName="megaphone" Name="ReleaseNotesMenu" Click="ReleaseNotesMenu_Click" />
+                <MenuFlyoutSeparator Height="5"/>
+                <widgets:BetterMenuItem Text="Quit WingetUI" IconName="close_round" Name="QuitWingetUI" Click="QuitUniGetUI_Click" />
+            </widgets:BetterMenu>
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid RowSpacing="4" ColumnSpacing="0">
@@ -49,10 +51,24 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="16"/>
+                <RowDefinition Height="Auto" MaxHeight="200" MinHeight="0"/>
             </Grid.RowDefinitions>
-            <ScrollView Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1" Margin="0" Padding="0,0,0,0" MaxHeight="200">
-                <StackPanel Orientation="Vertical" Spacing="0" Margin="0,0,0,0" Padding="0,0,0,0" Name="OperationStackPanel" x:FieldModifier="public"/>
+
+            <controls:GridSplitter
+                Name="OperationSplitter"
+                Orientation="Horizontal"
+                Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1"
+                CornerRadius="4" Height="12" Padding="0,0,0,0"
+                Margin="1,0,1,0"/>
+            <ScrollView
+                Name="OperationScrollView" SizeChanged="OperationScrollView_SizeChanged"
+                Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="2"
+                Margin="0" Padding="0,-8,0,0">
+                <StackPanel
+                    Orientation="Vertical" Spacing="0"
+                    Margin="0,0,0,0" Padding="0,0,0,0"
+                    Name="OperationStackPanel"/>
             </ScrollView>
         </Grid>
 
