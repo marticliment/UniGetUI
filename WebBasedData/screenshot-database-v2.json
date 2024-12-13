@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11713,
-        "done": 5131,
-        "packages_with_icon": 5131,
-        "packages_with_screenshot": 601,
-        "total_screenshots": 1876
+        "done": 5132,
+        "packages_with_icon": 5132,
+        "packages_with_screenshot": 602,
+        "total_screenshots": 1878
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -24243,8 +24243,11 @@
             "images": []
         },
         "mathtype7": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/Jh6hrqYz/mathtype-icon.png",
+            "images": [
+                "https://i.postimg.cc/BQQwDBm0/mathtype-screenshot.png",
+                "https://i.postimg.cc/QCS4wFxw/mathtype-screenshot.png"
+            ]
         },
         "matlabdrive": {
             "icon": "",
