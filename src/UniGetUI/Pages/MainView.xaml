@@ -27,6 +27,11 @@
                 <MenuFlyoutSeparator Height="5"/>
                 <widgets:BetterMenuItem Text="Quit WingetUI" IconName="close_round" Name="QuitWingetUI" Click="QuitUniGetUI_Click" />
             </widgets:BetterMenu>
+
+            <widgets:BetterMenu x:Name="OperationListMenu" Placement="Bottom">
+                <widgets:BetterMenuItem Text="Cancel all" IconName="Cross" Name="CancellAllOps" Click="CancellAllOps_Click"/>
+                <widgets:BetterMenuItem Text="Put pending operations on hold" IconName="SandClock" Name="PutAllOpsOnHold" Click="PutAllOpsOnHold_Click" IsEnabled="False"/>
+            </widgets:BetterMenu>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -56,20 +61,47 @@
             </Grid.RowDefinitions>
 
             <controls:GridSplitter
+                Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1"
                 Name="OperationSplitter"
                 Orientation="Horizontal"
-                Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1"
                 CornerRadius="4" Height="12" Padding="0,0,0,0"
                 Margin="1,0,1,0"/>
-            <ScrollView
+            <Grid
+                Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <HyperlinkButton
+                    Grid.Column="1" Height="12"
+                    Name="ExpandCollapseOpList"
+                    Click="ExpandCollapseOpList_Click"
+                    Padding="12,0,12,0" CornerRadius="4"
+                    Foreground="{ThemeResource ScrollBarButtonPointerOverBackgroundThemeBrush}" >
+                    <FontIcon Glyph="&#xE96E;" FontSize="14"/>
+                </HyperlinkButton>
+                <HyperlinkButton
+                    Grid.Column="2" Height="12"
+                    Name="OperationSplitterMenuButton"
+                    Click="OperationSplitterMenuButton_Click"
+                    Padding="12,0,12,0" CornerRadius="4"
+                    Foreground="{ThemeResource ScrollBarButtonPointerOverBackgroundThemeBrush}" >
+                    <FontIcon Glyph="&#xE712;" FontSize="24"/>
+                </HyperlinkButton>
+            </Grid>
+            <ScrollViewer
                 Name="OperationScrollView" SizeChanged="OperationScrollView_SizeChanged"
                 Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="2"
-                Margin="0" Padding="0,-8,0,0">
+                HorizontalScrollMode="Disabled"
+                VerticalScrollMode="Enabled"
+                VerticalScrollBarVisibility="Visible"
+                Margin="0" Padding="0,0,0,0">
                 <StackPanel
-                    Orientation="Vertical" Spacing="0"
+                    Orientation="Vertical" Spacing="8"
                     Margin="0,0,0,0" Padding="0,0,0,0"
                     Name="OperationStackPanel"/>
-            </ScrollView>
+            </ScrollViewer>
         </Grid>
 
         <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden" Grid.Row="0" Grid.Column="0" VerticalAlignment="Stretch" Margin="4,0,4,4" Padding="0,0,0,0">

@@ -14,6 +14,7 @@ using Windows.UI.Core;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.PackageEngine.Operations;
+using CommunityToolkit.WinUI.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -301,6 +302,8 @@ namespace UniGetUI.Interface
             UpdateOperationsLayout();
         }
 
+        bool isCollapsed;
+
         private void UpdateOperationsLayout()
         {
             OpListChanges++;
@@ -313,18 +316,35 @@ namespace UniGetUI.Interface
 
             if (OpCount > 0)
             {
-                if (int.TryParse(Settings.GetValue("OperationHistoryPreferredHeight"), out int setHeight) && setHeight < MaxHeight)
-                    MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(setHeight);
+                if(isCollapsed)
+                {
+                    MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(0);
+                    MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(16);
+                    OperationSplitter.Visibility = Visibility.Visible;
+                    OperationSplitterMenuButton.Visibility = Visibility.Visible;
+                    OperationScrollView.Visibility = Visibility.Collapsed;
+                    OperationSplitter.IsEnabled = false;
+                }
                 else
-                    MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(Math.Min(MaxHeight, 200));
-                MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(16);
-                OperationSplitter.Visibility = Visibility.Visible;
+                {
+                    if (int.TryParse(Settings.GetValue("OperationHistoryPreferredHeight"), out int setHeight) && setHeight < MaxHeight)
+                        MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(setHeight);
+                    else
+                        MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(Math.Min(MaxHeight, 200));
+                    MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(16);
+                    OperationSplitter.Visibility = Visibility.Visible;
+                    OperationSplitterMenuButton.Visibility = Visibility.Visible;
+                    OperationScrollView.Visibility = Visibility.Visible;
+                    OperationSplitter.IsEnabled = true;
+                }
             }
             else
             {
                 MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(0);
                 MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(0);
                 OperationSplitter.Visibility = Visibility.Collapsed;
+                OperationSplitterMenuButton.Visibility = Visibility.Collapsed;
+                OperationScrollView.Visibility = Visibility.Collapsed;
             }
             ResizingOPLayout = false;
         }
@@ -345,6 +365,37 @@ namespace UniGetUI.Interface
             await Task.Delay(100);
             if ((int)e.NewSize.Height == lastSaved)
                 Settings.SetValue("OperationHistoryPreferredHeight", lastSaved.ToString());
+        }
+
+        private void OperationSplitterMenuButton_Click(object sender, RoutedEventArgs e)
+        {
+            OperationListMenu.ShowAt(OperationSplitterMenuButton, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Standard });
+        }
+
+        private void CancellAllOps_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void PutAllOpsOnHold_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ExpandCollapseOpList_Click(object sender, RoutedEventArgs e)
+        {
+            if (isCollapsed)
+            {
+                isCollapsed = false;
+                ExpandCollapseOpList.Content = new FontIcon() { Glyph = "\uE96E", FontSize = 14 };
+                UpdateOperationsLayout();
+            }
+            else
+            {
+                isCollapsed = true;
+                ExpandCollapseOpList.Content = new FontIcon() { Glyph = "\uE96D", FontSize = 14 };
+                UpdateOperationsLayout();
+            }
         }
     }
 }
