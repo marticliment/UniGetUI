@@ -29,8 +29,12 @@
             </widgets:BetterMenu>
 
             <widgets:BetterMenu x:Name="OperationListMenu" Placement="Bottom">
+                <widgets:BetterMenuItem Text="Retry failed operations" IconName="Reload" Name="RetryFailedOps" Click="RetryFailedOps_Click"/>
+                <MenuFlyoutSeparator Height="5"/>
+                <widgets:BetterMenuItem Text="Pause pending operations" IconName="SandClock" Name="PausePendingOps" Click="PausePendingOps_Click" IsEnabled="False"/>
+                <widgets:BetterMenuItem Text="Resume pending operations" IconName="SandClock" Name="ResumeAllOps" Click="ResumeAllOps_Click" IsEnabled="False"/>
+                <MenuFlyoutSeparator Height="5"/>
                 <widgets:BetterMenuItem Text="Cancel all" IconName="Cross" Name="CancellAllOps" Click="CancellAllOps_Click"/>
-                <widgets:BetterMenuItem Text="Put pending operations on hold" IconName="SandClock" Name="PutAllOpsOnHold" Click="PutAllOpsOnHold_Click" IsEnabled="False"/>
             </widgets:BetterMenu>
         </ResourceDictionary>
     </UserControl.Resources>

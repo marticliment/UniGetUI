@@ -15,6 +15,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.PackageEngine.Operations;
 using CommunityToolkit.WinUI.Controls;
+using UniGetUI.PackageEngine.Enums;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -372,16 +373,6 @@ namespace UniGetUI.Interface
             OperationListMenu.ShowAt(OperationSplitterMenuButton, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Standard });
         }
 
-        private void CancellAllOps_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void PutAllOpsOnHold_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void ExpandCollapseOpList_Click(object sender, RoutedEventArgs e)
         {
             if (isCollapsed)
@@ -395,6 +386,57 @@ namespace UniGetUI.Interface
                 isCollapsed = true;
                 ExpandCollapseOpList.Content = new FontIcon() { Glyph = "\uE96D", FontSize = 14 };
                 UpdateOperationsLayout();
+            }
+        }
+
+        private void CancellAllOps_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var widget in OperationStackPanel.Children)
+            {
+                if (widget is not AbstractOperation operation)
+                    throw new InvalidCastException("All widgets here are supposed to inherit from AbstractOperation");
+
+                if (operation.Status is OperationStatus.Pending or OperationStatus.Running)
+                    operation.Cancel();
+            }
+        }
+
+        private void RetryFailedOps_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var widget in OperationStackPanel.Children)
+            {
+                if (widget is not AbstractOperation operation)
+                    throw new InvalidCastException("All widgets here are supposed to inherit from AbstractOperation");
+
+                if (operation.Status is OperationStatus.Failed)
+                    throw new NotImplementedException();
+                    //operation.Reload();
+            }
+        }
+
+        private void PausePendingOps_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var widget in OperationStackPanel.Children)
+            {
+                if (widget is not AbstractOperation operation)
+                    throw new InvalidCastException("All widgets here are supposed to inherit from AbstractOperation");
+
+                if (operation.Status is OperationStatus.Pending)
+                    throw new NotImplementedException();
+                    //operation.Pause();
+            }
+        }
+
+        private void ResumeAllOps_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var widget in OperationStackPanel.Children)
+            {
+                if (widget is not AbstractOperation operation)
+                    throw new InvalidCastException("All widgets here are supposed to inherit from AbstractOperation");
+
+                if (operation.Status is OperationStatus.Canceled/*Paused*/)
+                    throw new NotImplementedException();
+                   //operation.Resume();
             }
         }
     }

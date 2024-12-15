@@ -318,7 +318,9 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        public async void CancelButtonClicked()
+        public void Cancel() => CancelButtonClicked();
+
+        private async void CancelButtonClicked()
         {
             RemoveFromQueue();
 
