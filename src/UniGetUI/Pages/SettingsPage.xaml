@@ -344,6 +344,11 @@
                                 SettingName="AllowParallelInstalls"
                                 />
                             <widgets:CheckboxCard
+                                Text="Disable the 1-minute timeout for package-related operations"
+                                ForceInversion="True"
+                                SettingName="DisableTimeoutOnPackageListingTasks"
+                            />
+                            <widgets:CheckboxCard
                                 x:Name="DisableDownloadingNewTranslations"
                                 Text="Download updated language files from GitHub automatically"
                                 SettingName="DisableLangAutoUpdater"
