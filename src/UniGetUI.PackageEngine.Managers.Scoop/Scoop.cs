@@ -303,8 +303,12 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 {
                     string[] elements = Regex.Replace(line, " {2,}", " ").Trim().Split(" ");
                     if (elements.Length < 3)
-                    {
                         continue;
+
+                    if (elements[2].Contains(":\\"))
+                    {
+                        var path = Regex.Match(line, "[A-Za-z]:(?:[\\\\\\/][^\\\\\\/\\n]+)+(?:.json|…)");
+                        elements[2] = path.Value;
                     }
 
                     for (int i = 0; i < elements.Length; i++)
