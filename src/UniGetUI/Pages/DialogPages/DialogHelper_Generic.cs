@@ -394,12 +394,12 @@ public static partial class DialogHelper
                         "cmd.exe /C \"rmdir /Q /S `\"%temp%\\WinGet`\"\"; " +
                         "cmd.exe /C \"`\"%localappdata%\\Microsoft\\WindowsApps\\winget.exe`\" source reset --force\"; " +
                         "taskkill /im winget.exe /f; " +
-                        "taskkill /im WindowsIPackageManagerServer.exe /f; " +
+                        "taskkill /im WindowsPackageManagerServer.exe /f; " +
                         "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; " +
                         "Install-Module Microsoft.WinGet.Client -Force -AllowClobber; " +
                         "Import-Module Microsoft.WinGet.Client; " +
-                        "Repair-WinGetIPackageManager -Force -Latest; " +
-                        "Get-AppxPackage -Name 'Microsoft.DesktopAppInstaller' | Reset-AppxPackage" +
+                        "Repair-WinGetPackageManager -Force -Latest; " +
+                        "Get-AppxPackage -Name 'Microsoft.DesktopAppInstaller' | Reset-AppxPackage; " +
                         "}\"",
                     UseShellExecute = true,
                     Verb = "runas"
