@@ -396,7 +396,7 @@ public static partial class DialogHelper
                         "taskkill /im winget.exe /f; " +
                         "taskkill /im WindowsIPackageManagerServer.exe /f; " +
                         "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; " +
-                        "Install-Module Microsoft.WinGet.Client -Force -Scope AllUsers -AllowClobber; " +
+                        "Install-Module Microsoft.WinGet.Client -Force -AllowClobber; " +
                         "Import-Module Microsoft.WinGet.Client; " +
                         "Repair-WinGetIPackageManager -Force -Latest; " +
                         "Get-AppxPackage -Name 'Microsoft.DesktopAppInstaller' | Reset-AppxPackage" +
