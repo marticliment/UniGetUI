@@ -50,8 +50,8 @@ def get_all_strings():
         r'<[a-zA-Z0-9]+:ButtonCard' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
         r'<[a-zA-Z0-9]+:ButtonCard' + MAIN_WILDCARD + r'+ButtonText=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" ButtonText=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
         r'<[a-zA-Z0-9]+:CheckboxCard' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
-        r'<[a-zA-Z0-9]+:CheckboxButtonCard' + MAIN_WILDCARD + r'+CheckboxText=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
-        r'<[a-zA-Z0-9]+:CheckboxButtonCard' + MAIN_WILDCARD + r'+ButtonText=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:CheckboxButtonCard' + MAIN_WILDCARD + r'+CheckboxText=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" CheckboxText=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
+        r'<[a-zA-Z0-9]+:CheckboxButtonCard' + MAIN_WILDCARD + r'+ButtonText=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" ButtonText=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
         r'<[a-zA-Z0-9]+:ComboboxCard' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
         r'<[a-zA-Z0-9]+:BetterMenuItem' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
         r'<[a-zA-Z0-9]+:NavButton' + MAIN_WILDCARD + r'+Text=["\'].+["\']' + MAIN_WILDCARD + r'*\/?>': lambda match: match.split(" Text=\"")[1].split("\"")[0].encode('raw_unicode_escape').decode('unicode_escape'),
@@ -71,7 +71,11 @@ def get_all_strings():
                 with open(os.path.join(dirpath, file), "r", encoding="utf-8") as f:
                     matches: list[str] = re.findall(regex, f.read())
                     for match in matches:
-                        translation_strings.append(regex_data[regex](match.replace("\n", " ").replace("\t", " ")))
+                        try:
+                            translation_strings.append(regex_data[regex](match.replace("\n", " ").replace("\t", " ")))
+                        except Exception as e:
+                            print(match)
+                            raise e
 
     translation_strings = list(set(translation_strings))  # uniq
     translation_strings.sort(key=lambda x: (remove_special_chars(x.lower()), x))
