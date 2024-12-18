@@ -30,8 +30,8 @@
     <WindowsPackageType>None</WindowsPackageType>
     <WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion>
 
-    <!--PublishTrimmed>true</PublishTrimmed>
-    <TrimMode>partial</TrimMode-->
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>partial</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
   </PropertyGroup>
 
