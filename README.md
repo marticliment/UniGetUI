@@ -95,18 +95,7 @@ UniGetUI has a built-in autoupdater. However, it can also be updated like any ot
 
 **NOTE:** All package managers do support basic install, update, and uninstall processes, as well as checking for updates, finding new packages, and retrieving details from a package.
 
-| **Manager** 	| Install as administrator 	| Skip integrity checks 	| Interactive installation 	| Install Older Versions 	| Install a PreRelease Version 	| Install a Custom Architecture 	| Install on a Custom Scope 	| Custom Install Location 	| Custom Package Sources 	| Supported since 	|
-|:---:	|:---:	|:---:	|:---:	|:---:	|:---:	|:---:	|:---:	|:---:	|:---:	|:---:	|
-| **Winget** 	| ✅ 	| ✅ 	| ✅ 	| ✅ 	| ☑️ 	| ✅ 	| ⚠️ 	| ⚠️ 	| ✅ 	| 0.1.0 	|
-| **Scoop** 	| ✅ 	| ✅ 	| ❌ 	| ❌ 	| ☑️ 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| 0.1.0 	|
-| **Chocolatey** 	| ✅ 	| ✅ 	| ✅ 	| ✅ 	| ✅ 	| ✅ 	| ❌ 	| ❌ 	| ✅ 	| 1.6.0 	|
-| **Npm** 	| ✅ 	| ❌ 	| ❌ 	| ✅ 	| ❌ 	| ❌ 	| ✅ 	| ❌ 	| ❌ 	| 2.0.0 	|
-| **Pip** 	| ✅ 	| ❌ 	| ❌ 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| ❌ 	| ❌ 	| 2.0.0 	|
-| **.NET Tool** 	| ✅ 	| ❌ 	| ❌ 	| ✅ 	| ✅ 	| ✅ 	| ✅ 	| ✅ 	| ❌ 	| 2.1.0 	|
-| **PowerShell 5.x** 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| ❌ 	| ✅ 	| 2.2.0 	|
-| **PowerShell 7.x** 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| ✅ 	| ❌ 	| ✅ 	| ❌ 	| ✅ 	| 3.1.1 	|
-| **Cargo** 	         | ✅ 	| ❌ 	| ❌ 	| ❌ 	| ❌ 	| ❌ 	| ❌ 	| ❌ 	| ❌ 	| 3.1.2 	|
-| **vcpkg** 	         | ✅ 	| ❌ 	| ❌ 	| ❌ 	| ❌ 	| ☑️ 	| ☑️ 	| ❌ 	| ☑️ 	| 3.1.4 	|
+<img src="https://marticliment.com/unigetui/extra/supported-managers.svg"/>
 
 ✅: Supported on UniGetUI<br>
 ☑️: Not directly supported but can be easily achieved<br>
