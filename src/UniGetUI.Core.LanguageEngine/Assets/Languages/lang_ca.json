@@ -367,7 +367,7 @@
   "Please try again later": "Proveu-ho més tard",
   "Please type at least two characters": "Escriviu com a mínim dos caràcters",
   "Please wait": "Si us plau, espereu",
-  "Please wait while {0} is being installed. A black window may show up. Please wait until it closes.": "Si us plau, espereu mentre el {0} s'instal·la. Pot aparèixer una finestra negra. Espereu a que es tanqui.",
+  "Please wait while {0} is being installed. A black window may show up. Please wait until it closes.": "Si us plau, espereu mentre el {0} s'instal·la. Pot aparèixer una finestra negra (o blava). Espereu a que es tanqui.",
   "Please wait...": "Si us plau espereu...",
   "Portable": "Portàtil",
   "PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>": "L'administrador de paquets del PowerShell. Trobeu llibreries i scripts que us permetran expandir les capacitats del PowerShell<br>Conté: <b>Mòduls, scripts i Cmdlets</b>",
