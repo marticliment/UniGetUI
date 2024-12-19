@@ -413,7 +413,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 // Make sure the root is a valid root not just a random directory
                 if (found && Path.Exists($"{path}\\triplets"))
                 {
-                    vcpkgRoot = Path.GetDirectoryName(path);
+                    vcpkgRoot = path;
                 }
             }
 
