@@ -404,6 +404,18 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             {
                 vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
             }
+            if (vcpkgRoot == null)
+            {
+                // Unfortuanately, we can't use `GetVcpkgPath` for this
+                // as it would become a bunch of functions calling each other
+                var (found, path) = CoreTools.Which("vcpkg");
+                path = Path.GetDirectoryName(path);
+                // Make sure the root is a valid root not just a random directory
+                if (found && Path.Exists($"{path}\\triplets"))
+                {
+                    vcpkgRoot = Path.GetDirectoryName(path);
+                }
+            }
 
             return Tuple.Create(vcpkgRoot != null, vcpkgRoot ?? "");
         }
