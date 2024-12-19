@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -403,6 +404,18 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             {
                 vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
             }
+            if (vcpkgRoot == null)
+            {
+                // Unfortuanately, we can't use `GetVcpkgPath` for this
+                // as it would become a bunch of functions calling each other
+                var (found, path) = CoreTools.Which("vcpkg");
+                path = Path.GetDirectoryName(path);
+                // Make sure the root is a valid root not just a random directory
+                if (found && Path.Exists($"{path}\\triplets"))
+                {
+                    vcpkgRoot = path;
+                }
+            }
 
             return Tuple.Create(vcpkgRoot != null, vcpkgRoot ?? "");
         }
@@ -439,7 +452,25 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 string tripletLocation = Path.Join(vcpkgRoot, "triplets");
                 string communityTripletLocation = Path.Join(vcpkgRoot, "triplets", "community");
 
-                foreach (string tripletFile in Directory.EnumerateFiles(tripletLocation).Concat(Directory.EnumerateFiles(communityTripletLocation)))
+                IEnumerable<string> tripletFiles = [];
+                if (Path.Exists(tripletLocation))
+                {
+                    tripletFiles = tripletFiles.Concat(Directory.EnumerateFiles(tripletLocation));
+                }
+                else
+                {
+                    Logger.Warn($"The built-in triplet directory {tripletLocation} does not exist; triplets will not be loaded.");
+                }
+                if (Path.Exists(communityTripletLocation))
+                {
+                    tripletFiles = tripletFiles.Concat(Directory.EnumerateFiles(communityTripletLocation));
+                }
+                else
+                {
+                    Logger.Warn($"The community triplet directory {communityTripletLocation} does not exist; community triplets will not be loaded.");
+                }
+
+                foreach (string tripletFile in tripletFiles)
                 {
                     string triplet = Path.GetFileNameWithoutExtension(tripletFile);
                     Triplets.Add(triplet);
