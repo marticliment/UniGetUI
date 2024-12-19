@@ -7,25 +7,36 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:interface="using:UniGetUI.Interface"
-    xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets" xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d"
     MinHeight="200"
-    MinWidth="200"
-    >
+    MinWidth="200">
 
     <UserControl.Resources>
-        <widgets:BetterMenu x:Name="MoreNavButtonMenu" Placement="Right">
-            <widgets:BetterMenuItem Text="Help" IconName="help" Name="HelpMenu" Click="HelpMenu_Click" />
-            <MenuFlyoutSeparator Height="5"/>
-            <widgets:BetterMenuItem Text="WingetUI Log" IconName="buggy" Name="WingetUILogs" Click="UniGetUILogs_Click" />
-            <widgets:BetterMenuItem Text="Package Manager logs" IconName="console" Name="ManagerLogsMenu" Click="ManagerLogsMenu_Click" />
-            <widgets:BetterMenuItem Text="Operation history" IconName="history" Name="OperationHistoryMenu" Click="OperationHistoryMenu_Click" />
-            <MenuFlyoutSeparator Height="5"/>
-            <widgets:BetterMenuItem x:Name="VersionMenuItem" IconName="info_round" IsEnabled="False" />
-            <widgets:BetterMenuItem Text="Release notes" IconName="megaphone" Name="ReleaseNotesMenu" Click="ReleaseNotesMenu_Click" />
-            <MenuFlyoutSeparator Height="5"/>
-            <widgets:BetterMenuItem Text="Quit WingetUI" IconName="close_round" Name="QuitWingetUI" Click="QuitUniGetUI_Click" />
-        </widgets:BetterMenu>
+
+        <ResourceDictionary>
+            <widgets:BetterMenu x:Name="MoreNavButtonMenu" Placement="Right">
+                <widgets:BetterMenuItem Text="Help" IconName="help" Name="HelpMenu" Click="HelpMenu_Click" />
+                <MenuFlyoutSeparator Height="5"/>
+                <widgets:BetterMenuItem Text="WingetUI Log" IconName="buggy" Name="WingetUILogs" Click="UniGetUILogs_Click" />
+                <widgets:BetterMenuItem Text="Package Manager logs" IconName="console" Name="ManagerLogsMenu" Click="ManagerLogsMenu_Click" />
+                <widgets:BetterMenuItem Text="Operation history" IconName="history" Name="OperationHistoryMenu" Click="OperationHistoryMenu_Click" />
+                <MenuFlyoutSeparator Height="5"/>
+                <widgets:BetterMenuItem x:Name="VersionMenuItem" IconName="info_round" IsEnabled="False" />
+                <widgets:BetterMenuItem Text="Release notes" IconName="megaphone" Name="ReleaseNotesMenu" Click="ReleaseNotesMenu_Click" />
+                <MenuFlyoutSeparator Height="5"/>
+                <widgets:BetterMenuItem Text="Quit WingetUI" IconName="close_round" Name="QuitWingetUI" Click="QuitUniGetUI_Click" />
+            </widgets:BetterMenu>
+
+            <widgets:BetterMenu x:Name="OperationListMenu" Placement="Bottom">
+                <widgets:BetterMenuItem Text="Retry failed operations" IconName="Reload" Name="RetryFailedOps" Click="RetryFailedOps_Click"/>
+                <MenuFlyoutSeparator Height="5"/>
+                <widgets:BetterMenuItem Text="Pause pending operations" IconName="SandClock" Name="PausePendingOps" Click="PausePendingOps_Click" IsEnabled="False"/>
+                <widgets:BetterMenuItem Text="Resume pending operations" IconName="SandClock" Name="ResumeAllOps" Click="ResumeAllOps_Click" IsEnabled="False"/>
+                <MenuFlyoutSeparator Height="5"/>
+                <widgets:BetterMenuItem Text="Cancel all" IconName="Cross" Name="CancellAllOps" Click="CancellAllOps_Click"/>
+            </widgets:BetterMenu>
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid RowSpacing="4" ColumnSpacing="0">
@@ -49,11 +60,52 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="16"/>
+                <RowDefinition Height="Auto" MaxHeight="200" MinHeight="0"/>
             </Grid.RowDefinitions>
-            <ScrollView Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1" Margin="0" Padding="0,0,0,0" MaxHeight="200">
-                <StackPanel Orientation="Vertical" Spacing="0" Margin="0,0,0,0" Padding="0,0,0,0" Name="OperationStackPanel" x:FieldModifier="public"/>
-            </ScrollView>
+
+            <controls:GridSplitter
+                Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1"
+                Name="OperationSplitter"
+                Orientation="Horizontal"
+                CornerRadius="4" Height="12" Padding="0,0,0,0"
+                Margin="1,0,1,0"/>
+            <Grid
+                Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <HyperlinkButton
+                    Grid.Column="1" Height="12"
+                    Name="ExpandCollapseOpList"
+                    Click="ExpandCollapseOpList_Click"
+                    Padding="12,0,12,0" CornerRadius="4"
+                    Foreground="{ThemeResource ScrollBarButtonPointerOverBackgroundThemeBrush}" >
+                    <FontIcon Glyph="&#xE96E;" FontSize="14"/>
+                </HyperlinkButton>
+                <HyperlinkButton
+                    Grid.Column="2" Height="12"
+                    Name="OperationSplitterMenuButton"
+                    Click="OperationSplitterMenuButton_Click"
+                    Padding="12,0,12,0" CornerRadius="4"
+                    Foreground="{ThemeResource ScrollBarButtonPointerOverBackgroundThemeBrush}" >
+                    <FontIcon Glyph="&#xE712;" FontSize="24"/>
+                </HyperlinkButton>
+            </Grid>
+            <ScrollViewer
+                Name="OperationScrollView" SizeChanged="OperationScrollView_SizeChanged"
+                Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="2"
+                HorizontalScrollMode="Disabled"
+                VerticalScrollMode="Enabled"
+                VerticalScrollBarVisibility="Visible"
+                Margin="0" Padding="0,0,0,0">
+                <StackPanel
+                    Orientation="Vertical" Spacing="8"
+                    Margin="0,0,0,0" Padding="0,0,0,0"
+                    Name="OperationStackPanel"/>
+            </ScrollViewer>
         </Grid>
 
         <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden" Grid.Row="0" Grid.Column="0" VerticalAlignment="Stretch" Margin="4,0,4,4" Padding="0,0,0,0">

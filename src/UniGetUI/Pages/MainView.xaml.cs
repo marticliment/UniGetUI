@@ -13,6 +13,9 @@ using UniGetUI.Interface.SoftwarePages;
 using Windows.UI.Core;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.Pages.DialogPages;
+using UniGetUI.PackageEngine.Operations;
+using CommunityToolkit.WinUI.Controls;
+using UniGetUI.PackageEngine.Enums;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -108,6 +111,8 @@ namespace UniGetUI.Interface
                 Settings.Set("AlreadyWarnedAboutAdmin", true);
                 DialogHelper.WarnAboutAdminRights();
             }
+
+            UpdateOperationsLayout();
         }
 
         public void LoadDefaultPage()
@@ -280,5 +285,159 @@ namespace UniGetUI.Interface
 
         private void QuitUniGetUI_Click(object sender, RoutedEventArgs e)
             => MainApp.Instance.DisposeAndQuit();
+
+
+        private bool ResizingOPLayout;
+        private int OpListChanges;
+        public void AddOperation(AbstractOperation operation)
+        { 
+            OperationStackPanel.Children.Add(operation);
+            UpdateOperationsLayout();
+        }
+
+        public void RemoveOperation(AbstractOperation operation)
+        {
+            if (OperationStackPanel.Children.Contains(operation))
+                OperationStackPanel.Children.Remove(operation);
+
+            UpdateOperationsLayout();
+        }
+
+        bool isCollapsed;
+
+        private void UpdateOperationsLayout()
+        {
+            OpListChanges++;
+
+            ResizingOPLayout = true;
+            int OpCount = OperationStackPanel.Children.Count;
+            int MaxHeight = Math.Max((OpCount * 58) - 7, 0);
+
+            MainContentPresenterGrid.RowDefinitions[2].MaxHeight = MaxHeight;
+
+            if (OpCount > 0)
+            {
+                if(isCollapsed)
+                {
+                    MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(0);
+                    MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(16);
+                    OperationSplitter.Visibility = Visibility.Visible;
+                    OperationSplitterMenuButton.Visibility = Visibility.Visible;
+                    OperationScrollView.Visibility = Visibility.Collapsed;
+                    OperationSplitter.IsEnabled = false;
+                }
+                else
+                {
+                    if (int.TryParse(Settings.GetValue("OperationHistoryPreferredHeight"), out int setHeight) && setHeight < MaxHeight)
+                        MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(setHeight);
+                    else
+                        MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(Math.Min(MaxHeight, 200));
+                    MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(16);
+                    OperationSplitter.Visibility = Visibility.Visible;
+                    OperationSplitterMenuButton.Visibility = Visibility.Visible;
+                    OperationScrollView.Visibility = Visibility.Visible;
+                    OperationSplitter.IsEnabled = true;
+                }
+            }
+            else
+            {
+                MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(0);
+                MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(0);
+                OperationSplitter.Visibility = Visibility.Collapsed;
+                OperationSplitterMenuButton.Visibility = Visibility.Collapsed;
+                OperationScrollView.Visibility = Visibility.Collapsed;
+            }
+            ResizingOPLayout = false;
+        }
+
+        int lastSaved = -1;
+        private async void OperationScrollView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ResizingOPLayout)
+                return;
+
+            if(OpListChanges > 0)
+            {
+                OpListChanges--;
+                return;
+            }
+
+            lastSaved = (int)e.NewSize.Height;
+            await Task.Delay(100);
+            if ((int)e.NewSize.Height == lastSaved)
+                Settings.SetValue("OperationHistoryPreferredHeight", lastSaved.ToString());
+        }
+
+        private void OperationSplitterMenuButton_Click(object sender, RoutedEventArgs e)
+        {
+            OperationListMenu.ShowAt(OperationSplitterMenuButton, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Standard });
+        }
+
+        private void ExpandCollapseOpList_Click(object sender, RoutedEventArgs e)
+        {
+            if (isCollapsed)
+            {
+                isCollapsed = false;
+                ExpandCollapseOpList.Content = new FontIcon() { Glyph = "\uE96E", FontSize = 14 };
+                UpdateOperationsLayout();
+            }
+            else
+            {
+                isCollapsed = true;
+                ExpandCollapseOpList.Content = new FontIcon() { Glyph = "\uE96D", FontSize = 14 };
+                UpdateOperationsLayout();
+            }
+        }
+
+        private void CancellAllOps_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var widget in OperationStackPanel.Children)
+            {
+                if (widget is not AbstractOperation operation)
+                    throw new InvalidCastException("All widgets here are supposed to inherit from AbstractOperation");
+
+                if (operation.Status is OperationStatus.Pending or OperationStatus.Running)
+                    operation.Cancel();
+            }
+        }
+
+        private void RetryFailedOps_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var widget in OperationStackPanel.Children)
+            {
+                if (widget is not AbstractOperation operation)
+                    throw new InvalidCastException("All widgets here are supposed to inherit from AbstractOperation");
+
+                if (operation.Status is OperationStatus.Failed)
+                    throw new NotImplementedException();
+                    //operation.Reload();
+            }
+        }
+
+        private void PausePendingOps_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var widget in OperationStackPanel.Children)
+            {
+                if (widget is not AbstractOperation operation)
+                    throw new InvalidCastException("All widgets here are supposed to inherit from AbstractOperation");
+
+                if (operation.Status is OperationStatus.Pending)
+                    throw new NotImplementedException();
+                    //operation.Pause();
+            }
+        }
+
+        private void ResumeAllOps_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var widget in OperationStackPanel.Children)
+            {
+                if (widget is not AbstractOperation operation)
+                    throw new InvalidCastException("All widgets here are supposed to inherit from AbstractOperation");
+
+                if (operation.Status is OperationStatus.Canceled/*Paused*/)
+                    throw new NotImplementedException();
+                   //operation.Resume();
+            }
+        }
     }
 }

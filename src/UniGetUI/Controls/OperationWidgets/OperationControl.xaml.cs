@@ -318,7 +318,9 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        public async void CancelButtonClicked()
+        public void Cancel() => CancelButtonClicked();
+
+        private async void CancelButtonClicked()
         {
             RemoveFromQueue();
 
@@ -574,10 +576,7 @@ namespace UniGetUI.PackageEngine.Operations
             }
 
             RemoveFromQueue();
-            if (MainApp.Instance.MainWindow.NavigationPage.OperationStackPanel.Children.Contains(this))
-            {
-                MainApp.Instance.MainWindow.NavigationPage.OperationStackPanel.Children.Remove(this);
-            }
+            MainApp.Instance.MainWindow.NavigationPage.RemoveOperation(this);
         }
 
         protected abstract Task Initialize();
