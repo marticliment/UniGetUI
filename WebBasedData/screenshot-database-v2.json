@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 11713,
-        "done": 5132,
-        "packages_with_icon": 5132,
+        "total": 11714,
+        "done": 5135,
+        "packages_with_icon": 5135,
         "packages_with_screenshot": 602,
         "total_screenshots": 1878
     },
@@ -17189,11 +17189,11 @@
             "images": []
         },
         "gradle": {
-            "icon": "",
+            "icon": "https://static-00.iconduck.com/assets.00/gradle-icon-1024x752-8azdwgt9.png",
             "images": []
         },
         "gradle-bin": {
-            "icon": "",
+            "icon": "https://static-00.iconduck.com/assets.00/gradle-icon-1024x752-8azdwgt9.png",
             "images": []
         },
         "grafana": {
@@ -40591,6 +40591,10 @@
             "images": []
         },
         "temurin-20-jre": {
+            "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
+            "images": []
+        },
+        "temurin-21-jdk": {
             "icon": "https://projects.eclipse.org/sites/default/files/Logo_Temurin_2021_08_17_JRR_RGB-V1A_0.png",
             "images": []
         },
