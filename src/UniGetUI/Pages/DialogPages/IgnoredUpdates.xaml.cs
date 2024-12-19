@@ -27,7 +27,6 @@ namespace UniGetUI.Interface
             UpdateData();
             InitializeComponent();
             IgnoredUpdatesList.ItemsSource = ignoredPackages;
-            // IgnoredUpdatesList.DoubleTapped += IgnoredUpdatesList_DoubleTapped;
         }
 
         private void UpdateData()

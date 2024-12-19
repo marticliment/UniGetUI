@@ -214,7 +214,7 @@ namespace UniGetUI
 
         public void AddOperationToList(AbstractOperation operation)
         {
-            MainWindow.NavigationPage.OperationStackPanel.Children.Add(operation);
+            MainWindow.NavigationPage.AddOperation(operation);
         }
 
         /// <summary>

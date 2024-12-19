@@ -146,10 +146,10 @@ public partial class Cargo : PackageManager
         List<Package> Packages = [];
         foreach(var match in TaskRecycler<List<Match>>.RunOrAttach(GetInstalledCommandOutput, 15))
         {
-            var id = match.Groups[1].Value.Trim();
+            var id = match.Groups[1]?.Value?.Trim() ?? "";
             var name = CoreTools.FormatAsName(id);
-            var oldVersion = match.Groups[2].Value;
-            var newVersion = match.Groups[3].Value;
+            var oldVersion = match.Groups[2]?.Value?.Trim() ?? "";
+            var newVersion = match.Groups[3]?.Value?.Trim() ?? "";
             if(taskType is LoggableTaskType.ListUpdates && oldVersion != newVersion)
                 Packages.Add(new Package(name, id, oldVersion, newVersion, DefaultSource, this));
             else if(taskType is LoggableTaskType.ListInstalledPackages)

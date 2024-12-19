@@ -23,6 +23,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj" />
 	  <ProjectReference Include="..\UniGetUI.Core.Data\UniGetUI.Core.Data.csproj" />
 	  <ProjectReference Include="..\UniGetUI.Core.IconStore\UniGetUI.Core.IconEngine.csproj" />
