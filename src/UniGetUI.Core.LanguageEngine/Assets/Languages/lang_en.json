@@ -367,7 +367,7 @@
   "Please try again later": "Please try again later",
   "Please type at least two characters": "Please type at least two characters",
   "Please wait": "Please wait",
-  "Please wait while {0} is being installed. A black window may show up. Please wait until it closes.": "Please wait while {0} is being installed. A black window may show up. Please wait until it closes.",
+  "Please wait while {0} is being installed. A black window may show up. Please wait until it closes.": "Please wait while {0} is being installed. A black (or blue) window may show up. Please wait until it closes.",
   "Please wait...": "Please wait...",
   "Portable": "Portable",
   "PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>": "PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>",
