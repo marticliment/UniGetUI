@@ -169,7 +169,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         private FileInfo GetPackageOptionsFile()
         {
-            string optionsFileName = Package.Manager.Name + "." + Package.Id + ".json";
+            string optionsFileName = Package.Manager.Name + "." + Package.Id.Split(":")[0] + ".json";
+            Logger.Warn(optionsFileName);
             return new FileInfo(Path.Join(CoreData.UniGetUIInstallationOptionsDirectory, optionsFileName));
         }
 
