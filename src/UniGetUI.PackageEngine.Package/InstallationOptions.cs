@@ -96,6 +96,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             RunAsAdministrator = options.RunAsAdministrator;
             CustomInstallLocation = options.CustomInstallLocation;
             Version = options.Version;
+            SkipMinorUpdates = options.SkipMinorUpdates;
             PreRelease = options.PreRelease;
             if (options.Architecture != "" && CommonTranslations.InvertedArchNames.ContainsKey(options.Architecture))
                 Architecture = CommonTranslations.InvertedArchNames[options.Architecture];
@@ -117,6 +118,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             options.CustomInstallLocation = CustomInstallLocation;
             options.PreRelease = PreRelease;
             options.Version = Version;
+            options.SkipMinorUpdates = SkipMinorUpdates;
             if (Architecture != null)
                 options.Architecture = CommonTranslations.ArchNames[Architecture.Value];
             if (InstallationScope != null)

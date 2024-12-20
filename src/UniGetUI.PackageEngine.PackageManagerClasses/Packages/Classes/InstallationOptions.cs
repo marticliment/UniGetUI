@@ -22,6 +22,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public bool InteractiveInstallation { get; set; }
         public bool RunAsAdministrator { get; set; }
         public string Version { get; set; } = "";
+        public bool SkipMinorUpdates { get; set; }
         public Architecture? Architecture { get; set; }
         public PackageScope? InstallationScope { get; set; }
         public List<string> CustomParameters { get; set; } = [];
@@ -113,6 +114,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             RunAsAdministrator = options.RunAsAdministrator;
             CustomInstallLocation = options.CustomInstallLocation;
             Version = options.Version;
+            SkipMinorUpdates = options.SkipMinorUpdates;
             PreRelease = options.PreRelease;
 
             if (options.Architecture != "" && CommonTranslations.InvertedArchNames.TryGetValue(options.Architecture, out var name))
@@ -148,7 +150,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 RunAsAdministrator = RunAsAdministrator,
                 CustomInstallLocation = CustomInstallLocation,
                 PreRelease = PreRelease,
-                Version = Version
+                Version = Version,
+                SkipMinorUpdates = SkipMinorUpdates
             };
             if (Architecture is not null)
             {
