@@ -11,7 +11,7 @@ using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public sealed class ComboboxCard : SettingsCard
+    public sealed partial class ComboboxCard : SettingsCard
     {
         private readonly ComboBox _combobox = new();
         private readonly ObservableCollection<string> _elements = new();

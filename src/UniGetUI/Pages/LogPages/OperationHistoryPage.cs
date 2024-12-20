@@ -3,7 +3,7 @@ using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI.Interface.Pages.LogPage
 {
-    public class OperationHistoryPage : BaseLogPage
+    public partial class OperationHistoryPage : BaseLogPage
     {
         public OperationHistoryPage() : base(false)
         {

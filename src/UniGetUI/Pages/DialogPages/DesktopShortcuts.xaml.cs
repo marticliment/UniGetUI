@@ -101,7 +101,7 @@ namespace UniGetUI.Interface
         }
     }
 
-    public class ShortcutEntry : INotifyPropertyChanged
+    public partial class ShortcutEntry : INotifyPropertyChanged
     {
         public event EventHandler<EventArgs>? OnReset;
 

@@ -5,7 +5,7 @@ using UniGetUI.PackageEngine.Serializable;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
-    public class ImportedPackage : Package
+    public partial class ImportedPackage : Package
     {
         /// <summary>
         /// Construct an invalid package with a given name, id, version, source and manager, and an optional scope.

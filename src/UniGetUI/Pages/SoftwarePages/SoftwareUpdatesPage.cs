@@ -17,7 +17,7 @@ using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class SoftwareUpdatesPage : AbstractPackagesPage
+    public partial class SoftwareUpdatesPage : AbstractPackagesPage
     {
         private BetterMenuItem? MenuAsAdmin;
         private BetterMenuItem? MenuInteractive;

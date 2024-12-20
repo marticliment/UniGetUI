@@ -9,7 +9,7 @@ using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public sealed class SettingsEntry : SettingsExpander
+    public sealed partial class SettingsEntry : SettingsExpander
     {
         private readonly InfoBar infoBar;
         private readonly Button RestartButton;

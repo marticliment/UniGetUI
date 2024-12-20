@@ -116,7 +116,7 @@ namespace UniGetUI.PackageEngine.Operations
         }
     }
 
-    public class AddSourceOperation : SourceOperation
+    public partial class AddSourceOperation : SourceOperation
     {
 
         public event EventHandler<EventArgs>? OperationSucceeded;
@@ -197,7 +197,7 @@ namespace UniGetUI.PackageEngine.Operations
         }
     }
 
-    public class RemoveSourceOperation : SourceOperation
+    public partial class RemoveSourceOperation : SourceOperation
     {
 
         public event EventHandler<EventArgs>? OperationSucceeded;

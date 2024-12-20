@@ -7,7 +7,7 @@ using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public sealed class ButtonCard : SettingsCard
+    public sealed partial class ButtonCard : SettingsCard
     {
         private readonly Button _button = new();
 

@@ -9,7 +9,7 @@ using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public sealed class CheckboxButtonCard : SettingsCard
+    public sealed partial class CheckboxButtonCard : SettingsCard
     {
         public CheckBox CheckBox;
         public Button Button;
