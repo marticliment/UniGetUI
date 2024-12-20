@@ -126,7 +126,7 @@ namespace UniGetUI.Core.IconEngine
             }
 
             if (cachedIconFile is not null)
-                Logger.ImportantInfo($"Cached ocon for id={PackageId} is INVALID ({icon.ValidationMethod})");
+                Logger.ImportantInfo($"Cached icon for id={PackageId} is INVALID ({icon.ValidationMethod})");
 
             return SaveIconToCacheAndGetPath(icon, iconLocation);
         }

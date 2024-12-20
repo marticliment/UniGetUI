@@ -197,6 +197,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 iconId = iconId.Replace(".install", "").Replace(".portable", "");
             else if (Manager.Name == "Scoop")
                 iconId = iconId.Replace(".app", "");
+            else if (Manager.Name == "vcpkg")
+                iconId = iconId.split(":")[0].Split("[")[0];
             return iconId;
         }
 

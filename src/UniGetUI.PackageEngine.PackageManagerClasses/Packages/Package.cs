@@ -103,6 +103,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 "Winget" => string.Join('.', id.ToLower().Split(".")[1..]),
                 "Scoop" => id.ToLower().Replace(".app", ""),
                 "Chocolatey" => id.ToLower().Replace(".install", "").Replace(".portable", ""),
+                "vcpkg" => id.ToLower().Split(":")[0].Split("[")[0],
                 _ => id.ToLower()
             };
         }
@@ -173,7 +174,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             try
             {
                 CacheableIcon? icon = TaskRecycler<CacheableIcon?>.RunOrAttach(Manager.DetailsHelper.GetIcon, this);
-                string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, Manager.Name, Id);
+                string? path = IconCacheEngine.GetCacheOrDownloadIcon(icon, Manager.Name, _iconId);
                 return path is null? null: new Uri("file:///" + path);
             }
             catch (Exception ex)
