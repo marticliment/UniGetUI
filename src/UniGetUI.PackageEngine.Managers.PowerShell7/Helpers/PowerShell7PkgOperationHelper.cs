@@ -15,7 +15,8 @@ internal sealed class PowerShell7PkgOperationHelper : PackagePkgOperationHelper
             OperationType.Uninstall => Manager.Properties.UninstallVerb,
             _ => throw new InvalidDataException("Invalid package operation")
         }];
-        parameters.AddRange(["-Name", package.Id, "-Confirm:$false", "-Force"]);
+        parameters.AddRange(["-Name", package.Id, "-Confirm:$false"]);
+        if (operation is OperationType.Update) parameters.Add("-Force");
 
         if (options.CustomParameters is not null)
             parameters.AddRange(options.CustomParameters);
@@ -23,7 +24,7 @@ internal sealed class PowerShell7PkgOperationHelper : PackagePkgOperationHelper
         if(operation is not OperationType.Uninstall)
         {
             if (options.PreRelease)
-                parameters.Add("-AllowPrerelease");
+                parameters.Add("-Prerelease");
 
             if (package.OverridenOptions.Scope == PackageScope.Global ||
                 (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
@@ -34,11 +35,8 @@ internal sealed class PowerShell7PkgOperationHelper : PackagePkgOperationHelper
 
         if(operation is OperationType.Install)
         {
-            if (options.SkipHashCheck)
-                parameters.Add("-SkipPublisherCheck");
-
             if (options.Version != "")
-                parameters.AddRange(["-RequiredVersion", options.Version]);
+                parameters.AddRange(["-Version", options.Version]);
         }
 
         return parameters;

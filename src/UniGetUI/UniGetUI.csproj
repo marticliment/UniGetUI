@@ -24,11 +24,11 @@
 
     <!-- .NET & AppSdk publish options -->
     <PublishSelfContained>true</PublishSelfContained>
-    <SdkVersion>8.0.401</SdkVersion>
+    <SdkVersion>8.0.404</SdkVersion>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
     <WindowsPackageType>None</WindowsPackageType>
-    <WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion>
+    <!--WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion-->
 
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>
