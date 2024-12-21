@@ -21,7 +21,6 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
-                CanSkipIntegrityChecks = true,
                 SupportsCustomVersions = true,
                 SupportsCustomScopes = true,
                 SupportsCustomSources = true,

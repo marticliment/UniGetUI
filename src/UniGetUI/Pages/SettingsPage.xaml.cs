@@ -129,7 +129,6 @@ namespace UniGetUI.Interface
             WinGet_ResetWindowsIPackageManager.Click += (_, _) =>
             {
                 DialogHelper.HandleBrokenWinGet();
-                // CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "reset_winget_sources.cmd"), CoreTools.Translate("Resetting Winget sources - WingetUI"), RunAsAdmin: true);
             };
 
             CheckboxCard WinGet_UseBundled = new()
