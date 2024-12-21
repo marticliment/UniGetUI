@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11726,
-        "done": 5163,
-        "packages_with_icon": 5163,
-        "packages_with_screenshot": 604,
-        "total_screenshots": 1885
+        "done": 5165,
+        "packages_with_icon": 5165,
+        "packages_with_screenshot": 606,
+        "total_screenshots": 1889
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -19752,11 +19752,17 @@
         },
         "internet-download-manager": {
             "icon": "https://community.chocolatey.org/content/packageimages/internet-download-manager.6.41.7.png",
-            "images": []
+            "images": [
+                "https://www.internetdownloadmanager.com/images/idm_screenshot_6_35.png",
+                "https://www.internetdownloadmanager.com/images/queue.png"
+            ]
         },
         "internetdownloadmanager": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/Vk37BG4z/internet-download-manager.png",
+            "images": [
+                "https://www.internetdownloadmanager.com/images/idm_screenshot_6_35.png",
+                "https://www.internetdownloadmanager.com/images/queue.png"
+            ]
         },
         "internetoff": {
             "icon": "",
@@ -30979,7 +30985,7 @@
             "images": []
         },
         "pip": {
-            "icon": "https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/community/logos/python-logo-only.png",
+            "icon": "https://i.pinimg.com/originals/82/a2/18/82a2188c985ce75402ae44fc43fe7e5e.png",
             "images": []
         },
         "pip-tool": {
@@ -48171,7 +48177,7 @@
             "images": []
         },
         "xampp": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/zfGvzr9f/xampp.png",
             "images": []
         },
         "xampp-7-4": {
