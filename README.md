@@ -17,7 +17,7 @@ Check out the [Supported Package Managers Table](#supported-package-managers) fo
 
 > [!CAUTION]
 > **The OFFICIAL website for UniGetUI is [https://www.marticliment.com/unigetui/](https://www.marticliment.com/unigetui/)**<br>
-> **Any other website should be considered unofficial, despite what they may say. Especially, wingetui.com is NOT an official site for UniGetUI (formerly WingetUI)**
+> **Any other website should be considered unofficial, despite what they may say.**
 
 
 
