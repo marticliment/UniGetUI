@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11726,
-        "done": 5165,
-        "packages_with_icon": 5165,
-        "packages_with_screenshot": 606,
-        "total_screenshots": 1889
+        "done": 5166,
+        "packages_with_icon": 5166,
+        "packages_with_screenshot": 607,
+        "total_screenshots": 1893
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -27456,8 +27456,13 @@
             "images": []
         },
         "nilesoft-shell": {
-            "icon": "",
-            "images": []
+            "icon": "https://nilesoft.org/images/favicon.png",
+            "images": [
+                "https://nilesoft.org/images/screenshots/light/ss2.png",
+                "https://nilesoft.org/images/screenshots/light/goto.png",
+                "https://nilesoft.org/images/screenshots/light/ss1.png",
+                "https://nilesoft.org/images/screenshots/light/file-manage.png"
+            ]
         },
         "nim": {
             "icon": "",
