@@ -35,9 +35,10 @@ namespace UniGetUI.PackageEngine.Enums
         RestartRequired,
         AutoRetry,
     }
+
     public enum OperationStatus
     {
-        Pending,
+        InQueue,
         Running,
         Succeeded,
         Failed,
