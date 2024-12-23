@@ -104,6 +104,25 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                     }
                 }
 
+                function Test-GalleryModuleUpdate_Legacy {
+                    param (
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [version] $Version,
+                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Repository,
+                        [switch] $NeedUpdateOnly
+                    )
+                    process {
+                        $URLs = @{}
+                        @(Get-PSRepository).ForEach({$URLs[$_.Name] = If ($_.Uri) {$_.Uri.AbsoluteUri} Else {$_.SourceLocation}})
+                        $page = Invoke-WebRequest -Uri ($URLs[$Repository] + "/package/$Name") -UseBasicParsing -ea Ignore
+                        [version]$latest = Split-Path -Path ($page.BaseResponse.RequestMessage.RequestUri -replace "$Name." -replace ".nupkg") -Leaf
+                        $needsupdate = $Latest -gt $Version
+                        if ($needsupdate) {
+                                Write-Output($Name + "|" + $Version.ToString() + "|" + $Latest.ToString() + "|" + $Repository)
+                        }
+                    }
+                }
+
                 function Test-GalleryModuleUpdate {
                     param (
                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
@@ -120,19 +139,18 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                         $latestVersionMatch = [regex]::Match($page.Content, '<d:Version>(.*?)</d:Version>')
                         if ($latestVersionMatch.Success) {
                             [version]$latest = $latestVersionMatch.Groups[1].Value
+                            $needsupdate = $latest -gt $Version
+                            if ($needsupdate) {
+                                    Write-Output($Name + "|" + $Version.ToString() + "|" + $latest.ToString() + "|" + $Repository)
+                            }
                         } else {
-                            Write-Warning("Could not parse NuGet version for package " + $Name)
-                            [version]$latest = $Version
-                        }
-                        $needsupdate = $latest -gt $Version
-                        if ($needsupdate) {
-                                Write-Output($Name + "|" + $Version.ToString() + "|" + $Latest.ToString() + "|" + $Repository)
+                            Write-Warning("Could not parse version for package " + $Name)
+                            Test-GalleryModuleUpdate_Legacy -Name $Name -Version $Version -Repository $Repository -NeedUpdateOnly:$NeedUpdateOnly
                         }
                     }
                 }
 
                 Get-PSResource | Get-MaxVersion | Test-GalleryModuleUpdate
-
 
 
 
