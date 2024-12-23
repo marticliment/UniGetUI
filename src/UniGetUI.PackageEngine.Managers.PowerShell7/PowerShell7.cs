@@ -114,9 +114,17 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                     process {
                         $URLs = @{}
                         @(Get-PSRepository).ForEach({$URLs[$_.Name] = If ($_.Uri) {$_.Uri.AbsoluteUri} Else {$_.SourceLocation}})
-                        $page = Invoke-WebRequest -Uri ($URLs[$Repository] + "/package/$Name") -UseBasicParsing -ea Ignore
-                        [version]$latest = Split-Path -Path ($page.BaseResponse.RequestMessage.RequestUri -replace "$Name." -replace ".nupkg") -Leaf
-                        $needsupdate = $Latest -gt $Version
+
+                        $packageUrl = "$($URLs[$Repository])/FindPackagesById()?id='$Name'&`$filter=IsLatestVersion"
+                        $page = Invoke-WebRequest -Uri $packageUrl -UseBasicParsing -ea Ignore
+                        $latestVersionMatch = [regex]::Match($page.Content, '<d:Version>(.*?)</d:Version>')
+                        if ($latestVersionMatch.Success) {
+                            [version]$latest = $latestVersionMatch.Groups[1].Value
+                        } else {
+                            Write-Warning("Could not parse NuGet version for package " + $Name)
+                            [version]$latest = $Version
+                        }
+                        $needsupdate = $latest -gt $Version
                         if ($needsupdate) {
                                 Write-Output($Name + "|" + $Version.ToString() + "|" + $Latest.ToString() + "|" + $Repository)
                         }
