@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11726,
-        "done": 5166,
-        "packages_with_icon": 5166,
-        "packages_with_screenshot": 607,
-        "total_screenshots": 1893
+        "total": 11729,
+        "done": 5170,
+        "packages_with_icon": 5170,
+        "packages_with_screenshot": 611,
+        "total_screenshots": 1903
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -9174,7 +9174,7 @@
             "images": []
         },
         "curl": {
-            "icon": "https://community.chocolatey.org/content/packageimages/curl.7.88.1.png",
+            "icon": "https://i.postimg.cc/bJW9nGtV/curl-symbol-transparent.png",
             "images": []
         },
         "curlie": {
@@ -18982,7 +18982,9 @@
         },
         "icopy": {
             "icon": "https://community.chocolatey.org/content/packageimages/icopy.install.1.7.0.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/15qVBMSf/icopy-ss.png"
+            ]
         },
         "icqnew": {
             "icon": "",
@@ -21180,7 +21182,7 @@
             "images": []
         },
         "kdeconnect": {
-            "icon": "https://community.chocolatey.org/content/packageimages/kdeconnect-kde.22.12.2.1263.png",
+            "icon": "https://kdeconnect.kde.org/assets/img/KDE_Logo.png",
             "images": [
                 "https://cdn.kde.org/screenshots/kdeconnect/plasmoid.png",
                 "https://cdn.kde.org/screenshots/kdeconnect/kcm.png",
@@ -21188,7 +21190,7 @@
             ]
         },
         "kdeconnect-kde": {
-            "icon": "https://community.chocolatey.org/content/packageimages/kdeconnect-kde.22.12.2.1263.png",
+            "icon": "https://kdeconnect.kde.org/assets/img/KDE_Logo.png",
             "images": [
                 "https://cdn.kde.org/screenshots/kdeconnect/plasmoid.png",
                 "https://cdn.kde.org/screenshots/kdeconnect/kcm.png",
@@ -21885,7 +21887,7 @@
             "images": []
         },
         "komac": {
-            "icon": "https://github.com/russellbanks/Komac/raw/main/assets/logo.svg",
+            "icon": "https://i.postimg.cc/9fS786Qr/komac-logo.png",
             "images": []
         },
         "kombustor-2": {
@@ -23573,8 +23575,10 @@
             "images": []
         },
         "losslesscut": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/zGkCwpwT/losslesscut-icon.png",
+            "images": [
+                "https://github.com/mifi/lossless-cut/blob/59f117af2fe8ce03140ab8237cccbd073e09c0bc/main_screenshot.jpg"
+            ]
         },
         "lot": {
             "icon": "",
@@ -25863,7 +25867,7 @@
             "images": []
         },
         "mpv": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mpv.portable.2022.11.14.png",
+            "icon": "https://raw.githubusercontent.com/mpv-player/mpv.io/master/source/images/mpv-logo-128.png",
             "images": []
         },
         "mpv-easy-player": {
@@ -25875,16 +25879,26 @@
             "images": []
         },
         "mpv-net": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mpv.net.6.0.3.1.png",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/mpv-player/mpv.io/master/source/images/mpv-logo-128.png",
+            "images": [
+                "https://i.postimg.cc/cJNqRHQH/Main.png",
+                "https://i.postimg.cc/jdmYjv2y/Menu.png",
+                "https://i.postimg.cc/0ySRKmKF/Conf-Editor.png",
+                "https://i.postimg.cc/ncCtZNFH/Terminal.png"
+            ]
         },
         "mpvio": {
             "icon": "https://community.chocolatey.org/content/packageimages/mpvio.0.35.0.png",
             "images": []
         },
         "mpvnet": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mpvnet.install.5.4.9.20220427.png",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/mpv-player/mpv.io/master/source/images/mpv-logo-128.png",
+            "images": [
+                "https://i.postimg.cc/cJNqRHQH/Main.png",
+                "https://i.postimg.cc/jdmYjv2y/Menu.png",
+                "https://i.postimg.cc/0ySRKmKF/Conf-Editor.png",
+                "https://i.postimg.cc/ncCtZNFH/Terminal.png"
+            ]
         },
         "mpw": {
             "icon": "https://community.chocolatey.org/content/packageimages/mpw.portable.2.7.12.png",
@@ -49410,6 +49424,18 @@
                 "https://i.postimg.cc/6Q08QLcw/Scfmnn-Mo48.png",
                 "https://i.postimg.cc/HxkV8cvM/u-ARCBXBW1-L.png"
             ]
+        },
+        "black": {
+            "icon": "https://i.postimg.cc/52qwxW0H/black.png",
+            "images": []
+        },
+        "sublimetext": {
+            "icon": "https://i.postimg.cc/8cXWjZNf/sublime-text.png",
+            "images": []
+        },
+        "platformtools": {
+            "icon": "https://i.postimg.cc/L5VT8t0r/platform-tools.png",
+            "images": []
         }
     }
 }
