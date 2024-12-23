@@ -13,7 +13,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// <summary>
     /// A wrapper for packages to be able to show in ItemCollections
     /// </summary>
-    public class PackageWrapper : IIndexableListItem, INotifyPropertyChanged, IDisposable
+    public partial class PackageWrapper : IIndexableListItem, INotifyPropertyChanged, IDisposable
     {
         private static readonly ConcurrentDictionary<long, Uri?> CachedPackageIcons = new();
 

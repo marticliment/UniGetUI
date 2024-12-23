@@ -14,7 +14,7 @@ using UniGetUI.PackageEngine.Structs;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
-    public class Package : IPackage
+    public partial class Package : IPackage
     {
         // Internal properties
         private bool __is_checked;

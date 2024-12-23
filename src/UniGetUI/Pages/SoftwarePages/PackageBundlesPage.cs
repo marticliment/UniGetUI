@@ -21,7 +21,7 @@ using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class PackageBundlesPage : AbstractPackagesPage
+    public partial class PackageBundlesPage : AbstractPackagesPage
     {
         private BetterMenuItem? MenuInstallOptions;
         private BetterMenuItem? MenuInstall;
