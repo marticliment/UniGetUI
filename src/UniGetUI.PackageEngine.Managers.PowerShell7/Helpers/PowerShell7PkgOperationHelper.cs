@@ -23,6 +23,8 @@ internal sealed class PowerShell7PkgOperationHelper : PackagePkgOperationHelper
 
         if(operation is not OperationType.Uninstall)
         {
+            parameters.AddRange(["-TrustRepository", "-AcceptLicense"]);
+
             if (options.PreRelease)
                 parameters.Add("-Prerelease");
 
