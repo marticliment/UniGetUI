@@ -77,6 +77,33 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             p.Start();
 
             string command = """
+                function Get-MaxVersion {
+                    param (
+                        [Parameter(Mandatory, ValueFromPipeline)] [PSCustomObject] $InputObject
+                    )
+
+                    begin {
+                        $maxVersions = @{}
+                        $moduleObjects = @{}
+                    }
+
+                    process {
+                        if (-not $maxVersions.ContainsKey($InputObject.Name)) {
+                            $maxVersions[$InputObject.Name] = $InputObject.Version
+                            $moduleObjects[$InputObject.Name] = $InputObject
+                        } elseif ($InputObject.Version -gt $maxVersions[$InputObject.Name]) {
+                            $maxVersions[$InputObject.Name] = $InputObject.Version
+                            $moduleObjects[$InputObject.Name] = $InputObject
+                        }
+                    }
+
+                    end {
+                        $moduleObjects.GetEnumerator() | ForEach-Object {
+                            $_.Value
+                        }
+                    }
+                }
+
                 function Test-GalleryModuleUpdate {
                     param (
                         [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
@@ -95,7 +122,10 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                         }
                     }
                 }
-                Get-PSResource | Test-GalleryModuleUpdate
+
+                Get-PSResource | Get-MaxVersion | Test-GalleryModuleUpdate
+
+
 
 
                 exit
