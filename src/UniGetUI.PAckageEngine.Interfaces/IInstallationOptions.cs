@@ -10,6 +10,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         public bool InteractiveInstallation { get; set; }
         public bool RunAsAdministrator { get; set; }
         public string Version { get; set; }
+        public bool SkipMinorUpdates { get; set; }
         public Architecture? Architecture { get; set; }
         public PackageScope? InstallationScope { get; set; }
         public List<string> CustomParameters { get; set; }

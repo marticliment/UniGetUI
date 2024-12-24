@@ -29,6 +29,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 IgnoredPackages[package.Id] = package;
                 return false;
             }
+            if (package.AsSerializable().InstallationOptions.SkipMinorUpdates && package.IsUpdateMinor()) return false;
             if (package.NewerVersionIsInstalled()) return false;
             return true;
         }
