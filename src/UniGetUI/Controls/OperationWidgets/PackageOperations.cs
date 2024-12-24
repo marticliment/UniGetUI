@@ -42,11 +42,13 @@ namespace UniGetUI.PackageEngine.Operations
             Package = package;
             Options = options;
             Role = role;
+
+            Initialize();
+
             if (ONGOING_PROGRESS_STRING is null)
             {
                 throw new NullReferenceException("ONGOING_PROGRESS_STRING must be set to a non-null value in the Initialize method");
             }
-            Initialize();
             Line(ONGOING_PROGRESS_STRING, LineType.Progress);
             GenerateProcessLogHeader();
 

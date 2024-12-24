@@ -29,11 +29,11 @@ namespace UniGetUI.PackageEngine.Operations
         public SourceOperation(IManagerSource source) : base(false)
         {
             Source = source;
+            Initialize();
             if (OPERATION_ONGOING_STRING is null)
             {
                 throw new NullReferenceException("OPERATION_ONGOING_STRING must be set to a non-null value in the Initialize method");
             }
-            Initialize();
             GenerateProcessLogHeader();
 
             OperationStarting += (_, _) => CreateProgressToast();

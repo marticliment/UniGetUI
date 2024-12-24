@@ -300,9 +300,9 @@ namespace UniGetUI.Interface
 
             ResizingOPLayout = true;
             int OpCount = MainApp.Instance.Operations.Count;
-            int MaxHeight = Math.Max((OpCount * 58) - 7, 0);
+            int maxHeight = Math.Max((OpCount * 58) - 7, 0);
 
-            MainContentPresenterGrid.RowDefinitions[2].MaxHeight = MaxHeight;
+            MainContentPresenterGrid.RowDefinitions[2].MaxHeight = maxHeight;
 
             if (OpCount > 0)
             {
@@ -317,10 +317,10 @@ namespace UniGetUI.Interface
                 }
                 else
                 {
-                    if (int.TryParse(Settings.GetValue("OperationHistoryPreferredHeight"), out int setHeight) && setHeight < MaxHeight)
+                    if (int.TryParse(Settings.GetValue("OperationHistoryPreferredHeight"), out int setHeight) && setHeight < maxHeight)
                         MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(setHeight);
                     else
-                        MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(Math.Min(MaxHeight, 200));
+                        MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(Math.Min(maxHeight, 200));
                     MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(16);
                     OperationSplitter.Visibility = Visibility.Visible;
                     OperationSplitterMenuButton.Visibility = Visibility.Visible;
