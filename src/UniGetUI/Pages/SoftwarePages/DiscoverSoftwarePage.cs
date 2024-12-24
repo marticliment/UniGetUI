@@ -208,7 +208,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
-                    MainApp.Instance.AddOperationToList(new(new InstallPackageOperation(package)));
+                    MainApp.Operations.Add((new InstallPackageOperation(package)));
                 }
             };
 
@@ -217,7 +217,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, elevated: true);
-                    MainApp.Instance.AddOperationToList(new(new InstallPackageOperation(package, options)));
+                    MainApp.Operations.Add((new InstallPackageOperation(package, options)));
                 }
             };
 
@@ -226,7 +226,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, no_integrity: true);
-                    MainApp.Instance.AddOperationToList(new(new InstallPackageOperation(package, options)));
+                    MainApp.Operations.Add((new InstallPackageOperation(package, options)));
                 }
             };
 
@@ -235,7 +235,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, interactive: true);
-                    MainApp.Instance.AddOperationToList(new(new InstallPackageOperation(package, options)));
+                    MainApp.Operations.Add((new InstallPackageOperation(package, options)));
                 }
             };
 
@@ -312,7 +312,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            MainApp.Instance.AddOperationToList(new(new InstallPackageOperation(package)));
+            MainApp.Operations.Add((new InstallPackageOperation(package)));
         }
 
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
@@ -323,7 +323,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            MainApp.Instance.AddOperationToList(new(new InstallPackageOperation(package,
+            MainApp.Operations.Add((new InstallPackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, no_integrity: true))));
         }
 
@@ -335,7 +335,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            MainApp.Instance.AddOperationToList(new(new InstallPackageOperation(package,
+            MainApp.Operations.Add((new InstallPackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, interactive: true))));
         }
 
@@ -347,7 +347,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            MainApp.Instance.AddOperationToList(new(new InstallPackageOperation(package,
+            MainApp.Operations.Add((new InstallPackageOperation(package,
                 await InstallationOptions.FromPackageAsync(package, elevated: true))));
         }
 

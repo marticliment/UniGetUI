@@ -863,15 +863,15 @@ namespace UniGetUI.Interface
 
             if (PAGE_ROLE == OperationType.Install)
             {
-                MainApp.Instance.AddOperationToList(new(new InstallPackageOperation(package)));
+                MainApp.Operations.Add((new InstallPackageOperation(package)));
             }
             else if (PAGE_ROLE == OperationType.Update)
             {
-                MainApp.Instance.AddOperationToList(new(new UpdatePackageOperation(package)));
+                MainApp.Operations.Add((new UpdatePackageOperation(package)));
             }
             else // if (PageRole == OperationType.Uninstall)
             {
-                MainApp.Instance.AddOperationToList(new(new UninstallPackageOperation(package)));
+                MainApp.Operations.Add((new UninstallPackageOperation(package)));
             }
         }
 

@@ -98,7 +98,7 @@ public class OperationControl: INotifyPropertyChanged
 
     public void Close()
     {
-        MainApp.Instance.Operations.Remove(this);
+        MainApp.Operations._operationList.Remove(this);
     }
 
     private string _buttonText;

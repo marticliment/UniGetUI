@@ -308,16 +308,16 @@ namespace UniGetUI.Interface
 
     protected void RemoveFromQueue()
     {
-        while (MainApp.Instance.Operations.IndexOf(this) != -1)
+        while (MainApp.Operations._operationList.IndexOf(this) != -1)
         {
-            MainApp.Instance.Operations.Remove(this);
+            MainApp.Operations._operationList.Remove(this);
         }
     }
     protected void AddToQueue()
     {
-        if (!MainApp.Instance.Operations.Contains(this))
+        if (!MainApp.Operations._operationList.Contains(this))
         {
-            MainApp.Instance.Operations.Add(this);
+            MainApp.Operations._operationList.Add(this);
         }
     }
 
@@ -344,7 +344,7 @@ namespace UniGetUI.Interface
 
     protected void AddToQueue_Priority()
     {
-        MainApp.Instance.Operations.Insert(0, this);
+        MainApp.Operations._operationList.Insert(0, this);
     }
 
     protected virtual async Task WaitForAvailability()
@@ -360,7 +360,7 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            currentIndex = MainApp.Instance.Operations.IndexOf(this);
+            currentIndex = MainApp.Operations._operationList.IndexOf(this);
             if (currentIndex != oldIndex)
             {
                 LineInfoText = CoreTools.Translate("Operation on queue (position {0})...", currentIndex);
@@ -505,7 +505,7 @@ namespace UniGetUI.Interface
             switch (postAction)
             {
                 case AfterFinshAction.TimeoutClose:
-                    if (MainApp.Instance.Operations.Count == 0)
+                    if (MainApp.Operations._operationList.Count == 0)
                     {
                         if (Settings.Get("DoCacheAdminRightsForBatches"))
                         {
@@ -522,7 +522,7 @@ namespace UniGetUI.Interface
                     break;
 
                 case AfterFinshAction.ManualClose:
-                    if (MainApp.Instance.Operations.Count == 0)
+                    if (MainApp.Operations._operationList.Count == 0)
                     {
                         if (Settings.Get("DoCacheAdminRightsForBatches"))
                         {
@@ -537,7 +537,7 @@ namespace UniGetUI.Interface
                     break;
             }
 
-            if (MainApp.Instance.Operations.Count == 0 && DesktopShortcutsDatabase.GetUnknownShortcuts().Any() && Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            if (MainApp.Operations._operationList.Count == 0 && DesktopShortcutsDatabase.GetUnknownShortcuts().Any() && Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
                 await DialogHelper.HandleNewDesktopShortcuts();
             }

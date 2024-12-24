@@ -56,6 +56,7 @@ namespace UniGetUI.Interface
         public MainView()
         {
             InitializeComponent();
+            OperationList.ItemsSource = MainApp.Operations._operationList;
             DiscoverPage = new DiscoverSoftwarePage();
             UpdatesPage = new SoftwareUpdatesPage
             {
@@ -114,6 +115,7 @@ namespace UniGetUI.Interface
             }
 
             UpdateOperationsLayout();
+            MainApp.Operations._operationList.CollectionChanged += (_, _) => UpdateOperationsLayout();
         }
 
         public void LoadDefaultPage()
@@ -299,7 +301,7 @@ namespace UniGetUI.Interface
             OpListChanges++;
 
             ResizingOPLayout = true;
-            int OpCount = MainApp.Instance.Operations.Count;
+            int OpCount = MainApp.Operations._operationList.Count;
             int maxHeight = Math.Max((OpCount * 58) - 7, 0);
 
             MainContentPresenterGrid.RowDefinitions[2].MaxHeight = maxHeight;
@@ -380,7 +382,7 @@ namespace UniGetUI.Interface
 
         private void CancellAllOps_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var widget in MainApp.Instance.Operations)
+            foreach (var widget in MainApp.Operations._operationList)
             {
                 var operation = widget.Operation;
                 if (operation.Status is OperationStatus.InQueue or OperationStatus.Running)
@@ -390,7 +392,7 @@ namespace UniGetUI.Interface
 
         private void RetryFailedOps_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var widget in MainApp.Instance.Operations)
+            foreach (var widget in MainApp.Operations._operationList)
             {
                 var operation = widget.Operation;
                 //if (operation.Status is OperationStatus.Failed)
@@ -400,7 +402,7 @@ namespace UniGetUI.Interface
 
         private void PausePendingOps_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var widget in MainApp.Instance.Operations)
+            foreach (var widget in MainApp.Operations._operationList)
             {
                 var operation = widget.Operation;
                 //if (operation.Status is OperationStatus.InQueue)
@@ -410,7 +412,7 @@ namespace UniGetUI.Interface
 
         private void ResumeAllOps_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var widget in MainApp.Instance.Operations)
+            foreach (var widget in MainApp.Operations._operationList)
             {
                 var operation = widget.Operation;
                 if (operation.Status is OperationStatus.Canceled/*Paused*/)

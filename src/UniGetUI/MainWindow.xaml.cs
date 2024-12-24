@@ -45,7 +45,6 @@ namespace UniGetUI.Interface
         public int LoadingDialogCount;
 
         public List<ContentDialog> DialogQueue = [];
-
         public List<NavButton> NavButtonList = [];
 
         public static readonly ObservableQueue<string> ParametersToProcess = new();
@@ -210,7 +209,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                if (MainApp.Instance.Operations.Count > 0)
+                if (MainApp.Operations._operationList.Count > 0)
                 {
                     args.Cancel = true;
                     ContentDialog d = new()

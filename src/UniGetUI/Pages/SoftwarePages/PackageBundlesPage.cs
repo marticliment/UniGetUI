@@ -329,7 +329,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             foreach (Package package in packages_to_install)
             {
-               MainApp.Instance.AddOperationToList(new(new InstallPackageOperation(package,
+               MainApp.Operations.Add((new InstallPackageOperation(package,
                     await InstallationOptions.FromPackageAsync(package, elevated, interactive, skiphash))));
             }
         }
