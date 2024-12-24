@@ -47,6 +47,7 @@ public abstract class AbstractOperation
         set { _status = value; StatusChanged?.Invoke(this, value); }
     }
 
+    public bool Started { get; private set; } = false;
     protected bool QUEUE_ENABLED;
 
     public AbstractOperation(bool queue_enabled)
@@ -90,6 +91,8 @@ public abstract class AbstractOperation
 
     public async Task MainThread()
     {
+        Started = true;
+
         if (OperationQueue.Contains(this))
             throw new InvalidOperationException("This operation was already on the queue");
 

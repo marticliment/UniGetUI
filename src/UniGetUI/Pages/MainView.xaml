@@ -43,7 +43,7 @@
 
             <DataTemplate x:Key="OperationTemplate" x:DataType="operationWidgets:OperationControl">
                 <ItemContainer AutomationProperties.Name="{x:Bind Title}">
-                    <Grid Background="{x:Bind Background, Mode=OneWay}" ColumnSpacing="6" RowSpacing="6" Padding="8">
+                    <Grid Background="{x:Bind Background, Mode=OneWay}" ColumnSpacing="0" RowSpacing="6" Padding="8">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Background" Value="{ThemeResource SystemFillColorNeutralBackgroundBrush}"/>
@@ -58,7 +58,8 @@
                             <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="40" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -81,19 +82,18 @@
                         </Image>
                         <TextBlock
                             Grid.Column="1" VerticalAlignment="Center"
-                            Text="{x:Bind Title}"
+                            Text="{x:Bind Title}" Margin="6,0,0,0"
                             />
                         <Button
                             Grid.Column="2" VerticalAlignment="Center"
                             Name="OutputViewewBlock" HorizontalAlignment="Stretch"
                             FontFamily="Consolas" HorizontalContentAlignment="Left"
-                            Content="{x:Bind LiveLine, Mode=OneWay}"
-                            Click="{x:Bind LiveLineClick}"
-                            CornerRadius="5"/>
+                            Content="{x:Bind LiveLine, Mode=OneWay}" CornerRadius="5"
+                            Click="{x:Bind LiveLineClick}" Margin="6,0,0,0"/>
                         <Border
-                            Grid.Column="2" Margin="0,0,0,0"
+                            Grid.Column="2" Margin="6,0,0,0"
                             Height="12" VerticalAlignment="Bottom"
-                            CornerRadius="0,0,6,6">
+                            CornerRadius="6">
                             <ProgressBar
                                 IsIndeterminate="{x:Bind ProgressIndeterminate, Mode=OneWay}"
                                 VerticalAlignment="Bottom" Margin="0,0,0,-2"
@@ -104,13 +104,13 @@
                         </Border>
                         <Button
                             Grid.Column="3" VerticalAlignment="Center"
-                            HorizontalAlignment="Stretch"
-                            CornerRadius="5" Content="{x:Bind ButtonText, Mode=OneWay}"
+                            HorizontalAlignment="Stretch" Margin="6,0,1,0"
+                            CornerRadius="6,0,0,6" Content="{x:Bind ButtonText, Mode=OneWay}"
                             Click="{x:Bind ButtonClick}"/>
                         <Button
-                            Grid.Column="3" VerticalAlignment="Center"
+                            Grid.Column="4" VerticalAlignment="Center"
                             HorizontalAlignment="Stretch"
-                            CornerRadius="5"
+                            CornerRadius="0,6,6,0" Margin="0,0,0,0"
                             Click="{x:Bind ShowMenu}">
                             <SymbolIcon Symbol="More"/>
                         </Button>
@@ -185,14 +185,19 @@
                 VerticalScrollMode="Enabled"
                 VerticalScrollBarVisibility="Visible"
                 Margin="0" Padding="0,0,0,0">
-                <ItemsView
-                    SelectionMode="None" ItemTemplate="{StaticResource OperationTemplate}"
-                    Margin="0,0,0,0" Padding="0,0,0,0"
+                <ItemsRepeater
+                    ItemTemplate="{StaticResource OperationTemplate}"
+                    Margin="0,0,0,0"
                     Name="OperationList">
-                    <ItemsView.Layout>
-                        <StackLayout Orientation="Vertical" Spacing="8"/>
-                    </ItemsView.Layout>
-                </ItemsView>
+                    <ItemsRepeater.Layout>
+                        <StackLayout Spacing="8"/>
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.Resources>
+                        <SolidColorBrush x:Key="ItemContainerPointerOverBackground" Color="Transparent" />
+                        <SolidColorBrush x:Key="ItemContainerPressedBackground" Color="Transparent" />
+                    </ItemsRepeater.Resources>
+                </ItemsRepeater>
+
             </ScrollViewer>
         </Grid>
 

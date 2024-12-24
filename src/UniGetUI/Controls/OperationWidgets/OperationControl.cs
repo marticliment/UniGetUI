@@ -21,9 +21,12 @@ public class OperationControl: INotifyPropertyChanged
         Operation.LogLineAdded += (_, values) => LiveLine = values.Item1;
         Operation.StatusChanged += OperationOnStatusChanged;
         _title = Operation.GetOperationTitle();
-        _liveLine = CoreTools.Translate("Please wait...");
-        _buttonText = CoreTools.Translate("Close");
+        _liveLine = operation.GetOutput().Any()? operation.GetOutput().Last().Item1 : CoreTools.Translate("Please wait...");
+        _buttonText = "";
+        OperationOnStatusChanged(this, operation.Status);
         LoadIcon();
+        if (!operation.Started)
+            _ = operation.MainThread();
     }
 
     private async void LoadIcon()
