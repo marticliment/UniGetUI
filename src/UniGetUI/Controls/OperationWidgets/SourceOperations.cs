@@ -33,6 +33,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 throw new NullReferenceException("OPERATION_ONGOING_STRING must be set to a non-null value in the Initialize method");
             }
+            Initialize();
             GenerateProcessLogHeader();
 
             OperationStarting += (_, _) => CreateProgressToast();
@@ -40,6 +41,12 @@ namespace UniGetUI.PackageEngine.Operations
             OperationSucceeded += (_, _) => HandleSuccess();
             OperationFailed += (_, _) => HandleFailure();
         }
+
+        public override string GetOperationTitle()
+        {
+            return OPERATION_ONGOING_STRING;
+        }
+
 
         protected void ShowErrorNotification(string title, string body)
         {
@@ -124,6 +131,11 @@ namespace UniGetUI.PackageEngine.Operations
         {
             AppNotificationManager.Default.RemoveByTagAsync(Source.Name + "progress");
         }
+
+        public override Task<Uri> GetOperationIcon()
+        {
+            return Task.FromResult(new Uri($"ms-appx:///Assets/Images/{Source.Manager.Properties.ColorIconId}.png"));
+        }
     }
 
     public class AddSourceOperation : SourceOperation
@@ -198,8 +210,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void Initialize()
         {
-            // OperationTitle = OPERATION_ONGOING_STRING = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
-            // IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
+            OPERATION_ONGOING_STRING = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
         }
     }
 
@@ -263,7 +274,6 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override Task HandleSuccess()
         {
-            // OperationSucceeded?.Invoke(this, EventArgs.Empty);
             Line(CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } }), LineType.Progress);
 
             ShowSuccessNotification(
@@ -276,8 +286,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void Initialize()
         {
-            // OperationTitle = OPERATION_ONGOING_STRING = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
-            // IconSource = new Uri("ms-appx:///Assets/Images/" + Source.Manager.Properties.ColorIconId + ".png");
+            OPERATION_ONGOING_STRING = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
         }
     }
 }

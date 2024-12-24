@@ -15,6 +15,7 @@ using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Operations;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
+using UniGetUI.Controls.OperationWidgets;
 using UniGetUI.PackageEngine.Interfaces;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
@@ -34,7 +35,7 @@ namespace UniGetUI
             public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
         }
 
-        public List<AbstractOperation> OperationQueue = [];
+        public List<OperationControl> Operations = [];
 
         public bool RaiseExceptionAsFatal = true;
 
@@ -212,9 +213,9 @@ namespace UniGetUI
             }
         }
 
-        public void AddOperationToList(AbstractOperation operation)
+        public void AddOperationToList(OperationControl operation)
         {
-            MainWindow.NavigationPage.AddOperation(operation);
+            MainApp.Instance.Operations.Add(operation);
         }
 
         /// <summary>

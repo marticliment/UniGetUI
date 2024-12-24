@@ -21,7 +21,7 @@ using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class PackageBundlesPage : AbstractPackagesPage
+    public partial class PackageBundlesPage : AbstractPackagesPage
     {
         private BetterMenuItem? MenuInstallOptions;
         private BetterMenuItem? MenuInstall;
@@ -329,8 +329,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
             foreach (Package package in packages_to_install)
             {
-               MainApp.Instance.AddOperationToList(new InstallPackageOperation(package,
-                    await InstallationOptions.FromPackageAsync(package, elevated, interactive, skiphash)));
+               MainApp.Instance.AddOperationToList(new(new InstallPackageOperation(package,
+                    await InstallationOptions.FromPackageAsync(package, elevated, interactive, skiphash))));
             }
         }
 

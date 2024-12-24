@@ -210,7 +210,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                if (MainApp.Instance.OperationQueue.Count > 0)
+                if (MainApp.Instance.Operations.Count > 0)
                 {
                     args.Cancel = true;
                     ContentDialog d = new()

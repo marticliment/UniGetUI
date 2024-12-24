@@ -657,18 +657,18 @@ namespace UniGetUI.Interface.Dialogs
 
             if (action is OperationType.Install)
             {
-                MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, newOptions));
+                MainApp.Instance.AddOperationToList(new(new InstallPackageOperation(package, newOptions)));
             }
             else if (action is OperationType.Uninstall)
             {
                 if (await DialogHelper.ConfirmUninstallation(package))
                 {
-                    MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, newOptions));
+                    MainApp.Instance.AddOperationToList(new(new UninstallPackageOperation(package, newOptions)));
                 }
             }
             else if (action is OperationType.Update)
             {
-                MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package, newOptions));
+                MainApp.Instance.AddOperationToList(new(new UpdatePackageOperation(package, newOptions)));
             }
             else
             {

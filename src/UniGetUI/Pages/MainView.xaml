@@ -7,7 +7,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:interface="using:UniGetUI.Interface"
-    xmlns:widgets="using:UniGetUI.Interface.Widgets" xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:operations="using:UniGetUI.PackageOperations"
+    xmlns:operationWidgets="using:UniGetUI.Controls.OperationWidgets"
     mc:Ignorable="d"
     MinHeight="200"
     MinWidth="200">
@@ -36,7 +39,86 @@
                 <MenuFlyoutSeparator Height="5"/>
                 <widgets:BetterMenuItem Text="Cancel all" IconName="Cross" Name="CancellAllOps" Click="CancellAllOps_Click"/>
             </widgets:BetterMenu>
+
+
+            <DataTemplate x:Key="OperationTemplate" x:DataType="operationWidgets:OperationControl">
+                <ItemContainer AutomationProperties.Name="{x:Bind Title}">
+                    <Grid Background="{x:Bind Background, Mode=OneWay}" ColumnSpacing="6" RowSpacing="6" Padding="8">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Background" Value="{ThemeResource SystemFillColorNeutralBackgroundBrush}"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource ExpanderContentBorderBrush}"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                                <Setter Property="CornerRadius" Value="8"/>
+                                <Setter Property="Margin" Value="0"/>
+                                <Setter Property="Padding" Value="0"/>
+                            </Style>
+                        </Grid.Style>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="150" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.Resources>
+                            <ResourceDictionary>
+                                <Style TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+                                    <Setter Property="Height" Value="32"/>
+                                    <Setter Property="CornerRadius" Value="2"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Style>
+                            </ResourceDictionary>
+                        </Grid.Resources>
+                        <Image
+                            Grid.Column="0" VerticalAlignment="Center"
+                            Width="32" Height="24" Margin="0"
+                            Source="{x:Bind Icon, Mode=OneWay}"
+                        />
+                        <TextBlock
+                            Grid.Column="1" VerticalAlignment="Center"
+                            Text="{x:Bind Title}"
+                            />
+                        <Button
+                            Grid.Column="2" VerticalAlignment="Center"
+                            Name="OutputViewewBlock" HorizontalAlignment="Stretch"
+                            FontFamily="Consolas" HorizontalContentAlignment="Left"
+                            Content="{x:Bind LiveLine, Mode=OneWay}"
+                            Click="{x:Bind LiveLineClick}"
+                            CornerRadius="5"/>
+                        <Border
+                            Grid.Column="2" Margin="0,0,0,0"
+                            Height="12" VerticalAlignment="Bottom"
+                            CornerRadius="0,0,6,6">
+                            <ProgressBar
+                                IsIndeterminate="{x:Bind ProgressIndeterminate, Mode=OneWay}"
+                                VerticalAlignment="Bottom" Margin="0,0,0,-2"
+                                CornerRadius="0,0,6,6" Height="6"
+                                Maximum="100" Value="{x:Bind ProgressValue, Mode=OneWay}"
+                                Foreground="{x:Bind ProgressForeground, Mode=OneWay}"
+                                />
+                        </Border>
+                        <Button
+                            Grid.Column="3" VerticalAlignment="Center"
+                            HorizontalAlignment="Stretch"
+                            CornerRadius="5" Content="{x:Bind ButtonText, Mode=OneWay}"
+                            Click="{x:Bind ButtonClick}"/>
+                        <Button
+                            Grid.Column="3" VerticalAlignment="Center"
+                            HorizontalAlignment="Stretch"
+                            CornerRadius="5"
+                            Click="{x:Bind ShowMenu}">
+                            <SymbolIcon Symbol="More"/>
+                        </Button>
+                    </Grid>
+                </ItemContainer>
+            </DataTemplate>
+
+
         </ResourceDictionary>
+
     </UserControl.Resources>
 
     <Grid RowSpacing="4" ColumnSpacing="0">
@@ -101,10 +183,14 @@
                 VerticalScrollMode="Enabled"
                 VerticalScrollBarVisibility="Visible"
                 Margin="0" Padding="0,0,0,0">
-                <StackPanel
-                    Orientation="Vertical" Spacing="8"
+                <ItemsView
+                    SelectionMode="None" ItemTemplate="{StaticResource OperationTemplate}"
                     Margin="0,0,0,0" Padding="0,0,0,0"
-                    Name="OperationStackPanel"/>
+                    Name="OperationList">
+                    <ItemsView.Layout>
+                        <StackLayout Orientation="Vertical" Spacing="8"/>
+                    </ItemsView.Layout>
+                </ItemsView>
             </ScrollViewer>
         </Grid>
 

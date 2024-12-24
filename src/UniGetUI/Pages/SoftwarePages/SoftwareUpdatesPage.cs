@@ -277,7 +277,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
-                    MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
+                    MainApp.Instance.AddOperationToList(new(new UpdatePackageOperation(package)));
                 }
             };
 
@@ -286,7 +286,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, elevated: true);
-                    MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package, options));
+                    MainApp.Instance.AddOperationToList(new(new UpdatePackageOperation(package, options)));
                 }
             };
 
@@ -295,7 +295,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, no_integrity: true);
-                    MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package, options));
+                    MainApp.Instance.AddOperationToList(new(new UpdatePackageOperation(package, options)));
                 }
             };
 
@@ -304,7 +304,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
                 {
                     InstallationOptions options = await InstallationOptions.FromPackageAsync(package, interactive: true);
-                    MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package, options));
+                    MainApp.Instance.AddOperationToList(new(new UpdatePackageOperation(package, options)));
                 }
             };
 
@@ -326,7 +326,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 if (package.Tag is not PackageTag.BeingProcessed and not PackageTag.OnQueue)
                 {
-                    MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
+                    MainApp.Instance.AddOperationToList(new(new UpdatePackageOperation(package)));
                 }
             }
         }
@@ -458,7 +458,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
+            MainApp.Instance.AddOperationToList(new(new UpdatePackageOperation(package)));
         }
 
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
@@ -469,8 +469,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
-                await InstallationOptions.FromPackageAsync(package, no_integrity: true)));
+            MainApp.Instance.AddOperationToList(new(new UpdatePackageOperation(package,
+                await InstallationOptions.FromPackageAsync(package, no_integrity: true))));
         }
 
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
@@ -481,8 +481,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
-                await InstallationOptions.FromPackageAsync(package, interactive: true)));
+            MainApp.Instance.AddOperationToList(new(new UpdatePackageOperation(package,
+                await InstallationOptions.FromPackageAsync(package, interactive: true))));
         }
 
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
@@ -493,8 +493,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package,
-                await InstallationOptions.FromPackageAsync(package, elevated: true)));
+            MainApp.Instance.AddOperationToList(new(new UpdatePackageOperation(package,
+                await InstallationOptions.FromPackageAsync(package, elevated: true))));
         }
 
         private void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
@@ -505,8 +505,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, IgnoreParallelInstalls: true));
-            MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, IgnoreParallelInstalls: true));
+            MainApp.Instance.AddOperationToList(new(new UninstallPackageOperation(package, IgnoreParallelInstalls: true)));
+            MainApp.Instance.AddOperationToList(new(new InstallPackageOperation(package, IgnoreParallelInstalls: true)));
         }
 
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs e)
@@ -517,7 +517,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
+            MainApp.Instance.AddOperationToList(new(new UninstallPackageOperation(package)));
         }
 
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs e)
@@ -552,7 +552,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 if (package.Id == id)
                 {
-                    MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
+                    MainApp.Instance.AddOperationToList(new(new UpdatePackageOperation(package)));
                     Logger.Info($"[WIDGETS] Updating package with id {id}");
                     break;
                 }
@@ -568,7 +568,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 {
                     if (package.Manager.Name == manager || package.Manager.DisplayName == manager)
                     {
-                        MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
+                        MainApp.Instance.AddOperationToList(new(new UpdatePackageOperation(package)));
                     }
                 }
             }

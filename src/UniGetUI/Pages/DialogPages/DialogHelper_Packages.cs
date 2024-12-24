@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface;
 using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
@@ -12,6 +13,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
+using AbstractOperation = UniGetUI.PackageOperations.AbstractOperation;
 
 namespace UniGetUI.Pages.DialogPages;
 
@@ -180,7 +182,7 @@ public static partial class DialogHelper
     }
 
     public static async Task<ContentDialogResult> ShowOperationFailed(
-        IEnumerable<AbstractOperation.OutputLine> processOutput,
+        IEnumerable<(string, AbstractOperation.LineType)> processOutput,
         string dialogTitle,
         string shortDescription)
     {
@@ -260,21 +262,24 @@ public static partial class DialogHelper
         };
 
         Paragraph par = new();
+
+        SolidColorBrush errorColor = (SolidColorBrush)Application.Current.Resources["SystemFillColorCriticalBrush"];
+        SolidColorBrush debugColor = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBrush"];
+
         foreach (var line in processOutput)
         {
-            if (line.Type is AbstractOperation.OutputLine.LineType.STDOUT)
-                par.Inlines.Add(new Run { Text = line.Contents + "\x0a" });
-            else if (line.Type is AbstractOperation.OutputLine.LineType.Header)
-                // TODO: Theme-aware colorss
-                par.Inlines.Add(new Run
-                {
-                    Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Azure)
-                });
+            if (line.Item2 is AbstractOperation.LineType.Debug)
+            {
+                par.Inlines.Add(new Run { Text = line.Item1 + "\x0a" });
+            }
+            else if (line.Item2 is AbstractOperation.LineType.StdOUT)
+            {
+                par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = debugColor });
+            }
             else
-                par.Inlines.Add(new Run
-                {
-                    Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Red)
-                });
+            {
+                par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = errorColor });
+            }
         }
 
         CommandLineOutput.Blocks.Add(par);

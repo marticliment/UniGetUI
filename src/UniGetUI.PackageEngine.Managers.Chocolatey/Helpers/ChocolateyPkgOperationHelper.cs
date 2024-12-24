@@ -55,7 +55,8 @@ internal sealed class ChocolateyPkgOperationHelper : PackagePkgOperationHelper
     {
         if(returnCode is 3010)
         {
-            return OperationVeredict.RestartRequired;
+            return OperationVeredict.Success;
+            // return OperationVeredict.RestartRequired;
         }
 
         if (returnCode is 1641 or 1614 or 1605 or 0)

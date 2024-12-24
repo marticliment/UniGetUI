@@ -25,11 +25,11 @@ public abstract class AbstractOperation
     public event EventHandler<OperationStatus>? StatusChanged;
     public event EventHandler<EventArgs>? CancelRequested;
     public event EventHandler<(string, LineType)>? LogLineAdded;
-    protected event EventHandler<EventArgs>? OperationStarting;
-    protected event EventHandler<EventArgs>? OperationFinished;
-    protected event EventHandler<EventArgs>? Enqueued;
-    protected event EventHandler<EventArgs>? OperationSucceeded;
-    protected event EventHandler<EventArgs>? OperationFailed;
+    public event EventHandler<EventArgs>? OperationStarting;
+    public event EventHandler<EventArgs>? OperationFinished;
+    public event EventHandler<EventArgs>? Enqueued;
+    public event EventHandler<EventArgs>? OperationSucceeded;
+    public event EventHandler<EventArgs>? OperationFailed;
 
     public enum LineType
     {
@@ -79,7 +79,7 @@ public abstract class AbstractOperation
 
     protected void Line(string line, LineType type)
     {
-        LogList.Add((line, type));
+        if(type != LineType.Progress) LogList.Add((line, type));
         LogLineAdded?.Invoke(this, (line, type));
     }
 
@@ -164,6 +164,9 @@ public abstract class AbstractOperation
     }
 
     protected abstract Task<OperationVeredict> PerformOperation();
+    public abstract string GetOperationTitle();
+    public abstract Task<Uri> GetOperationIcon();
+
 
     /*protected async Task MainThread_()
     {

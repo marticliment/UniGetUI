@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -45,6 +46,8 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 throw new NullReferenceException("ONGOING_PROGRESS_STRING must be set to a non-null value in the Initialize method");
             }
+            Initialize();
+            Line(ONGOING_PROGRESS_STRING, LineType.Progress);
             GenerateProcessLogHeader();
 
             Enqueued += (_, _) =>
@@ -185,6 +188,11 @@ namespace UniGetUI.PackageEngine.Operations
         {
             AppNotificationManager.Default.RemoveByTagAsync(Package.Id + "progress");
         }
+
+        public override Task<Uri> GetOperationIcon()
+        {
+            return TaskRecycler<Uri>.RunOrAttachAsync(Package.GetIconUrl);
+        }
     }
 
     public class InstallPackageOperation : PackageOperation
@@ -205,8 +213,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void GenerateProcessLogHeader()
         {
-            Line(
-                "Starting package install operation for package id=" + Package.Id + " with Manager name=" +
+            Line("Starting package install operation for package id=" + Package.Id + " with Manager name=" +
                 Package.Manager.Name, LineType.Debug);
             Line("Given installation options are " + Options.ToString(), LineType.Debug);
         }
@@ -243,23 +250,27 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            return Task.CompletedTask;
-            /*if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
                 DesktopShortcutsDatabase.TryRemoveNewShortcuts(DesktopShortcutsBeforeStart);
-            }*/
+            }
+            return Task.CompletedTask;
         }
+
+
 
         protected override void Initialize()
         {
             ONGOING_PROGRESS_STRING = CoreTools.Translate("{0} is being installed", Package.Name);
-            // OperationTitle = CoreTools.Translate("{package} Installation", new Dictionary<string, object?> { { "package", Package.Name } });
-            // IconSource = await Task.Run(Package.GetIconUrl);
-
-            /*if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
                 DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcuts();
-            }*/
+            }
+        }
+
+        public override string GetOperationTitle()
+        {
+            return CoreTools.Translate("{package} Installation", new Dictionary<string, object?> { { "package", Package.Name } });
         }
     }
 
@@ -304,8 +315,7 @@ namespace UniGetUI.PackageEngine.Operations
                 ProcessOutput,
                 CoreTools.Translate("{package} update failed", new Dictionary<string, object?> { { "package", Package.Name } }),
                 CoreTools.Translate("{package} could not be updated", new Dictionary<string, object?> { { "package", Package.Name } })
-            );
-            return result == ContentDialogResult.Primary ? AfterFinshAction.Retry : AfterFinshAction.ManualClose;*/
+            );*/
         }
 
         protected override async Task HandleSuccess()
@@ -327,22 +337,24 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            /*if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
                 DesktopShortcutsDatabase.TryRemoveNewShortcuts(DesktopShortcutsBeforeStart);
-            }*/
+            }
         }
 
         protected override void Initialize()
         {
             ONGOING_PROGRESS_STRING = CoreTools.Translate("{0} is being updated to version {1}", Package.Name, Package.NewVersion);
-            // OperationTitle = CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
-            // IconSource = await Task.Run(Package.GetIconUrl);
-
-            /*if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
                 DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcuts();
-            }*/
+            }
+        }
+
+        public override string GetOperationTitle()
+        {
+            return CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
         }
     }
 
@@ -387,7 +399,6 @@ namespace UniGetUI.PackageEngine.Operations
                 CoreTools.Translate("{package} could not be uninstalled", new Dictionary<string, object?> { { "package", Package.Name } })
             );*/
             return Task.CompletedTask;
-            // return result == ContentDialogResult.Primary ? AfterFinshAction.Retry : AfterFinshAction.ManualClose;
         }
 
         protected override Task HandleSuccess()
@@ -410,8 +421,11 @@ namespace UniGetUI.PackageEngine.Operations
         protected override void Initialize()
         {
             ONGOING_PROGRESS_STRING = CoreTools.Translate("{0} is being uninstalled", Package.Name);
-            // OperationTitle = CoreTools.Translate("{package} Uninstall", new Dictionary<string, object?> { { "package", Package.Name } });
-            // IconSource = await Task.Run(Package.GetIconUrl);
+        }
+
+        public override string GetOperationTitle()
+        {
+            return CoreTools.Translate("{package} Uninstall", new Dictionary<string, object?> { { "package", Package.Name } });
         }
     }
 }

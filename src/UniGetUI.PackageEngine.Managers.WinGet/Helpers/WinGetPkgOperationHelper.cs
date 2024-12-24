@@ -122,7 +122,8 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
         {
             // If the user is required to restart the system to complete the installation
             if(operation is OperationType.Update) MarkUpgradeAsDone(package);
-            return OperationVeredict.RestartRequired;
+            //return OperationVeredict.RestartRequired;
+            return OperationVeredict.Success;
         }
 
         if (uintCode == 0x8A150077 || uintCode == 0x8A15010C || uintCode == 0x8A150005)

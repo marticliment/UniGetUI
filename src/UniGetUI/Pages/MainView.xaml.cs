@@ -16,6 +16,7 @@ using UniGetUI.Pages.DialogPages;
 using UniGetUI.PackageEngine.Operations;
 using CommunityToolkit.WinUI.Controls;
 using UniGetUI.PackageEngine.Enums;
+using UniGetUI.PackageEngine;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -289,19 +290,7 @@ namespace UniGetUI.Interface
 
         private bool ResizingOPLayout;
         private int OpListChanges;
-        public void AddOperation(AbstractOperation operation)
-        { 
-            OperationStackPanel.Children.Add(operation);
-            UpdateOperationsLayout();
-        }
 
-        public void RemoveOperation(AbstractOperation operation)
-        {
-            if (OperationStackPanel.Children.Contains(operation))
-                OperationStackPanel.Children.Remove(operation);
-
-            UpdateOperationsLayout();
-        }
 
         bool isCollapsed;
 
@@ -310,7 +299,7 @@ namespace UniGetUI.Interface
             OpListChanges++;
 
             ResizingOPLayout = true;
-            int OpCount = OperationStackPanel.Children.Count;
+            int OpCount = MainApp.Instance.Operations.Count;
             int MaxHeight = Math.Max((OpCount * 58) - 7, 0);
 
             MainContentPresenterGrid.RowDefinitions[2].MaxHeight = MaxHeight;
@@ -391,49 +380,39 @@ namespace UniGetUI.Interface
 
         private void CancellAllOps_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var widget in OperationStackPanel.Children)
+            foreach (var widget in MainApp.Instance.Operations)
             {
-                if (widget is not AbstractOperation operation)
-                    throw new InvalidCastException("All widgets here are supposed to inherit from AbstractOperation");
-
-                if (operation.Status is OperationStatus.Pending or OperationStatus.Running)
+                var operation = widget.Operation;
+                if (operation.Status is OperationStatus.InQueue or OperationStatus.Running)
                     operation.Cancel();
             }
         }
 
         private void RetryFailedOps_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var widget in OperationStackPanel.Children)
+            foreach (var widget in MainApp.Instance.Operations)
             {
-                if (widget is not AbstractOperation operation)
-                    throw new InvalidCastException("All widgets here are supposed to inherit from AbstractOperation");
-
-                if (operation.Status is OperationStatus.Failed)
-                    throw new NotImplementedException();
-                    //operation.Reload();
+                var operation = widget.Operation;
+                //if (operation.Status is OperationStatus.Failed)
+                //    operation.Restart();
             }
         }
 
         private void PausePendingOps_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var widget in OperationStackPanel.Children)
+            foreach (var widget in MainApp.Instance.Operations)
             {
-                if (widget is not AbstractOperation operation)
-                    throw new InvalidCastException("All widgets here are supposed to inherit from AbstractOperation");
-
-                if (operation.Status is OperationStatus.Pending)
-                    throw new NotImplementedException();
-                    //operation.Pause();
+                var operation = widget.Operation;
+                //if (operation.Status is OperationStatus.InQueue)
+                //    operation.Pause();
             }
         }
 
         private void ResumeAllOps_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var widget in OperationStackPanel.Children)
+            foreach (var widget in MainApp.Instance.Operations)
             {
-                if (widget is not AbstractOperation operation)
-                    throw new InvalidCastException("All widgets here are supposed to inherit from AbstractOperation");
-
+                var operation = widget.Operation;
                 if (operation.Status is OperationStatus.Canceled/*Paused*/)
                     throw new NotImplementedException();
                    //operation.Resume();
