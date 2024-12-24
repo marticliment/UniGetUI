@@ -6,27 +6,20 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageOperations;
 using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.PackageEngine.Operations
 {
-
-    public class OperationCanceledEventArgs : EventArgs
+    public abstract class PackageOperation : AbstractProcessOperation
     {
-        public OperationStatus OldStatus;
-        public OperationCanceledEventArgs(OperationStatus OldStatus)
-        {
-            this.OldStatus = OldStatus;
-        }
-    }
-
-    public abstract class PackageOperation : AbstractOperation
-    {
+        protected abstract void GenerateProcessLogHeader();
         protected List<string> DesktopShortcutsBeforeStart = [];
 
         protected readonly IPackage Package;
@@ -34,39 +27,52 @@ namespace UniGetUI.PackageEngine.Operations
         protected readonly OperationType Role;
         protected string ONGOING_PROGRESS_STRING = null!;
 
+        protected abstract Task HandleSuccess();
+        protected abstract Task HandleFailure();
+        protected abstract void Initialize();
+
         public PackageOperation(
             IPackage package,
             IInstallationOptions options,
             OperationType role,
             bool IgnoreParallelInstalls = false)
-            : base(IgnoreParallelInstalls)
+            : base(!IgnoreParallelInstalls)
         {
             Package = package;
             Options = options;
             Role = role;
-            MainProcedure();
             if (ONGOING_PROGRESS_STRING is null)
             {
                 throw new NullReferenceException("ONGOING_PROGRESS_STRING must be set to a non-null value in the Initialize method");
             }
+            GenerateProcessLogHeader();
 
-            OutputDialog.SecondaryButtonText = CoreTools.Translate("Package details");
-            OutputDialog.SecondaryButtonClick += (_, _) =>
+            Enqueued += (_, _) =>
             {
-                DialogHelper.ShowPackageDetails(Package, Role);
+                Package.SetTag(PackageTag.OnQueue);
+                if ((Settings.Get("AllowParallelInstalls")
+                     || Settings.Get($"AllowParallelInstallsForManager{Package.Manager.Name}")))
+                {
+                    Logger.Debug("Parallel installs are allowed. Skipping queue check");
+                    SkipQueue();
+                }
             };
+            CancelRequested += (_, _) => Package.SetTag(PackageTag.Default);
+            OperationStarting += (_, _) => CreateProgressToast();
+            OperationFinished += (_, _) => RemoveProgressToast();
+            OperationSucceeded += (_, _) => HandleSuccess();
+            OperationFailed += (_, _) => HandleFailure();
         }
 
         public PackageOperation(
             IPackage package,
             OperationType role,
             bool IgnoreParallelInstalls = false)
-            : this(package, InstallationOptions.FromPackage(package), role, IgnoreParallelInstalls)
-        {
-        }
+            : this(package, InstallationOptions.FromPackage(package), role, IgnoreParallelInstalls) { }
 
-        protected sealed override async Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo)
+        protected sealed override async Task PrepareProcessStartInfo()
         {
+            Package.SetTag(PackageTag.OnQueue);
             string operation_args = string.Join(" ", Package.Manager.OperationHelper.GetParameters(Package, Options, Role));
 
             if (Package.OverridenOptions.RunAsAdministrator == true
@@ -80,66 +86,20 @@ namespace UniGetUI.PackageEngine.Operations
                     await CoreTools.CacheUACForCurrentProcess();
                 }
 
-                startInfo.FileName = CoreData.GSudoPath;
-                startInfo.Arguments =
+                process.StartInfo.FileName = CoreData.GSudoPath;
+                process.StartInfo.Arguments =
                     $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
             else
             {
-                startInfo.FileName = Package.Manager.Status.ExecutablePath;
-                startInfo.Arguments = $"{Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
+                process.StartInfo.FileName = Package.Manager.Status.ExecutablePath;
+                process.StartInfo.Arguments = $"{Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
-
-            return startInfo;
-        }
-
-        protected override Task HandleCancelation()
-        {
-            Package.SetTag(PackageTag.Default);
-            return Task.CompletedTask;
         }
 
         protected sealed override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
             return Task.FromResult(Package.Manager.OperationHelper.GetResult(Package, Role, Output, ReturnCode));
-        }
-
-        protected override async Task WaitForAvailability()
-        {
-            if (!IGNORE_PARALLEL_OPERATION_SETTINGS &&
-                (Settings.Get("AllowParallelInstalls")
-                 || Settings.Get($"AllowParallelInstallsForManager{Package.Manager.Name}")))
-            {
-                Logger.Debug("Parallel installs are allowed. Skipping queue check");
-                Package.SetTag(PackageTag.BeingProcessed);
-                return;
-            }
-
-            Package.SetTag(PackageTag.OnQueue);
-
-            AddToQueue();
-            int currentIndex = -2;
-            int oldIndex = -1;
-            while (currentIndex != 0)
-            {
-                if (Status == OperationStatus.Canceled)
-                {
-                    Package.Tag = PackageTag.Default;
-                    return; // If the operation has been cancelled
-                }
-
-                currentIndex = MainApp.Instance.OperationQueue.IndexOf(this);
-                if (currentIndex != oldIndex)
-                {
-                    LineInfoText = CoreTools.Translate("Operation on queue (position {0})...", currentIndex);
-                    oldIndex = currentIndex;
-                }
-
-                await Task.Delay(100);
-            }
-
-            Package.SetTag(PackageTag.BeingProcessed);
-
         }
 
         protected void ShowErrorNotification(string title, string body)
@@ -192,7 +152,7 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        protected override void PostProcessStartAction()
+        private void CreateProgressToast()
         {
             if (Settings.AreProgressNotificationsDisabled())
                 return;
@@ -221,7 +181,7 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        protected override void PostProcessEndAction()
+        private void RemoveProgressToast()
         {
             AppNotificationManager.Default.RemoveByTagAsync(Package.Id + "progress");
         }
@@ -243,18 +203,17 @@ namespace UniGetUI.PackageEngine.Operations
             : base(package, OperationType.Install, IgnoreParallelInstalls)
         { }
 
-        protected override string[] GenerateProcessLogHeader()
+        protected override void GenerateProcessLogHeader()
         {
-            return
-            [
-                "Starting package install operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name,
-                "Given installation options are " + Options.ToString(),
-            ];
+            Line(
+                "Starting package install operation for package id=" + Package.Id + " with Manager name=" +
+                Package.Manager.Name, LineType.Debug);
+            Line("Given installation options are " + Options.ToString(), LineType.Debug);
         }
 
-        protected override async Task<AfterFinshAction> HandleFailure()
+        protected override Task HandleFailure()
         {
-            LineInfoText = CoreTools.Translate("{package} installation failed", new Dictionary<string, object?> { { "package", Package.Name } });
+            Line(CoreTools.Translate("{package} installation failed", new Dictionary<string, object?> { { "package", Package.Name } }), LineType.Progress);
             Package.SetTag(PackageTag.Failed);
 
             ShowErrorNotification(
@@ -263,19 +222,18 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            ContentDialogResult result = await DialogHelper.ShowOperationFailed(
+            return Task.CompletedTask;
+            /*ContentDialogResult result = await DialogHelper.ShowOperationFailed(
                 ProcessOutput,
                 CoreTools.Translate("{package} installation failed", new Dictionary<string, object?> { { "package", Package.Name } }),
                 CoreTools.Translate("{package} could not be installed", new Dictionary<string, object?> { { "package", Package.Name } })
-            );
-
-            return result == ContentDialogResult.Primary? AfterFinshAction.Retry: AfterFinshAction.ManualClose;
+            );*/
 
         }
 
-        protected override Task<AfterFinshAction> HandleSuccess()
+        protected override Task HandleSuccess()
         {
-            LineInfoText = CoreTools.Translate("{package} was installed successfully", new Dictionary<string, object?> { { "package", Package.Name } });
+            Line(CoreTools.Translate("{package} was installed successfully", new Dictionary<string, object?> { { "package", Package.Name } }), LineType.Progress);
             Package.SetTag(PackageTag.AlreadyInstalled);
             PEInterface.InstalledPackagesLoader.AddForeign(Package);
 
@@ -285,24 +243,23 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            return Task.CompletedTask;
+            /*if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
                 DesktopShortcutsDatabase.TryRemoveNewShortcuts(DesktopShortcutsBeforeStart);
-            }
-
-            return Task.FromResult(AfterFinshAction.TimeoutClose);
+            }*/
         }
 
-        protected override async Task Initialize()
+        protected override void Initialize()
         {
             ONGOING_PROGRESS_STRING = CoreTools.Translate("{0} is being installed", Package.Name);
-            OperationTitle = CoreTools.Translate("{package} Installation", new Dictionary<string, object?> { { "package", Package.Name } });
-            IconSource = await Task.Run(Package.GetIconUrl);
+            // OperationTitle = CoreTools.Translate("{package} Installation", new Dictionary<string, object?> { { "package", Package.Name } });
+            // IconSource = await Task.Run(Package.GetIconUrl);
 
-            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            /*if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
                 DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcuts();
-            }
+            }*/
         }
     }
 
@@ -322,18 +279,17 @@ namespace UniGetUI.PackageEngine.Operations
             : base(package, OperationType.Update, IgnoreParallelInstalls)
         { }
 
-        protected override string[] GenerateProcessLogHeader()
+        protected override void GenerateProcessLogHeader()
         {
-            return
-            [
-                "Starting package update operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name,
-                "Given installation options are " + Options.ToString(),
-            ];
+            Line(
+                "Starting package update operation for package id=" + Package.Id + " with Manager name=" +
+                Package.Manager.Name, LineType.Debug);
+            Line("Given installation options are " + Options.ToString(), LineType.Debug);
         }
 
-        protected override async Task<AfterFinshAction> HandleFailure()
+        protected override Task HandleFailure()
         {
-            LineInfoText = CoreTools.Translate("{package} update failed. Click here for more details.", new Dictionary<string, object?> { { "package", Package.Name } });
+            Line(CoreTools.Translate("{package} update failed. Click here for more details.", new Dictionary<string, object?> { { "package", Package.Name } }), LineType.Progress);
             Package.SetTag(PackageTag.Failed);
 
             ShowErrorNotification(
@@ -342,18 +298,19 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            ContentDialogResult result = await DialogHelper.ShowOperationFailed(
+            return Task.CompletedTask;
+
+            /*ContentDialogResult result = await DialogHelper.ShowOperationFailed(
                 ProcessOutput,
                 CoreTools.Translate("{package} update failed", new Dictionary<string, object?> { { "package", Package.Name } }),
                 CoreTools.Translate("{package} could not be updated", new Dictionary<string, object?> { { "package", Package.Name } })
             );
-
-            return result == ContentDialogResult.Primary ? AfterFinshAction.Retry : AfterFinshAction.ManualClose;
+            return result == ContentDialogResult.Primary ? AfterFinshAction.Retry : AfterFinshAction.ManualClose;*/
         }
 
-        protected override async Task<AfterFinshAction> HandleSuccess()
+        protected override async Task HandleSuccess()
         {
-            LineInfoText = CoreTools.Translate("{package} was updated successfully", new Dictionary<string, object?> { { "package", Package.Name } });
+            Line(CoreTools.Translate("{package} was updated successfully", new Dictionary<string, object?> { { "package", Package.Name } }), LineType.Progress);
             Package.SetTag(PackageTag.Default);
             Package.GetInstalledPackage()?.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
@@ -370,24 +327,22 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            /*if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
                 DesktopShortcutsDatabase.TryRemoveNewShortcuts(DesktopShortcutsBeforeStart);
-            }
-
-            return AfterFinshAction.TimeoutClose;
+            }*/
         }
 
-        protected override async Task Initialize()
+        protected override void Initialize()
         {
             ONGOING_PROGRESS_STRING = CoreTools.Translate("{0} is being updated to version {1}", Package.Name, Package.NewVersion);
-            OperationTitle = CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
-            IconSource = await Task.Run(Package.GetIconUrl);
+            // OperationTitle = CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
+            // IconSource = await Task.Run(Package.GetIconUrl);
 
-            if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
+            /*if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
                 DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcuts();
-            }
+            }*/
         }
     }
 
@@ -407,18 +362,17 @@ namespace UniGetUI.PackageEngine.Operations
             : base(package, OperationType.Uninstall, IgnoreParallelInstalls)
         { }
 
-        protected override string[] GenerateProcessLogHeader()
+        protected override void GenerateProcessLogHeader()
         {
-            return
-            [
-                "Starting package uninstall operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name,
-                "Given installation options are " + Options.ToString(),
-            ];
+            Line(
+                "Starting package uninstall operation for package id=" + Package.Id + " with Manager name=" +
+                Package.Manager.Name, LineType.Debug);
+            Line("Given installation options are " + Options.ToString(), LineType.Debug);
         }
 
-        protected override async Task<AfterFinshAction> HandleFailure()
+        protected override Task HandleFailure()
         {
-            LineInfoText = CoreTools.Translate("{package} uninstall failed", new Dictionary<string, object?> { { "package", Package.Name } });
+            Line(CoreTools.Translate("{package} uninstall failed", new Dictionary<string, object?> { { "package", Package.Name } }), LineType.Debug);
             Package.SetTag(PackageTag.Failed);
 
             ShowErrorNotification(
@@ -427,18 +381,18 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            ContentDialogResult result = await DialogHelper.ShowOperationFailed(
+            /*ContentDialogResult result = await DialogHelper.ShowOperationFailed(
                 ProcessOutput,
                 CoreTools.Translate("{package} uninstall failed", new Dictionary<string, object?> { { "package", Package.Name } }),
                 CoreTools.Translate("{package} could not be uninstalled", new Dictionary<string, object?> { { "package", Package.Name } })
-            );
-
-            return result == ContentDialogResult.Primary ? AfterFinshAction.Retry : AfterFinshAction.ManualClose;
+            );*/
+            return Task.CompletedTask;
+            // return result == ContentDialogResult.Primary ? AfterFinshAction.Retry : AfterFinshAction.ManualClose;
         }
 
-        protected override async Task<AfterFinshAction> HandleSuccess()
+        protected override Task HandleSuccess()
         {
-            LineInfoText = CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?> { { "package", Package.Name } });
+            Line(CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?> { { "package", Package.Name } }), LineType.Debug);
             Package.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.Default);
             PEInterface.UpgradablePackagesLoader.Remove(Package);
@@ -450,14 +404,14 @@ namespace UniGetUI.PackageEngine.Operations
                     new Dictionary<string, object?> { { "package", Package.Name } })
             );
 
-            return AfterFinshAction.TimeoutClose;
+            return Task.CompletedTask;
         }
 
-        protected override async Task Initialize()
+        protected override void Initialize()
         {
             ONGOING_PROGRESS_STRING = CoreTools.Translate("{0} is being uninstalled", Package.Name);
-            OperationTitle = CoreTools.Translate("{package} Uninstall", new Dictionary<string, object?> { { "package", Package.Name } });
-            IconSource = await Task.Run(Package.GetIconUrl);
+            // OperationTitle = CoreTools.Translate("{package} Uninstall", new Dictionary<string, object?> { { "package", Package.Name } });
+            // IconSource = await Task.Run(Package.GetIconUrl);
         }
     }
 }
