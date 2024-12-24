@@ -58,6 +58,6 @@ internal sealed class PowerShell7PkgOperationHelper : PackagePkgOperationHelper
             return OperationVeredict.AutoRetry;
         }
 
-        return returnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+        return returnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
     }
 }

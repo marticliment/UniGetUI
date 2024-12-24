@@ -22,13 +22,14 @@ public abstract class AbstractOperation
 {
     public readonly static List<AbstractOperation> OperationQueue = new();
 
-    protected enum FinishAction
-    {
-        Retry,
-        Success,
-        Error,
-        Canceled,
-    }
+    public event EventHandler<OperationStatus>? StatusChanged;
+    public event EventHandler<EventArgs>? CancelRequested;
+    public event EventHandler<(string, LineType)>? LogLineAdded;
+    protected event EventHandler<EventArgs>? OperationStarting;
+    protected event EventHandler<EventArgs>? OperationFinished;
+    protected event EventHandler<EventArgs>? Enqueued;
+    protected event EventHandler<EventArgs>? OperationSucceeded;
+    protected event EventHandler<EventArgs>? OperationFailed;
 
     public enum LineType
     {
@@ -38,11 +39,12 @@ public abstract class AbstractOperation
         StdERR
     }
 
+    private List<(string, LineType)> LogList = new();
     private OperationStatus _status = OperationStatus.InQueue;
     public OperationStatus Status
     {
         get => _status;
-        set { _status = value; StatusChanged(); }
+        set { _status = value; StatusChanged?.Invoke(this, value); }
     }
 
     protected bool QUEUE_ENABLED;
@@ -51,13 +53,10 @@ public abstract class AbstractOperation
     {
         QUEUE_ENABLED = queue_enabled;
         Status = OperationStatus.InQueue;
-        _ = MainThread();
+        // _ = MainThread();
     }
 
-    protected abstract Task CancelRequested();
-    protected abstract Task StatusChanged();
-
-    public async void Cancel()
+    public void Cancel()
     {
         switch (_status)
         {
@@ -66,7 +65,7 @@ public abstract class AbstractOperation
             case OperationStatus.Failed:
                 break;
             case OperationStatus.Running:
-                await CancelRequested();
+                CancelRequested?.Invoke(this, EventArgs.Empty);
                 Status = OperationStatus.Canceled;
                 break;
             case OperationStatus.InQueue:
@@ -78,9 +77,18 @@ public abstract class AbstractOperation
         }
     }
 
-    protected abstract string Line(string line, LineType type);
+    protected void Line(string line, LineType type)
+    {
+        LogList.Add((line, type));
+        LogLineAdded?.Invoke(this, (line, type));
+    }
 
-    private async Task MainThread()
+    public IReadOnlyList<(string, LineType)> GetOutput()
+    {
+        return LogList;
+    }
+
+    public async Task MainThread()
     {
         if (OperationQueue.Contains(this))
             throw new InvalidOperationException("This operation was already on the queue");
@@ -90,10 +98,12 @@ public abstract class AbstractOperation
         // BEGIN QUEUE HANDLER
         if (QUEUE_ENABLED)
         {
+            SKIP_QUEUE = false;
             OperationQueue.Add(this);
+            Enqueued?.Invoke(this, EventArgs.Empty);
             int lastPos = -1;
 
-            while (OperationQueue.First() != this)
+            while (OperationQueue.First() != this && !SKIP_QUEUE)
             {
                 int pos = OperationQueue.IndexOf(this);
                 if (pos != lastPos)
@@ -107,10 +117,10 @@ public abstract class AbstractOperation
         // END QUEUE HANDLER
 
         // BEGIN ACTUAL OPERATION
-        FinishAction result;
+        OperationVeredict result;
         Line(CoreTools.Translate("Starting operation..."), LineType.Progress);
         Status = OperationStatus.Running;
-        await PreOperation();
+        OperationStarting?.Invoke(this, EventArgs.Empty);
         do
         {
             try
@@ -119,46 +129,41 @@ public abstract class AbstractOperation
             }
             catch (Exception e)
             {
-                result = FinishAction.Error;
+                result = OperationVeredict.Failure;
                 Logger.Error(e);
                 foreach (string l in e.ToString().Split("\n")) Line(l, LineType.StdERR);
             }
         }
-        while (result == FinishAction.Retry);
+        while (result == OperationVeredict.AutoRetry);
         OperationQueue.Remove(this);
         // END OPERATION
 
-        await PostOperation();
-
-        if (result == FinishAction.Success)
+        OperationFinished?.Invoke(this, EventArgs.Empty);
+        if (result == OperationVeredict.Success)
         {
             Status = OperationStatus.Succeeded;
-            await HandleSuccess();
+            OperationSucceeded?.Invoke(this, EventArgs.Empty);
         }
-        else if (result == FinishAction.Error)
+        else if (result == OperationVeredict.Failure)
         {
             Status = OperationStatus.Failed;
-            await HandleFaliure();
+            OperationFailed?.Invoke(this, EventArgs.Empty);
         }
-        else if (result == FinishAction.Canceled)
+        else if (result == OperationVeredict.Canceled)
         {
             Status = OperationStatus.Canceled;
         }
     }
 
-
+    private bool SKIP_QUEUE;
     public void SkipQueue()
     {
         if (Status != OperationStatus.InQueue) return;
         OperationQueue.Remove(this);
-        OperationQueue.Insert(0, this);
+        SKIP_QUEUE = true;
     }
 
-    protected abstract Task<FinishAction> PerformOperation();
-    protected abstract Task PreOperation();
-    protected abstract Task PostOperation();
-    protected abstract Task HandleSuccess();
-    protected abstract Task HandleFaliure();
+    protected abstract Task<OperationVeredict> PerformOperation();
 
     /*protected async Task MainThread_()
     {
@@ -234,7 +239,7 @@ public abstract class AbstractOperation
             ProcessOutput.Add(new("Process Exit Code      : " + Process.ExitCode, OutputLine.LineType.Debug));
             ProcessOutput.Add(new("Process End Time       : " + DateTime.Now, OutputLine.LineType.Debug));
 
-            FinishAction postAction = FinishAction.KeepVisible;
+            OperationVeredict postAction = OperationVeredict.KeepVisible;
 
             OperationVeredict OperationVeredict = await GetProcessVeredict(Process.ExitCode, RawProcessOutput);
 
@@ -252,13 +257,13 @@ public abstract class AbstractOperation
                     case OperationVeredict.Canceled:
                         Status = OperationStatus.Canceled;
                         RemoveFromQueue();
-                        postAction = FinishAction.KeepVisible;
+                        postAction = OperationVeredict.KeepVisible;
                         await HandleCancelation();
                         break;
 
                     case OperationVeredict.AutoRetry:
                         Status = OperationStatus.InQueue;
-                        postAction = FinishAction.AutoRestart;
+                        postAction = OperationVeredict.AutoRestart;
                         break;
 
                     case OperationVeredict.Failed:
@@ -277,7 +282,7 @@ public abstract class AbstractOperation
 
             switch (postAction)
             {
-                case FinishAction.AutoHide:
+                case OperationVeredict.AutoHide:
                     if (Opera.Count == 0)
                     {
                         if (Settings.Get("DoCacheAdminRightsForBatches"))
@@ -294,7 +299,7 @@ public abstract class AbstractOperation
 
                     break;
 
-                case FinishAction.KeepVisible:
+                case OperationVeredict.KeepVisible:
                     if (MainApp.Instance.OperationQueue.Count == 0)
                     {
                         if (Settings.Get("DoCacheAdminRightsForBatches"))
@@ -305,7 +310,7 @@ public abstract class AbstractOperation
 
                     break;
 
-                case FinishAction.AutoRestart:
+                case OperationVeredict.AutoRestart:
                     Retry();
                     break;
             }

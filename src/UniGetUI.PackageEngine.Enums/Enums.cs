@@ -29,10 +29,10 @@ namespace UniGetUI.PackageEngine.Enums
 
     public enum OperationVeredict
     {
-        Succeeded,
-        Failed,
+        Success,
+        Failure,
         Canceled,
-        RestartRequired,
+        // RestartRequired,
         AutoRetry,
     }
 

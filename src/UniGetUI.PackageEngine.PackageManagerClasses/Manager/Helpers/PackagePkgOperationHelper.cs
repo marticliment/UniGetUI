@@ -68,7 +68,7 @@ public abstract class PackagePkgOperationHelper : IPackageOperationHelper
             Logger.Error(
                 $"A fatal error ocurred while loading operation parameters for package id={package.Id} on manager {Manager.Name} and operation {operation}");
             Logger.Error(ex);
-            return OperationVeredict.Failed;
+            return OperationVeredict.Failure;
         }
     }
 }

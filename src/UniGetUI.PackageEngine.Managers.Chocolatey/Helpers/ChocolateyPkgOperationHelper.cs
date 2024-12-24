@@ -60,7 +60,7 @@ internal sealed class ChocolateyPkgOperationHelper : PackagePkgOperationHelper
 
         if (returnCode is 1641 or 1614 or 1605 or 0)
         {
-            return OperationVeredict.Succeeded;
+            return OperationVeredict.Success;
         }
 
         string output_string = string.Join("\n", processOutput);
@@ -76,6 +76,6 @@ internal sealed class ChocolateyPkgOperationHelper : PackagePkgOperationHelper
             return OperationVeredict.AutoRetry;
         }
 
-        return OperationVeredict.Failed;
+        return OperationVeredict.Failure;
     }
 }

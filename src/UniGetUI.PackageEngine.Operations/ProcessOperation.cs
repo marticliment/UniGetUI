@@ -1,22 +1,48 @@
 using System.Diagnostics;
+using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.PackageOperations;
 
 public abstract class AbstractProcessOperation : AbstractOperation
 {
-    Process process;
+    protected Process process { get; private set; }
     protected AbstractProcessOperation(bool queue_enabled) : base(queue_enabled)
     {
         process = new();
+        CancelRequested += (_, _) => process.Kill();
+        OperationStarting += async (_, _) =>
+        {
+            process = new();
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardInput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.FileName = "lol";
+            process.StartInfo.Arguments = "lol";
+            process.OutputDataReceived += (_, e) =>
+            {
+                if (e.Data is not null)
+                {
+                    string data = e.Data.ToString().Trim();
+                    var lineType = LineType.StdOUT;
+                    if (data.Length < 6 || data.Contains("Waiting for another install..."))
+                        lineType = LineType.Progress;
+
+                    Line(">> " + data, lineType);
+                }
+            };
+            process.ErrorDataReceived += (_, e) =>
+            {
+                if (e.Data is not null)
+                {
+                    Line(">> " + e.Data, LineType.StdERR);
+                }
+            };
+            await PrepareProcessStartInfo();
+        };
     }
 
-    protected override Task CancelRequested()
-    {
-        process.Kill();
-        return Task.CompletedTask;
-    }
-
-    protected override async Task<FinishAction> PerformOperation()
+    protected override async Task<OperationVeredict> PerformOperation()
     {
         if(process.StartInfo.UseShellExecute) throw new InvalidOperationException("UseShellExecute must be set to false");
         if(!process.StartInfo.RedirectStandardOutput) throw new InvalidOperationException("RedirectStandardOutput must be set to true");
@@ -35,40 +61,10 @@ public abstract class AbstractProcessOperation : AbstractOperation
 
         Line($"End Time: \"{DateTime.Now}\"", LineType.Debug);
         Line($"Process return value: \"{process.ExitCode}\" (0x{process.ExitCode:X})", LineType.Debug);
-        return await HandleProcessResult();
+
+        return await GetProcessVeredict(process.ExitCode, []);
     }
 
-    protected abstract Task<FinishAction> HandleProcessResult();
+    protected abstract Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output);
     protected abstract Task PrepareProcessStartInfo();
-
-    protected override Task PreOperation()
-    {
-        process = new();
-        process.StartInfo.UseShellExecute = false;
-        process.StartInfo.RedirectStandardOutput = true;
-        process.StartInfo.RedirectStandardInput = true;
-        process.StartInfo.RedirectStandardError = true;
-        process.StartInfo.FileName = "lol";
-        process.StartInfo.Arguments = "lol";
-        process.OutputDataReceived += (_, e) =>
-        {
-            if (e.Data is not null)
-            {
-                string data = e.Data.ToString().Trim();
-                var lineType = LineType.StdOUT;
-                if (data.Length < 6 || data.Contains("Waiting for another install..."))
-                    lineType = LineType.Progress;
-
-                Line(">> " + data, lineType);
-            }
-        };
-        process.ErrorDataReceived += (_, e) =>
-        {
-            if (e.Data is not null)
-            {
-                Line(">> " + e.Data, LineType.StdERR);
-            }
-        };
-        return PrepareProcessStartInfo();
-    }
 }
