@@ -350,7 +350,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             if (await DialogHelper.ConfirmUninstallation(package))
             {
-                MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, options));
+                MainApp.Operations.Add((new UninstallPackageOperation(package, options)));
             }
         }
 
@@ -360,8 +360,8 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 foreach (IPackage package in packages)
                 {
-                    MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package,
-                        await InstallationOptions.FromPackageAsync(package, elevated, interactive, remove_data: remove_data)));
+                    MainApp.Operations.Add((new UninstallPackageOperation(package,
+                        await InstallationOptions.FromPackageAsync(package, elevated, interactive, remove_data: remove_data))));
                 }
             }
         }
@@ -468,7 +468,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
+            MainApp.Operations.Add((new InstallPackageOperation(package)));
         }
 
         private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
@@ -479,8 +479,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, IgnoreParallelInstalls: true));
-            MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, IgnoreParallelInstalls: true));
+            MainApp.Operations.Add((new UninstallPackageOperation(package, IgnoreParallelInstalls: true)));
+            MainApp.Operations.Add((new InstallPackageOperation(package, IgnoreParallelInstalls: true)));
 
         }
         private async void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)

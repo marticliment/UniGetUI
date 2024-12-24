@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
@@ -15,7 +16,9 @@ using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Operations;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
+using UniGetUI.Controls.OperationWidgets;
 using UniGetUI.PackageEngine.Interfaces;
+using AbstractOperation = UniGetUI.PackageOperations.AbstractOperation;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 namespace UniGetUI
@@ -34,7 +37,22 @@ namespace UniGetUI
             public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
         }
 
-        public List<AbstractOperation> OperationQueue = [];
+        public static class Operations
+        {
+            public static ObservableCollection<OperationControl> _operationList = new();
+
+            public static void Add(AbstractOperation op)
+                => _operationList.Add(new(op));
+
+            public static void Remove(OperationControl control)
+                => _operationList.Remove(control);
+
+            public static void Remove(AbstractOperation op)
+            {
+                foreach(var control in _operationList.Where(x => x.Operation == op).ToArray())
+                    _operationList.Remove(control);
+            }
+        }
 
         public bool RaiseExceptionAsFatal = true;
 
@@ -210,11 +228,6 @@ namespace UniGetUI
                 Logger.Error("Could not register notification event");
                 Logger.Error(ex);
             }
-        }
-
-        public void AddOperationToList(AbstractOperation operation)
-        {
-            MainWindow.NavigationPage.OperationStackPanel.Children.Add(operation);
         }
 
         /// <summary>

@@ -122,7 +122,8 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
         {
             // If the user is required to restart the system to complete the installation
             if(operation is OperationType.Update) MarkUpgradeAsDone(package);
-            return OperationVeredict.RestartRequired;
+            //return OperationVeredict.RestartRequired;
+            return OperationVeredict.Success;
         }
 
         if (uintCode == 0x8A150077 || uintCode == 0x8A15010C || uintCode == 0x8A150005)
@@ -133,26 +134,26 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
         if (uintCode == 0x8A150011)
         {
             // TODO: Needs skip checksum
-            return OperationVeredict.Failed;
+            return OperationVeredict.Failure;
         }
 
 		if (uintCode == 0x8A15002B)
 		{
-			return OperationVeredict.Failed;
+			return OperationVeredict.Failure;
 		}
 
         if (uintCode == 0x8A15010D || uintCode == 0x8A15004F || uintCode == 0x8A15010E)
         {
             // Application is already installed
             if(operation is OperationType.Update) MarkUpgradeAsDone(package);
-            return OperationVeredict.Succeeded;
+            return OperationVeredict.Success;
         }
 
         if (returnCode == 0)
         {
             // Operation succeeded
             if(operation is OperationType.Update) MarkUpgradeAsDone(package);
-            return OperationVeredict.Succeeded;
+            return OperationVeredict.Success;
         }
 
         if(uintCode == 0x8A150056 && package.OverridenOptions.RunAsAdministrator != false && !CoreTools.IsAdministrator())
@@ -169,7 +170,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             return OperationVeredict.AutoRetry;
         }
 
-        return OperationVeredict.Failed;
+        return OperationVeredict.Failure;
     }
 
     private static void MarkUpgradeAsDone(IPackage package)

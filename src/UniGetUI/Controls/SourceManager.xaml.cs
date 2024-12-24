@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using UniGetUI.Controls.OperationWidgets;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager;
@@ -25,9 +26,9 @@ namespace UniGetUI.Interface.Widgets
 
         public void Remove(object sender, RoutedEventArgs e)
         {
-            RemoveSourceOperation op = new(Source);
-            MainApp.Instance.AddOperationToList(op);
-            op.OperationSucceeded += (_, _) => { Parent.RemoveSourceItem(this); };
+            var op = new OperationControl(new RemoveSourceOperation(Source));
+            MainApp.Operations._operationList.Add(op);
+            op.Operation.OperationSucceeded += (_, _) => { Parent.RemoveSourceItem(this); };
         }
     }
 
@@ -124,19 +125,14 @@ namespace UniGetUI.Interface.Widgets
 
                     if (await MainApp.Instance.MainWindow.ShowDialogAsync(d) == ContentDialogResult.Primary)
                     {
-                        AddSourceOperation op;
+                        PackageOperations.AbstractOperation op;
                         if (CoreTools.Translate("Other") != SourcesCombo.SelectedValue.ToString())
-                        {
                             op = new AddSourceOperation(NameSourceRef[SourcesCombo.SelectedValue.ToString() ?? ""]);
-                        }
                         else
-                        {
                             op = new AddSourceOperation(new ManagerSource(this.Manager, SourceNameTextBox.Text, new Uri(SourceUrlTextBox.Text)));
-                        }
 
-                        MainApp.Instance.AddOperationToList(op);
-                        op.OperationSucceeded += (_, _) => { LoadSources(); };
-
+                        MainApp.Operations.Add(op);
+                        op.OperationSucceeded += (_, _) => LoadSources();
                     }
                 }
                 catch (Exception ex)

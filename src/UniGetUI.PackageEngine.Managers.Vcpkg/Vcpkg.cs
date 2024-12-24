@@ -339,7 +339,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         public override void RefreshPackageIndexes()
         {
-            var (found, path) = GetVcpkgPath();
+            var (found, _) = GetVcpkgPath();
             var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
             var (gitFound, gitPath) = CoreTools.Which("git");
 

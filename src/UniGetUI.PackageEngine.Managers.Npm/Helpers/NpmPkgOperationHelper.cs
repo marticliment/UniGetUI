@@ -36,6 +36,6 @@ internal sealed class NpmPkgOperationHelper : PackagePkgOperationHelper
         IEnumerable<string> processOutput,
         int returnCode)
     {
-        return returnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+        return returnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
     }
 }

@@ -54,7 +54,7 @@ internal sealed class PipPkgOperationHelper : PackagePkgOperationHelper
     {
         if (returnCode == 0)
         {
-            return OperationVeredict.Succeeded;
+            return OperationVeredict.Success;
         }
 
         string output_string = string.Join("\n", processOutput);
@@ -64,7 +64,7 @@ internal sealed class PipPkgOperationHelper : PackagePkgOperationHelper
             package.OverridenOptions.Scope = PackageScope.User;
             return OperationVeredict.AutoRetry;
         }
-        return OperationVeredict.Failed;
+        return OperationVeredict.Failure;
 
     }
 }
