@@ -390,7 +390,7 @@ namespace UniGetUI.Interface.SoftwarePages
                                 upgradablePackages[0].Version))
 
                             .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
-                            .AddButton(new AppNotificationButton(CoreTools.Translate("Open WingetUI"))
+                            .AddButton(new AppNotificationButton(CoreTools.Translate("View on UniGetUI").Replace("'", "´"))
                                 .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
                             )
                             .AddButton(new AppNotificationButton(CoreTools.Translate("Update"))
@@ -430,7 +430,7 @@ namespace UniGetUI.Interface.SoftwarePages
                             .AddText(CoreTools.Translate("{0} packages can be updated", upgradablePackages.Count))
                             .SetAttributionText(attribution)
 
-                            .AddButton(new AppNotificationButton(CoreTools.Translate("Open WingetUI"))
+                            .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI").Replace("'", "´"))
                                 .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
                             )
                             .AddButton(new AppNotificationButton(CoreTools.Translate("Update all"))

@@ -19,7 +19,12 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             {
                 try
                 {
-                    details.ManifestUrl = new Uri(details.Package.Source.Url.ToString() + "/blob/master/bucket/" + details.Package.Id + ".json");
+                    if (details.Package.Source.Name.StartsWith("http"))
+                        details.ManifestUrl = new Uri(details.Package.Source.Name);
+                    else if (details.Package.Source.Name.Contains(":\\"))
+                        details.ManifestUrl = new Uri("file:///" + details.Package.Source.Name.Replace("\\", "/"));
+                    else
+                        details.ManifestUrl = new Uri(details.Package.Source.Url + "/blob/master/bucket/" + details.Package.Id + ".json");
                 }
                 catch (Exception ex)
                 {

@@ -13,6 +13,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 {
     public abstract class PackageManager : IPackageManager
     {
+        private const int PackageListingTaskTimeout = 60;
+
         public ManagerProperties Properties { get; set; } = new(IsDummy: true);
         public ManagerCapabilities Capabilities { get; set; } = new(IsDummy: true);
         public ManagerStatus Status { get; set; } = new() { Found = false };
@@ -143,8 +145,15 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             try
             {
                 var task = Task.Run(() => FindPackages_UnSafe(query));
-                if (!task.Wait(TimeSpan.FromSeconds(60)))
-                    throw new TimeoutException();
+                if (!task.Wait(TimeSpan.FromSeconds(PackageListingTaskTimeout)))
+                {
+                    if (!Settings.Get("DisableTimeoutOnPackageListingTasks"))
+                        throw new TimeoutException($"Task _getInstalledPackages for manager {Name} did not finish after " +
+                                                   $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
+                                                   $"timeouts from UniGetUI Advanced Settings");
+                    else
+                        task.Wait();
+                }
 
                 Package[] packages = task.GetAwaiter().GetResult().ToArray();
 
@@ -189,8 +198,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                 Task.Run(RefreshPackageIndexes).Wait(TimeSpan.FromSeconds(60));
 
                 var task = Task.Run(GetAvailableUpdates_UnSafe);
-                if (!task.Wait(TimeSpan.FromSeconds(60)))
-                    throw new TimeoutException();
+                if (!task.Wait(TimeSpan.FromSeconds(PackageListingTaskTimeout)))
+                {
+                    if (!Settings.Get("DisableTimeoutOnPackageListingTasks"))
+                        throw new TimeoutException($"Task _getInstalledPackages for manager {Name} did not finish after " +
+                                                   $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
+                                                   $"timeouts from UniGetUI Advanced Settings");                    else
+                        task.Wait();
+                }
 
                 Package[] packages = task.GetAwaiter().GetResult().ToArray();
 
@@ -234,8 +249,14 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             try
             {
                 var task = Task.Run(GetInstalledPackages_UnSafe);
-                if (!task.Wait(TimeSpan.FromSeconds(60)))
-                    throw new TimeoutException();
+                if (!task.Wait(TimeSpan.FromSeconds(PackageListingTaskTimeout)))
+                {
+                    if (!Settings.Get("DisableTimeoutOnPackageListingTasks"))
+                        throw new TimeoutException($"Task _getInstalledPackages for manager {Name} did not finish after " +
+                                                   $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
+                                                   $"timeouts from UniGetUI Advanced Settings");                    else
+                        task.Wait();
+                }
 
                 Package[] packages = task.GetAwaiter().GetResult().ToArray();
 

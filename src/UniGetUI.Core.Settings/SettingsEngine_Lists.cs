@@ -14,44 +14,54 @@ namespace UniGetUI.Core.SettingsEngine
         {
             try
             {
-                if (listSettings.TryGetValue(setting, out List<object>? result))
-                {
-                    // If the setting was cached
-                    return result.Cast<T>().ToList();
-                }
-            }
-            catch (InvalidCastException)
-            {
-                Logger.Error($"Tried to get a list setting as type {typeof(T)}, which is not the type of the list");
-                return null;
-            }
-
-            // Otherwhise, load the setting from disk and cache that setting
-            List<T> value = [];
-
-            var file = Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json");
-            if (File.Exists(file))
-            {
-                string result = File.ReadAllText(file);
                 try
                 {
-                    if (result != "")
+                    if (listSettings.TryGetValue(setting, out List<object>? result))
                     {
-                        List<T>? item = JsonSerializer.Deserialize<List<T>>(result);
-                        if (item is not null)
-                        {
-                            value = item;
-                        }
+                        // If the setting was cached
+                        return result.Cast<T>().ToList();
                     }
                 }
                 catch (InvalidCastException)
                 {
-                    Logger.Error($"Tried to get a list setting as type {typeof(T)}, but the setting on disk {result} cannot be deserialized to {typeof(T)}");
+                    Logger.Error($"Tried to get a list setting as type {typeof(T)}, which is not the type of the list");
+                    return null;
                 }
-            }
 
-            listSettings[setting] = value.Cast<object>().ToList();
-            return value;
+                // Otherwhise, load the setting from disk and cache that setting
+                List<T> value = [];
+
+                var file = Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json");
+                if (File.Exists(file))
+                {
+                    string result = File.ReadAllText(file);
+                    try
+                    {
+                        if (result != "")
+                        {
+                            List<T>? item = JsonSerializer.Deserialize<List<T>>(result);
+                            if (item is not null)
+                            {
+                                value = item;
+                            }
+                        }
+                    }
+                    catch (InvalidCastException)
+                    {
+                        Logger.Error(
+                            $"Tried to get a list setting as type {typeof(T)}, but the setting on disk {result} cannot be deserialized to {typeof(T)}");
+                    }
+                }
+
+                listSettings[setting] = value.Cast<object>().ToList();
+                return value;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Could not load list {setting} from settings");
+                Logger.Error(ex);
+                return new();
+            }
         }
 
         // Returns an empty list if the setting doesn't exist and null if the type is invalid

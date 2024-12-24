@@ -29,7 +29,7 @@ namespace UniGetUI.Core.Language.Tests
 
         [Theory]
         [InlineData("en", "UniGetUI Log", "UniGetUI (formerly WingetUI)")]
-        [InlineData("ca", "Registre del UniGetUI", "UniGetUI (abans WingetUI)")]
+        [InlineData("ca", "Registre de l'UniGetUI", "UniGetUI (abans WingetUI)")]
         public void TestUniGetUIRefactoring(string language, string uniGetUILogTranslation, string uniGetUITranslation)
         {
             LanguageEngine engine = new();

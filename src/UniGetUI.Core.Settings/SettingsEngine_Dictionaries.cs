@@ -15,48 +15,59 @@ namespace UniGetUI.Core.SettingsEngine
         {
             try
             {
-                if (dictionarySettings.TryGetValue(setting, out Dictionary<object, object>? result))
-                {
-                    // If the setting was cached
-                    return result.ToDictionary(
-                        kvp => (K)kvp.Key,
-                        kvp => (V)kvp.Value
-                    );
-                }
-            }
-            catch (InvalidCastException)
-            {
-                Logger.Error($"Tried to get a dictionary setting with a key of type {typeof(K)} and a value of type {typeof(V)}, which is not the type of the dictionary");
-                return null;
-            }
-
-            // Otherwhise, load the setting from disk and cache that setting
-            Dictionary<K, V> value = new();
-            if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json")))
-            {
-                string result = File.ReadAllText(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json"));
                 try
                 {
-                    if (result != "")
+                    if (dictionarySettings.TryGetValue(setting, out Dictionary<object, object>? result))
                     {
-                        Dictionary<K, V>? item = JsonSerializer.Deserialize<Dictionary<K, V>>(result);
-                        if (item is not null)
-                        {
-                            value = item;
-                        }
+                        // If the setting was cached
+                        return result.ToDictionary(
+                            kvp => (K)kvp.Key,
+                            kvp => (V)kvp.Value
+                        );
                     }
                 }
                 catch (InvalidCastException)
                 {
-                    Logger.Error($"Tried to get a dictionary setting with a key of type {typeof(K)} and a value of type {typeof(V)}, but the setting on disk ({result}) cannot be deserialized to that");
+                    Logger.Error(
+                        $"Tried to get a dictionary setting with a key of type {typeof(K)} and a value of type {typeof(V)}, which is not the type of the dictionary");
+                    return null;
                 }
-            }
 
-            dictionarySettings[setting] = value.ToDictionary(
-                kvp => (object)kvp.Key,
-                kvp => (object?)kvp.Value
-            );
-            return value;
+                // Otherwhise, load the setting from disk and cache that setting
+                Dictionary<K, V> value = new();
+                if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json")))
+                {
+                    string result = File.ReadAllText(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json"));
+                    try
+                    {
+                        if (result != "")
+                        {
+                            Dictionary<K, V>? item = JsonSerializer.Deserialize<Dictionary<K, V>>(result);
+                            if (item is not null)
+                            {
+                                value = item;
+                            }
+                        }
+                    }
+                    catch (InvalidCastException)
+                    {
+                        Logger.Error(
+                            $"Tried to get a dictionary setting with a key of type {typeof(K)} and a value of type {typeof(V)}, but the setting on disk ({result}) cannot be deserialized to that");
+                    }
+                }
+
+                dictionarySettings[setting] = value.ToDictionary(
+                    kvp => (object)kvp.Key,
+                    kvp => (object?)kvp.Value
+                );
+                return value;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Could not load dictionary name {setting}");
+                Logger.Error(ex);
+                return new();
+            }
         }
 
         // Returns an empty dictionary if the setting doesn't exist and null if the types are invalid

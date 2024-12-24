@@ -278,7 +278,7 @@ public static partial class DialogHelper
                     .AddText(CoreTools.Translate("Desktop shortcut created"))
                     .AddText(CoreTools.Translate("UniGetUI has detected a new desktop shortcut that can be deleted automatically."))
                     .SetAttributionText(UnknownShortcuts.First().Split("\\").Last())
-                    .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI"))
+                    .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI").Replace("'", "´"))
                         .AddArgument("action", NotificationArguments.Show)
                     )
                     .AddArgument("action", NotificationArguments.Show);
@@ -297,7 +297,7 @@ public static partial class DialogHelper
                     .AddText(CoreTools.Translate("{0} desktop shortcuts created", UnknownShortcuts.Count))
                     .AddText(CoreTools.Translate("UniGetUI has detected {0} new desktop shortcuts that can be deleted automatically.", UnknownShortcuts.Count))
                     .SetAttributionText(attribution)
-                    .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI"))
+                    .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI").Replace("'", "´"))
                         .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
                     )
                     .AddArgument("action", NotificationArguments.ShowOnUpdatesTab);
@@ -394,12 +394,12 @@ public static partial class DialogHelper
                         "cmd.exe /C \"rmdir /Q /S `\"%temp%\\WinGet`\"\"; " +
                         "cmd.exe /C \"`\"%localappdata%\\Microsoft\\WindowsApps\\winget.exe`\" source reset --force\"; " +
                         "taskkill /im winget.exe /f; " +
-                        "taskkill /im WindowsIPackageManagerServer.exe /f; " +
+                        "taskkill /im WindowsPackageManagerServer.exe /f; " +
                         "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; " +
-                        "Install-Module Microsoft.WinGet.Client -Force -Scope AllUsers -AllowClobber; " +
+                        "Install-Module Microsoft.WinGet.Client -Force -AllowClobber; " +
                         "Import-Module Microsoft.WinGet.Client; " +
-                        "Repair-WinGetIPackageManager -Force -Latest; " +
-                        "Get-AppxPackage -Name 'Microsoft.DesktopAppInstaller' | Reset-AppxPackage" +
+                        "Repair-WinGetPackageManager -Force -Latest; " +
+                        "Get-AppxPackage -Name 'Microsoft.DesktopAppInstaller' | Reset-AppxPackage; " +
                         "}\"",
                     UseShellExecute = true,
                     Verb = "runas"
