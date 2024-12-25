@@ -19,7 +19,6 @@ namespace UniGetUI.PackageEngine.Operations
 
     public abstract class SourceOperation : AbstractProcessOperation
     {
-        protected abstract void GenerateProcessLogHeader();
         protected abstract Task HandleSuccess();
         protected abstract Task HandleFailure();
         protected abstract void Initialize();
@@ -30,8 +29,6 @@ namespace UniGetUI.PackageEngine.Operations
         {
             Source = source;
             Initialize();
-            GenerateProcessLogHeader();
-
             OperationStarting += (_, _) => CreateProgressToast();
             OperationFinished += (_, _) => RemoveProgressToast();
             OperationSucceeded += (_, _) => HandleSuccess();
@@ -151,13 +148,6 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        protected override void GenerateProcessLogHeader()
-        {
-            Line(
-                "Starting adding source operation for source name=" + Source.Name + "with Manager name=" +
-                Source.Manager.Name, LineType.Debug);
-        }
-
         protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
             return Task.Run(() => Source.Manager.SourcesHelper.GetAddOperationVeredict(Source, ReturnCode, Output));
@@ -165,8 +155,6 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override Task HandleFailure()
         {
-            Line(Metadata.FailureMessage, LineType.Progress);
-
             ShowErrorNotification(
                 Metadata.FailureTitle,
                 Metadata.FailureMessage);
@@ -182,8 +170,6 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override Task HandleSuccess()
         {
-            Line(Metadata.SuccessMessage, LineType.Progress);
-
             ShowSuccessNotification(
                 Metadata.SuccessTitle,
                 Metadata.SuccessMessage);
@@ -193,6 +179,9 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void Initialize()
         {
+            Metadata.OperationInformation = "Starting adding source operation for source=" + Source.Name +
+                                            "with Manager=" + Source.Manager.Name;
+
             Metadata.Title = CoreTools.Translate("Adding source {source}", new Dictionary<string, object?> { { "source", Source.Name } });
             Metadata.Status = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });;
             Metadata.SuccessTitle = CoreTools.Translate("Source added successfully");
@@ -228,13 +217,6 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        protected override void GenerateProcessLogHeader()
-        {
-            Line(
-                "Starting remove source operation for source name=" + Source.Name + "with Manager name=" +
-                Source.Manager.Name, LineType.Debug);
-        }
-
         protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
             return Task.Run(() => Source.Manager.SourcesHelper.GetRemoveOperationVeredict(Source, ReturnCode, Output));
@@ -242,11 +224,6 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override Task HandleFailure()
         {
-            Line(
-                CoreTools.Translate("Could not remove source {source} from {manager}",
-                    new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } }),
-                LineType.Progress);
-
             ShowErrorNotification(
                 CoreTools.Translate("Removal failed"),
                 CoreTools.Translate("Could not remove source {source} from {manager}",
@@ -264,8 +241,6 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override Task HandleSuccess()
         {
-            Line(CoreTools.Translate("The source {source} was removed from {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } }), LineType.Progress);
-
             ShowSuccessNotification(
                 CoreTools.Translate("Removal succeeded"),
                 CoreTools.Translate("The source {source} was removed from {manager} successfully",
@@ -276,6 +251,8 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void Initialize()
         {
+            Metadata.OperationInformation = "Starting remove source operation for source=" + Source.Name + "with Manager=" + Source.Manager.Name;
+
             Metadata.Title = CoreTools.Translate("Removing source {source}", new Dictionary<string, object?> { { "source", Source.Name } });
             Metadata.Status = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });;
             Metadata.SuccessTitle = CoreTools.Translate("Source removed successfully");

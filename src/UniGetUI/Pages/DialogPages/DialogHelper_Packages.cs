@@ -269,7 +269,7 @@ public static partial class DialogHelper
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a" });
             }
-            else if (line.Item2 is AbstractOperation.LineType.Debug)
+            else if (line.Item2 is AbstractOperation.LineType.OperationInfo)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = debugColor });
             }

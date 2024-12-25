@@ -52,18 +52,18 @@ public abstract class AbstractProcessOperation : AbstractOperation
         if (process.StartInfo.FileName == "lol") throw new InvalidOperationException("StartInfo.FileName has not been set");
         if (process.StartInfo.Arguments == "lol") throw new InvalidOperationException("StartInfo.Arguments has not been set");
 
-        Line($"Executing process with StartInfo:", LineType.Debug);
-        Line($" - FileName: \"{process.StartInfo.FileName.Trim()}\"", LineType.Debug);
-        Line($" - Arguments: \"{process.StartInfo.Arguments.Trim()}\"", LineType.Debug);
-        Line($"Start Time: \"{DateTime.Now}\"", LineType.Debug);
+        Line($"Executing process with StartInfo:", LineType.OperationInfo);
+        Line($" - FileName: \"{process.StartInfo.FileName.Trim()}\"", LineType.OperationInfo);
+        Line($" - Arguments: \"{process.StartInfo.Arguments.Trim()}\"", LineType.OperationInfo);
+        Line($"Start Time: \"{DateTime.Now}\"", LineType.OperationInfo);
 
         process.Start();
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
         await process.WaitForExitAsync();
 
-        Line($"End Time: \"{DateTime.Now}\"", LineType.Debug);
-        Line($"Process return value: \"{process.ExitCode}\" (0x{process.ExitCode:X})", LineType.Debug);
+        Line($"End Time: \"{DateTime.Now}\"", LineType.OperationInfo);
+        Line($"Process return value: \"{process.ExitCode}\" (0x{process.ExitCode:X})", LineType.OperationInfo);
 
         return await GetProcessVeredict(process.ExitCode, []);
     }

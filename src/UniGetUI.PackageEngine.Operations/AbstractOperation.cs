@@ -51,6 +51,11 @@ public abstract class AbstractOperation
         /// X Could not be installed
         /// </summary>
         public string FailureMessage = "";
+
+        /// <summary>
+        /// Starting operation X with options Y
+        /// </summary>
+        public string OperationInformation = "";
     }
 
     public readonly OperationMetadata Metadata = new();
@@ -68,7 +73,7 @@ public abstract class AbstractOperation
 
     public enum LineType
     {
-        Debug,
+        OperationInfo,
         Progress,
         StdOUT,
         StdERR
@@ -82,14 +87,14 @@ public abstract class AbstractOperation
         set { _status = value; StatusChanged?.Invoke(this, value); }
     }
 
-    public bool Started { get; private set; };
+    public bool Started { get; private set; }
     protected bool QUEUE_ENABLED;
 
     public AbstractOperation(bool queue_enabled)
     {
         QUEUE_ENABLED = queue_enabled;
         Status = OperationStatus.InQueue;
-        // _ = MainThread();
+        Line("Please wait...", LineType.Progress);
     }
 
     public void Cancel()
@@ -128,6 +133,7 @@ public abstract class AbstractOperation
     {
         if (Metadata.Status == "") throw new InvalidDataException("Metadata.Status was not set!");
         if (Metadata.Title == "") throw new InvalidDataException("Metadata.Title was not set!");
+        if (Metadata.OperationInformation == "") throw new InvalidDataException("Metadata.OperationInformation was not set!");
         if (Metadata.SuccessTitle == "") throw new InvalidDataException("Metadata.SuccessTitle was not set!");
         if (Metadata.SuccessMessage == "") throw new InvalidDataException("Metadata.SuccessMessage was not set!");
         if (Metadata.FailureTitle == "") throw new InvalidDataException("Metadata.FailureTitle was not set!");
@@ -139,6 +145,8 @@ public abstract class AbstractOperation
             throw new InvalidOperationException("This operation was already on the queue");
 
         Status = OperationStatus.InQueue;
+        Line(Metadata.OperationInformation, LineType.OperationInfo);
+        Line(Metadata.Status, LineType.Progress);
 
         // BEGIN QUEUE HANDLER
         if (QUEUE_ENABLED)
@@ -188,15 +196,18 @@ public abstract class AbstractOperation
         {
             Status = OperationStatus.Succeeded;
             OperationSucceeded?.Invoke(this, EventArgs.Empty);
+            Line(Metadata.SuccessMessage, LineType.OperationInfo);
         }
         else if (result == OperationVeredict.Failure)
         {
             Status = OperationStatus.Failed;
             OperationFailed?.Invoke(this, EventArgs.Empty);
+            Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"), LineType.OperationInfo);
         }
         else if (result == OperationVeredict.Canceled)
         {
             Status = OperationStatus.Canceled;
+            Line(CoreTools.Translate("Operation canceled by user"), LineType.OperationInfo);
         }
     }
 

@@ -20,7 +20,6 @@ namespace UniGetUI.PackageEngine.Operations
 {
     public abstract class PackageOperation : AbstractProcessOperation
     {
-        protected abstract void GenerateProcessLogHeader();
         protected List<string> DesktopShortcutsBeforeStart = [];
 
         protected readonly IPackage Package;
@@ -43,9 +42,6 @@ namespace UniGetUI.PackageEngine.Operations
             Role = role;
 
             Initialize();
-
-            Line(Metadata.Status, LineType.Progress);
-            GenerateProcessLogHeader();
 
             Enqueued += (_, _) =>
             {
@@ -208,16 +204,8 @@ namespace UniGetUI.PackageEngine.Operations
             : base(package, OperationType.Install, IgnoreParallelInstalls)
         { }
 
-        protected override void GenerateProcessLogHeader()
-        {
-            Line("Starting package install operation for package id=" + Package.Id + " with Manager name=" +
-                Package.Manager.Name, LineType.Debug);
-            Line("Given installation options are " + Options.ToString(), LineType.Debug);
-        }
-
         protected override Task HandleFailure()
         {
-            Line(CoreTools.Translate("{package} installation failed", new Dictionary<string, object?> { { "package", Package.Name } }), LineType.Progress);
             Package.SetTag(PackageTag.Failed);
 
             ShowErrorNotification(Metadata.FailureTitle, Metadata.FailureMessage);
@@ -227,7 +215,6 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override Task HandleSuccess()
         {
-            Line(Metadata.SuccessMessage, LineType.Progress);
             Package.SetTag(PackageTag.AlreadyInstalled);
             PEInterface.InstalledPackagesLoader.AddForeign(Package);
 
@@ -242,6 +229,9 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void Initialize()
         {
+            Metadata.OperationInformation = "Package install operation for Package=" + Package.Id + " with Manager=" +
+                                            Package.Manager.Name + "\nInstallation options: " + Options.ToString();
+
             Metadata.Title = CoreTools.Translate("{package} Installation", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.Status = CoreTools.Translate("{0} is being installed", Package.Name);
             Metadata.SuccessTitle = CoreTools.Translate("Installation succeeded");
@@ -272,15 +262,8 @@ namespace UniGetUI.PackageEngine.Operations
             : base(package, OperationType.Update, IgnoreParallelInstalls)
         { }
 
-        protected override void GenerateProcessLogHeader()
-        {
-            Line("Starting package update operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name, LineType.Debug);
-            Line("Given installation options are " + Options.ToString(), LineType.Debug);
-        }
-
         protected override Task HandleFailure()
         {
-            Line(Metadata.FailureMessage, LineType.Progress);
             Package.SetTag(PackageTag.Failed);
 
             ShowErrorNotification(Metadata.FailureTitle, Metadata.FailureTitle);
@@ -296,7 +279,6 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task HandleSuccess()
         {
-            Line(Metadata.SuccessMessage, LineType.Progress);
             Package.SetTag(PackageTag.Default);
             Package.GetInstalledPackage()?.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
@@ -317,6 +299,9 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void Initialize()
         {
+            Metadata.OperationInformation = "Package update operation for Package=" + Package.Id + " with Manager=" +
+                                            Package.Manager.Name + "\nInstallation options: " + Options.ToString();
+
             Metadata.Title = CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.Status = CoreTools.Translate("{0} is being updated to version {1}", Package.Name, Package.NewVersion);
             Metadata.SuccessTitle = CoreTools.Translate("Update succeeded");
@@ -347,15 +332,8 @@ namespace UniGetUI.PackageEngine.Operations
             : base(package, OperationType.Uninstall, IgnoreParallelInstalls)
         { }
 
-        protected override void GenerateProcessLogHeader()
-        {
-            Line("Starting package uninstall operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name, LineType.Debug);
-            Line("Given installation options are " + Options.ToString(), LineType.Debug);
-        }
-
         protected override Task HandleFailure()
         {
-            Line(Metadata.SuccessMessage, LineType.Debug);
             Package.SetTag(PackageTag.Failed);
 
             ShowErrorNotification(Metadata.FailureTitle, Metadata.FailureMessage);
@@ -370,7 +348,6 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override Task HandleSuccess()
         {
-            Line(Metadata.SuccessMessage, LineType.Debug);
             Package.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.Default);
             PEInterface.UpgradablePackagesLoader.Remove(Package);
@@ -382,6 +359,9 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void Initialize()
         {
+            Metadata.OperationInformation = "Package uninstall operation for Package=" + Package.Id + " with Manager=" +
+                                            Package.Manager.Name + "\nInstallation options: " + Options.ToString();
+
             Metadata.Title = CoreTools.Translate("{package} Uninstall", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.Status = CoreTools.Translate("{0} is being uninstalled", Package.Name);
             Metadata.SuccessTitle = CoreTools.Translate("Uninstall succeeded");
