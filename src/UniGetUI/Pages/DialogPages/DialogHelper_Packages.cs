@@ -20,8 +20,6 @@ namespace UniGetUI.Pages.DialogPages;
 
 public static partial class DialogHelper
 {
-
-
     /// <summary>
     /// Will update the Installation Options for the given Package, and will return whether the user choose to continue
     /// </summary>
@@ -183,8 +181,7 @@ public static partial class DialogHelper
 
     public static async Task<ContentDialogResult> ShowOperationFailed(
         IEnumerable<(string, AbstractOperation.LineType)> processOutput,
-        string dialogTitle,
-        string shortDescription)
+        string dialogTitle, string shortDescription)
     {
         ContentDialog dialog = new()
         {
@@ -268,11 +265,11 @@ public static partial class DialogHelper
 
         foreach (var line in processOutput)
         {
-            if (line.Item2 is AbstractOperation.LineType.Debug)
+            if (line.Item2 is AbstractOperation.LineType.StdOUT)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a" });
             }
-            else if (line.Item2 is AbstractOperation.LineType.StdOUT)
+            else if (line.Item2 is AbstractOperation.LineType.Debug)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = debugColor });
             }

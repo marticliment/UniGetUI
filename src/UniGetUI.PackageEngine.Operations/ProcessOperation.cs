@@ -17,6 +17,7 @@ public abstract class AbstractProcessOperation : AbstractOperation
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.CreateNoWindow = true;
             process.StartInfo.FileName = "lol";
             process.StartInfo.Arguments = "lol";
             process.OutputDataReceived += (_, e) =>
@@ -57,6 +58,8 @@ public abstract class AbstractProcessOperation : AbstractOperation
         Line($"Start Time: \"{DateTime.Now}\"", LineType.Debug);
 
         process.Start();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
         await process.WaitForExitAsync();
 
         Line($"End Time: \"{DateTime.Now}\"", LineType.Debug);

@@ -1,13 +1,16 @@
 using System.ComponentModel;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Windows.Devices.Sensors;
 using Windows.UI;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageOperations;
+using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Controls.OperationWidgets;
 
@@ -20,7 +23,7 @@ public class OperationControl: INotifyPropertyChanged
         Operation = operation;
         Operation.LogLineAdded += (_, values) => LiveLine = values.Item1;
         Operation.StatusChanged += OperationOnStatusChanged;
-        _title = Operation.GetOperationTitle();
+        _title = Operation.Metadata.Title;
         _liveLine = operation.GetOutput().Any()? operation.GetOutput().Last().Item1 : CoreTools.Translate("Please wait...");
         _buttonText = "";
         OperationOnStatusChanged(this, operation.Status);
@@ -79,7 +82,10 @@ public class OperationControl: INotifyPropertyChanged
 
     public void LiveLineClick()
     {
-        throw new NotImplementedException();
+        if (Operation.Status == OperationStatus.Failed || true)
+        {
+            DialogHelper.ShowOperationFailed(Operation.GetOutput(), "", "");
+        }
     }
 
     public void ButtonClick()
@@ -96,7 +102,7 @@ public class OperationControl: INotifyPropertyChanged
 
     public void ShowMenu()
     {
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
     }
 
     public void Close()
@@ -164,6 +170,6 @@ public class OperationControl: INotifyPropertyChanged
 
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        MainApp.Dispatcher.TryEnqueue(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
     }
 }

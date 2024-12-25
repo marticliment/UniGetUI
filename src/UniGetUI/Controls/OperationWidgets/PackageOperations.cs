@@ -225,32 +225,21 @@ namespace UniGetUI.PackageEngine.Operations
             Line(CoreTools.Translate("{package} installation failed", new Dictionary<string, object?> { { "package", Package.Name } }), LineType.Progress);
             Package.SetTag(PackageTag.Failed);
 
-            ShowErrorNotification(
-                CoreTools.Translate("Installation failed"),
-                CoreTools.Translate("{package} could not be installed",
-                    new Dictionary<string, object?> { { "package", Package.Name } })
-            );
+            ShowErrorNotification(Metadata.FailureTitle, Metadata.FailureMessage);
 
             return Task.CompletedTask;
             /*ContentDialogResult result = await DialogHelper.ShowOperationFailed(
-                ProcessOutput,
-                CoreTools.Translate("{package} installation failed", new Dictionary<string, object?> { { "package", Package.Name } }),
-                CoreTools.Translate("{package} could not be installed", new Dictionary<string, object?> { { "package", Package.Name } })
             );*/
 
         }
 
         protected override Task HandleSuccess()
         {
-            Line(CoreTools.Translate("{package} was installed successfully", new Dictionary<string, object?> { { "package", Package.Name } }), LineType.Progress);
+            Line(Metadata.SuccessMessage, LineType.Progress);
             Package.SetTag(PackageTag.AlreadyInstalled);
             PEInterface.InstalledPackagesLoader.AddForeign(Package);
 
-            ShowSuccessNotification(
-                CoreTools.Translate("Installation succeeded"),
-                CoreTools.Translate("{package} was installed successfully",
-                    new Dictionary<string, object?> { { "package", Package.Name } })
-            );
+            ShowSuccessNotification(Metadata.SuccessTitle, Metadata.SuccessMessage);
 
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
@@ -259,20 +248,19 @@ namespace UniGetUI.PackageEngine.Operations
             return Task.CompletedTask;
         }
 
-
-
         protected override void Initialize()
         {
-            ONGOING_PROGRESS_STRING = CoreTools.Translate("{0} is being installed", Package.Name);
+            Metadata.Title = CoreTools.Translate("{package} Installation", new Dictionary<string, object?> { { "package", Package.Name } });
+            Metadata.Status = CoreTools.Translate("{0} is being installed", Package.Name);
+            Metadata.SuccessTitle = CoreTools.Translate("Installation succeeded");
+            Metadata.SuccessMessage = CoreTools.Translate("{package} was installed successfully",  new Dictionary<string, object?> { { "package", Package.Name } });
+            Metadata.FailureTitle = CoreTools.Translate("Installation failed", new Dictionary<string, object?> { { "package", Package.Name } });
+            Metadata.FailureMessage = CoreTools.Translate("{package} could not be installed", new Dictionary<string, object?> { { "package", Package.Name } });
+
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
                 DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcuts();
             }
-        }
-
-        public override string GetOperationTitle()
-        {
-            return CoreTools.Translate("{package} Installation", new Dictionary<string, object?> { { "package", Package.Name } });
         }
     }
 
@@ -294,22 +282,16 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void GenerateProcessLogHeader()
         {
-            Line(
-                "Starting package update operation for package id=" + Package.Id + " with Manager name=" +
-                Package.Manager.Name, LineType.Debug);
+            Line("Starting package update operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name, LineType.Debug);
             Line("Given installation options are " + Options.ToString(), LineType.Debug);
         }
 
         protected override Task HandleFailure()
         {
-            Line(CoreTools.Translate("{package} update failed. Click here for more details.", new Dictionary<string, object?> { { "package", Package.Name } }), LineType.Progress);
+            Line(Metadata.FailureMessage, LineType.Progress);
             Package.SetTag(PackageTag.Failed);
 
-            ShowErrorNotification(
-                CoreTools.Translate("Update failed"),
-                CoreTools.Translate("{package} could not be updated",
-                    new Dictionary<string, object?> { { "package", Package.Name } })
-            );
+            ShowErrorNotification(Metadata.FailureTitle, Metadata.FailureTitle);
 
             return Task.CompletedTask;
 
@@ -322,7 +304,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override async Task HandleSuccess()
         {
-            Line(CoreTools.Translate("{package} was updated successfully", new Dictionary<string, object?> { { "package", Package.Name } }), LineType.Progress);
+            Line(Metadata.SuccessMessage, LineType.Progress);
             Package.SetTag(PackageTag.Default);
             Package.GetInstalledPackage()?.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
@@ -333,11 +315,7 @@ namespace UniGetUI.PackageEngine.Operations
             }
             PEInterface.UpgradablePackagesLoader.Remove(Package);
 
-            ShowSuccessNotification(
-                CoreTools.Translate("Update succeeded"),
-                CoreTools.Translate("{package} was updated successfully",
-                    new Dictionary<string, object?> { { "package", Package.Name } })
-            );
+            ShowSuccessNotification(Metadata.SuccessTitle, Metadata.SuccessMessage);
 
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
@@ -347,16 +325,17 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void Initialize()
         {
-            ONGOING_PROGRESS_STRING = CoreTools.Translate("{0} is being updated to version {1}", Package.Name, Package.NewVersion);
+            Metadata.Title = CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
+            Metadata.Status = CoreTools.Translate("{0} is being updated to version {1}", Package.Name, Package.NewVersion);
+            Metadata.SuccessTitle = CoreTools.Translate("Update succeeded");
+            Metadata.SuccessMessage = CoreTools.Translate("{package} was updated successfully",  new Dictionary<string, object?> { { "package", Package.Name } });
+            Metadata.FailureTitle = CoreTools.Translate("Update failed", new Dictionary<string, object?> { { "package", Package.Name } });
+            Metadata.FailureMessage = CoreTools.Translate("{package} could not be updated", new Dictionary<string, object?> { { "package", Package.Name } });
+
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
                 DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcuts();
             }
-        }
-
-        public override string GetOperationTitle()
-        {
-            return CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
         }
     }
 
@@ -378,22 +357,16 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void GenerateProcessLogHeader()
         {
-            Line(
-                "Starting package uninstall operation for package id=" + Package.Id + " with Manager name=" +
-                Package.Manager.Name, LineType.Debug);
+            Line("Starting package uninstall operation for package id=" + Package.Id + " with Manager name=" + Package.Manager.Name, LineType.Debug);
             Line("Given installation options are " + Options.ToString(), LineType.Debug);
         }
 
         protected override Task HandleFailure()
         {
-            Line(CoreTools.Translate("{package} uninstall failed", new Dictionary<string, object?> { { "package", Package.Name } }), LineType.Debug);
+            Line(Metadata.SuccessMessage, LineType.Debug);
             Package.SetTag(PackageTag.Failed);
 
-            ShowErrorNotification(
-                CoreTools.Translate("Uninstall failed"),
-                CoreTools.Translate("{package} could not be uninstalled",
-                    new Dictionary<string, object?> { { "package", Package.Name } })
-            );
+            ShowErrorNotification(Metadata.FailureTitle, Metadata.FailureMessage);
 
             /*ContentDialogResult result = await DialogHelper.ShowOperationFailed(
                 ProcessOutput,
@@ -405,29 +378,24 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override Task HandleSuccess()
         {
-            Line(CoreTools.Translate("{package} was uninstalled successfully", new Dictionary<string, object?> { { "package", Package.Name } }), LineType.Debug);
+            Line(Metadata.SuccessMessage, LineType.Debug);
             Package.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.Default);
             PEInterface.UpgradablePackagesLoader.Remove(Package);
             PEInterface.InstalledPackagesLoader.Remove(Package);
 
-            ShowSuccessNotification(
-                CoreTools.Translate("Uninstall succeeded"),
-                CoreTools.Translate("{package} was uninstalled successfully",
-                    new Dictionary<string, object?> { { "package", Package.Name } })
-            );
-
+            ShowSuccessNotification(Metadata.SuccessTitle, Metadata.SuccessMessage);
             return Task.CompletedTask;
         }
 
         protected override void Initialize()
         {
-            ONGOING_PROGRESS_STRING = CoreTools.Translate("{0} is being uninstalled", Package.Name);
-        }
-
-        public override string GetOperationTitle()
-        {
-            return CoreTools.Translate("{package} Uninstall", new Dictionary<string, object?> { { "package", Package.Name } });
+            Metadata.Title = CoreTools.Translate("{package} Uninstall", new Dictionary<string, object?> { { "package", Package.Name } });
+            Metadata.Status = CoreTools.Translate("{0} is being uninstalled", Package.Name);
+            Metadata.SuccessTitle = CoreTools.Translate("Uninstall succeeded");
+            Metadata.SuccessMessage = CoreTools.Translate("{package} was uninstalled successfully",  new Dictionary<string, object?> { { "package", Package.Name } });
+            Metadata.FailureTitle = CoreTools.Translate("Uninstall failed", new Dictionary<string, object?> { { "package", Package.Name } });
+            Metadata.FailureMessage = CoreTools.Translate("{package} could not be uninstalled", new Dictionary<string, object?> { { "package", Package.Name } });
         }
     }
 }

@@ -20,6 +20,41 @@ namespace UniGetUI.PackageOperations;
 
 public abstract class AbstractOperation
 {
+    public class OperationMetadata
+    {
+        /// <summary>
+        /// Installation of X
+        /// </summary>
+        public string Title = "";
+
+        /// <summary>
+        /// X is being installed/upated/removed
+        /// </summary>
+        public string Status = "";
+
+        /// <summary>
+        /// X was installed
+        /// </summary>
+        public string SuccessTitle = "";
+
+        /// <summary>
+        /// X has been installed successfully
+        /// </summary>
+        public string SuccessMessage = "";
+
+        /// <summary>
+        /// X could not be installed.
+        /// </summary>
+        public string FailureTitle = "";
+
+        /// <summary>
+        /// X Could not be installed
+        /// </summary>
+        public string FailureMessage = "";
+    }
+
+    public readonly OperationMetadata Metadata = new();
+
     public readonly static List<AbstractOperation> OperationQueue = new();
 
     public event EventHandler<OperationStatus>? StatusChanged;
@@ -47,7 +82,7 @@ public abstract class AbstractOperation
         set { _status = value; StatusChanged?.Invoke(this, value); }
     }
 
-    public bool Started { get; private set; } = false;
+    public bool Started { get; private set; };
     protected bool QUEUE_ENABLED;
 
     public AbstractOperation(bool queue_enabled)
@@ -91,6 +126,13 @@ public abstract class AbstractOperation
 
     public async Task MainThread()
     {
+        if (Metadata.Status == "") throw new InvalidDataException("Metadata.Status was not set!");
+        if (Metadata.Title == "") throw new InvalidDataException("Metadata.Title was not set!");
+        if (Metadata.SuccessTitle == "") throw new InvalidDataException("Metadata.SuccessTitle was not set!");
+        if (Metadata.SuccessMessage == "") throw new InvalidDataException("Metadata.SuccessMessage was not set!");
+        if (Metadata.FailureTitle == "") throw new InvalidDataException("Metadata.FailureTitle was not set!");
+        if (Metadata.FailureMessage == "") throw new InvalidDataException("Metadata.FailureMessage was not set!");
+
         Started = true;
 
         if (OperationQueue.Contains(this))
@@ -167,7 +209,6 @@ public abstract class AbstractOperation
     }
 
     protected abstract Task<OperationVeredict> PerformOperation();
-    public abstract string GetOperationTitle();
     public abstract Task<Uri> GetOperationIcon();
 
 

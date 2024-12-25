@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
 using CommunityToolkit.WinUI.Helpers;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Data;
@@ -25,6 +26,7 @@ namespace UniGetUI
 {
     public partial class MainApp
     {
+        public static DispatcherQueue Dispatcher = null!;
         public class __tooltip_options
         {
             private int _errors_occurred;
@@ -69,6 +71,7 @@ namespace UniGetUI
             try
             {
                 Instance = this;
+                Dispatcher = DispatcherQueue.GetForCurrentThread();
 
                 InitializeComponent();
 
