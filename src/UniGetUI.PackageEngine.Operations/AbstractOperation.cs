@@ -1,20 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 using UniGetUI.Core.Logging;
-using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
-using Windows.Devices.Bluetooth.Advertisement;
 
 namespace UniGetUI.PackageOperations;
 
@@ -203,18 +189,18 @@ public abstract class AbstractOperation
         {
             Status = OperationStatus.Succeeded;
             OperationSucceeded?.Invoke(this, EventArgs.Empty);
-            Line(Metadata.SuccessMessage, LineType.OperationInfo);
+            Line(Metadata.SuccessMessage, LineType.StdOUT);
         }
         else if (result == OperationVeredict.Failure)
         {
             Status = OperationStatus.Failed;
             OperationFailed?.Invoke(this, EventArgs.Empty);
-            Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"), LineType.OperationInfo);
+            Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"), LineType.StdERR);
         }
         else if (result == OperationVeredict.Canceled)
         {
             Status = OperationStatus.Canceled;
-            Line(CoreTools.Translate("Operation canceled by user"), LineType.OperationInfo);
+            Line(CoreTools.Translate("Operation canceled by user"), LineType.StdERR);
         }
     }
 
@@ -224,6 +210,11 @@ public abstract class AbstractOperation
         if (Status != OperationStatus.InQueue) return;
         OperationQueue.Remove(this);
         SKIP_QUEUE = true;
+    }
+
+    public void Retry()
+    {
+        throw new NotImplementedException();
     }
 
     protected abstract Task<OperationVeredict> PerformOperation();

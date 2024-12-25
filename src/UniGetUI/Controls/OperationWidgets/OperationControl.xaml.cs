@@ -29,47 +29,6 @@ namespace UniGetUI.Interface
 
     public AbstractOperation(bool IgnoreParallelInstalls = false)
     {
-
-
-        OutputDialog = new ContentDialog
-        {
-            Style = (Style)Application.Current.Resources["DefaultContentDialogStyle"],
-            XamlRoot = XamlRoot
-        };
-        OutputDialog.Resources["ContentDialogMaxWidth"] = 1200;
-        OutputDialog.Resources["ContentDialogMaxHeight"] = 1000;
-
-        LiveOutputTextBlock = new RichTextBlock
-        {
-            Margin = new Thickness(8),
-            FontFamily = new FontFamily("Consolas")
-        };
-
-        LiveOutputScrollBar = new ScrollViewer
-        {
-            CornerRadius = new CornerRadius(6),
-            Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"],
-            Height = 400,
-            Width = 600,
-            Content = LiveOutputTextBlock
-        };
-
-        OutputDialog.Title = CoreTools.Translate("Live output");
-        OutputDialog.CloseButtonText = CoreTools.Translate("Close");
-
-        OutputDialog.SizeChanged += (_, _) =>
-        {
-            if (!IsDialogOpen)
-            {
-                return;
-            }
-
-            LiveOutputScrollBar.MinWidth = MainApp.Instance.MainWindow.NavigationPage.ActualWidth - 400;
-            LiveOutputScrollBar.MinHeight = MainApp.Instance.MainWindow.NavigationPage.ActualHeight - 200;
-        };
-
-        OutputDialog.Content = LiveOutputScrollBar;
-
         Status = OperationStatus.InQueue;
 
         ActionButton.Click += ActionButtonClicked;

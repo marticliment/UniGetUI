@@ -173,11 +173,15 @@ public class OperationControl: INotifyPropertyChanged
         }
     }
 
-    public void LiveLineClick()
+    public async Task LiveLineClick()
     {
-        if (Operation.Status == OperationStatus.Failed || true)
+        if (Operation.Status == OperationStatus.Failed)
         {
-            DialogHelper.ShowOperationFailed(Operation.GetOutput(), "", "");
+            await DialogHelper.ShowOperationFailedDialog(Operation);
+        }
+        else
+        {
+            await DialogHelper.ShowLiveLogDialog(Operation);
         }
     }
 

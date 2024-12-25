@@ -22,22 +22,27 @@ public abstract class AbstractProcessOperation : AbstractOperation
             process.StartInfo.Arguments = "lol";
             process.OutputDataReceived += (_, e) =>
             {
-                if (e.Data is not null)
+                if (e.Data is null) return;
+                string data = e.Data.ToString().Trim();
+                var lineType = LineType.StdOUT;
+                if (data.Length < 6 || data.Contains("Waiting for another install..."))
                 {
-                    string data = e.Data.ToString().Trim();
-                    var lineType = LineType.StdOUT;
-                    if (data.Length < 6 || data.Contains("Waiting for another install..."))
-                        lineType = LineType.Progress;
-
-                    Line(">> " + data, lineType);
+                    lineType = LineType.Progress;
                 }
+
+                Line(data, lineType);
             };
             process.ErrorDataReceived += (_, e) =>
             {
-                if (e.Data is not null)
+                if (e.Data is null) return;
+                string data = e.Data.ToString().Trim();
+                var lineType = LineType.StdERR;
+                if (data.Length < 6 || data.Contains("Waiting for another install..."))
                 {
-                    Line(">> " + e.Data, LineType.StdERR);
+                    lineType = LineType.Progress;
                 }
+
+                Line(data, lineType);
             };
             await PrepareProcessStartInfo();
         };
