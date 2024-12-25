@@ -56,6 +56,13 @@ public abstract class AbstractOperation
         /// Starting operation X with options Y
         /// </summary>
         public string OperationInformation = "";
+
+        public readonly string Identifier;
+
+        public OperationMetadata()
+        {
+            Identifier  =  new Random().NextInt64(1000000, 9999999).ToString();
+        }
     }
 
     public readonly OperationMetadata Metadata = new();

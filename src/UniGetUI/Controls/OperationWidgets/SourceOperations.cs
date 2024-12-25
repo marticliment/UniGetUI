@@ -19,8 +19,6 @@ namespace UniGetUI.PackageEngine.Operations
 
     public abstract class SourceOperation : AbstractProcessOperation
     {
-        protected abstract Task HandleSuccess();
-        protected abstract Task HandleFailure();
         protected abstract void Initialize();
 
         protected IManagerSource Source;
@@ -29,94 +27,6 @@ namespace UniGetUI.PackageEngine.Operations
         {
             Source = source;
             Initialize();
-            OperationStarting += (_, _) => CreateProgressToast();
-            OperationFinished += (_, _) => RemoveProgressToast();
-            OperationSucceeded += (_, _) => HandleSuccess();
-            OperationFailed += (_, _) => HandleFailure();
-        }
-
-        protected void ShowErrorNotification(string title, string body)
-        {
-            if (Settings.AreErrorNotificationsDisabled())
-                return;
-
-            try
-            {
-                AppNotificationManager.Default.RemoveByTagAsync(Source.Name);
-                AppNotificationBuilder builder = new AppNotificationBuilder()
-                    .SetScenario(AppNotificationScenario.Urgent)
-                    .SetTag(Source.Name)
-                    .AddText(title)
-                    .AddText(body)
-                    .AddArgument("action", NotificationArguments.Show);
-                AppNotification notification = builder.BuildNotification();
-                notification.ExpiresOnReboot = true;
-                AppNotificationManager.Default.Show(notification);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Failed to show toast notification");
-                Logger.Error(ex);
-            }
-        }
-
-        protected void ShowSuccessNotification(string title, string body)
-        {
-            if (Settings.AreSuccessNotificationsDisabled())
-                return;
-
-            try
-            {
-                AppNotificationManager.Default.RemoveByTagAsync(Source.Name);
-                AppNotificationBuilder builder = new AppNotificationBuilder()
-                    .SetScenario(AppNotificationScenario.Default)
-                    .SetTag(Source.Name)
-                    .AddText(title)
-                    .AddText(body)
-                    .AddArgument("action", NotificationArguments.Show);
-                AppNotification notification = builder.BuildNotification();
-                notification.ExpiresOnReboot = true;
-                AppNotificationManager.Default.Show(notification);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Failed to show toast notification");
-                Logger.Error(ex);
-            }
-        }
-
-        protected void CreateProgressToast()
-        {
-            if (Settings.AreProgressNotificationsDisabled())
-                return;
-
-            try
-            {
-                AppNotificationManager.Default.RemoveByTagAsync(Source.Name + "progress");
-                AppNotificationBuilder builder = new AppNotificationBuilder()
-                    .SetScenario(AppNotificationScenario.Default)
-                    .SetTag(Source.Name + "progress")
-                    .AddProgressBar(new AppNotificationProgressBar()
-                        .SetStatus(CoreTools.Translate("Please wait..."))
-                        .SetValueStringOverride("\uE002")
-                        .SetTitle(Metadata.Status)
-                        .SetValue(1.0))
-                    .AddArgument("action", NotificationArguments.Show);
-                AppNotification notification = builder.BuildNotification();
-                notification.ExpiresOnReboot = true;
-                notification.SuppressDisplay = true;
-                AppNotificationManager.Default.Show(notification);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Failed to show toast notification");
-                Logger.Error(ex);
-            }
-        }
-
-        protected void RemoveProgressToast()
-        {
-            AppNotificationManager.Default.RemoveByTagAsync(Source.Name + "progress");
         }
 
         public override Task<Uri> GetOperationIcon()
@@ -151,30 +61,6 @@ namespace UniGetUI.PackageEngine.Operations
         protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
             return Task.Run(() => Source.Manager.SourcesHelper.GetAddOperationVeredict(Source, ReturnCode, Output));
-        }
-
-        protected override Task HandleFailure()
-        {
-            ShowErrorNotification(
-                Metadata.FailureTitle,
-                Metadata.FailureMessage);
-
-            /*ContentDialogResult result = await DialogHelper.ShowOperationFailed(
-                ProcessOutput,
-                CoreTools.Translate("Source addition failed"),
-                CoreTools.Translate("Could not add source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
-            );*/
-
-            return Task.CompletedTask;
-        }
-
-        protected override Task HandleSuccess()
-        {
-            ShowSuccessNotification(
-                Metadata.SuccessTitle,
-                Metadata.SuccessMessage);
-
-            return Task.CompletedTask;
         }
 
         protected override void Initialize()
@@ -220,33 +106,6 @@ namespace UniGetUI.PackageEngine.Operations
         protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
         {
             return Task.Run(() => Source.Manager.SourcesHelper.GetRemoveOperationVeredict(Source, ReturnCode, Output));
-        }
-
-        protected override Task HandleFailure()
-        {
-            ShowErrorNotification(
-                CoreTools.Translate("Removal failed"),
-                CoreTools.Translate("Could not remove source {source} from {manager}",
-                    new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
-            );
-
-            /*ContentDialogResult result = await DialogHelper.ShowOperationFailed(
-                ProcessOutput,
-                CoreTools.Translate("Source removal failed"),
-                CoreTools.Translate("Could not remove source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
-            );*/
-            return Task.CompletedTask;
-
-        }
-
-        protected override Task HandleSuccess()
-        {
-            ShowSuccessNotification(
-                CoreTools.Translate("Removal succeeded"),
-                CoreTools.Translate("The source {source} was removed from {manager} successfully",
-                    new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
-            );
-            return Task.CompletedTask;
         }
 
         protected override void Initialize()

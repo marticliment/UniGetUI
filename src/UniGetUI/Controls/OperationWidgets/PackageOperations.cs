@@ -54,8 +54,6 @@ namespace UniGetUI.PackageEngine.Operations
                 }
             };
             CancelRequested += (_, _) => Package.SetTag(PackageTag.Default);
-            OperationStarting += (_, _) => CreateProgressToast();
-            OperationFinished += (_, _) => RemoveProgressToast();
             OperationSucceeded += (_, _) => HandleSuccess();
             OperationFailed += (_, _) => HandleFailure();
         }
@@ -98,90 +96,6 @@ namespace UniGetUI.PackageEngine.Operations
             return Task.FromResult(Package.Manager.OperationHelper.GetResult(Package, Role, Output, ReturnCode));
         }
 
-        protected void ShowErrorNotification(string title, string body)
-        {
-            if (Settings.AreErrorNotificationsDisabled())
-                return;
-
-            try
-            {
-                AppNotificationManager.Default.RemoveByTagAsync(Package.Id);
-                AppNotificationBuilder builder = new AppNotificationBuilder()
-                    .SetScenario(AppNotificationScenario.Urgent)
-                    .SetTag(Package.Id)
-                    .AddText(title)
-                    .AddText(body)
-                    .AddArgument("action", NotificationArguments.Show);
-                AppNotification notification = builder.BuildNotification();
-                notification.ExpiresOnReboot = true;
-                AppNotificationManager.Default.Show(notification);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Failed to show toast notification");
-                Logger.Error(ex);
-            }
-        }
-
-        protected void ShowSuccessNotification(string title, string body)
-        {
-            if (Settings.AreSuccessNotificationsDisabled())
-                return;
-
-            try
-            {
-                AppNotificationManager.Default.RemoveByTagAsync(Package.Id);
-                AppNotificationBuilder builder = new AppNotificationBuilder()
-                    .SetScenario(AppNotificationScenario.Default)
-                    .SetTag(Package.Id)
-                    .AddText(title)
-                    .AddText(body)
-                    .AddArgument("action", NotificationArguments.Show);
-                AppNotification notification = builder.BuildNotification();
-                notification.ExpiresOnReboot = true;
-                AppNotificationManager.Default.Show(notification);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Failed to show toast notification");
-                Logger.Error(ex);
-            }
-        }
-
-        private void CreateProgressToast()
-        {
-            if (Settings.AreProgressNotificationsDisabled())
-                return;
-
-            try
-            {
-                AppNotificationManager.Default.RemoveByTagAsync(Package.Id + "progress");
-                AppNotificationBuilder builder = new AppNotificationBuilder()
-                    .SetScenario(AppNotificationScenario.Default)
-                    .SetTag(Package.Id + "progress")
-                    .AddProgressBar(new AppNotificationProgressBar()
-                        .SetStatus(CoreTools.Translate("Please wait..."))
-                        .SetValueStringOverride("\u2003")
-                        .SetTitle(Metadata.Status)
-                        .SetValue(1.0))
-                    .AddArgument("action", NotificationArguments.Show);
-                AppNotification notification = builder.BuildNotification();
-                notification.ExpiresOnReboot = true;
-                notification.SuppressDisplay = true;
-                AppNotificationManager.Default.Show(notification);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Failed to show toast notification");
-                Logger.Error(ex);
-            }
-        }
-
-        private void RemoveProgressToast()
-        {
-            AppNotificationManager.Default.RemoveByTagAsync(Package.Id + "progress");
-        }
-
         public override Task<Uri> GetOperationIcon()
         {
             return TaskRecycler<Uri>.RunOrAttachAsync(Package.GetIconUrl);
@@ -207,9 +121,6 @@ namespace UniGetUI.PackageEngine.Operations
         protected override Task HandleFailure()
         {
             Package.SetTag(PackageTag.Failed);
-
-            ShowErrorNotification(Metadata.FailureTitle, Metadata.FailureMessage);
-
             return Task.CompletedTask;
         }
 
@@ -217,8 +128,6 @@ namespace UniGetUI.PackageEngine.Operations
         {
             Package.SetTag(PackageTag.AlreadyInstalled);
             PEInterface.InstalledPackagesLoader.AddForeign(Package);
-
-            ShowSuccessNotification(Metadata.SuccessTitle, Metadata.SuccessMessage);
 
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
@@ -265,16 +174,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected override Task HandleFailure()
         {
             Package.SetTag(PackageTag.Failed);
-
-            ShowErrorNotification(Metadata.FailureTitle, Metadata.FailureTitle);
-
             return Task.CompletedTask;
-
-            /*ContentDialogResult result = await DialogHelper.ShowOperationFailed(
-                ProcessOutput,
-                CoreTools.Translate("{package} update failed", new Dictionary<string, object?> { { "package", Package.Name } }),
-                CoreTools.Translate("{package} could not be updated", new Dictionary<string, object?> { { "package", Package.Name } })
-            );*/
         }
 
         protected override async Task HandleSuccess()
@@ -283,13 +183,10 @@ namespace UniGetUI.PackageEngine.Operations
             Package.GetInstalledPackage()?.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
 
-            if (await Package.HasUpdatesIgnoredAsync() && await Package.GetIgnoredUpdatesVersionAsync() != "*")
-            {
-                await Package.RemoveFromIgnoredUpdatesAsync();
-            }
             PEInterface.UpgradablePackagesLoader.Remove(Package);
 
-            ShowSuccessNotification(Metadata.SuccessTitle, Metadata.SuccessMessage);
+            if (await Package.HasUpdatesIgnoredAsync() && await Package.GetIgnoredUpdatesVersionAsync() != "*")
+                await Package.RemoveFromIgnoredUpdatesAsync();
 
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
@@ -335,14 +232,6 @@ namespace UniGetUI.PackageEngine.Operations
         protected override Task HandleFailure()
         {
             Package.SetTag(PackageTag.Failed);
-
-            ShowErrorNotification(Metadata.FailureTitle, Metadata.FailureMessage);
-
-            /*ContentDialogResult result = await DialogHelper.ShowOperationFailed(
-                ProcessOutput,
-                CoreTools.Translate("{package} uninstall failed", new Dictionary<string, object?> { { "package", Package.Name } }),
-                CoreTools.Translate("{package} could not be uninstalled", new Dictionary<string, object?> { { "package", Package.Name } })
-            );*/
             return Task.CompletedTask;
         }
 
@@ -353,7 +242,6 @@ namespace UniGetUI.PackageEngine.Operations
             PEInterface.UpgradablePackagesLoader.Remove(Package);
             PEInterface.InstalledPackagesLoader.Remove(Package);
 
-            ShowSuccessNotification(Metadata.SuccessTitle, Metadata.SuccessMessage);
             return Task.CompletedTask;
         }
 
