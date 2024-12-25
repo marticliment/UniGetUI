@@ -1,8 +1,5 @@
 using System.Diagnostics;
 using Windows.Media.Capture;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.Windows.AppNotifications;
-using Microsoft.Windows.AppNotifications.Builder;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -12,7 +9,6 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageOperations;
-using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.PackageEngine.Operations
 {

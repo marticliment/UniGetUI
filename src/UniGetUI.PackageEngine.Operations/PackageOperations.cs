@@ -1,7 +1,4 @@
 using System.Diagnostics;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.Windows.AppNotifications;
-using Microsoft.Windows.AppNotifications.Builder;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
@@ -13,8 +10,8 @@ using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageOperations;
-using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.PackageEngine.Operations
 {
@@ -127,7 +124,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected override Task HandleSuccess()
         {
             Package.SetTag(PackageTag.AlreadyInstalled);
-            PEInterface.InstalledPackagesLoader.AddForeign(Package);
+            InstalledPackagesLoader.Instance.AddForeign(Package);
 
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
@@ -183,7 +180,7 @@ namespace UniGetUI.PackageEngine.Operations
             Package.GetInstalledPackage()?.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.AlreadyInstalled);
 
-            PEInterface.UpgradablePackagesLoader.Remove(Package);
+            UpgradablePackagesLoader.Instance.Remove(Package);
 
             if (await Package.HasUpdatesIgnoredAsync() && await Package.GetIgnoredUpdatesVersionAsync() != "*")
                 await Package.RemoveFromIgnoredUpdatesAsync();
@@ -239,8 +236,8 @@ namespace UniGetUI.PackageEngine.Operations
         {
             Package.SetTag(PackageTag.Default);
             Package.GetAvailablePackage()?.SetTag(PackageTag.Default);
-            PEInterface.UpgradablePackagesLoader.Remove(Package);
-            PEInterface.InstalledPackagesLoader.Remove(Package);
+            UpgradablePackagesLoader.Instance.Remove(Package);
+            InstalledPackagesLoader.Instance.Remove(Package);
 
             return Task.CompletedTask;
         }
