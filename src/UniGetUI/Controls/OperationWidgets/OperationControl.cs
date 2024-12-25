@@ -26,22 +26,22 @@ public class OperationControl: INotifyPropertyChanged
     {
         Operation = operation;
         Operation.LogLineAdded += (_, values) => LiveLine = values.Item1;
-        Operation.StatusChanged += OperationOnStatusChanged;
-        Operation.OperationStarting += OperationOnOperationStarting;
-        Operation.OperationFinished += OperationOnOperationFinished;
-        Operation.OperationFailed += OperationOnOperationFailed;
-        Operation.OperationSucceeded += OperationOnOperationSucceeded;
+        Operation.StatusChanged += OnOperationStatusChanged;
+        Operation.OperationStarting += OnOperationStarting;
+        Operation.OperationFinished += OnOperationFinished;
+        Operation.OperationFailed += OnOperationFailed;
+        Operation.OperationSucceeded += OnOperationSucceeded;
 
         _title = Operation.Metadata.Title;
         _liveLine = operation.GetOutput().Any()? operation.GetOutput().Last().Item1 : CoreTools.Translate("Please wait...");
         _buttonText = "";
-        OperationOnStatusChanged(this, operation.Status);
+        OnOperationStatusChanged(this, operation.Status);
         LoadIcon();
         if (!operation.Started)
             _ = operation.MainThread();
     }
 
-    private void OperationOnOperationStarting(object? sender, EventArgs e)
+    private void OnOperationStarting(object? sender, EventArgs e)
     {
         if (Settings.AreProgressNotificationsDisabled())
             return;
@@ -70,7 +70,7 @@ public class OperationControl: INotifyPropertyChanged
         }
     }
 
-    private void OperationOnOperationSucceeded(object? sender, EventArgs e)
+    private void OnOperationSucceeded(object? sender, EventArgs e)
     {
         if (Settings.AreSuccessNotificationsDisabled())
             return;
@@ -79,7 +79,7 @@ public class OperationControl: INotifyPropertyChanged
         {
             AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier);
             AppNotificationBuilder builder = new AppNotificationBuilder()
-                .SetScenario(AppNotificationScenario.Urgent)
+                .SetScenario(AppNotificationScenario.Default)
                 .SetTag(Operation.Metadata.Identifier)
                 .AddText(Operation.Metadata.SuccessTitle)
                 .AddText(Operation.Metadata.SuccessMessage)
@@ -95,7 +95,7 @@ public class OperationControl: INotifyPropertyChanged
         }
     }
 
-    private void OperationOnOperationFailed(object? sender, EventArgs e)
+    private void OnOperationFailed(object? sender, EventArgs e)
     {
         if (Settings.AreErrorNotificationsDisabled())
             return;
@@ -120,7 +120,7 @@ public class OperationControl: INotifyPropertyChanged
         }
     }
 
-    private void OperationOnOperationFinished(object? sender, EventArgs e)
+    private void OnOperationFinished(object? sender, EventArgs e)
     {
         AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
     }
@@ -130,7 +130,7 @@ public class OperationControl: INotifyPropertyChanged
         Icon = await Operation.GetOperationIcon();
     }
 
-    private void OperationOnStatusChanged(object? sender, OperationStatus newStatus)
+    private void OnOperationStatusChanged(object? sender, OperationStatus newStatus)
     {
         switch (newStatus)
         {

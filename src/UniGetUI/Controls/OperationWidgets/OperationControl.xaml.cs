@@ -24,174 +24,12 @@ namespace UniGetUI.Interface
     public abstract partial class AbstractOperation : UserControl
     {
     }
-    /*protected enum AfterFinshAction
-    {
-        TimeoutClose,
-        ManualClose,
-        Retry,
-    }
 
-    private enum WidgetLayout
-    {
-        Default,
-        Compact,
-    }
+    /*
 
-    public struct OutputLine
-    {
-        public enum LineType
-        {
-            Header,
-            STDOUT,
-            STDERR
-        }
-
-        readonly public LineType Type;
-        readonly public string Contents;
-
-        public OutputLine(string contents, LineType type)
-        {
-            Contents = contents;
-            Type = type;
-        }
-    }
-
-    private OperationStatus __status = OperationStatus.InQueue;
-    private bool IsDialogOpen;
-
-    private WidgetLayout __layout_mode;
-    private WidgetLayout LayoutMode
-    {
-        set
-        {
-            if (value == WidgetLayout.Compact)
-            {
-                Grid.SetColumn(OutputViewewBlock, 0);
-                Grid.SetColumnSpan(OutputViewewBlock, 4);
-                Grid.SetRow(OutputViewewBlock, 1);
-                Grid.SetColumn(ProgressIndicator, 0);
-                Grid.SetColumnSpan(ProgressIndicator, 4);
-                Grid.SetRow(ProgressIndicator, 1);
-                if (MainGrid.RowDefinitions.Count < 2)
-                {
-                    MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                }
-            }
-            else
-            {
-                Grid.SetColumn(OutputViewewBlock, 2);
-                Grid.SetColumnSpan(OutputViewewBlock, 1);
-                Grid.SetRow(OutputViewewBlock, 0);
-                Grid.SetColumn(ProgressIndicator, 2);
-                Grid.SetColumnSpan(ProgressIndicator, 1);
-                Grid.SetRow(ProgressIndicator, 0);
-                if (MainGrid.RowDefinitions.Count >= 2)
-                {
-                    MainGrid.RowDefinitions.RemoveAt(1);
-                }
-            }
-            __layout_mode = value;
-        }
-        get { return __layout_mode; }
-    }
-
-    protected string ButtonText
-    {
-        set => ActionButton.Content = value;
-    }
-    protected string LineInfoText
-    {
-        set => OutputViewewBlock.Content = value;
-    }
-    protected Uri IconSource
-    {
-        set => PackageIcon.Source = new BitmapImage(value);
-    }
-    protected string OperationTitle
-    {
-        set => InfoTextBlock.Text = value;
-    }
-
-#pragma warning disable CS0067
-    protected event EventHandler<OperationCanceledEventArgs>? CancelRequested;
-    protected event EventHandler<OperationCanceledEventArgs>? CloseRequested;
-#pragma warning restore CS0067
-    protected Process Process = new();
-
-    protected ObservableCollection<OutputLine> ProcessOutput = [];
-
-    protected string[] RawProcessOutput
-    {
-        get
-        {
-            List<string> tempOutput = new();
-            foreach (var line in ProcessOutput)
-            {
-                if(line.Type is not OutputLine.LineType.Header)
-                    tempOutput.Add(line.Contents);
-            }
-
-            return tempOutput.ToArray();
-        }
-    }
-
-    protected readonly ContentDialog OutputDialog = new();
-    private readonly ScrollViewer LiveOutputScrollBar = new();
-    private readonly RichTextBlock LiveOutputTextBlock = new();
-
-    public OperationStatus Status
-    {
-        get => __status;
-        set
-        {
-            MainGrid.RequestedTheme = MainApp.Instance.MainWindow.ContentRoot.RequestedTheme;
-            __status = value;
-            switch (__status)
-            {
-                case OperationStatus.InQueue:
-                    ProgressIndicator.IsIndeterminate = false;
-                    ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBrush"];
-                    MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBackgroundBrush"];
-                    ButtonText = CoreTools.Translate("Cancel");
-                    break;
-
-                case OperationStatus.Running:
-                    ProgressIndicator.IsIndeterminate = true;
-                    ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorAttentionBrush"];
-                    MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorAttentionBackgroundBrush"];
-                    ButtonText = CoreTools.Translate("Cancel");
-                    break;
-
-                case OperationStatus.Succeeded:
-                    ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorSuccessBrush"];
-                    MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBackgroundBrush"];
-                    ProgressIndicator.IsIndeterminate = false;
-                    ButtonText = CoreTools.Translate("Close");
-                    break;
-
-                case OperationStatus.Failed:
-                    ProgressIndicator.IsIndeterminate = false;
-                    ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorCriticalBrush"];
-                    MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorCriticalBackgroundBrush"];
-                    ButtonText = CoreTools.Translate("Close");
-                    break;
-
-                case OperationStatus.Canceled:
-                    ProgressIndicator.IsIndeterminate = false;
-                    ProgressIndicator.Foreground = (SolidColorBrush)Application.Current.Resources["SystemFillColorCautionBrush"];
-                    MainGrid.Background = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBackgroundBrush"];
-                    ButtonText = CoreTools.Translate("Close");
-                    LineInfoText = CoreTools.Translate("Operation canceled by user");
-                    break;
-            }
-        }
-    }
-    protected bool IGNORE_PARALLEL_OPERATION_SETTINGS;
     public AbstractOperation(bool IgnoreParallelInstalls = false)
     {
-        IGNORE_PARALLEL_OPERATION_SETTINGS = IgnoreParallelInstalls;
 
-        InitializeComponent();
 
         OutputDialog = new ContentDialog
         {
@@ -232,30 +70,6 @@ namespace UniGetUI.Interface
 
         OutputDialog.Content = LiveOutputScrollBar;
 
-        ProcessOutput.CollectionChanged += async (_, _) =>
-        {
-            if (!IsDialogOpen)
-            {
-                return;
-            }
-
-            LiveOutputTextBlock.Blocks.Clear();
-            Paragraph p = new();
-            foreach (OutputLine line in ProcessOutput)
-            {
-                if (line.Type is OutputLine.LineType.STDOUT)
-                    p.Inlines.Add(new Run { Text = line.Contents + "\x0a" });
-                else if (line.Type is OutputLine.LineType.Header)
-                    // TODO: Theme-aware colorss
-                    p.Inlines.Add(new Run { Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Azure)});
-                else
-                    p.Inlines.Add(new Run { Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Red)});
-            }
-            LiveOutputTextBlock.Blocks.Add(p);
-            await Task.Delay(100);
-            LiveOutputScrollBar.ScrollToVerticalOffset(LiveOutputScrollBar.ScrollableHeight);
-        };
-
         Status = OperationStatus.InQueue;
 
         ActionButton.Click += ActionButtonClicked;
@@ -294,87 +108,9 @@ namespace UniGetUI.Interface
         IsDialogOpen = false;
     }
 
-    public void ActionButtonClicked(object sender, RoutedEventArgs args)
-    {
-        if (Status is OperationStatus.InQueue or OperationStatus.Running)
-        {
-            CancelButtonClicked();
-        }
-        else
-        {
-            CloseButtonClicked();
-        }
-    }
 
-    protected void RemoveFromQueue()
-    {
-        while (MainApp.Operations._operationList.IndexOf(this) != -1)
-        {
-            MainApp.Operations._operationList.Remove(this);
-        }
-    }
-    protected void AddToQueue()
-    {
-        if (!MainApp.Operations._operationList.Contains(this))
-        {
-            MainApp.Operations._operationList.Add(this);
-        }
-    }
 
-    public void Cancel() => CancelButtonClicked();
 
-    private async void CancelButtonClicked()
-    {
-        RemoveFromQueue();
-
-        if (Status is OperationStatus.Running)
-        {
-            Process.Kill();
-        }
-
-        await HandleCancelation();
-        PostProcessEndAction();
-        Status = OperationStatus.Canceled;
-    }
-
-    public void CloseButtonClicked()
-    {
-        _ = Close();
-    }
-
-    protected void AddToQueue_Priority()
-    {
-        MainApp.Operations._operationList.Insert(0, this);
-    }
-
-    protected virtual async Task WaitForAvailability()
-    {
-        AddToQueue();
-        int currentIndex = -2;
-        int oldIndex = -1;
-        while (currentIndex != 0)
-        {
-            if (Status is OperationStatus.Canceled)
-            {
-                RemoveFromQueue();
-                return;
-            }
-
-            currentIndex = MainApp.Operations._operationList.IndexOf(this);
-            if (currentIndex != oldIndex)
-            {
-                LineInfoText = CoreTools.Translate("Operation on queue (position {0})...", currentIndex);
-                oldIndex = currentIndex;
-            }
-            await Task.Delay(100);
-        }
-    }
-    protected async Task PreMainThread()
-    {
-        Status = OperationStatus.InQueue;
-        await WaitForAvailability();
-        await MainThread();
-    }
     protected async Task MainThread()
     {
         try
@@ -582,16 +318,6 @@ namespace UniGetUI.Interface
         PEInterface.OperationList.Remove(this);
     }
 
-    protected abstract Task Initialize();
-    protected abstract void PostProcessStartAction();
-    protected abstract void PostProcessEndAction();
-    protected abstract Task<ProcessStartInfo> BuildProcessInstance(ProcessStartInfo startInfo);
-    protected abstract Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output);
-    protected abstract Task<AfterFinshAction> HandleFailure();
-    protected abstract Task<AfterFinshAction> HandleSuccess();
-    protected abstract Task HandleCancelation();
-    protected abstract string[] GenerateProcessLogHeader();
-
     protected void Retry()
     {
         AddToQueue_Priority();
@@ -601,28 +327,5 @@ namespace UniGetUI.Interface
         _ = MainThread();
     }
 
-    protected void MainProcedure()
-    {
-        Initialize();
-        _ = PreMainThread();
-    }
-    private void ResizeEvent(object sender, SizeChangedEventArgs e)
-    {
-        if (e.NewSize.Width < 500)
-        {
-            if (LayoutMode != WidgetLayout.Compact)
-            {
-                LayoutMode = WidgetLayout.Compact;
-            }
-        }
-        else
-        {
-            if (LayoutMode != WidgetLayout.Default)
-            {
-                LayoutMode = WidgetLayout.Default;
-            }
-        }
-
-    }
 }*/
 }
