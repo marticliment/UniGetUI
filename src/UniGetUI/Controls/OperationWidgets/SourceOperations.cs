@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Windows.Media.Capture;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
@@ -24,16 +25,11 @@ namespace UniGetUI.PackageEngine.Operations
         protected abstract void Initialize();
 
         protected IManagerSource Source;
-        protected string OPERATION_ONGOING_STRING = null!;
 
         public SourceOperation(IManagerSource source) : base(false)
         {
             Source = source;
             Initialize();
-            if (OPERATION_ONGOING_STRING is null)
-            {
-                throw new NullReferenceException("OPERATION_ONGOING_STRING must be set to a non-null value in the Initialize method");
-            }
             GenerateProcessLogHeader();
 
             OperationStarting += (_, _) => CreateProgressToast();
@@ -41,12 +37,6 @@ namespace UniGetUI.PackageEngine.Operations
             OperationSucceeded += (_, _) => HandleSuccess();
             OperationFailed += (_, _) => HandleFailure();
         }
-
-        public override string GetOperationTitle()
-        {
-            return OPERATION_ONGOING_STRING;
-        }
-
 
         protected void ShowErrorNotification(string title, string body)
         {
@@ -112,7 +102,7 @@ namespace UniGetUI.PackageEngine.Operations
                     .AddProgressBar(new AppNotificationProgressBar()
                         .SetStatus(CoreTools.Translate("Please wait..."))
                         .SetValueStringOverride("\uE002")
-                        .SetTitle(OPERATION_ONGOING_STRING)
+                        .SetTitle(Metadata.Status)
                         .SetValue(1.0))
                     .AddArgument("action", NotificationArguments.Show);
                 AppNotification notification = builder.BuildNotification();
@@ -175,16 +165,11 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override Task HandleFailure()
         {
-            Line(
-                CoreTools.Translate("Could not add source {source} to {manager}",
-                    new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } }),
-                LineType.Progress);
+            Line(Metadata.FailureMessage, LineType.Progress);
 
             ShowErrorNotification(
-                CoreTools.Translate("Installation failed"),
-                CoreTools.Translate("Could not add source {source} to {manager}",
-                    new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
-            );
+                Metadata.FailureTitle,
+                Metadata.FailureMessage);
 
             /*ContentDialogResult result = await DialogHelper.ShowOperationFailed(
                 ProcessOutput,
@@ -197,20 +182,25 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override Task HandleSuccess()
         {
-            Line(CoreTools.Translate("The source {source} was added to {manager} successfully", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } }), LineType.Progress);
+            Line(Metadata.SuccessMessage, LineType.Progress);
 
             ShowSuccessNotification(
-                CoreTools.Translate("Addition succeeded"),
-                CoreTools.Translate("The source {source} was added to {manager} successfully",
-                    new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } })
-            );
+                Metadata.SuccessTitle,
+                Metadata.SuccessMessage);
 
             return Task.CompletedTask;
         }
 
         protected override void Initialize()
         {
-            OPERATION_ONGOING_STRING = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            Metadata.Title = CoreTools.Translate("Adding source {source}", new Dictionary<string, object?> { { "source", Source.Name } });
+            Metadata.Status = CoreTools.Translate("Adding source {source} to {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });;
+            Metadata.SuccessTitle = CoreTools.Translate("Source added successfully");
+            Metadata.SuccessMessage = CoreTools.Translate("The source {source} was added to {manager} successfully",
+                new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            Metadata.FailureTitle = CoreTools.Translate("Could not add source");
+            Metadata.FailureMessage = CoreTools.Translate("Could not add source {source} to {manager}",
+                new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
         }
     }
 
@@ -286,7 +276,14 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void Initialize()
         {
-            OPERATION_ONGOING_STRING = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            Metadata.Title = CoreTools.Translate("Removing source {source}", new Dictionary<string, object?> { { "source", Source.Name } });
+            Metadata.Status = CoreTools.Translate("Removing source {source} from {manager}", new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });;
+            Metadata.SuccessTitle = CoreTools.Translate("Source removed successfully");
+            Metadata.SuccessMessage = CoreTools.Translate("The source {source} was removed from {manager} successfully",
+                new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
+            Metadata.FailureTitle = CoreTools.Translate("Could not remove source");
+            Metadata.FailureMessage = CoreTools.Translate("Could not remove source {source} from {manager}",
+                new Dictionary<string, object?> { { "source", Source.Name }, { "manager", Source.Manager.Name } });
         }
     }
 }

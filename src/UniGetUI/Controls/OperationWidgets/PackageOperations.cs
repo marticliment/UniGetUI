@@ -26,7 +26,6 @@ namespace UniGetUI.PackageEngine.Operations
         protected readonly IPackage Package;
         protected readonly IInstallationOptions Options;
         protected readonly OperationType Role;
-        protected string ONGOING_PROGRESS_STRING = null!;
 
         protected abstract Task HandleSuccess();
         protected abstract Task HandleFailure();
@@ -45,11 +44,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             Initialize();
 
-            if (ONGOING_PROGRESS_STRING is null)
-            {
-                throw new NullReferenceException("ONGOING_PROGRESS_STRING must be set to a non-null value in the Initialize method");
-            }
-            Line(ONGOING_PROGRESS_STRING, LineType.Progress);
+            Line(Metadata.Status, LineType.Progress);
             GenerateProcessLogHeader();
 
             Enqueued += (_, _) =>
@@ -171,7 +166,7 @@ namespace UniGetUI.PackageEngine.Operations
                     .AddProgressBar(new AppNotificationProgressBar()
                         .SetStatus(CoreTools.Translate("Please wait..."))
                         .SetValueStringOverride("\u2003")
-                        .SetTitle(ONGOING_PROGRESS_STRING)
+                        .SetTitle(Metadata.Status)
                         .SetValue(1.0))
                     .AddArgument("action", NotificationArguments.Show);
                 AppNotification notification = builder.BuildNotification();
@@ -228,9 +223,6 @@ namespace UniGetUI.PackageEngine.Operations
             ShowErrorNotification(Metadata.FailureTitle, Metadata.FailureMessage);
 
             return Task.CompletedTask;
-            /*ContentDialogResult result = await DialogHelper.ShowOperationFailed(
-            );*/
-
         }
 
         protected override Task HandleSuccess()
