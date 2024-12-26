@@ -9,6 +9,7 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
@@ -17,6 +18,61 @@ using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
+    public class PauseTime
+    {
+        private int _daysTill;
+        public int Months { get { return Weeks / 4; } set { _daysTill = value * 7 * 4; } }
+        public int Weeks { get { return _daysTill / 7; } set { _daysTill = value * 7; } }
+        public int Days { get { return _daysTill; } set { _daysTill = value; } }
+        public string GetDateFromNow()
+        {
+            DateTime NewTime = DateTime.Now.AddDays(_daysTill);
+            return NewTime.Year + "-" + NewTime.Month + "-" + NewTime.Day;
+        }
+        public void Parse(string Date)
+        {
+            string[] SplitDate = Date.Split("-");
+            if (SplitDate.Length != 3)
+            {
+                throw new ArgumentException("Input date isn't formatted correctly");
+            }
+            DateTime ParsedDate = new DateTime(int.Parse(SplitDate[0]), int.Parse(SplitDate[1]), int.Parse(SplitDate[2]));
+            DateTime Now = DateTime.Now;
+            if (ParsedDate > Now)
+            {
+                _daysTill = (int)(ParsedDate - Now).TotalDays;
+            }
+            else
+            {
+                _daysTill = (int)(Now - ParsedDate).TotalDays;
+            }
+        }
+        public string StringRepresentation()
+        {
+            if (Months >= 12 && Months % 12 == 0)
+            {
+                int Years = Months / 12;
+                if (Years > 1) return CoreTools.Translate($"{Years} years");
+                else return CoreTools.Translate("1 year");
+            }
+            else if (Months >= 1)
+            {
+                if (Months > 1) return CoreTools.Translate($"{Months} months");
+                else return CoreTools.Translate("1 month");
+            }
+            else if (Weeks >= 1)
+            {
+                if (Weeks > 1) return CoreTools.Translate($"{Weeks} weeks");
+                else return CoreTools.Translate("1 week");
+            }
+            else
+            {
+                if (Days != 1) return CoreTools.Translate($"{Days} days");
+                else return CoreTools.Translate("1 day");
+            }
+        }
+    }
+
     public class SoftwareUpdatesPage : AbstractPackagesPage
     {
         private BetterMenuItem? MenuAsAdmin;
@@ -143,6 +199,27 @@ namespace UniGetUI.Interface.SoftwarePages
             };
             menuDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem);
 
+            MenuFlyoutSubItem menuPause = new()
+            {
+                Text = "Pause updates for",
+                Icon = new FontIcon() { Glyph = "\uE769" },
+            };
+            foreach (PauseTime menuTime in new List<PauseTime>{
+                new() { Days = 1 }, new() { Days = 3 },
+                new() { Weeks = 1 }, new() { Weeks = 2 }, new() { Weeks = 4 },
+                new() { Months = 3 }, new() { Months = 6 }, new() { Months = 12 },
+            })
+            {
+                BetterMenuItem menuItem = new()
+                {
+                    Text = menuTime.StringRepresentation(),
+                };
+                // menuItem.Click += (_, _) => IgnoredUpdatesDatabase.Add(
+                //     IgnoredUpdatesDatabase.GetIgnoredIdForPackage(SelectedItem),
+                //     "<" + menuTime.GetDateFromNow());
+                menuPause.Items.Add(menuItem);
+            }
+
             ContextMenu.Items.Add(menuInstall);
             ContextMenu.Items.Add(new MenuFlyoutSeparator());
             ContextMenu.Items.Add(menuInstallSettings);
@@ -157,6 +234,7 @@ namespace UniGetUI.Interface.SoftwarePages
             ContextMenu.Items.Add(new MenuFlyoutSeparator());
             ContextMenu.Items.Add(menuIgnorePackage);
             ContextMenu.Items.Add(menuSkipVersion);
+            ContextMenu.Items.Add(menuPause);
             ContextMenu.Items.Add(new MenuFlyoutSeparator());
             ContextMenu.Items.Add(menuShare);
             ContextMenu.Items.Add(menuDetails);
