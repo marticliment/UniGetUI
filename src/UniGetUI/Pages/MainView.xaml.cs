@@ -314,7 +314,7 @@ namespace UniGetUI.Interface
                     MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(16);
                     OperationSplitter.Visibility = Visibility.Visible;
                     OperationSplitterMenuButton.Visibility = Visibility.Visible;
-                    OperationScrollView.Visibility = Visibility.Collapsed;
+                    // OperationScrollView.Visibility = Visibility.Collapsed;
                     OperationSplitter.IsEnabled = false;
                 }
                 else
@@ -326,7 +326,7 @@ namespace UniGetUI.Interface
                     MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(16);
                     OperationSplitter.Visibility = Visibility.Visible;
                     OperationSplitterMenuButton.Visibility = Visibility.Visible;
-                    OperationScrollView.Visibility = Visibility.Visible;
+                    // OperationScrollView.Visibility = Visibility.Visible;
                     OperationSplitter.IsEnabled = true;
                 }
             }
@@ -336,7 +336,7 @@ namespace UniGetUI.Interface
                 MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(0);
                 OperationSplitter.Visibility = Visibility.Collapsed;
                 OperationSplitterMenuButton.Visibility = Visibility.Collapsed;
-                OperationScrollView.Visibility = Visibility.Collapsed;
+                // OperationScrollView.Visibility = Visibility.Collapsed;
             }
             ResizingOPLayout = false;
         }
@@ -395,8 +395,8 @@ namespace UniGetUI.Interface
             foreach (var widget in MainApp.Operations._operationList)
             {
                 var operation = widget.Operation;
-                //if (operation.Status is OperationStatus.Failed)
-                //    operation.Restart();
+                if (operation.Status is OperationStatus.Failed)
+                    operation.Retry();
             }
         }
 

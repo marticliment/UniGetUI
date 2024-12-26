@@ -18,6 +18,7 @@ using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageOperations;
 using UniGetUI.Pages.DialogPages;
+using CommunityToolkit.WinUI;
 
 namespace UniGetUI.Controls.OperationWidgets;
 
@@ -49,6 +50,7 @@ public class OperationControl: INotifyPropertyChanged
     {
         ShowProgressToast();
         MainApp.Tooltip.OperationsInProgress++;
+        MainApp.Instance.MainWindow.NavigationPage.OperationList.SmoothScrollIntoViewWithItemAsync(this);
     }
 
     private async void OnOperationSucceeded(object? sender, EventArgs e)

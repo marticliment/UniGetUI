@@ -178,27 +178,32 @@
                     <FontIcon Glyph="&#xE712;" FontSize="24"/>
                 </HyperlinkButton>
             </Grid>
-            <ScrollViewer
+            <!--ScrollViewer
                 Name="OperationScrollView" SizeChanged="OperationScrollView_SizeChanged"
                 Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="2"
                 HorizontalScrollMode="Disabled"
                 VerticalScrollMode="Enabled"
                 VerticalScrollBarVisibility="Visible"
-                Margin="0" Padding="0,0,0,0">
-                <ItemsRepeater
+                Margin="0" Padding="0,0,0,0"-->
+                <ListView
+                    SizeChanged="OperationScrollView_SizeChanged"
+                    Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="2"
+                    Padding="0,0,0,0"
+                    
                     ItemTemplate="{StaticResource OperationTemplate}"
-                    Margin="0,0,0,0"
-                    Name="OperationList">
-                    <ItemsRepeater.Layout>
-                        <StackLayout Spacing="8"/>
-                    </ItemsRepeater.Layout>
-                    <ItemsRepeater.Resources>
+                    Margin="0,0,0,0" SelectionMode="None"
+                    Name="OperationList" x:FieldModifier="public">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical" Spacing="8"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ListView.Resources>
                         <SolidColorBrush x:Key="ItemContainerPointerOverBackground" Color="Transparent" />
                         <SolidColorBrush x:Key="ItemContainerPressedBackground" Color="Transparent" />
-                    </ItemsRepeater.Resources>
-                </ItemsRepeater>
-
-            </ScrollViewer>
+                    </ListView.Resources>
+                </ListView>
+            <!--/ScrollViewer-->
         </Grid>
 
         <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden" Grid.Row="0" Grid.Column="0" VerticalAlignment="Stretch" Margin="4,0,4,4" Padding="0,0,0,0">
