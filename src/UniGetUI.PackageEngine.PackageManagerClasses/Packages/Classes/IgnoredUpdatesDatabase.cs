@@ -63,6 +63,12 @@ public static class IgnoredUpdatesDatabase
     {
         string? ignoredVersion = Settings.GetDictionaryItem<string, string>("IgnoredPackageUpdates", ignoredId);
 
+        if (ignoredVersion != null && ignoredVersion.StartsWith("<")) {
+            var ignoreDate = DateTime.ParseExact(ignoredVersion[1..], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            if (ignoreDate > DateTime.Now) return true;
+            else Remove(ignoredId);
+        }
+
         // Check if the package is ignored
         return ignoredVersion == "*" || ignoredVersion == version;
     }
