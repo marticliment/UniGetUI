@@ -140,7 +140,7 @@ namespace UniGetUI.Core.Tools
         /// <returns>The formatted string</returns>
         public static string FormatAsName(string name)
         {
-            name = name.Replace(".install", "").Replace(".portable", "").Replace("-", " ").Replace("_", " ").Split("/")[^1];
+            name = name.Replace(".install", "").Replace(".portable", "").Replace("-", " ").Replace("_", " ").Split("/")[^1].Split(":")[0];
             string newName = "";
             for (int i = 0; i < name.Length; i++)
             {
