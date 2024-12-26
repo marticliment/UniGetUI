@@ -7,7 +7,7 @@
       <Platforms>x64</Platforms>
      <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
   <WindowsSdkPackageVersion>10.0.26100.53</WindowsSdkPackageVersion>
-      <SdkVersion>8.0.401</SdkVersion>
+      <SdkVersion>8.0.404</SdkVersion>
       <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
       <PublishSelfContained>true</PublishSelfContained>
       <Authors>Martí Climent and the contributors</Authors>

@@ -295,7 +295,7 @@
   "Manifest": "מניפסט",
   "Manifests": "מניפסטים",
   "Microsoft's official package manager. Full of well-known and verified packages<br>Contains: <b>General Software, Microsoft Store apps</b>": "מנהל החבילות הרשמי של מיקרוסופט. מלא בחבילות ידועות ומאומתות<br>מכיל: <b>תוכנה כללית, אפליקציות Microsoft Store</b>",
-  "Missing dependency": "חסר תלות",
+  "Missing dependency": "חבילת תלות חסרה",
   "More": "עוד",
   "More details": "פרטים נוספים",
   "More info": "מידע נוסף",

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
@@ -27,7 +28,19 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {python.exe "
                         + "-m pip install parse_pip_search; if($error.count -ne 0){pause}}\"",
                     "python -m pip install parse_pip_search",
-                    async () => (await CoreTools.WhichAsync("parse_pip_search.exe")).Item1)
+                    async () =>
+                    {
+                        bool found = (await CoreTools.WhichAsync("parse_pip_search.exe")).Item1;
+                        if (found) return true;
+                        else if (Status.ExecutablePath.Contains("WindowsApps\\python.exe"))
+                        {
+                            Logger.Warn("parse_pip_search could was not found but the user will not be prompted to install it.");
+                            Logger.Warn("NOTE: Microsoft Store python is not fully supported on UniGetUI");
+                            return true;
+                        }
+                        else return false;
+                    }
+                )
             ];
 
             Capabilities = new ManagerCapabilities

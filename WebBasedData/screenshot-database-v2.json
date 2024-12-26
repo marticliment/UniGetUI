@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11714,
-        "done": 5135,
-        "packages_with_icon": 5135,
-        "packages_with_screenshot": 602,
-        "total_screenshots": 1878
+        "total": 11729,
+        "done": 5170,
+        "packages_with_icon": 5170,
+        "packages_with_screenshot": 611,
+        "total_screenshots": 1903
     },
     "icons_and_screenshots": {
         "010memorizer": {
@@ -3448,7 +3448,7 @@
             "icon": "",
             "images": []
         },
-        "ausweisapp2": {
+        "ausweisapp": {
             "icon": "https://i.imgur.com/nPb3wTl.png",
             "images": [
                 "https://res.cloudinary.com/canonical/image/fetch/f_auto,q_auto,fl_sanitize,w_819,h_549/https://dashboard.snapcraft.io/site_media/appmedia/2019/01/ausweisapp2.png",
@@ -7850,7 +7850,7 @@
             "images": []
         },
         "cmake": {
-            "icon": "https://community.chocolatey.org/content/packageimages/cmake.install.3.25.2.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/CMake_logo.svg/1200px-CMake_logo.svg.png",
             "images": []
         },
         "cmaptools": {
@@ -8205,7 +8205,7 @@
             "images": []
         },
         "compactgui": {
-            "icon": "",
+            "icon": "https://postimg.cc/23Nn3b75",
             "images": []
         },
         "compactor": {
@@ -9174,7 +9174,7 @@
             "images": []
         },
         "curl": {
-            "icon": "https://community.chocolatey.org/content/packageimages/curl.7.88.1.png",
+            "icon": "https://i.postimg.cc/bJW9nGtV/curl-symbol-transparent.png",
             "images": []
         },
         "curlie": {
@@ -9382,7 +9382,7 @@
             "images": []
         },
         "darktable": {
-            "icon": "https://community.chocolatey.org/content/packageimages/darktable.4.2.1.png",
+            "icon": "https://github.com/darktable-org/darktable/blob/master/data/pixmaps/256x256/darktable.png",
             "images": []
         },
         "dart": {
@@ -9937,6 +9937,10 @@
             "images": []
         },
         "dellcommandupdate-uwp": {
+            "icon": "https://community.chocolatey.org/content/packageimages/dellcommandupdate-uwp.4.8.0.png",
+            "images": []
+        },
+        "dell-commandupdate-universal": {
             "icon": "https://community.chocolatey.org/content/packageimages/dellcommandupdate-uwp.4.8.0.png",
             "images": []
         },
@@ -12692,7 +12696,7 @@
             "images": []
         },
         "eduvpnclient": {
-            "icon": "",
+            "icon": "https://postimg.cc/DSG2WZg2",
             "images": []
         },
         "effie": {
@@ -13814,8 +13818,10 @@
             "images": []
         },
         "fancontrol": {
-            "icon": "",
-            "images": []
+            "icon": "https://postimg.cc/T5KzZ7NR",
+            "images": [
+                "https://github.com/Rem0o/FanControl.Releases/blob/master/Images/MainUI.png"
+            ]
         },
         "far": {
             "icon": "",
@@ -16837,12 +16843,24 @@
             "icon": "https://community.chocolatey.org/content/packageimages/GoodSync.12.1.7.png",
             "images": []
         },
+        "google-api-core": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png",
+            "images": []
+        },
+        "google-api-python-client": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png",
+            "images": []
+        },
         "google-assistant": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Google_Assistant_logo.svg/768px-Google_Assistant_logo.svg.png",
             "images": []
         },
         "google-assistant-pr\u2026": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Google_Assistant_logo.svg/768px-Google_Assistant_logo.svg.png",
+            "images": []
+        },
+        "google-auth": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png",
             "images": []
         },
         "google-books-downloader": {
@@ -17223,7 +17241,7 @@
             "images": []
         },
         "grammarly": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/dtrmQxRt/grammarly-for-windows-1-2-122-1565.png",
             "images": []
         },
         "grammarly-chrome": {
@@ -18404,8 +18422,15 @@
             "images": []
         },
         "homebank": {
-            "icon": "",
-            "images": []
+            "icon": "https://postimg.cc/Lnf7LZr0",
+            "images": [
+                "https://www.gethomebank.org/screenshots/5.8/image1.png",
+                "https://www.gethomebank.org/screenshots/5.8/image2.png",
+                "https://www.gethomebank.org/screenshots/5.8/image3.png",
+                "https://www.gethomebank.org/screenshots/5.8/image4.png",
+                "https://www.gethomebank.org/screenshots/5.8/image5.png",
+                "https://www.gethomebank.org/screenshots/5.8/image6.png"
+            ]
         },
         "homedale": {
             "icon": "",
@@ -18957,7 +18982,9 @@
         },
         "icopy": {
             "icon": "https://community.chocolatey.org/content/packageimages/icopy.install.1.7.0.png",
-            "images": []
+            "images": [
+                "https://i.postimg.cc/15qVBMSf/icopy-ss.png"
+            ]
         },
         "icqnew": {
             "icon": "",
@@ -19727,11 +19754,17 @@
         },
         "internet-download-manager": {
             "icon": "https://community.chocolatey.org/content/packageimages/internet-download-manager.6.41.7.png",
-            "images": []
+            "images": [
+                "https://www.internetdownloadmanager.com/images/idm_screenshot_6_35.png",
+                "https://www.internetdownloadmanager.com/images/queue.png"
+            ]
         },
         "internetdownloadmanager": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/Vk37BG4z/internet-download-manager.png",
+            "images": [
+                "https://www.internetdownloadmanager.com/images/idm_screenshot_6_35.png",
+                "https://www.internetdownloadmanager.com/images/queue.png"
+            ]
         },
         "internetoff": {
             "icon": "",
@@ -21149,7 +21182,7 @@
             "images": []
         },
         "kdeconnect": {
-            "icon": "https://community.chocolatey.org/content/packageimages/kdeconnect-kde.22.12.2.1263.png",
+            "icon": "https://kdeconnect.kde.org/assets/img/KDE_Logo.png",
             "images": [
                 "https://cdn.kde.org/screenshots/kdeconnect/plasmoid.png",
                 "https://cdn.kde.org/screenshots/kdeconnect/kcm.png",
@@ -21157,7 +21190,7 @@
             ]
         },
         "kdeconnect-kde": {
-            "icon": "https://community.chocolatey.org/content/packageimages/kdeconnect-kde.22.12.2.1263.png",
+            "icon": "https://kdeconnect.kde.org/assets/img/KDE_Logo.png",
             "images": [
                 "https://cdn.kde.org/screenshots/kdeconnect/plasmoid.png",
                 "https://cdn.kde.org/screenshots/kdeconnect/kcm.png",
@@ -21854,7 +21887,7 @@
             "images": []
         },
         "komac": {
-            "icon": "https://github.com/russellbanks/Komac/raw/main/assets/logo.svg",
+            "icon": "https://i.postimg.cc/9fS786Qr/komac-logo.png",
             "images": []
         },
         "kombustor-2": {
@@ -23542,8 +23575,10 @@
             "images": []
         },
         "losslesscut": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/zGkCwpwT/losslesscut-icon.png",
+            "images": [
+                "https://github.com/mifi/lossless-cut/blob/59f117af2fe8ce03140ab8237cccbd073e09c0bc/main_screenshot.jpg"
+            ]
         },
         "lot": {
             "icon": "",
@@ -25832,7 +25867,7 @@
             "images": []
         },
         "mpv": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mpv.portable.2022.11.14.png",
+            "icon": "https://raw.githubusercontent.com/mpv-player/mpv.io/master/source/images/mpv-logo-128.png",
             "images": []
         },
         "mpv-easy-player": {
@@ -25844,16 +25879,26 @@
             "images": []
         },
         "mpv-net": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mpv.net.6.0.3.1.png",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/mpv-player/mpv.io/master/source/images/mpv-logo-128.png",
+            "images": [
+                "https://i.postimg.cc/cJNqRHQH/Main.png",
+                "https://i.postimg.cc/jdmYjv2y/Menu.png",
+                "https://i.postimg.cc/0ySRKmKF/Conf-Editor.png",
+                "https://i.postimg.cc/ncCtZNFH/Terminal.png"
+            ]
         },
         "mpvio": {
             "icon": "https://community.chocolatey.org/content/packageimages/mpvio.0.35.0.png",
             "images": []
         },
         "mpvnet": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mpvnet.install.5.4.9.20220427.png",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/mpv-player/mpv.io/master/source/images/mpv-logo-128.png",
+            "images": [
+                "https://i.postimg.cc/cJNqRHQH/Main.png",
+                "https://i.postimg.cc/jdmYjv2y/Menu.png",
+                "https://i.postimg.cc/0ySRKmKF/Conf-Editor.png",
+                "https://i.postimg.cc/ncCtZNFH/Terminal.png"
+            ]
         },
         "mpw": {
             "icon": "https://community.chocolatey.org/content/packageimages/mpw.portable.2.7.12.png",
@@ -27297,7 +27342,7 @@
             "images": []
         },
         "nextclouddesktop": {
-            "icon": "",
+            "icon": "https://postimg.cc/RJ17V9DG",
             "images": []
         },
         "nextdns": {
@@ -27425,8 +27470,13 @@
             "images": []
         },
         "nilesoft-shell": {
-            "icon": "",
-            "images": []
+            "icon": "https://nilesoft.org/images/favicon.png",
+            "images": [
+                "https://nilesoft.org/images/screenshots/light/ss2.png",
+                "https://nilesoft.org/images/screenshots/light/goto.png",
+                "https://nilesoft.org/images/screenshots/light/ss1.png",
+                "https://nilesoft.org/images/screenshots/light/file-manage.png"
+            ]
         },
         "nim": {
             "icon": "",
@@ -28002,9 +28052,11 @@
         },
         "numere": {
             "icon": "",
-            "images": [
-                "https://lh6.googleusercontent.com/yRDXccfYN1gqv2pjp0raonCusKLlYqOEXfi63VLLNyn8eR3L9IeEBaiO-LKFYxqR1I7upXFnX_s98H1CmavVtL5okxB_6xo8vpt9BdN7i6fNMNzcqBZr0uzYYeAo3ACt0g=w1280"
-            ]
+            "images": []
+        },
+        "numpy": {
+            "icon": "https://seeklogo.com/images/N/numpy-logo-479C24EC79-seeklogo.com.png",
+            "images": []
         },
         "nunit": {
             "icon": "",
@@ -28101,11 +28153,11 @@
             "images": []
         },
         "nvm": {
-            "icon": "https://community.chocolatey.org/content/packageimages/nvm.install.1.1.9.png",
+            "icon": "https://raw.githubusercontent.com/nodejs/nodejs.org/main/apps/site/public/static/images/favicons/android-chrome-192x192.png",
             "images": []
         },
         "nvmforwindows": {
-            "icon": "",
+            "icon": "https://raw.githubusercontent.com/nodejs/nodejs.org/main/apps/site/public/static/images/favicons/android-chrome-192x192.png",
             "images": []
         },
         "nvquicksite": {
@@ -30952,7 +31004,7 @@
             "images": []
         },
         "pip": {
-            "icon": "https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/community/logos/python-logo-only.png",
+            "icon": "https://i.pinimg.com/originals/82/a2/18/82a2188c985ce75402ae44fc43fe7e5e.png",
             "images": []
         },
         "pip-tool": {
@@ -32769,7 +32821,23 @@
             "images": []
         },
         "pyqt4": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
+            "images": []
+        },
+        "pyqt5": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
+            "images": []
+        },
+        "pyqt5_sip": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
+            "images": []
+        },
+        "pyqt6": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
+            "images": []
+        },
+        "pyqt6_sip": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
             "images": []
         },
         "pyrevit-cli": {
@@ -34640,7 +34708,7 @@
             "images": []
         },
         "restic": {
-            "icon": "",
+            "icon": "https://github.com/restic/restic/blob/master/doc/logo/logo.png",
             "images": []
         },
         "restish": {
@@ -36119,19 +36187,19 @@
             "images": []
         },
         "sdl2": {
-            "icon": "",
+            "icon": "https://d4.alternativeto.net/osEBVed0H1ZZ3RYFt2TsXDDONZvrQIbw2bW19lTmNe4/rs:fit:280:280:0/g:ce:0:0/exar:1/YWJzOi8vZGlzdC9pY29ucy9zZGxfOTczNDgucG5n.png",
             "images": []
         },
         "sdl2-image": {
-            "icon": "",
+            "icon": "https://d4.alternativeto.net/osEBVed0H1ZZ3RYFt2TsXDDONZvrQIbw2bW19lTmNe4/rs:fit:280:280:0/g:ce:0:0/exar:1/YWJzOi8vZGlzdC9pY29ucy9zZGxfOTczNDgucG5n.png",
             "images": []
         },
         "sdl2-mixer": {
-            "icon": "",
+            "icon": "https://d4.alternativeto.net/osEBVed0H1ZZ3RYFt2TsXDDONZvrQIbw2bW19lTmNe4/rs:fit:280:280:0/g:ce:0:0/exar:1/YWJzOi8vZGlzdC9pY29ucy9zZGxfOTczNDgucG5n.png",
             "images": []
         },
         "sdl2-ttf": {
-            "icon": "",
+            "icon": "https://d4.alternativeto.net/osEBVed0H1ZZ3RYFt2TsXDDONZvrQIbw2bW19lTmNe4/rs:fit:280:280:0/g:ce:0:0/exar:1/YWJzOi8vZGlzdC9pY29ucy9zZGxfOTczNDgucG5n.png",
             "images": []
         },
         "sdrsharp": {
@@ -36143,7 +36211,7 @@
             "images": []
         },
         "seamonkey": {
-            "icon": "https://community.chocolatey.org/content/packageimages/seamonkey.2.53.13.png",
+            "icon": "",
             "images": []
         },
         "search-by-image-chrome": {
@@ -38161,7 +38229,7 @@
             "images": []
         },
         "spek": {
-            "icon": "",
+            "icon": "https://github.com/alexkay/spek/blob/master/data/icons/48x48/spek.png",
             "images": []
         },
         "spencer": {
@@ -40803,7 +40871,7 @@
             "images": []
         },
         "testdisk": {
-            "icon": "",
+            "icon": "https://www.cgsecurity.org/mw/images/thumb/Testdisklogo_clear_100.png/75px-Testdisklogo_clear_100.png",
             "images": []
         },
         "testdisk-photorec": {
@@ -41195,8 +41263,10 @@
             "images": []
         },
         "ticktick": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/L63mjjjB/99774274-e1ee6b80-2b0d-11eb-9f17-95ad67dd878c.png",
+            "images": [
+                "https://i.postimg.cc/SRGHY7Hn/platform.png"
+            ]
         },
         "ticonnect": {
             "icon": "",
@@ -43465,6 +43535,18 @@
         },
         "vcpkg": {
             "icon": "https://devblogs.microsoft.com/cppblog/wp-content/uploads/sites/9/2021/05/vcpkg-product-mark.png",
+            "images": []
+        },
+        "vcpkg-cmake": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/CMake_logo.svg/1200px-CMake_logo.svg.png",
+            "images": []
+        },
+        "vcpkg-cmake-config": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/CMake_logo.svg/1200px-CMake_logo.svg.png",
+            "images": []
+        },
+        "vcpkg-cmake-get-vars": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/CMake_logo.svg/1200px-CMake_logo.svg.png",
             "images": []
         },
         "vcredist": {
@@ -48114,7 +48196,7 @@
             "images": []
         },
         "xampp": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/zfGvzr9f/xampp.png",
             "images": []
         },
         "xampp-7-4": {
@@ -49066,7 +49148,7 @@
             "images": []
         },
         "zint": {
-            "icon": "",
+            "icon": "https://github.com/zint/zint/blob/master/docs/images/zint-qt.png",
             "images": []
         },
         "zip": {
@@ -49342,6 +49424,18 @@
                 "https://i.postimg.cc/6Q08QLcw/Scfmnn-Mo48.png",
                 "https://i.postimg.cc/HxkV8cvM/u-ARCBXBW1-L.png"
             ]
+        },
+        "black": {
+            "icon": "https://i.postimg.cc/52qwxW0H/black.png",
+            "images": []
+        },
+        "sublimetext": {
+            "icon": "https://i.postimg.cc/8cXWjZNf/sublime-text.png",
+            "images": []
+        },
+        "platformtools": {
+            "icon": "https://i.postimg.cc/L5VT8t0r/platform-tools.png",
+            "images": []
         }
     }
 }

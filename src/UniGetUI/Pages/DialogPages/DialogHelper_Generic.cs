@@ -278,7 +278,7 @@ public static partial class DialogHelper
                     .AddText(CoreTools.Translate("Desktop shortcut created"))
                     .AddText(CoreTools.Translate("UniGetUI has detected a new desktop shortcut that can be deleted automatically."))
                     .SetAttributionText(UnknownShortcuts.First().Split("\\").Last())
-                    .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI"))
+                    .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI").Replace("'", "´"))
                         .AddArgument("action", NotificationArguments.Show)
                     )
                     .AddArgument("action", NotificationArguments.Show);
@@ -297,7 +297,7 @@ public static partial class DialogHelper
                     .AddText(CoreTools.Translate("{0} desktop shortcuts created", UnknownShortcuts.Count))
                     .AddText(CoreTools.Translate("UniGetUI has detected {0} new desktop shortcuts that can be deleted automatically.", UnknownShortcuts.Count))
                     .SetAttributionText(attribution)
-                    .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI"))
+                    .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI").Replace("'", "´"))
                         .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
                     )
                     .AddArgument("action", NotificationArguments.ShowOnUpdatesTab);

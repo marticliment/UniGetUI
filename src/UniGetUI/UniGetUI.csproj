@@ -24,14 +24,14 @@
 
     <!-- .NET & AppSdk publish options -->
     <PublishSelfContained>true</PublishSelfContained>
-    <SdkVersion>8.0.401</SdkVersion>
+    <SdkVersion>8.0.404</SdkVersion>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
     <WindowsPackageType>None</WindowsPackageType>
-    <WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion>
+    <!--WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion-->
 
-    <!--PublishTrimmed>true</PublishTrimmed>
-    <TrimMode>partial</TrimMode-->
+    <PublishTrimmed>false</PublishTrimmed>
+    <!--TrimMode>partial</TrimMode-->
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
   </PropertyGroup>
 
@@ -72,7 +72,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Common" Version="8.3.2" />
+    <PackageReference Include="CommunityToolkit.Common" Version="8.4.0" />
     <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.1.240916" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.1.240916" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.1.240916" />
