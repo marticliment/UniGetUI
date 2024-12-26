@@ -14,6 +14,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.IconEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
@@ -305,21 +306,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <returns></returns>
         public async Task<bool> HasUpdatesIgnoredAsync(string Version = "*")
         {
-            try
-            {
-                string IgnoredId = $"{Manager.Properties.Name.ToLower()}\\{Id}";
-                JsonObject IgnoredUpdatesJson = JsonNode.Parse(await File.ReadAllTextAsync(CoreData.IgnoredUpdatesDatabaseFile)) as JsonObject;
-                if (IgnoredUpdatesJson.ContainsKey(IgnoredId) && (IgnoredUpdatesJson[IgnoredId].ToString() == "*" || IgnoredUpdatesJson[IgnoredId].ToString() == Version))
-                    return true;
-                else
-                    return false;
-            }
-            catch (Exception ex)
-            {
-                Logger.Log(ex);
-                return false;
-            }
-
+            return IgnoredUpdatesDatabase.HasUpdatesIgnored(
+                IgnoredUpdatesDatabase.GetIgnoredIdForPackage(this),
+                Version
+            );
         }
 
         /// <summary>
