@@ -21,8 +21,8 @@ namespace UniGetUI.Interface.SoftwarePages
     public class PauseTime
     {
         private int _daysTill;
-        public int Months { get { return Weeks / 4; } set { _daysTill = value * 7 * 4; } }
-        public int Weeks { get { return _daysTill / 7; } set { _daysTill = value * 7; } }
+        public int Months { get { return Weeks / 4; } set { Weeks = value * 4; } }
+        public int Weeks { get { return Days / 7; } set { Days = value * 7; } }
         public int Days { get { return _daysTill; } set { _daysTill = value; } }
         public string GetDateFromNow()
         {
