@@ -27,7 +27,7 @@ namespace UniGetUI.Interface.SoftwarePages
         public string GetDateFromNow()
         {
             DateTime NewTime = DateTime.Now.AddDays(_daysTill);
-            return NewTime.Year + "-" + NewTime.Month + "-" + NewTime.Day;
+            return NewTime.ToString("yyyy-MM-dd");
         }
         public void Parse(string Date)
         {
@@ -214,9 +214,15 @@ namespace UniGetUI.Interface.SoftwarePages
                 {
                     Text = menuTime.StringRepresentation(),
                 };
-                // menuItem.Click += (_, _) => IgnoredUpdatesDatabase.Add(
-                //     IgnoredUpdatesDatabase.GetIgnoredIdForPackage(SelectedItem),
-                //     "<" + menuTime.GetDateFromNow());
+                menuItem.Click += (_, _) => {
+                    if (SelectedItem != null)
+                    {
+                        IgnoredUpdatesDatabase.Add(
+                            IgnoredUpdatesDatabase.GetIgnoredIdForPackage(SelectedItem),
+                            "<" + menuTime.GetDateFromNow());
+                        PEInterface.UpgradablePackagesLoader.IgnoredPackages[SelectedItem.Id] = SelectedItem;
+                    }
+                };
                 menuPause.Items.Add(menuItem);
             }
 
