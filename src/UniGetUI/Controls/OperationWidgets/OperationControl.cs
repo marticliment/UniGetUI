@@ -24,7 +24,7 @@ namespace UniGetUI.Controls.OperationWidgets;
 public class OperationControl: INotifyPropertyChanged
 {
     public AbstractOperation Operation;
-    private bool ErrorTooltipShown = false;
+    private bool ErrorTooltipShown;
 
     public OperationControl(AbstractOperation operation)
     {

@@ -36,13 +36,13 @@ namespace UniGetUI.PackageEngine.Operations
         public AddSourceOperation(IManagerSource source) : base(source)
         { }
 
-        protected override async Task PrepareProcessStartInfo()
+        protected override void PrepareProcessStartInfo()
         {
            if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    await CoreTools.CacheUACForCurrentProcess();
+                    CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
                 }
                 process.StartInfo.FileName = CoreData.GSudoPath;
                 process.StartInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetAddSourceParameters(Source));
@@ -80,13 +80,13 @@ namespace UniGetUI.PackageEngine.Operations
         public RemoveSourceOperation(IManagerSource source) : base(source)
         { }
 
-        protected override async Task PrepareProcessStartInfo()
+        protected override void PrepareProcessStartInfo()
         {
             if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    await CoreTools.CacheUACForCurrentProcess();
+                    CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
                 }
                 process.StartInfo.FileName = CoreData.GSudoPath;
                 process.StartInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetRemoveSourceParameters(Source));

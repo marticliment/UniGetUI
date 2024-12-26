@@ -61,7 +61,7 @@ namespace UniGetUI.PackageEngine.Operations
             bool IgnoreParallelInstalls = false)
             : this(package, InstallationOptions.FromPackage(package), role, IgnoreParallelInstalls) { }
 
-        protected sealed override async Task PrepareProcessStartInfo()
+        protected sealed override void PrepareProcessStartInfo()
         {
             Package.SetTag(PackageTag.OnQueue);
             string operation_args = string.Join(" ", Package.Manager.OperationHelper.GetParameters(Package, Options, Role));
@@ -74,7 +74,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    await CoreTools.CacheUACForCurrentProcess();
+                    CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
                 }
 
                 process.StartInfo.FileName = CoreData.GSudoPath;

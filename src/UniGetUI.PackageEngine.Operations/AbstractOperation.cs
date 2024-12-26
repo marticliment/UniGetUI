@@ -99,10 +99,12 @@ public abstract class AbstractOperation
             case OperationStatus.Failed:
                 break;
             case OperationStatus.Running:
+                Status = OperationStatus.Canceled;
                 CancelRequested?.Invoke(this, EventArgs.Empty);
                 Status = OperationStatus.Canceled;
                 break;
             case OperationStatus.InQueue:
+                Status = OperationStatus.Canceled;
                 OperationQueue.Remove(this);
                 Status = OperationStatus.Canceled;
                 break;
@@ -195,7 +197,8 @@ public abstract class AbstractOperation
         {
             Status = OperationStatus.Failed;
             OperationFailed?.Invoke(this, EventArgs.Empty);
-            Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"), LineType.StdERR);
+            Line(Metadata.FailureMessage, LineType.StdERR);
+            Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"), LineType.Progress);
         }
         else if (result == OperationVeredict.Canceled)
         {
@@ -214,7 +217,8 @@ public abstract class AbstractOperation
 
     public void Retry()
     {
-        throw new NotImplementedException();
+        if (Status is OperationStatus.Running or OperationStatus.InQueue) return;
+        _ = MainThread();
     }
 
     protected abstract Task<OperationVeredict> PerformOperation();

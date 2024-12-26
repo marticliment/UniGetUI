@@ -6,11 +6,16 @@ namespace UniGetUI.PackageOperations;
 public abstract class AbstractProcessOperation : AbstractOperation
 {
     protected Process process { get; private set; }
+    private bool ProcessKilled;
     protected AbstractProcessOperation(bool queue_enabled) : base(queue_enabled)
     {
         process = new();
-        CancelRequested += (_, _) => process.Kill();
-        OperationStarting += async (_, _) =>
+        CancelRequested += (_, _) =>
+        {
+            ProcessKilled = true;
+            process.Kill();
+        };
+        OperationStarting += (_, _) =>
         {
             process = new();
             process.StartInfo.UseShellExecute = false;
@@ -50,7 +55,7 @@ public abstract class AbstractProcessOperation : AbstractOperation
 
                 Line(line, lineType);
             };
-            await PrepareProcessStartInfo();
+            PrepareProcessStartInfo();
         };
     }
 
@@ -76,9 +81,12 @@ public abstract class AbstractProcessOperation : AbstractOperation
         Line($"End Time: \"{DateTime.Now}\"", LineType.OperationInfo);
         Line($"Process return value: \"{process.ExitCode}\" (0x{process.ExitCode:X})", LineType.OperationInfo);
 
+        if (ProcessKilled)
+            return OperationVeredict.Canceled;
+
         return await GetProcessVeredict(process.ExitCode, []);
     }
 
     protected abstract Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output);
-    protected abstract Task PrepareProcessStartInfo();
+    protected abstract void PrepareProcessStartInfo();
 }
