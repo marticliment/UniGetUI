@@ -149,11 +149,15 @@ public abstract class AbstractOperation
             SKIP_QUEUE = false;
             OperationQueue.Add(this);
             Enqueued?.Invoke(this, EventArgs.Empty);
-            int lastPos = -1;
+            int lastPos = -2;
 
             while (OperationQueue.First() != this && !SKIP_QUEUE)
             {
                 int pos = OperationQueue.IndexOf(this);
+
+                if (pos == -1) return;
+                // In this case, operation was canceled;
+
                 if (pos != lastPos)
                 {
                     lastPos = pos;
