@@ -127,7 +127,7 @@ namespace UniGetUI.Interface
                 "installed" => PageType.Installed,
                 "bundles" => PageType.Bundles,
                 "settings" => PageType.Settings,
-                _ => MainApp.Instance.TooltipStatus.AvailableUpdates > 0 ? PageType.Updates : PageType.Discover
+                _ => MainApp.Tooltip.AvailableUpdates > 0 ? PageType.Updates : PageType.Discover
             };
             NavigateTo(type);
         }

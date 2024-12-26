@@ -313,11 +313,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override void WhenPackageCountUpdated()
         {
-            try
-            {
-                MainApp.Instance.TooltipStatus.AvailableUpdates = Loader.Count();
-            }
-            catch { }
+            MainApp.Tooltip.AvailableUpdates = Loader.Count();
         }
 
         public void UpdateAll()

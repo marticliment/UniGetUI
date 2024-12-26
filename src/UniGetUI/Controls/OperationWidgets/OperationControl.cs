@@ -1,9 +1,11 @@
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.JavaScript;
 using Windows.Devices.Sensors;
 using Windows.UI;
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
@@ -12,6 +14,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageOperations;
 using UniGetUI.Pages.DialogPages;
@@ -21,6 +24,7 @@ namespace UniGetUI.Controls.OperationWidgets;
 public class OperationControl: INotifyPropertyChanged
 {
     public AbstractOperation Operation;
+    private bool ErrorTooltipShown = false;
 
     public OperationControl(AbstractOperation operation)
     {
@@ -43,86 +47,64 @@ public class OperationControl: INotifyPropertyChanged
 
     private void OnOperationStarting(object? sender, EventArgs e)
     {
-        if (Settings.AreProgressNotificationsDisabled())
-            return;
-
-        try
-        {
-            AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
-            AppNotificationBuilder builder = new AppNotificationBuilder()
-                .SetScenario(AppNotificationScenario.Default)
-                .SetTag(Operation.Metadata.Identifier + "progress")
-                .AddProgressBar(new AppNotificationProgressBar()
-                    .SetStatus(CoreTools.Translate("Please wait..."))
-                    .SetValueStringOverride("\u2003")
-                    .SetTitle(Operation.Metadata.Status)
-                    .SetValue(1.0))
-                .AddArgument("action", NotificationArguments.Show);
-            AppNotification notification = builder.BuildNotification();
-            notification.ExpiresOnReboot = true;
-            notification.SuppressDisplay = true;
-            AppNotificationManager.Default.Show(notification);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error("Failed to show toast notification");
-            Logger.Error(ex);
-        }
+        ShowProgressToast();
+        MainApp.Tooltip.OperationsInProgress++;
     }
 
-    private void OnOperationSucceeded(object? sender, EventArgs e)
+    private async void OnOperationSucceeded(object? sender, EventArgs e)
     {
-        if (Settings.AreSuccessNotificationsDisabled())
-            return;
+        // Success notification
+        ShowSuccessToast();
 
-        try
+        // Handle UAC for batches
+        if (Settings.Get("DoCacheAdminRightsForBatches"))
         {
-            AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier);
-            AppNotificationBuilder builder = new AppNotificationBuilder()
-                .SetScenario(AppNotificationScenario.Default)
-                .SetTag(Operation.Metadata.Identifier)
-                .AddText(Operation.Metadata.SuccessTitle)
-                .AddText(Operation.Metadata.SuccessMessage)
-                .AddArgument("action", NotificationArguments.Show);
-            AppNotification notification = builder.BuildNotification();
-            notification.ExpiresOnReboot = true;
-            AppNotificationManager.Default.Show(notification);
+            bool isOpRunning = false;
+            foreach (var op in MainApp.Operations._operationList)
+            {
+                if (op.Operation.Status is OperationStatus.Running or OperationStatus.InQueue)
+                {
+                    isOpRunning = true;
+                    break;
+                }
+            }
+            if(!isOpRunning) await CoreTools.ResetUACForCurrentProcess();
         }
-        catch (Exception ex)
-        {
-            Logger.Error("Failed to show toast notification");
-            Logger.Error(ex);
-        }
+
+        // Clean succesful operation from list
+        if(!Settings.Get("MaintainSuccessfulInstalls"))
+            await TimeoutAndClose();
     }
 
     private void OnOperationFailed(object? sender, EventArgs e)
     {
-        if (Settings.AreErrorNotificationsDisabled())
-            return;
-
-        try
-        {
-            AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier);
-            AppNotificationBuilder builder = new AppNotificationBuilder()
-                .SetScenario(AppNotificationScenario.Urgent)
-                .SetTag(Operation.Metadata.Identifier)
-                .AddText(Operation.Metadata.FailureTitle)
-                .AddText(Operation.Metadata.FailureMessage)
-                .AddArgument("action", NotificationArguments.Show);
-            AppNotification notification = builder.BuildNotification();
-            notification.ExpiresOnReboot = true;
-            AppNotificationManager.Default.Show(notification);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error("Failed to show toast notification");
-            Logger.Error(ex);
-        }
+        ShowErrorToast();
     }
 
     private void OnOperationFinished(object? sender, EventArgs e)
     {
+        // Remove progress notification (if any)
         AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
+
+        MainApp.Tooltip.OperationsInProgress--;
+
+        // Generate process output
+        List<string> rawOutput = new();
+        rawOutput.Add("                           ");
+        rawOutput.Add("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄");
+        foreach (var line in Operation.GetOutput())
+        {
+            rawOutput.Add(line.Item1);
+        }
+
+        string[] oldHistory = Settings.GetValue("OperationHistory").Split("\n");
+        if (oldHistory.Length > 300) oldHistory = oldHistory.Take(300).ToArray();
+
+        List<string> newHistory = [.. rawOutput, .. oldHistory];
+        Settings.SetValue("OperationHistory", string.Join('\n', newHistory));
+        rawOutput.Add("");
+        rawOutput.Add("");
+        rawOutput.Add("");
     }
 
     private async void LoadIcon()
@@ -171,6 +153,18 @@ public class OperationControl: INotifyPropertyChanged
             default:
                 throw new ArgumentOutOfRangeException(nameof(newStatus), newStatus, null);
         }
+
+        // Handle error tooltip counter
+        if (!ErrorTooltipShown && newStatus is OperationStatus.Failed)
+        {
+            MainApp.Tooltip.ErrorsOccurred++;
+            ErrorTooltipShown = true;
+        }
+        else if (ErrorTooltipShown && newStatus is not OperationStatus.Failed)
+        {
+            MainApp.Tooltip.ErrorsOccurred--;
+            ErrorTooltipShown = false;
+        }
     }
 
     public async Task LiveLineClick()
@@ -202,9 +196,25 @@ public class OperationControl: INotifyPropertyChanged
         // throw new NotImplementedException();
     }
 
+    private async Task TimeoutAndClose()
+    {
+        var oldStatus = Operation.Status;
+        await Task.Delay(5000);
+
+        if (Operation.Status == oldStatus)
+            Close();
+    }
+
     public void Close()
     {
         MainApp.Operations._operationList.Remove(this);
+
+        if (MainApp.Operations._operationList.Count == 0
+            && DesktopShortcutsDatabase.GetUnknownShortcuts().Any()
+            && Settings.Get("AskToDeleteNewDesktopShortcuts"))
+        {
+            _ = DialogHelper.HandleNewDesktopShortcuts();
+        }
     }
 
     private string _buttonText;
@@ -269,4 +279,86 @@ public class OperationControl: INotifyPropertyChanged
     {
         MainApp.Dispatcher.TryEnqueue(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
     }
+
+
+    private void ShowProgressToast()
+    {
+        if (Settings.AreProgressNotificationsDisabled())
+            return;
+
+        try
+        {
+            AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
+            AppNotificationBuilder builder = new AppNotificationBuilder()
+                .SetScenario(AppNotificationScenario.Default)
+                .SetTag(Operation.Metadata.Identifier + "progress")
+                .AddProgressBar(new AppNotificationProgressBar()
+                    .SetStatus(CoreTools.Translate("Please wait..."))
+                    .SetValueStringOverride("\u2003")
+                    .SetTitle(Operation.Metadata.Status)
+                    .SetValue(1.0))
+                .AddArgument("action", NotificationArguments.Show);
+            AppNotification notification = builder.BuildNotification();
+            notification.ExpiresOnReboot = true;
+            notification.SuppressDisplay = true;
+            AppNotificationManager.Default.Show(notification);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to show toast notification");
+            Logger.Error(ex);
+        }
+    }
+
+    private void ShowSuccessToast()
+    {
+        if (Settings.AreSuccessNotificationsDisabled())
+            return;
+
+        try
+        {
+            AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier);
+            AppNotificationBuilder builder = new AppNotificationBuilder()
+                .SetScenario(AppNotificationScenario.Default)
+                .SetTag(Operation.Metadata.Identifier)
+                .AddText(Operation.Metadata.SuccessTitle)
+                .AddText(Operation.Metadata.SuccessMessage)
+                .AddArgument("action", NotificationArguments.Show);
+            AppNotification notification = builder.BuildNotification();
+            notification.ExpiresOnReboot = true;
+            AppNotificationManager.Default.Show(notification);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to show toast notification");
+            Logger.Error(ex);
+        }
+    }
+
+    private void ShowErrorToast()
+    {
+        if (Settings.AreErrorNotificationsDisabled())
+            return;
+
+        try
+        {
+            AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier);
+            AppNotificationBuilder builder = new AppNotificationBuilder()
+                .SetScenario(AppNotificationScenario.Urgent)
+                .SetTag(Operation.Metadata.Identifier)
+                .AddText(Operation.Metadata.FailureTitle)
+                .AddText(Operation.Metadata.FailureMessage)
+                .AddArgument("action", NotificationArguments.Show);
+            AppNotification notification = builder.BuildNotification();
+            notification.ExpiresOnReboot = true;
+            AppNotificationManager.Default.Show(notification);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to show toast notification");
+            Logger.Error(ex);
+        }
+    }
+
+
 }

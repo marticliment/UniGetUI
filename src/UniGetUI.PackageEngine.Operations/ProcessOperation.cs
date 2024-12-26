@@ -23,26 +23,32 @@ public abstract class AbstractProcessOperation : AbstractOperation
             process.OutputDataReceived += (_, e) =>
             {
                 if (e.Data is null) return;
-                string data = e.Data.ToString().Trim();
+                string line = e.Data.ToString().Trim();
+                if (line.Contains("For the question below") ||
+                    line.Contains("Would remove:"))
+                {   // Mitigate chocolatey timeouts
+                    process.StandardInput.WriteLine("");
+                }
+
                 var lineType = LineType.StdOUT;
-                if (data.Length < 6 || data.Contains("Waiting for another install..."))
+                if (line.Length < 6 || line.Contains("Waiting for another install..."))
                 {
                     lineType = LineType.Progress;
                 }
 
-                Line(data, lineType);
+                Line(line, lineType);
             };
             process.ErrorDataReceived += (_, e) =>
             {
                 if (e.Data is null) return;
-                string data = e.Data.ToString().Trim();
+                string line = e.Data.ToString().Trim();
                 var lineType = LineType.StdERR;
-                if (data.Length < 6 || data.Contains("Waiting for another install..."))
+                if (line.Length < 6 || line.Contains("Waiting for another install..."))
                 {
                     lineType = LineType.Progress;
                 }
 
-                Line(data, lineType);
+                Line(line, lineType);
             };
             await PrepareProcessStartInfo();
         };
