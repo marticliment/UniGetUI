@@ -573,7 +573,7 @@
   "Unable to load informarion": "غير قادر على تحميل المعلومات",
   "UniGetUI has detected a new desktop shortcut that can be deleted automatically.": "اكتشف UniGetUI اختصارًا جديدًا على سطح المكتب يمكن حذفه تلقائيًا.",
   "UniGetUI has detected the following desktop shortcuts which can be removed automatically on future upgrades": "اكتشف UniGetUI اختصارات سطح المكتب التالية والتي يمكن إزالتها تلقائيًا في الترقيات المستقبلية",
-  "UniGetUI has detected {0} new desktop shortcuts that can be deleted automatically.": null,
+  "UniGetUI has detected {0} new desktop shortcuts that can be deleted automatically.": "اكتشف UniGetUI {0} اختصارات سطح مكتب جديدة يمكن حذفها تلقائيًا.",
   "UniGetUI is being updated...": "جاري تحديث UniGetUI...",
   "UniGetUI is not related to any of the compatible package managers. UniGetUI is an independent project.": "UniGetUI ليس مرتبطًا بأي من مديري الحزم المتوافقين. UniGetUI هو مشروع مستقل.",
   "UniGetUI requires {0} to operate, but it was not found on your system.": "يتطلب UniGetUI {0} للعمل، ولكن لم يتم العثور عليه على نظامك.",
