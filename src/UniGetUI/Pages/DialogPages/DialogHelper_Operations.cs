@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
+using UniGetUI.Controls.OperationWidgets;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
@@ -12,7 +13,7 @@ namespace UniGetUI.Pages.DialogPages;
 
 public static partial class DialogHelper
 {
-    public static async Task ShowOperationFailedDialog(AbstractOperation operation)
+    public static async Task ShowOperationFailedDialog(AbstractOperation operation, OperationControl opControl)
     {
         ContentDialog dialog = new()
         {
@@ -30,7 +31,9 @@ public static partial class DialogHelper
         };
 
         grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
         TextBlock headerContent = new()
         {
@@ -58,34 +61,20 @@ public static partial class DialogHelper
 
         RichTextBlock CommandLineOutput = new()
         {
+            Padding = new Thickness(6),
             FontFamily = new FontFamily("Consolas"),
             TextWrapping = TextWrapping.Wrap,
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
         };
 
         ScrollViewer ScrollView = new()
         {
-            BorderBrush = new SolidColorBrush(),
+            MaxHeight = 500,
+            MaxWidth = 800,
+            CornerRadius = new CornerRadius(6),
+            Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"],
             Content = CommandLineOutput,
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-        };
-
-        Grid OutputGrid = new();
-        OutputGrid.Children.Add(ScrollView);
-        OutputGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        OutputGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-        Grid.SetColumn(ScrollView, 0);
-        Grid.SetRow(ScrollView, 0);
-
-        Expander expander = new()
-        {
-            Header = HeaderPanel,
-            Content = OutputGrid,
-            CornerRadius = new CornerRadius(8),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
+            VerticalScrollMode = ScrollMode.Enabled,
+            HorizontalScrollMode = ScrollMode.Disabled,
         };
 
         Paragraph par = new();
@@ -112,17 +101,69 @@ public static partial class DialogHelper
         CommandLineOutput.Blocks.Add(par);
 
         grid.Children.Add(headerContent);
-        grid.Children.Add(expander);
+        grid.Children.Add(ScrollView);
         Grid.SetRow(headerContent, 0);
-        Grid.SetRow(expander, 1);
+        Grid.SetRow(ScrollView, 1);
 
+        var CloseButton = new Button() { Content = CoreTools.Translate("Close"), HorizontalAlignment = HorizontalAlignment.Stretch };
+        CloseButton.Click += (_, _) =>
+        {
+            dialog.Hide();
+        };
+        Control _retryButton;
+
+        var retryOptions = opControl.GetRetryOptions(() => dialog.Hide());
+        if (retryOptions.Any())
+        {
+            SplitButton RetryButton = new SplitButton() { Content = CoreTools.Translate("Retry"), HorizontalAlignment = HorizontalAlignment.Stretch };
+            RetryButton.Click += (_, _) =>
+            {
+                operation.Retry(AbstractOperation.RetryMode.Retry);
+                dialog.Hide();
+            };
+
+            RetryButton.Flyout = new BetterMenu();
+            foreach (var opt in retryOptions)
+            {
+                (RetryButton.Flyout as BetterMenu)?.Items.Add(opt);
+            }
+
+            _retryButton = RetryButton;
+        }
+        else
+        {
+            var RetryButton = new Button() { Content = CoreTools.Translate("Retry"), HorizontalAlignment = HorizontalAlignment.Stretch};
+            RetryButton.Click += (_, _) =>
+            {
+                operation.Retry(AbstractOperation.RetryMode.Retry);
+                dialog.Hide();
+            };
+            _retryButton = RetryButton;
+        }
+
+        Grid sp = new()
+        {
+            Margin = new Thickness(-25, 0, -25, -25),
+            ColumnSpacing = 8,
+            Padding = new Thickness(30),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"]
+        };
+        sp.ColumnDefinitions.Add(new ColumnDefinition(){Width = new(1, GridUnitType.Star)});
+        sp.ColumnDefinitions.Add(new ColumnDefinition(){Width = new(1, GridUnitType.Star)});
+        sp.Children.Add(_retryButton);
+        Grid.SetColumn(CloseButton, 1);
+        sp.Children.Add(CloseButton);
+        Grid.SetRow(sp, 3);
+        Grid.SetColumn(sp, 0);
+        grid.Children.Add(sp);
         dialog.Content = grid;
-        dialog.PrimaryButtonText = CoreTools.Translate("Retry");
-        dialog.CloseButtonText = CoreTools.Translate("Close");
-        dialog.DefaultButton = ContentDialogButton.Primary;
+        dialog.SizeChanged += (_, _) =>
+        {
+            // grid.MaxHeight = Math.Max(100, MainApp.Instance.MainWindow.NavigationPage.ActualHeight - 200);
+        };
 
-        var result = await Window.ShowDialogAsync(dialog);
-        if (result is ContentDialogResult.Primary) operation.Retry();
+        await Window.ShowDialogAsync(dialog);
     }
 
     public static async Task ShowLiveLogDialog(AbstractOperation operation)

@@ -12,8 +12,15 @@ public abstract class AbstractProcessOperation : AbstractOperation
         process = new();
         CancelRequested += (_, _) =>
         {
-            ProcessKilled = true;
-            process.Kill();
+            try
+            {
+                process.Kill();
+                ProcessKilled = true;
+            }
+            catch (InvalidOperationException e)
+            {
+                Line("Attempted to cancel a process that hasn't ben created yet: " + e.Message, LineType.StdERR);
+            }
         };
         OperationStarting += (_, _) =>
         {

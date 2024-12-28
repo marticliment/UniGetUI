@@ -18,6 +18,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected abstract void Initialize();
 
         protected IManagerSource Source;
+        public bool ForceAsAdministrator { get; private set; }
 
         public SourceOperation(IManagerSource source) : base(false)
         {
@@ -29,6 +30,20 @@ namespace UniGetUI.PackageEngine.Operations
         {
             return Task.FromResult(new Uri($"ms-appx:///Assets/Images/{Source.Manager.Properties.ColorIconId}.png"));
         }
+
+        protected override void ApplyRetryAction(string retryMode)
+        {
+            switch (retryMode)
+            {
+                case RetryMode.Retry:
+                    break;
+                case RetryMode.Retry_AsAdmin:
+                    ForceAsAdministrator = true;
+                    break;
+                default:
+                    throw new InvalidOperationException($"Retry mode {retryMode} is not supported in this context");
+            }
+        }
     }
 
     public class AddSourceOperation : SourceOperation
@@ -38,7 +53,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void PrepareProcessStartInfo()
         {
-           if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
+           if (ForceAsAdministrator || Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
@@ -82,7 +97,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void PrepareProcessStartInfo()
         {
-            if (Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
+            if (ForceAsAdministrator || Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {

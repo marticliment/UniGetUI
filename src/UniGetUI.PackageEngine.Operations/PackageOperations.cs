@@ -19,9 +19,9 @@ namespace UniGetUI.PackageEngine.Operations
     {
         protected List<string> DesktopShortcutsBeforeStart = [];
 
-        protected readonly IPackage Package;
-        protected readonly IInstallationOptions Options;
-        protected readonly OperationType Role;
+        public readonly IPackage Package;
+        public readonly IInstallationOptions Options;
+        public readonly OperationType Role;
 
         protected abstract Task HandleSuccess();
         protected abstract Task HandleFailure();
@@ -60,6 +60,29 @@ namespace UniGetUI.PackageEngine.Operations
             OperationType role,
             bool IgnoreParallelInstalls = false)
             : this(package, InstallationOptions.FromPackage(package), role, IgnoreParallelInstalls) { }
+
+        protected override void ApplyRetryAction(string retryMode)
+        {
+            switch (retryMode)
+            {
+                case RetryMode.Retry_AsAdmin:
+                    Options.RunAsAdministrator = true;
+                    break;
+                case RetryMode.Retry_Interactive:
+                    Options.InteractiveInstallation = true;
+                    break;
+                case RetryMode.Retry_SkipIntegrity:
+                    Options.SkipHashCheck = true;
+                    break;
+                case RetryMode.Retry:
+                    break;
+                default:
+                    throw new InvalidOperationException($"Retry mode {retryMode} is not supported in this context");
+            }
+            Metadata.OperationInformation = "Retried package operation for Package=" + Package.Id + " with Manager=" +
+                                            Package.Manager.Name + "\nUpdated installation options: " + Options.ToString();
+
+        }
 
         protected sealed override void PrepareProcessStartInfo()
         {

@@ -19,6 +19,8 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageOperations;
 using UniGetUI.Pages.DialogPages;
 using CommunityToolkit.WinUI;
+using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Operations;
 
 namespace UniGetUI.Controls.OperationWidgets;
 
@@ -171,9 +173,9 @@ public class OperationControl: INotifyPropertyChanged
 
     public async Task LiveLineClick()
     {
-        if (Operation.Status == OperationStatus.Failed)
+        if (Operation.Status is OperationStatus.Failed or OperationStatus.Canceled)
         {
-            await DialogHelper.ShowOperationFailedDialog(Operation);
+            await DialogHelper.ShowOperationFailedDialog(Operation, this);
         }
         else
         {
@@ -362,5 +364,62 @@ public class OperationControl: INotifyPropertyChanged
         }
     }
 
+    public List<BetterMenuItem> GetRetryOptions(Action callback)
+    {
+        var retryOptionsMenu = new List<BetterMenuItem>();
 
+        if (Operation is SourceOperation sourceOp && !sourceOp.ForceAsAdministrator)
+        {
+            var adminButton = new BetterMenuItem() { Text = CoreTools.Translate("Retry as administrator") };
+            adminButton.IconName = IconType.UAC;
+            adminButton.Click += (_, _) =>
+            {
+                callback();
+                Operation.Retry(AbstractOperation.RetryMode.Retry_AsAdmin);
+            };
+            retryOptionsMenu.Add(adminButton);
+        }
+        else if (Operation is PackageOperation packageOp)
+        {
+            if (!packageOp.Options.RunAsAdministrator && packageOp.Package.Manager.Capabilities.CanRunAsAdmin)
+            {
+                var adminButton = new BetterMenuItem() { Text = CoreTools.Translate("Retry as administrator") };
+                adminButton.IconName = IconType.UAC;
+                adminButton.Click += (_, _) =>
+                {
+                    callback();
+                    Operation.Retry(AbstractOperation.RetryMode.Retry_AsAdmin);
+                };
+                retryOptionsMenu.Add(adminButton);
+            }
+
+            if (!packageOp.Options.InteractiveInstallation &&
+                packageOp.Package.Manager.Capabilities.CanRunInteractively)
+            {
+                var interactiveButton = new BetterMenuItem() { Text = CoreTools.Translate("Retry interactively") };
+                interactiveButton.IconName = IconType.Interactive;
+                interactiveButton.Click += (_, _) =>
+                {
+                    callback();
+                    Operation.Retry(AbstractOperation.RetryMode.Retry_Interactive);
+                };
+                retryOptionsMenu.Add(interactiveButton);
+            }
+
+            if (!packageOp.Options.SkipHashCheck && packageOp.Package.Manager.Capabilities.CanSkipIntegrityChecks)
+            {
+                var skiphashButton =
+                    new BetterMenuItem() { Text = CoreTools.Translate("Retry skipping integrity checks") };
+                skiphashButton.IconName = IconType.Checksum;
+                skiphashButton.Click += (_, _) =>
+                {
+                    callback();
+                    Operation.Retry(AbstractOperation.RetryMode.Retry_SkipIntegrity);
+                };
+                retryOptionsMenu.Add(skiphashButton);
+            }
+        }
+
+        return retryOptionsMenu;
+    }
 }

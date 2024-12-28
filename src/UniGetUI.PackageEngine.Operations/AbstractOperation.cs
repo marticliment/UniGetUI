@@ -4,8 +4,17 @@ using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.PackageOperations;
 
-public abstract class AbstractOperation
+public abstract class AbstractOperation : IDisposable
 {
+    public static class RetryMode
+    {
+        public const string NoRetry = "";
+        public const string Retry = "Retry";
+        public const string Retry_AsAdmin = "RetryAsAdmin";
+        public const string Retry_Interactive = "RetryInteractive";
+        public const string Retry_SkipIntegrity = "RetryNoHashCheck";
+    }
+
     public class OperationMetadata
     {
         /// <summary>
@@ -105,7 +114,7 @@ public abstract class AbstractOperation
                 break;
             case OperationStatus.InQueue:
                 Status = OperationStatus.Canceled;
-                OperationQueue.Remove(this);
+                while(OperationQueue.Remove(this));
                 Status = OperationStatus.Canceled;
                 break;
             case OperationStatus.Succeeded:
@@ -187,7 +196,7 @@ public abstract class AbstractOperation
             }
         }
         while (result == OperationVeredict.AutoRetry);
-        OperationQueue.Remove(this);
+        while(OperationQueue.Remove(this));
         // END OPERATION
 
         OperationFinished?.Invoke(this, EventArgs.Empty);
@@ -215,16 +224,29 @@ public abstract class AbstractOperation
     public void SkipQueue()
     {
         if (Status != OperationStatus.InQueue) return;
-        OperationQueue.Remove(this);
+        while(OperationQueue.Remove(this));
         SKIP_QUEUE = true;
     }
 
-    public void Retry()
+    public void Retry(string retryMode)
     {
+        if (retryMode is RetryMode.NoRetry)
+            throw new InvalidOperationException("We weren't supposed to reach this, weren't we?");
+
+        ApplyRetryAction(retryMode);
+        Line($"", LineType.OperationInfo);
+        Line($"-----------------------", LineType.OperationInfo);
+        Line($"Retrying operation with RetryMode={retryMode}", LineType.OperationInfo);
+        Line($"", LineType.OperationInfo);
         if (Status is OperationStatus.Running or OperationStatus.InQueue) return;
         _ = MainThread();
     }
 
+    protected abstract void ApplyRetryAction(string retryMode);
     protected abstract Task<OperationVeredict> PerformOperation();
     public abstract Task<Uri> GetOperationIcon();
+    public void Dispose()
+    {
+        while(OperationQueue.Remove(this));
+    }
 }

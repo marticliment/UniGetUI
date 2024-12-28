@@ -17,6 +17,7 @@ using UniGetUI.PackageEngine.Operations;
 using CommunityToolkit.WinUI.Controls;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageOperations;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -396,7 +397,7 @@ namespace UniGetUI.Interface
             {
                 var operation = widget.Operation;
                 if (operation.Status is OperationStatus.Failed)
-                    operation.Retry();
+                    operation.Retry(AbstractOperation.RetryMode.Retry);
             }
         }
 
