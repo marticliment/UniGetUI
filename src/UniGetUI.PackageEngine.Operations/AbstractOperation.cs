@@ -135,88 +135,118 @@ public abstract class AbstractOperation : IDisposable
 
     public async Task MainThread()
     {
-        if (Metadata.Status == "") throw new InvalidDataException("Metadata.Status was not set!");
-        if (Metadata.Title == "") throw new InvalidDataException("Metadata.Title was not set!");
-        if (Metadata.OperationInformation == "") throw new InvalidDataException("Metadata.OperationInformation was not set!");
-        if (Metadata.SuccessTitle == "") throw new InvalidDataException("Metadata.SuccessTitle was not set!");
-        if (Metadata.SuccessMessage == "") throw new InvalidDataException("Metadata.SuccessMessage was not set!");
-        if (Metadata.FailureTitle == "") throw new InvalidDataException("Metadata.FailureTitle was not set!");
-        if (Metadata.FailureMessage == "") throw new InvalidDataException("Metadata.FailureMessage was not set!");
-
-        Started = true;
-
-        if (OperationQueue.Contains(this))
-            throw new InvalidOperationException("This operation was already on the queue");
-
-        Status = OperationStatus.InQueue;
-        Line(Metadata.OperationInformation, LineType.OperationInfo);
-        Line(Metadata.Status, LineType.Progress);
-
-        // BEGIN QUEUE HANDLER
-        if (QUEUE_ENABLED)
+        try
         {
-            SKIP_QUEUE = false;
-            OperationQueue.Add(this);
-            Enqueued?.Invoke(this, EventArgs.Empty);
-            int lastPos = -2;
+            if (Metadata.Status == "") throw new InvalidDataException("Metadata.Status was not set!");
+            if (Metadata.Title == "") throw new InvalidDataException("Metadata.Title was not set!");
+            if (Metadata.OperationInformation == "")
+                throw new InvalidDataException("Metadata.OperationInformation was not set!");
+            if (Metadata.SuccessTitle == "") throw new InvalidDataException("Metadata.SuccessTitle was not set!");
+            if (Metadata.SuccessMessage == "") throw new InvalidDataException("Metadata.SuccessMessage was not set!");
+            if (Metadata.FailureTitle == "") throw new InvalidDataException("Metadata.FailureTitle was not set!");
+            if (Metadata.FailureMessage == "") throw new InvalidDataException("Metadata.FailureMessage was not set!");
 
-            while (OperationQueue.First() != this && !SKIP_QUEUE)
+            Started = true;
+
+            if (OperationQueue.Contains(this))
+                throw new InvalidOperationException("This operation was already on the queue");
+
+            Status = OperationStatus.InQueue;
+            Line(Metadata.OperationInformation, LineType.OperationInfo);
+            Line(Metadata.Status, LineType.Progress);
+
+            // BEGIN QUEUE HANDLER
+            if (QUEUE_ENABLED)
             {
-                int pos = OperationQueue.IndexOf(this);
+                SKIP_QUEUE = false;
+                OperationQueue.Add(this);
+                Enqueued?.Invoke(this, EventArgs.Empty);
+                int lastPos = -2;
 
-                if (pos == -1) return;
-                // In this case, operation was canceled;
-
-                if (pos != lastPos)
+                while (OperationQueue.First() != this && !SKIP_QUEUE)
                 {
-                    lastPos = pos;
-                    Line(CoreTools.Translate("Operation on queue (position {0})...", pos), LineType.Progress);
+                    int pos = OperationQueue.IndexOf(this);
+
+                    if (pos == -1) return;
+                    // In this case, operation was canceled;
+
+                    if (pos != lastPos)
+                    {
+                        lastPos = pos;
+                        Line(CoreTools.Translate("Operation on queue (position {0})...", pos), LineType.Progress);
+                    }
+
+                    await Task.Delay(100);
                 }
-                await Task.Delay(100);
+            }
+            // END QUEUE HANDLER
+
+            // BEGIN ACTUAL OPERATION
+            OperationVeredict result;
+            Line(CoreTools.Translate("Starting operation..."), LineType.Progress);
+            Status = OperationStatus.Running;
+            OperationStarting?.Invoke(this, EventArgs.Empty);
+            do
+            {
+                try
+                {
+                    result = await PerformOperation();
+                }
+                catch (Exception e)
+                {
+                    result = OperationVeredict.Failure;
+                    Logger.Error(e);
+                    foreach (string l in e.ToString().Split("\n")) Line(l, LineType.StdERR);
+                }
+            } while (result == OperationVeredict.AutoRetry);
+
+            while (OperationQueue.Remove(this)) ;
+            // END OPERATION
+
+            OperationFinished?.Invoke(this, EventArgs.Empty);
+            if (result == OperationVeredict.Success)
+            {
+                Status = OperationStatus.Succeeded;
+                OperationSucceeded?.Invoke(this, EventArgs.Empty);
+                Line(Metadata.SuccessMessage, LineType.StdOUT);
+            }
+            else if (result == OperationVeredict.Failure)
+            {
+                Status = OperationStatus.Failed;
+                OperationFailed?.Invoke(this, EventArgs.Empty);
+                Line(Metadata.FailureMessage, LineType.StdERR);
+                Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"),
+                    LineType.Progress);
+            }
+            else if (result == OperationVeredict.Canceled)
+            {
+                Status = OperationStatus.Canceled;
+                Line(CoreTools.Translate("Operation canceled by user"), LineType.StdERR);
             }
         }
-        // END QUEUE HANDLER
-
-        // BEGIN ACTUAL OPERATION
-        OperationVeredict result;
-        Line(CoreTools.Translate("Starting operation..."), LineType.Progress);
-        Status = OperationStatus.Running;
-        OperationStarting?.Invoke(this, EventArgs.Empty);
-        do
+        catch (Exception ex)
         {
+            Line("An internal error occurred:", LineType.StdERR);
+            foreach (var line in ex.ToString().Split("\n"))
+                Line(line, LineType.StdERR);
+
+            while (OperationQueue.Remove(this)) ;
+
+            Status = OperationStatus.Failed;
             try
             {
-                result = await PerformOperation();
+                OperationFailed?.Invoke(this, EventArgs.Empty);
             }
-            catch (Exception e)
+            catch (Exception e2)
             {
-                result = OperationVeredict.Failure;
-                Logger.Error(e);
-                foreach (string l in e.ToString().Split("\n")) Line(l, LineType.StdERR);
+                Line("An internal error occurred while handling an internal error:", LineType.StdERR);
+                foreach (var line in e2.ToString().Split("\n"))
+                    Line(line, LineType.StdERR);
             }
-        }
-        while (result == OperationVeredict.AutoRetry);
-        while(OperationQueue.Remove(this));
-        // END OPERATION
 
-        OperationFinished?.Invoke(this, EventArgs.Empty);
-        if (result == OperationVeredict.Success)
-        {
-            Status = OperationStatus.Succeeded;
-            OperationSucceeded?.Invoke(this, EventArgs.Empty);
-            Line(Metadata.SuccessMessage, LineType.StdOUT);
-        }
-        else if (result == OperationVeredict.Failure)
-        {
-            Status = OperationStatus.Failed;
-            OperationFailed?.Invoke(this, EventArgs.Empty);
             Line(Metadata.FailureMessage, LineType.StdERR);
-            Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"), LineType.Progress);
-        }
-        else if (result == OperationVeredict.Canceled)
-        {
-            Status = OperationStatus.Canceled;
-            Line(CoreTools.Translate("Operation canceled by user"), LineType.StdERR);
+            Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"),
+                LineType.Progress);
         }
     }
 
