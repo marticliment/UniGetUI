@@ -1,3 +1,4 @@
+using Windows.UI;
 using ExternalLibraries.Clipboard;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -68,7 +69,7 @@ public static partial class DialogHelper
 
         ScrollViewer ScrollView = new()
         {
-            MaxHeight = 500,
+            MaxHeight = MainApp.Instance.MainWindow.NavigationPage.ActualHeight > 800? 500: 300,
             MaxWidth = 800,
             CornerRadius = new CornerRadius(6),
             Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"],
@@ -105,7 +106,10 @@ public static partial class DialogHelper
         Grid.SetRow(headerContent, 0);
         Grid.SetRow(ScrollView, 1);
 
-        var CloseButton = new Button() { Content = CoreTools.Translate("Close"), HorizontalAlignment = HorizontalAlignment.Stretch };
+        var CloseButton = new Button()
+        {
+            Content = CoreTools.Translate("Close"), HorizontalAlignment = HorizontalAlignment.Stretch, Height = 30,
+        };
         CloseButton.Click += (_, _) =>
         {
             dialog.Hide();
@@ -115,7 +119,12 @@ public static partial class DialogHelper
         var retryOptions = opControl.GetRetryOptions(() => dialog.Hide());
         if (retryOptions.Any())
         {
-            SplitButton RetryButton = new SplitButton() { Content = CoreTools.Translate("Retry"), HorizontalAlignment = HorizontalAlignment.Stretch };
+            SplitButton RetryButton = new SplitButton()
+            {
+                Content = CoreTools.Translate("Retry"),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Height = 30,
+            };
             RetryButton.Click += (_, _) =>
             {
                 operation.Retry(AbstractOperation.RetryMode.Retry);
@@ -132,7 +141,12 @@ public static partial class DialogHelper
         }
         else
         {
-            var RetryButton = new Button() { Content = CoreTools.Translate("Retry"), HorizontalAlignment = HorizontalAlignment.Stretch};
+            var RetryButton = new Button()
+            {
+                Content = CoreTools.Translate("Retry"),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Height = 30,
+            };
             RetryButton.Click += (_, _) =>
             {
                 operation.Retry(AbstractOperation.RetryMode.Retry);
