@@ -91,6 +91,7 @@ public abstract class AbstractOperation : IDisposable
 
     public bool Started { get; private set; }
     protected bool QUEUE_ENABLED;
+    protected bool FORCE_HOLD_QUEUE;
 
     public AbstractOperation(bool queue_enabled)
     {
@@ -163,7 +164,7 @@ public abstract class AbstractOperation : IDisposable
                 Enqueued?.Invoke(this, EventArgs.Empty);
                 int lastPos = -2;
 
-                while (OperationQueue.First() != this && !SKIP_QUEUE)
+                while (FORCE_HOLD_QUEUE || (OperationQueue.First() != this && !SKIP_QUEUE))
                 {
                     int pos = OperationQueue.IndexOf(this);
 
@@ -251,11 +252,34 @@ public abstract class AbstractOperation : IDisposable
     }
 
     private bool SKIP_QUEUE;
+
     public void SkipQueue()
     {
         if (Status != OperationStatus.InQueue) return;
         while(OperationQueue.Remove(this));
         SKIP_QUEUE = true;
+    }
+
+    public void RunNext()
+    {
+        if (Status != OperationStatus.InQueue) return;
+        if (!OperationQueue.Contains(this)) return;
+
+        FORCE_HOLD_QUEUE = true;
+        while(OperationQueue.Remove(this));
+        OperationQueue.Insert(Math.Min(1, OperationQueue.Count), this);
+        FORCE_HOLD_QUEUE = false;
+    }
+
+    public void BackOfTheQueue()
+    {
+        if (Status != OperationStatus.InQueue) return;
+        if (!OperationQueue.Contains(this)) return;
+
+        FORCE_HOLD_QUEUE = true;
+        while(OperationQueue.Remove(this));
+        OperationQueue.Add(this);
+        FORCE_HOLD_QUEUE = false;
     }
 
     public void Retry(string retryMode)

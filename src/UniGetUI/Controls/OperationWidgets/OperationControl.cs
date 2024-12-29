@@ -217,6 +217,23 @@ public class OperationControl: INotifyPropertyChanged
             OpMenu.Items.Add(new MenuFlyoutSeparator());
         }
 
+        if (Operation.Status is OperationStatus.InQueue)
+        {
+            var skipQueue = new BetterMenuItem() { Text = CoreTools.Translate("Run now"), Icon = new FontIcon(){Glyph = "\uE768"} };
+            skipQueue.Click += (_, _) => Operation.SkipQueue();
+            OpMenu.Items.Add(skipQueue);
+
+            var putNext = new BetterMenuItem() { Text = CoreTools.Translate("Run next"), Icon = new FontIcon(){Glyph = "\uEB9D"} };
+            putNext.Click += (_, _) => Operation.RunNext();
+            OpMenu.Items.Add(putNext);
+
+            var putLast = new BetterMenuItem() { Text = CoreTools.Translate("Run last"), Icon = new FontIcon(){Glyph = "\uEB9E"} };
+            putLast.Click += (_, _) => Operation.BackOfTheQueue();
+            OpMenu.Items.Add(putLast);
+
+            OpMenu.Items.Add(new MenuFlyoutSeparator());
+        }
+
         // Create Cancel/Retry buttons
         if (Operation.Status is OperationStatus.InQueue or OperationStatus.Running)
         {
