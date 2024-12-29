@@ -43,7 +43,7 @@ public abstract class AbstractProcessOperation : AbstractOperation
                 }
 
                 var lineType = LineType.StdOUT;
-                if (line.Length < 6 || line.Contains("Waiting for another install..."))
+                if (line.Length < 6 || line.EndsWith("install/uninstall to complete..."))
                 {
                     lineType = LineType.Progress;
                 }

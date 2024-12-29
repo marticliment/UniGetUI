@@ -107,13 +107,15 @@
                             HorizontalAlignment="Stretch" Margin="6,0,1,0"
                             CornerRadius="6,0,0,6" Content="{x:Bind ButtonText, Mode=OneWay}"
                             Click="{x:Bind ButtonClick}"/>
-                        <Button
+                        <DropDownButton
                             Grid.Column="4" VerticalAlignment="Center"
                             HorizontalAlignment="Stretch"
                             CornerRadius="0,6,6,0" Margin="0,0,0,0"
-                            Click="{x:Bind ShowMenu}">
-                            <SymbolIcon Symbol="More"/>
-                        </Button>
+                            PointerEntered="{x:Bind LoadMenu}"
+                            GotFocus="{x:Bind LoadMenu}"
+                            Flyout="{x:Bind OpMenu}">
+                            <!--SymbolIcon Symbol="More"/-->
+                        </DropDownButton>
                     </Grid>
                 </ItemContainer>
             </DataTemplate>
@@ -189,7 +191,7 @@
                     SizeChanged="OperationScrollView_SizeChanged"
                     Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="2"
                     Padding="0,0,0,0"
-                    
+
                     ItemTemplate="{StaticResource OperationTemplate}"
                     Margin="0,0,0,0" SelectionMode="None"
                     Name="OperationList" x:FieldModifier="public">

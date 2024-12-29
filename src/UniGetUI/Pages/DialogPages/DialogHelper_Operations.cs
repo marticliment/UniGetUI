@@ -130,11 +130,11 @@ public static partial class DialogHelper
                 operation.Retry(AbstractOperation.RetryMode.Retry);
                 dialog.Hide();
             };
-
-            RetryButton.Flyout = new BetterMenu();
+            BetterMenu menu = new();
+            RetryButton.Flyout = menu;
             foreach (var opt in retryOptions)
             {
-                (RetryButton.Flyout as BetterMenu)?.Items.Add(opt);
+                menu.Items.Add(opt);
             }
 
             _retryButton = RetryButton;
@@ -172,10 +172,6 @@ public static partial class DialogHelper
         Grid.SetColumn(sp, 0);
         grid.Children.Add(sp);
         dialog.Content = grid;
-        dialog.SizeChanged += (_, _) =>
-        {
-            // grid.MaxHeight = Math.Max(100, MainApp.Instance.MainWindow.NavigationPage.ActualHeight - 200);
-        };
 
         await Window.ShowDialogAsync(dialog);
     }

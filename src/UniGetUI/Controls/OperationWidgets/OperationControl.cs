@@ -19,6 +19,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageOperations;
 using UniGetUI.Pages.DialogPages;
 using CommunityToolkit.WinUI;
+using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Operations;
 
@@ -28,9 +29,12 @@ public class OperationControl: INotifyPropertyChanged
 {
     public AbstractOperation Operation;
     private bool ErrorTooltipShown;
+    public BetterMenu OpMenu;
+    public OperationStatus? MenuStateOnLoaded;
 
     public OperationControl(AbstractOperation operation)
     {
+        OpMenu = new BetterMenu();
         Operation = operation;
         Operation.LogLineAdded += (_, values) => LiveLine = values.Item1;
         Operation.StatusChanged += OnOperationStatusChanged;
@@ -195,9 +199,47 @@ public class OperationControl: INotifyPropertyChanged
         }
     }
 
-    public void ShowMenu()
+    public void LoadMenu()
     {
-        // throw new NotImplementedException();
+        if (MenuStateOnLoaded == Operation.Status) return;
+        MenuStateOnLoaded = Operation.Status;
+
+        // Reset menu
+        OpMenu.Items.Clear();
+
+        // Load operation-specific entries
+        var normalOptions = GetOperationOptions();
+        if (normalOptions.Any())
+        {
+            foreach(var item in normalOptions)
+                OpMenu.Items.Add(item);
+
+            OpMenu.Items.Add(new MenuFlyoutSeparator());
+        }
+
+        // Create Cancel/Retry buttons
+        if (Operation.Status is OperationStatus.InQueue or OperationStatus.Running)
+        {
+            var cancel = new BetterMenuItem() { Text = CoreTools.Translate("Cancel"), IconName = IconType.Cross, };
+            cancel.Click += (_, _) => Operation.Cancel();
+            OpMenu.Items.Add(cancel);
+        }
+        else
+        {
+            var retry = new BetterMenuItem() { Text = CoreTools.Translate("Retry"), IconName = IconType.Reload, };
+            retry.Click += (_, _) => Operation.Retry(AbstractOperation.RetryMode.Retry);
+            OpMenu.Items.Add(retry);
+
+            // Add extra retry options, if applicable
+            var extraRetry = GetRetryOptions(() => { });
+            if (extraRetry.Any())
+            {
+                OpMenu.Items.Add(new MenuFlyoutSeparator());
+
+                foreach(var item in extraRetry)
+                    OpMenu.Items.Add(item);
+            }
+        }
     }
 
     private async Task TimeoutAndClose()
@@ -212,6 +254,7 @@ public class OperationControl: INotifyPropertyChanged
     public void Close()
     {
         MainApp.Operations._operationList.Remove(this);
+        while(AbstractOperation.OperationQueue.Remove(Operation));
 
         if (MainApp.Operations._operationList.Count == 0
             && DesktopShortcutsDatabase.GetUnknownShortcuts().Any()
@@ -421,5 +464,49 @@ public class OperationControl: INotifyPropertyChanged
         }
 
         return retryOptionsMenu;
+    }
+
+    public List<BetterMenuItem> GetOperationOptions()
+    {
+        var optionsMenu = new List<BetterMenuItem>();
+        if (Operation is PackageOperation packageOp)
+        {
+            var details = new BetterMenuItem() { Text = CoreTools.Translate("Package details") };
+            details.IconName = IconType.Info_Round;
+            details.Click += (_, _) =>
+            {
+                DialogHelper.ShowPackageDetails(packageOp.Package, OperationType.None);
+            };
+            optionsMenu.Add(details);
+
+
+            var installationSettings = new BetterMenuItem() { Text = CoreTools.Translate("Installation options") };
+            installationSettings.IconName = IconType.Options;
+            installationSettings.Click += (_, _) =>
+            {
+                _ = DialogHelper.ShowInstallatOptions_Continue(packageOp.Package, OperationType.None);
+            };
+            optionsMenu.Add(installationSettings);
+
+            string? location = packageOp.Package.Manager.DetailsHelper.GetInstallLocation(packageOp.Package);
+            if (location is not null && Directory.Exists(location))
+            {
+                var openLocation = new BetterMenuItem() { Text = CoreTools.Translate("Open install location") };
+                openLocation.IconName = IconType.OpenFolder;
+                openLocation.Click += (_, _) =>
+                {
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() {
+                        FileName = location,
+                        UseShellExecute = true,
+                        Verb = "open"
+                    });
+
+                };
+                optionsMenu.Add(openLocation);
+            }
+
+        }
+
+        return optionsMenu;
     }
 }
