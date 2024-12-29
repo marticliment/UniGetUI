@@ -59,7 +59,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="110" />
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="50" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -109,7 +109,9 @@
                             Click="{x:Bind ButtonClick}"/>
                         <DropDownButton
                             Grid.Column="4" VerticalAlignment="Center"
-                            HorizontalAlignment="Stretch"
+                            HorizontalAlignment="Stretch" Height="32"
+                            
+                            BorderThickness="0"
                             CornerRadius="0,6,6,0" Margin="0,0,0,0"
                             PointerEntered="{x:Bind LoadMenu}"
                             GotFocus="{x:Bind LoadMenu}"
@@ -162,6 +164,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="15"/>
                 </Grid.ColumnDefinitions>
                 <HyperlinkButton
                     Grid.Column="1" Height="12"
@@ -180,14 +183,7 @@
                     <FontIcon Glyph="&#xE712;" FontSize="24"/>
                 </HyperlinkButton>
             </Grid>
-            <!--ScrollViewer
-                Name="OperationScrollView" SizeChanged="OperationScrollView_SizeChanged"
-                Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="2"
-                HorizontalScrollMode="Disabled"
-                VerticalScrollMode="Enabled"
-                VerticalScrollBarVisibility="Visible"
-                Margin="0" Padding="0,0,0,0"-->
-                <ListView
+            <ListView
                     SizeChanged="OperationScrollView_SizeChanged"
                     Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="2"
                     Padding="0,0,0,0"
@@ -205,7 +201,6 @@
                         <SolidColorBrush x:Key="ItemContainerPressedBackground" Color="Transparent" />
                     </ListView.Resources>
                 </ListView>
-            <!--/ScrollViewer-->
         </Grid>
 
         <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden" Grid.Row="0" Grid.Column="0" VerticalAlignment="Stretch" Margin="4,0,4,4" Padding="0,0,0,0">

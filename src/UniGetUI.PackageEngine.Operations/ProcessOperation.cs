@@ -24,6 +24,7 @@ public abstract class AbstractProcessOperation : AbstractOperation
         };
         OperationStarting += (_, _) =>
         {
+            ProcessKilled = false;
             process = new();
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
