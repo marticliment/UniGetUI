@@ -40,6 +40,27 @@
                 <widgets:BetterMenuItem Text="Cancel all" IconName="Cross" Name="CancellAllOps" Click="CancellAllOps_Click"/>
             </widgets:BetterMenu>
 
+            <DataTemplate x:Key="OperationBadgeTemplate" x:DataType="operationWidgets:OperationBadge">
+                <Button
+                Margin="6,0,0,0" Padding="0"
+                Width="32" Height="32"
+                ToolTipService.ToolTip="{x:Bind Tooltip}"
+                CornerRadius="6">   
+                    <widgets:LocalIcon Icon="{x:Bind Icon}"/>
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <widgets:LocalIcon Icon="{x:Bind Icon}"/>
+                                <StackPanel Orientation="Vertical" Spacing="6">
+                                    <TextBlock Text="{x:Bind PrimaryBanner}" TextWrapping="WrapWholeWords"/>
+                                    <TextBlock Opacity="0.6" Text="{x:Bind SecondaryBanner}"
+                        Visibility="{x:Bind SecondaryBannerVisible}" TextWrapping="WrapWholeWords"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </DataTemplate>
 
             <DataTemplate x:Key="OperationTemplate" x:DataType="operationWidgets:OperationControl">
                 <ItemContainer AutomationProperties.Name="{x:Bind Title}">
@@ -58,6 +79,7 @@
                             <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="110" />
                             <ColumnDefinition Width="50" />
                         </Grid.ColumnDefinitions>
@@ -102,13 +124,22 @@
                                 Foreground="{x:Bind ProgressForeground, Mode=OneWay}"
                                 />
                         </Border>
+                        <Border Grid.Column="3" Margin="0,0,0,0" CornerRadius="6">
+                            <ItemsRepeater
+                                ItemTemplate="{StaticResource OperationBadgeTemplate}"
+                                ItemsSource="{x:Bind Badges}">
+                                <ItemsRepeater.Layout>
+                                    <StackLayout Orientation="Horizontal" Spacing="0"/>
+                                </ItemsRepeater.Layout>
+                            </ItemsRepeater>
+                        </Border>
                         <Button
-                            Grid.Column="3" VerticalAlignment="Center"
+                            Grid.Column="4" VerticalAlignment="Center"
                             HorizontalAlignment="Stretch" Margin="6,0,1,0"
                             CornerRadius="6,0,0,6" Content="{x:Bind ButtonText, Mode=OneWay}"
                             Click="{x:Bind ButtonClick}"/>
                         <DropDownButton
-                            Grid.Column="4" VerticalAlignment="Center"
+                            Grid.Column="5" VerticalAlignment="Center"
                             HorizontalAlignment="Stretch" Height="32"
                             
                             BorderThickness="0"

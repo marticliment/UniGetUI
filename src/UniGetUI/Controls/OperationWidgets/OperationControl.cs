@@ -22,6 +22,7 @@ using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Operations;
+using System.Collections.ObjectModel;
 
 namespace UniGetUI.Controls.OperationWidgets;
 
@@ -31,10 +32,14 @@ public class OperationControl: INotifyPropertyChanged
     private bool ErrorTooltipShown;
     public BetterMenu OpMenu;
     public OperationStatus? MenuStateOnLoaded;
+    public ObservableCollection<OperationBadge> Badges = new();
 
     public OperationControl(AbstractOperation operation)
     {
         OpMenu = new BetterMenu();
+        Badges.Add(new("Admin", IconType.UAC, "This is running as admin", "You messed up"));
+        Badges.Add(new("Interact", IconType.Interactive, "Interactive installation"));
+        Badges.Add(new("Hash", IconType.Checksum, "Integrity of the installer will not be verified", "Hell yeah"));
         Operation = operation;
         Operation.LogLineAdded += (_, values) => LiveLine = values.Item1;
         Operation.StatusChanged += OnOperationStatusChanged;
