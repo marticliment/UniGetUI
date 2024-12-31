@@ -227,7 +227,7 @@ namespace UniGetUI.PackageEngine.Operations
         }
     }
 
-    public class InstallPackageOperation : PackageOperation
+    public partial class InstallPackageOperation : PackageOperation
     {
 
         public InstallPackageOperation(
@@ -306,7 +306,7 @@ namespace UniGetUI.PackageEngine.Operations
         }
     }
 
-    public class UpdatePackageOperation : PackageOperation
+    public partial class UpdatePackageOperation : PackageOperation
     {
 
         public UpdatePackageOperation(
@@ -391,7 +391,7 @@ namespace UniGetUI.PackageEngine.Operations
         }
     }
 
-    public class UninstallPackageOperation : PackageOperation
+    public partial class UninstallPackageOperation : PackageOperation
     {
 
         public UninstallPackageOperation(

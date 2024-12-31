@@ -9,7 +9,7 @@ using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public sealed class CheckboxCard : SettingsCard
+    public sealed partial class CheckboxCard : SettingsCard
     {
         public CheckBox _checkbox;
         private bool IS_INVERTED;

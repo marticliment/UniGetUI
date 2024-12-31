@@ -6,7 +6,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
     /// <summary>
     /// A special ObservableCollection designed to work with Package objects
     /// </summary>
-    public class ObservablePackageCollection : SortableObservableCollection<PackageWrapper>
+    public partial class ObservablePackageCollection : SortableObservableCollection<PackageWrapper>
     {
         public enum Sorter
         {

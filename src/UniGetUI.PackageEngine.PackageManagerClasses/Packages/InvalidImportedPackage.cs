@@ -10,7 +10,7 @@ using UniGetUI.PackageEngine.Structs;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
-    public class InvalidImportedPackage : IPackage, INotifyPropertyChanged
+    public partial class InvalidImportedPackage : IPackage, INotifyPropertyChanged
     {
         public IPackageDetails Details { get; }
 
