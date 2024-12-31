@@ -320,9 +320,9 @@ namespace UniGetUI.Interface
                 }
                 else
                 {
-                    if (int.TryParse(Settings.GetValue("OperationHistoryPreferredHeight"), out int setHeight) && setHeight < maxHeight)
-                        MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(setHeight);
-                    else
+                    //if (int.TryParse(Settings.GetValue("OperationHistoryPreferredHeight"), out int setHeight) && setHeight < maxHeight)
+                    //    MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(setHeight);
+                    //else
                         MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(Math.Min(maxHeight, 200));
                     MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(16);
                     OperationSplitter.Visibility = Visibility.Visible;
@@ -342,7 +342,7 @@ namespace UniGetUI.Interface
             ResizingOPLayout = false;
         }
 
-        int lastSaved = -1;
+        // int lastSaved = -1;
         private async void OperationScrollView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (ResizingOPLayout)
@@ -354,10 +354,10 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            lastSaved = (int)e.NewSize.Height;
-            await Task.Delay(100);
-            if ((int)e.NewSize.Height == lastSaved)
-                Settings.SetValue("OperationHistoryPreferredHeight", lastSaved.ToString());
+            //lastSaved = (int)e.NewSize.Height;
+            //await Task.Delay(100);
+            //if ((int)e.NewSize.Height == lastSaved)
+            //    Settings.SetValue("OperationHistoryPreferredHeight", lastSaved.ToString());
         }
 
         private void OperationSplitterMenuButton_Click(object sender, RoutedEventArgs e)
@@ -401,24 +401,13 @@ namespace UniGetUI.Interface
             }
         }
 
-        private void PausePendingOps_Click(object sender, RoutedEventArgs e)
+        private void ClearSuccessfulOps_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var widget in MainApp.Operations._operationList)
+            foreach (var widget in MainApp.Operations._operationList.ToArray())
             {
                 var operation = widget.Operation;
-                //if (operation.Status is OperationStatus.InQueue)
-                //    operation.Pause();
-            }
-        }
-
-        private void ResumeAllOps_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var widget in MainApp.Operations._operationList)
-            {
-                var operation = widget.Operation;
-                if (operation.Status is OperationStatus.Canceled/*Paused*/)
-                    throw new NotImplementedException();
-                   //operation.Resume();
+                if (operation.Status is OperationStatus.Succeeded)
+                    widget.Close();
             }
         }
     }

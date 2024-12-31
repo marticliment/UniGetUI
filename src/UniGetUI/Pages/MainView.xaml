@@ -33,19 +33,16 @@
 
             <widgets:BetterMenu x:Name="OperationListMenu" Placement="Bottom">
                 <widgets:BetterMenuItem Text="Retry failed operations" IconName="Reload" Name="RetryFailedOps" Click="RetryFailedOps_Click"/>
-                <MenuFlyoutSeparator Height="5"/>
-                <widgets:BetterMenuItem Text="Pause pending operations" IconName="SandClock" Name="PausePendingOps" Click="PausePendingOps_Click" IsEnabled="False"/>
-                <widgets:BetterMenuItem Text="Resume pending operations" IconName="SandClock" Name="ResumeAllOps" Click="ResumeAllOps_Click" IsEnabled="False"/>
-                <MenuFlyoutSeparator Height="5"/>
-                <widgets:BetterMenuItem Text="Cancel all" IconName="Cross" Name="CancellAllOps" Click="CancellAllOps_Click"/>
+                <widgets:BetterMenuItem Text="Clean successful operations" IconName="ClipboardList" Name="PausePendingOps" Click="ClearSuccessfulOps_Click"/>
+                <widgets:BetterMenuItem Text="Cancel all operations" IconName="Cross" Name="CancellAllOps" Click="CancellAllOps_Click"/>
             </widgets:BetterMenu>
 
             <DataTemplate x:Key="OperationBadgeTemplate" x:DataType="operationWidgets:OperationBadge">
                 <Button
-                    Margin="6,0,0,0" Padding="0" 
+                    Margin="6,0,0,0" Padding="0"
                     Width="32" Height="32"
                     ToolTipService.ToolTip="{x:Bind Tooltip}"
-                    CornerRadius="6">   
+                    CornerRadius="6">
                     <widgets:LocalIcon Icon="{x:Bind Icon}"/>
                     <Button.Flyout>
                         <Flyout>
