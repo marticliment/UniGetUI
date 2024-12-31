@@ -6,9 +6,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
 {
     public class InstalledPackagesLoader : AbstractPackageLoader
     {
+        public static InstalledPackagesLoader Instance = null!;
+
         public InstalledPackagesLoader(IEnumerable<IPackageManager> managers)
         : base(managers, "INSTALLED_PACKAGES", AllowMultiplePackageVersions: true, CheckedBydefault: false)
         {
+            Instance = this;
         }
 
         protected override Task<bool> IsPackageValid(IPackage package)

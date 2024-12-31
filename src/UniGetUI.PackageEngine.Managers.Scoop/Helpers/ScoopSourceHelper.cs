@@ -15,7 +15,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         protected override OperationVeredict _getAddSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+            return ReturnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
         }
 
         public override string[] GetAddSourceParameters(IManagerSource source)
@@ -25,7 +25,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         protected override OperationVeredict _getRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
-            return ReturnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+            return ReturnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
         }
 
         public override string[] GetRemoveSourceParameters(IManagerSource source)

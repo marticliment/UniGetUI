@@ -7,9 +7,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
 {
     public class PackageBundlesLoader : AbstractPackageLoader
     {
+        public static PackageBundlesLoader Instance = null!;
+
         public PackageBundlesLoader(IEnumerable<IPackageManager> managers)
         : base(managers, "PACKAGE_BUNDLES", AllowMultiplePackageVersions: true, DisableReload: true, CheckedBydefault: false)
         {
+            Instance = this;
         }
 
         protected override Task<bool> IsPackageValid(IPackage package)

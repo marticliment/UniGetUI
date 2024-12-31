@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using Microsoft.Management.Deployment;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
@@ -86,25 +87,34 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             });
         }
 
-        var installOptions = NativePackageHandler.GetInstallationOptions(package, operation);
-        if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationRequired
-            or ElevationRequirement.ElevatesSelf)
+        try
         {
-            package.OverridenOptions.RunAsAdministrator = true;
-        }
-        else if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationProhibited)
-        {
-            if (CoreTools.IsAdministrator())
-                throw new UnauthorizedAccessException(
-                    CoreTools.Translate("This package cannot be installed from an elevated context.")
-                  + CoreTools.Translate("Please run UniGetUI as a regular user and try again."));
+            var installOptions = NativePackageHandler.GetInstallationOptions(package, operation);
+            if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationRequired
+                or ElevationRequirement.ElevatesSelf)
+            {
+                package.OverridenOptions.RunAsAdministrator = true;
+            }
+            else if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationProhibited)
+            {
+                if (CoreTools.IsAdministrator())
+                    throw new UnauthorizedAccessException(
+                        CoreTools.Translate("This package cannot be installed from an elevated context.")
+                        + CoreTools.Translate("Please run UniGetUI as a regular user and try again."));
 
-            if (options.RunAsAdministrator)
-                throw new UnauthorizedAccessException(
-                    CoreTools.Translate("This package cannot be installed from an elevated context.")
-                    + CoreTools.Translate("Please check the installation options for this package and try again"));
-            package.OverridenOptions.RunAsAdministrator = false;
+                if (options.RunAsAdministrator)
+                    throw new UnauthorizedAccessException(
+                        CoreTools.Translate("This package cannot be installed from an elevated context.")
+                        + CoreTools.Translate("Please check the installation options for this package and try again"));
+                package.OverridenOptions.RunAsAdministrator = false;
+            }
         }
+        catch (Exception ex)
+        {
+            Logger.Error("Recovered from fatal WinGet exception:");
+            Logger.Error(ex);
+        }
+
 
         return parameters;
     }
@@ -122,7 +132,8 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
         {
             // If the user is required to restart the system to complete the installation
             if(operation is OperationType.Update) MarkUpgradeAsDone(package);
-            return OperationVeredict.RestartRequired;
+            //return OperationVeredict.RestartRequired;
+            return OperationVeredict.Success;
         }
 
         if (uintCode == 0x8A150077 || uintCode == 0x8A15010C || uintCode == 0x8A150005)
@@ -133,26 +144,26 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
         if (uintCode == 0x8A150011)
         {
             // TODO: Needs skip checksum
-            return OperationVeredict.Failed;
+            return OperationVeredict.Failure;
         }
 
 		if (uintCode == 0x8A15002B)
 		{
-			return OperationVeredict.Failed;
+			return OperationVeredict.Failure;
 		}
 
         if (uintCode == 0x8A15010D || uintCode == 0x8A15004F || uintCode == 0x8A15010E)
         {
             // Application is already installed
             if(operation is OperationType.Update) MarkUpgradeAsDone(package);
-            return OperationVeredict.Succeeded;
+            return OperationVeredict.Success;
         }
 
         if (returnCode == 0)
         {
             // Operation succeeded
             if(operation is OperationType.Update) MarkUpgradeAsDone(package);
-            return OperationVeredict.Succeeded;
+            return OperationVeredict.Success;
         }
 
         if(uintCode == 0x8A150056 && package.OverridenOptions.RunAsAdministrator != false && !CoreTools.IsAdministrator())
@@ -169,7 +180,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             return OperationVeredict.AutoRetry;
         }
 
-        return OperationVeredict.Failed;
+        return OperationVeredict.Failure;
     }
 
     private static void MarkUpgradeAsDone(IPackage package)
