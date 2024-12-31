@@ -138,7 +138,6 @@ public class OperationControl: INotifyPropertyChanged
     {
         // Remove progress notification (if any)
         AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
-
         MainApp.Tooltip.OperationsInProgress--;
 
         // Generate process output
@@ -315,6 +314,12 @@ public class OperationControl: INotifyPropertyChanged
 
     public void Close()
     {
+        if (ErrorTooltipShown && Operation.Status is OperationStatus.Failed)
+        {
+            MainApp.Tooltip.ErrorsOccurred--;
+            ErrorTooltipShown = false;
+        }
+
         MainApp.Operations._operationList.Remove(this);
         while(AbstractOperation.OperationQueue.Remove(Operation));
 

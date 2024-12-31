@@ -223,11 +223,16 @@ public abstract class AbstractOperation : IDisposable
             Line(CoreTools.Translate("Starting operation..."), LineType.Progress);
             Status = OperationStatus.Running;
             OperationStarting?.Invoke(this, EventArgs.Empty);
+
             do
             {
                 try
                 {
-                    result = await PerformOperation();
+                    Task<OperationVeredict> op = PerformOperation();
+                    while (Status != OperationStatus.Canceled && !op.IsCompleted) await Task.Delay(100);
+
+                    if (Status is OperationStatus.Canceled) result = OperationVeredict.Canceled;
+                    else result = op.GetAwaiter().GetResult();
                 }
                 catch (Exception e)
                 {
@@ -237,10 +242,11 @@ public abstract class AbstractOperation : IDisposable
                 }
             } while (result == OperationVeredict.AutoRetry);
 
-            while (OperationQueue.Remove(this)) ;
+            OperationFinished?.Invoke(this, EventArgs.Empty);
+
+            while (OperationQueue.Remove(this));
             // END OPERATION
 
-            OperationFinished?.Invoke(this, EventArgs.Empty);
             if (result == OperationVeredict.Success)
             {
                 Status = OperationStatus.Succeeded;
@@ -272,6 +278,7 @@ public abstract class AbstractOperation : IDisposable
             Status = OperationStatus.Failed;
             try
             {
+                OperationFinished?.Invoke(this, EventArgs.Empty);
                 OperationFailed?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception e2)
