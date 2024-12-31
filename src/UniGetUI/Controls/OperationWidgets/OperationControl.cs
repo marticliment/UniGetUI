@@ -69,23 +69,23 @@ public class OperationControl: INotifyPropertyChanged
                 CoreTools.Translate("This is not recommended.") + " " + CoreTools.Translate("Proceed at your own risk.")
             ));
 
-            if (badges.Scope is not null)
+            /*if (badges.Scope is not null)
             {
                 if (badges.Scope is PackageScope.Local)
                     Badges.Add(new(
-                        CoreTools.Translate("Local operation"),
+                        CoreTools.Translate ("Local operation"),
                         IconType.Home,
-                        CoreTools.Translate("The changes performed by this operation will affect only the current user."),
+                        CoreTools.Translate ("The changes performed by this operation will affect only the current user."),
                         ""
                     ));
                 else
                     Badges.Add(new(
-                        CoreTools.Translate("Global operation"),
+                        CoreTools.Translate ("Global operation"),
                         IconType.LocalPc,
-                        CoreTools.Translate("The changes performed by this operation may affect other users on this machine."),
+                        CoreTools.Translate ("The changes performed by this operation may affect other users on this machine."),
                         ""
                 ));
-            }
+            }*/
         };
 
         _title = Operation.Metadata.Title;
