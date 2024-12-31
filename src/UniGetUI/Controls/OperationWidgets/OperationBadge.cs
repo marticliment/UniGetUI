@@ -19,15 +19,15 @@ public class OperationBadge
         Tooltip = tooltip;
         Icon = icon;
         PrimaryBanner = primaryBanner;
-        if(secondaryBanner != null)
+        if(secondaryBanner is null || secondaryBanner == String.Empty)
         {
-            SecondaryBanner = secondaryBanner;
-            SecondaryBannerVisible = true;
+            SecondaryBannerVisible = false;
+            SecondaryBanner = "";
         }
         else
         {
-            SecondaryBanner = "";
-            SecondaryBannerVisible = false;
+            SecondaryBanner = secondaryBanner;
+            SecondaryBannerVisible = true;
         }
     }
 }

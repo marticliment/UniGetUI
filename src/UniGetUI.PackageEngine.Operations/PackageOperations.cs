@@ -86,6 +86,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected sealed override void PrepareProcessStartInfo()
         {
+            bool admin = false;
             Package.SetTag(PackageTag.OnQueue);
             string operation_args = string.Join(" ", Package.Manager.OperationHelper.GetParameters(Package, Options, Role));
 
@@ -95,6 +96,7 @@ namespace UniGetUI.PackageEngine.Operations
                     && !Package.OverridenOptions.RunAsAdministrator is false)
                 )
             {
+                admin = true;
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
                     CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
@@ -109,6 +111,10 @@ namespace UniGetUI.PackageEngine.Operations
                 process.StartInfo.FileName = Package.Manager.Status.ExecutablePath;
                 process.StartInfo.Arguments = $"{Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
+            ApplyCapabilities(admin,
+                Options.InteractiveInstallation,
+                (Options.SkipHashCheck && Role is not OperationType.Uninstall),
+                Package.OverridenOptions.Scope ?? Options.InstallationScope);
         }
 
         protected sealed override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)

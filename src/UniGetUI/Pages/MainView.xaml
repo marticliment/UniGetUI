@@ -52,9 +52,9 @@
                             <StackPanel Orientation="Horizontal" Spacing="12">
                                 <widgets:LocalIcon Icon="{x:Bind Icon}"/>
                                 <StackPanel Orientation="Vertical" Spacing="6">
-                                    <TextBlock Text="{x:Bind PrimaryBanner}" TextWrapping="WrapWholeWords"/>
+                                    <TextBlock Text="{x:Bind PrimaryBanner}" TextWrapping="WrapWholeWords" MaxWidth="200"/>
                                     <TextBlock Opacity="0.6" Text="{x:Bind SecondaryBanner}"
-                        Visibility="{x:Bind SecondaryBannerVisible}" TextWrapping="WrapWholeWords"/>
+                                        Visibility="{x:Bind SecondaryBannerVisible}" TextWrapping="WrapWholeWords" MaxWidth="200"/>
                                 </StackPanel>
                             </StackPanel>
                         </Flyout>
@@ -111,9 +111,9 @@
                             Name="OutputViewewBlock" HorizontalAlignment="Stretch"
                             FontFamily="Consolas" HorizontalContentAlignment="Left"
                             Content="{x:Bind LiveLine, Mode=OneWay}" CornerRadius="5"
-                            Click="{x:Bind LiveLineClick}" Margin="6,0,0,0"/>
+                            Click="{x:Bind LiveLineClick}" Margin="12,0,0,0"/>
                         <Border
-                            Grid.Column="2" Margin="6,0,0,0"
+                            Grid.Column="2" Margin="12,0,0,0"
                             Height="12" VerticalAlignment="Bottom"
                             CornerRadius="6">
                             <ProgressBar

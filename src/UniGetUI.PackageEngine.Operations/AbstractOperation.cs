@@ -61,8 +61,7 @@ public abstract class AbstractOperation : IDisposable
     }
 
     public readonly OperationMetadata Metadata = new();
-
-    public readonly static List<AbstractOperation> OperationQueue = new();
+    public static readonly List<AbstractOperation> OperationQueue = new();
 
     public event EventHandler<OperationStatus>? StatusChanged;
     public event EventHandler<EventArgs>? CancelRequested;
@@ -72,6 +71,28 @@ public abstract class AbstractOperation : IDisposable
     public event EventHandler<EventArgs>? Enqueued;
     public event EventHandler<EventArgs>? OperationSucceeded;
     public event EventHandler<EventArgs>? OperationFailed;
+
+    public event EventHandler<BadgeCollection>? BadgesChanged;
+
+    public class BadgeCollection
+    {
+        public readonly bool AsAdministrator;
+        public readonly bool Interactive;
+        public readonly bool SkipHashCheck;
+        public readonly PackageScope? Scope;
+
+        public BadgeCollection(bool admin, bool interactive, bool skiphash, PackageScope? scope)
+        {
+            AsAdministrator = admin;
+            Interactive = interactive;
+            SkipHashCheck = skiphash;
+            Scope = scope;
+        }
+    }
+    public void ApplyCapabilities(bool admin, bool interactive, bool skiphash, PackageScope? scope)
+    {
+        BadgesChanged?.Invoke(this, new BadgeCollection(admin, interactive, skiphash, scope));
+    }
 
     public enum LineType
     {

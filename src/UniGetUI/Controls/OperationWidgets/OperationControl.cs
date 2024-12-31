@@ -37,9 +37,6 @@ public class OperationControl: INotifyPropertyChanged
     public OperationControl(AbstractOperation operation)
     {
         OpMenu = new BetterMenu();
-        Badges.Add(new("Admin", IconType.UAC, "This is running as admin", "You messed up"));
-        Badges.Add(new("Interact", IconType.Interactive, "Interactive installation"));
-        Badges.Add(new("Hash", IconType.Checksum, "Integrity of the installer will not be verified", "Hell yeah"));
         Operation = operation;
         Operation.LogLineAdded += (_, values) => LiveLine = values.Item1;
         Operation.StatusChanged += OnOperationStatusChanged;
@@ -47,6 +44,49 @@ public class OperationControl: INotifyPropertyChanged
         Operation.OperationFinished += OnOperationFinished;
         Operation.OperationFailed += OnOperationFailed;
         Operation.OperationSucceeded += OnOperationSucceeded;
+
+        Operation.BadgesChanged += (_, badges) =>
+        {
+            Badges.Clear();
+            if (badges.AsAdministrator) Badges.Add(new(
+                CoreTools.Translate("Administrator privileges"),
+                IconType.UAC,
+                CoreTools.Translate("This operation is running with administrator privileges."),
+                ""
+            ));
+
+            if (badges.Interactive) Badges.Add(new(
+                CoreTools.Translate("Interactive operation"),
+                IconType.Interactive,
+                CoreTools.Translate("This operation is running interactively."),
+                CoreTools.Translate("You will likely need to interact with the installer.")
+            ));
+
+            if (badges.SkipHashCheck) Badges.Add(new(
+                CoreTools.Translate("Integrity checks skipped"),
+                IconType.Checksum,
+                CoreTools.Translate("Integrity checks will not be performed during this operation"),
+                CoreTools.Translate("This is not recommended.") + " " + CoreTools.Translate("Proceed at your own risk.")
+            ));
+
+            if (badges.Scope is not null)
+            {
+                if (badges.Scope is PackageScope.Local)
+                    Badges.Add(new(
+                        CoreTools.Translate("Local operation"),
+                        IconType.Home,
+                        CoreTools.Translate("The changes performed by this operation will affect only the current user."),
+                        ""
+                    ));
+                else
+                    Badges.Add(new(
+                        CoreTools.Translate("Global operation"),
+                        IconType.LocalPc,
+                        CoreTools.Translate("The changes performed by this operation may affect other users on this machine."),
+                        ""
+                ));
+            }
+        };
 
         _title = Operation.Metadata.Title;
         _liveLine = operation.GetOutput().Any()? operation.GetOutput().Last().Item1 : CoreTools.Translate("Please wait...");

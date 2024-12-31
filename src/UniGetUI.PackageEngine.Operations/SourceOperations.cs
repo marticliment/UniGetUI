@@ -53,12 +53,15 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void PrepareProcessStartInfo()
         {
+            bool admin = false;
            if (ForceAsAdministrator || Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
-            {
+           {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
                     CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
                 }
+
+                admin = true;
                 process.StartInfo.FileName = CoreData.GSudoPath;
                 process.StartInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetAddSourceParameters(Source));
             }
@@ -67,6 +70,8 @@ namespace UniGetUI.PackageEngine.Operations
                 process.StartInfo.FileName = Source.Manager.Status.ExecutablePath;
                 process.StartInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetAddSourceParameters(Source));
             }
+
+           ApplyCapabilities(admin, false, false, null);
         }
 
         protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
