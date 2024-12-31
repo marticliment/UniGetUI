@@ -42,10 +42,10 @@
 
             <DataTemplate x:Key="OperationBadgeTemplate" x:DataType="operationWidgets:OperationBadge">
                 <Button
-                Margin="6,0,0,0" Padding="0"
-                Width="32" Height="32"
-                ToolTipService.ToolTip="{x:Bind Tooltip}"
-                CornerRadius="6">   
+                    Margin="6,0,0,0" Padding="0" 
+                    Width="32" Height="32"
+                    ToolTipService.ToolTip="{x:Bind Tooltip}"
+                    CornerRadius="6">   
                     <widgets:LocalIcon Icon="{x:Bind Icon}"/>
                     <Button.Flyout>
                         <Flyout>
@@ -81,7 +81,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="110" />
-                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="36" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -138,17 +138,16 @@
                             HorizontalAlignment="Stretch" Margin="6,0,1,0"
                             CornerRadius="6,0,0,6" Content="{x:Bind ButtonText, Mode=OneWay}"
                             Click="{x:Bind ButtonClick}"/>
-                        <DropDownButton
+                        <Button
                             Grid.Column="5" VerticalAlignment="Center"
                             HorizontalAlignment="Stretch" Height="32"
-                            
-                            BorderThickness="0"
+                            BorderThickness="0" Padding="0"
                             CornerRadius="0,6,6,0" Margin="0,0,0,0"
                             PointerEntered="{x:Bind LoadMenu}"
                             GotFocus="{x:Bind LoadMenu}"
                             Flyout="{x:Bind OpMenu}">
-                            <!--SymbolIcon Symbol="More"/-->
-                        </DropDownButton>
+                            <SymbolIcon Symbol="More"/>
+                        </Button>
                     </Grid>
                 </ItemContainer>
             </DataTemplate>
