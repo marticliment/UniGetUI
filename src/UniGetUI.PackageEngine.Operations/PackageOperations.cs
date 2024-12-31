@@ -42,13 +42,12 @@ namespace UniGetUI.PackageEngine.Operations
 
             Enqueued += (_, _) =>
             {
+                ApplyCapabilities(RequiresAdminRights(),
+                    Options.InteractiveInstallation,
+                    (Options.SkipHashCheck && Role is not OperationType.Uninstall),
+                    Package.OverridenOptions.Scope ?? Options.InstallationScope);
+
                 Package.SetTag(PackageTag.OnQueue);
-                if ((Settings.Get("AllowParallelInstalls")
-                     || Settings.Get($"AllowParallelInstallsForManager{Package.Manager.Name}")))
-                {
-                    Logger.Debug("Parallel installs are allowed. Skipping queue check");
-                    SkipQueue();
-                }
             };
             CancelRequested += (_, _) => Package.SetTag(PackageTag.Default);
             OperationSucceeded += (_, _) => HandleSuccess();
@@ -60,6 +59,13 @@ namespace UniGetUI.PackageEngine.Operations
             OperationType role,
             bool IgnoreParallelInstalls = false)
             : this(package, InstallationOptions.FromPackage(package), role, IgnoreParallelInstalls) { }
+
+        private bool RequiresAdminRights()
+        {
+            return Package.OverridenOptions.RunAsAdministrator is true
+                    || Options.RunAsAdministrator
+                    || (Settings.Get("AlwaysElevate" + Package.Manager.Name) && !Package.OverridenOptions.RunAsAdministrator is false);
+        }
 
         protected override void ApplyRetryAction(string retryMode)
         {
@@ -90,11 +96,7 @@ namespace UniGetUI.PackageEngine.Operations
             Package.SetTag(PackageTag.OnQueue);
             string operation_args = string.Join(" ", Package.Manager.OperationHelper.GetParameters(Package, Options, Role));
 
-            if (Package.OverridenOptions.RunAsAdministrator == true
-                || Options.RunAsAdministrator
-                || (Settings.Get("AlwaysElevate" + Package.Manager.Name)
-                    && !Package.OverridenOptions.RunAsAdministrator is false)
-                )
+            if (RequiresAdminRights())
             {
                 admin = true;
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))

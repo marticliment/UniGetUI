@@ -1,4 +1,5 @@
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 
@@ -72,6 +73,8 @@ public abstract class AbstractOperation : IDisposable
     public event EventHandler<EventArgs>? OperationSucceeded;
     public event EventHandler<EventArgs>? OperationFailed;
 
+    public static int MAX_OPERATIONS;
+
     public event EventHandler<BadgeCollection>? BadgesChanged;
 
     public class BadgeCollection
@@ -119,6 +122,17 @@ public abstract class AbstractOperation : IDisposable
         QUEUE_ENABLED = queue_enabled;
         Status = OperationStatus.InQueue;
         Line("Please wait...", LineType.Progress);
+
+        if(int.TryParse(Settings.GetValue("ParallelOperationCount"), out int _maxPps))
+        {
+            Logger.Debug("Parallel operation limit not set, defaulting to 1");
+            MAX_OPERATIONS = _maxPps;
+        }
+        else
+        {
+            MAX_OPERATIONS = 1;
+            Logger.Debug($"Parallel operation limit set to {MAX_OPERATIONS}");
+        }
     }
 
     public void Cancel()
@@ -131,6 +145,7 @@ public abstract class AbstractOperation : IDisposable
                 break;
             case OperationStatus.Running:
                 Status = OperationStatus.Canceled;
+                while(OperationQueue.Remove(this));
                 CancelRequested?.Invoke(this, EventArgs.Empty);
                 Status = OperationStatus.Canceled;
                 break;
@@ -185,9 +200,9 @@ public abstract class AbstractOperation : IDisposable
                 Enqueued?.Invoke(this, EventArgs.Empty);
                 int lastPos = -2;
 
-                while (FORCE_HOLD_QUEUE || (OperationQueue.First() != this && !SKIP_QUEUE))
+                while (FORCE_HOLD_QUEUE || (OperationQueue.IndexOf(this) >= MAX_OPERATIONS && !SKIP_QUEUE))
                 {
-                    int pos = OperationQueue.IndexOf(this);
+                    int pos = OperationQueue.IndexOf(this) - MAX_OPERATIONS + 1;
 
                     if (pos == -1) return;
                     // In this case, operation was canceled;
@@ -288,7 +303,7 @@ public abstract class AbstractOperation : IDisposable
 
         FORCE_HOLD_QUEUE = true;
         while(OperationQueue.Remove(this));
-        OperationQueue.Insert(Math.Min(1, OperationQueue.Count), this);
+        OperationQueue.Insert(Math.Min(MAX_OPERATIONS, OperationQueue.Count), this);
         FORCE_HOLD_QUEUE = false;
     }
 
