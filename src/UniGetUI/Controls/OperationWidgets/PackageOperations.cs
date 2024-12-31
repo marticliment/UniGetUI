@@ -55,6 +55,7 @@ namespace UniGetUI.PackageEngine.Operations
             {
                 DialogHelper.ShowPackageDetails(Package, Role);
             };
+            OutputDialog.DefaultButton = ContentDialogButton.Primary;
         }
 
         public PackageOperation(
