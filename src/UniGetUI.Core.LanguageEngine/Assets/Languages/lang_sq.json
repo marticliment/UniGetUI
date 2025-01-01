@@ -745,7 +745,7 @@
   "{0} packages can be updated": "Mund të {0, plural, one {përditësohet {0} paketë} other {përditësohen {0} paketa}}",
   "{0} packages found": "U {0, plural, one {gjet {0} paketë} other {gjetën {0} paketa}}",
   "{0} packages were found": "{0, plural, one {Është gjetur {0} paketë} other {Janë gjetur {0} paketa}}",
-  "{0} packages were found, {1} of which match the specified filters.": "U gjetën {0} paketa, nga të cilat {1} përputhen me filtrat e specifikuar.\nU {0, plural, one {gjet {0} paketë} other {gjetën {0} paketa}}, {1, plural, one {dhe {1} përputhet} other {nga të cilat {1} përputhen}} me filtrat e specifikuar.",
+  "{0} packages were found, {1} of which match the specified filters.": "U {0, plural, one {gjet {0} paketë} other {gjetën {0} paketa}}, {1, plural, one {dhe {1} përputhet} other {nga të cilat {1} përputhen}} me filtrat e specifikuar.",
   "{0} succeeded": "{0} pati sukses",
   "{0} update": "{0} përditësim",
   "{0} updates are available": "{0, plural, one {Ofrohet {0} përditësim} other {Ofrohen {0} përditësime}}",

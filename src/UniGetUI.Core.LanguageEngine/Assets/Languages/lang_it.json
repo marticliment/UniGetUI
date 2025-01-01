@@ -1,5 +1,5 @@
 {
-  "(Last checked: {0})": "Ultimo controllo: {0}",
+  "(Last checked: {0})": "(ultimo controllo: {0})",
   "(Number {0} in the queue)": "(ancora {0} in coda)",
   "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry": "@giacobot, @maicol07, @mapi68, @mrfranza, David Senoner, Rosario Di Mauro",
   "0 packages found": "Nessun pacchetto trovato",
@@ -181,7 +181,7 @@
   "Enable the new UniGetUI-Branded UAC Elevator": "Abilita il nuovo elevatore UAC con marchio UniGetUI",
   "Enable {pm}": "Abilita {pm}",
   "Error": "Errore",
-  "Everything is up to date": "Tutto aggiornato -",
+  "Everything is up to date": "Tutto aggiornato",
   "Exact match": "Corrispondenza esatta",
   "Expand version": "Espandi versione",
   "Experimental settings and developer options": "Impostazioni sperimentali e opzioni sviluppatore",
