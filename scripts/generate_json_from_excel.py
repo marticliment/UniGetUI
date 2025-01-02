@@ -48,7 +48,7 @@ packagesWithIcon = 0
 packagesWithScreenshot = 0
 screenshotCount = 0
 arrivedAtTheEnd = False
-i = 2
+i = 1
 while not arrivedAtTheEnd:
     try:
         data = [worksheet.cell_value(i, 0), worksheet.cell_value(i, 1), []]
