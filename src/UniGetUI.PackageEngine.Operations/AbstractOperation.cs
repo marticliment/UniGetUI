@@ -125,13 +125,13 @@ public abstract class AbstractOperation : IDisposable
 
         if(int.TryParse(Settings.GetValue("ParallelOperationCount"), out int _maxPps))
         {
-            Logger.Debug("Parallel operation limit not set, defaulting to 1");
-            MAX_OPERATIONS = _maxPps;
+            MAX_OPERATIONS = _maxPps; 
+            Logger.Debug($"Parallel operation limit set to {MAX_OPERATIONS}");
         }
         else
         {
             MAX_OPERATIONS = 1;
-            Logger.Debug($"Parallel operation limit set to {MAX_OPERATIONS}");
+            Logger.Debug("Parallel operation limit not set, defaulting to 1");
         }
     }
 
