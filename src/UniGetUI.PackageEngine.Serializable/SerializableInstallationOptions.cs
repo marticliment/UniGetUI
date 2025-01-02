@@ -11,6 +11,7 @@ namespace UniGetUI.PackageEngine.Serializable
         public bool PreRelease { get; set; }
         public string CustomInstallLocation { get; set; } = "";
         public string Version { get; set; } = "";
+        public bool SkipMinorUpdates { get; set; }
 
         public SerializableInstallationOptions_v1 Copy()
         {
@@ -25,6 +26,7 @@ namespace UniGetUI.PackageEngine.Serializable
                 PreRelease = PreRelease,
                 RunAsAdministrator = RunAsAdministrator,
                 Version = Version,
+                SkipMinorUpdates = SkipMinorUpdates,
             };
         }
     }

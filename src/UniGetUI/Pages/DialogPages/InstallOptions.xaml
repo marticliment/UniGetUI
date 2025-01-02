@@ -63,9 +63,19 @@
 
                             <ProgressBar IsIndeterminate="True" Name="VersionProgress" Visibility="Visible" Grid.Column="2" VerticalAlignment="Top" CornerRadius="4,4,0,0" Margin="1,0,1,0"/>
                         </Grid>
-                        <CheckBox Name="IgnoreUpdatesCheckbox" Grid.Column="4">
-                            <widgets:TranslatedTextBlock Text="Ignore future updates for this package"/>
-                        </CheckBox>
+                         <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Name="IgnoreUpdatesCheckbox" Grid.Column="0">
+                                <widgets:TranslatedTextBlock Text="Ignore future updates for this package"/>
+                            </CheckBox>
+                            <CheckBox Name="SkipMinorUpdatesCheckbox" Grid.Column="2">
+                                <widgets:TranslatedTextBlock Text="Skip minor updates for this package"/>
+                            </CheckBox>
+                        </Grid>
                     </StackPanel>
                 </Border>
 

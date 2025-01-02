@@ -83,6 +83,8 @@ namespace UniGetUI.Interface.Dialogs
                 }
             }
 
+            SkipMinorUpdatesCheckbox.IsChecked = Options.SkipMinorUpdates;
+
             if (Package.Manager.Capabilities.SupportsCustomVersions)
             {
                 _ = LoadVersions();
@@ -186,6 +188,7 @@ namespace UniGetUI.Interface.Dialogs
             {
                 Options.Version = "";
             }
+            Options.SkipMinorUpdates = SkipMinorUpdatesCheckbox?.IsChecked ?? false;
 
             if (IgnoreUpdatesCheckbox?.IsChecked ?? false)
             {
