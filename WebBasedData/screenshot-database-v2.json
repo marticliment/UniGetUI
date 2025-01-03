@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 11733,
-        "done": 5176,
-        "packages_with_icon": 5176,
+        "total": 11734,
+        "done": 5178,
+        "packages_with_icon": 5178,
         "packages_with_screenshot": 612,
         "total_screenshots": 1905
     },
@@ -11772,7 +11772,7 @@
             "images": []
         },
         "doxygen": {
-            "icon": "",
+            "icon": "https://static.macupdate.com/products/51038/l/doxygen-logo.png",
             "images": []
         },
         "dprint": {
@@ -43586,6 +43586,10 @@
         },
         "vcpkg-cmake-get-vars": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/CMake_logo.svg/1200px-CMake_logo.svg.png",
+            "images": []
+        },
+        "vcpkg-tool-meson": {
+            "icon": "https://static-00.iconduck.com/assets.00/file-type-meson-icon-256x256-ias65td0.png",
             "images": []
         },
         "vcredist": {
