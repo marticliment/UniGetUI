@@ -293,7 +293,13 @@ namespace UniGetUI.Interface
         {
             while (ParametersToProcess.Count > 0)
             {
-                string param = ParametersToProcess.Dequeue().Trim('\'').Trim('"');
+                string? param = ParametersToProcess.Dequeue()?.Trim('\'')?.Trim('"');
+                if (param is null)
+                {
+                    Logger.Error("Attempted to process a null parameter");
+                    return;
+                }
+
                 if (param.Length > 2 && param[0] == '-' && param[1] == '-')
                 {
                     if (param == "--help")
