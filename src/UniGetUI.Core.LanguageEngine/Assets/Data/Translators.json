@@ -145,6 +145,7 @@
       "link": "https://github.com/ppvnf"
     }
   ],
+  "en-CA": [],
   "es": [
     {
       "name": "apazga",
@@ -169,6 +170,10 @@
     {
       "name": "marticliment",
       "link": "https://github.com/marticliment"
+    },
+    {
+      "name": "P10Designs",
+      "link": "https://github.com/P10Designs"
     },
     {
       "name": "rubnium",
@@ -239,6 +244,7 @@
       "link": "https://github.com/W1L7dev"
     }
   ],
+  "fr-CA": [],
   "gu": [],
   "he": [
     {
