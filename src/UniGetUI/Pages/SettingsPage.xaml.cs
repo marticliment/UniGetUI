@@ -17,6 +17,7 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.VcpkgManager;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageOperations;
 using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -97,6 +98,19 @@ namespace UniGetUI.Interface
             StartupPageSelector.AddItem(CoreTools.AutoTranslated("Package Bundles"), "bundles");
             StartupPageSelector.AddItem(CoreTools.AutoTranslated("Settings"), "settings");
             StartupPageSelector.ShowAddedItems();
+
+            for (int i = 1; i <= 10; i++)
+            {
+                ParallelOperationCount.AddItem(i.ToString(), i.ToString(), false);
+
+            }
+            ParallelOperationCount.AddItem("15", "15", false);
+            ParallelOperationCount.AddItem("20", "20", false);
+            ParallelOperationCount.AddItem("30", "30", false);
+            ParallelOperationCount.AddItem("50", "50", false);
+            ParallelOperationCount.AddItem("75", "75", false);
+            ParallelOperationCount.AddItem("100", "100", false);
+            ParallelOperationCount.ShowAddedItems();
 
             // Backup Section
             BackupDirectoryLabel = (TextBlock)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(0);
@@ -428,13 +442,13 @@ namespace UniGetUI.Interface
                 AdminCard._checkbox.Content = (AdminCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
                 ExtraSettingsCards[Manager].Insert(index++, AdminCard);
 
-                CheckboxCard ParallelCard = new()
+                /*CheckboxCard ParallelCard = new()
                 {
                     Text = CoreTools.AutoTranslated("Allow {pm} operations to be performed in parallel"),
                     SettingName = "AllowParallelInstallsForManager" + Manager.Name,
                 };
                 ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
-                ExtraSettingsCards[Manager].Insert(index++, ParallelCard);
+                ExtraSettingsCards[Manager].Insert(index++, ParallelCard);*/
 
                 if (Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
                 {
@@ -741,6 +755,14 @@ namespace UniGetUI.Interface
         private void CheckboxButtonCard_OnClick(object? sender, RoutedEventArgs e)
         {
             _ = DialogHelper.ManageDesktopShortcuts();
+        }
+
+        private void ParallelOperationCount_OnValueChanged(object? sender, EventArgs e)
+        {
+            if (int.TryParse(ParallelOperationCount.SelectedValue(), out int value))
+            {
+                AbstractOperation.MAX_OPERATIONS = value;
+            }
         }
     }
 }

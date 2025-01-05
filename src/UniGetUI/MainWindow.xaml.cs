@@ -45,7 +45,6 @@ namespace UniGetUI.Interface
         public int LoadingDialogCount;
 
         public List<ContentDialog> DialogQueue = [];
-
         public List<NavButton> NavButtonList = [];
 
         public static readonly ObservableQueue<string> ParametersToProcess = new();
@@ -210,7 +209,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                if (MainApp.Instance.OperationQueue.Count > 0)
+                if (MainApp.Operations._operationList.Count > 0)
                 {
                     args.Cancel = true;
                     ContentDialog d = new()
@@ -294,7 +293,13 @@ namespace UniGetUI.Interface
         {
             while (ParametersToProcess.Count > 0)
             {
-                string param = ParametersToProcess.Dequeue().Trim('\'').Trim('"');
+                string? param = ParametersToProcess.Dequeue()?.Trim('\'')?.Trim('"');
+                if (param is null)
+                {
+                    Logger.Error("Attempted to process a null parameter");
+                    return;
+                }
+
                 if (param.Length > 2 && param[0] == '-' && param[1] == '-')
                 {
                     if (param == "--help")
@@ -461,80 +466,95 @@ namespace UniGetUI.Interface
             UpdateSystemTrayStatus();
         }
 
+        private string LastTrayIcon  = "";
         public void UpdateSystemTrayStatus()
         {
-            string modifier = "_empty";
-            string tooltip = CoreTools.Translate("Everything is up to date") + " - " + Title;
+            try
+            {
+                string modifier = "_empty";
+                string tooltip = CoreTools.Translate("Everything is up to date") + " - " + Title;
 
-            if (MainApp.Instance.TooltipStatus.OperationsInProgress > 0)
-            {
-                modifier = "_blue";
-                tooltip = CoreTools.Translate("Operation in progress") + " - " + Title;
-            }
-            else if (MainApp.Instance.TooltipStatus.ErrorsOccurred > 0)
-            {
-                modifier = "_orange";
-                tooltip = CoreTools.Translate("Attention required") + " - " + Title;
-            }
-            else if (MainApp.Instance.TooltipStatus.RestartRequired)
-            {
-                modifier = "_turquoise";
-                tooltip = CoreTools.Translate("Restart required") + " - " + Title;
-            }
-            else if (MainApp.Instance.TooltipStatus.AvailableUpdates > 0)
-            {
-                modifier = "_green";
-                if (MainApp.Instance.TooltipStatus.AvailableUpdates == 1)
+                if (MainApp.Tooltip.OperationsInProgress > 0)
                 {
-                    tooltip = CoreTools.Translate("1 update is available") + " - " + Title;
+                    modifier = "_blue";
+                    tooltip = CoreTools.Translate("Operation in progress") + " - " + Title;
+                }
+                else if (MainApp.Tooltip.ErrorsOccurred > 0)
+                {
+                    modifier = "_orange";
+                    tooltip = CoreTools.Translate("Attention required") + " - " + Title;
+                }
+                else if (MainApp.Tooltip.RestartRequired)
+                {
+                    modifier = "_turquoise";
+                    tooltip = CoreTools.Translate("Restart required") + " - " + Title;
+                }
+                else if (MainApp.Tooltip.AvailableUpdates > 0)
+                {
+                    modifier = "_green";
+                    if (MainApp.Tooltip.AvailableUpdates == 1)
+                    {
+                        tooltip = CoreTools.Translate("1 update is available") + " - " + Title;
+                    }
+                    else
+                    {
+                        tooltip = CoreTools.Translate("{0} updates are available",
+                            MainApp.Tooltip.AvailableUpdates) + " - " + Title;
+                    }
+                }
+
+                if (TrayIcon is null)
+                {
+                    Logger.Warn("Attempting to update a null taskbar icon tray, aborting!");
+                    return;
+                }
+
+                TrayIcon.ToolTipText = tooltip;
+
+                ApplicationTheme theme = ApplicationTheme.Light;
+                string RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
+                string RegistryValueName = "SystemUsesLightTheme";
+                RegistryKey? key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath);
+                object? registryValueObject = key?.GetValue(RegistryValueName) ?? null;
+                if (registryValueObject is not null)
+                {
+                    int registryValue = (int)registryValueObject;
+                    theme = registryValue > 0 ? ApplicationTheme.Light : ApplicationTheme.Dark;
+                }
+
+                if (theme == ApplicationTheme.Light)
+                {
+                    modifier += "_black";
                 }
                 else
                 {
-                    tooltip = CoreTools.Translate("{0} updates are available",
-                        MainApp.Instance.TooltipStatus.AvailableUpdates) + " - " + Title;
+                    modifier += "_white";
                 }
+
+                string FullIconPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "\\Assets\\Images\\tray" + modifier + ".ico");
+                if (LastTrayIcon != FullIconPath)
+                {
+                    LastTrayIcon = FullIconPath;
+                    if (File.Exists(FullIconPath))
+                    {
+                        TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage { UriSource = new Uri(FullIconPath) });
+                    }
+                }
+
+                if (Settings.Get("DisableSystemTray"))
+                {
+                    TrayIcon.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    TrayIcon.Visibility = Visibility.Visible;
+                }
+
             }
-
-            if (TrayIcon is null)
+            catch (Exception ex)
             {
-                Logger.Warn("Attempting to update a null taskbar icon tray, aborting!");
-                return;
-            }
-
-            TrayIcon.ToolTipText = tooltip;
-
-            ApplicationTheme theme = ApplicationTheme.Light;
-            string RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
-            string RegistryValueName = "SystemUsesLightTheme";
-            RegistryKey? key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath);
-            object? registryValueObject = key?.GetValue(RegistryValueName) ?? null;
-            if (registryValueObject is not null)
-            {
-                int registryValue = (int)registryValueObject;
-                theme = registryValue > 0 ? ApplicationTheme.Light : ApplicationTheme.Dark;
-            }
-
-            if (theme == ApplicationTheme.Light)
-            {
-                modifier += "_black";
-            }
-            else
-            {
-                modifier += "_white";
-            }
-
-            string FullIconPath = Path.Join(CoreData.UniGetUIExecutableDirectory,
-                "\\Assets\\Images\\tray" + modifier + ".ico");
-
-            TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage { UriSource = new Uri(FullIconPath) });
-
-            if (Settings.Get("DisableSystemTray"))
-            {
-                TrayIcon.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                TrayIcon.Visibility = Visibility.Visible;
+                Logger.Error("An error occurred while updating the System Tray icon:");
+                Logger.Error(ex);
             }
         }
 

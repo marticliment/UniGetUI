@@ -16,7 +16,7 @@
 	<Authors>Martí Climent and the contributors</Authors>
 	<PublisherName>Martí Climent</PublisherName>
 	<ApplicationVersion>3.1.0-alpha2</ApplicationVersion>
-	<Copyright>2024, Martí Climent</Copyright>
+	<Copyright>2025, Martí Climent</Copyright>
 	<Nullable>enable</Nullable>
  </PropertyGroup>
 </Project>

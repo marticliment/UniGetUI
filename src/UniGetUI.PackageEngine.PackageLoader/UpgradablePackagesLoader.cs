@@ -9,6 +9,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
     public class UpgradablePackagesLoader : AbstractPackageLoader
     {
         private System.Timers.Timer? UpdatesTimer;
+        public static UpgradablePackagesLoader Instance = null!;
 
         /// <summary>
         /// The collection of packages with updates ignored
@@ -18,6 +19,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public UpgradablePackagesLoader(IEnumerable<IPackageManager> managers)
         : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false, CheckedBydefault: !Settings.Get("DisableSelectingUpdatesByDefault"))
         {
+            Instance = this;
             FinishedLoading += (_, _) => StartAutoCheckTimeout();
         }
 
