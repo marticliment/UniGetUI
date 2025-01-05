@@ -6,11 +6,15 @@ namespace UniGetUI.PackageEngine.PackageLoader
 {
     public class DiscoverablePackagesLoader : AbstractPackageLoader
     {
+        public static DiscoverablePackagesLoader Instance = null!;
+
         private string QUERY_TEXT = string.Empty;
 
         public DiscoverablePackagesLoader(IEnumerable<IPackageManager> managers)
-        : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false, CheckedBydefault: false)
-        { }
+            : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false, CheckedBydefault: false)
+        {
+            Instance = this;
+        }
 
         public async Task ReloadPackages(string query)
         {

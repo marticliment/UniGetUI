@@ -204,9 +204,9 @@
 
                     <!-- Updates Settings -->
                     <widgets:SettingsEntry
-                            Text="Updates preferences"
+                            Text="Install and update preferences"
                             x:Name="UpdatesOptionsExpander"
-                            UnderText="Change how UniGetUI checks and installs available updates for your packages"
+                            UnderText="Change how UniGetUI installs packages, and checks and installs available updates"
                             Icon="update">
                         <Toolkit:SettingsExpander.Items>
                             <widgets:CheckboxCard
@@ -229,7 +229,13 @@
                                 SettingName="AskToDeleteNewDesktopShortcuts"
                                 ButtonText="Manage shortcuts"
                                 Click="CheckboxButtonCard_OnClick"
-                                /> <!-- UniGetUI will only delete desktop shortcuts that were newly added after an update operation and that were explicitly approved -->
+                                />
+                            <widgets:ComboboxCard
+                                x:Name="ParallelOperationCount"
+                                Text="Choose how many operations shouls be performed in parallel"
+                                SettingName="ParallelOperationCount"
+                                ValueChanged="ParallelOperationCount_OnValueChanged"
+                            />
                         </Toolkit:SettingsExpander.Items>
                     </widgets:SettingsEntry>
 
@@ -338,10 +344,6 @@
                                 Text="Use installed GSudo instead of the bundled one"
                                 SettingName="UseUserGSudo"
                                 StateChanged="UseUserGSudoToggle_StateChanged"
-                                />
-                            <widgets:CheckboxCard
-                                Text="Allow package operations to be performed in parallel"
-                                SettingName="AllowParallelInstalls"
                                 />
                             <widgets:CheckboxCard
                                 Text="Disable the 1-minute timeout for package-related operations"

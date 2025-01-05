@@ -81,16 +81,16 @@ internal sealed class ScoopPkgOperationHelper : PackagePkgOperationHelper
         if (operation is OperationType.Uninstall)
         {
             if (output_string.Contains("was uninstalled"))
-                return OperationVeredict.Succeeded;
+                return OperationVeredict.Success;
 
-            return OperationVeredict.Failed;
+            return OperationVeredict.Failure;
         }
         else
         {
             if (output_string.Contains("ERROR"))
-                return OperationVeredict.Failed;
+                return OperationVeredict.Failure;
 
-            return OperationVeredict.Succeeded;
+            return OperationVeredict.Success;
         }
     }
 }
