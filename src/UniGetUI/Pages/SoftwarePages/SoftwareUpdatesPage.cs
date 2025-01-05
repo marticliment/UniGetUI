@@ -18,88 +18,6 @@ using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class PauseTime
-    {
-        private int _daysTill;
-        public int Months { get { return Weeks / 4; } set { Weeks = value * 4; } }
-        public int Weeks { get { return Days / 7; } set { Days = value * 7; } }
-        public int Days { get { return _daysTill; } set { _daysTill = value; } }
-
-        public string GetDateFromNow()
-        {
-            DateTime NewTime = DateTime.Now.AddDays(_daysTill);
-            return NewTime.ToString("yyyy-MM-dd");
-        }
-
-        public void Parse(string Date)
-        {
-            try
-            {
-                DateTime ParsedDate = DateTime.ParseExact(Date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                DateTime Now = DateTime.Now;
-                if (ParsedDate > Now)
-                {
-                    _daysTill = (int)(ParsedDate - Now).TotalDays;
-                }
-                else
-                {
-                    _daysTill = (int)(Now - ParsedDate).TotalDays;
-                }
-            }
-            catch (FormatException ex)
-            {
-                Logger.Error($"Couldn't parse date {Date}:");
-                Logger.Error(ex);
-            }
-        }
-
-        public string StringRepresentation()
-        {
-            /*
-            // This is a better, replacement body of this function. The only reason it's not the default one is because
-            // I wasn't sure `translation_utils.get_all_strings` would be able to scrape it correctly
-            // (because scraping "{num} {timeset}" would result in untranslated 'day/year/month'{s}).
-            // I'll leave it to you which to leave or if you want me to write a third one because this body sucks :/
-            // I just recommend deleting whichever you don't use.
-            Func<int, string, string> PluralLambda = (num, timeset) =>
-            {
-                if (num == 1) return CoreTools.Translate($"1 {timeset}");
-                else return CoreTools.Translate($"{num} {timeset}s");
-            };
-            if (Months >= 12 && Months % 12 == 0)
-            {
-                int Years = Months / 12;
-                return PluralLambda(Years, "year");
-            }
-            else if (Months >= 1) return PluralLambda(Months, "month");
-            else if (Weeks >= 1) return PluralLambda(Weeks, "week");
-            else return PluralLambda(Days, "day");
-            */
-
-            if (Months >= 12 && Months % 12 == 0)
-            {
-                int Years = Months / 12;
-                if (Years > 1) return CoreTools.Translate($"{Years} years");
-                else return CoreTools.Translate("1 year");
-            }
-            else if (Months >= 1)
-            {
-                if (Months > 1) return CoreTools.Translate($"{Months} months");
-                else return CoreTools.Translate("1 month");
-            }
-            else if (Weeks >= 1)
-            {
-                if (Weeks > 1) return CoreTools.Translate($"{Weeks} weeks");
-                else return CoreTools.Translate("1 week");
-            }
-            else
-            {
-                if (Days != 1) return CoreTools.Translate($"{Days} days");
-                else return CoreTools.Translate("1 day");
-            }
-        }
-    }
-
     public class SoftwareUpdatesPage : AbstractPackagesPage
     {
         private BetterMenuItem? MenuAsAdmin;
@@ -231,7 +149,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 Text = "Pause updates for",
                 Icon = new FontIcon() { Glyph = "\uE769" },
             };
-            foreach (PauseTime menuTime in new List<PauseTime>{
+            foreach (IgnoredUpdatesDatabase.PauseTime menuTime in new List<IgnoredUpdatesDatabase.PauseTime>{
                 new() { Days = 1 }, new() { Days = 3 },
                 new() { Weeks = 1 }, new() { Weeks = 2 }, new() { Weeks = 4 },
                 new() { Months = 3 }, new() { Months = 6 }, new() { Months = 12 },
