@@ -244,10 +244,9 @@ namespace UniGetUI.Interface.SoftwarePages
                 menuItem.Click += (_, _) => {
                     if (SelectedItem != null)
                     {
-                        IgnoredUpdatesDatabase.Add(
-                            IgnoredUpdatesDatabase.GetIgnoredIdForPackage(SelectedItem),
-                            "<" + menuTime.GetDateFromNow());
+                        SelectedItem.AddToIgnoredUpdatesAsync("<" + menuTime.GetDateFromNow());
                         PEInterface.UpgradablePackagesLoader.IgnoredPackages[SelectedItem.Id] = SelectedItem;
+                        Loader.Remove(SelectedItem);
                     }
                 };
                 menuPause.Items.Add(menuItem);
