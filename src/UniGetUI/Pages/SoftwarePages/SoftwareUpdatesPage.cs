@@ -9,6 +9,7 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
@@ -143,6 +144,32 @@ namespace UniGetUI.Interface.SoftwarePages
             };
             menuDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem);
 
+            MenuFlyoutSubItem menuPause = new()
+            {
+                Text = "Pause updates for",
+                Icon = new FontIcon() { Glyph = "\uE769" },
+            };
+            foreach (IgnoredUpdatesDatabase.PauseTime menuTime in new List<IgnoredUpdatesDatabase.PauseTime>{
+                new() { Days = 1 }, new() { Days = 3 },
+                new() { Weeks = 1 }, new() { Weeks = 2 }, new() { Weeks = 4 },
+                new() { Months = 3 }, new() { Months = 6 }, new() { Months = 12 },
+            })
+            {
+                BetterMenuItem menuItem = new()
+                {
+                    Text = menuTime.StringRepresentation(),
+                };
+                menuItem.Click += (_, _) => {
+                    if (SelectedItem != null)
+                    {
+                        SelectedItem.AddToIgnoredUpdatesAsync("<" + menuTime.GetDateFromNow());
+                        PEInterface.UpgradablePackagesLoader.IgnoredPackages[SelectedItem.Id] = SelectedItem;
+                        Loader.Remove(SelectedItem);
+                    }
+                };
+                menuPause.Items.Add(menuItem);
+            }
+
             ContextMenu.Items.Add(menuInstall);
             ContextMenu.Items.Add(new MenuFlyoutSeparator());
             ContextMenu.Items.Add(menuInstallSettings);
@@ -157,6 +184,7 @@ namespace UniGetUI.Interface.SoftwarePages
             ContextMenu.Items.Add(new MenuFlyoutSeparator());
             ContextMenu.Items.Add(menuIgnorePackage);
             ContextMenu.Items.Add(menuSkipVersion);
+            ContextMenu.Items.Add(menuPause);
             ContextMenu.Items.Add(new MenuFlyoutSeparator());
             ContextMenu.Items.Add(menuShare);
             ContextMenu.Items.Add(menuDetails);

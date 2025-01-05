@@ -61,6 +61,8 @@ namespace UniGetUI.Core.Tools.Tests
         [InlineData("Flask-RESTful", "Flask RESTful")]
         [InlineData("vcpkg-item[option]", "Vcpkg Item [Option]")]
         [InlineData("vcpkg-item[multi-option]", "Vcpkg Item [Multi Option]")]
+        [InlineData("vcpkg-item[multi-option]:triplet", "Vcpkg Item [Multi Option]")]
+        [InlineData("vcpkg-single-item:triplet", "Vcpkg Single Item")]
         public void TestFormatAsName(string id, string name)
         {
             Assert.Equal(name, CoreTools.FormatAsName(id));

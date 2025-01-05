@@ -1,11 +1,73 @@
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.Classes.Packages.Classes;
 
 public static class IgnoredUpdatesDatabase
 {
+    public class PauseTime
+    {
+        private int _daysTill;
+        public int Months { get { return Weeks / 4; } set { Weeks = value * 4; } }
+        public int Weeks { get { return Days / 7; } set { Days = value * 7; } }
+        public int Days { get { return _daysTill; } set { _daysTill = value; } }
+
+        public string GetDateFromNow()
+        {
+            DateTime NewTime = DateTime.Now.AddDays(_daysTill);
+            return NewTime.ToString("yyyy-MM-dd");
+        }
+
+        public void Parse(string Date)
+        {
+            try
+            {
+                DateTime ParsedDate = DateTime.ParseExact(Date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                DateTime Now = DateTime.Now;
+                if (ParsedDate > Now)
+                {
+                    _daysTill = (int)(ParsedDate - Now).TotalDays;
+                }
+                else
+                {
+                    _daysTill = (int)(Now - ParsedDate).TotalDays;
+                }
+            }
+            catch (FormatException ex)
+            {
+                Logger.Error($"Couldn't parse date {Date}:");
+                Logger.Error(ex);
+            }
+        }
+
+        public string StringRepresentation()
+        {
+            if (Months >= 12 && Months % 12 == 0)
+            {
+                int Years = Months / 12;
+                if (Years > 1) return CoreTools.Translate("{0} years", Years);
+                else return CoreTools.Translate("1 year");
+            }
+            else if (Months >= 1)
+            {
+                if (Months > 1) return CoreTools.Translate("{0} months", Months);
+                else return CoreTools.Translate("1 month");
+            }
+            else if (Weeks >= 1)
+            {
+                if (Weeks > 1) return CoreTools.Translate("{0} weeks", Weeks);
+                else return CoreTools.Translate("1 week");
+            }
+            else
+            {
+                if (Days != 1) return CoreTools.Translate("{0} days", Days);
+                else return CoreTools.Translate("1 day");
+            }
+        }
+    }
+
     public static IReadOnlyDictionary<string, string> GetDatabase()
     {
         return Settings.GetDictionary<string, string>("IgnoredPackageUpdates") ?? new Dictionary<string, string>();
@@ -62,6 +124,21 @@ public static class IgnoredUpdatesDatabase
     public static bool HasUpdatesIgnored(string ignoredId, string version = "*")
     {
         string? ignoredVersion = Settings.GetDictionaryItem<string, string>("IgnoredPackageUpdates", ignoredId);
+
+        if (ignoredVersion != null && ignoredVersion.StartsWith("<"))
+        {
+            try
+            {
+                var ignoreDate = DateTime.ParseExact(ignoredVersion[1..], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                if (ignoreDate > DateTime.Now) return true;
+                else Remove(ignoredId);
+            }
+            catch (FormatException ex)
+            {
+                Logger.Error($"Couldn't parse update ignoration {ignoredVersion}:");
+                Logger.Error(ex);
+            }
+        }
 
         // Check if the package is ignored
         return ignoredVersion == "*" || ignoredVersion == version;
