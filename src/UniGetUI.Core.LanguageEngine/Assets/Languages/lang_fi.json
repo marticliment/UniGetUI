@@ -14,7 +14,7 @@
   "3 - Information (less)": "3 - Tietoja (vähemmän)",
   "4 - Information (more)": "4 - Tietoja (enemmän)",
   "5 - information (debug)": "5 - Tietoja (debug)",
-  "A popular C/C++ library manager. Full of C/C++ libraries and other C/C++-related utilities<br>Contains: <b>C/C++ libraries and related utilities</b>": null,
+  "A popular C/C++ library manager. Full of C/C++ libraries and other C/C++-related utilities<br>Contains: <b>C/C++ libraries and related utilities</b>": "Suosittu C/C++-kirjastonhallinta. Täynnä C/C++-kirjastoja ja muita C/C++:aan liittyviä apuohjelmia<br>Sisältää: <b>C/C++-kirjastot ja niihin liittyvät apuohjelmat</b>",
   "A repository full of tools and executables designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related tools and scripts</b>": "Arkisto täynnä työkaluja ja suoritettavia tiedostoja, jotka on suunniteltu Microsoftin .NET-ekosysteemiä silmällä pitäen.<br>Sisältää: <b>.NETiin liittyvät työkalut ja komentosarjat</b>",
   "A repository full of tools designed with Microsoft's .NET ecosystem in mind.<br>Contains: <b>.NET related Tools</b>": "Arkisto täynnä työkaluja, jotka on suunniteltu Microsoftin .NET-ekosysteemiä ajatellen.<br>Sisältää: <b>.NET-työkalut</b>",
   "A restart is required": "Uudelleenkäynnistys vaaditaan",
