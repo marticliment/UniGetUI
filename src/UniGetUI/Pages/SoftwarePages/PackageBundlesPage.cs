@@ -18,6 +18,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
+using YamlDotNet.Serialization;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -604,8 +605,9 @@ namespace UniGetUI.Interface.SoftwarePages
             }
             else if (format is BundleFormatType.YAML)
             {
-                YamlDotNet.Serialization.IDeserializer deserializer =
-                    new YamlDotNet.Serialization.DeserializerBuilder()
+                IDeserializer deserializer =
+                    new DeserializerBuilder()
+                        .IgnoreUnmatchedProperties()
                         .Build();
                 DeserializedData = await Task.Run(() => deserializer.Deserialize<SerializableBundle_v1>(content));
             }
