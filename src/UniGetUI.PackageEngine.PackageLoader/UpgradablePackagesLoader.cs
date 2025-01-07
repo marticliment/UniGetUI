@@ -3,6 +3,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
@@ -31,7 +32,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 IgnoredPackages[package.Id] = package;
                 return false;
             }
-            if (package.AsSerializable().InstallationOptions.SkipMinorUpdates && package.IsUpdateMinor()) return false;
+            if (InstallationOptions.FromPackage(package).SkipMinorUpdates && package.IsUpdateMinor()) return false;
             if (package.NewerVersionIsInstalled()) return false;
             return true;
         }
