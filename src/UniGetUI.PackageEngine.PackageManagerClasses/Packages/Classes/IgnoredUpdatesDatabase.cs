@@ -46,24 +46,19 @@ public static class IgnoredUpdatesDatabase
         {
             if (Months >= 12 && Months % 12 == 0)
             {
-                int Years = Months / 12;
-                if (Years > 1) return CoreTools.Translate("{0} years", Years);
-                else return CoreTools.Translate("1 year");
+                return CoreTools.Translate("{years, plural, =1{1 year} other{# years}}", new Dictionary<string, object?> { { "years", Months / 12 } });
             }
             else if (Months >= 1)
             {
-                if (Months > 1) return CoreTools.Translate("{0} months", Months);
-                else return CoreTools.Translate("1 month");
+                return CoreTools.Translate("{months, plural, =1{1 month} other{# months}}", new Dictionary<string, object?> { { "months", Months } });
             }
             else if (Weeks >= 1)
             {
-                if (Weeks > 1) return CoreTools.Translate("{0} weeks", Weeks);
-                else return CoreTools.Translate("1 week");
+                return CoreTools.Translate("{weeks, plural, =1{1 week} other{# weeks}}", new Dictionary<string, object?> { { "weeks", Weeks } });
             }
             else
             {
-                if (Days != 1) return CoreTools.Translate("{0} days", Days);
-                else return CoreTools.Translate("1 day");
+                return CoreTools.Translate("{days, plural, =1{1 day} other{# days}}", new Dictionary<string, object?> { { "days", Days } });
             }
         }
     }
