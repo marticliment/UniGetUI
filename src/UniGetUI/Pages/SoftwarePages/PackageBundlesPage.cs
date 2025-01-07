@@ -459,11 +459,17 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 string fileContent = await File.ReadAllTextAsync(file);
 
-                await AddFromBundle(fileContent, formatType);
+                double open_version = await AddFromBundle(fileContent, formatType);
                 HasUnsavedChanges = false;
 
                 DialogHelper.HideLoadingDialog();
 
+                if ((int)(open_version*10) != (int)(SerializableBundle_Data.ExpectedVersion*10))
+                {   // Check only up to first decimal digit
+                    Logger.Warn($"The loaded bundle \"{file}\" is based on schema version {open_version}, " +
+                                $"while this UniGetUI build expects version {SerializableBundle_Data.ExpectedVersion}." +
+                                $"\nThis should not be a problem if packages show up, but be careful");
+                }
             }
             catch (Exception ex)
             {
@@ -574,7 +580,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             else if (formatType == BundleFormatType.YAML)
             {
-                YamlDotNet.Serialization.ISerializer serializer = new YamlDotNet.Serialization.SerializerBuilder()
+                ISerializer serializer = new SerializerBuilder()
                     .Build();
                 ExportableData = serializer.Serialize(exportable);
             }
@@ -594,7 +600,7 @@ namespace UniGetUI.Interface.SoftwarePages
             return ExportableData;
         }
 
-        public async Task AddFromBundle(string content, BundleFormatType format)
+        public async Task<double> AddFromBundle(string content, BundleFormatType format)
         {
             // Deserialize data
             SerializableBundle_v1? DeserializedData;
@@ -641,6 +647,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(packages);
 
+            return DeserializedData.export_version;
         }
 
         public static IPackage PackageFromSerializable(SerializablePackage_v1 raw_package)
