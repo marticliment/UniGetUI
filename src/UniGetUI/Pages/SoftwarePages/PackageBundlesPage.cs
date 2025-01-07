@@ -465,7 +465,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 DialogHelper.HideLoadingDialog();
 
                 if ((int)(open_version*10) != (int)(SerializableBundle_Data.ExpectedVersion*10))
-                {   // Check only up to first decimal digit
+                {   // Check only up to first decimal digit, prevent floating point precision error.
                     Logger.Warn($"The loaded bundle \"{file}\" is based on schema version {open_version}, " +
                                 $"while this UniGetUI build expects version {SerializableBundle_Data.ExpectedVersion}." +
                                 $"\nThis should not be a problem if packages show up, but be careful");
