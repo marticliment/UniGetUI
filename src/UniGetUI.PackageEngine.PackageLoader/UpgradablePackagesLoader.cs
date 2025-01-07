@@ -32,7 +32,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 IgnoredPackages[package.Id] = package;
                 return false;
             }
-            if (InstallationOptions.FromPackage(package).SkipMinorUpdates && package.IsUpdateMinor()) return false;
+            if ((await InstallationOptions.FromPackageAsync(package)).SkipMinorUpdates && package.IsUpdateMinor()) return false;
             if (package.NewerVersionIsInstalled()) return false;
             return true;
         }
