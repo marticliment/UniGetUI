@@ -54,8 +54,7 @@ public static class IgnoredUpdatesDatabase
             };
             if (Months >= 12 && Months % 12 == 0)
             {
-                int Years = Months / 12;
-                return PluralLambda(Years, CoreTools.Translate("year"));
+                return PluralLambda(Months / 12, CoreTools.Translate("year"));
             }
             else if (Months >= 1) return PluralLambda(Months, CoreTools.Translate("month"));
             else if (Weeks >= 1) return PluralLambda(Weeks, CoreTools.Translate("week"));
