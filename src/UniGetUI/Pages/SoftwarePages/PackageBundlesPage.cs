@@ -546,7 +546,7 @@ namespace UniGetUI.Interface.SoftwarePages
         public static async Task<string> CreateBundle(IEnumerable<IPackage> unsorted_packages, BundleFormatType formatType = BundleFormatType.JSON)
         {
             SerializableBundle_v1 exportable = new();
-            exportable.export_version = 2.0;
+            exportable.export_version = 2.1;
 
             List<IPackage> packages = unsorted_packages.ToList();
             packages.Sort(Comparison);
@@ -596,7 +596,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
         public async Task AddFromBundle(string content, BundleFormatType format)
         {
-
             // Deserialize data
             SerializableBundle_v1? DeserializedData;
             if (format is BundleFormatType.JSON)
