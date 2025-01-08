@@ -1,5 +1,10 @@
 ﻿namespace UniGetUI.PackageEngine.Classes.Serializable
 {
+    public class SerializableBundle_Data
+    {
+        public const double ExpectedVersion = 2.1;
+    }
+
     public class SerializableBundle_v1
     {
         public double export_version { get; set; } = -1;

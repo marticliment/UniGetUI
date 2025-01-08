@@ -18,6 +18,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
+using YamlDotNet.Serialization;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -458,11 +459,17 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 string fileContent = await File.ReadAllTextAsync(file);
 
-                await AddFromBundle(fileContent, formatType);
+                double open_version = await AddFromBundle(fileContent, formatType);
                 HasUnsavedChanges = false;
 
                 DialogHelper.HideLoadingDialog();
 
+                if ((int)(open_version*10) != (int)(SerializableBundle_Data.ExpectedVersion*10))
+                {   // Check only up to first decimal digit, prevent floating point precision error.
+                    Logger.Warn($"The loaded bundle \"{file}\" is based on schema version {open_version}, " +
+                                $"while this UniGetUI build expects version {SerializableBundle_Data.ExpectedVersion}." +
+                                $"\nThis should not be a problem if packages show up, but be careful");
+                }
             }
             catch (Exception ex)
             {
@@ -545,7 +552,7 @@ namespace UniGetUI.Interface.SoftwarePages
         public static async Task<string> CreateBundle(IEnumerable<IPackage> unsorted_packages, BundleFormatType formatType = BundleFormatType.JSON)
         {
             SerializableBundle_v1 exportable = new();
-            exportable.export_version = 2.0;
+            exportable.export_version = 2.1;
 
             List<IPackage> packages = unsorted_packages.ToList();
             packages.Sort(Comparison);
@@ -573,7 +580,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             else if (formatType == BundleFormatType.YAML)
             {
-                YamlDotNet.Serialization.ISerializer serializer = new YamlDotNet.Serialization.SerializerBuilder()
+                ISerializer serializer = new SerializerBuilder()
                     .Build();
                 ExportableData = serializer.Serialize(exportable);
             }
@@ -593,9 +600,8 @@ namespace UniGetUI.Interface.SoftwarePages
             return ExportableData;
         }
 
-        public async Task AddFromBundle(string content, BundleFormatType format)
+        public async Task<double> AddFromBundle(string content, BundleFormatType format)
         {
-
             // Deserialize data
             SerializableBundle_v1? DeserializedData;
             if (format is BundleFormatType.JSON)
@@ -604,8 +610,9 @@ namespace UniGetUI.Interface.SoftwarePages
             }
             else if (format is BundleFormatType.YAML)
             {
-                YamlDotNet.Serialization.IDeserializer deserializer =
-                    new YamlDotNet.Serialization.DeserializerBuilder()
+                IDeserializer deserializer =
+                    new DeserializerBuilder()
+                        .IgnoreUnmatchedProperties()
                         .Build();
                 DeserializedData = await Task.Run(() => deserializer.Deserialize<SerializableBundle_v1>(content));
             }
@@ -640,6 +647,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(packages);
 
+            return DeserializedData.export_version;
         }
 
         public static IPackage PackageFromSerializable(SerializablePackage_v1 raw_package)
