@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11734,
-        "done": 5178,
-        "packages_with_icon": 5178,
-        "packages_with_screenshot": 612,
-        "total_screenshots": 1905
+        "done": 5179,
+        "packages_with_icon": 5179,
+        "packages_with_screenshot": 613,
+        "total_screenshots": 1912
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -33530,7 +33530,7 @@
             "images": []
         },
         "quicklook": {
-            "icon": "https://community.chocolatey.org/content/packageimages/quicklook.3.7.3.png",
+            "icon": "https://imgur.com/FTMhHwD",
             "images": []
         },
         "quickpar": {
@@ -34295,8 +34295,16 @@
             "images": []
         },
         "regcool": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/6QX9bvvX/regcool-icon.png",
+            "images": [
+                "https://i.postimg.cc/Vvd1093j/regcool-e1.png",
+                "https://i.postimg.cc/W3psTc8Y/regcool-e2.png",
+                "https://i.postimg.cc/d1Ww0NSs/regcool-e3.png",
+                "https://i.postimg.cc/KYDm68Pg/regcool-e4.png",
+                "https://i.postimg.cc/nrgx4jJN/regcool-e5.png",
+                "https://i.postimg.cc/dQxJPXyn/regcool-e6.png",
+                "https://i.postimg.cc/5NQbx35J/regcool-e7.png"
+            ]
         },
         "regdelnull": {
             "icon": "",
