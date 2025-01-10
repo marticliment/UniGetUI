@@ -577,5 +577,19 @@ Crash Traceback:
                 await Task.Delay(TimeSpan.FromSeconds(5));
             }
         }
+
+        public static string TextProgressGenerator(int length, int progressPercent, string? extra)
+        {
+            int done = (int)((progressPercent / 100.0) * (length));
+            int rest = length - done;
+
+            return new StringBuilder()
+                .Append('[')
+                .Append(new string('#', done))
+                .Append(new string('.', rest))
+                .Append($"] {progressPercent}%")
+                .Append(extra is null? "": $" ({extra})")
+                .ToString();
+        }
     }
 }
