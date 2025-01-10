@@ -609,7 +609,7 @@ Crash Traceback:
         {
             if (number >= 1073741824)
             {
-                return $"{(number / 1048576d).ToString($"F{decimals}")} GB";
+                return $"{(number / 1073741824d).ToString($"F{decimals}")} GB";
             }
             else if (number >= 1048576)
             {

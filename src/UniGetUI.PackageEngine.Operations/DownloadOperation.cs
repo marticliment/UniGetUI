@@ -109,7 +109,11 @@ public class DownloadOperation : AbstractOperation
                     if (progress != oldProgress)
                     {
                         oldProgress = progress;
-                        Line(CoreTools.TextProgressGenerator(30, progress, ), LineType.Progress);
+                        Line(CoreTools.TextProgressGenerator(
+                            30,
+                            progress,
+                            $"{CoreTools.FormatAsSize(totalRead)}/{CoreTools.FormatAsSize(totalBytes)}"
+                        ), LineType.Progress);
                     }
                 }
 
