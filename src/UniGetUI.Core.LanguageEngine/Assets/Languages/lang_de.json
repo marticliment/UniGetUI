@@ -1,7 +1,7 @@
 {
   "(Last checked: {0})": "(Zuletzt geprüft: {0})",
   "(Number {0} in the queue)": "( Position {0} in der Warteschlange )",
-  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry": "@Datacra5H, @ebnater, @Seeloewen, @michaelmairegger, @CanePlayz, @1270o1, @yrjarv, @alxhu-dev",
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry": "@Datacra5H, @ebnater, @Seeloewen, @michaelmairegger, @CanePlayz, @1270o1, @yrjarv, @alxhu-dev, @Araxxas",
   "0 packages found": "0 Pakete gefunden",
   "0 updates found": "0 Updates gefunden",
   "1 - Errors": "1 - Fehler",
@@ -36,7 +36,7 @@
   "Adding source {source} to {manager}": "Quelle {source} wird zu {manager} hinzugefügt",
   "Addition succeeded": "Erfolgreich hinzugefügt",
   "Administrator privileges": "Administratorrechte",
-  "Administrator privileges preferences": "Einstellungen zu Administratorrechte",
+  "Administrator privileges preferences": "Einstellungen zu Administratorrechten",
   "Administrator rights": "Administratorrechte",
   "All files": "Alle Dateien",
   "All versions": "Alle Versionen",
