@@ -453,7 +453,6 @@ namespace UniGetUI.Interface.Dialogs
 
         public async void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)
         {
-            bool running = true;
             try
             {
                 if (Package.Details?.InstallerUrl is null)
@@ -481,48 +480,17 @@ namespace UniGetUI.Interface.Dialogs
                 StorageFile file = await savePicker.PickSaveFileAsync();
                 if (file is not null)
                 {
-                    Func<Task> loader = async () =>
-                    {
-                        List<string> texts = [
-                            " .   ",
-                            " ..  ",
-                            " ... ",
-                            "  ...",
-                            "   ..",
-                            "    ."];
-                        int i = 0;
-                        string baseString = CoreTools.Translate("Downloading installer for {package}", new Dictionary<string, object?> { { "package", Package.Name } });
-                        while (running)
-                        {
-                            DownloadInstaller_Button.Inlines.Clear();
-                            DownloadInstaller_Button.Inlines.Add(new Run { Text = baseString + " " + texts[i++ % 6] });
-                            await Task.Delay(500);
-                        }
-                    };
-                    _ = loader();
+                    MainApp.Operations.Add(new DownloadOperation(Package, file.Path));
+                    Close?.Invoke(this, EventArgs.Empty);
 
-                    Logger.Debug($"Downloading installer ${file.Path}");
-
-                    using HttpClient httpClient = new(CoreData.GenericHttpClientParameters);
-                    httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-                    await using Stream s = await httpClient.GetStreamAsync(Package.Details.InstallerUrl);
-                    await using FileStream fs = File.OpenWrite(file.Path);
-                    await s.CopyToAsync(fs);
-                    DownloadInstaller_Button.Inlines.Clear();
-                    DownloadInstaller_Button.Inlines.Add(new Run { Text = CoreTools.Translate("Download installer") });
-                    running = false;
-                    Logger.ImportantInfo($"Installer for {Package.Id} has been downloaded successfully");
-                    DialogHelper.HideLoadingDialog();
-                    Process.Start("explorer.exe", "/select," + $"\"{file.Path}\"");
+                   //  DialogHelper.HideLoadingDialog();
+                   // Process.Start("explorer.exe", "/select," + $"\"{file.Path}\"");
                 }
             }
             catch (Exception ex)
             {
                 Logger.Error($"An error occurred while downloading the installer for the package {Package.Id}");
                 Logger.Error(ex);
-
-                DownloadInstaller_Button.Inlines.Clear();
-                DownloadInstaller_Button.Inlines.Add(new Run { Text = CoreTools.Translate("An error occurred") + ": " + ex.Message });
             }
         }
 
