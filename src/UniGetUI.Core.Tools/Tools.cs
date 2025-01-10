@@ -140,7 +140,9 @@ namespace UniGetUI.Core.Tools
         /// <returns>The formatted string</returns>
         public static string FormatAsName(string name)
         {
-            name = name.Replace(".install", "").Replace(".portable", "").Replace("-", " ").Replace("_", " ").Split("/")[^1].Split(":")[0];
+            name =
+                name.Replace(".install", "").Replace(".portable", "").Replace("-", " ").Replace("_", " ").Split("/")[^1]
+                    .Split(":")[0];
             string newName = "";
             for (int i = 0; i < name.Length; i++)
             {
@@ -153,6 +155,7 @@ namespace UniGetUI.Core.Tools
                     newName += name[i];
                 }
             }
+
             newName = newName.Replace(" [", "[").Replace("[", " [");
             return newName;
         }
@@ -200,7 +203,8 @@ Crash Traceback:
 
             Console.WriteLine(Error_String);
 
-            string ErrorBody = "https://www.marticliment.com/error-report/?appName=UniGetUI^&errorBody=" + Uri.EscapeDataString(Error_String.Replace("\n", "{l}"));
+            string ErrorBody = "https://www.marticliment.com/error-report/?appName=UniGetUI^&errorBody=" +
+                               Uri.EscapeDataString(Error_String.Replace("\n", "{l}"));
 
             Console.WriteLine(ErrorBody);
 
@@ -244,7 +248,7 @@ Crash Traceback:
             try
             {
                 return new WindowsPrincipal(WindowsIdentity.GetCurrent())
-                          .IsInRole(WindowsBuiltInRole.Administrator);
+                    .IsInRole(WindowsBuiltInRole.Administrator);
             }
             catch (Exception e)
             {
@@ -299,6 +303,7 @@ Crash Traceback:
                 Logger.Warn($"Could not load file size for url={url}");
                 Logger.Warn(e);
             }
+
             return 0;
         }
 
@@ -328,6 +333,7 @@ Crash Traceback:
                         }
                     }
                 }
+
                 double res = -1;
                 if (_ver is not "" and not ".")
                 {
@@ -359,18 +365,18 @@ Crash Traceback:
         public static string EnsureSafeQueryString(string query)
         {
             return query.Replace(";", string.Empty)
-                        .Replace("&", string.Empty)
-                        .Replace("|", string.Empty)
-                        .Replace(">", string.Empty)
-                        .Replace("<", string.Empty)
-                        .Replace("%", string.Empty)
-                        .Replace("\"", string.Empty)
-                        .Replace("~", string.Empty)
-                        .Replace("?", string.Empty)
-                        .Replace("/", string.Empty)
-                        .Replace("'", string.Empty)
-                        .Replace("\\", string.Empty)
-                        .Replace("`", string.Empty);
+                .Replace("&", string.Empty)
+                .Replace("|", string.Empty)
+                .Replace(">", string.Empty)
+                .Replace("<", string.Empty)
+                .Replace("%", string.Empty)
+                .Replace("\"", string.Empty)
+                .Replace("~", string.Empty)
+                .Replace("?", string.Empty)
+                .Replace("/", string.Empty)
+                .Replace("'", string.Empty)
+                .Replace("\\", string.Empty)
+                .Replace("`", string.Empty);
         }
 
         /// <summary>
@@ -525,11 +531,13 @@ Crash Traceback:
             {
                 info.Environment[env.Key?.ToString() ?? "UNKNOWN"] = env.Value?.ToString();
             }
+
             foreach (DictionaryEntry env in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User))
             {
                 string key = env.Key.ToString() ?? "";
                 string newValue = env.Value?.ToString() ?? "";
-                if (info.Environment.TryGetValue(key, out string? oldValue) && oldValue is not null && oldValue.Contains(';') && newValue != "")
+                if (info.Environment.TryGetValue(key, out string? oldValue) && oldValue is not null &&
+                    oldValue.Contains(';') && newValue != "")
                 {
                     info.Environment[key] = oldValue + ";" + newValue;
                 }
@@ -538,6 +546,7 @@ Crash Traceback:
                     info.Environment[key] = newValue;
                 }
             }
+
             return info;
         }
 
@@ -549,7 +558,8 @@ Crash Traceback:
 
         public static async Task _waitForInternetConnection()
         {
-            Logger.Debug("Checking for internet connectivity. Pinging google.com, microsoft.com, couldflare.com and marticliment.com");
+            Logger.Debug(
+                "Checking for internet connectivity. Pinging google.com, microsoft.com, couldflare.com and marticliment.com");
             string[] hosts = ["google.com", "microsoft.com", "cloudflare.com", "marticliment.com"];
             while (true)
             {
@@ -562,7 +572,8 @@ Crash Traceback:
                             PingReply reply = await pinger.SendPingAsync(host, 10);
                             if (reply.Status is IPStatus.Success)
                             {
-                                Logger.Debug($"{host} responded successfully to ping, internet connection was validated.");
+                                Logger.Debug(
+                                    $"{host} responded successfully to ping, internet connection was validated.");
                                 return;
                             }
 
@@ -570,10 +581,12 @@ Crash Traceback:
                         }
                         catch (Exception ex)
                         {
-                            Logger.Debug($"Could not ping {host} with error {ex.Message}. Are you connected to the internet?");
+                            Logger.Debug(
+                                $"Could not ping {host} with error {ex.Message}. Are you connected to the internet?");
                         }
                     }
                 }
+
                 await Task.Delay(TimeSpan.FromSeconds(5));
             }
         }
@@ -588,8 +601,28 @@ Crash Traceback:
                 .Append(new string('#', done))
                 .Append(new string('.', rest))
                 .Append($"] {progressPercent}%")
-                .Append(extra is null? "": $" ({extra})")
+                .Append(extra is null ? "" : $" ({extra})")
                 .ToString();
+        }
+
+        public static string FormatAsSize(long number, int decimals = 1)
+        {
+            if (number >= 1073741824)
+            {
+                return $"{(number / 1048576d).ToString($"F{decimals}")} GB";
+            }
+            else if (number >= 1048576)
+            {
+                return $"{(number / 1048576d).ToString($"F{decimals}")} MB";
+            }
+            else if (number >= 1024)
+            {
+                return $"{(number / 1024d).ToString($"F{decimals}")} KB";
+            }
+            else
+            {
+                return $"{number} bytes";
+            }
         }
     }
 }

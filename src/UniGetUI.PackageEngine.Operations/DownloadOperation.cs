@@ -109,7 +109,7 @@ public class DownloadOperation : AbstractOperation
                     if (progress != oldProgress)
                     {
                         oldProgress = progress;
-                        Line($"Download progress: {progress}%", LineType.Progress);
+                        Line(CoreTools.TextProgressGenerator(30, progress, ), LineType.Progress);
                     }
                 }
 
