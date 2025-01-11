@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11734,
-        "done": 5179,
-        "packages_with_icon": 5179,
-        "packages_with_screenshot": 613,
-        "total_screenshots": 1912
+        "total": 11736,
+        "done": 5181,
+        "packages_with_icon": 5181,
+        "packages_with_screenshot": 616,
+        "total_screenshots": 1922
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -56,7 +56,7 @@
         "0install": {
             "icon": "https://i.postimg.cc/W1ygf5s9/zeroinstall-icon.png",
             "images": [
-                "https://i.postimg.cc/wv8J93yL/maxresdefault.png"
+                "https://i.postimg.cc/W1ygf5s9/zeroinstall-icon.png"
             ]
         },
         "0patch": {
@@ -9910,6 +9910,17 @@
         "defaultaudio": {
             "icon": "",
             "images": []
+        },
+        "defenderui": {
+            "icon": "https://i.postimg.cc/8Pyn1b94/defui-icon.png",
+            "images": [
+                "https://i.postimg.cc/76gWwrrJ/defui1.png",
+                "https://i.postimg.cc/KcDHWb5d/defui2.png",
+                "https://i.postimg.cc/PJTFqVd3/defui3.png",
+                "https://i.postimg.cc/2yG9Ld6z/defui4.png",
+                "https://i.postimg.cc/fTWrnP2k/defui5.png",
+                "https://i.postimg.cc/mgtphHGs/defui6.png"
+            ]
         },
         "defender-injector": {
             "icon": "https://community.chocolatey.org/content/packageimages/defender-injector.1.1.png",
@@ -33530,8 +33541,10 @@
             "images": []
         },
         "quicklook": {
-            "icon": "https://imgur.com/FTMhHwD",
-            "images": []
+            "icon": "https://i.postimg.cc/ZqyTPn6k/ql-icon.png",
+            "images": [
+                "https://i.postimg.cc/y8G1ScgX/ql1.png"
+            ]
         },
         "quickpar": {
             "icon": "https://community.chocolatey.org/content/packageimages/QuickPar.0.9.1.20181112.png",
@@ -43217,6 +43230,10 @@
             "icon": "",
             "images": []
         },
+        "urllib3": {
+            "icon": "https://i.postimg.cc/90Nw8MnZ/urllib3.png",
+            "images": []
+        },
         "urlprotocolview": {
             "icon": "https://community.chocolatey.org/content/packageimages/urlprotocolview.1.15.png",
             "images": []
@@ -46348,7 +46365,11 @@
         },
         "webtorrent-desktop": {
             "icon": "https://community.chocolatey.org/content/packageimages/webtorrent-desktop.0.24.0.png",
-            "images": []
+            "images": [
+                "https://webtorrent.io/img/screenshot-main.png",
+                "https://webtorrent.io/img/screenshot-player.png",
+                "https://webtorrent.io/img/network.png"
+            ]
         },
         "webvideocap": {
             "icon": "https://community.chocolatey.org/content/packageimages/webvideocap.1.41.png",
