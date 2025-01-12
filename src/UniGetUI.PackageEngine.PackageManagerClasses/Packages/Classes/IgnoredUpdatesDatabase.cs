@@ -44,27 +44,21 @@ public static class IgnoredUpdatesDatabase
 
         public string StringRepresentation()
         {
+
+            Func<int, string, string> PluralLambda = (num, timeset) =>
+            {
+                return CoreTools.Translate("{number, plural, =1{1 {timeset}} other{# {timeset}s}}", new Dictionary<string, object?> {
+                    { "number", num },
+                    { "timeset", timeset }
+                });
+            };
             if (Months >= 12 && Months % 12 == 0)
             {
-                int Years = Months / 12;
-                if (Years > 1) return CoreTools.Translate("{0} years", Years);
-                else return CoreTools.Translate("1 year");
+                return PluralLambda(Months / 12, CoreTools.Translate("year"));
             }
-            else if (Months >= 1)
-            {
-                if (Months > 1) return CoreTools.Translate("{0} months", Months);
-                else return CoreTools.Translate("1 month");
-            }
-            else if (Weeks >= 1)
-            {
-                if (Weeks > 1) return CoreTools.Translate("{0} weeks", Weeks);
-                else return CoreTools.Translate("1 week");
-            }
-            else
-            {
-                if (Days != 1) return CoreTools.Translate("{0} days", Days);
-                else return CoreTools.Translate("1 day");
-            }
+            else if (Months >= 1) return PluralLambda(Months, CoreTools.Translate("month"));
+            else if (Weeks >= 1) return PluralLambda(Weeks, CoreTools.Translate("week"));
+            else return PluralLambda(Days, CoreTools.Translate("day"));
         }
     }
 
