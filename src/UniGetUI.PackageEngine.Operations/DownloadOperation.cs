@@ -59,28 +59,10 @@ public class DownloadOperation : AbstractOperation
             Uri? downloadUrl = _package.Details.InstallerUrl;
             if (downloadUrl is null)
             {
-                Line($"We couldn't find any installer for this package. " +
+                Line($"UniGetUI was not able to find any installer for this package. " +
                      $"Please check that this package has an applicable installer and try again later", LineType.StdERR);
                 return OperationVeredict.Failure;
             }
-
-            /*FileSavePicker savePicker = new(hWnd);
-            string extension = _package.Manager is BaseNuGet
-                ? "nupkg"
-                : downloadUrl.ToString().Split('.').Last();
-            string suggestedName = _package.Id + " installer." + extension;
-
-            List<string> extensions = new();
-            extensions.Add($"*.{extension}");
-            if (downloadUrl.ToString().Split('.')[^1] == "nupkg") extensions.Add("*.zip");
-            extensions.Add("*.*");
-
-            string name = await Task.Run(() => savePicker.Show(extensions, suggestedName));
-            if (name == String.Empty)
-            {
-                Line("User has canceled the operation");
-                return OperationVeredict.Canceled;
-            }*/
 
             using var httpClient = new HttpClient();
             using var response = await httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
