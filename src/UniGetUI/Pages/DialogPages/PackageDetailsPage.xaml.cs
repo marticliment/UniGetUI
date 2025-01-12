@@ -453,7 +453,7 @@ namespace UniGetUI.Interface.Dialogs
 
         public void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)
         {
-            MainApp.Operations.DownloadInstaller(Package);
+            MainApp.Operations.AskLocationAndDownload(Package);
             Close?.Invoke(this, EventArgs.Empty);
         }
 

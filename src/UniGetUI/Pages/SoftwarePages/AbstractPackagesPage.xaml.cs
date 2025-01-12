@@ -838,7 +838,7 @@ namespace UniGetUI.Interface
                 return;
 
 
-            if (e.NewSize.Width == ((int)(e.NewSize.Width / 10)) || e.NewSize.Width == 25)
+            if ((int)e.NewSize.Width == (int)(e.NewSize.Width / 10) || (int)e.NewSize.Width == 25)
             {
                 return;
             }
@@ -863,11 +863,11 @@ namespace UniGetUI.Interface
 
             if (PAGE_ROLE == OperationType.Install)
             {
-                MainApp.Operations.Add((new InstallPackageOperation(package)));
+                MainApp.Operations.Install(package);
             }
             else if (PAGE_ROLE == OperationType.Update)
             {
-                MainApp.Operations.Add((new UpdatePackageOperation(package)));
+                MainApp.Operations.Update(package);
             }
             else // if (PageRole == OperationType.Uninstall)
             {

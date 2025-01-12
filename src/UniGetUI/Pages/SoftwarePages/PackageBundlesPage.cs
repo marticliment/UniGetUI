@@ -327,12 +327,7 @@ namespace UniGetUI.Interface.SoftwarePages
             }
 
             DialogHelper.HideLoadingDialog();
-
-            foreach (Package package in packages_to_install)
-            {
-               MainApp.Operations.Add((new InstallPackageOperation(package,
-                    await InstallationOptions.FromPackageAsync(package, elevated, interactive, skiphash))));
-            }
+            MainApp.Operations.Install(packages_to_install, elevated, interactive, skiphash);
         }
 
         protected override void WhenPackageCountUpdated()
@@ -368,38 +363,31 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuInstall_Invoked(object sender, RoutedEventArgs args)
         {
-            IPackage? package = SelectedItem;
-            if (package is null) return;
-
-            await ImportAndInstallPackage([package]);
+            if (SelectedItem is null) return;
+            await ImportAndInstallPackage([SelectedItem]);
         }
 
         private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
         {
-            IPackage? package = SelectedItem;
-            if (package is null) return;
-            await ImportAndInstallPackage([package], elevated: true);
+            if (SelectedItem is null) return;
+            await ImportAndInstallPackage([SelectedItem], elevated: true);
         }
 
         private async void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
         {
-            IPackage? package = SelectedItem;
-            if (package is null) return;
-
-            await ImportAndInstallPackage([package], interactive: true);
-
+            if (SelectedItem is null) return;
+            await ImportAndInstallPackage([SelectedItem], interactive: true);
         }
+
         private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs args)
         {
-            IPackage? package = SelectedItem;
-            if (package is null) return;
-
-            await ImportAndInstallPackage([package], skiphash: true);
+            if (SelectedItem is null) return;
+            await ImportAndInstallPackage([SelectedItem], skiphash: true);
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs args)
         {
-            if (PackageList.SelectedItem is null) return;
+            if (SelectedItem is null) return;
             MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 

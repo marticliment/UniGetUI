@@ -257,9 +257,9 @@ namespace UniGetUI.Interface.SoftwarePages
                     }
             };
 
-            UninstallSelected.Click += (_, _) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
-            UninstallAsAdmin.Click += (_, _) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), elevated: true);
-            UninstallInteractive.Click += (_, _) => ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), interactive: true);
+            UninstallSelected.Click += (_, _) => MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
+            UninstallAsAdmin.Click += (_, _) => MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), elevated: true);
+            UninstallInteractive.Click += (_, _) => MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages(), interactive: true);
             SharePackage.Click += (_, _) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
 
@@ -346,26 +346,6 @@ namespace UniGetUI.Interface.SoftwarePages
 
         }
 
-        public async void ConfirmAndUninstall(IPackage package, IInstallationOptions options)
-        {
-            if (await DialogHelper.ConfirmUninstallation(package))
-            {
-                MainApp.Operations.Add((new UninstallPackageOperation(package, options)));
-            }
-        }
-
-        public async void ConfirmAndUninstall(IEnumerable<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? remove_data = null)
-        {
-            if (await DialogHelper.ConfirmUninstallation(packages))
-            {
-                foreach (IPackage package in packages)
-                {
-                    MainApp.Operations.Add((new UninstallPackageOperation(package,
-                        await InstallationOptions.FromPackageAsync(package, elevated, interactive, remove_data: remove_data))));
-                }
-            }
-        }
-
         public async Task BackupPackages()
         {
 
@@ -416,80 +396,31 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        private async void MenuUninstall_Invoked(object sender, RoutedEventArgs args)
-        {
-            IPackage? package = SelectedItem;
-            if (package is null)
-            {
-                return;
-            }
+        private void MenuUninstall_Invoked(object sender, RoutedEventArgs args)
+            => MainApp.Operations.ConfirmAndUninstall(SelectedItem);
 
-            ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package));
-        }
+        private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
+            => MainApp.Operations.ConfirmAndUninstall(SelectedItem, elevated: true);
 
-        private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs args)
-        {
-            IPackage? package = SelectedItem;
-            if (package is null)
-            {
-                return;
-            }
+        private void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
+            => MainApp.Operations.ConfirmAndUninstall(SelectedItem, interactive: true);
 
-            ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, elevated: true));
-        }
-
-        private async void MenuInteractive_Invoked(object sender, RoutedEventArgs args)
-        {
-            IPackage? package = SelectedItem;
-            if (package is null)
-            {
-                return;
-            }
-
-            ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, interactive: true));
-        }
-
-        private async void MenuRemoveData_Invoked(object sender, RoutedEventArgs args)
-        {
-            IPackage? package = SelectedItem;
-            if (package is null)
-            {
-                return;
-            }
-
-            ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package, remove_data: true));
-        }
+        private void MenuRemoveData_Invoked(object sender, RoutedEventArgs args)
+            => MainApp.Operations.ConfirmAndUninstall(SelectedItem, remove_data: true);
 
         private void MenuReinstall_Invoked(object sender, RoutedEventArgs args)
-        {
-            IPackage? package = SelectedItem;
-            if (package is null)
-            {
-                return;
-            }
-
-            MainApp.Operations.Add((new InstallPackageOperation(package)));
-        }
+            => MainApp.Operations.Install(SelectedItem);
 
         private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
         {
-            IPackage? package = SelectedItem;
-            if (package is null)
-            {
-                return;
-            }
-
-            MainApp.Operations.Add((new UninstallPackageOperation(package, IgnoreParallelInstalls: true)));
-            MainApp.Operations.Add((new InstallPackageOperation(package, IgnoreParallelInstalls: true)));
-
+            MainApp.Operations.Uninstall(SelectedItem, ignoreParallel: true);
+            MainApp.Operations.Install(SelectedItem, ignoreParallel: true);
         }
+
         private async void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)
         {
             IPackage? package = SelectedItem;
-            if (package is null)
-            {
-                return;
-            }
+            if (package is null) return;
 
             if(await package.HasUpdatesIgnoredAsync())
                 await package.RemoveFromIgnoredUpdatesAsync();
@@ -515,14 +446,9 @@ namespace UniGetUI.Interface.SoftwarePages
             ShowDetailsForPackage(SelectedItem);
         }
 
-        private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
+        private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
         {
-            IPackage? package = SelectedItem;
-            if (package is not null &&
-                await DialogHelper.ShowInstallatOptions_Continue(package, OperationType.Uninstall))
-            {
-                ConfirmAndUninstall(package, await InstallationOptions.FromPackageAsync(package));
-            }
+            ShowInstallationOptionsForPackage(SelectedItem);
         }
     }
 }
