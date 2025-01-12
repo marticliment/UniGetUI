@@ -54,12 +54,6 @@ namespace UniGetUI.PackageEngine.Operations
             OperationFailed += (_, _) => HandleFailure();
         }
 
-        public PackageOperation(
-            IPackage package,
-            OperationType role,
-            bool IgnoreParallelInstalls = false)
-            : this(package, InstallationOptions.FromPackage(package), role, IgnoreParallelInstalls) { }
-
         private bool RequiresAdminRights()
         {
             return Package.OverridenOptions.RunAsAdministrator is true
@@ -140,12 +134,6 @@ namespace UniGetUI.PackageEngine.Operations
             : base(package, options, OperationType.Install, IgnoreParallelInstalls)
         { }
 
-        public InstallPackageOperation(
-            IPackage package,
-            bool IgnoreParallelInstalls = false)
-            : base(package, OperationType.Install, IgnoreParallelInstalls)
-        { }
-
         protected override Task HandleFailure()
         {
             Package.SetTag(PackageTag.Failed);
@@ -191,12 +179,6 @@ namespace UniGetUI.PackageEngine.Operations
             IInstallationOptions options,
             bool IgnoreParallelInstalls = false)
             : base(package, options, OperationType.Update, IgnoreParallelInstalls)
-        { }
-
-        public UpdatePackageOperation(
-            IPackage package,
-            bool IgnoreParallelInstalls = false)
-            : base(package, OperationType.Update, IgnoreParallelInstalls)
         { }
 
         protected override Task HandleFailure()
@@ -249,12 +231,6 @@ namespace UniGetUI.PackageEngine.Operations
             IInstallationOptions options,
             bool IgnoreParallelInstalls = false)
             : base(package, options, OperationType.Uninstall, IgnoreParallelInstalls)
-        { }
-
-        public UninstallPackageOperation(
-            IPackage package,
-            bool IgnoreParallelInstalls = false)
-            : base(package, OperationType.Uninstall, IgnoreParallelInstalls)
         { }
 
         protected override Task HandleFailure()

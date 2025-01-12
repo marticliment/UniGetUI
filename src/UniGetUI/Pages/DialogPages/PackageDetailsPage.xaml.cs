@@ -577,7 +577,7 @@ namespace UniGetUI.Interface.Dialogs
         {
             Close?.Invoke(this, EventArgs.Empty);
 
-            var newOptions = (await InstallationOptions.FromPackageAsync(package));
+            var newOptions = await InstallationOptions.FromPackageAsync(package);
             newOptions.FromSerializable(await InstallOptionsPage.GetUpdatedOptions());
             newOptions.SaveToDisk();
 
@@ -588,18 +588,15 @@ namespace UniGetUI.Interface.Dialogs
 
             if (action is OperationType.Install)
             {
-                MainApp.Operations.Add((new InstallPackageOperation(package, newOptions)));
+                MainApp.Operations.Install(package, AsAdmin, Interactive, SkipHash);
             }
             else if (action is OperationType.Uninstall)
             {
-                if (await DialogHelper.ConfirmUninstallation(package))
-                {
-                    MainApp.Operations.Add((new UninstallPackageOperation(package, newOptions)));
-                }
+                MainApp.Operations.ConfirmAndUninstall(package, AsAdmin, Interactive, RemoveData);
             }
             else if (action is OperationType.Update)
             {
-                MainApp.Operations.Add((new UpdatePackageOperation(package, newOptions)));
+                MainApp.Operations.Update(package, AsAdmin, Interactive, SkipHash);
             }
             else
             {

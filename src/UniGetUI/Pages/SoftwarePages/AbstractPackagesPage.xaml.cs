@@ -871,7 +871,7 @@ namespace UniGetUI.Interface
             }
             else // if (PageRole == OperationType.Uninstall)
             {
-                MainApp.Operations.Add((new UninstallPackageOperation(package)));
+                MainApp.Operations.ConfirmAndUninstall(package);
             }
         }
 
