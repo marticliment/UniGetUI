@@ -451,47 +451,10 @@ namespace UniGetUI.Interface.Dialogs
             MainApp.Instance.MainWindow.SharePackage(Package);
         }
 
-        public async void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)
+        public void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                if (Package.Details?.InstallerUrl is null)
-                {
-                    return;
-                }
-
-                FileSavePicker savePicker = new();
-                MainWindow window = MainApp.Instance.MainWindow;
-                IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-                WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
-                savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
-                string extension = Package.Manager is BaseNuGet
-                    ? "nupkg"
-                    : Package.Details.InstallerUrl.ToString().Split('.')[^1];
-                savePicker.SuggestedFileName = Package.Id + " installer." + extension;
-
-                if (Package.Details.InstallerUrl.ToString().Split('.')[^1] == "nupkg")
-                {
-                    savePicker.FileTypeChoices.Add("Compressed Manifest File", [".zip"]);
-                }
-
-                savePicker.FileTypeChoices.Add("Default", [$".{extension}"]);
-
-                StorageFile file = await savePicker.PickSaveFileAsync();
-                if (file is not null)
-                {
-                    MainApp.Operations.Add(new DownloadOperation(Package, file.Path));
-                    Close?.Invoke(this, EventArgs.Empty);
-
-                   //  DialogHelper.HideLoadingDialog();
-                   // Process.Start("explorer.exe", "/select," + $"\"{file.Path}\"");
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"An error occurred while downloading the installer for the package {Package.Id}");
-                Logger.Error(ex);
-            }
+            MainApp.Operations.DownloadInstaller(Package);
+            Close?.Invoke(this, EventArgs.Empty);
         }
 
         public void CloseButton_Click(object sender, RoutedEventArgs e)

@@ -2,6 +2,8 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
@@ -19,6 +21,7 @@ using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using UniGetUI.Controls.OperationWidgets;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using AbstractOperation = UniGetUI.PackageOperations.AbstractOperation;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
@@ -59,22 +62,7 @@ namespace UniGetUI
             }
         }
 
-        public static class Operations
-        {
-            public static ObservableCollection<OperationControl> _operationList = new();
 
-            public static void Add(AbstractOperation op)
-                => _operationList.Add(new(op));
-
-            public static void Remove(OperationControl control)
-                => _operationList.Remove(control);
-
-            public static void Remove(AbstractOperation op)
-            {
-                foreach(var control in _operationList.Where(x => x.Operation == op).ToArray())
-                    _operationList.Remove(control);
-            }
-        }
 
         public bool RaiseExceptionAsFatal = true;
 
