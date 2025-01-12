@@ -51,14 +51,14 @@ public partial class MainApp
                 IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
                 WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
-                string extension = package.Manager is BaseNuGet
-                    ? "nupkg"
-                    : details.InstallerUrl.ToString().Split('.')[^1];
+
+                string extension = details.InstallerUrl.ToString().Split('.')[^1];
                 savePicker.SuggestedFileName = package.Id + " installer." + extension;
 
-                if (details.InstallerUrl.ToString().Split('.')[^1] == "nupkg")
+                if (package.Manager is BaseNuGet)
                 {
-                    savePicker.FileTypeChoices.Add("Compressed Manifest File", [".zip"]);
+                    extension = "nupkg";
+                    savePicker.FileTypeChoices.Add("Compressed file", [".zip"]);
                 }
 
                 savePicker.FileTypeChoices.Add("Default", [$".{extension}"]);
