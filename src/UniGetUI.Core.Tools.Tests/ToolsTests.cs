@@ -189,5 +189,25 @@ namespace UniGetUI.Core.Tools.Tests
             info.Environment.TryGetValue(ENV, out string? result);
             Assert.Equal(oldpath, result);
         }
+
+        [Theory]
+        [InlineData(10, 33, "hello", "[###.......] 33% (hello)")]
+        [InlineData(20, 37, null, "[#######.............] 37%")]
+        [InlineData(10, 0, "", "[..........] 0% ()")]
+        [InlineData(10, 100, "3/3", "[##########] 100% (3/3)")]
+        public void TestTextProgressbarGenerator(int length, int progress, string? extra, string? expected)
+        {
+            Assert.Equal(CoreTools.TextProgressGenerator(length, progress, extra), expected);
+        }
+
+        [Theory]
+        [InlineData(0, 1, "0 bytes")]
+        [InlineData(10, 1, "10 bytes")]
+        [InlineData(1024*34, 0, "34 KB")]
+        [InlineData(65322450, 3, "62.296 MB")]
+        public void TestFormatSize(long size, int decPlaces, string expected)
+        {
+            Assert.Equal(CoreTools.FormatAsSize(size, decPlaces).Replace(',', '.'), expected);
+        }
     }
 }

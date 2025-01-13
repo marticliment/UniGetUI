@@ -125,11 +125,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
     <Page Update="MainInterface.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -17,6 +17,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\ExternalLibraries.FilePickers\ExternalLibraries.FilePickers.csproj" />
         <ProjectReference Include="..\UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj" />
         <ProjectReference Include="..\UniGetUI.Core.Data\UniGetUI.Core.Data.csproj" />
         <ProjectReference Include="..\UniGetUI.Core.Logger\UniGetUI.Core.Logging.csproj" />
