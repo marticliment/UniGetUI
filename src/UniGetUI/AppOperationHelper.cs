@@ -1,10 +1,13 @@
 using System.Collections.ObjectModel;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Controls.OperationWidgets;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Managers.CargoManager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -38,13 +41,29 @@ public partial class MainApp
          *
          */
 
-        public static async void AskLocationAndDownload(IPackage package)
+        public static async void AskLocationAndDownload(IPackage? package)
         {
+            if (package is null) return;
             try
             {
+                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+
                 var details = package.Details;
+                await details.Load();
+
+                DialogHelper.HideLoadingDialog();
+
                 if (details.InstallerUrl is null)
+                {
+                    var dialog = new ContentDialog();
+                    dialog.Title = CoreTools.Translate("Download failed");
+                    dialog.Content = CoreTools.Translate("No applicable installer was found for the package {0}", package.Name);
+                    dialog.PrimaryButtonText = CoreTools.Translate("Ok");
+                    dialog.DefaultButton = ContentDialogButton.Primary;
+                    dialog.XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot;
+                    await MainApp.Instance.MainWindow.ShowDialogAsync(dialog);
                     return;
+                }
 
                 FileSavePicker savePicker = new();
                 MainWindow window = MainApp.Instance.MainWindow;
@@ -53,6 +72,7 @@ public partial class MainApp
                 savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
 
                 string extension = details.InstallerUrl.ToString().Split('.')[^1];
+                if (package.Manager is Cargo) extension = "zip";
                 savePicker.SuggestedFileName = package.Id + " installer." + extension;
 
                 if (package.Manager is BaseNuGet)
@@ -62,6 +82,8 @@ public partial class MainApp
                 }
 
                 savePicker.FileTypeChoices.Add("Default", [$".{extension}"]);
+
+
 
                 StorageFile file = await savePicker.PickSaveFileAsync();
                 if (file is not null)

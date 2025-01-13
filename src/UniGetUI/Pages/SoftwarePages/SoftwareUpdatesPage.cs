@@ -99,6 +99,13 @@ namespace UniGetUI.Interface.SoftwarePages
             };
             MenuskipHash.Click += MenuSkipHash_Invoked;
 
+            BetterMenuItem MenuDownloadInstaller = new BetterMenuItem
+            {
+                Text = CoreTools.AutoTranslated("Download installer"),
+                IconName = IconType.Download
+            };
+            MenuDownloadInstaller.Click += (_, _) => MainApp.Operations.AskLocationAndDownload(SelectedItem);
+
             BetterMenuItem menuUpdateAfterUninstall = new()
             {
                 Text = CoreTools.AutoTranslated("Uninstall package, then update it"),
@@ -176,6 +183,7 @@ namespace UniGetUI.Interface.SoftwarePages
             ContextMenu.Items.Add(MenuAsAdmin);
             ContextMenu.Items.Add(MenuInteractive);
             ContextMenu.Items.Add(MenuskipHash);
+            ContextMenu.Items.Add(MenuDownloadInstaller);
             ContextMenu.Items.Add(new MenuFlyoutSeparator());
             ContextMenu.Items.Add(menuUpdateAfterUninstall);
             ContextMenu.Items.Add(menuUninstall);

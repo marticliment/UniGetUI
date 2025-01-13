@@ -30,6 +30,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuSharePackage;
         private BetterMenuItem? MenuPackageDetails;
         private BetterMenuItem? MenuOpenInstallLocation;
+        private BetterMenuItem? MenuDownloadInstaller;
 
         public InstalledPackagesPage()
         : base(new PackagesPageData
@@ -116,6 +117,16 @@ namespace UniGetUI.Interface.SoftwarePages
 
             menu.Items.Add(new MenuFlyoutSeparator());
 
+            MenuDownloadInstaller = new BetterMenuItem
+            {
+                Text = CoreTools.AutoTranslated("Download installer"),
+                IconName = IconType.Download
+            };
+            MenuDownloadInstaller.Click += (_, _) => MainApp.Operations.AskLocationAndDownload(SelectedItem);
+            menu.Items.Add(MenuDownloadInstaller);
+
+            menu.Items.Add(new MenuFlyoutSeparator());
+
             MenuReinstallPackage = new()
             {
                 Text = CoreTools.AutoTranslated("Reinstall package"),
@@ -131,7 +142,6 @@ namespace UniGetUI.Interface.SoftwarePages
             };
             MenuUninstallThenReinstall.Click += MenuUninstallThenReinstall_Invoked;
             menu.Items.Add(MenuUninstallThenReinstall);
-
             menu.Items.Add(new MenuFlyoutSeparator());
 
             MenuIgnoreUpdates = new()
@@ -301,7 +311,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 || MenuIgnoreUpdates is null
                 || MenuSharePackage is null
                 || MenuPackageDetails is null
-                || MenuOpenInstallLocation is null)
+                || MenuOpenInstallLocation is null
+                || MenuDownloadInstaller is null)
             {
                 Logger.Error("Menu items are null on InstalledPackagesTab");
                 return;
@@ -316,9 +327,10 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuInstallationOptions.IsEnabled = !IS_LOCAL;
             MenuReinstallPackage.IsEnabled = !IS_LOCAL;
             MenuUninstallThenReinstall.IsEnabled = !IS_LOCAL;
-            MenuIgnoreUpdates.IsEnabled = false; //!IS_LOCAL;
+            MenuIgnoreUpdates.IsEnabled = false; // Will be set on the lines below;
             MenuSharePackage.IsEnabled = !IS_LOCAL;
             MenuPackageDetails.IsEnabled = !IS_LOCAL;
+            MenuDownloadInstaller.IsEnabled = !IS_LOCAL;
 
             MenuOpenInstallLocation.IsEnabled = package.Manager.DetailsHelper.GetInstallLocation(package) is not null;
             if (!IS_LOCAL)

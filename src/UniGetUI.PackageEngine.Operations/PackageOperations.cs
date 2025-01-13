@@ -81,7 +81,6 @@ namespace UniGetUI.PackageEngine.Operations
             }
             Metadata.OperationInformation = "Retried package operation for Package=" + Package.Id + " with Manager=" +
                                             Package.Manager.Name + "\nUpdated installation options: " + Options.ToString();
-
         }
 
         protected sealed override void PrepareProcessStartInfo()

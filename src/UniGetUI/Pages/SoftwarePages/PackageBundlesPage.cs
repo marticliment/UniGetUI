@@ -31,6 +31,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuAsAdmin;
         private BetterMenuItem? MenuInteractive;
         private BetterMenuItem? MenuSkipHash;
+        private BetterMenuItem? MenuDownloadInstaller;
 
         private bool _hasUnsavedChanges;
         private bool HasUnsavedChanges
@@ -124,6 +125,14 @@ namespace UniGetUI.Interface.SoftwarePages
             };
             MenuSkipHash.Click += MenuSkipHash_Invoked;
             menu.Items.Add(MenuSkipHash);
+
+            MenuDownloadInstaller = new BetterMenuItem
+            {
+                Text = CoreTools.AutoTranslated("Download installer"),
+                IconName = IconType.Download
+            };
+            MenuDownloadInstaller.Click += (_, _) => MainApp.Operations.AskLocationAndDownload(SelectedItem);
+            menu.Items.Add(MenuDownloadInstaller);
 
             menu.Items.Add(new MenuFlyoutSeparator());
 
@@ -344,7 +353,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 || MenuDetails is null
                 || MenuShare is null
                 || MenuInstall is null
-                || MenuInstallOptions is null)
+                || MenuInstallOptions is null
+                || MenuDownloadInstaller is null)
             {
                 Logger.Error("Menu items are null on InstalledPackagesTab");
                 return;
@@ -359,6 +369,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuShare.IsEnabled = IS_VALID;
             MenuInstall.IsEnabled = IS_VALID;
             MenuInstallOptions.IsEnabled = IS_VALID;
+            MenuDownloadInstaller.IsEnabled = IS_VALID;
         }
 
         private async void MenuInstall_Invoked(object sender, RoutedEventArgs args)

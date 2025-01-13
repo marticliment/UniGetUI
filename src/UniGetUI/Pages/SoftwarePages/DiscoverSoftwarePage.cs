@@ -102,6 +102,14 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuSkipHash.Click += MenuSkipHash_Invoked;
             menu.Items.Add(MenuSkipHash);
 
+            BetterMenuItem MenuDownloadInstaller = new BetterMenuItem
+            {
+                Text = CoreTools.AutoTranslated("Download installer"),
+                IconName = IconType.Download
+            };
+            MenuDownloadInstaller.Click += (_, _) => MainApp.Operations.AskLocationAndDownload(SelectedItem);
+            menu.Items.Add(MenuDownloadInstaller);
+
             menu.Items.Add(new MenuFlyoutSeparator { Height = 5 });
 
             BetterMenuItem menuShare = new()
