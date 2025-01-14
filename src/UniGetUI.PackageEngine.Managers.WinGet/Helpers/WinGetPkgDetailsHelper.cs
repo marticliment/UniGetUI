@@ -272,7 +272,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
             if (result != "" && httpResponse.StatusCode == HttpStatusCode.OK)
             {
-                __msstore_package_manifests[package.Id] = result;
+                __steam_package_manifests[package.Id] = result;
             }
 
             return result;
