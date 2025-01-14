@@ -166,6 +166,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return false;
         }
 
+        public bool IsUpdateMinor()
+        {
+            return false;
+        }
+
         public async Task RemoveFromIgnoredUpdatesAsync()
         {
             return;

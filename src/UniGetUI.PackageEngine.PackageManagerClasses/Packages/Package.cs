@@ -288,6 +288,23 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return PackageCacher.NewerVersionIsInstalled(this);
         }
 
+        public virtual bool IsUpdateMinor()
+        {
+            if (!IsUpgradable) return false;
+            string[] VersionSplit = Version.Split(".");
+            string[] NewVersionSplit = NewVersion.Split(".");
+
+            // When in doubt, return false
+            if (VersionSplit.Length < 3 || NewVersionSplit.Length < 3) return false;
+
+            if (
+                VersionSplit[0] != NewVersionSplit[0] ||
+                VersionSplit[1] != NewVersionSplit[1]
+            ) return false; // Major update
+
+            return VersionSplit[2].CompareTo(NewVersionSplit[2]) < 0;
+        }
+
         public virtual SerializablePackage_v1 AsSerializable()
         {
             return new SerializablePackage_v1
