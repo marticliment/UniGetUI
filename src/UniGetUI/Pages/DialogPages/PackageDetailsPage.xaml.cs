@@ -351,7 +351,8 @@ namespace UniGetUI.Interface.Dialogs
             SetTextToItem(InstallerHash_Content, details.InstallerHash);
             if (details.InstallerUrl is not null)
             {
-                SetTextToItem(InstallerSize_Content, details.InstallerSize > 0 ? $" ({details.InstallerSize} MB)" : $" ({CoreTools.Translate("Unknown size")})");
+                if (details.Package.Source.Name != "Steam")
+                    SetTextToItem(InstallerSize_Content, details.InstallerSize > 0 ? $" ({details.InstallerSize} MB)" : $" ({CoreTools.Translate("Unknown size")})");
                 SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Download installer"));
             }
             else
@@ -458,6 +459,15 @@ namespace UniGetUI.Interface.Dialogs
             {
                 if (Package.Details?.InstallerUrl is null)
                 {
+                    return;
+                }
+                if (Package.Details.InstallerUrl.ToString().StartsWith("steam://"))
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = Package.Details.InstallerUrl.ToString(),
+                        UseShellExecute = true
+                    });
                     return;
                 }
 

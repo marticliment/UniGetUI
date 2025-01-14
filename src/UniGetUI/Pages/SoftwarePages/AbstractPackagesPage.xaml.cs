@@ -787,7 +787,7 @@ namespace UniGetUI.Interface
 
         protected void ShowDetailsForPackage(IPackage? package)
         {
-            if (package is null || package.Source.IsVirtualManager || package is InvalidImportedPackage)
+            if (package is null || (package.Source.IsVirtualManager && package.Source.Name != "Steam") || package is InvalidImportedPackage)
             {
                 return;
             }
