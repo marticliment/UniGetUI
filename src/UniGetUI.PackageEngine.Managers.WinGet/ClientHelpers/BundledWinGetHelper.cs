@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
@@ -303,6 +304,46 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         else if (details.Package.Source.Name == "msstore")
         {
             details.ManifestUrl = new Uri("https://apps.microsoft.com/detail/" + details.Package.Id);
+        }
+        else if (details.Package.Source.Name == "Steam")
+        {
+            string AppId = details.Package.Id.Split(" ")[^1];
+            JsonNode? SteamManifest = JsonObject.Parse(WinGetPkgDetailsHelper.GetSteamManifest(details.Package) ?? "{}")?[AppId]?["data"];
+            if (SteamManifest?["developers"]?.AsArray() != null && SteamManifest?["developers"]?.AsArray().Count > 0)
+            {
+                details.Author = string.Join(", ", SteamManifest!["developers"]!.AsArray() ?? []);
+            }
+            if (SteamManifest?["short_description"] != null)
+            {
+                details.Description = SteamManifest["short_description"]!.ToString();
+            }
+            if (SteamManifest?["website"] != null)
+            {
+                details.HomepageUrl = new Uri(SteamManifest["website"]!.ToString());
+            }
+            details.ManifestUrl = new Uri($"https://store.steampowered.com/api/appdetails/?appids={AppId}");
+            if (SteamManifest?["publishers"]?.AsArray() != null && SteamManifest?["publishers"]?.AsArray().Count > 0)
+            {
+                details.Publisher = string.Join(", ", SteamManifest!["publishers"]!.AsArray() ?? []);
+            }
+            List<string> Tags = [];
+            if (SteamManifest?["categories"]?.AsArray() != null && SteamManifest?["categories"]?.AsArray().Count > 0)
+            {
+                foreach (JsonNode? category in SteamManifest!["categories"]!.AsArray())
+                {
+                    if (category?.AsObject()?["description"] != null)
+                    {
+                        Tags.Add(category!.AsObject()!["description"]!.ToString());
+                    }
+                }
+            }
+            if (Tags.Count > 0)
+            {
+                details.Tags = [.. Tags];
+            }
+            details.InstallerType = "Steam";
+            details.InstallerUrl = new Uri($"steam://install/{AppId}");
+            return;
         }
 
         // Get the output for the best matching locale
