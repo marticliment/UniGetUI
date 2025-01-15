@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 11736,
-        "done": 5181,
-        "packages_with_icon": 5181,
+        "total": 11745,
+        "done": 5190,
+        "packages_with_icon": 5190,
         "packages_with_screenshot": 616,
         "total_screenshots": 1922
     },
@@ -15753,6 +15753,10 @@
             "icon": "https://community.chocolatey.org/content/packageimages/gcompris.1.0.png",
             "images": []
         },
+        "gcsa": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/512px-Google_Calendar_icon_%282020%29.svg.png",
+            "images": []
+        },
         "gcstar": {
             "icon": "https://community.chocolatey.org/content/packageimages/gcstar.1.6.1.png",
             "images": []
@@ -16906,6 +16910,14 @@
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png",
             "images": []
         },
+        "google-auth-httplib2": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png",
+            "images": []
+        },
+        "google-auth-oauthlib": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png",
+            "images": []
+        },
         "google-books-downloader": {
             "icon": "https://community.chocolatey.org/content/packageimages/google-books-downloader.2.7.png",
             "images": []
@@ -16998,6 +17010,10 @@
         },
         "google2srt": {
             "icon": "https://community.chocolatey.org/content/packageimages/google2srt.install.0.7.10.png",
+            "images": []
+        },
+        "googleapis-common-protos": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png",
             "images": []
         },
         "googlechatelectron": {
@@ -31038,7 +31054,7 @@
             "images": []
         },
         "pip": {
-            "icon": "https://i.pinimg.com/originals/82/a2/18/82a2188c985ce75402ae44fc43fe7e5e.png",
+            "icon": "https://cdn.iconscout.com/icon/free/png-256/free-python-logo-icon-download-in-svg-png-gif-file-formats--brand-development-tools-pack-logos-icons-226051.png",
             "images": []
         },
         "pip-tool": {
@@ -32866,6 +32882,10 @@
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
             "images": []
         },
+        "pyqt5-qt5": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
+            "images": []
+        },
         "pyqt5_sip": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
             "images": []
@@ -32874,7 +32894,23 @@
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
             "images": []
         },
+        "pyqt6-qt6": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
+            "images": []
+        },
         "pyqt6_sip": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
+            "images": []
+        },
+        "pyqtwebengine": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
+            "images": []
+        },
+        "pyqtwebengine-qt5": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
+            "images": []
+        },
+        "pyqtwebengine-qt6": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Python_and_Qt.svg/1200px-Python_and_Qt.svg.png",
             "images": []
         },
