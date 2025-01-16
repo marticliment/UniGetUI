@@ -3,8 +3,8 @@
         "total": 11745,
         "done": 5190,
         "packages_with_icon": 5190,
-        "packages_with_screenshot": 616,
-        "total_screenshots": 1922
+        "packages_with_screenshot": 617,
+        "total_screenshots": 1923
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -2832,8 +2832,10 @@
             "images": []
         },
         "archisteamfarm": {
-            "icon": "https://i.postimg.cc/RZp6THtr/image.png",
-            "images": []
+            "icon": "https://raw.githubusercontent.com/JustArchiNET/ArchiSteamFarm/refs/heads/main/resources/ASF_512x512.png",
+            "images": [
+                "https://raw.githubusercontent.com/JustArchiNET/ASF-ui/refs/heads/main/.github/previews/bots.png"
+            ]
         },
         "archive": {
             "icon": "",
