@@ -9,6 +9,7 @@ using UniGetUI.Interface;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.CargoManager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
+using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageOperations;
@@ -46,47 +47,61 @@ public partial class MainApp
             {
                 DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
 
+                MainWindow window = MainApp.Instance.MainWindow;
+                IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+                string path;
+
                 var details = package.Details;
                 await details.Load();
 
                 if (details.InstallerUrl is null)
                 {
-                    DialogHelper.HideLoadingDialog();
-                    var dialog = new ContentDialog();
-                    dialog.Title = CoreTools.Translate("Download failed");
-                    dialog.Content = CoreTools.Translate("No applicable installer was found for the package {0}", package.Name);
-                    dialog.PrimaryButtonText = CoreTools.Translate("Ok");
-                    dialog.DefaultButton = ContentDialogButton.Primary;
-                    dialog.XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot;
-                    await MainApp.Instance.MainWindow.ShowDialogAsync(dialog);
-                    return;
+                    if (package.Manager is WinGet)
+                    {
+                        FolderPicker savePicker = new();
+                        WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
+                        savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
+                        path = (await savePicker.PickSingleFolderAsync())?.Path ?? "";
+                    }
+                    else
+                    {
+                        DialogHelper.HideLoadingDialog();
+                        var dialog = new ContentDialog();
+                        dialog.Title = CoreTools.Translate("Download failed");
+                        dialog.Content = CoreTools.Translate("No applicable installer was found for the package {0}",
+                            package.Name);
+                        dialog.PrimaryButtonText = CoreTools.Translate("Ok");
+                        dialog.DefaultButton = ContentDialogButton.Primary;
+                        dialog.XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot;
+                        await MainApp.Instance.MainWindow.ShowDialogAsync(dialog);
+                        return;
+                    }
                 }
-
-                FileSavePicker savePicker = new();
-                MainWindow window = MainApp.Instance.MainWindow;
-                IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-                WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
-                savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
-
-                string extension = details.InstallerUrl.ToString().Split('.')[^1];
-                if (package.Manager is Cargo) extension = "zip";
-                savePicker.SuggestedFileName = package.Id + " installer." + extension;
-
-                if (package.Manager is BaseNuGet)
+                else
                 {
-                    extension = "nupkg";
-                    savePicker.FileTypeChoices.Add("Compressed file", [".zip"]);
+                    FileSavePicker savePicker = new();
+                    WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
+                    savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
+
+                    string extension = details.InstallerUrl.ToString().Split('.')[^1];
+                    if (package.Manager is Cargo) extension = "zip";
+                    savePicker.SuggestedFileName = package.Name + " installer." + extension;
+
+                    if (package.Manager is BaseNuGet)
+                    {
+                        extension = "nupkg";
+                        savePicker.FileTypeChoices.Add("Compressed file", [".zip"]);
+                    }
+
+                    savePicker.FileTypeChoices.Add("Default", [$".{extension}"]);
+                    path = (await savePicker.PickSaveFileAsync())?.Path ?? "";
                 }
 
-                savePicker.FileTypeChoices.Add("Default", [$".{extension}"]);
-
-
-                StorageFile file = await savePicker.PickSaveFileAsync();
 
                 DialogHelper.HideLoadingDialog();
-                if (file is not null)
+                if (path != "")
                 {
-                    Add(new DownloadOperation(package, file.Path));
+                    Add(new DownloadOperation(package, path));
                 }
             }
             catch (Exception ex)

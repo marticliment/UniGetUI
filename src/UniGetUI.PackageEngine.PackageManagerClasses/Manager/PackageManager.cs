@@ -14,7 +14,6 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
     public abstract class PackageManager : IPackageManager
     {
         private const int PackageListingTaskTimeout = 60;
-
         public ManagerProperties Properties { get; set; } = new(IsDummy: true);
         public ManagerCapabilities Capabilities { get; set; } = new(IsDummy: true);
         public ManagerStatus Status { get; set; } = new() { Found = false };
