@@ -387,7 +387,7 @@ namespace UniGetUI.Interface.Dialogs
             else
             {
                 r.Text = s;
-                r.ClearValue(Run.ForegroundProperty);
+                r.ClearValue(TextElement.ForegroundProperty);
             }
         }
 
@@ -415,7 +415,7 @@ namespace UniGetUI.Interface.Dialogs
         {
             h.Inlines.Clear();
             h.Inlines.Add(new Run { Text = s });
-            h.NavigateUri = new Uri("about:blank");
+            h.NavigateUri = null;
         }
 
         public async void LoadIcon()
@@ -453,8 +453,8 @@ namespace UniGetUI.Interface.Dialogs
 
         public void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)
         {
-            MainApp.Operations.AskLocationAndDownload(Package);
             Close?.Invoke(this, EventArgs.Empty);
+            MainApp.Operations.AskLocationAndDownload(Package);
         }
 
         public void CloseButton_Click(object sender, RoutedEventArgs e)

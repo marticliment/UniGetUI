@@ -25,8 +25,10 @@ public static partial class DialogHelper
         ShowLoadingDialog(text, "");
     }
 
-    public static void ShowLoadingDialog(string title, string description)
+    public static async void ShowLoadingDialog(string title, string description)
     {
+        while (Window.LoadingDialogCount == 0 && Window.DialogQueue.Count != 0) await Task.Delay(100);
+
         if (Window.LoadingDialogCount == 0 && Window.DialogQueue.Count == 0)
         {
             Window.LoadingSthDalog.Title = title;

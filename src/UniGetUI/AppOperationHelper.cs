@@ -34,13 +34,11 @@ public partial class MainApp
                 _operationList.Remove(control);
         }
 
-
         /*
          *
          * OPERATION CREATION HELPERS
          *
          */
-
         public static async void AskLocationAndDownload(IPackage? package)
         {
             if (package is null) return;
@@ -51,10 +49,9 @@ public partial class MainApp
                 var details = package.Details;
                 await details.Load();
 
-                DialogHelper.HideLoadingDialog();
-
                 if (details.InstallerUrl is null)
                 {
+                    DialogHelper.HideLoadingDialog();
                     var dialog = new ContentDialog();
                     dialog.Title = CoreTools.Translate("Download failed");
                     dialog.Content = CoreTools.Translate("No applicable installer was found for the package {0}", package.Name);
@@ -84,8 +81,9 @@ public partial class MainApp
                 savePicker.FileTypeChoices.Add("Default", [$".{extension}"]);
 
 
-
                 StorageFile file = await savePicker.PickSaveFileAsync();
+
+                DialogHelper.HideLoadingDialog();
                 if (file is not null)
                 {
                     Add(new DownloadOperation(package, file.Path));
@@ -97,7 +95,6 @@ public partial class MainApp
                 Logger.Error(ex);
             }
         }
-
 
 
         /*
