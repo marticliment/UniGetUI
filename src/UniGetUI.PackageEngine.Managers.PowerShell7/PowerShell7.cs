@@ -25,6 +25,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 SupportsCustomScopes = true,
                 SupportsCustomSources = true,
                 SupportsPreRelease = true,
+                CanDownloadInstaller = true,
                 SupportsCustomPackageIcons = true,
                 Sources = new SourceCapabilities
                 {

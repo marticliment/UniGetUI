@@ -369,7 +369,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuShare.IsEnabled = IS_VALID;
             MenuInstall.IsEnabled = IS_VALID;
             MenuInstallOptions.IsEnabled = IS_VALID;
-            MenuDownloadInstaller.IsEnabled = IS_VALID;
+            MenuDownloadInstaller.IsEnabled = IS_VALID && package.Manager.Capabilities.CanDownloadInstaller;
         }
 
         private async void MenuInstall_Invoked(object sender, RoutedEventArgs args)

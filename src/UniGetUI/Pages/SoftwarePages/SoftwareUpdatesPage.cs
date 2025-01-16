@@ -23,6 +23,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuAsAdmin;
         private BetterMenuItem? MenuInteractive;
         private BetterMenuItem? MenuskipHash;
+        private BetterMenuItem? MenuDownloadInstaller;
         private BetterMenuItem? MenuOpenInstallLocation;
 
         public SoftwareUpdatesPage()
@@ -99,7 +100,7 @@ namespace UniGetUI.Interface.SoftwarePages
             };
             MenuskipHash.Click += MenuSkipHash_Invoked;
 
-            BetterMenuItem MenuDownloadInstaller = new BetterMenuItem
+            MenuDownloadInstaller = new BetterMenuItem
             {
                 Text = CoreTools.AutoTranslated("Download installer"),
                 IconName = IconType.Download
@@ -203,6 +204,7 @@ namespace UniGetUI.Interface.SoftwarePages
             if (MenuAsAdmin is null
                 || MenuInteractive is null
                 || MenuskipHash is null
+                || MenuDownloadInstaller is null
                 || MenuOpenInstallLocation is null)
             {
                 Logger.Error("Menu items are null on SoftwareUpdatesTab");
@@ -212,6 +214,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin.IsEnabled = package.Manager.Capabilities.CanRunAsAdmin;
             MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
             MenuskipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
+            MenuDownloadInstaller.IsEnabled = package.Manager.Capabilities.CanDownloadInstaller;
 
             MenuOpenInstallLocation.IsEnabled = package.Manager.DetailsHelper.GetInstallLocation(package) is not null;
         }

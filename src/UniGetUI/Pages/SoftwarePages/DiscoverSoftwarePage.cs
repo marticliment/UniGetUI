@@ -18,6 +18,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuAsAdmin;
         private BetterMenuItem? MenuInteractive;
         private BetterMenuItem? MenuSkipHash;
+        private BetterMenuItem? MenuDownloadInstaller;
         public DiscoverSoftwarePage()
         : base(new PackagesPageData
         {
@@ -102,7 +103,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuSkipHash.Click += MenuSkipHash_Invoked;
             menu.Items.Add(MenuSkipHash);
 
-            BetterMenuItem MenuDownloadInstaller = new BetterMenuItem
+            MenuDownloadInstaller = new BetterMenuItem
             {
                 Text = CoreTools.AutoTranslated("Download installer"),
                 IconName = IconType.Download
@@ -246,7 +247,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override void WhenShowingContextMenu(IPackage package)
         {
-            if (MenuAsAdmin is null || MenuInteractive is null || MenuSkipHash is null)
+            if (MenuAsAdmin is null || MenuInteractive is null || MenuSkipHash is null || MenuDownloadInstaller is null)
             {
                 Logger.Warn("MenuItems are null on DiscoverPackagesPage");
                 return;
@@ -255,6 +256,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin.IsEnabled = package.Manager.Capabilities.CanRunAsAdmin;
             MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
             MenuSkipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
+            MenuDownloadInstaller.IsEnabled = package.Manager.Capabilities.CanDownloadInstaller;
         }
 
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)

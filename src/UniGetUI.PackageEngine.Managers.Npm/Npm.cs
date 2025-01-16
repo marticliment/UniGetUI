@@ -20,6 +20,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             {
                 CanRunAsAdmin = true,
                 SupportsCustomVersions = true,
+                CanDownloadInstaller = true,
                 SupportsCustomScopes = true,
                 SupportsPreRelease = true,
             };
