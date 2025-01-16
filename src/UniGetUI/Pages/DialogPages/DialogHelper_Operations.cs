@@ -85,11 +85,11 @@ public static partial class DialogHelper
 
         foreach (var line in operation.GetOutput())
         {
-            if (line.Item2 is AbstractOperation.LineType.StdOUT)
+            if (line.Item2 is AbstractOperation.LineType.Information)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a" });
             }
-            else if (line.Item2 is AbstractOperation.LineType.OperationInfo)
+            else if (line.Item2 is AbstractOperation.LineType.VerboseDetails)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = debugColor });
             }
@@ -223,11 +223,11 @@ public static partial class DialogHelper
 
         foreach (var line in operation.GetOutput())
         {
-            if (line.Item2 is AbstractOperation.LineType.StdOUT)
+            if (line.Item2 is AbstractOperation.LineType.Information)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a" });
             }
-            else if (line.Item2 is AbstractOperation.LineType.OperationInfo)
+            else if (line.Item2 is AbstractOperation.LineType.VerboseDetails)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = debugColor });
             }
@@ -242,15 +242,15 @@ public static partial class DialogHelper
             if(LastLineWasProgress) par.Inlines.RemoveAt(par.Inlines.Count-1);
 
             LastLineWasProgress = false;
-            if (line.Item2 is AbstractOperation.LineType.StdOUT)
+            if (line.Item2 is AbstractOperation.LineType.Information)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a" });
             }
-            else if (line.Item2 is AbstractOperation.LineType.OperationInfo)
+            else if (line.Item2 is AbstractOperation.LineType.VerboseDetails)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = debugColor });
             }
-            else if (line.Item2 is AbstractOperation.LineType.StdERR)
+            else if (line.Item2 is AbstractOperation.LineType.Error)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = errorColor });
             }

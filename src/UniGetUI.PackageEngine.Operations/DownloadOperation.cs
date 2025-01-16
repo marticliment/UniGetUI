@@ -17,6 +17,10 @@ public class DownloadOperation : AbstractOperation
 {
     private IPackage _package;
     private string downloadLocation;
+    public string DownloadLocation
+    {
+        get => downloadLocation;
+    }
     private bool canceled;
 
     public DownloadOperation(IPackage package, string downloadPath): base(true)
@@ -54,13 +58,13 @@ public class DownloadOperation : AbstractOperation
         canceled = false;
         try
         {
-            Line($"Fetching download url for package {_package.Id} on manager {_package.Manager.DisplayName}...", LineType.StdOUT);
+            Line($"Fetching download url for package {_package.Name} from {_package.Manager.DisplayName}...", LineType.Information);
             await _package.Details.Load();
             Uri? downloadUrl = _package.Details.InstallerUrl;
             if (downloadUrl is null)
             {
                 Line($"UniGetUI was not able to find any installer for this package. " +
-                     $"Please check that this package has an applicable installer and try again later", LineType.StdERR);
+                     $"Please check that this package has an applicable installer and try again later", LineType.Error);
                 return OperationVeredict.Failure;
             }
 
@@ -92,10 +96,9 @@ public class DownloadOperation : AbstractOperation
                     {
                         oldProgress = progress;
                         Line(CoreTools.TextProgressGenerator(
-                            30,
-                            progress,
+                            30, progress,
                             $"{CoreTools.FormatAsSize(totalRead)}/{CoreTools.FormatAsSize(totalBytes)}"
-                        ), LineType.Progress);
+                        ), LineType.ProgressIndicator);
                     }
                 }
 
@@ -103,18 +106,18 @@ public class DownloadOperation : AbstractOperation
                 {
                     fileStream.Close();
                     File.Delete(downloadLocation);
-                    Line("User has canceled the operation", LineType.StdERR);
+                    Line("User has canceled the operation", LineType.Error);
                     return OperationVeredict.Canceled;
                 }
             }
 
-            Line($"The file was saved to {downloadLocation}", LineType.Progress);
+            Line($"The file was saved to {downloadLocation}", LineType.Information);
             return OperationVeredict.Success;
         }
         catch (Exception ex)
         {
-            Line($"{ex.GetType()}: {ex.Message}", LineType.StdERR);
-            Line($"{ex.StackTrace}", LineType.StdERR);
+            Line($"{ex.GetType()}: {ex.Message}", LineType.Error);
+            Line($"{ex.StackTrace}", LineType.Error);
             return OperationVeredict.Failure;
         }
     }

@@ -19,7 +19,7 @@ public abstract class AbstractProcessOperation : AbstractOperation
             }
             catch (InvalidOperationException e)
             {
-                Line("Attempted to cancel a process that hasn't ben created yet: " + e.Message, LineType.StdERR);
+                Line("Attempted to cancel a process that hasn't ben created yet: " + e.Message, LineType.Error);
             }
         };
         OperationStarting += (_, _) =>
@@ -43,10 +43,10 @@ public abstract class AbstractProcessOperation : AbstractOperation
                     process.StandardInput.WriteLine("");
                 }
 
-                var lineType = LineType.StdOUT;
+                var lineType = LineType.Information;
                 if (line.Length < 6 || line.EndsWith("install/uninstall to complete..."))
                 {
-                    lineType = LineType.Progress;
+                    lineType = LineType.ProgressIndicator;
                 }
 
                 Line(line, lineType);
@@ -55,10 +55,10 @@ public abstract class AbstractProcessOperation : AbstractOperation
             {
                 if (e.Data is null) return;
                 string line = e.Data.ToString().Trim();
-                var lineType = LineType.StdERR;
+                var lineType = LineType.Error;
                 if (line.Length < 6 || line.Contains("Waiting for another install..."))
                 {
-                    lineType = LineType.Progress;
+                    lineType = LineType.ProgressIndicator;
                 }
 
                 Line(line, lineType);
@@ -76,18 +76,18 @@ public abstract class AbstractProcessOperation : AbstractOperation
         if (process.StartInfo.FileName == "lol") throw new InvalidOperationException("StartInfo.FileName has not been set");
         if (process.StartInfo.Arguments == "lol") throw new InvalidOperationException("StartInfo.Arguments has not been set");
 
-        Line($"Executing process with StartInfo:", LineType.OperationInfo);
-        Line($" - FileName: \"{process.StartInfo.FileName.Trim()}\"", LineType.OperationInfo);
-        Line($" - Arguments: \"{process.StartInfo.Arguments.Trim()}\"", LineType.OperationInfo);
-        Line($"Start Time: \"{DateTime.Now}\"", LineType.OperationInfo);
+        Line($"Executing process with StartInfo:", LineType.VerboseDetails);
+        Line($" - FileName: \"{process.StartInfo.FileName.Trim()}\"", LineType.VerboseDetails);
+        Line($" - Arguments: \"{process.StartInfo.Arguments.Trim()}\"", LineType.VerboseDetails);
+        Line($"Start Time: \"{DateTime.Now}\"", LineType.VerboseDetails);
 
         process.Start();
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
         await process.WaitForExitAsync();
 
-        Line($"End Time: \"{DateTime.Now}\"", LineType.OperationInfo);
-        Line($"Process return value: \"{process.ExitCode}\" (0x{process.ExitCode:X})", LineType.OperationInfo);
+        Line($"End Time: \"{DateTime.Now}\"", LineType.VerboseDetails);
+        Line($"Process return value: \"{process.ExitCode}\" (0x{process.ExitCode:X})", LineType.VerboseDetails);
 
         if (ProcessKilled)
             return OperationVeredict.Canceled;
