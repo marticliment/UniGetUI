@@ -35,6 +35,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
+                CanDownloadInstaller = true,
                 SupportsCustomScopes = true,
                 SupportsCustomArchitectures = true,
                 SupportedCustomArchitectures = [Architecture.X86, Architecture.X64, Architecture.Arm64, Architecture.Arm],

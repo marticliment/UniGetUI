@@ -7,8 +7,6 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
 using UniGetUI.Pages.DialogPages;
@@ -20,6 +18,7 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuAsAdmin;
         private BetterMenuItem? MenuInteractive;
         private BetterMenuItem? MenuSkipHash;
+        private BetterMenuItem? MenuDownloadInstaller;
         public DiscoverSoftwarePage()
         : base(new PackagesPageData
         {
@@ -103,6 +102,14 @@ namespace UniGetUI.Interface.SoftwarePages
             };
             MenuSkipHash.Click += MenuSkipHash_Invoked;
             menu.Items.Add(MenuSkipHash);
+
+            MenuDownloadInstaller = new BetterMenuItem
+            {
+                Text = CoreTools.AutoTranslated("Download installer"),
+                IconName = IconType.Download
+            };
+            MenuDownloadInstaller.Click += (_, _) => MainApp.Operations.AskLocationAndDownload(SelectedItem);
+            menu.Items.Add(MenuDownloadInstaller);
 
             menu.Items.Add(new MenuFlyoutSeparator { Height = 5 });
 
@@ -204,40 +211,10 @@ namespace UniGetUI.Interface.SoftwarePages
             HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
             InstallationSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
 
-            InstallSelected.Click += (_, _) =>
-            {
-                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
-                {
-                    MainApp.Operations.Add((new InstallPackageOperation(package)));
-                }
-            };
-
-            InstallAsAdmin.Click += async (_, _) =>
-            {
-                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
-                {
-                    InstallationOptions options = await InstallationOptions.FromPackageAsync(package, elevated: true);
-                    MainApp.Operations.Add((new InstallPackageOperation(package, options)));
-                }
-            };
-
-            InstallSkipHash.Click += async (_, _) =>
-            {
-                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
-                {
-                    InstallationOptions options = await InstallationOptions.FromPackageAsync(package, no_integrity: true);
-                    MainApp.Operations.Add((new InstallPackageOperation(package, options)));
-                }
-            };
-
-            InstallInteractive.Click += async (_, _) =>
-            {
-                foreach (IPackage package in FilteredPackages.GetCheckedPackages())
-                {
-                    InstallationOptions options = await InstallationOptions.FromPackageAsync(package, interactive: true);
-                    MainApp.Operations.Add((new InstallPackageOperation(package, options)));
-                }
-            };
+            InstallSelected.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages());
+            InstallAsAdmin.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), elevated: true);
+            InstallSkipHash.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), no_integrity: true);
+            InstallInteractive.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), interactive: true);
 
             SharePackage.Click += (_, _) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
@@ -270,7 +247,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         protected override void WhenShowingContextMenu(IPackage package)
         {
-            if (MenuAsAdmin is null || MenuInteractive is null || MenuSkipHash is null)
+            if (MenuAsAdmin is null || MenuInteractive is null || MenuSkipHash is null || MenuDownloadInstaller is null)
             {
                 Logger.Warn("MenuItems are null on DiscoverPackagesPage");
                 return;
@@ -279,6 +256,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuAsAdmin.IsEnabled = package.Manager.Capabilities.CanRunAsAdmin;
             MenuInteractive.IsEnabled = package.Manager.Capabilities.CanRunInteractively;
             MenuSkipHash.IsEnabled = package.Manager.Capabilities.CanSkipIntegrityChecks;
+            MenuDownloadInstaller.IsEnabled = package.Manager.Capabilities.CanDownloadInstaller;
         }
 
         private async void ExportSelection_Click(object sender, RoutedEventArgs e)
@@ -305,56 +283,19 @@ namespace UniGetUI.Interface.SoftwarePages
         }
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
-        {
-            IPackage? package = SelectedItem;
-            if (package is null)
-            {
-                return;
-            }
+            => MainApp.Operations.Install(SelectedItem);
 
-            MainApp.Operations.Add((new InstallPackageOperation(package)));
-        }
+        private void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
+            => MainApp.Operations.Install(SelectedItem, no_integrity: true);
 
-        private async void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
-        {
-            IPackage? package = SelectedItem;
-            if (package is null)
-            {
-                return;
-            }
+        private void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
+            => MainApp.Operations.Install(SelectedItem, interactive: true);
 
-            MainApp.Operations.Add((new InstallPackageOperation(package,
-                await InstallationOptions.FromPackageAsync(package, no_integrity: true))));
-        }
-
-        private async void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
-        {
-            IPackage? package = SelectedItem;
-            if (package is null)
-            {
-                return;
-            }
-
-            MainApp.Operations.Add((new InstallPackageOperation(package,
-                await InstallationOptions.FromPackageAsync(package, interactive: true))));
-        }
-
-        private async void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
-        {
-            IPackage? package = SelectedItem;
-            if (package is null)
-            {
-                return;
-            }
-
-            MainApp.Operations.Add((new InstallPackageOperation(package,
-                await InstallationOptions.FromPackageAsync(package, elevated: true))));
-        }
+        private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
+            => MainApp.Operations.Install(SelectedItem, elevated: true);
 
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
-        {
-            ShowInstallationOptionsForPackage(SelectedItem);
-        }
+            => ShowInstallationOptionsForPackage(SelectedItem);
 
         public void ShowSharedPackage_ThreadSafe(string id, string combinedSourceName)
         {

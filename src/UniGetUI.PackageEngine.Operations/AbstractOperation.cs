@@ -99,10 +99,10 @@ public abstract class AbstractOperation : IDisposable
 
     public enum LineType
     {
-        OperationInfo,
-        Progress,
-        StdOUT,
-        StdERR
+        VerboseDetails,
+        ProgressIndicator,
+        Information,
+        Error
     }
 
     private List<(string, LineType)> LogList = new();
@@ -121,11 +121,11 @@ public abstract class AbstractOperation : IDisposable
     {
         QUEUE_ENABLED = queue_enabled;
         Status = OperationStatus.InQueue;
-        Line("Please wait...", LineType.Progress);
+        Line("Please wait...", LineType.ProgressIndicator);
 
         if(int.TryParse(Settings.GetValue("ParallelOperationCount"), out int _maxPps))
         {
-            MAX_OPERATIONS = _maxPps; 
+            MAX_OPERATIONS = _maxPps;
             Logger.Debug($"Parallel operation limit set to {MAX_OPERATIONS}");
         }
         else
@@ -161,7 +161,7 @@ public abstract class AbstractOperation : IDisposable
 
     protected void Line(string line, LineType type)
     {
-        if(type != LineType.Progress) LogList.Add((line, type));
+        if(type != LineType.ProgressIndicator) LogList.Add((line, type));
         LogLineAdded?.Invoke(this, (line, type));
     }
 
@@ -189,8 +189,8 @@ public abstract class AbstractOperation : IDisposable
                 throw new InvalidOperationException("This operation was already on the queue");
 
             Status = OperationStatus.InQueue;
-            Line(Metadata.OperationInformation, LineType.OperationInfo);
-            Line(Metadata.Status, LineType.Progress);
+            Line(Metadata.OperationInformation, LineType.VerboseDetails);
+            Line(Metadata.Status, LineType.ProgressIndicator);
 
             // BEGIN QUEUE HANDLER
             if (QUEUE_ENABLED)
@@ -210,7 +210,7 @@ public abstract class AbstractOperation : IDisposable
                     if (pos != lastPos)
                     {
                         lastPos = pos;
-                        Line(CoreTools.Translate("Operation on queue (position {0})...", pos), LineType.Progress);
+                        Line(CoreTools.Translate("Operation on queue (position {0})...", pos), LineType.ProgressIndicator);
                     }
 
                     await Task.Delay(100);
@@ -220,7 +220,7 @@ public abstract class AbstractOperation : IDisposable
 
             // BEGIN ACTUAL OPERATION
             OperationVeredict result;
-            Line(CoreTools.Translate("Starting operation..."), LineType.Progress);
+            Line(CoreTools.Translate("Starting operation..."), LineType.ProgressIndicator);
             if(Status is OperationStatus.InQueue) Status = OperationStatus.Running;
             OperationStarting?.Invoke(this, EventArgs.Empty);
 
@@ -245,7 +245,7 @@ public abstract class AbstractOperation : IDisposable
                 {
                     result = OperationVeredict.Failure;
                     Logger.Error(e);
-                    foreach (string l in e.ToString().Split("\n")) Line(l, LineType.StdERR);
+                    foreach (string l in e.ToString().Split("\n")) Line(l, LineType.Error);
                 }
             } while (result == OperationVeredict.AutoRetry);
 
@@ -258,27 +258,27 @@ public abstract class AbstractOperation : IDisposable
             {
                 Status = OperationStatus.Succeeded;
                 OperationSucceeded?.Invoke(this, EventArgs.Empty);
-                Line(Metadata.SuccessMessage, LineType.StdOUT);
+                Line(Metadata.SuccessMessage, LineType.Information);
             }
             else if (result == OperationVeredict.Failure)
             {
                 Status = OperationStatus.Failed;
                 OperationFailed?.Invoke(this, EventArgs.Empty);
-                Line(Metadata.FailureMessage, LineType.StdERR);
+                Line(Metadata.FailureMessage, LineType.Error);
                 Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"),
-                    LineType.Progress);
+                    LineType.ProgressIndicator);
             }
             else if (result == OperationVeredict.Canceled)
             {
                 Status = OperationStatus.Canceled;
-                Line(CoreTools.Translate("Operation canceled by user"), LineType.StdERR);
+                Line(CoreTools.Translate("Operation canceled by user"), LineType.Error);
             }
         }
         catch (Exception ex)
         {
-            Line("An internal error occurred:", LineType.StdERR);
+            Line("An internal error occurred:", LineType.Error);
             foreach (var line in ex.ToString().Split("\n"))
-                Line(line, LineType.StdERR);
+                Line(line, LineType.Error);
 
             while (OperationQueue.Remove(this)) ;
 
@@ -290,14 +290,14 @@ public abstract class AbstractOperation : IDisposable
             }
             catch (Exception e2)
             {
-                Line("An internal error occurred while handling an internal error:", LineType.StdERR);
+                Line("An internal error occurred while handling an internal error:", LineType.Error);
                 foreach (var line in e2.ToString().Split("\n"))
-                    Line(line, LineType.StdERR);
+                    Line(line, LineType.Error);
             }
 
-            Line(Metadata.FailureMessage, LineType.StdERR);
+            Line(Metadata.FailureMessage, LineType.Error);
             Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"),
-                LineType.Progress);
+                LineType.ProgressIndicator);
         }
     }
 
@@ -338,10 +338,10 @@ public abstract class AbstractOperation : IDisposable
             throw new InvalidOperationException("We weren't supposed to reach this, weren't we?");
 
         ApplyRetryAction(retryMode);
-        Line($"", LineType.OperationInfo);
-        Line($"-----------------------", LineType.OperationInfo);
-        Line($"Retrying operation with RetryMode={retryMode}", LineType.OperationInfo);
-        Line($"", LineType.OperationInfo);
+        Line($"", LineType.VerboseDetails);
+        Line($"-----------------------", LineType.VerboseDetails);
+        Line($"Retrying operation with RetryMode={retryMode}", LineType.VerboseDetails);
+        Line($"", LineType.VerboseDetails);
         if (Status is OperationStatus.Running or OperationStatus.InQueue) return;
         _ = MainThread();
     }

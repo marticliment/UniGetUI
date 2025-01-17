@@ -48,6 +48,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 CanRunAsAdmin = true,
                 SupportsCustomVersions = true,
                 SupportsCustomScopes = true,
+                CanDownloadInstaller = true,
                 SupportsPreRelease = true,
             };
 

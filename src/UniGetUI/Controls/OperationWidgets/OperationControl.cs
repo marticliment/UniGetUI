@@ -23,6 +23,7 @@ using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Operations;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace UniGetUI.Controls.OperationWidgets;
 
@@ -125,7 +126,7 @@ public class OperationControl: INotifyPropertyChanged
         }
 
         // Clean succesful operation from list
-        if(!Settings.Get("MaintainSuccessfulInstalls"))
+        if(!Settings.Get("MaintainSuccessfulInstalls") && Operation is not DownloadOperation)
             await TimeoutAndClose();
     }
 
@@ -546,7 +547,6 @@ public class OperationControl: INotifyPropertyChanged
             };
             optionsMenu.Add(details);
 
-
             var installationSettings = new BetterMenuItem() { Text = CoreTools.Translate("Installation options") };
             installationSettings.IconName = IconType.Options;
             installationSettings.Click += (_, _) =>
@@ -556,22 +556,60 @@ public class OperationControl: INotifyPropertyChanged
             optionsMenu.Add(installationSettings);
 
             string? location = packageOp.Package.Manager.DetailsHelper.GetInstallLocation(packageOp.Package);
-            if (location is not null && Directory.Exists(location))
+            var openLocation = new BetterMenuItem() { Text = CoreTools.Translate("Open install location") };
+            openLocation.IconName = IconType.OpenFolder;
+            openLocation.Click += (_, _) =>
             {
-                var openLocation = new BetterMenuItem() { Text = CoreTools.Translate("Open install location") };
-                openLocation.IconName = IconType.OpenFolder;
-                openLocation.Click += (_, _) =>
+                Process.Start(new ProcessStartInfo() {
+                    FileName = location ?? "",
+                    UseShellExecute = true,
+                    Verb = "open"
+                });
+            };
+            openLocation.IsEnabled = location is not null && Directory.Exists(location);
+            optionsMenu.Add(openLocation);
+
+        }
+
+        else if (Operation is DownloadOperation downloadOp)
+        {
+            var launchInstaller = new BetterMenuItem() { Text = CoreTools.Translate("Open") };
+            launchInstaller.IconName = IconType.Launch;
+            launchInstaller.Click += (_, _) =>
+            {
+                try
                 {
-                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() {
-                        FileName = location,
-                        UseShellExecute = true,
-                        Verb = "open"
+                    Process.Start(new ProcessStartInfo()
+                    {
+                        FileName = downloadOp.DownloadLocation,
+                        UseShellExecute = true
                     });
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"An error occurred while attempting to launch the file {downloadOp.DownloadLocation}.");
+                    Logger.Error(ex);
+                }
+            };
+            launchInstaller.IsEnabled = downloadOp.Status is OperationStatus.Succeeded;
+            optionsMenu.Add(launchInstaller);
 
-                };
-                optionsMenu.Add(openLocation);
-            }
-
+            var showFileInExplorer = new BetterMenuItem() { Text = CoreTools.Translate("Show in explorer") };
+            showFileInExplorer.IconName = IconType.OpenFolder;
+            showFileInExplorer.Click += (_, _) =>
+            {
+                try
+                {
+                    Process.Start("explorer.exe", "/select," + $"\"{downloadOp.DownloadLocation}\"");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"An error occurred while attempting to show the file {downloadOp.DownloadLocation} on explorer.");
+                    Logger.Error(ex);
+                }
+            };
+            showFileInExplorer.IsEnabled = downloadOp.Status is OperationStatus.Succeeded;
+            optionsMenu.Add(showFileInExplorer);
         }
 
         return optionsMenu;
