@@ -1,8 +1,5 @@
 using System.Globalization;
 using System.Net;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Microsoft.Management.Deployment;
 using UniGetUI.Core.IconEngine;
@@ -15,7 +12,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
     internal sealed class WinGetPkgDetailsHelper : BasePkgDetailsHelper
     {
         private static readonly Dictionary<string, string> __msstore_package_manifests = [];
-        private static readonly Dictionary<string, string> __steam_package_manifests = [];
 
         public WinGetPkgDetailsHelper(WinGet manager) : base(manager) { }
 
@@ -43,26 +39,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
         {
-            if (package.Source.Name == "Steam")
-            {
-                string? SteamResponseContent = GetSteamManifest(package);
-                if (SteamResponseContent is null)
-                {
-                    return [];
-                }
-
-                string AppId = package.Id.Split(" ")[^1];
-                List<Uri> Screenshots = [];
-                foreach (JsonNode? Screenshot in JsonObject.Parse(SteamResponseContent)?[AppId]?["data"]?["screenshots"]?.AsArray() ?? []) {
-                    string? ScreenshotUrl = Screenshot?.AsObject()["path_full"]?.ToString();
-                    if (ScreenshotUrl != null)
-                    {
-                        Screenshots.Add(new Uri(ScreenshotUrl));
-                    }
-                }
-                return Screenshots;
-            }
-
             if (package.Source.Name != "msstore")
             {
                 return [];
@@ -237,45 +213,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             string uri = "https:" + FoundIcons[FoundIcons.Keys.Max()];
 
             return new CacheableIcon(new Uri(uri));
-        }
-
-        public static string? GetSteamManifest(IPackage package)
-        {
-            if (__steam_package_manifests.TryGetValue(package.Id, out var manifest))
-            {
-                return manifest;
-            }
-
-            string AppId = package.Id.Split(" ")[^1];
-            string url = $"https://store.steampowered.com/api/appdetails/?appids={AppId}";
-
-#pragma warning disable SYSLIB0014
-            HttpWebRequest httpRequest = (HttpWebRequest)WebRequest.Create(url);
-#pragma warning restore SYSLIB0014
-
-            httpRequest.Method = "GET";
-
-            HttpWebResponse? httpResponse = httpRequest.GetResponse() as HttpWebResponse;
-            if (httpResponse is null)
-            {
-                Logger.Warn($"Null Steam response for uri={url}");
-                return null;
-            }
-
-            string result;
-            using (StreamReader streamReader = new(httpResponse.GetResponseStream()))
-            {
-                result = streamReader.ReadToEnd();
-            }
-
-            Logger.Debug("Steam API call status code: " + httpResponse.StatusCode);
-
-            if (result != "" && httpResponse.StatusCode == HttpStatusCode.OK)
-            {
-                __steam_package_manifests[package.Id] = result;
-            }
-
-            return result;
         }
 
         private static CacheableIcon? GetWinGetPackageIcon(IPackage package)

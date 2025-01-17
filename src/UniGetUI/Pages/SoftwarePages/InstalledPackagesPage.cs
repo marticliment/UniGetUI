@@ -318,7 +318,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuUninstallThenReinstall.IsEnabled = !IS_LOCAL;
             MenuIgnoreUpdates.IsEnabled = false; //!IS_LOCAL;
             MenuSharePackage.IsEnabled = !IS_LOCAL;
-            MenuPackageDetails.IsEnabled = !IS_LOCAL || package.Source.Name == "Steam";
+            MenuPackageDetails.IsEnabled = !IS_LOCAL;
 
             MenuOpenInstallLocation.IsEnabled = package.Manager.DetailsHelper.GetInstallLocation(package) is not null;
             if (!IS_LOCAL)
