@@ -201,10 +201,12 @@ namespace UniGetUI.Core.Tools.Tests
         }
 
         [Theory]
-        [InlineData(0, 1, "0 bytes")]
-        [InlineData(10, 1, "10 bytes")]
+        [InlineData(0, 1, "0 Bytes")]
+        [InlineData(10, 1, "10 Bytes")]
         [InlineData(1024*34, 0, "34 KB")]
         [InlineData(65322450, 3, "62.296 MB")]
+        [InlineData(65322450000, 3, "60.836 GB")]
+        [InlineData(65322450000000, 3, "59.410 TB")]
         public void TestFormatSize(long size, int decPlaces, string expected)
         {
             Assert.Equal(CoreTools.FormatAsSize(size, decPlaces).Replace(',', '.'), expected);
