@@ -57,6 +57,7 @@ namespace UniGetUI.Interface
         public MainView()
         {
             InitializeComponent();
+            OperationList.ItemContainerTransitions = null;
             OperationList.ItemsSource = MainApp.Operations._operationList;
             DiscoverPage = new DiscoverSoftwarePage();
             UpdatesPage = new SoftwareUpdatesPage
