@@ -85,12 +85,10 @@ internal sealed class ScoopPkgOperationHelper : PackagePkgOperationHelper
 
             return OperationVeredict.Failure;
         }
-        else
-        {
-            if (output_string.Contains("ERROR"))
-                return OperationVeredict.Failure;
 
-            return OperationVeredict.Success;
-        }
+        if (output_string.Contains("ERROR"))
+            return OperationVeredict.Failure;
+
+        return returnCode == 0? OperationVeredict.Success: OperationVeredict.Failure;
     }
 }
