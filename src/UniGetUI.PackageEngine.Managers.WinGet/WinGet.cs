@@ -17,14 +17,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 {
     public class WinGet : PackageManager
     {
-        public enum WinGetMode
-        {
-            Native_COM,
-            Bundled_EXE
-        }
-
-        public static WinGet Instance = null!;
-        public static WinGetMode Mode = WinGetMode.Bundled_EXE;
         public static new string[] FALSE_PACKAGE_NAMES = ["", "e(s)", "have", "the", "Id"];
         public static new string[] FALSE_PACKAGE_IDS = ["", "e(s)", "have", "an", "'winget", "pin'", "have", "an", "Version"];
         public static new string[] FALSE_PACKAGE_VERSIONS = ["", "have", "an", "'winget", "pin'", "have", "an", "Version"];
@@ -40,7 +32,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public WinGet()
         {
-            Instance = this;
             WinGetBundledPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "winget-cli_x64", "winget.exe");
 
             Capabilities = new ManagerCapabilities
@@ -219,20 +210,17 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 if (FORCE_BUNDLED)
                 {
-                    Mode = WinGetMode.Bundled_EXE;
                     WinGetHelper.Instance = new BundledWinGetHelper(this);
                     status.Version += "\nUsing bundled WinGet helper (CLI parsing)";
                 }
                 else
                 {
-                    Mode = WinGetMode.Native_COM;
                     WinGetHelper.Instance = new NativeWinGetHelper(this);
                     status.Version += "\nUsing Native WinGet helper (COM Api)";
                 }
             }
             catch (Exception ex)
             {
-                Mode = WinGetMode.Bundled_EXE;
                 Logger.Warn($"Cannot instantiate {(FORCE_BUNDLED? "Bundled" : "Native")} WinGet Helper due to error: {ex.Message}");
                 Logger.Warn(ex);
                 Logger.Warn("WinGet will resort to using BundledWinGetHelper()");
@@ -246,7 +234,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         // For future usage
         private void ReRegisterCOMServer()
         {
-            Mode = WinGetMode.Native_COM;
             WinGetHelper.Instance = new NativeWinGetHelper(this);
             NativePackageHandler.Clear();
         }
@@ -255,7 +242,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
         {
             try
             {
-                if (Mode is WinGetMode.Native_COM)
+                if (WinGetHelper.Instance is NativeWinGetHelper)
                 {
                     Logger.ImportantInfo("Attempting to reconnec to WinGet COM Server...");
                     ReRegisterCOMServer();

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -11,9 +10,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageOperations;
 using Windows.Foundation.Metadata;
 using ExternalLibraries.Pickers;
-using PhotoSauce.MagicScaler;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
-using UniGetUI.PackageEngine.Managers.WingetManager;
 
 namespace UniGetUI.PackageEngine.Operations;
 public class DownloadOperation : AbstractOperation
@@ -56,69 +53,11 @@ public class DownloadOperation : AbstractOperation
         // Do nothing
     }
 
-    private async Task<OperationVeredict> WinGetDownload()
-    {
-        if (_package.Manager is not WinGet) throw new InvalidDataException("How did we end up here?");
-        if (!Directory.Exists(downloadLocation))
-            throw new InvalidDataException("The output file must be a directory, if downloading a WinGet package");
-
-        Process p = new Process()
-        {
-            StartInfo = new()
-            {
-                FileName = WinGet.Instance.Status.ExecutablePath,
-                Arguments = $"download --id \"{_package.Id}\" --exact --source \"{_package.Source.Name}\" --disable-interactivity " +
-                            $"--skip-license --accept-source-agreements --accept-package-agreements --download-directory \"{downloadLocation}\" --authentication-mode silentPreferred",
-                StandardOutputEncoding = Encoding.UTF8,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-            }
-        };
-        Line("Starting process " + p.StartInfo.FileName, LineType.VerboseDetails);
-        Line("   with arguments " + p.StartInfo.Arguments, LineType.VerboseDetails);
-
-        p.Start();
-
-        string? line;
-        while ((line = (await p.StandardOutput.ReadLineAsync())?.Trim()) != null)
-        {
-            if(canceled) p.Kill();
-            Line(line, line.Length > 6? LineType.Information: LineType.ProgressIndicator);
-        }
-
-        await p.WaitForExitAsync();
-
-        Line($"Process exited with output code {p.ExitCode}", LineType.Information);
-        if (canceled)
-        {
-            Line("User has canceled the operation", LineType.Error);
-            return OperationVeredict.Canceled;
-        }
-        else if (p.ExitCode == 0)
-        {
-            Line($"The file was saved to {downloadLocation}", LineType.Information);
-            return OperationVeredict.Success;
-        }
-        else
-        {
-            Line("The download has failed.", LineType.Information);
-            return OperationVeredict.Failure;
-        }
-    }
-
     protected override async Task<OperationVeredict> PerformOperation()
     {
         canceled = false;
         try
         {
-            if (_package.Manager is WinGet && Directory.Exists(downloadLocation))
-            {
-                return await WinGetDownload();
-            }
-
             Line($"Fetching download url for package {_package.Name} from {_package.Manager.DisplayName}...", LineType.Information);
             await _package.Details.Load();
             Uri? downloadUrl = _package.Details.InstallerUrl;
