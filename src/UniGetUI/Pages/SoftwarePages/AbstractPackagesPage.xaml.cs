@@ -695,7 +695,7 @@ namespace UniGetUI.Interface
                         PackageList.Select(i);
                         PackageList.ScrollView?.ScrollTo(0, Math.Max(0, (i - 3) * 39), new ScrollingScrollOptions
                         (
-                            ScrollingAnimationMode.Enabled,
+                            ScrollingAnimationMode.Disabled,
                             ScrollingSnapPointsMode.Ignore
                         ));
                         break;
