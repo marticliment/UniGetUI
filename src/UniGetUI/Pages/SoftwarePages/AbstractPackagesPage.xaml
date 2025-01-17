@@ -649,7 +649,7 @@
             <TextBlock Grid.Column="1" Grid.Row="2"
                 Text="" FontSize="11" x:Name="MainSubtitle" x:FieldModifier="protected"
                 HorizontalAlignment="Left" VerticalAlignment="Top"
-                FontWeight="Normal" Foreground="{StaticResource AppBarItemDisabledForegroundThemeBrush}"
+                FontWeight="Normal" Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"
                 />
             <Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Stretch" >
                 <Grid.ColumnDefinitions>
