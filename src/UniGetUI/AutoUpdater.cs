@@ -300,7 +300,7 @@ public class AutoUpdater
             StartInfo = new()
             {
                 FileName = installerLocation,
-                Arguments = "/SILENT /SUPPRESSMSGBOXES /NORESTART /SP-",
+                Arguments = "/SILENT /SUPPRESSMSGBOXES /NORESTART /SP- /NoVCRedist /NoEdgeWebView /NoWinGet /NoChocolatey",
                 UseShellExecute = true,
                 CreateNoWindow = true,
             }
