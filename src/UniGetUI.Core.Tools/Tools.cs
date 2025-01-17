@@ -607,21 +607,30 @@ Crash Traceback:
 
         public static string FormatAsSize(long number, int decimals = 1)
         {
-            if (number >= 1073741824)
+            const double KiloByte = 1024d;
+            const double MegaByte = 1024d * 1024d;
+            const double GigaByte = 1024d * 1024d * 1024d;
+            const double TeraByte = 1024d * 1024d * 1024d * 1024d;
+
+            if (number >= TeraByte)
             {
-                return $"{(number / 1073741824d).ToString($"F{decimals}")} GB";
+                return $"{(number / TeraByte).ToString($"F{decimals}")} TB";
             }
-            else if (number >= 1048576)
+            else if (number >= GigaByte)
             {
-                return $"{(number / 1048576d).ToString($"F{decimals}")} MB";
+                return $"{(number / GigaByte).ToString($"F{decimals}")} GB";
             }
-            else if (number >= 1024)
+            else if (number >= MegaByte)
             {
-                return $"{(number / 1024d).ToString($"F{decimals}")} KB";
+                return $"{(number / MegaByte).ToString($"F{decimals}")} MB";
+            }
+            else if (number >= KiloByte)
+            {
+                return $"{(number / KiloByte).ToString($"F{decimals}")} KB";
             }
             else
             {
-                return $"{number} bytes";
+                return $"{number} Bytes";
             }
         }
     }
