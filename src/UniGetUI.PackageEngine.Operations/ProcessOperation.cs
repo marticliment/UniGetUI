@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.PackageOperations;
@@ -31,6 +32,9 @@ public abstract class AbstractProcessOperation : AbstractOperation
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+            process.StartInfo.StandardErrorEncoding = Encoding.UTF8;
+            process.StartInfo.StandardInputEncoding = Encoding.UTF8;
             process.StartInfo.FileName = "lol";
             process.StartInfo.Arguments = "lol";
             process.OutputDataReceived += (_, e) =>
