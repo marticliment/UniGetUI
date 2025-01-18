@@ -669,8 +669,8 @@
                 </ToggleButton>
 
                 <TextBox Grid.Column="1" x:Name="QueryBlock" x:FieldModifier="protected" Height="30" CornerRadius="4,0,0,4" Padding="7,5,5,5"
-                         VerticalContentAlignment="Center"
-                         />
+                         VerticalContentAlignment="Center"/>
+
                 <Button Grid.Column="2" x:Name="FindButton" CornerRadius="0,4,4,0" x:FieldModifier="protected"
                         Height="32" Width="32" Padding="4" AutomationProperties.HelpText="Search">
                     <AnimatedIcon>

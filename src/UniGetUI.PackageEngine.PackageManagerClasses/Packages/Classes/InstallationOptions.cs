@@ -43,7 +43,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns the InstallationOptions object associated with the given package.
         /// </summary>
-        /// <param name="package">The package from which to load the InstallationOptions</param>
         /// <returns>The package's InstallationOptions instance</returns>
         public static InstallationOptions FromPackage(IPackage package, bool? elevated = null, bool?
             interactive = null, bool? no_integrity = null, bool? remove_data = null)
