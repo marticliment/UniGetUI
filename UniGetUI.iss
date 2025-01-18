@@ -203,7 +203,8 @@ Name: "regularinstall\desktopicon"; Description: "{cm:RegDesktopIcon}"; GroupDes
 Name: "regularinstall\chocoinstall"; Description: "{cm:ChocoInstall}"; GroupDescription: "{cm:ShCuts}";
 
 [Registry]
-Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\UniGetUI.exe"" --daemon"; Flags: uninsdeletevalue; Tasks: regularinstall
+Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "WingetUI"; ValueData: """{app}\UniGetUI.exe"" --daemon"; Flags: uninsdeletevalue; Tasks: regularinstall;
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run"; ValueType: binary; ValueName: "WingetUI"; ValueData: "03"; Flags: uninsdeletevalue; Tasks: regularinstall; Check: CmdLineParamExists('/NoRunOnStartup');
 
 // Register the unigetui:// deep link
 Root: HKA; Subkey: "Software\Classes\unigetui"; ValueType: "string"; ValueData: "URL:UniGetUI Protocol"; Flags: uninsdeletekey
