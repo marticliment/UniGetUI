@@ -43,6 +43,14 @@ internal sealed class DotNetPkgOperationHelper : PackagePkgOperationHelper
             });
         }
 
+        if (operation is OperationType.Install)
+        {
+            if (options.Version != "")
+            {
+                parameters.AddRange(["--version", options.Version]);
+            }
+        }
+
         return parameters;
     }
 
