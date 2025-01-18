@@ -817,8 +817,8 @@ namespace UniGetUI.Interface
 
         private void ForceUpdateUniGetUI_OnClick(object? sender, RoutedEventArgs e)
         {
-            _ = AutoUpdater.CheckAndInstallUpdates(MainApp.Instance.MainWindow, MainApp.Instance.MainWindow.UpdatesBanner,
-                true);
+            var mainWindow = MainApp.Instance.MainWindow;
+            _ = AutoUpdater.CheckAndInstallUpdates(mainWindow, mainWindow.UpdatesBanner, true, false, true);
         }
 
         private void CheckboxButtonCard_OnClick(object? sender, RoutedEventArgs e)

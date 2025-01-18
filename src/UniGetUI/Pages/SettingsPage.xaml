@@ -62,8 +62,7 @@
                                         <widgets:TranslatedTextBlock Text="Is your language missing or incomplete?" Opacity=".8" VerticalAlignment="Center"/>
                                         <HyperlinkButton
                                         Padding="0"
-                                            NavigateUri="https://github.com/marticliment/WingetUI/wiki#translating-wingetui"
-                                        >
+                                            NavigateUri="https://github.com/marticliment/WingetUI/wiki#translating-wingetui">
                                             <widgets:TranslatedTextBlock Text="Become a translator"/>
                                         </HyperlinkButton>
                                     </StackPanel>
@@ -79,6 +78,7 @@
                                 CheckboxText="Update WingetUI automatically"
                                 ButtonText="Check for updates"
                                 SettingName="DisableAutoUpdateWingetUI"
+                                ButtonAlwaysOn="true"
                                 Click="ForceUpdateUniGetUI_OnClick"
                                 />
                             <widgets:CheckboxCard
