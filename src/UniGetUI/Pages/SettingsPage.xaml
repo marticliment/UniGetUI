@@ -106,7 +106,7 @@
                     <!-- User interface -->
                     <widgets:SettingsEntry
                             Text="User interface preferences"
-                            UnderText="Action when double-clicking packages, hide successful installations"
+                            UnderText="Application theme, startup page, package icons, clear successful installs automatically"
                             x:Name="InterfaceSettingsExpander"
                             Icon="interactive">
                         <Toolkit:SettingsExpander.Items>
