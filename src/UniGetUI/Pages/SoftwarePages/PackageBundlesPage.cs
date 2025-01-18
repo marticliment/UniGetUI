@@ -200,8 +200,8 @@ namespace UniGetUI.Interface.SoftwarePages
                   // Their texts will be used as the tooltip
                     { NewBundle,              CoreTools.Translate("New bundle") },
                     { InstallPackages,        CoreTools.Translate("Install selection") },
-                    { InstallAsAdmin,     " " + CoreTools.Translate("Uninstall as administrator") },
-                    { InstallInteractive, " " + CoreTools.Translate("Interactive uninstall") },
+                    { InstallAsAdmin,     " " + CoreTools.Translate("Install as administrator") },
+                    { InstallInteractive, " " + CoreTools.Translate("Interactive installation") },
                     { InstallSkipHash, " " + CoreTools.Translate("Skip integrity checks") },
                     { OpenBundle,             CoreTools.Translate("Open existing bundle") },
                     { RemoveSelected,         CoreTools.Translate("Remove selection from bundle") },
