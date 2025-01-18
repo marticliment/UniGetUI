@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+		<TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
 		<RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
@@ -17,10 +17,14 @@
 		<Authors>Martí Climent and the contributors</Authors>
 		<PublisherName>Martí Climent</PublisherName>
 		<ApplicationVersion>3.1.0-beta0</ApplicationVersion>
-		<Copyright>2024, Martí Climent</Copyright>
+		<Copyright>2025, Martí Climent</Copyright>
 		<Nullable>enable</Nullable>
 		<Configurations>Debug;Release</Configurations>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
+	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\UniGetUI.Core.Classes\UniGetUI.Core.Classes.csproj" />

@@ -104,6 +104,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 "Scoop" => id.ToLower().Replace(".app", ""),
                 "Chocolatey" => id.ToLower().Replace(".install", "").Replace(".portable", ""),
                 "vcpkg" => id.ToLower().Split(":")[0].Split("[")[0],
+                "Steam" => id.ToLower().Split("\\")[^1].Replace("Steam App", "steam:"),
+                "Local PC" => id.ToLower().Split("\\")[^1],
+                "Microsoft Store" => id.ToLower().Split(".")[1].Split("_")[0],
                 _ => id.ToLower()
             };
         }
@@ -283,6 +286,23 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 return false;
 
             return PackageCacher.NewerVersionIsInstalled(this);
+        }
+
+        public virtual bool IsUpdateMinor()
+        {
+            if (!IsUpgradable) return false;
+            string[] VersionSplit = Version.Split(".");
+            string[] NewVersionSplit = NewVersion.Split(".");
+
+            // When in doubt, return false
+            if (VersionSplit.Length < 3 || NewVersionSplit.Length < 3) return false;
+
+            if (
+                VersionSplit[0] != NewVersionSplit[0] ||
+                VersionSplit[1] != NewVersionSplit[1]
+            ) return false; // Major update
+
+            return VersionSplit[2].CompareTo(NewVersionSplit[2]) < 0;
         }
 
         public virtual SerializablePackage_v1 AsSerializable()

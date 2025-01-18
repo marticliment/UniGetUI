@@ -20,7 +20,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         public Pip()
         {
-            Dependencies = [
+            Dependencies = [];
+            /*Dependencies = [
                 // parse_pip_search is required for pip package finding to work
                 new ManagerDependency(
                     "parse-pip-search",
@@ -41,13 +42,14 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         else return false;
                     }
                 )
-            ];
+            ];*/
 
             Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
                 SupportsCustomVersions = true,
                 SupportsCustomScopes = true,
+                CanDownloadInstaller = true,
                 SupportsPreRelease = true,
             };
 

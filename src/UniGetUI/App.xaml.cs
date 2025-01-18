@@ -1,7 +1,11 @@
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using CommunityToolkit.WinUI.Helpers;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Data;
@@ -15,26 +19,50 @@ using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Operations;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
+using UniGetUI.Controls.OperationWidgets;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Managers.PowerShellManager;
+using AbstractOperation = UniGetUI.PackageOperations.AbstractOperation;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 namespace UniGetUI
 {
     public partial class MainApp
     {
-        public class __tooltip_options
+        public static DispatcherQueue Dispatcher = null!;
+
+        public static class Tooltip
         {
-            private int _errors_occurred;
-            public int ErrorsOccurred { get { return _errors_occurred; } set { _errors_occurred = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
-            private bool _restart_required;
-            public bool RestartRequired { get { return _restart_required; } set { _restart_required = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
-            private int _operations_in_progress;
-            public int OperationsInProgress { get { return _operations_in_progress; } set { _operations_in_progress = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
-            private int _available_updates;
-            public int AvailableUpdates { get { return _available_updates; } set { _available_updates = value; Instance.MainWindow.UpdateSystemTrayStatus(); } }
+            private static int _errors_occurred;
+            public static int ErrorsOccurred
+            {
+                get => _errors_occurred;
+                set { _errors_occurred = value; Instance?.MainWindow?.UpdateSystemTrayStatus(); }
+            }
+
+            private static bool _restart_required;
+            public static bool RestartRequired
+            {
+                get => _restart_required;
+                set { _restart_required = value; Instance?.MainWindow?.UpdateSystemTrayStatus(); }
+            }
+
+            private static int _operations_in_progress;
+            public static int OperationsInProgress
+            {
+                get => _operations_in_progress;
+                set { _operations_in_progress = value; Instance?.MainWindow?.UpdateSystemTrayStatus(); }
+            }
+
+            private static int _available_updates;
+            public static int AvailableUpdates
+            {
+                get => _available_updates;
+                set { _available_updates = value; Instance?.MainWindow?.UpdateSystemTrayStatus(); }
+            }
         }
 
-        public List<AbstractOperation> OperationQueue = [];
+
 
         public bool RaiseExceptionAsFatal = true;
 
@@ -44,13 +72,13 @@ namespace UniGetUI
 
         private readonly BackgroundApiRunner BackgroundApi = new();
         public static MainApp Instance = null!;
-        public __tooltip_options TooltipStatus = new();
 
         public MainApp()
         {
             try
             {
                 Instance = this;
+                Dispatcher = DispatcherQueue.GetForCurrentThread();
 
                 InitializeComponent();
 
@@ -210,11 +238,6 @@ namespace UniGetUI
                 Logger.Error("Could not register notification event");
                 Logger.Error(ex);
             }
-        }
-
-        public void AddOperationToList(AbstractOperation operation)
-        {
-            MainWindow.NavigationPage.OperationStackPanel.Children.Add(operation);
         }
 
         /// <summary>

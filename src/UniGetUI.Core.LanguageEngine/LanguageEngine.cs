@@ -39,9 +39,9 @@ namespace UniGetUI.Core.Language
             {
                 Locale = lang;
             }
-            else if (LanguageData.LanguageReference.ContainsKey(lang[0..2]))
+            else if (LanguageData.LanguageReference.ContainsKey(lang[0..2].Replace("uk", "ua")))
             {
-                Locale = lang[0..2];
+                Locale = lang[0..2].Replace("uk", "ua");
             }
 
             MainLangDict = LoadLanguageFile(Locale);

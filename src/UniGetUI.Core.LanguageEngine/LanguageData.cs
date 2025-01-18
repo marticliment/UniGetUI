@@ -116,7 +116,6 @@ namespace UniGetUI.Core.Language
                     result.Add(person);
                 }
             }
-
             return result.ToArray();
         }
     }

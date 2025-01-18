@@ -43,6 +43,14 @@ internal sealed class DotNetPkgOperationHelper : PackagePkgOperationHelper
             });
         }
 
+        if (operation is OperationType.Install)
+        {
+            if (options.Version != "")
+            {
+                parameters.AddRange(["--version", options.Version]);
+            }
+        }
+
         return parameters;
     }
 
@@ -52,6 +60,6 @@ internal sealed class DotNetPkgOperationHelper : PackagePkgOperationHelper
         IEnumerable<string> processOutput,
         int returnCode)
     {
-        return returnCode == 0 ? OperationVeredict.Succeeded : OperationVeredict.Failed;
+        return returnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
     }
 }

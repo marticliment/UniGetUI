@@ -695,7 +695,7 @@ namespace UniGetUI.Interface
                         PackageList.Select(i);
                         PackageList.ScrollView?.ScrollTo(0, Math.Max(0, (i - 3) * 39), new ScrollingScrollOptions
                         (
-                            ScrollingAnimationMode.Enabled,
+                            ScrollingAnimationMode.Disabled,
                             ScrollingSnapPointsMode.Ignore
                         ));
                         break;
@@ -838,7 +838,7 @@ namespace UniGetUI.Interface
                 return;
 
 
-            if (e.NewSize.Width == ((int)(e.NewSize.Width / 10)) || e.NewSize.Width == 25)
+            if ((int)e.NewSize.Width == (int)(e.NewSize.Width / 10) || (int)e.NewSize.Width == 25)
             {
                 return;
             }
@@ -863,15 +863,15 @@ namespace UniGetUI.Interface
 
             if (PAGE_ROLE == OperationType.Install)
             {
-                MainApp.Instance.AddOperationToList(new InstallPackageOperation(package));
+                MainApp.Operations.Install(package);
             }
             else if (PAGE_ROLE == OperationType.Update)
             {
-                MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package));
+                MainApp.Operations.Update(package);
             }
             else // if (PageRole == OperationType.Uninstall)
             {
-                MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package));
+                MainApp.Operations.ConfirmAndUninstall(package);
             }
         }
 

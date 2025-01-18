@@ -58,7 +58,7 @@ public class AutoUpdater
     /// <summary>
     /// Performs the entire update process, and returns true/false whether the process finished successfully;
     /// </summary>
-    public static async Task<bool> CheckAndInstallUpdates(Window window, InfoBar banner, bool Verbose, bool AutoLaunch = false)
+    public static async Task<bool> CheckAndInstallUpdates(Window window, InfoBar banner, bool Verbose, bool AutoLaunch = false, bool ManualCheck = false)
     {
         Window = window;
         Banner = banner;
@@ -90,7 +90,7 @@ public class AutoUpdater
                     && await CheckInstallerHash(InstallerPath, InstallerHash))
                 {
                     Logger.Info($"A cached valid installer was found, launching update process...");
-                    return await PrepairToLaunchInstaller(InstallerPath, LatestVersion, AutoLaunch);
+                    return await PrepairToLaunchInstaller(InstallerPath, LatestVersion, AutoLaunch, ManualCheck);
                 }
                 else
                 {
@@ -109,7 +109,7 @@ public class AutoUpdater
                 if (await CheckInstallerHash(InstallerPath, InstallerHash))
                 {
                     Logger.Info("The downloaded installer is valid, launching update process...");
-                    return await PrepairToLaunchInstaller(InstallerPath, LatestVersion, AutoLaunch);
+                    return await PrepairToLaunchInstaller(InstallerPath, LatestVersion, AutoLaunch, ManualCheck);
                 }
                 else
                 {
@@ -218,7 +218,7 @@ public class AutoUpdater
     /// <summary>
     /// Waits for the window to be closed if it is open and launches the updater
     /// </summary>
-    private static async Task<bool> PrepairToLaunchInstaller(string installerLocation, string NewVersion, bool AutoLaunch)
+    private static async Task<bool> PrepairToLaunchInstaller(string installerLocation, string NewVersion, bool AutoLaunch, bool ManualCheck)
     {
         Logger.Debug("Starting the process to launch the installer.");
         UpdateReadyToBeInstalled = true;
@@ -227,7 +227,7 @@ public class AutoUpdater
         ReleaseLockForAutoupdate_UpdateBanner = false;
 
         // Check if the user has disabled updates
-        if (Settings.Get("DisableAutoUpdateWingetUI"))
+        if (!ManualCheck && Settings.Get("DisableAutoUpdateWingetUI"))
         {
             Banner.IsOpen = false;
             Logger.Warn("User disabled updates!");
@@ -279,7 +279,7 @@ public class AutoUpdater
             Logger.Debug("Autoupdater lock released, launching installer...");
         }
 
-        if (Settings.Get("DisableAutoUpdateWingetUI"))
+        if (!ManualCheck && Settings.Get("DisableAutoUpdateWingetUI"))
         {
             Logger.Warn("User has disabled updates");
             return true;
@@ -300,7 +300,7 @@ public class AutoUpdater
             StartInfo = new()
             {
                 FileName = installerLocation,
-                Arguments = "/SILENT /SUPPRESSMSGBOXES /NORESTART /SP-",
+                Arguments = "/SILENT /SUPPRESSMSGBOXES /NORESTART /SP- /NoVCRedist /NoEdgeWebView /NoWinGet /NoChocolatey",
                 UseShellExecute = true,
                 CreateNoWindow = true,
             }

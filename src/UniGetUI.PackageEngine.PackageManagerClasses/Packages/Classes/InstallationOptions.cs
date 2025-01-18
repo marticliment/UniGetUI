@@ -22,6 +22,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public bool InteractiveInstallation { get; set; }
         public bool RunAsAdministrator { get; set; }
         public string Version { get; set; } = "";
+        public bool SkipMinorUpdates { get; set; }
         public Architecture? Architecture { get; set; }
         public PackageScope? InstallationScope { get; set; }
         public List<string> CustomParameters { get; set; } = [];
@@ -42,7 +43,6 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Returns the InstallationOptions object associated with the given package.
         /// </summary>
-        /// <param name="package">The package from which to load the InstallationOptions</param>
         /// <returns>The package's InstallationOptions instance</returns>
         public static InstallationOptions FromPackage(IPackage package, bool? elevated = null, bool?
             interactive = null, bool? no_integrity = null, bool? remove_data = null)
@@ -113,6 +113,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             RunAsAdministrator = options.RunAsAdministrator;
             CustomInstallLocation = options.CustomInstallLocation;
             Version = options.Version;
+            SkipMinorUpdates = options.SkipMinorUpdates;
             PreRelease = options.PreRelease;
 
             if (options.Architecture != "" && CommonTranslations.InvertedArchNames.TryGetValue(options.Architecture, out var name))
@@ -148,7 +149,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 RunAsAdministrator = RunAsAdministrator,
                 CustomInstallLocation = CustomInstallLocation,
                 PreRelease = PreRelease,
-                Version = Version
+                Version = Version,
+                SkipMinorUpdates = SkipMinorUpdates
             };
             if (Architecture is not null)
             {
@@ -166,7 +168,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         private FileInfo GetPackageOptionsFile()
         {
-            string optionsFileName = Package.Manager.Name + "." + Package.Id + ".json";
+            string optionsFileName = Package.Manager.Name + "." + Package.Id.Split(":")[0] + ".json";
             return new FileInfo(Path.Join(CoreData.UniGetUIInstallationOptionsDirectory, optionsFileName));
         }
 

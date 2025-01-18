@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface;
 using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
@@ -12,14 +13,13 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
+using AbstractOperation = UniGetUI.PackageOperations.AbstractOperation;
 
 namespace UniGetUI.Pages.DialogPages;
 
 
 public static partial class DialogHelper
 {
-
-
     /// <summary>
     /// Will update the Installation Options for the given Package, and will return whether the user choose to continue
     /// </summary>
@@ -178,118 +178,4 @@ public static partial class DialogHelper
 
         return await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary;
     }
-
-    public static async Task<ContentDialogResult> ShowOperationFailed(
-        IEnumerable<AbstractOperation.OutputLine> processOutput,
-        string dialogTitle,
-        string shortDescription)
-    {
-        ContentDialog dialog = new()
-        {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style, XamlRoot = Window.XamlRoot
-        };
-        dialog.Resources["ContentDialogMaxWidth"] = 850;
-        dialog.Resources["ContentDialogMaxHeight"] = 800;
-        dialog.Title = dialogTitle;
-
-        Grid grid = new()
-        {
-            RowSpacing = 16,
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-        };
-
-        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-
-        TextBlock headerContent = new()
-        {
-            TextWrapping = TextWrapping.WrapWholeWords,
-            Text = $"{shortDescription}. "
-                   + CoreTools.Translate(
-                       "Please see the Command-line Output or refer to the Operation History for further information about the issue.")
-        };
-
-        StackPanel HeaderPanel = new() { Orientation = Orientation.Horizontal, Spacing = 8 };
-
-        HeaderPanel.Children.Add(new LocalIcon(IconType.Console)
-        {
-            VerticalAlignment = VerticalAlignment.Center,
-            Height = 24,
-            Width = 24,
-            HorizontalAlignment = HorizontalAlignment.Left
-        });
-
-        HeaderPanel.Children.Add(new TextBlock
-        {
-            Text = CoreTools.Translate("Command-line Output"),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
-        });
-
-        RichTextBlock CommandLineOutput = new()
-        {
-            FontFamily = new FontFamily("Consolas"),
-            TextWrapping = TextWrapping.Wrap,
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-        };
-
-        ScrollViewer ScrollView = new()
-        {
-            BorderBrush = new SolidColorBrush(),
-            Content = CommandLineOutput,
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-        };
-
-        Grid OutputGrid = new();
-        OutputGrid.Children.Add(ScrollView);
-        OutputGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        OutputGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-        Grid.SetColumn(ScrollView, 0);
-        Grid.SetRow(ScrollView, 0);
-
-        Expander expander = new()
-        {
-            Header = HeaderPanel,
-            Content = OutputGrid,
-            CornerRadius = new CornerRadius(8),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-        };
-
-        Paragraph par = new();
-        foreach (var line in processOutput)
-        {
-            if (line.Type is AbstractOperation.OutputLine.LineType.STDOUT)
-                par.Inlines.Add(new Run { Text = line.Contents + "\x0a" });
-            else if (line.Type is AbstractOperation.OutputLine.LineType.Header)
-                // TODO: Theme-aware colorss
-                par.Inlines.Add(new Run
-                {
-                    Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Azure)
-                });
-            else
-                par.Inlines.Add(new Run
-                {
-                    Text = line.Contents + "\x0a", Foreground = new SolidColorBrush(Colors.Red)
-                });
-        }
-
-        CommandLineOutput.Blocks.Add(par);
-
-        grid.Children.Add(headerContent);
-        grid.Children.Add(expander);
-        Grid.SetRow(headerContent, 0);
-        Grid.SetRow(expander, 1);
-
-        dialog.Content = grid;
-        dialog.PrimaryButtonText = CoreTools.Translate("Retry");
-        dialog.CloseButtonText = CoreTools.Translate("Close");
-        dialog.DefaultButton = ContentDialogButton.Primary;
-
-        return await Window.ShowDialogAsync(dialog);
-    }
-
 }

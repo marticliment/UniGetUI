@@ -20,6 +20,7 @@ using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.Pages.DialogPages;
 using FileSavePicker = Windows.Storage.Pickers.FileSavePicker;
 
@@ -349,9 +350,9 @@ namespace UniGetUI.Interface.Dialogs
             }
 
             SetTextToItem(InstallerHash_Content, details.InstallerHash);
-            if (details.InstallerUrl is not null)
+            if (Package.Manager.Capabilities.CanDownloadInstaller)
             {
-                SetTextToItem(InstallerSize_Content, details.InstallerSize > 0 ? $" ({details.InstallerSize} MB)" : $" ({CoreTools.Translate("Unknown size")})");
+                SetTextToItem(InstallerSize_Content, details.InstallerSize > 0 ? $" ({CoreTools.FormatAsSize((long)(details.InstallerSize * 1024 * 1024), 2)})" : $" ({CoreTools.Translate("Unknown size")})");
                 SetTextToItem(DownloadInstaller_Button, CoreTools.Translate("Download installer"));
             }
             else
@@ -387,7 +388,7 @@ namespace UniGetUI.Interface.Dialogs
             else
             {
                 r.Text = s;
-                r.ClearValue(Run.ForegroundProperty);
+                r.ClearValue(TextElement.ForegroundProperty);
             }
         }
 
@@ -415,7 +416,7 @@ namespace UniGetUI.Interface.Dialogs
         {
             h.Inlines.Clear();
             h.Inlines.Add(new Run { Text = s });
-            h.NavigateUri = new Uri("about:blank");
+            h.NavigateUri = null;
         }
 
         public async void LoadIcon()
@@ -451,79 +452,11 @@ namespace UniGetUI.Interface.Dialogs
             MainApp.Instance.MainWindow.SharePackage(Package);
         }
 
-        public async void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)
+        public void DownloadInstallerButton_Click(object sender, RoutedEventArgs e)
         {
-            bool running = true;
-            try
-            {
-                if (Package.Details?.InstallerUrl is null)
-                {
-                    return;
-                }
-
-                FileSavePicker savePicker = new();
-                MainWindow window = MainApp.Instance.MainWindow;
-                IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-                WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
-                savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
-                string extension = Package.Manager is BaseNuGet
-                    ? "nupkg"
-                    : Package.Details.InstallerUrl.ToString().Split('.')[^1];
-                savePicker.SuggestedFileName = Package.Id + " installer." + extension;
-
-                if (Package.Details.InstallerUrl.ToString().Split('.')[^1] == "nupkg")
-                {
-                    savePicker.FileTypeChoices.Add("Compressed Manifest File", [".zip"]);
-                }
-
-                savePicker.FileTypeChoices.Add("Default", [$".{extension}"]);
-
-                StorageFile file = await savePicker.PickSaveFileAsync();
-                if (file is not null)
-                {
-                    Func<Task> loader = async () =>
-                    {
-                        List<string> texts = [
-                            " .   ",
-                            " ..  ",
-                            " ... ",
-                            "  ...",
-                            "   ..",
-                            "    ."];
-                        int i = 0;
-                        string baseString = CoreTools.Translate("Downloading installer for {package}", new Dictionary<string, object?> { { "package", Package.Name } });
-                        while (running)
-                        {
-                            DownloadInstaller_Button.Inlines.Clear();
-                            DownloadInstaller_Button.Inlines.Add(new Run { Text = baseString + " " + texts[i++ % 6] });
-                            await Task.Delay(500);
-                        }
-                    };
-                    _ = loader();
-
-                    Logger.Debug($"Downloading installer ${file.Path}");
-
-                    using HttpClient httpClient = new(CoreData.GenericHttpClientParameters);
-                    httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-                    await using Stream s = await httpClient.GetStreamAsync(Package.Details.InstallerUrl);
-                    await using FileStream fs = File.OpenWrite(file.Path);
-                    await s.CopyToAsync(fs);
-                    DownloadInstaller_Button.Inlines.Clear();
-                    DownloadInstaller_Button.Inlines.Add(new Run { Text = CoreTools.Translate("Download installer") });
-                    running = false;
-                    Logger.ImportantInfo($"Installer for {Package.Id} has been downloaded successfully");
-                    DialogHelper.HideLoadingDialog();
-                    Process.Start("explorer.exe", "/select," + $"\"{file.Path}\"");
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"An error occurred while downloading the installer for the package {Package.Id}");
-                Logger.Error(ex);
-
-                DownloadInstaller_Button.Inlines.Clear();
-                DownloadInstaller_Button.Inlines.Add(new Run { Text = CoreTools.Translate("An error occurred") + ": " + ex.Message });
-            }
+            if (!Package.Manager.Capabilities.CanDownloadInstaller) return;
+            Close?.Invoke(this, EventArgs.Empty);
+            MainApp.Operations.AskLocationAndDownload(Package);
         }
 
         public void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -646,7 +579,7 @@ namespace UniGetUI.Interface.Dialogs
         {
             Close?.Invoke(this, EventArgs.Empty);
 
-            var newOptions = (await InstallationOptions.FromPackageAsync(package));
+            var newOptions = await InstallationOptions.FromPackageAsync(package);
             newOptions.FromSerializable(await InstallOptionsPage.GetUpdatedOptions());
             newOptions.SaveToDisk();
 
@@ -657,18 +590,15 @@ namespace UniGetUI.Interface.Dialogs
 
             if (action is OperationType.Install)
             {
-                MainApp.Instance.AddOperationToList(new InstallPackageOperation(package, newOptions));
+                MainApp.Operations.Install(package, AsAdmin, Interactive, SkipHash);
             }
             else if (action is OperationType.Uninstall)
             {
-                if (await DialogHelper.ConfirmUninstallation(package))
-                {
-                    MainApp.Instance.AddOperationToList(new UninstallPackageOperation(package, newOptions));
-                }
+                MainApp.Operations.ConfirmAndUninstall(package, AsAdmin, Interactive, RemoveData);
             }
             else if (action is OperationType.Update)
             {
-                MainApp.Instance.AddOperationToList(new UpdatePackageOperation(package, newOptions));
+                MainApp.Operations.Update(package, AsAdmin, Interactive, SkipHash);
             }
             else
             {

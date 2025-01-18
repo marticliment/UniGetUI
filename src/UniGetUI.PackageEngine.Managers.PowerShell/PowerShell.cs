@@ -22,6 +22,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 CanRunAsAdmin = true,
                 CanSkipIntegrityChecks = true,
                 SupportsCustomVersions = true,
+                CanDownloadInstaller = true,
                 SupportsCustomScopes = true,
                 SupportsCustomSources = true,
                 SupportsPreRelease = true,

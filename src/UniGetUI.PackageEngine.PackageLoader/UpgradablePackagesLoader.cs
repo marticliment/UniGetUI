@@ -3,12 +3,14 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.PackageLoader
 {
     public class UpgradablePackagesLoader : AbstractPackageLoader
     {
         private System.Timers.Timer? UpdatesTimer;
+        public static UpgradablePackagesLoader Instance = null!;
 
         /// <summary>
         /// The collection of packages with updates ignored
@@ -18,6 +20,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public UpgradablePackagesLoader(IEnumerable<IPackageManager> managers)
         : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false, CheckedBydefault: !Settings.Get("DisableSelectingUpdatesByDefault"))
         {
+            Instance = this;
             FinishedLoading += (_, _) => StartAutoCheckTimeout();
         }
 
@@ -29,6 +32,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 IgnoredPackages[package.Id] = package;
                 return false;
             }
+            if ((await InstallationOptions.FromPackageAsync(package)).SkipMinorUpdates && package.IsUpdateMinor()) return false;
             if (package.NewerVersionIsInstalled()) return false;
             return true;
         }

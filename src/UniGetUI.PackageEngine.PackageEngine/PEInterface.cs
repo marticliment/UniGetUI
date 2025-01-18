@@ -11,6 +11,8 @@ using UniGetUI.PackageEngine.Managers.ScoopManager;
 using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.Managers.VcpkgManager;
 using UniGetUI.PackageEngine.PackageLoader;
+using System.Collections.ObjectModel;
+using UniGetUI.PackageOperations;
 
 namespace UniGetUI.PackageEngine
 {
@@ -30,7 +32,7 @@ namespace UniGetUI.PackageEngine
         public static readonly PowerShell PowerShell = new();
         public static readonly PowerShell7 PowerShell7 = new();
         public static readonly Cargo Cargo = new();
-		public static readonly Vcpkg Vcpkg = new();
+        public static readonly Vcpkg Vcpkg = new();
 
         public static readonly IPackageManager[] Managers = [WinGet, Scoop, Chocolatey, Npm, Pip, Cargo, Vcpkg, DotNet, PowerShell, PowerShell7];
 
@@ -45,7 +47,7 @@ namespace UniGetUI.PackageEngine
 
             foreach (IPackageManager manager in Managers)
             {
-                initializeTasks.Add(Task.Run(() => manager.Initialize()));
+                initializeTasks.Add(Task.Run(manager.Initialize));
             }
 
             Task ManagersMetaTask = Task.WhenAll(initializeTasks);

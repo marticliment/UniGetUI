@@ -17,6 +17,7 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.VcpkgManager;
 using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageOperations;
 using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -38,424 +39,506 @@ namespace UniGetUI.Interface
         {
             InitializeComponent();
 
-            // General Settings Section
-            Dictionary<string, string> lang_dict = new(LanguageData.LanguageReference.AsEnumerable());
-
-            foreach (string key in lang_dict.Keys)
+            try
             {
-                if (key != "en" && LanguageData.TranslationPercentages.TryGetValue(key, out var translationPercentage))
+
+                // General Settings Section
+                Dictionary<string, string> lang_dict = new(LanguageData.LanguageReference.AsEnumerable());
+
+                foreach (string key in lang_dict.Keys)
                 {
-                    lang_dict[key] = lang_dict[key] + " (" + translationPercentage + ")";
-                }
-            }
-
-            bool isFirst = true;
-            foreach (KeyValuePair<string, string> entry in lang_dict)
-            {
-                LanguageSelector.AddItem(entry.Value, entry.Key, isFirst);
-                isFirst = false;
-            }
-            LanguageSelector.ShowAddedItems();
-
-            NotificationSettingsEntry.IsEnabled = DisableSystemTray.Checked;
-
-            Dictionary<string, string> updates_dict = new()
-            {
-                {CoreTools.Translate("{0} minutes", 10), "600"},
-                {CoreTools.Translate("{0} minutes", 30), "1800"},
-                {CoreTools.Translate("1 hour"), "3600"},
-                {CoreTools.Translate("{0} hours", 2), "7200"},
-                {CoreTools.Translate("{0} hours", 4), "14400"},
-                {CoreTools.Translate("{0} hours", 8), "28800"},
-                {CoreTools.Translate("{0} hours", 12), "43200"},
-                {CoreTools.Translate("1 day"), "86400"},
-                {CoreTools.Translate("{0} days", 2), "172800"},
-                {CoreTools.Translate("{0} days", 3), "259200"},
-                {CoreTools.Translate("1 week"), "604800"}
-            };
-
-            foreach (KeyValuePair<string, string> entry in updates_dict)
-            {
-                UpdatesCheckIntervalSelector.AddItem(entry.Key, entry.Value, false);
-            }
-            UpdatesCheckIntervalSelector.ShowAddedItems();
-
-            if (Settings.GetValue("PreferredTheme") == "")
-            {
-                Settings.SetValue("PreferredTheme", "auto");
-            }
-
-            ThemeSelector.AddItem(CoreTools.AutoTranslated("Light"), "light");
-            ThemeSelector.AddItem(CoreTools.AutoTranslated("Dark"), "dark");
-            ThemeSelector.AddItem(CoreTools.AutoTranslated("Follow system color scheme"), "auto");
-            ThemeSelector.ShowAddedItems();
-
-            StartupPageSelector.AddItem(CoreTools.AutoTranslated("Default"), "default");
-            StartupPageSelector.AddItem(CoreTools.AutoTranslated("Discover Packages"), "discover");
-            StartupPageSelector.AddItem(CoreTools.AutoTranslated("Software Updates"), "updates");
-            StartupPageSelector.AddItem(CoreTools.AutoTranslated("Installed Packages"), "installed");
-            StartupPageSelector.AddItem(CoreTools.AutoTranslated("Package Bundles"), "bundles");
-            StartupPageSelector.AddItem(CoreTools.AutoTranslated("Settings"), "settings");
-            StartupPageSelector.ShowAddedItems();
-
-            // Backup Section
-            BackupDirectoryLabel = (TextBlock)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(0);
-            ResetBackupDirectory = (HyperlinkButton)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(1);
-            OpenBackupDirectory = (HyperlinkButton)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2);
-
-            EnablePackageBackupUI(Settings.Get("EnablePackageBackup"));
-            ResetBackupDirectory.Content = CoreTools.Translate("Reset");
-            OpenBackupDirectory.Content = CoreTools.Translate("Open");
-
-            // Experimental Settings Section
-            ExperimentalSettingsExpander.HideRestartRequiredBanner();
-
-            // Package Manager banners;
-            Dictionary<IPackageManager, SettingsEntry> IPackageManagerExpanders = [];
-            Dictionary<IPackageManager, List<SettingsCard>> ExtraSettingsCards = [];
-
-            foreach (IPackageManager Manager in PEInterface.Managers)
-            {
-                ExtraSettingsCards.Add(Manager, []);
-            }
-
-            // ----------------------------------------------------------------------------------------
-
-            ButtonCard WinGet_ResetWindowsIPackageManager = new() {
-                Text = CoreTools.AutoTranslated("Reset WinGet") + $" ({CoreTools.Translate("This may help if no packages are listed")})",
-                ButtonText = CoreTools.AutoTranslated("Reset")
-            };
-
-            WinGet_ResetWindowsIPackageManager.Click += (_, _) =>
-            {
-                DialogHelper.HandleBrokenWinGet();
-            };
-
-            CheckboxCard WinGet_UseBundled = new()
-            {
-                Text = $"{CoreTools.Translate("Use bundled WinGet instead of system WinGet")} ({CoreTools.Translate("This may help if WinGet packages are not shown")})",
-                SettingName = "ForceLegacyBundledWinGet"
-            };
-            WinGet_UseBundled.StateChanged += (_, _) =>
-            {
-                IPackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
-            };
-
-            CheckboxCard WinGet_EnableTroubleshooter = new()
-            {
-                Text = CoreTools.Translate("Enable the automatic WinGet troubleshooter"),
-                SettingName = "DisableWinGetMalfunctionDetector"
-            };
-            WinGet_EnableTroubleshooter.StateChanged += (_, _) =>
-            {
-                MainApp.Instance.MainWindow.WinGetWarningBanner.IsOpen = false;
-                _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
-            };
-
-            ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_EnableTroubleshooter);
-            ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_ResetWindowsIPackageManager);
-            ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_UseBundled);
-
-            // ----------------------------------------------------------------------------------------
-
-            ButtonCard Scoop_Install = new() { Text = CoreTools.AutoTranslated("Install Scoop"), ButtonText = CoreTools.AutoTranslated("Install") };
-            Scoop_Install.Click += (_, _) =>
-            {
-                CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"), CoreTools.Translate("Scoop Installer - WingetUI"));
-                IPackageManagerExpanders[PEInterface.Scoop].ShowRestartRequiredBanner();
-            };
-            ButtonCard Scoop_Uninstall = new() { Text = CoreTools.AutoTranslated("Uninstall Scoop (and its packages)"), ButtonText = CoreTools.AutoTranslated("Uninstall") };
-            Scoop_Uninstall.Click += (_, _) =>
-            {
-                CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"), CoreTools.Translate("Scoop Uninstaller - WingetUI"));
-                IPackageManagerExpanders[PEInterface.Scoop].ShowRestartRequiredBanner();
-            };
-            ButtonCard Scoop_ResetAppCache = new() { Text = CoreTools.AutoTranslated("Run cleanup and clear cache"), ButtonText = CoreTools.AutoTranslated("Run") };
-            Scoop_ResetAppCache.Click += (_, _) =>
-            {
-                CoreTools.LaunchBatchFile(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"), CoreTools.Translate("Clearing Scoop cache - WingetUI"), RunAsAdmin: true);
-            };
-
-            ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_Install);
-            ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_Uninstall);
-            ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_ResetAppCache);
-
-            // ----------------------------------------------------------------------------------------
-
-            CheckboxCard Chocolatey_SystemChoco = new() { Text = CoreTools.AutoTranslated("Use system Chocolatey"), SettingName = "UseSystemChocolatey" };
-            Chocolatey_SystemChoco.StateChanged += (_, _) =>
-            {
-                IPackageManagerExpanders[PEInterface.Chocolatey].ShowRestartRequiredBanner();
-            };
-
-            ExtraSettingsCards[PEInterface.Chocolatey].Add(Chocolatey_SystemChoco);
-
-            // ----------------------------------------------------------------------------------------
-
-            CheckboxCard Vcpkg_UpdateGitPorts = new()
-            {
-                Text = CoreTools.Translate("Update vcpkg's Git portfiles automatically (requires Git installed)"),
-                SettingName = "DisableUpdateVcpkgGitPorts"
-            };
-            ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_UpdateGitPorts);
-
-            // GetDefaultTriplet factors in the `DefaultVcpkgTriplet` setting as its first priority
-            Settings.SetValue("DefaultVcpkgTriplet", Vcpkg.GetDefaultTriplet());
-            ComboboxCard Vcpkg_DefaultTriplet = new()
-            {
-                Text = CoreTools.Translate("Default vcpkg triplet"),
-                SettingName = "DefaultVcpkgTriplet"
-            };
-            foreach (string triplet in Vcpkg.GetSystemTriplets())
-            {
-                Vcpkg_DefaultTriplet.AddItem(triplet, triplet);
-            }
-            Vcpkg_DefaultTriplet.ShowAddedItems();
-            ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_DefaultTriplet);
-
-            ButtonCard Vcpkg_CustomVcpkgRoot = new()
-            {
-                Text="Change vcpkg root location",
-                ButtonText="Select",
-            };
-            StackPanel p = new() { Orientation = Orientation.Horizontal, Spacing = 5, };
-            var VcPkgRootLabel = new TextBlock() { VerticalAlignment = VerticalAlignment.Center };
-            var ResetVcPkgRootLabel = new HyperlinkButton() { Content = CoreTools.Translate("Reset") };
-            var OpenVcPkgRootLabel = new HyperlinkButton() { Content = CoreTools.Translate("Open") };
-
-            VcPkgRootLabel.Text = Settings.Get("CustomVcpkgRoot")? Settings.GetValue("CustomVcpkgRoot"): "%VCPKG_ROOT%";
-            OpenVcPkgRootLabel.IsEnabled = Settings.Get("CustomVcpkgRoot");
-            ResetVcPkgRootLabel.IsEnabled = Settings.Get("CustomVcpkgRoot");
-
-            ResetVcPkgRootLabel.Click += (_, _) =>
-            {
-                VcPkgRootLabel.Text = "%VCPKG_ROOT%";
-                Settings.Set("CustomVcpkgRoot", false);
-                ResetVcPkgRootLabel.IsEnabled = false;
-                OpenVcPkgRootLabel.IsEnabled = false;
-            };
-
-            OpenVcPkgRootLabel.Click += (_, _) =>
-            {
-                string directory = Settings.GetValue("CustomVcpkgRoot").Replace("/", "\\");
-                if(directory.Any()) Process.Start("explorer.exe", directory);
-            };
-
-            Vcpkg_CustomVcpkgRoot.Click += (_, _) =>
-            {
-                ExternalLibraries.Pickers.FolderPicker openPicker = new(MainApp.Instance.MainWindow.GetWindowHandle());
-                string folder = openPicker.Show();
-                if (folder != string.Empty)
-                {
-                    Settings.SetValue("CustomVcpkgRoot", folder);
-                    VcPkgRootLabel.Text = folder;
-                    ResetVcPkgRootLabel.IsEnabled = true;
-                    OpenVcPkgRootLabel.IsEnabled = true;
-                }
-            };
-
-            p.Children.Add(VcPkgRootLabel);
-            p.Children.Add(ResetVcPkgRootLabel);
-            p.Children.Add(OpenVcPkgRootLabel);
-            Vcpkg_CustomVcpkgRoot.Description = p;
-
-            Vcpkg_CustomVcpkgRoot.Click += (_, _) =>
-            {
-                IPackageManagerExpanders[PEInterface.Vcpkg].ShowRestartRequiredBanner();
-            };
-
-            ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_CustomVcpkgRoot);
-
-            // ----------------------------------------------------------------------------------------
-
-            foreach (IPackageManager Manager in PEInterface.Managers)
-            {
-                // Creation of the actual expander
-                SettingsEntry ManagerExpander = new()
-                {
-                    Text = Manager.DisplayName,
-                    Description = Manager.Properties.Description.Replace("<br>", "\n").Replace("<b>", "").Replace("</b>", "")
-                };
-                IPackageManagerExpanders.Add(Manager, ManagerExpander);
-                ManagerExpander.HeaderIcon = new LocalIcon(Manager.Properties.IconId);
-
-                // Creation of the status footer
-
-                InfoBar ManagerStatus = new();
-
-                TextBlock LongVersion = new();
-                HyperlinkButton ShowVersionButton = new()
-                {
-                    Content = CoreTools.Translate("Expand version"),
-                    Visibility = Visibility.Collapsed
-                };
-                ManagerStatus.ActionButton = ShowVersionButton;
-                ShowVersionButton.Click += (_, _) => { SetManagerStatus(Manager, true); };
-
-                LongVersion.TextWrapping = TextWrapping.Wrap;
-                LongVersion.Text = Manager.Status.Version + "\n";
-                LongVersion.FontFamily = new FontFamily("Consolas");
-                LongVersion.Visibility = Visibility.Collapsed;
-                ManagerStatus.Content = LongVersion;
-
-                ManagerStatus.IsClosable = false;
-                ManagerStatus.IsOpen = true;
-                ManagerStatus.CornerRadius = new CornerRadius(0);
-                ManagerStatus.BorderThickness = new (0, 1, 0, 0);
-
-                Button managerLogs = new Button()
-                {
-                    Content = new LocalIcon(IconType.Console),
-                    CornerRadius = new(0),
-                    Padding = new(14, 4, 14, 4),
-                    BorderThickness = new (0),
-                    Margin = new (0, 1, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Stretch,
-                    HorizontalAlignment = HorizontalAlignment.Stretch
-                };
-                managerLogs.Click += (_, _) =>
-                {
-                    MainApp.Instance.MainWindow.NavigationPage.OpenManagerLogs(Manager as IPackageManager);
-                };
-
-                Grid g = new()
-                {
-                    ColumnSpacing = 1, Margin = new(0, 0, 0, 0),
-                    ColumnDefinitions =
+                    if (key != "en" &&
+                        LanguageData.TranslationPercentages.TryGetValue(key, out var translationPercentage))
                     {
-                        new() {Width = new GridLength(1, GridUnitType.Star)},
-                        new() {Width = GridLength.Auto}
-                    }
-                };
-                g.Children.Add(ManagerStatus);
-                g.Children.Add(managerLogs);
-                Grid.SetColumn(ManagerStatus, 0);
-                Grid.SetColumn(managerLogs, 1);
-                ManagerExpander.ItemsFooter = g;
-
-                void SetManagerStatus(IPackageManager manager, bool ShowVersion = false)
-                {
-                    ShowVersionButton.Visibility = Visibility.Collapsed;
-                    LongVersion.Visibility = Visibility.Collapsed;
-                    if (manager.IsEnabled() && manager.Status.Found)
-                    {
-                        ManagerStatus.Severity = InfoBarSeverity.Success;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} is enabled and ready to go", new Dictionary<string, object?> { { "pm", manager.DisplayName } });
-                        if (!manager.Status.Version.Contains('\n'))
-                        {
-                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?> { { "pm", manager.DisplayName } }) + " " + manager.Status.Version;
-                        }
-                        else if (ShowVersion)
-                        {
-                            ManagerStatus.Message = CoreTools.Translate("{pm} version:", new Dictionary<string, object?> { { "pm", manager.DisplayName } });
-                            LongVersion.Visibility = Visibility.Visible;
-                        }
-                        else
-                        {
-                            ManagerStatus.Message = "";
-                            ShowVersionButton.Visibility = Visibility.Visible;
-                        }
-                    }
-                    else if (manager.IsEnabled() && !manager.Status.Found)
-                    {
-                        ManagerStatus.Severity = InfoBarSeverity.Error;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} was not found!", new Dictionary<string, object?> { { "pm", manager.DisplayName } });
-                        ManagerStatus.Message = CoreTools.Translate("You may need to install {pm} in order to use it with WingetUI.", new Dictionary<string, object?> { { "pm", manager.DisplayName } });
-                    }
-                    else if (!manager.IsEnabled())
-                    {
-                        ManagerStatus.Severity = InfoBarSeverity.Informational;
-                        ManagerStatus.Title = CoreTools.Translate("{pm} is disabled", new Dictionary<string, object?> { { "pm", manager.DisplayName } });
-                        ManagerStatus.Message = CoreTools.Translate("Enable it to install packages from {pm}.", new Dictionary<string, object?> { { "pm", manager.DisplayName } });
+                        lang_dict[key] = lang_dict[key] + " (" + translationPercentage + ")";
                     }
                 }
 
-                // Switch to enable/disable said manager
-
-                ToggleSwitch ManagerSwitch = new()
+                bool isFirst = true;
+                foreach (KeyValuePair<string, string> entry in lang_dict)
                 {
-                    IsOn = Manager.IsEnabled()
+                    LanguageSelector.AddItem(entry.Value, entry.Key, isFirst);
+                    isFirst = false;
+                }
+
+                LanguageSelector.ShowAddedItems();
+
+                NotificationSettingsEntry.IsEnabled = DisableSystemTray.Checked;
+
+                Dictionary<string, string> updates_dict = new()
+                {
+                    { CoreTools.Translate("{0} minutes", 10), "600" },
+                    { CoreTools.Translate("{0} minutes", 30), "1800" },
+                    { CoreTools.Translate("1 hour"), "3600" },
+                    { CoreTools.Translate("{0} hours", 2), "7200" },
+                    { CoreTools.Translate("{0} hours", 4), "14400" },
+                    { CoreTools.Translate("{0} hours", 8), "28800" },
+                    { CoreTools.Translate("{0} hours", 12), "43200" },
+                    { CoreTools.Translate("1 day"), "86400" },
+                    { CoreTools.Translate("{0} days", 2), "172800" },
+                    { CoreTools.Translate("{0} days", 3), "259200" },
+                    { CoreTools.Translate("1 week"), "604800" }
                 };
-                ManagerSwitch.Toggled += (_, _) =>
+
+                foreach (KeyValuePair<string, string> entry in updates_dict)
                 {
-                    Settings.SetDictionaryItem("DisabledManagers", Manager.Name, !ManagerSwitch.IsOn);
-                    SetManagerStatus(Manager);
-                    EnableOrDisableEntries();
+                    UpdatesCheckIntervalSelector.AddItem(entry.Key, entry.Value, false);
+                }
+
+                UpdatesCheckIntervalSelector.ShowAddedItems();
+
+                if (Settings.GetValue("PreferredTheme") == "")
+                {
+                    Settings.SetValue("PreferredTheme", "auto");
+                }
+
+                ThemeSelector.AddItem(CoreTools.AutoTranslated("Light"), "light");
+                ThemeSelector.AddItem(CoreTools.AutoTranslated("Dark"), "dark");
+                ThemeSelector.AddItem(CoreTools.AutoTranslated("Follow system color scheme"), "auto");
+                ThemeSelector.ShowAddedItems();
+
+                StartupPageSelector.AddItem(CoreTools.AutoTranslated("Default"), "default");
+                StartupPageSelector.AddItem(CoreTools.AutoTranslated("Discover Packages"), "discover");
+                StartupPageSelector.AddItem(CoreTools.AutoTranslated("Software Updates"), "updates");
+                StartupPageSelector.AddItem(CoreTools.AutoTranslated("Installed Packages"), "installed");
+                StartupPageSelector.AddItem(CoreTools.AutoTranslated("Package Bundles"), "bundles");
+                StartupPageSelector.AddItem(CoreTools.AutoTranslated("Settings"), "settings");
+                StartupPageSelector.ShowAddedItems();
+
+                for (int i = 1; i <= 10; i++)
+                {
+                    ParallelOperationCount.AddItem(i.ToString(), i.ToString(), false);
+
+                }
+
+                ParallelOperationCount.AddItem("15", "15", false);
+                ParallelOperationCount.AddItem("20", "20", false);
+                ParallelOperationCount.AddItem("30", "30", false);
+                ParallelOperationCount.AddItem("50", "50", false);
+                ParallelOperationCount.AddItem("75", "75", false);
+                ParallelOperationCount.AddItem("100", "100", false);
+                ParallelOperationCount.ShowAddedItems();
+
+                // Backup Section
+                BackupDirectoryLabel = (TextBlock)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(0);
+                ResetBackupDirectory =
+                    (HyperlinkButton)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(1);
+                OpenBackupDirectory =
+                    (HyperlinkButton)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2);
+
+                EnablePackageBackupUI(Settings.Get("EnablePackageBackup"));
+                ResetBackupDirectory.Content = CoreTools.Translate("Reset");
+                OpenBackupDirectory.Content = CoreTools.Translate("Open");
+
+                // Experimental Settings Section
+                ExperimentalSettingsExpander.HideRestartRequiredBanner();
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("An error occurred while generating the Base Settings page");
+                Logger.Error(ex);
+            }
+            // ----------------------------------------------------------------------------------------
+
+            try
+            {
+
+                // Package Manager banners;
+                Dictionary<IPackageManager, SettingsEntry> IPackageManagerExpanders = [];
+                Dictionary<IPackageManager, List<SettingsCard>> ExtraSettingsCards = [];
+
+                foreach (IPackageManager Manager in PEInterface.Managers)
+                {
+                    ExtraSettingsCards.Add(Manager, []);
+                }
+
+                ButtonCard WinGet_ResetWindowsIPackageManager = new()
+                {
+                    Text = CoreTools.AutoTranslated("Reset WinGet") +
+                           $" ({CoreTools.Translate("This may help if no packages are listed")})",
+                    ButtonText = CoreTools.AutoTranslated("Reset")
                 };
 
-                ManagerExpander.Content = ManagerSwitch;
+                WinGet_ResetWindowsIPackageManager.Click += (_, _) => { DialogHelper.HandleBrokenWinGet(); };
 
-                void EnableOrDisableEntries()
+                CheckboxCard WinGet_UseBundled = new()
                 {
-                    if (ExtraSettingsCards.TryGetValue(Manager, out var settingsCard))
+                    Text =
+                        $"{CoreTools.Translate("Use bundled WinGet instead of system WinGet")} ({CoreTools.Translate("This may help if WinGet packages are not shown")})",
+                    SettingName = "ForceLegacyBundledWinGet"
+                };
+                WinGet_UseBundled.StateChanged += (_, _) =>
+                {
+                    IPackageManagerExpanders[PEInterface.WinGet].ShowRestartRequiredBanner();
+                };
+
+                CheckboxCard WinGet_EnableTroubleshooter = new()
+                {
+                    Text = CoreTools.Translate("Enable the automatic WinGet troubleshooter"),
+                    SettingName = "DisableWinGetMalfunctionDetector"
+                };
+                WinGet_EnableTroubleshooter.StateChanged += (_, _) =>
+                {
+                    MainApp.Instance.MainWindow.WinGetWarningBanner.IsOpen = false;
+                    _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
+                };
+
+                ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_EnableTroubleshooter);
+                ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_ResetWindowsIPackageManager);
+                ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_UseBundled);
+
+                // ----------------------------------------------------------------------------------------
+
+                ButtonCard Scoop_Install = new()
+                {
+                    Text = CoreTools.AutoTranslated("Install Scoop"),
+                    ButtonText = CoreTools.AutoTranslated("Install")
+                };
+                Scoop_Install.Click += (_, _) =>
+                {
+                    CoreTools.LaunchBatchFile(
+                        Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "install_scoop.cmd"),
+                        CoreTools.Translate("Scoop Installer - WingetUI"));
+                    IPackageManagerExpanders[PEInterface.Scoop].ShowRestartRequiredBanner();
+                };
+                ButtonCard Scoop_Uninstall = new()
+                {
+                    Text = CoreTools.AutoTranslated("Uninstall Scoop (and its packages)"),
+                    ButtonText = CoreTools.AutoTranslated("Uninstall")
+                };
+                Scoop_Uninstall.Click += (_, _) =>
+                {
+                    CoreTools.LaunchBatchFile(
+                        Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "uninstall_scoop.cmd"),
+                        CoreTools.Translate("Scoop Uninstaller - WingetUI"));
+                    IPackageManagerExpanders[PEInterface.Scoop].ShowRestartRequiredBanner();
+                };
+                ButtonCard Scoop_ResetAppCache = new()
+                {
+                    Text = CoreTools.AutoTranslated("Run cleanup and clear cache"),
+                    ButtonText = CoreTools.AutoTranslated("Run")
+                };
+                Scoop_ResetAppCache.Click += (_, _) =>
+                {
+                    CoreTools.LaunchBatchFile(
+                        Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "scoop_cleanup.cmd"),
+                        CoreTools.Translate("Clearing Scoop cache - WingetUI"), RunAsAdmin: true);
+                };
+
+                ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_Install);
+                ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_Uninstall);
+                ExtraSettingsCards[PEInterface.Scoop].Add(Scoop_ResetAppCache);
+
+                // ----------------------------------------------------------------------------------------
+
+                CheckboxCard Chocolatey_SystemChoco = new()
+                {
+                    Text = CoreTools.AutoTranslated("Use system Chocolatey"), SettingName = "UseSystemChocolatey"
+                };
+                Chocolatey_SystemChoco.StateChanged += (_, _) =>
+                {
+                    IPackageManagerExpanders[PEInterface.Chocolatey].ShowRestartRequiredBanner();
+                };
+
+                ExtraSettingsCards[PEInterface.Chocolatey].Add(Chocolatey_SystemChoco);
+
+                // ----------------------------------------------------------------------------------------
+
+                CheckboxCard Vcpkg_UpdateGitPorts = new()
+                {
+                    Text = CoreTools.Translate(
+                        "Update vcpkg's Git portfiles automatically (requires Git installed)"),
+                    SettingName = "DisableUpdateVcpkgGitPorts"
+                };
+                ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_UpdateGitPorts);
+
+                // GetDefaultTriplet factors in the `DefaultVcpkgTriplet` setting as its first priority
+                Settings.SetValue("DefaultVcpkgTriplet", Vcpkg.GetDefaultTriplet());
+                ComboboxCard Vcpkg_DefaultTriplet = new()
+                {
+                    Text = CoreTools.Translate("Default vcpkg triplet"), SettingName = "DefaultVcpkgTriplet"
+                };
+                foreach (string triplet in Vcpkg.GetSystemTriplets())
+                {
+                    Vcpkg_DefaultTriplet.AddItem(triplet, triplet);
+                }
+
+                Vcpkg_DefaultTriplet.ShowAddedItems();
+                ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_DefaultTriplet);
+
+                ButtonCard Vcpkg_CustomVcpkgRoot = new()
+                {
+                    Text = "Change vcpkg root location", ButtonText = "Select",
+                };
+                StackPanel p = new() { Orientation = Orientation.Horizontal, Spacing = 5, };
+                var VcPkgRootLabel = new TextBlock() { VerticalAlignment = VerticalAlignment.Center };
+                var ResetVcPkgRootLabel = new HyperlinkButton() { Content = CoreTools.Translate("Reset") };
+                var OpenVcPkgRootLabel = new HyperlinkButton() { Content = CoreTools.Translate("Open") };
+
+                VcPkgRootLabel.Text = Settings.Get("CustomVcpkgRoot")
+                    ? Settings.GetValue("CustomVcpkgRoot")
+                    : "%VCPKG_ROOT%";
+                OpenVcPkgRootLabel.IsEnabled = Settings.Get("CustomVcpkgRoot");
+                ResetVcPkgRootLabel.IsEnabled = Settings.Get("CustomVcpkgRoot");
+
+                ResetVcPkgRootLabel.Click += (_, _) =>
+                {
+                    VcPkgRootLabel.Text = "%VCPKG_ROOT%";
+                    Settings.Set("CustomVcpkgRoot", false);
+                    ResetVcPkgRootLabel.IsEnabled = false;
+                    OpenVcPkgRootLabel.IsEnabled = false;
+                };
+
+                OpenVcPkgRootLabel.Click += (_, _) =>
+                {
+                    string directory = Settings.GetValue("CustomVcpkgRoot").Replace("/", "\\");
+                    if (directory.Any()) Process.Start("explorer.exe", directory);
+                };
+
+                Vcpkg_CustomVcpkgRoot.Click += (_, _) =>
+                {
+                    ExternalLibraries.Pickers.FolderPicker openPicker =
+                        new(MainApp.Instance.MainWindow.GetWindowHandle());
+                    string folder = openPicker.Show();
+                    if (folder != string.Empty)
                     {
-                        foreach (SettingsCard card in settingsCard)
+                        Settings.SetValue("CustomVcpkgRoot", folder);
+                        VcPkgRootLabel.Text = folder;
+                        ResetVcPkgRootLabel.IsEnabled = true;
+                        OpenVcPkgRootLabel.IsEnabled = true;
+                    }
+                };
+
+                p.Children.Add(VcPkgRootLabel);
+                p.Children.Add(ResetVcPkgRootLabel);
+                p.Children.Add(OpenVcPkgRootLabel);
+                Vcpkg_CustomVcpkgRoot.Description = p;
+
+                Vcpkg_CustomVcpkgRoot.Click += (_, _) =>
+                {
+                    IPackageManagerExpanders[PEInterface.Vcpkg].ShowRestartRequiredBanner();
+                };
+
+                ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_CustomVcpkgRoot);
+
+                // ----------------------------------------------------------------------------------------
+
+                foreach (IPackageManager Manager in PEInterface.Managers)
+                {
+                    try
+                    {
+
+                        // Creation of the actual expander
+                        SettingsEntry ManagerExpander = new()
                         {
-                            if (ManagerSwitch.IsOn)
+                            Text = Manager.DisplayName,
+                            Description = Manager.Properties.Description.Replace("<br>", "\n").Replace("<b>", "")
+                                .Replace("</b>", "")
+                        };
+                        IPackageManagerExpanders.Add(Manager, ManagerExpander);
+                        ManagerExpander.HeaderIcon = new LocalIcon(Manager.Properties.IconId);
+
+                        // Creation of the status footer
+
+                        InfoBar ManagerStatus = new();
+
+                        TextBlock LongVersion = new();
+                        HyperlinkButton ShowVersionButton = new()
+                        {
+                            Content = CoreTools.Translate("Expand version"), Visibility = Visibility.Collapsed
+                        };
+                        ManagerStatus.ActionButton = ShowVersionButton;
+                        ShowVersionButton.Click += (_, _) => { SetManagerStatus(Manager, true); };
+
+                        LongVersion.TextWrapping = TextWrapping.Wrap;
+                        LongVersion.Text = Manager.Status.Version + "\n";
+                        LongVersion.FontFamily = new FontFamily("Consolas");
+                        LongVersion.Visibility = Visibility.Collapsed;
+                        ManagerStatus.Content = LongVersion;
+
+                        ManagerStatus.IsClosable = false;
+                        ManagerStatus.IsOpen = true;
+                        ManagerStatus.CornerRadius = new CornerRadius(0);
+                        ManagerStatus.BorderThickness = new(0, 1, 0, 0);
+
+                        Button managerLogs = new Button()
+                        {
+                            Content = new LocalIcon(IconType.Console),
+                            CornerRadius = new(0),
+                            Padding = new(14, 4, 14, 4),
+                            BorderThickness = new(0),
+                            Margin = new(0, 1, 0, 0),
+                            VerticalAlignment = VerticalAlignment.Stretch,
+                            HorizontalAlignment = HorizontalAlignment.Stretch
+                        };
+                        managerLogs.Click += (_, _) =>
+                        {
+                            MainApp.Instance.MainWindow.NavigationPage.OpenManagerLogs(Manager as IPackageManager);
+                        };
+
+                        Grid g = new()
+                        {
+                            ColumnSpacing = 1,
+                            Margin = new(0, 0, 0, 0),
+                            ColumnDefinitions =
                             {
-                                card.Visibility = Visibility.Visible;
+                                new() { Width = new GridLength(1, GridUnitType.Star) },
+                                new() { Width = GridLength.Auto }
                             }
-                            else
+                        };
+                        g.Children.Add(ManagerStatus);
+                        g.Children.Add(managerLogs);
+                        Grid.SetColumn(ManagerStatus, 0);
+                        Grid.SetColumn(managerLogs, 1);
+                        ManagerExpander.ItemsFooter = g;
+
+                        void SetManagerStatus(IPackageManager manager, bool ShowVersion = false)
+                        {
+                            ShowVersionButton.Visibility = Visibility.Collapsed;
+                            LongVersion.Visibility = Visibility.Collapsed;
+                            if (manager.IsEnabled() && manager.Status.Found)
                             {
-                                card.Visibility = Visibility.Collapsed;
+                                ManagerStatus.Severity = InfoBarSeverity.Success;
+                                ManagerStatus.Title = CoreTools.Translate("{pm} is enabled and ready to go",
+                                    new Dictionary<string, object?> { { "pm", manager.DisplayName } });
+                                if (!manager.Status.Version.Contains('\n'))
+                                {
+                                    ManagerStatus.Message = CoreTools.Translate("{pm} version:",
+                                                                new Dictionary<string, object?>
+                                                                {
+                                                                    { "pm", manager.DisplayName }
+                                                                }) + " " +
+                                                            manager.Status.Version;
+                                }
+                                else if (ShowVersion)
+                                {
+                                    ManagerStatus.Message = CoreTools.Translate("{pm} version:",
+                                        new Dictionary<string, object?> { { "pm", manager.DisplayName } });
+                                    LongVersion.Visibility = Visibility.Visible;
+                                }
+                                else
+                                {
+                                    ManagerStatus.Message = "";
+                                    ShowVersionButton.Visibility = Visibility.Visible;
+                                }
+                            }
+                            else if (manager.IsEnabled() && !manager.Status.Found)
+                            {
+                                ManagerStatus.Severity = InfoBarSeverity.Error;
+                                ManagerStatus.Title = CoreTools.Translate("{pm} was not found!",
+                                    new Dictionary<string, object?> { { "pm", manager.DisplayName } });
+                                ManagerStatus.Message = CoreTools.Translate(
+                                    "You may need to install {pm} in order to use it with WingetUI.",
+                                    new Dictionary<string, object?> { { "pm", manager.DisplayName } });
+                            }
+                            else if (!manager.IsEnabled())
+                            {
+                                ManagerStatus.Severity = InfoBarSeverity.Informational;
+                                ManagerStatus.Title = CoreTools.Translate("{pm} is disabled",
+                                    new Dictionary<string, object?> { { "pm", manager.DisplayName } });
+                                ManagerStatus.Message = CoreTools.Translate("Enable it to install packages from {pm}.",
+                                    new Dictionary<string, object?> { { "pm", manager.DisplayName } });
                             }
                         }
+
+                        // Switch to enable/disable said manager
+
+                        ToggleSwitch ManagerSwitch = new() { IsOn = Manager.IsEnabled() };
+                        ManagerSwitch.Toggled += (_, _) =>
+                        {
+                            Settings.SetDictionaryItem("DisabledManagers", Manager.Name, !ManagerSwitch.IsOn);
+                            SetManagerStatus(Manager);
+                            EnableOrDisableEntries();
+                        };
+
+                        ManagerExpander.Content = ManagerSwitch;
+
+                        void EnableOrDisableEntries()
+                        {
+                            if (ExtraSettingsCards.TryGetValue(Manager, out var settingsCard))
+                            {
+                                foreach (SettingsCard card in settingsCard)
+                                {
+                                    if (ManagerSwitch.IsOn)
+                                    {
+                                        card.Visibility = Visibility.Visible;
+                                    }
+                                    else
+                                    {
+                                        card.Visibility = Visibility.Collapsed;
+                                    }
+                                }
+                            }
+                        }
+
+                        int index = 0;
+                        SettingsCard ManagerPath = new()
+                        {
+                            Description =
+                                Manager.Status.ExecutablePath + " " + Manager.Properties.ExecutableCallArgs,
+                            IsClickEnabled = true,
+                            ActionIcon = new SymbolIcon(Symbol.Copy)
+                        };
+
+                        ManagerPath.Click += async (_, _) =>
+                        {
+                            WindowsClipboard.SetText(ManagerPath.Description.ToString() ?? "");
+                            ManagerPath.ActionIcon = new FontIcon() { Glyph = "\uE73E" };
+                            await Task.Delay(1000);
+                            ManagerPath.ActionIcon = new SymbolIcon(Symbol.Copy);
+                        };
+                        ExtraSettingsCards[Manager].Insert(index++, ManagerPath);
+
+                        CheckboxCard AdminCard = new()
+                        {
+                            Text = CoreTools.AutoTranslated("Always run {pm} operations with administrator rights"),
+                            SettingName = "AlwaysElevate" + Manager.Name,
+                        };
+                        AdminCard._checkbox.Content =
+                            (AdminCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
+                        ExtraSettingsCards[Manager].Insert(index++, AdminCard);
+
+                        /*CheckboxCard ParallelCard = new()
+                        {
+                            Text = CoreTools.AutoTranslated("Allow {pm} operations to be performed in parallel"),
+                            SettingName = "AllowParallelInstallsForManager" + Manager.Name,
+                        };
+                        ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
+                        ExtraSettingsCards[Manager].Insert(index++, ParallelCard);*/
+
+                        if (Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
+                        {
+                            SettingsCard SourceManagerCard = new();
+                            SourceManagerCard.Resources["SettingsCardLeftIndention"] = 10;
+                            SourceManager SourceManager = new(Manager);
+                            SourceManagerCard.Description = SourceManager;
+                            ExtraSettingsCards[Manager].Insert(index++, SourceManagerCard);
+                        }
+
+                        if (ExtraSettingsCards.TryGetValue(Manager, out var extraSettingsCard))
+                        {
+                            foreach (SettingsCard card in extraSettingsCard)
+                            {
+                                ManagerExpander.Items.Add(card);
+                            }
+                        }
+
+                        SetManagerStatus(Manager);
+                        EnableOrDisableEntries();
+                        MainLayout.Children.Add(ManagerExpander);
                     }
-                }
-
-                int index = 0;
-                SettingsCard ManagerPath = new()
-                {
-                    Description = Manager.Status.ExecutablePath + " " + Manager.Properties.ExecutableCallArgs,
-                    IsClickEnabled = true,
-                    ActionIcon = new SymbolIcon(Symbol.Copy)
-                };
-
-                ManagerPath.Click += async (_, _) =>
-                {
-                    WindowsClipboard.SetText(ManagerPath.Description.ToString() ?? "");
-                    ManagerPath.ActionIcon = new FontIcon() {Glyph = "\uE73E"};
-                    await Task.Delay(1000);
-                    ManagerPath.ActionIcon = new SymbolIcon(Symbol.Copy);
-                };
-                ExtraSettingsCards[Manager].Insert(index++, ManagerPath);
-
-                CheckboxCard AdminCard = new()
-                {
-                    Text = CoreTools.AutoTranslated("Always run {pm} operations with administrator rights"),
-                    SettingName = "AlwaysElevate" + Manager.Name,
-                };
-                AdminCard._checkbox.Content = (AdminCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
-                ExtraSettingsCards[Manager].Insert(index++, AdminCard);
-
-                CheckboxCard ParallelCard = new()
-                {
-                    Text = CoreTools.AutoTranslated("Allow {pm} operations to be performed in parallel"),
-                    SettingName = "AllowParallelInstallsForManager" + Manager.Name,
-                };
-                ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
-                ExtraSettingsCards[Manager].Insert(index++, ParallelCard);
-
-                if (Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
-                {
-                    SettingsCard SourceManagerCard = new();
-                    SourceManagerCard.Resources["SettingsCardLeftIndention"] = 10;
-                    SourceManager SourceManager = new(Manager);
-                    SourceManagerCard.Description = SourceManager;
-                    ExtraSettingsCards[Manager].Insert(index++, SourceManagerCard);
-                }
-
-                if (ExtraSettingsCards.TryGetValue(Manager, out var extraSettingsCard))
-                {
-                    foreach (SettingsCard card in extraSettingsCard)
+                    catch (Exception ex)
                     {
-                        ManagerExpander.Items.Add(card);
+                        Logger.Error($"An error occurred while loading the package manager {Manager.Name} section of the Settings Page");
+                        Logger.Error(ex);
                     }
                 }
-
-                SetManagerStatus(Manager);
-                EnableOrDisableEntries();
-                MainLayout.Children.Add(ManagerExpander);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("An error occurred while loading the package managers section of the Settings Page");
+                Logger.Error(ex);
             }
 
             InterfaceLoaded = true;
@@ -734,13 +817,21 @@ namespace UniGetUI.Interface
 
         private void ForceUpdateUniGetUI_OnClick(object? sender, RoutedEventArgs e)
         {
-            _ = AutoUpdater.CheckAndInstallUpdates(MainApp.Instance.MainWindow, MainApp.Instance.MainWindow.UpdatesBanner,
-                true);
+            var mainWindow = MainApp.Instance.MainWindow;
+            _ = AutoUpdater.CheckAndInstallUpdates(mainWindow, mainWindow.UpdatesBanner, true, false, true);
         }
 
         private void CheckboxButtonCard_OnClick(object? sender, RoutedEventArgs e)
         {
             _ = DialogHelper.ManageDesktopShortcuts();
+        }
+
+        private void ParallelOperationCount_OnValueChanged(object? sender, EventArgs e)
+        {
+            if (int.TryParse(ParallelOperationCount.SelectedValue(), out int value))
+            {
+                AbstractOperation.MAX_OPERATIONS = value;
+            }
         }
     }
 }

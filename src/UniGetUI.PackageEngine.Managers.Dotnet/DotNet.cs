@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
@@ -35,6 +37,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
+                CanDownloadInstaller = true,
                 SupportsCustomScopes = true,
                 SupportsCustomArchitectures = true,
                 SupportedCustomArchitectures = [Architecture.X86, Architecture.X64, Architecture.Arm64, Architecture.Arm],
@@ -97,7 +100,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = path,
-                    Arguments = "",
+                    Arguments = "--format json --utf8",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -110,51 +113,35 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
             p.Start();
 
-            string? line;
-            bool DashesPassed = false;
             List<Package> Packages = [];
-            while ((line = p.StandardOutput.ReadLine()) is not null)
+            string output = p.StandardOutput.ReadToEnd();
+            logger.AddToStdOut(output);
+            logger.AddToStdErr(p.StandardError.ReadToEnd());
+
+            while (output[0] != '{') output = output[1..];
+            JsonArray? data = (JsonNode.Parse(output) as JsonObject)?["dotnet-tools-outdated"] as JsonArray;
+            if (data is not null)
             {
-                logger.AddToStdOut(line);
-                if (!DashesPassed)
+                foreach (JsonNode? node in data)
                 {
-                    if (line.Contains("----"))
-                    {
-                        DashesPassed = true;
-                    }
-                }
-                else
-                {
-                    string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
-                    if (elements.Length < 3)
-                    {
-                        continue;
-                    }
+                    if(node is not JsonObject element) continue;
 
-                    for (int i = 0; i < elements.Length; i++)
-                    {
-                        elements[i] = elements[i].Trim();
-                    }
+                    string id = element["packageName"]?.ToString() ?? "";
+                    string version = element["currentVer"]?.ToString() ?? "";
+                    string newVersion = element["availableVer"]?.ToString() ?? "";
 
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
-                    {
-                        continue;
-                    }
-
-                    if(elements[2].Trim() == "") continue;
-
-                    Packages.Add(new Package(
-                        CoreTools.FormatAsName(elements[0]),
-                        elements[0],
-                        elements[1],
-                        elements[2],
-                        DefaultSource,
-                        this,
+                    Packages.Add(new(
+                        CoreTools.FormatAsName(id), id, version, newVersion, DefaultSource, this,
                         new(PackageScope.Global)
                     ));
+
                 }
             }
-            logger.AddToStdErr(p.StandardError.ReadToEnd());
+            else
+            {
+                logger.AddToStdErr("\"JsonArray? data\" was null!");
+            }
+
             p.WaitForExit();
             logger.Close(p.ExitCode);
 
