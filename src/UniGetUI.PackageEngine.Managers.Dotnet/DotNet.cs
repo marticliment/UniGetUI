@@ -114,49 +114,6 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             p.Start();
 
             List<Package> Packages = [];
-            /*string? line;
-            bool DashesPassed = false;
-            while ((line = p.StandardOutput.ReadLine()) is not null)
-            {
-                logger.AddToStdOut(line);
-                if (!DashesPassed)
-                {
-                    if (line.Contains("----"))
-                    {
-                        DashesPassed = true;
-                    }
-                }
-                else
-                {
-                    string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
-                    if (elements.Length < 3)
-                    {
-                        continue;
-                    }
-
-                    for (int i = 0; i < elements.Length; i++)
-                    {
-                        elements[i] = elements[i].Trim();
-                    }
-
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
-                    {
-                        continue;
-                    }
-
-                    if(elements[2].Trim() == "") continue;
-
-                    Packages.Add(new Package(
-                        CoreTools.FormatAsName(elements[0]),
-                        elements[0],
-                        elements[1],
-                        elements[2],
-                        DefaultSource,
-                        this,
-                        new(PackageScope.Global)
-                    ));
-                }
-            }*/
             string output = p.StandardOutput.ReadToEnd();
             logger.AddToStdOut(output);
             logger.AddToStdErr(p.StandardError.ReadToEnd());
