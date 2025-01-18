@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
@@ -98,7 +100,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = path,
-                    Arguments = "",
+                    Arguments = "--format json --utf8",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -111,9 +113,9 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
             p.Start();
 
-            string? line;
-            bool DashesPassed = false;
             List<Package> Packages = [];
+            /*string? line;
+            bool DashesPassed = false;
             while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
@@ -154,8 +156,35 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                         new(PackageScope.Global)
                     ));
                 }
-            }
+            }*/
+            string output = p.StandardOutput.ReadToEnd();
+            logger.AddToStdOut(output);
             logger.AddToStdErr(p.StandardError.ReadToEnd());
+
+            while (output[0] != '{') output = output[1..];
+            JsonArray? data = (JsonNode.Parse(output) as JsonObject)?["dotnet-tools-outdated"] as JsonArray;
+            if (data is not null)
+            {
+                foreach (JsonNode? node in data)
+                {
+                    if(node is not JsonObject element) continue;
+
+                    string id = element["packageName"]?.ToString() ?? "";
+                    string version = element["currentVer"]?.ToString() ?? "";
+                    string newVersion = element["availableVer"]?.ToString() ?? "";
+
+                    Packages.Add(new(
+                        CoreTools.FormatAsName(id), id, version, newVersion, DefaultSource, this,
+                        new(PackageScope.Global)
+                    ));
+
+                }
+            }
+            else
+            {
+                logger.AddToStdErr("\"JsonArray? data\" was null!");
+            }
+
             p.WaitForExit();
             logger.Close(p.ExitCode);
 
