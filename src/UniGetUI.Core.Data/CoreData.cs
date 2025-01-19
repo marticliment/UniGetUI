@@ -10,42 +10,6 @@ namespace UniGetUI.Core.Data
     {
         private static int? __code_page;
         public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
-
-        private static int GetCodePage()
-        {
-            try
-            {
-                Process p = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = "chcp.com",
-                        RedirectStandardOutput = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true,
-                    }
-                };
-                p.Start();
-                string contents = p.StandardOutput.ReadToEnd();
-                string purifiedString = "";
-
-                foreach (var c in contents.Split(':')[^1].Trim())
-                {
-                    if (c >= '0' && c <= '9')
-                    {
-                        purifiedString += c;
-                    }
-                }
-
-                return int.Parse(purifiedString);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-                return 0;
-            }
-        }
-
         public const string VersionName =  "3.1.6-beta1"; // Do not modify this line, use file scripts/apply_versions.py
         public const int BuildNumber =  76; // Do not modify this line, use file scripts/apply_versions.py
 
@@ -63,6 +27,8 @@ namespace UniGetUI.Core.Data
             }
         }
 
+        private static bool? IS_PORTABLE;
+
         /// <summary>
         /// The directory where all the user data is stored. The directory is automatically created if it does not exist.
         /// </summary>
@@ -70,9 +36,21 @@ namespace UniGetUI.Core.Data
         {
             get
             {
-                string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
-                string new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI");
-                return GetNewDataDirectoryOrMoveOld(old_path, new_path);
+                if (IS_PORTABLE is null)
+                    IS_PORTABLE = File.Exists(Path.Join(UniGetUIExecutableDirectory, "ForceUniGetUIPortable"));
+
+                if (IS_PORTABLE == true)
+                {
+                    string path = Path.Join(UniGetUIExecutableDirectory, "Settings");
+                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                    return path;
+                }
+                else
+                {
+                    string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
+                    string new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI");
+                    return GetNewDataDirectoryOrMoveOld(old_path, new_path);
+                }
             }
         }
 
@@ -84,11 +62,7 @@ namespace UniGetUI.Core.Data
             get
             {
                 string path = Path.Join(UniGetUIDataDirectory, "InstallationOptions");
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
                 return path;
             }
         }
@@ -100,9 +74,9 @@ namespace UniGetUI.Core.Data
         {
             get
             {
-                string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedData");
-                string new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI", "CachedMetadata");
-                return GetNewDataDirectoryOrMoveOld(old_path, new_path);
+                string path = Path.Join(UniGetUIDataDirectory, "CachedMetadata");
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                return path;
             }
         }
 
@@ -113,9 +87,9 @@ namespace UniGetUI.Core.Data
         {
             get
             {
-                string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedIcons");
-                string new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI", "CachedMedia");
-                return GetNewDataDirectoryOrMoveOld(old_path, new_path);
+                string path  = Path.Join(UniGetUIDataDirectory, "CachedMedia");
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                return path;
             }
         }
 
@@ -126,9 +100,9 @@ namespace UniGetUI.Core.Data
         {
             get
             {
-                string old_dir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedLangFiles");
-                string new_dir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI", "CachedLanguageFiles");
-                return GetNewDataDirectoryOrMoveOld(old_dir, new_dir);
+                string path= Path.Join(UniGetUIDataDirectory, "CachedLanguageFiles");
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                return path;
             }
         }
 
@@ -308,5 +282,42 @@ namespace UniGetUI.Core.Data
             TypeInfoResolverChain = { new DefaultJsonTypeInfoResolver() },
             WriteIndented = true,
         };
+
+
+        private static int GetCodePage()
+        {
+            try
+            {
+                Process p = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "chcp.com",
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                    }
+                };
+                p.Start();
+                string contents = p.StandardOutput.ReadToEnd();
+                string purifiedString = "";
+
+                foreach (var c in contents.Split(':')[^1].Trim())
+                {
+                    if (c >= '0' && c <= '9')
+                    {
+                        purifiedString += c;
+                    }
+                }
+
+                return int.Parse(purifiedString);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                return 0;
+            }
+        }
+
     }
 }
