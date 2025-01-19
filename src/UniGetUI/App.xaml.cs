@@ -20,8 +20,10 @@ using UniGetUI.PackageEngine.Operations;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using UniGetUI.Controls.OperationWidgets;
+using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
+using UniGetUI.Pages.DialogPages;
 using AbstractOperation = UniGetUI.PackageOperations.AbstractOperation;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
@@ -265,23 +267,40 @@ namespace UniGetUI
 
                     BackgroundApi.OnShowSharedPackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        MainWindow?.NavigationPage?.DiscoverPage.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
+                        DialogHelper.ShowSharedPackage_ThreadSafe(package.Key, package.Value);
                         MainWindow?.Activate();
                     });
 
                     BackgroundApi.OnUpgradeAll += (_, _) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        MainWindow?.NavigationPage?.UpdatesPage.UpdateAll();
+                        Logger.Info($"[WIDGETS] Updating ALL packages");
+
+                        foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
+                            if (package.Tag is not PackageTag.BeingProcessed and not PackageTag.OnQueue)
+                                Operations.Update(package);
                     });
 
                     BackgroundApi.OnUpgradeAllForManager += (_, manager) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        MainWindow?.NavigationPage?.UpdatesPage.UpdateAllPackagesForManager(manager);
+                        Logger.Info($"[WIDGETS] Updating all packages with manager={manager}");
+
+                        foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
+                            if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed)
+                                if (package.Manager.Name == manager || package.Manager.DisplayName == manager)
+                                    Operations.Update(package);
                     });
 
-                    BackgroundApi.OnUpgradePackage += (_, package) => MainWindow.DispatcherQueue.TryEnqueue(() =>
+                    BackgroundApi.OnUpgradePackage += (_, id) => MainWindow.DispatcherQueue.TryEnqueue(() =>
                     {
-                        MainWindow?.NavigationPage?.UpdatesPage.UpdatePackageForId(package);
+                        foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
+                            if (package.Id == id)
+                            {
+                                Operations.Update(package);
+                                Logger.Info($"[WIDGETS] Updating package with id {id}");
+                                return;
+                            }
+
+                        Logger.Warn($"[WIDGETS] No package with id={id} was found");
                     });
 
                     _ = BackgroundApi.Start();

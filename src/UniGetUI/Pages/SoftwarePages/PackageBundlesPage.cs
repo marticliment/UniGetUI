@@ -458,7 +458,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
                 string fileContent = await File.ReadAllTextAsync(file);
 
-                double open_version = await AddFromBundle(fileContent, formatType);
+                double open_version = await PEInterface.PackageBundlesLoader.AddFromBundle(fileContent, formatType);
                 HasUnsavedChanges = false;
 
                 DialogHelper.HideLoadingDialog();
@@ -514,7 +514,7 @@ namespace UniGetUI.Interface.SoftwarePages
                         formatType = BundleFormatType.JSON;
 
                     // Save serialized data
-                    await File.WriteAllTextAsync(file, await CreateBundle(Loader.Packages, formatType));
+                    await File.WriteAllTextAsync(file, await PEInterface.PackageBundlesLoader.CreateBundle(Loader.Packages, formatType));
 
                     DialogHelper.HideLoadingDialog();
 
@@ -548,139 +548,6 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        public static async Task<string> CreateBundle(IEnumerable<IPackage> unsorted_packages, BundleFormatType formatType = BundleFormatType.JSON)
-        {
-            SerializableBundle_v1 exportable = new();
-            exportable.export_version = 2.1;
 
-            List<IPackage> packages = unsorted_packages.ToList();
-            packages.Sort(Comparison);
-
-            int Comparison(IPackage x, IPackage y)
-            {
-                if(x.Id != y.Id) return String.Compare(x.Id, y.Id, StringComparison.Ordinal);
-                if(x.Name != y.Name) return String.Compare(x.Name, y.Name, StringComparison.Ordinal);
-                return (x.VersionAsFloat > y.VersionAsFloat) ? -1 : 1;
-            }
-
-            foreach (IPackage package in packages)
-                if (package is Package && !package.Source.IsVirtualManager)
-                    exportable.packages.Add(await Task.Run(package.AsSerializable));
-                else
-                    exportable.incompatible_packages.Add(package.AsSerializable_Incompatible());
-
-            Logger.Debug("Finished loading serializable objects. Serializing with format " + formatType);
-            string ExportableData;
-
-            if (formatType == BundleFormatType.JSON)
-                ExportableData = JsonSerializer.Serialize(
-                    exportable,
-                    CoreData.SerializingOptions);
-
-            else if (formatType == BundleFormatType.YAML)
-            {
-                ISerializer serializer = new SerializerBuilder()
-                    .Build();
-                ExportableData = serializer.Serialize(exportable);
-            }
-            else
-            {
-                string tempfile = Path.GetTempFileName();
-                StreamWriter writer = new(tempfile);
-                XmlSerializer serializer = new(typeof(SerializableBundle_v1));
-                serializer.Serialize(writer, exportable);
-                writer.Close();
-                ExportableData = await File.ReadAllTextAsync(tempfile);
-                File.Delete(tempfile);
-            }
-
-            Logger.Debug("Serialization finished successfully");
-
-            return ExportableData;
-        }
-
-        public async Task<double> AddFromBundle(string content, BundleFormatType format)
-        {
-            // Deserialize data
-            SerializableBundle_v1? DeserializedData;
-            if (format is BundleFormatType.JSON)
-            {
-                DeserializedData = await Task.Run(() => JsonSerializer.Deserialize<SerializableBundle_v1>(content, CoreData.SerializingOptions));
-            }
-            else if (format is BundleFormatType.YAML)
-            {
-                IDeserializer deserializer =
-                    new DeserializerBuilder()
-                        .IgnoreUnmatchedProperties()
-                        .Build();
-                DeserializedData = await Task.Run(() => deserializer.Deserialize<SerializableBundle_v1>(content));
-            }
-            else
-            {
-                string tempfile = Path.GetTempFileName();
-                await File.WriteAllTextAsync(tempfile, content);
-                StreamReader reader = new(tempfile);
-                XmlSerializer serializer = new(typeof(SerializableBundle_v1));
-                DeserializedData = await Task.Run(() => serializer.Deserialize(reader) as SerializableBundle_v1);
-                reader.Close();
-                File.Delete(tempfile);
-            }
-
-            if (DeserializedData is null || DeserializedData.export_version is -1)
-            {
-                throw new ArgumentException("DeserializedData was null");
-            }
-
-            List<IPackage> packages = new List<IPackage>();
-
-            foreach (SerializablePackage_v1 DeserializedPackage in DeserializedData.packages)
-            {
-                packages.Add(PackageFromSerializable(DeserializedPackage));
-            }
-
-            foreach (SerializableIncompatiblePackage_v1 DeserializedPackage in DeserializedData
-                         .incompatible_packages)
-            {
-                packages.Add(InvalidPackageFromSerializable(DeserializedPackage, NullSource.Instance));
-            }
-
-            await PEInterface.PackageBundlesLoader.AddPackagesAsync(packages);
-
-            return DeserializedData.export_version;
-        }
-
-        public static IPackage PackageFromSerializable(SerializablePackage_v1 raw_package)
-        {
-            IPackageManager? manager = null;
-            IManagerSource? source;
-
-            foreach (var possible_manager in PEInterface.Managers)
-            {
-                if (possible_manager.Name == raw_package.ManagerName)
-                {
-                    manager = possible_manager;
-                    break;
-                }
-            }
-
-            if (manager?.Capabilities.SupportsCustomSources == true)
-            {
-                source = manager?.SourcesHelper?.Factory.GetSourceIfExists(raw_package.Source);
-            }
-            else
-                source = manager?.DefaultSource;
-
-            if (manager is null || source is null)
-            {
-                return InvalidPackageFromSerializable(raw_package.GetInvalidEquivalent(), NullSource.Instance);
-            }
-
-            return new ImportedPackage(raw_package, manager, source);
-        }
-
-        public static IPackage InvalidPackageFromSerializable(SerializableIncompatiblePackage_v1 raw_package, IManagerSource source)
-        {
-            return new InvalidImportedPackage(raw_package, source);
-        }
     }
 }

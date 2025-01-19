@@ -40,10 +40,10 @@ namespace UniGetUI.Interface
 
     public sealed partial class MainView : UserControl
     {
-        public DiscoverSoftwarePage DiscoverPage;
-        public SoftwareUpdatesPage UpdatesPage;
-        public InstalledPackagesPage InstalledPage;
-        public PackageBundlesPage BundlesPage;
+        private DiscoverSoftwarePage DiscoverPage;
+        private SoftwareUpdatesPage UpdatesPage;
+        private InstalledPackagesPage InstalledPage;
+        private PackageBundlesPage BundlesPage;
         private SettingsPage? SettingsPage;
         private UniGetUILogPage? UniGetUILogPage;
         private ManagerLogsPage? ManagerLogPage;
@@ -52,6 +52,7 @@ namespace UniGetUI.Interface
 
         private PageType OldPage_t = PageType.Null;
         private PageType CurrentPage_t = PageType.Null;
+        private Page CurrentPage = null!;
         private readonly HashSet<Page> AddedPages = new();
 
         public MainView()
@@ -118,6 +119,12 @@ namespace UniGetUI.Interface
 
             UpdateOperationsLayout();
             MainApp.Operations._operationList.CollectionChanged += (_, _) => UpdateOperationsLayout();
+        }
+
+        public page_t RequestPageIntoView<page_t>(PageType page) where page_t: AbstractPackagesPage
+        {
+            NavigateTo(page);
+            return CurrentPage as page_t ?? throw new InvalidCastException("Invalid page_t");
         }
 
         public void LoadDefaultPage()
@@ -262,6 +269,8 @@ namespace UniGetUI.Interface
                 Page oldPage = GetPageForType(OldPage_t);
                 (oldPage as IEnterLeaveListener)?.OnLeave();
             }
+
+            CurrentPage = NewPage;
         }
 
         private void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)

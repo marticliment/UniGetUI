@@ -708,7 +708,7 @@ namespace UniGetUI.Interface
         private async void DoBackup_Click(object sender, EventArgs e)
         {
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Performing backup, please wait..."));
-            await MainApp.Instance.MainWindow.NavigationPage.InstalledPage.BackupPackages();
+            await PackageBackupHelper.BackupPackages();
             DialogHelper.HideLoadingDialog();
         }
 

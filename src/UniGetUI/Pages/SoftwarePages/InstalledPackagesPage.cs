@@ -278,16 +278,8 @@ namespace UniGetUI.Interface.SoftwarePages
             return;
         }
 
-        protected override void WhenPackagesLoaded(ReloadReason reason)
+        protected override async void WhenPackagesLoaded(ReloadReason reason)
         {
-            if (!HasDoneBackup)
-            {
-                if (Settings.Get("EnablePackageBackup"))
-                {
-                    _ = BackupPackages();
-                }
-            }
-
             if(WinGet.NO_PACKAGES_HAVE_BEEN_LOADED && !Settings.Get("DisableWinGetMalfunctionDetector"))
             {
                 var infoBar = MainApp.Instance.MainWindow.WinGetWarningBanner;
@@ -297,6 +289,12 @@ namespace UniGetUI.Interface.SoftwarePages
                 var button = new Button() { Content = CoreTools.Translate("Repair WinGet") };
                 infoBar.ActionButton = button;
                 button.Click += (_, _) => DialogHelper.HandleBrokenWinGet();
+            }
+
+            if (!HasDoneBackup && Settings.Get("EnablePackageBackup"))
+            {
+                await PackageBackupHelper.BackupPackages();
+                HasDoneBackup = true;
             }
         }
 
@@ -356,56 +354,6 @@ namespace UniGetUI.Interface.SoftwarePages
             await PEInterface.PackageBundlesLoader.AddPackagesAsync(FilteredPackages.GetCheckedPackages());
             DialogHelper.HideLoadingDialog();
 
-        }
-
-        public async Task BackupPackages()
-        {
-
-            try
-            {
-                Logger.Debug("Starting package backup");
-                List<IPackage> packagesToExport = [];
-                foreach (IPackage package in Loader.Packages)
-                {
-                    packagesToExport.Add(package);
-                }
-
-                string BackupContents = await PackageBundlesPage.CreateBundle(packagesToExport.ToArray(), BundleFormatType.JSON);
-
-                string dirName = Settings.GetValue("ChangeBackupOutputDirectory");
-                if (dirName == "")
-                {
-                    dirName = CoreData.UniGetUI_DefaultBackupDirectory;
-                }
-
-                if (!Directory.Exists(dirName))
-                {
-                    Directory.CreateDirectory(dirName);
-                }
-
-                string fileName = Settings.GetValue("ChangeBackupFileName");
-                if (fileName == "")
-                {
-                    fileName = CoreTools.Translate("{pcName} installed packages", new Dictionary<string, object?> { { "pcName", Environment.MachineName } });
-                }
-
-                if (Settings.Get("EnableBackupTimestamping"))
-                {
-                    fileName += " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
-                }
-
-                fileName += ".ubundle";
-
-                string filePath = Path.Combine(dirName, fileName);
-                await File.WriteAllTextAsync(filePath, BackupContents);
-                HasDoneBackup = true;
-                Logger.ImportantInfo("Backup saved to " + filePath);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("An error occurred while performing a backup");
-                Logger.Error(ex);
-            }
         }
 
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs args)
