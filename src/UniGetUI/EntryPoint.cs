@@ -56,6 +56,7 @@ namespace UniGetUI
                 Logger.ImportantInfo(textart);
                 Logger.ImportantInfo("  ");
                 Logger.ImportantInfo($"Build {CoreData.BuildNumber}");
+                Logger.ImportantInfo($"Data directory {CoreData.UniGetUIDataDirectory}");
                 Logger.ImportantInfo($"Encoding Code Page set to {CoreData.CODE_PAGE}");
 
                 // WinRT single-instance fancy stuff

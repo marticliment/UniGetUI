@@ -224,6 +224,7 @@ Source: "unigetui_bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; 
 Source: "unigetui_bin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
 Source: "src\UniGetUI.PackageEngine.Managers.Chocolatey\choco-cli\*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall\chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
 Source: "InstallerExtras\EnsureWinGet.ps1"; DestDir: "{tmp}"; Flags: deleteafterinstall
+Source: "InstallerExtras\ForceUniGetUIPortable"; DestDir: "{app}"; Tasks: portableinstall
 
 
 [Icons]
