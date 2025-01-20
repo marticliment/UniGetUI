@@ -86,7 +86,7 @@ namespace UniGetUI.Interface
                 {
                     NavigateTo(IS_SHIFT_PRESSED ? GetPreviousPage(CurrentPage_t) : GetNextPage(CurrentPage_t));
                 }
-                else if (e.Key == VirtualKey.F1)
+                else if (!IS_CONTROL_PRESSED && !IS_SHIFT_PRESSED && e.Key == VirtualKey.F1)
                 {
                     NavigateTo(PageType.Help);
                 }
