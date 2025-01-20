@@ -78,17 +78,9 @@ internal sealed class ScoopPkgOperationHelper : PackagePkgOperationHelper
             return OperationVeredict.AutoRetry;
         }
 
-        if (operation is OperationType.Uninstall)
-        {
-            if (output_string.Contains("was uninstalled"))
-                return OperationVeredict.Success;
-
-            return OperationVeredict.Failure;
-        }
-
-        if (output_string.Contains("ERROR"))
+        if (output_string.Contains("ERROR") || returnCode is not 0)
             return OperationVeredict.Failure;
 
-        return returnCode == 0? OperationVeredict.Success: OperationVeredict.Failure;
+        return OperationVeredict.Success;
     }
 }
