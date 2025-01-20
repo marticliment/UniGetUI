@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 11746,
-        "done": 5194,
-        "packages_with_icon": 5194,
+        "total": 11747,
+        "done": 5195,
+        "packages_with_icon": 5195,
         "packages_with_screenshot": 621,
         "total_screenshots": 1939
     },
@@ -24924,6 +24924,10 @@
             "images": []
         },
         "microsoft-teams": {
+            "icon": "https://community.chocolatey.org/content/packageimages/microsoft-teams.install.1.6.00.1381.png",
+            "images": []
+        },
+        "microsoft-teams-free": {
             "icon": "https://community.chocolatey.org/content/packageimages/microsoft-teams.install.1.6.00.1381.png",
             "images": []
         },
