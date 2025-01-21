@@ -1,8 +1,10 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
@@ -126,9 +128,16 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 {
                     if(node is not JsonObject element) continue;
 
+                    bool unlisted = element["becomeUnlisted"]?.GetValue<bool>() ?? false;
                     string id = element["packageName"]?.ToString() ?? "";
                     string version = element["currentVer"]?.ToString() ?? "";
                     string newVersion = element["availableVer"]?.ToString() ?? "";
+
+                    if (unlisted)
+                    {
+                        Logger.Warn($".NET package {id} is unlisted, not showing it...");
+                        continue;
+                    };
 
                     Packages.Add(new(
                         CoreTools.FormatAsName(id), id, version, newVersion, DefaultSource, this,
