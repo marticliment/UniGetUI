@@ -47,30 +47,30 @@ It really does make a big difference, and is very much appreciated. Thanks :)<br
 ## Installation
 <p>There are multiple ways to install UniGetUI — choose whichever one you prefer!</p>
  
-### Microsoft Store installation (recommended)**
+### Microsoft Store installation (recommended)
 <a href="https://apps.microsoft.com/detail/xpfftq032ptphf"><img alt="alt_text" width="240px" src="https://get.microsoft.com/images/en-us%20dark.svg" /></a> 
 
  
-### Download UniGetUI installer:**
+### Download UniGetUI installer:
 ![GitHub Release](https://img.shields.io/github/v/release/marticliment/UniGetUI?style=for-the-badge)
 <p align="left"><b><a href="https://github.com/marticliment/UniGetUI/releases/latest/download/WingetUI.Installer.exe">Click here to download UniGetUI</a></b></p>
 
 
-### Install UniGetUI through Winget:**
+### Install UniGetUI via WinGet:
 ![WinGet Package Version](https://img.shields.io/winget/v/MartiCliment.UniGetUI?style=for-the-badge)
 ```cmd
 winget install --exact --id MartiCliment.UniGetUI --source winget
 ```
 
 
-### Install UniGetUI through Scoop:
+### Install UniGetUI via Scoop:
 ![Scoop version](https://img.shields.io/scoop/v/unigetui?bucket=extras&style=for-the-badge)
 ```cmd
 scoop bucket add extras
 scoop install extras/unigetui
 ```
 
-### Install UniGetUI through Chocolatey:
+### Install UniGetUI via Chocolatey:
 ![Chocolatey Version](https://img.shields.io/chocolatey/v/wingetui?style=for-the-badge)
 ```cmd
 choco install wingetui
