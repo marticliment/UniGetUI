@@ -456,7 +456,7 @@ namespace UniGetUI.Interface.Dialogs
         {
             if (!Package.Manager.Capabilities.CanDownloadInstaller) return;
             Close?.Invoke(this, EventArgs.Empty);
-            MainApp.Operations.AskLocationAndDownload(Package);
+            _ = MainApp.Operations.AskLocationAndDownload(Package);
         }
 
         public void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -590,7 +590,7 @@ namespace UniGetUI.Interface.Dialogs
 
             if (action is OperationType.Install)
             {
-                MainApp.Operations.Install(package, AsAdmin, Interactive, SkipHash);
+                _ = MainApp.Operations.Install(package, AsAdmin, Interactive, SkipHash);
             }
             else if (action is OperationType.Uninstall)
             {
@@ -598,7 +598,7 @@ namespace UniGetUI.Interface.Dialogs
             }
             else if (action is OperationType.Update)
             {
-                MainApp.Operations.Update(package, AsAdmin, Interactive, SkipHash);
+                _ = MainApp.Operations.Update(package, AsAdmin, Interactive, SkipHash);
             }
             else
             {

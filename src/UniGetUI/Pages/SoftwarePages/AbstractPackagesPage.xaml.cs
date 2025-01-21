@@ -863,11 +863,11 @@ namespace UniGetUI.Interface
 
             if (PAGE_ROLE == OperationType.Install)
             {
-                MainApp.Operations.Install(package);
+                _ = MainApp.Operations.Install(package);
             }
             else if (PAGE_ROLE == OperationType.Update)
             {
-                MainApp.Operations.Update(package);
+                _ = MainApp.Operations.Update(package);
             }
             else // if (PageRole == OperationType.Uninstall)
             {

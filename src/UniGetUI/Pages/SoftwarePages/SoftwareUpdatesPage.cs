@@ -105,7 +105,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 Text = CoreTools.AutoTranslated("Download installer"),
                 IconName = IconType.Download
             };
-            MenuDownloadInstaller.Click += (_, _) => MainApp.Operations.AskLocationAndDownload(SelectedItem);
+            MenuDownloadInstaller.Click += (_, _) => _ = MainApp.Operations.AskLocationAndDownload(SelectedItem);
 
             BetterMenuItem menuUpdateAfterUninstall = new()
             {
@@ -326,7 +326,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             foreach (IPackage package in Loader.Packages)
                 if (package.Tag is not PackageTag.BeingProcessed and not PackageTag.OnQueue)
-                    MainApp.Operations.Update(package);
+                    _ = MainApp.Operations.Update(package);
         }
 
         protected override void WhenPackagesLoaded(ReloadReason reason)
@@ -445,25 +445,25 @@ namespace UniGetUI.Interface.SoftwarePages
         }
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
-            => MainApp.Operations.Update(SelectedItem);
+            => _ = MainApp.Operations.Update(SelectedItem);
 
         private  void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
-            => MainApp.Operations.Update(SelectedItem, no_integrity: true);
+            => _ = MainApp.Operations.Update(SelectedItem, no_integrity: true);
 
         private void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
-            => MainApp.Operations.Update(SelectedItem, interactive: true);
+            => _ = MainApp.Operations.Update(SelectedItem, interactive: true);
 
         private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
-            => MainApp.Operations.Update(SelectedItem, elevated: true);
+            => _ = MainApp.Operations.Update(SelectedItem, elevated: true);
 
-        private void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
+        private async void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
         {
-            MainApp.Operations.Uninstall(SelectedItem, elevated: true, ignoreParallel: true);
-            MainApp.Operations.Install(SelectedItem, elevated: true, ignoreParallel: true);
+            var op = await MainApp.Operations.Uninstall(SelectedItem, elevated: true, ignoreParallel: true);
+            _ = MainApp.Operations.Install(SelectedItem, elevated: true, ignoreParallel: true, req: op);
         }
 
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs e)
-            => MainApp.Operations.Uninstall(SelectedItem);
+            => _ = MainApp.Operations.Uninstall(SelectedItem);
 
         private void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs e)
         {
@@ -496,19 +496,19 @@ namespace UniGetUI.Interface.SoftwarePages
             foreach (IPackage package in Loader.Packages)
                 if (package.Id == id)
                 {
-                    MainApp.Operations.Update(package);
+                    _ = MainApp.Operations.Update(package);
                     Logger.Info($"[WIDGETS] Updating package with id {id}");
                     break;
                 }
             Logger.Warn($"[WIDGETS] No package with id={id} was found");
         }
 
-        public void UpdateAllPackagesForManager(string manager)
+        public async void UpdateAllPackagesForManager(string manager)
         {
             foreach (IPackage package in Loader.Packages)
                 if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed)
                     if (package.Manager.Name == manager || package.Manager.DisplayName == manager)
-                        MainApp.Operations.Update(package);
+                        await MainApp.Operations.Update(package);
         }
     }
 }

@@ -8,7 +8,8 @@ public abstract class AbstractProcessOperation : AbstractOperation
 {
     protected Process process { get; private set; }
     private bool ProcessKilled;
-    protected AbstractProcessOperation(bool queue_enabled) : base(queue_enabled)
+
+    protected AbstractProcessOperation(bool queue_enabled, AbstractOperation? req) : base(queue_enabled, req)
     {
         process = new();
         CancelRequested += (_, _) =>

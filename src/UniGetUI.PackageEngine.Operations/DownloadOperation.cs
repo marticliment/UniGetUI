@@ -23,7 +23,7 @@ public class DownloadOperation : AbstractOperation
     }
     private bool canceled;
 
-    public DownloadOperation(IPackage package, string downloadPath): base(true)
+    public DownloadOperation(IPackage package, string downloadPath): base(true, null)
     {
         downloadLocation = downloadPath;
         _package = package;

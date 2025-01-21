@@ -117,9 +117,18 @@ public abstract class AbstractOperation : IDisposable
     protected bool QUEUE_ENABLED;
     protected bool FORCE_HOLD_QUEUE;
 
-    public AbstractOperation(bool queue_enabled)
+    private AbstractOperation? requirement;
+
+
+    public AbstractOperation(bool queue_enabled, AbstractOperation? req)
     {
         QUEUE_ENABLED = queue_enabled;
+        if (req is not null)
+        {
+            requirement = req;
+            QUEUE_ENABLED = false;
+        }
+
         Status = OperationStatus.InQueue;
         Line("Please wait...", LineType.ProgressIndicator);
 
@@ -192,12 +201,24 @@ public abstract class AbstractOperation : IDisposable
             Line(Metadata.OperationInformation, LineType.VerboseDetails);
             Line(Metadata.Status, LineType.ProgressIndicator);
 
-            // BEGIN QUEUE HANDLER
-            if (QUEUE_ENABLED)
-            {
+            Enqueued?.Invoke(this, EventArgs.Empty);
+
+            if (requirement != null)
+            {   // OPERATION REQUIREMENT HANDLER
+                Logger.Info($"Operation {Metadata.Title} is waiting for requirement operation {requirement.Metadata.Title}");
+                Line(CoreTools.Translate("Waiting for {0} to complete...", requirement.Metadata.Title), LineType.ProgressIndicator);
+                {
+                    while (requirement.Status is OperationStatus.Running or OperationStatus.InQueue)
+                    {
+                        await Task.Delay(100);
+                        if(SKIP_QUEUE) break;
+                    }
+                }
+            }
+            else if (QUEUE_ENABLED)
+            {   // QUEUE HANDLER
                 SKIP_QUEUE = false;
                 OperationQueue.Add(this);
-                Enqueued?.Invoke(this, EventArgs.Empty);
                 int lastPos = -2;
 
                 while (FORCE_HOLD_QUEUE || (OperationQueue.IndexOf(this) >= MAX_OPERATIONS && !SKIP_QUEUE))
@@ -234,6 +255,22 @@ public abstract class AbstractOperation : IDisposable
                         result = OperationVeredict.Canceled;
                         break;
                     }
+                    else if (requirement is not null)
+                    {
+                        if (requirement.Status is OperationStatus.Failed)
+                        {
+                            Line(CoreTools.Translate("{0} has failed, that was a requirement for {1} to be run", requirement.Metadata.Title, Metadata.Title), LineType.Error);
+                            result = OperationVeredict.Failure;
+                            break;
+                        }
+                        else if (requirement.Status is OperationStatus.Canceled)
+                        {
+                            Line(CoreTools.Translate("The user has canceled {0}, that was a requirement for {1} to be run", requirement.Metadata.Title, Metadata.Title), LineType.Error);
+                            result = OperationVeredict.Canceled;
+                            break;
+                        }
+                    }
+
 
                     Task<OperationVeredict> op = PerformOperation();
                     while (Status != OperationStatus.Canceled && !op.IsCompleted) await Task.Delay(100);

@@ -122,7 +122,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 Text = CoreTools.AutoTranslated("Download installer"),
                 IconName = IconType.Download
             };
-            MenuDownloadInstaller.Click += (_, _) => MainApp.Operations.AskLocationAndDownload(SelectedItem);
+            MenuDownloadInstaller.Click += (_, _) => _ = MainApp.Operations.AskLocationAndDownload(SelectedItem);
             menu.Items.Add(MenuDownloadInstaller);
 
             menu.Items.Add(new MenuFlyoutSeparator());
@@ -421,12 +421,12 @@ namespace UniGetUI.Interface.SoftwarePages
             => MainApp.Operations.ConfirmAndUninstall(SelectedItem, remove_data: true);
 
         private void MenuReinstall_Invoked(object sender, RoutedEventArgs args)
-            => MainApp.Operations.Install(SelectedItem);
+            => _ = MainApp.Operations.Install(SelectedItem);
 
-        private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
+        private async void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
         {
-            MainApp.Operations.Uninstall(SelectedItem, ignoreParallel: true);
-            MainApp.Operations.Install(SelectedItem, ignoreParallel: true);
+            var op = await MainApp.Operations.Uninstall(SelectedItem, ignoreParallel: true);
+            _ = MainApp.Operations.Install(SelectedItem, ignoreParallel: true, req: op);
         }
 
         private async void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)

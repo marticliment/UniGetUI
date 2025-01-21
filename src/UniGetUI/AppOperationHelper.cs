@@ -39,9 +39,9 @@ public partial class MainApp
          * OPERATION CREATION HELPERS
          *
          */
-        public static async void AskLocationAndDownload(IPackage? package)
+        public static async Task<AbstractOperation?> AskLocationAndDownload(IPackage? package)
         {
-            if (package is null) return;
+            if (package is null) return null;
             try
             {
                 DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
@@ -59,7 +59,7 @@ public partial class MainApp
                     dialog.DefaultButton = ContentDialogButton.Primary;
                     dialog.XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot;
                     await MainApp.Instance.MainWindow.ShowDialogAsync(dialog);
-                    return;
+                    return null;
                 }
 
                 FileSavePicker savePicker = new();
@@ -86,13 +86,18 @@ public partial class MainApp
                 DialogHelper.HideLoadingDialog();
                 if (file is not null)
                 {
-                    Add(new DownloadOperation(package, file.Path));
+                    var op = new DownloadOperation(package, file.Path);
+                    Add(op);
+                    return op;
                 }
+
+                return null;
             }
             catch (Exception ex)
             {
                 Logger.Error($"An error occurred while downloading the installer for the package {package.Id}");
                 Logger.Error(ex);
+                return null;
             }
         }
 
@@ -100,17 +105,19 @@ public partial class MainApp
         /*
          * PACKAGE INSTALLATION
          */
-        public static async void Install(IPackage? package, bool? elevated = null, bool? interactive = null, bool? no_integrity = null, bool ignoreParallel = false)
+        public static async Task<AbstractOperation?> Install(IPackage? package, bool? elevated = null, bool? interactive = null, bool? no_integrity = null, bool ignoreParallel = false, AbstractOperation? req = null)
         {
-            if (package is null) return;
+            if (package is null) return null;
 
             var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, no_integrity);
-            Add(new InstallPackageOperation(package, options, ignoreParallel));
+            var op = new InstallPackageOperation(package, options, ignoreParallel, req);
+            Add(op);
+            return op;
         }
 
         public static void Install(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? no_integrity = null)
         {
-            foreach (var package in packages) Install(package, elevated, interactive, no_integrity);
+            foreach (var package in packages) _ = Install(package, elevated, interactive, no_integrity);
         }
 
 
@@ -118,17 +125,19 @@ public partial class MainApp
         /*
          * PACKAGE UPDATE
          */
-        public static async void Update(IPackage? package, bool? elevated = null, bool? interactive = null, bool? no_integrity = null, bool ignoreParallel = false)
+        public static async Task<AbstractOperation?> Update(IPackage? package, bool? elevated = null, bool? interactive = null, bool? no_integrity = null, bool ignoreParallel = false, AbstractOperation? req = null)
         {
-            if (package is null) return;
+            if (package is null) return null;
 
             var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, no_integrity);
-            Add(new UpdatePackageOperation(package, options, ignoreParallel));
+            var op = new UpdatePackageOperation(package, options, ignoreParallel, req);
+            Add(op);
+            return op;
         }
 
         public static void Update(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? no_integrity = null)
         {
-            foreach (var package in packages) Update(package, elevated, interactive, no_integrity);
+            foreach (var package in packages) _ = Update(package, elevated, interactive, no_integrity);
         }
 
 
@@ -150,20 +159,22 @@ public partial class MainApp
             if (package is null) return;
             if (!await DialogHelper.ConfirmUninstallation(package)) return;
 
-            Uninstall(package, elevated, interactive, remove_data);
+            _ = Uninstall(package, elevated, interactive, remove_data);
         }
 
-        public static async void Uninstall(IPackage? package, bool? elevated = null, bool? interactive = null, bool? remove_data = null, bool ignoreParallel = false)
+        public static async Task<AbstractOperation?> Uninstall(IPackage? package, bool? elevated = null, bool? interactive = null, bool? remove_data = null, bool ignoreParallel = false, AbstractOperation? req = null)
         {
-            if (package is null) return;
+            if (package is null) return null;
 
             var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, remove_data: remove_data);
-            Add(new UninstallPackageOperation(package, options, ignoreParallel));
+            var op = new UninstallPackageOperation(package, options, ignoreParallel, req);
+            Add(op);
+            return op;
         }
 
         public static void Uninstall(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? remove_data = null)
         {
-            foreach (var package in packages) Uninstall(package, elevated, interactive, remove_data);
+            foreach (var package in packages) _ = Uninstall(package, elevated, interactive, remove_data);
         }
     }
 }

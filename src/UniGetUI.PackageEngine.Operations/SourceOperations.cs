@@ -20,7 +20,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected IManagerSource Source;
         public bool ForceAsAdministrator { get; private set; }
 
-        public SourceOperation(IManagerSource source) : base(false)
+        public SourceOperation(IManagerSource source) : base(false, null)
         {
             Source = source;
             Initialize();

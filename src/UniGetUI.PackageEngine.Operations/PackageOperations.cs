@@ -31,8 +31,9 @@ namespace UniGetUI.PackageEngine.Operations
             IPackage package,
             IInstallationOptions options,
             OperationType role,
-            bool IgnoreParallelInstalls = false)
-            : base(!IgnoreParallelInstalls)
+            bool IgnoreParallelInstalls = false,
+            AbstractOperation? req = null)
+            : base(!IgnoreParallelInstalls, req)
         {
             Package = package;
             Options = options;
@@ -129,8 +130,9 @@ namespace UniGetUI.PackageEngine.Operations
         public InstallPackageOperation(
             IPackage package,
             IInstallationOptions options,
-            bool IgnoreParallelInstalls = false)
-            : base(package, options, OperationType.Install, IgnoreParallelInstalls)
+            bool IgnoreParallelInstalls = false,
+            AbstractOperation? req = null)
+            : base(package, options, OperationType.Install, IgnoreParallelInstalls, req)
         { }
 
         protected override Task HandleFailure()
@@ -176,8 +178,9 @@ namespace UniGetUI.PackageEngine.Operations
         public UpdatePackageOperation(
             IPackage package,
             IInstallationOptions options,
-            bool IgnoreParallelInstalls = false)
-            : base(package, options, OperationType.Update, IgnoreParallelInstalls)
+            bool IgnoreParallelInstalls = false,
+            AbstractOperation? req = null)
+            : base(package, options, OperationType.Update, IgnoreParallelInstalls, req)
         { }
 
         protected override Task HandleFailure()
@@ -228,8 +231,9 @@ namespace UniGetUI.PackageEngine.Operations
         public UninstallPackageOperation(
             IPackage package,
             IInstallationOptions options,
-            bool IgnoreParallelInstalls = false)
-            : base(package, options, OperationType.Uninstall, IgnoreParallelInstalls)
+            bool IgnoreParallelInstalls = false,
+            AbstractOperation? req = null)
+            : base(package, options, OperationType.Uninstall, IgnoreParallelInstalls, req)
         { }
 
         protected override Task HandleFailure()

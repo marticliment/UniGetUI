@@ -108,7 +108,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 Text = CoreTools.AutoTranslated("Download installer"),
                 IconName = IconType.Download
             };
-            MenuDownloadInstaller.Click += (_, _) => MainApp.Operations.AskLocationAndDownload(SelectedItem);
+            MenuDownloadInstaller.Click += (_, _) => _ = MainApp.Operations.AskLocationAndDownload(SelectedItem);
             menu.Items.Add(MenuDownloadInstaller);
 
             menu.Items.Add(new MenuFlyoutSeparator { Height = 5 });
@@ -283,16 +283,16 @@ namespace UniGetUI.Interface.SoftwarePages
         }
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
-            => MainApp.Operations.Install(SelectedItem);
+            => _ = MainApp.Operations.Install(SelectedItem);
 
         private void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
-            => MainApp.Operations.Install(SelectedItem, no_integrity: true);
+            => _ = MainApp.Operations.Install(SelectedItem, no_integrity: true);
 
         private void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
-            => MainApp.Operations.Install(SelectedItem, interactive: true);
+            => _ = MainApp.Operations.Install(SelectedItem, interactive: true);
 
         private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
-            => MainApp.Operations.Install(SelectedItem, elevated: true);
+            => _ = MainApp.Operations.Install(SelectedItem, elevated: true);
 
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
             => ShowInstallationOptionsForPackage(SelectedItem);
