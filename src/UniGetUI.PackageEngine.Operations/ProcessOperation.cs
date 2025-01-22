@@ -38,24 +38,6 @@ public abstract class AbstractProcessOperation : AbstractOperation
             process.StartInfo.StandardInputEncoding = Encoding.UTF8;
             process.StartInfo.FileName = "lol";
             process.StartInfo.Arguments = "lol";
-            process.OutputDataReceived += (_, e) =>
-            {
-                if (e.Data is null) return;
-                string line = e.Data.ToString().Trim();
-                if (line.Contains("For the question below") ||
-                    line.Contains("Would remove:"))
-                {   // Mitigate chocolatey timeouts
-                    process.StandardInput.WriteLine("");
-                }
-
-                var lineType = LineType.Information;
-                if (line.Length < 6 || line.EndsWith("install/uninstall to complete..."))
-                {
-                    lineType = LineType.ProgressIndicator;
-                }
-
-                Line(line, lineType);
-            };
             process.ErrorDataReceived += (_, e) =>
             {
                 if (e.Data is null) return;
@@ -87,8 +69,42 @@ public abstract class AbstractProcessOperation : AbstractOperation
         Line($"Start Time: \"{DateTime.Now}\"", LineType.VerboseDetails);
 
         process.Start();
-        process.BeginOutputReadLine();
+        // process.BeginOutputReadLine();
         process.BeginErrorReadLine();
+
+        StringBuilder currentLine= new();
+        char[] buffer = new char[1];
+        string? lastStringBeforeLF = null;
+        while ((await process.StandardOutput.ReadBlockAsync(buffer)) > 0)
+        {
+            char c = buffer[0];
+            if (c == '\n')
+            {
+                if (currentLine.Length == 0)
+                {
+                    if (lastStringBeforeLF is not null)
+                    {
+                        Line(lastStringBeforeLF, LineType.Information);
+                        lastStringBeforeLF = null;
+                    }
+                    continue;
+                }
+                Line(currentLine.ToString(), LineType.Information);
+                currentLine.Clear();
+            }
+            else if (c == '\r')
+            {
+                if(currentLine.Length == 0) continue;
+                lastStringBeforeLF = currentLine.ToString();
+                Line(lastStringBeforeLF, LineType.ProgressIndicator);
+                currentLine.Clear();
+            }
+            else
+            {
+                currentLine.Append(c);
+            }
+        }
+
         await process.WaitForExitAsync();
 
         Line($"End Time: \"{DateTime.Now}\"", LineType.VerboseDetails);
