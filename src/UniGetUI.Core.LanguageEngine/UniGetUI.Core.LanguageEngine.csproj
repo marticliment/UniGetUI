@@ -53,6 +53,7 @@
     <None Remove="Assets\Languages\lang_sl.json" />
     <None Remove="Assets\Languages\lang_sr.json" />
     <None Remove="Assets\Languages\lang_sv.json" />
+    <None Remove="Assets\Languages\lang_sq.json" />
     <None Remove="Assets\Languages\lang_tg.json" />
     <None Remove="Assets\Languages\lang_th.json" />
     <None Remove="Assets\Languages\lang_tr.json" />
