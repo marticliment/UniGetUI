@@ -336,7 +336,6 @@ public static partial class DialogHelper
         await Window.ShowDialogAsync(AdminDialog);
     }
 
-
     public static async Task ShowAboutUniGetUI()
     {
         ContentDialog? AboutDialog = new();
