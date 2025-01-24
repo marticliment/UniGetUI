@@ -290,7 +290,7 @@ namespace UniGetUI
                 _ = MainWindow.DoEntryTextAnimationAsync();
 
                 // Load package managers
-                await Task.Run(() => PEInterface.Initialize());
+                await Task.Run(PEInterface.Initialize);
 
                 Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();

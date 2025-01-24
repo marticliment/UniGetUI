@@ -80,7 +80,6 @@ public partial class MainApp
 
                 savePicker.FileTypeChoices.Add("Default", [$".{extension}"]);
 
-
                 StorageFile file = await savePicker.PickSaveFileAsync();
 
                 DialogHelper.HideLoadingDialog();
@@ -101,7 +100,6 @@ public partial class MainApp
             }
         }
 
-
         /*
          * PACKAGE INSTALLATION
          */
@@ -120,8 +118,6 @@ public partial class MainApp
             foreach (var package in packages) _ = Install(package, elevated, interactive, no_integrity);
         }
 
-
-
         /*
          * PACKAGE UPDATE
          */
@@ -139,8 +135,6 @@ public partial class MainApp
         {
             foreach (var package in packages) _ = Update(package, elevated, interactive, no_integrity);
         }
-
-
 
         /*
          * PACKAGE UNINSTALL
