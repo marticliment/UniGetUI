@@ -12,6 +12,23 @@ public static class TelemetryHandler
 {
     private const string HOST = "http://localhost:3000";
 
+    private static string[] SettingsToSend =
+    {
+        "DisableAutoUpdateWingetUI",
+        "EnableUniGetUIBeta",
+        "DisableSystemTray",
+        "DisableNotifications",
+        "DisableAutoCheckforUpdates",
+        "AutomaticallyUpdatePackages",
+        "AskToDeleteNewDesktopShortcuts",
+        "EnablePackageBackup",
+        "DoCacheAdminRights",
+        "DoCacheAdminRightsForBatches",
+        "ForceLegacyBundledWinGet",
+        "UseSystemChocolatey",
+        "SP1",
+    };
+
     public static async void Initialize()
     {
         try
@@ -33,11 +50,29 @@ public static class TelemetryHandler
             {
                 if(manager.IsEnabled()) ManagerMagicValue |= mask;
                 mask = mask << 1;
-                if(manager.Status.Found) ManagerMagicValue |= mask;
+                if(manager.IsEnabled() && manager.Status.Found) ManagerMagicValue |= mask;
                 mask = mask << 1;
+
+                if (mask == 0x1)
+                    throw new OverflowException();
             }
 
             int SettingsMagicValue = 0;
+            mask = 0x1;
+            foreach (var setting in SettingsToSend)
+            {
+                bool enabled;
+                if (setting == "SP1") enabled = File.Exists("ForceUniGetUIPortable");
+                else if (setting.StartsWith("Disable")) enabled = !Settings.Get(setting);
+                else enabled = Settings.Get(setting);
+
+                if(enabled) SettingsMagicValue |= mask;
+                mask = mask << 1;
+
+                if (mask == 0x1)
+                    throw new OverflowException();
+            }
+
             var request = new HttpRequestMessage(HttpMethod.Post, $"{HOST}/activity");
 
             request.Headers.Add("clientId", ID);
