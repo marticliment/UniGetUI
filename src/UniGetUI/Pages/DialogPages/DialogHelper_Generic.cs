@@ -1,6 +1,8 @@
 using System.Diagnostics;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
@@ -425,7 +427,8 @@ public static partial class DialogHelper
                 PrimaryButtonText = CoreTools.Translate("Close"),
                 SecondaryButtonText = CoreTools.Translate("Restart"),
                 DefaultButton = ContentDialogButton.Secondary,
-                XamlRoot = Window.XamlRoot
+                XamlRoot = Window.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
             };
 
             // Restart UniGetUI or reload packages depending on the user's choice
@@ -462,6 +465,103 @@ public static partial class DialogHelper
             await Window.ShowDialogAsync(c);
         }
 
+    }
+
+    public static async void ShowTelemetryDialog()
+    {
+        var dialog = new ContentDialog()
+        {
+            Title = CoreTools.Translate("Share anonymous usage data"),
+            XamlRoot = Window.XamlRoot,
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+        };
+
+        Grid MainGrid = new()
+        {
+            RowSpacing = 16,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Stretch,
+        };
+
+        MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+        var MessageBlock = new RichTextBlock();
+        MainGrid.Children.Add(MessageBlock);
+
+        var p = new Paragraph();
+        MessageBlock.Blocks.Add(p);
+
+        p.Inlines.Add(new Run()
+        {
+            Text = CoreTools.Translate("UniGetUI collects anonymous usage data with the sole purpose of understanding and improving the user experience.")
+        });
+        p.Inlines.Add(new LineBreak());
+        p.Inlines.Add(new Run()
+        {
+            Text = CoreTools.Translate("No personal information is collected nor sent, and the collected data is anonimized, so it can't be back-tracked to you.")
+        });
+        p.Inlines.Add(new LineBreak());
+        p.Inlines.Add(new LineBreak());
+        var link = new Hyperlink() { NavigateUri = new Uri("https://www.marticliment.com/unigetui/privacy/"), };
+        link.Inlines.Add(new Run()
+        {
+            Text = CoreTools.Translate("More details about the shared data and how it will be processed"),
+        });
+
+        p.Inlines.Add(link);
+        p.Inlines.Add(new LineBreak());
+        p.Inlines.Add(new LineBreak());
+        p.Inlines.Add(new Run()
+        {
+            Text = CoreTools.Translate("Do you accept that UniGetUI collects and sends anonymous usage statistics, with the sole purpose of understanding and improving the user experience?"),
+            FontWeight = FontWeights.SemiBold
+        });
+
+        var AcceptButton = new Button()
+        {
+            Content = CoreTools.Translate("Accept"),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            Height = 32,
+            Style = (Style)Application.Current.Resources["AccentButtonStyle"],
+        };
+        AcceptButton.Click += (_, _) =>
+        {
+            dialog.Hide();
+            Settings.Set("DisableTelemetry", false);
+        };
+
+        var DeclineButton = new HyperlinkButton()
+        {
+            Content = CoreTools.Translate("Decline"),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            Height = 32,
+        };
+        DeclineButton.Click += (_, _) =>
+        {
+            dialog.Hide();
+            Settings.Set("DisableTelemetry", true);
+        };
+
+        Grid sp = new()
+        {
+            Margin = new Thickness(-25, 0, -25, -25),
+            ColumnSpacing = 8,
+            Padding = new Thickness(30),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"]
+        };
+        sp.ColumnDefinitions.Add(new ColumnDefinition(){Width = new(1, GridUnitType.Star)});
+        sp.ColumnDefinitions.Add(new ColumnDefinition(){Width = new(1, GridUnitType.Star)});
+        sp.Children.Add(DeclineButton);
+        Grid.SetColumn(AcceptButton, 1);
+        sp.Children.Add(AcceptButton);
+        Grid.SetRow(sp, 1);
+        Grid.SetColumn(sp, 0);
+        MainGrid.Children.Add(sp);
+        dialog.Content = MainGrid;
+
+        await Window.ShowDialogAsync(dialog);
     }
 }
 

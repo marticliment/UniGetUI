@@ -86,6 +86,11 @@
                                 SettingName="EnableUniGetUIBeta"
                                 />
                             <widgets:ButtonCard
+                                Text="Manage telemetry settings"
+                                ButtonText="Manage"
+                                Click="ManageTelemetrySettings_Click"
+                            />
+                            <widgets:ButtonCard
                                 Text="Import settings from a local file"
                                 ButtonText="Import"
                                 Click="ImportSettings"
