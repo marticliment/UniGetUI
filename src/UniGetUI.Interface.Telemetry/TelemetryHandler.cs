@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -10,7 +11,7 @@ namespace UniGetUI.Interface.Telemetry;
 
 public static class TelemetryHandler
 {
-    private const string HOST = "http://localhost:3000";
+    private const string HOST = "https://marticliment.com/unigetui/statistics";
 
     private static string[] SettingsToSend =
     {
@@ -26,7 +27,8 @@ public static class TelemetryHandler
         "DoCacheAdminRightsForBatches",
         "ForceLegacyBundledWinGet",
         "UseSystemChocolatey",
-        "SP1",
+        "SP1", // UniGetUI is portable
+        "SP2" // UniGetUI was started as daemon
     };
 
     public static async void Initialize()
@@ -63,6 +65,7 @@ public static class TelemetryHandler
             {
                 bool enabled;
                 if (setting == "SP1") enabled = File.Exists("ForceUniGetUIPortable");
+                else if (setting == "SP2") enabled = CoreData.WasDaemon;
                 else if (setting.StartsWith("Disable")) enabled = !Settings.Get(setting);
                 else enabled = Settings.Get(setting);
 
@@ -79,6 +82,7 @@ public static class TelemetryHandler
             request.Headers.Add("clientVersion", CoreData.VersionName);
             request.Headers.Add("activeManagers", ManagerMagicValue.ToString());
             request.Headers.Add("activeSettings", SettingsMagicValue.ToString());
+            request.Headers.Add("language", LanguageEngine.SelectedLocale);
 
             HttpClient _httpClient = new(CoreData.GenericHttpClientParameters);
             HttpResponseMessage response = await _httpClient.SendAsync(request);

@@ -120,6 +120,7 @@ namespace UniGetUI.Core.Data
         }
 
         public static bool IsDaemon;
+        public static bool WasDaemon;
 
         /// <summary>
         /// The ID of the notification that is used to inform the user that updates are available
