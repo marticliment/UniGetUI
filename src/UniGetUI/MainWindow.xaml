@@ -57,6 +57,9 @@
                     Name="WinGetWarningBanner" x:FieldModifier="public" IsOpen="False"
                     Visibility="{x:Bind WinGetWarningBanner.IsOpen, Mode=OneWay}" Margin="0,0,0,4"
                     Severity="Warning" CornerRadius="0" BorderThickness="0,1,0,1"/>
+                <InfoBar
+                    Name="TelemetryWarner" x:FieldModifier="public" IsOpen="False"
+                    Margin="0,0,0,4" Severity="Informational" CornerRadius="0" BorderThickness="0,1,0,1"/>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="0" Grid.Column="0" x:Name="LoadingWindow" Visibility="Visible"

@@ -1,7 +1,10 @@
 using System.Diagnostics;
+using Windows.UI;
+using Microsoft.UI;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
@@ -475,7 +478,7 @@ public static partial class DialogHelper
             XamlRoot = Window.XamlRoot,
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
         };
-        
+
         var MessageBlock = new RichTextBlock();
         dialog.Content = MessageBlock;
 
@@ -527,6 +530,37 @@ public static partial class DialogHelper
         {
             Settings.Set("DisableTelemetry", true);
         }
+    }
+
+    public static void ShowTelemetryBanner()
+    {
+        Window.TelemetryWarner.Title = CoreTools.Translate("Share anonymous usage data");
+        Window.TelemetryWarner.Message = CoreTools.Translate("UniGetUI collects anonymous usage data in order to improve the user experience.");
+        Window.TelemetryWarner.IsOpen = true;
+
+        Window.TelemetryWarner.Background = new SolidColorBrush(Color.FromArgb(62, 66, 135, 245));
+        Window.TelemetryWarner.IconSource = new FontIconSource()
+        {
+            Glyph = "\uF167",
+            FontSize = 14,
+            Foreground = new SolidColorBrush(Color.FromArgb(255, 99, 154, 242)),
+        };
+
+        Window.TelemetryWarner.IsClosable = true;
+        Window.TelemetryWarner.Visibility = Visibility.Visible;
+        Window.TelemetryWarner.ActionButton = new Button()
+        {
+            Content = CoreTools.Translate("Settings"),
+        };
+
+        Window.TelemetryWarner.CloseButtonClick += (_, _) => Settings.Set("ShownTelemetryBanner", true);
+        Window.TelemetryWarner.ActionButton.Click += (_, _) =>
+        {
+            Window.TelemetryWarner.Visibility = Visibility.Collapsed;
+            Window.TelemetryWarner.IsOpen = false;
+            ShowTelemetryDialog();
+            Settings.Set("ShownTelemetryBanner", true);
+        };
     }
 }
 
