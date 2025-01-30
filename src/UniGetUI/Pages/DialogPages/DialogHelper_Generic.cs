@@ -475,19 +475,9 @@ public static partial class DialogHelper
             XamlRoot = Window.XamlRoot,
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
         };
-
-        Grid MainGrid = new()
-        {
-            RowSpacing = 16,
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-        };
-
-        MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-        MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-
+        
         var MessageBlock = new RichTextBlock();
-        MainGrid.Children.Add(MessageBlock);
+        dialog.Content = MessageBlock;
 
         var p = new Paragraph();
         MessageBlock.Blocks.Add(p);
@@ -518,50 +508,25 @@ public static partial class DialogHelper
             FontWeight = FontWeights.SemiBold
         });
 
-        var AcceptButton = new Button()
+
+        dialog.PrimaryButtonText = CoreTools.Translate("Decline");
+        dialog.SecondaryButtonText = CoreTools.Translate("Accept");
+        dialog.DefaultButton = ContentDialogButton.Secondary;
+        dialog.Closing += (s, e) =>
         {
-            Content = CoreTools.Translate("Accept"),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            Height = 32,
-            Style = (Style)Application.Current.Resources["AccentButtonStyle"],
+            if (e.Result == ContentDialogResult.None) e.Cancel = true;
         };
-        AcceptButton.Click += (_, _) =>
+
+        var res = await Window.ShowDialogAsync(dialog);
+
+        if (res is ContentDialogResult.Secondary)
         {
-            dialog.Hide();
             Settings.Set("DisableTelemetry", false);
-        };
-
-        var DeclineButton = new HyperlinkButton()
+        }
+        else
         {
-            Content = CoreTools.Translate("Decline"),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            Height = 32,
-        };
-        DeclineButton.Click += (_, _) =>
-        {
-            dialog.Hide();
             Settings.Set("DisableTelemetry", true);
-        };
-
-        Grid sp = new()
-        {
-            Margin = new Thickness(-25, 0, -25, -25),
-            ColumnSpacing = 8,
-            Padding = new Thickness(30),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"]
-        };
-        sp.ColumnDefinitions.Add(new ColumnDefinition(){Width = new(1, GridUnitType.Star)});
-        sp.ColumnDefinitions.Add(new ColumnDefinition(){Width = new(1, GridUnitType.Star)});
-        sp.Children.Add(DeclineButton);
-        Grid.SetColumn(AcceptButton, 1);
-        sp.Children.Add(AcceptButton);
-        Grid.SetRow(sp, 1);
-        Grid.SetColumn(sp, 0);
-        MainGrid.Children.Add(sp);
-        dialog.Content = MainGrid;
-
-        await Window.ShowDialogAsync(dialog);
+        }
     }
 }
 
