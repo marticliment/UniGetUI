@@ -10,8 +10,8 @@ namespace UniGetUI.Core.Data
     {
         private static int? __code_page;
         public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
-        public const string VersionName =  "3.1.6-beta2"; // Do not modify this line, use file scripts/apply_versions.py
-        public const int BuildNumber =  77; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName =  "3.1.6-beta3"; // Do not modify this line, use file scripts/apply_versions.py
+        public const int BuildNumber =  78; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 
@@ -120,6 +120,7 @@ namespace UniGetUI.Core.Data
         }
 
         public static bool IsDaemon;
+        public static bool WasDaemon;
 
         /// <summary>
         /// The ID of the notification that is used to inform the user that updates are available

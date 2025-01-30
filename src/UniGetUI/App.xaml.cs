@@ -20,6 +20,7 @@ using UniGetUI.PackageEngine.Operations;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using UniGetUI.Controls.OperationWidgets;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using AbstractOperation = UniGetUI.PackageOperations.AbstractOperation;
@@ -291,6 +292,7 @@ namespace UniGetUI
 
                 // Load package managers
                 await Task.Run(() => PEInterface.Initialize());
+                TelemetryHandler.Initialize();
 
                 Logger.Info("LoadComponentsAsync finished executing. All managers loaded. Proceeding to interface.");
                 MainWindow.SwitchToInterface();

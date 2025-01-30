@@ -6,6 +6,7 @@ using UniGetUI.Controls.OperationWidgets;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.CargoManager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
@@ -112,6 +113,7 @@ public partial class MainApp
             var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, no_integrity);
             var op = new InstallPackageOperation(package, options, ignoreParallel, req);
             Add(op);
+            op.OperationSucceeded += (_, _) => TelemetryHandler.PackageInstalled(package);
             return op;
         }
 
