@@ -833,5 +833,10 @@ namespace UniGetUI.Interface
                 AbstractOperation.MAX_OPERATIONS = value;
             }
         }
+
+        private void ManageTelemetrySettings_Click(object sender, EventArgs e)
+        {
+            DialogHelper.ShowTelemetryDialog();
+        }
     }
 }

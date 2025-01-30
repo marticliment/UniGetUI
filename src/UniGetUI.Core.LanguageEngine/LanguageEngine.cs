@@ -12,6 +12,7 @@ namespace UniGetUI.Core.Language
     public class LanguageEngine
     {
         private Dictionary<string, string> MainLangDict = [];
+        public static string SelectedLocale = "??";
 
         [NotNull]
         public string? Locale { get; private set; }
@@ -48,6 +49,7 @@ namespace UniGetUI.Core.Language
             Formatter = new() { Locale = Locale.Replace('_', '-') };
 
             LoadStaticTranslation();
+            SelectedLocale = Locale;
             Logger.Info("Loaded language locale: " + Locale);
         }
 

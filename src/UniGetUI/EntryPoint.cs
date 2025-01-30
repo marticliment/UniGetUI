@@ -15,6 +15,7 @@ namespace UniGetUI
             try
             {
                 CoreData.IsDaemon = args.Contains("--daemon");
+                CoreData.WasDaemon = CoreData.IsDaemon;
 
                 if (args.Contains("--uninstall-unigetui") || args.Contains("--uninstall-wingetui"))
                 {

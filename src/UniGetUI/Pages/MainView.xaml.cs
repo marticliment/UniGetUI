@@ -118,6 +118,11 @@ namespace UniGetUI.Interface
 
             UpdateOperationsLayout();
             MainApp.Operations._operationList.CollectionChanged += (_, _) => UpdateOperationsLayout();
+
+            if (!Settings.Get("ShownTelemetryBanner"))
+            {
+                DialogHelper.ShowTelemetryBanner();
+            }
         }
 
         public void LoadDefaultPage()
