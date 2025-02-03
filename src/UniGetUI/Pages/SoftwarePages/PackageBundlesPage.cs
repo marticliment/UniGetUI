@@ -10,6 +10,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Serializable;
@@ -131,7 +132,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 Text = CoreTools.AutoTranslated("Download installer"),
                 IconName = IconType.Download
             };
-            MenuDownloadInstaller.Click += (_, _) => _ = MainApp.Operations.AskLocationAndDownload(SelectedItem);
+            MenuDownloadInstaller.Click += (_, _) => _ = MainApp.Operations.AskLocationAndDownload(SelectedItem, TEL_InstallReferral.FROM_BUNDLE);
             menu.Items.Add(MenuDownloadInstaller);
 
             menu.Items.Add(new MenuFlyoutSeparator());
@@ -239,9 +240,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
             PackageDetails.Click += (_, _) =>
             {
-                IPackage? package = SelectedItem as IPackage;
-                if (package is not null)
-                    DialogHelper.ShowPackageDetails(package, OperationType.None);
+                if (SelectedItem is null) return;
+                DialogHelper.ShowPackageDetails(SelectedItem, OperationType.None, TEL_InstallReferral.FROM_BUNDLE);
             };
 
             HelpButton.Click += (_, _) => { MainApp.Instance.MainWindow.NavigationPage.ShowHelp(); };
@@ -336,7 +336,7 @@ namespace UniGetUI.Interface.SoftwarePages
             }
 
             DialogHelper.HideLoadingDialog();
-            MainApp.Operations.Install(packages_to_install, elevated, interactive, skiphash);
+            MainApp.Operations.Install(packages_to_install, TEL_InstallReferral.FROM_BUNDLE, elevated, interactive, skiphash);
         }
 
         protected override void WhenPackageCountUpdated()
@@ -404,7 +404,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs args)
         {
-            ShowDetailsForPackage(SelectedItem);
+            ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.FROM_BUNDLE);
         }
 
         private async void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
@@ -451,10 +451,12 @@ namespace UniGetUI.Interface.SoftwarePages
                     formatType = BundleFormatType.YAML;
                 else if (EXT == "xml")
                     formatType = BundleFormatType.XML;
-                else if (EXT == "json" || EXT == "ubundle")
+                else if (EXT == "json")
                     formatType = BundleFormatType.JSON;
+                else if (EXT == "ubundle")
+                    formatType = BundleFormatType.UBUNDLE;
                 else
-                    formatType = BundleFormatType.JSON;
+                    formatType = BundleFormatType.UBUNDLE;
 
                 string fileContent = await File.ReadAllTextAsync(file);
 
@@ -508,13 +510,16 @@ namespace UniGetUI.Interface.SoftwarePages
                         formatType = BundleFormatType.YAML;
                     else if (EXT == "xml")
                         formatType = BundleFormatType.XML;
-                    else if (EXT == "json" || EXT == "ubundle")
+                    else if (EXT == "json")
                         formatType = BundleFormatType.JSON;
+                    else if (EXT == "ubundle")
+                        formatType = BundleFormatType.UBUNDLE;
                     else
-                        formatType = BundleFormatType.JSON;
+                        formatType = BundleFormatType.UBUNDLE;
 
                     // Save serialized data
                     await File.WriteAllTextAsync(file, await CreateBundle(Loader.Packages, formatType));
+                    TelemetryHandler.ExportBundle(formatType);
 
                     DialogHelper.HideLoadingDialog();
 
@@ -548,7 +553,7 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        public static async Task<string> CreateBundle(IEnumerable<IPackage> unsorted_packages, BundleFormatType formatType = BundleFormatType.JSON)
+        public static async Task<string> CreateBundle(IEnumerable<IPackage> unsorted_packages, BundleFormatType formatType = BundleFormatType.UBUNDLE)
         {
             SerializableBundle_v1 exportable = new();
             exportable.export_version = 2.1;
@@ -572,12 +577,12 @@ namespace UniGetUI.Interface.SoftwarePages
             Logger.Debug("Finished loading serializable objects. Serializing with format " + formatType);
             string ExportableData;
 
-            if (formatType == BundleFormatType.JSON)
+            if (formatType is BundleFormatType.JSON or BundleFormatType.UBUNDLE)
                 ExportableData = JsonSerializer.Serialize(
                     exportable,
                     CoreData.SerializingOptions);
 
-            else if (formatType == BundleFormatType.YAML)
+            else if (formatType is BundleFormatType.YAML)
             {
                 ISerializer serializer = new SerializerBuilder()
                     .Build();
@@ -603,7 +608,7 @@ namespace UniGetUI.Interface.SoftwarePages
         {
             // Deserialize data
             SerializableBundle_v1? DeserializedData;
-            if (format is BundleFormatType.JSON)
+            if (format is BundleFormatType.JSON or BundleFormatType.UBUNDLE)
             {
                 DeserializedData = await Task.Run(() => JsonSerializer.Deserialize<SerializableBundle_v1>(content, CoreData.SerializingOptions));
             }

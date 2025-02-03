@@ -22,9 +22,10 @@ namespace UniGetUI.PackageEngine.Enums
 
     public enum BundleFormatType
     {
+        UBUNDLE,
         JSON,
         YAML,
-        XML
+        XML,
     }
 
     public enum OperationVeredict
