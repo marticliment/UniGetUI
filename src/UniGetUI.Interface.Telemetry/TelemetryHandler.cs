@@ -103,7 +103,27 @@ public static class TelemetryHandler
         }
     }
 
-    public static async void PackageInstalled(IPackage package)
+    public enum OP_RESULT
+    {
+        SUCCESS,
+        FAILED,
+        CANCELED
+    }
+
+    public static void InstallPackage(IPackage package, OP_RESULT status)
+        => PackageEndpoint(package, "install", status);
+
+    public static void UpdatePackage(IPackage package, OP_RESULT status)
+        => PackageEndpoint(package, "update", status);
+
+    public static void DownloadPackage(IPackage package, OP_RESULT status)
+        => PackageEndpoint(package, "download", status);
+
+    public static void UninstallPackage(IPackage package, OP_RESULT status)
+        => PackageEndpoint(package, "uninstall", status);
+
+
+    private static async void PackageEndpoint(IPackage package, string endpoint, OP_RESULT result)
     {
         try
         {
@@ -118,12 +138,13 @@ public static class TelemetryHandler
             string ID = Settings.GetValue("TelemetryClientToken");
 
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{HOST}/install");
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{HOST}/package/{endpoint}");
 
             request.Headers.Add("clientId", ID);
             request.Headers.Add("packageId", package.Id);
             request.Headers.Add("managerName", package.Manager.Name);
             request.Headers.Add("sourceName", package.Source.Name);
+            request.Headers.Add("operationResult", result.ToString());
 
             HttpClient _httpClient = new(CoreData.GenericHttpClientParameters);
             HttpResponseMessage response = await _httpClient.SendAsync(request);

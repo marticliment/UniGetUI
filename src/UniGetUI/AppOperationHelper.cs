@@ -88,6 +88,8 @@ public partial class MainApp
                 if (file is not null)
                 {
                     var op = new DownloadOperation(package, file.Path);
+                    op.OperationSucceeded += (_, _) => TelemetryHandler.DownloadPackage(package, TelemetryHandler.OP_RESULT.SUCCESS);
+                    op.OperationFailed += (_, _) => TelemetryHandler.DownloadPackage(package, TelemetryHandler.OP_RESULT.FAILED);
                     Add(op);
                     return op;
                 }
@@ -113,7 +115,8 @@ public partial class MainApp
             var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, no_integrity);
             var op = new InstallPackageOperation(package, options, ignoreParallel, req);
             Add(op);
-            op.OperationSucceeded += (_, _) => TelemetryHandler.PackageInstalled(package);
+            op.OperationSucceeded += (_, _) => TelemetryHandler.InstallPackage(package, TelemetryHandler.OP_RESULT.SUCCESS);
+            op.OperationFailed += (_, _) => TelemetryHandler.InstallPackage(package, TelemetryHandler.OP_RESULT.FAILED);
             return op;
         }
 
@@ -134,6 +137,8 @@ public partial class MainApp
             var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, no_integrity);
             var op = new UpdatePackageOperation(package, options, ignoreParallel, req);
             Add(op);
+            op.OperationSucceeded += (_, _) => TelemetryHandler.UpdatePackage(package, TelemetryHandler.OP_RESULT.SUCCESS);
+            op.OperationFailed += (_, _) => TelemetryHandler.UpdatePackage(package, TelemetryHandler.OP_RESULT.FAILED);
             return op;
         }
 
@@ -171,6 +176,8 @@ public partial class MainApp
             var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, remove_data: remove_data);
             var op = new UninstallPackageOperation(package, options, ignoreParallel, req);
             Add(op);
+            op.OperationSucceeded += (_, _) => TelemetryHandler.UninstallPackage(package, TelemetryHandler.OP_RESULT.SUCCESS);
+            op.OperationFailed += (_, _) => TelemetryHandler.UninstallPackage(package, TelemetryHandler.OP_RESULT.FAILED);
             return op;
         }
 
