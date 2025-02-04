@@ -173,7 +173,7 @@ namespace UniGetUI.Core.Data
             }
         }
 
-        public static string GSudoPath = "";
+        public static string ElevatorPath = "";
 
         /// <summary>
         /// This method will return the most appropriate data directory.

@@ -420,7 +420,7 @@ Crash Traceback:
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = CoreData.GSudoPath,
+                    FileName = CoreData.ElevatorPath,
                     Arguments = "cache on --pid " + Environment.ProcessId + " -d 1",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -444,7 +444,7 @@ Crash Traceback:
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = CoreData.GSudoPath,
+                    FileName = CoreData.ElevatorPath,
                     Arguments = "cache off --pid " + Environment.ProcessId,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
