@@ -10,7 +10,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public static PackageBundlesLoader Instance = null!;
 
         public PackageBundlesLoader(IEnumerable<IPackageManager> managers)
-        : base(managers, "PACKAGE_BUNDLES", AllowMultiplePackageVersions: true, DisableReload: true, CheckedBydefault: false)
+        : base(managers,
+            identifier: "PACKAGE_BUNDLES",
+            AllowMultiplePackageVersions: true,
+            DisableReload: true,
+            CheckedBydefault: false,
+            RequiresInternet: false)
         {
             Instance = this;
         }

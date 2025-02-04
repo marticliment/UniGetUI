@@ -9,7 +9,13 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public static InstalledPackagesLoader Instance = null!;
 
         public InstalledPackagesLoader(IEnumerable<IPackageManager> managers)
-        : base(managers, "INSTALLED_PACKAGES", AllowMultiplePackageVersions: true, CheckedBydefault: false)
+        : base(
+            managers,
+            identifier: "INSTALLED_PACKAGES",
+            AllowMultiplePackageVersions: true,
+            DisableReload: false,
+            CheckedBydefault: false,
+            RequiresInternet: true)
         {
             Instance = this;
         }

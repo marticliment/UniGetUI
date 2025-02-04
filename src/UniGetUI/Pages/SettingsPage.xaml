@@ -361,6 +361,12 @@
                                 SettingName="DisableLangAutoUpdater"
                                 StateChanged="DisableDownloadingNewTranslations_StateChanged"
                                 />
+                            <widgets:CheckboxCard
+                                x:Name="DisableWaitForInternetConnection"
+                                Text="Wait for the device to be connected to the internet before attempting to do tasks that require internet connectivity."
+                                SettingName="DisableWaitForInternetConnection"
+                                StateChanged="DisableDownloadingNewTranslations_StateChanged"
+                            />
                             <widgets:TextboxCard
                                 Text="Use a custom icon and screenshot database URL"
                                 Placeholder="Leave empty for default"

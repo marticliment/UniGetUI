@@ -11,7 +11,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
         private string QUERY_TEXT = string.Empty;
 
         public DiscoverablePackagesLoader(IEnumerable<IPackageManager> managers)
-            : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false, CheckedBydefault: false)
+            : base(managers,
+                identifier: "DISCOVERABLE_PACKAGES",
+                AllowMultiplePackageVersions: false,
+                DisableReload: false,
+                CheckedBydefault: false,
+                RequiresInternet: true)
         {
             Instance = this;
         }

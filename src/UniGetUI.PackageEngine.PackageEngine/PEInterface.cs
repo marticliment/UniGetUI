@@ -12,6 +12,7 @@ using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.Managers.VcpkgManager;
 using UniGetUI.PackageEngine.PackageLoader;
 using System.Collections.ObjectModel;
+using UniGetUI.Core.Tools;
 using UniGetUI.PackageOperations;
 
 namespace UniGetUI.PackageEngine
@@ -64,8 +65,8 @@ namespace UniGetUI.PackageEngine
                 Logger.Warn("Timeout: Not all package managers have finished initializing.");
             }
 
-            _ = UpgradablePackagesLoader.ReloadPackages();
             _ = InstalledPackagesLoader.ReloadPackages();
+            _ = UpgradablePackagesLoader.ReloadPackages();
         }
     }
 }

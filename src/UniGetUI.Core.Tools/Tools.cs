@@ -10,6 +10,7 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI.Core.Tools
 {
@@ -558,9 +559,10 @@ Crash Traceback:
 
         public static async Task _waitForInternetConnection()
         {
-            Logger.Debug(
-                "Checking for internet connectivity. Pinging google.com, microsoft.com, couldflare.com and marticliment.com");
-            string[] hosts = ["google.com", "microsoft.com", "cloudflare.com", "marticliment.com"];
+            if (Settings.Get("DisableWaitForInternetConnection")) return;
+
+            Logger.Debug("Checking for internet connectivity. Pinging google.com, microsoft.com, couldflare.com and marticliment.com");
+            string[] hosts = ["google.com", "microsoft.com", "cloudflare.com", "github.com"];
             while (true)
             {
                 foreach (var host in hosts)
