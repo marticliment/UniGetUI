@@ -164,7 +164,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             if (CachedPackageIcons.TryGetValue(Package.GetHash(), out Uri? icon))
             {
-                MainIconSource = new BitmapImage()
+                MainIconSource = new BitmapImage
                 {
                     UriSource = icon,
                     DecodePixelWidth = 24,

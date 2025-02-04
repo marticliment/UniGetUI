@@ -82,7 +82,7 @@ namespace UniGetUI.Interface
             Title = Title + " - DEBUG BUILD";
             AppTitle.Text = Title;
 #endif
-            var panel = new StackPanel()
+            var panel = new StackPanel
             {
                 Width = 400,
                 Orientation = Orientation.Vertical,
@@ -211,7 +211,7 @@ namespace UniGetUI.Interface
             else
             {
                 if (MainApp.Operations._operationList.Any()
-                    && MainApp.Operations._operationList.Where(x => x.Operation.Status is OperationStatus.Running or OperationStatus.InQueue).Any())
+                    && MainApp.Operations._operationList.Any(x => x.Operation.Status is OperationStatus.Running or OperationStatus.InQueue))
                 {
                     args.Cancel = true;
                     ContentDialog d = new()

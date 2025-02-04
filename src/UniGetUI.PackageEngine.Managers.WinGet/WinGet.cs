@@ -117,44 +117,42 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 return MicrosoftStoreSource;
             }
-            else
+
+            string MeaningfulId = IdPieces[^1];
+
+            // Fast Local PC Check
+            if (MeaningfulId[0] == '{')
             {
-                string MeaningfulId = IdPieces[^1];
-
-                // Fast Local PC Check
-                if (MeaningfulId[0] == '{')
-                {
-                    return LocalPcSource;
-                }
-
-                // Check if source is android
-                if(MeaningfulId.Count(x => x == '.') >= 2 && MeaningfulId.All(c => (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '.' || c == '…'))
-                {
-                    return AndroidSubsystemSource;
-                }
-
-                // Check if source is Steam
-                if (MeaningfulId == "Steam" || MeaningfulId.StartsWith("Steam App"))
-                {
-                    return SteamSource;
-                }
-
-                // Check if source is Ubisoft Connect
-                if (MeaningfulId == "Uplay" || MeaningfulId.StartsWith("Uplay Install"))
-                {
-                    return UbisoftConnectSource;
-                }
-
-                // Check if source is GOG
-                if (MeaningfulId.EndsWith("_is1") &&
-                    MeaningfulId.Replace("_is1", "").All(c => (c >= '0' && c <= '9')))
-                {
-                    return GOGSource;
-                }
-
-                // Otherwise they are Local PC
                 return LocalPcSource;
             }
+
+            // Check if source is android
+            if (MeaningfulId.Count(x => x == '.') >= 2 && MeaningfulId.All(c => (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '.' || c == '…'))
+            {
+                return AndroidSubsystemSource;
+            }
+
+            // Check if source is Steam
+            if (MeaningfulId == "Steam" || MeaningfulId.StartsWith("Steam App"))
+            {
+                return SteamSource;
+            }
+
+            // Check if source is Ubisoft Connect
+            if (MeaningfulId == "Uplay" || MeaningfulId.StartsWith("Uplay Install"))
+            {
+                return UbisoftConnectSource;
+            }
+
+            // Check if source is GOG
+            if (MeaningfulId.EndsWith("_is1") &&
+                MeaningfulId.Replace("_is1", "").All(c => (c >= '0' && c <= '9')))
+            {
+                return GOGSource;
+            }
+
+            // Otherwise they are Local PC
+            return LocalPcSource;
         }
 
         protected override ManagerStatus LoadManager()

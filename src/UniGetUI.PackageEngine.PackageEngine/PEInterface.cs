@@ -11,8 +11,6 @@ using UniGetUI.PackageEngine.Managers.ScoopManager;
 using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.Managers.VcpkgManager;
 using UniGetUI.PackageEngine.PackageLoader;
-using System.Collections.ObjectModel;
-using UniGetUI.PackageOperations;
 
 namespace UniGetUI.PackageEngine
 {

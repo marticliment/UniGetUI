@@ -15,13 +15,12 @@ namespace UniGetUI.Interface
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-
     public sealed partial class DesktopShortcutsManager : Page
     {
         public event EventHandler? Close;
-        private readonly ObservableCollection<ShortcutEntry> desktopShortcuts = new ObservableCollection<ShortcutEntry>();
+        private readonly ObservableCollection<ShortcutEntry> desktopShortcuts = [];
 
-        private bool NewOnly;
+        private readonly bool NewOnly;
 
         public DesktopShortcutsManager(List<string>? NewShortcuts)
         {

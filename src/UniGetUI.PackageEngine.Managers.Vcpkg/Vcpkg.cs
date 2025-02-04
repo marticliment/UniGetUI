@@ -346,10 +346,10 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             if (!found || !gitFound || !vcpkgRootFound || Settings.Get("DisableUpdateVcpkgGitPorts"))
             {
                 INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
-                if(Settings.Get("DisableUpdateVcpkgGitPorts")) logger.Error("User has disabled updating sources");
-                if(!found) logger.Error("Vcpkg was not found???");
-                if(!gitFound) logger.Error("Vcpkg sources won't be updated since git was not found");
-                if(!vcpkgRootFound) logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable / the custom vcpkg root setting were not set");
+                if (Settings.Get("DisableUpdateVcpkgGitPorts")) logger.Error("User has disabled updating sources");
+                if (!found) logger.Error("Vcpkg was not found???");
+                if (!gitFound) logger.Error("Vcpkg sources won't be updated since git was not found");
+                if (!vcpkgRootFound) logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable / the custom vcpkg root setting were not set");
                 logger.Close(Settings.Get("DisableUpdateVcpkgGitPorts")? 0: 1);
                 return;
             }

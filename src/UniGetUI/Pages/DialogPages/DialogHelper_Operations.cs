@@ -1,4 +1,3 @@
-using Windows.UI;
 using ExternalLibraries.Clipboard;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -240,7 +239,7 @@ public static partial class DialogHelper
 
         EventHandler<(string, AbstractOperation.LineType)> AddLineLambda = (_, line) => MainApp.Dispatcher.TryEnqueue(() =>
         {
-            if(LastLineWasProgress) par.Inlines.RemoveAt(par.Inlines.Count-1);
+            if (LastLineWasProgress) par.Inlines.RemoveAt(par.Inlines.Count-1);
 
             LastLineWasProgress = false;
             if (line.Item2 is AbstractOperation.LineType.Information)

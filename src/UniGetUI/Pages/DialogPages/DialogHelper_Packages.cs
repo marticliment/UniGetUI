@@ -1,22 +1,14 @@
-using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface;
 using UniGetUI.Interface.Dialogs;
-using UniGetUI.Interface.Enums;
-using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.Serializable;
-using AbstractOperation = UniGetUI.PackageOperations.AbstractOperation;
 
 namespace UniGetUI.Pages.DialogPages;
-
 
 public static partial class DialogHelper
 {
@@ -37,7 +29,6 @@ public static partial class DialogHelper
 
         return dialogResult == ContentDialogResult.Secondary;
     }
-
 
     /// <summary>
     /// Will update the Installation Options for the given imported package
@@ -89,7 +80,6 @@ public static partial class DialogHelper
         return (await OptionsPage.GetUpdatedOptions(), result);
     }
 
-
     public static async void ShowPackageDetails(IPackage package, OperationType operation)
     {
         PackageDetailsPage DetailsPage = new(package, operation);
@@ -116,7 +106,6 @@ public static partial class DialogHelper
         await Window.ShowDialogAsync(DetailsDialog);
     }
 
-
     public static async Task<bool> ConfirmUninstallation(IPackage package)
     {
         ContentDialog dialog = new()
@@ -132,7 +121,6 @@ public static partial class DialogHelper
 
         return await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary;
     }
-
 
     public static async Task<bool> ConfirmUninstallation(IEnumerable<IPackage> packages)
     {

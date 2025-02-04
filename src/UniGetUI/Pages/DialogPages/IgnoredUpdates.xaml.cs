@@ -20,7 +20,7 @@ namespace UniGetUI.Interface
     public sealed partial class IgnoredUpdatesManager : Page
     {
         public event EventHandler? Close;
-        private readonly ObservableCollection<IgnoredPackageEntry> ignoredPackages = new ObservableCollection<IgnoredPackageEntry>();
+        private readonly ObservableCollection<IgnoredPackageEntry> ignoredPackages = [];
 
         public IgnoredUpdatesManager()
         {

@@ -73,7 +73,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             LoadOperationIdentifier = -1;
             IsLoaded = false;
             IsLoading = false;
-            if(emitFinishSignal) InvokeFinishedLoadingEvent();
+            if (emitFinishSignal) InvokeFinishedLoadingEvent();
         }
 
         protected void InvokePackagesChangedEvent()
@@ -96,7 +96,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public virtual async Task ReloadPackages()
         {
-            if(DISABLE_RELOAD)
+            if (DISABLE_RELOAD)
             {
                 InvokePackagesChangedEvent();
                 return;
@@ -108,7 +108,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             IsLoading = true;
             StartedLoading?.Invoke(this, EventArgs.Empty);
 
-            List<Task<IEnumerable<IPackage>>> tasks = new();
+            List<Task<IEnumerable<IPackage>>> tasks = [];
 
             foreach (IPackageManager manager in Managers)
             {

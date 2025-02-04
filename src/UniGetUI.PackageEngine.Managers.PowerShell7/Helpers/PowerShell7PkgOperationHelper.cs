@@ -21,7 +21,7 @@ internal sealed class PowerShell7PkgOperationHelper : PackagePkgOperationHelper
         if (options.CustomParameters is not null)
             parameters.AddRange(options.CustomParameters);
 
-        if(operation is not OperationType.Uninstall)
+        if (operation is not OperationType.Uninstall)
         {
             parameters.AddRange(["-TrustRepository", "-AcceptLicense"]);
 
@@ -35,7 +35,7 @@ internal sealed class PowerShell7PkgOperationHelper : PackagePkgOperationHelper
                 parameters.AddRange(["-Scope", "CurrentUser"]);
         }
 
-        if(operation is OperationType.Install)
+        if (operation is OperationType.Install)
         {
             if (options.Version != "")
                 parameters.AddRange(["-Version", options.Version]);

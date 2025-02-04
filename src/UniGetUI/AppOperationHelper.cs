@@ -21,7 +21,7 @@ public partial class MainApp
 {
     public static class Operations
     {
-        public static ObservableCollection<OperationControl> _operationList = new();
+        public static ObservableCollection<OperationControl> _operationList = [];
 
         public static void Add(AbstractOperation op)
             => _operationList.Add(new(op));
@@ -32,7 +32,9 @@ public partial class MainApp
         public static void Remove(AbstractOperation op)
         {
             foreach(var control in _operationList.Where(x => x.Operation == op).ToArray())
+            {
                 _operationList.Remove(control);
+            }
         }
 
         /*
@@ -117,7 +119,10 @@ public partial class MainApp
 
         public static void Install(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? no_integrity = null)
         {
-            foreach (var package in packages) _ = Install(package, elevated, interactive, no_integrity);
+            foreach (var package in packages)
+            {
+                _ = Install(package, elevated, interactive, no_integrity);
+            }
         }
 
         /*
@@ -135,7 +140,10 @@ public partial class MainApp
 
         public static void Update(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? no_integrity = null)
         {
-            foreach (var package in packages) _ = Update(package, elevated, interactive, no_integrity);
+            foreach (var package in packages)
+            {
+                _ = Update(package, elevated, interactive, no_integrity);
+            }
         }
 
         /*
@@ -170,7 +178,10 @@ public partial class MainApp
 
         public static void Uninstall(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? remove_data = null)
         {
-            foreach (var package in packages) _ = Uninstall(package, elevated, interactive, remove_data);
+            foreach (var package in packages)
+            {
+                _ = Uninstall(package, elevated, interactive, remove_data);
+            }
         }
     }
 }

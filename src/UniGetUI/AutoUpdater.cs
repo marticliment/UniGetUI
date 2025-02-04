@@ -92,10 +92,8 @@ public class AutoUpdater
                     Logger.Info($"A cached valid installer was found, launching update process...");
                     return await PrepairToLaunchInstaller(InstallerPath, LatestVersion, AutoLaunch, ManualCheck);
                 }
-                else
-                {
-                    File.Delete(InstallerPath);
-                }
+
+                File.Delete(InstallerPath);
 
                 ShowMessage_ThreadSafe(
                     CoreTools.Translate("UniGetUI version {0} is being downloaded.", LatestVersion.ToString(CultureInfo.InvariantCulture)),
@@ -111,26 +109,22 @@ public class AutoUpdater
                     Logger.Info("The downloaded installer is valid, launching update process...");
                     return await PrepairToLaunchInstaller(InstallerPath, LatestVersion, AutoLaunch, ManualCheck);
                 }
-                else
-                {
-                    ShowMessage_ThreadSafe(
-                        CoreTools.Translate("The installer authenticity could not be verified."),
-                        CoreTools.Translate("The update process has been aborted."),
-                        InfoBarSeverity.Error,
-                        true);
-                    return false;
-                }
+
+                ShowMessage_ThreadSafe(
+                    CoreTools.Translate("The installer authenticity could not be verified."),
+                    CoreTools.Translate("The update process has been aborted."),
+                    InfoBarSeverity.Error,
+                    true);
+                return false;
             }
-            else
-            {
-                if (Verbose) ShowMessage_ThreadSafe(
-                    CoreTools.Translate("Great! You are on the latest version."),
-                    CoreTools.Translate("There are no new UniGetUI versions to be installed"),
-                    InfoBarSeverity.Success,
-                    true
-                );
-                return true;
-            }
+
+            if (Verbose) ShowMessage_ThreadSafe(
+                CoreTools.Translate("Great! You are on the latest version."),
+                CoreTools.Translate("There are no new UniGetUI versions to be installed"),
+                InfoBarSeverity.Success,
+                true
+            );
+            return true;
 
         }
         catch (Exception e)
@@ -138,7 +132,7 @@ public class AutoUpdater
             Logger.Error("An error occurred while checking for updates: ");
             Logger.Error(e);
             // We don't want an error popping if updates can't
-            if(Verbose || !WasCheckingForUpdates) ShowMessage_ThreadSafe(
+            if (Verbose || !WasCheckingForUpdates) ShowMessage_ThreadSafe(
                 CoreTools.Translate("An error occurred when checking for updates: "),
                 e.Message,
                 InfoBarSeverity.Error,

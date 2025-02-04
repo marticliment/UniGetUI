@@ -339,10 +339,10 @@ namespace UniGetUI.Interface.SoftwarePages
                     throw new ArgumentException(CoreTools.Translate("The package manager \"{0}\" was not found", managerName));
                 }
 
-                if(!manager.IsEnabled())
+                if (!manager.IsEnabled())
                     throw new ArgumentException(CoreTools.Translate("The package manager \"{0}\" is disabled", manager.DisplayName));
 
-                if(!manager.Status.Found)
+                if (!manager.Status.Found)
                     throw new ArgumentException(CoreTools.Translate("There is an error with the configuration of the package manager \"{0}\"", manager.DisplayName));
 
                 var results = await Task.Run(() => manager.FindPackages(id));
@@ -358,8 +358,10 @@ namespace UniGetUI.Interface.SoftwarePages
                 // Get package from best source
                 if (candidates.Length >= 1 && manager.Capabilities.SupportsCustomSources)
                     foreach (var candidate in candidates)
+                    {
                         if (candidate.Source.Name == sourceName)
                             package = candidate;
+                    }
 
                 Logger.ImportantInfo($"Found package {package.Id} on manager {package.Manager.Name}, showing it...");
                 DialogHelper.HideLoadingDialog();

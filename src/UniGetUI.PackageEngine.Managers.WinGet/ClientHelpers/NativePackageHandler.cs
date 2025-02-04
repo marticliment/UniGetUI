@@ -29,7 +29,7 @@ public static class NativePackageHandler
         // Rarely a package will not be available in cache (native WinGet helper should always call AddPackage)
         // so it makes no sense to add TaskRecycler.RunOrAttach() here. (Only imported packages may arrive at this point)
         catalogPackage = _findPackageOnCatalog(package);
-        if(catalogPackage is not null) AddPackage(package, catalogPackage);
+        if (catalogPackage is not null) AddPackage(package, catalogPackage);
 
         return catalogPackage;
     }

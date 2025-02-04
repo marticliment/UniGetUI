@@ -56,10 +56,10 @@ public abstract class AbstractProcessOperation : AbstractOperation
 
     protected override async Task<OperationVeredict> PerformOperation()
     {
-        if(process.StartInfo.UseShellExecute) throw new InvalidOperationException("UseShellExecute must be set to false");
-        if(!process.StartInfo.RedirectStandardOutput) throw new InvalidOperationException("RedirectStandardOutput must be set to true");
-        if(!process.StartInfo.RedirectStandardInput) throw new InvalidOperationException("RedirectStandardInput must be set to true");
-        if(!process.StartInfo.RedirectStandardError) throw new InvalidOperationException("RedirectStandardError must be set to true");
+        if (process.StartInfo.UseShellExecute) throw new InvalidOperationException("UseShellExecute must be set to false");
+        if (!process.StartInfo.RedirectStandardOutput) throw new InvalidOperationException("RedirectStandardOutput must be set to true");
+        if (!process.StartInfo.RedirectStandardInput) throw new InvalidOperationException("RedirectStandardInput must be set to true");
+        if (!process.StartInfo.RedirectStandardError) throw new InvalidOperationException("RedirectStandardError must be set to true");
         if (process.StartInfo.FileName == "lol") throw new InvalidOperationException("StartInfo.FileName has not been set");
         if (process.StartInfo.Arguments == "lol") throw new InvalidOperationException("StartInfo.Arguments has not been set");
 
@@ -94,7 +94,7 @@ public abstract class AbstractProcessOperation : AbstractOperation
             }
             else if (c == '\r')
             {
-                if(currentLine.Length == 0) continue;
+                if (currentLine.Length == 0) continue;
                 lastStringBeforeLF = currentLine.ToString();
                 Line(lastStringBeforeLF, LineType.ProgressIndicator);
                 currentLine.Clear();

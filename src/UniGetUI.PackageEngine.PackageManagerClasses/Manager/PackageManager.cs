@@ -59,7 +59,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
             // END integrity check
 
             Properties.DefaultSource.RefreshSourceNames();
-            foreach(var source in Properties.KnownSources) source.RefreshSourceNames();
+            foreach(var source in Properties.KnownSources)
+            {
+                source.RefreshSourceNames();
+            }
 
             try
             {
@@ -72,7 +75,9 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                     if (sourcesTask.Wait(TimeSpan.FromSeconds(15)))
                     {
                         foreach (var source in sourcesTask.Result)
+                        {
                             SourcesHelper?.Factory.AddSource(source);
+                        }
                     }
                     else
                     {
@@ -151,8 +156,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                         throw new TimeoutException($"Task _getInstalledPackages for manager {Name} did not finish after " +
                                                    $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
                                                    $"timeouts from UniGetUI Advanced Settings");
-                    else
-                        task.Wait();
+                    task.Wait();
                 }
 
                 Package[] packages = task.GetAwaiter().GetResult().ToArray();
@@ -174,12 +178,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                     AttemptFastRepair();
                     return _findPackages(query, true);
                 }
-                else
-                {
-                    Logger.Error("Error finding packages on manager " + Name + " with query " + query);
-                    Logger.Error(e);
-                    return [];
-                }
+
+                Logger.Error("Error finding packages on manager " + Name + " with query " + query);
+                Logger.Error(e);
+                return [];
             }
         }
 
@@ -203,8 +205,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                     if (!Settings.Get("DisableTimeoutOnPackageListingTasks"))
                         throw new TimeoutException($"Task _getInstalledPackages for manager {Name} did not finish after " +
                                                    $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
-                                                   $"timeouts from UniGetUI Advanced Settings");                    else
-                        task.Wait();
+                                                   $"timeouts from UniGetUI Advanced Settings");
+                    task.Wait();
                 }
 
                 Package[] packages = task.GetAwaiter().GetResult().ToArray();
@@ -227,12 +229,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                     AttemptFastRepair();
                     return _getAvailableUpdates(true);
                 }
-                else
-                {
-                    Logger.Error("Error finding updates on manager " + Name);
-                    Logger.Error(e);
-                    return [];
-                }
+
+                Logger.Error("Error finding updates on manager " + Name);
+                Logger.Error(e);
+                return [];
             }
         }
 
@@ -254,8 +254,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                     if (!Settings.Get("DisableTimeoutOnPackageListingTasks"))
                         throw new TimeoutException($"Task _getInstalledPackages for manager {Name} did not finish after " +
                                                    $"{PackageListingTaskTimeout} seconds, aborting.  You may disable " +
-                                                   $"timeouts from UniGetUI Advanced Settings");                    else
-                        task.Wait();
+                                                   $"timeouts from UniGetUI Advanced Settings");
+                    task.Wait();
                 }
 
                 Package[] packages = task.GetAwaiter().GetResult().ToArray();
@@ -278,12 +278,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
                     AttemptFastRepair();
                     return _getInstalledPackages(true);
                 }
-                else
-                {
-                    Logger.Error("Error finding installed packages on manager " + Name);
-                    Logger.Error(e);
-                    return [];
-                }
+
+                Logger.Error("Error finding installed packages on manager " + Name);
+                Logger.Error(e);
+                return [];
             }
         }
 

@@ -12,8 +12,6 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
@@ -153,7 +151,7 @@ namespace UniGetUI.Interface.SoftwarePages
             MenuFlyoutSubItem menuPause = new()
             {
                 Text = "Pause updates for",
-                Icon = new FontIcon() { Glyph = "\uE769" },
+                Icon = new FontIcon { Glyph = "\uE769" },
             };
             foreach (IgnoredUpdatesDatabase.PauseTime menuTime in new List<IgnoredUpdatesDatabase.PauseTime>{
                 new() { Days = 1 }, new() { Days = 3 },
@@ -325,16 +323,20 @@ namespace UniGetUI.Interface.SoftwarePages
         public void UpdateAll()
         {
             foreach (IPackage package in Loader.Packages)
+            {
                 if (package.Tag is not PackageTag.BeingProcessed and not PackageTag.OnQueue)
                     _ = MainApp.Operations.Update(package);
+            }
         }
 
         protected override void WhenPackagesLoaded(ReloadReason reason)
         {
             List<IPackage> upgradablePackages = [];
             foreach (IPackage package in Loader.Packages)
+            {
                 if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed)
                     upgradablePackages.Add(package);
+            }
 
             try
             {
@@ -344,14 +346,13 @@ namespace UniGetUI.Interface.SoftwarePages
                 bool EnableAutoUpdate = Settings.Get("AutomaticallyUpdatePackages") ||
                                    Environment.GetCommandLineArgs().Contains("--updateapps");
 
-                if(EnableAutoUpdate)
+                if (EnableAutoUpdate)
                     UpdateAll();
 
                 if (Settings.AreUpdatesNotificationsDisabled())
                     return;
 
                 AppNotificationManager.Default.RemoveByTagAsync(CoreData.UpdatesAvailableNotificationTag.ToString());
-
 
                 AppNotification notification;
                 if (upgradablePackages.Count == 1)
@@ -396,7 +397,11 @@ namespace UniGetUI.Interface.SoftwarePages
                 else
                 {
                     string attribution = "";
-                    foreach (IPackage package in upgradablePackages) attribution += package.Name + ", ";
+                    foreach (IPackage package in upgradablePackages)
+                    {
+                        attribution += package.Name + ", ";
+                    }
+
                     attribution = attribution.TrimEnd(' ').TrimEnd(',');
 
                     if (EnableAutoUpdate)
@@ -494,21 +499,26 @@ namespace UniGetUI.Interface.SoftwarePages
         public void UpdatePackageForId(string id)
         {
             foreach (IPackage package in Loader.Packages)
+            {
                 if (package.Id == id)
                 {
                     _ = MainApp.Operations.Update(package);
                     Logger.Info($"[WIDGETS] Updating package with id {id}");
                     break;
                 }
+            }
+
             Logger.Warn($"[WIDGETS] No package with id={id} was found");
         }
 
         public async void UpdateAllPackagesForManager(string manager)
         {
             foreach (IPackage package in Loader.Packages)
+            {
                 if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed)
                     if (package.Manager.Name == manager || package.Manager.DisplayName == manager)
                         await MainApp.Operations.Update(package);
+            }
         }
     }
 }

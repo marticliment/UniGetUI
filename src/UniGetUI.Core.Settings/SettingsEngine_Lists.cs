@@ -60,7 +60,7 @@ namespace UniGetUI.Core.SettingsEngine
             {
                 Logger.Error($"Could not load list {setting} from settings");
                 Logger.Error(ex);
-                return new();
+                return [];
             }
         }
 

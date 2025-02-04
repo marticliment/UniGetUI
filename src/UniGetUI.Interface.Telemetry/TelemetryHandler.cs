@@ -13,7 +13,7 @@ public static class TelemetryHandler
     private const string HOST = "https://marticliment.com/unigetui/statistics";
 
     private static string[] SettingsToSend =
-    {
+    [
         "DisableAutoUpdateWingetUI",
         "EnableUniGetUIBeta",
         "DisableSystemTray",
@@ -27,8 +27,8 @@ public static class TelemetryHandler
         "ForceLegacyBundledWinGet",
         "UseSystemChocolatey",
         "SP1", // UniGetUI is portable
-        "SP2" // UniGetUI was started as daemon
-    };
+        "SP2", // UniGetUI was started as daemon
+    ];
 
     public static async void Initialize()
     {

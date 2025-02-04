@@ -13,13 +13,19 @@ internal sealed class DotNetPkgOperationHelper : PackagePkgOperationHelper
         IInstallationOptions options,
         OperationType operation)
     {
-        List<string> parameters = [operation switch {
-            OperationType.Install => Manager.Properties.InstallVerb,
-            OperationType.Update => Manager.Properties.UpdateVerb,
-            OperationType.Uninstall => Manager.Properties.UninstallVerb,
-            _ => throw new InvalidDataException("Invalid package operation")
-        }];
-        parameters.Add(package.Id);
+        List<string> parameters =
+        [
+            operation switch
+            {
+                OperationType.Install => Manager.Properties.InstallVerb,
+                OperationType.Update => Manager.Properties.UpdateVerb,
+                OperationType.Uninstall => Manager.Properties.UninstallVerb,
+                _ => throw new InvalidDataException("Invalid package operation")
+            },
+
+            package.Id,
+
+        ];
 
         if (options.CustomParameters is not null)
             parameters.AddRange(options.CustomParameters);
@@ -27,7 +33,7 @@ internal sealed class DotNetPkgOperationHelper : PackagePkgOperationHelper
         if (options.CustomInstallLocation != "")
             parameters.AddRange(["--tool-path", "\"" + options.CustomInstallLocation + "\""]);
 
-        if(package.OverridenOptions.Scope == PackageScope.Global ||
+        if (package.OverridenOptions.Scope == PackageScope.Global ||
            (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
             parameters.Add("--global");
 

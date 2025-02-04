@@ -45,12 +45,10 @@ namespace UniGetUI.Core.Data
                     if (!Directory.Exists(path)) Directory.CreateDirectory(path);
                     return path;
                 }
-                else
-                {
-                    string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
-                    string new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI");
-                    return GetNewDataDirectoryOrMoveOld(old_path, new_path);
-                }
+
+                string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
+                string new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI");
+                return GetNewDataDirectoryOrMoveOld(old_path, new_path);
             }
         }
 

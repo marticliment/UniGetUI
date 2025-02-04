@@ -83,7 +83,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// </summary>
         public List<IPackage> GetPackages()
         {
-            List<IPackage> packages = new();
+            List<IPackage> packages = [];
             foreach (PackageWrapper wrapper in this)
             {
                 packages.Add(wrapper.Package);

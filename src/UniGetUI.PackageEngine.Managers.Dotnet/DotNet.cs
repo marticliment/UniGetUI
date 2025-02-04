@@ -1,9 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -31,7 +29,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
                 new ManagerDependency(
                     ".NET Tools Outdated",
                     Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
-                    "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {dotnet tool install --global dotnet-tools-outdated --add-source https://api.nuget.org/v3/index.json; if($error.count -ne 0){pause}}\"",
+                    "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {dotnet tool install --global dotnet-tools-outdated --add-source https://api.nuget.org/v3/index.json; if ($error.count -ne 0){pause}}\"",
                     "dotnet tool install --global dotnet-tools-outdated --add-source https://api.nuget.org/v3/index.json",
                     async () => (await CoreTools.WhichAsync("dotnet-tools-outdated.exe")).Item1)
             ];
@@ -126,7 +124,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             {
                 foreach (JsonNode? node in data)
                 {
-                    if(node is not JsonObject element) continue;
+                    if (node is not JsonObject element) continue;
 
                     bool unlisted = element["becomeUnlisted"]?.GetValue<bool>() ?? false;
                     string id = element["packageName"]?.ToString() ?? "";

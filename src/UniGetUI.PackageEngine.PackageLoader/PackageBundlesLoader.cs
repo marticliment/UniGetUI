@@ -27,7 +27,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         protected override Task WhenAddingPackage(IPackage package)
         {
-            if(package.GetInstalledPackage() is not null)
+            if (package.GetInstalledPackage() is not null)
                 package.SetTag(PackageTag.AlreadyInstalled);
 
             return Task.CompletedTask;
@@ -66,7 +66,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
                 {
                     Logger.Error($"An IPackage instance id={foreign.Id} did not match the types Package, ImportedPackage or InvalidImportedPackage. This should never be the case");
                 }
-                if(package is not null && !Contains(package)) AddPackage(package);
+                if (package is not null && !Contains(package)) AddPackage(package);
             }
             InvokePackagesChangedEvent();
         }
