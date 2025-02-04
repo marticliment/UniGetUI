@@ -48,7 +48,11 @@ namespace UniGetUI.Interface.Widgets
         private bool _buttonAlwaysOn;
         public bool ButtonAlwaysOn
         {
-            set => _buttonAlwaysOn = value;
+            set
+            {
+                _buttonAlwaysOn = value;
+                Button.IsEnabled = (CheckBox.IsChecked ?? false) || _buttonAlwaysOn ;
+            }
         }
 
         public CheckboxButtonCard()
