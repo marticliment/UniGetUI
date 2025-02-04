@@ -18,7 +18,12 @@ namespace UniGetUI.PackageEngine.PackageLoader
         public ConcurrentDictionary<string, IPackage> IgnoredPackages = new();
 
         public UpgradablePackagesLoader(IEnumerable<IPackageManager> managers)
-        : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false, CheckedBydefault: !Settings.Get("DisableSelectingUpdatesByDefault"))
+        : base(managers,
+            identifier: "UPGRADABLE_PACKAGES",
+            AllowMultiplePackageVersions: false,
+            DisableReload: false,
+            CheckedBydefault: !Settings.Get("DisableSelectingUpdatesByDefault"),
+            RequiresInternet: true)
         {
             Instance = this;
             FinishedLoading += (_, _) => StartAutoCheckTimeout();
