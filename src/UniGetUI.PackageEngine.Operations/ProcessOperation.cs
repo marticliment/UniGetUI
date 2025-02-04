@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using System.Text;
+using Windows.System;
+using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.PackageOperations;
@@ -36,6 +38,7 @@ public abstract class AbstractProcessOperation : AbstractOperation
             process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
             process.StartInfo.StandardErrorEncoding = Encoding.UTF8;
             process.StartInfo.StandardInputEncoding = Encoding.UTF8;
+            process.StartInfo.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             process.StartInfo.FileName = "lol";
             process.StartInfo.Arguments = "lol";
             process.ErrorDataReceived += (_, e) =>
@@ -70,7 +73,8 @@ public abstract class AbstractProcessOperation : AbstractOperation
 
         process.Start();
         // process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
+        try { process.BeginErrorReadLine(); }
+        catch (Exception ex) { Logger.Error(ex); }
 
         StringBuilder currentLine= new();
         char[] buffer = new char[1];
