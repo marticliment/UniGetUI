@@ -7,6 +7,7 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
 using UniGetUI.Interface.Dialogs;
 using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -90,9 +91,9 @@ public static partial class DialogHelper
     }
 
 
-    public static async void ShowPackageDetails(IPackage package, OperationType operation)
+    public static async void ShowPackageDetails(IPackage package, OperationType operation, TEL_InstallReferral referral)
     {
-        PackageDetailsPage DetailsPage = new(package, operation);
+        PackageDetailsPage DetailsPage = new(package, operation, referral);
 
         ContentDialog DetailsDialog = new()
         {

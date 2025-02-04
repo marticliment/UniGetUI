@@ -24,6 +24,7 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Operations;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using UniGetUI.Interface.Telemetry;
 
 namespace UniGetUI.Controls.OperationWidgets;
 
@@ -543,7 +544,7 @@ public class OperationControl: INotifyPropertyChanged
             details.IconName = IconType.Info_Round;
             details.Click += (_, _) =>
             {
-                DialogHelper.ShowPackageDetails(packageOp.Package, OperationType.None);
+                DialogHelper.ShowPackageDetails(packageOp.Package, OperationType.None, TEL_InstallReferral.DIRECT_SEARCH);
             };
             optionsMenu.Add(details);
 
