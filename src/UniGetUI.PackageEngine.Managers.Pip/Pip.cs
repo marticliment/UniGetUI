@@ -319,6 +319,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 return status;
             }
 
+
+            Environment.SetEnvironmentVariable("PIP_REQUIRE_VIRTUALENV", "false", EnvironmentVariableTarget.Process);
             return status;
         }
     }
