@@ -7,6 +7,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
@@ -103,7 +104,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 Text = CoreTools.AutoTranslated("Download installer"),
                 IconName = IconType.Download
             };
-            MenuDownloadInstaller.Click += (_, _) => _ = MainApp.Operations.AskLocationAndDownload(SelectedItem);
+            MenuDownloadInstaller.Click += (_, _) => _ = MainApp.Operations.AskLocationAndDownload(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
 
             BetterMenuItem menuUpdateAfterUninstall = new()
             {
@@ -146,7 +147,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 IconName = IconType.Info_Round,
                 KeyboardAcceleratorTextOverride = "Enter"
             };
-            menuDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem);
+            menuDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
 
             MenuFlyoutSubItem menuPause = new()
             {
@@ -294,7 +295,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
             }
 
-            PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem);
+            PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
             HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
             InstallationSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
             ManageIgnored.Click += async (_, _) => await DialogHelper.ManageIgnoredUpdates();
@@ -463,8 +464,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private async void MenuUpdateAfterUninstall_Invoked(object sender, RoutedEventArgs e)
         {
-            var op = await MainApp.Operations.Uninstall(SelectedItem, elevated: true, ignoreParallel: true);
-            _ = MainApp.Operations.Install(SelectedItem, elevated: true, ignoreParallel: true, req: op);
+            var op = await MainApp.Operations.Uninstall(SelectedItem);
+            _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED, req: op);
         }
 
         private void MenuUninstall_Invoked(object sender, RoutedEventArgs e)

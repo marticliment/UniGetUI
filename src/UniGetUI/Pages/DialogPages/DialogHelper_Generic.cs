@@ -227,17 +227,17 @@ public static partial class DialogHelper
     {
         ContentDialog? UpdatesDialog = new()
         {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style, XamlRoot = Window.XamlRoot
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style, XamlRoot = Window.XamlRoot,
+            Resources = {
+                ["ContentDialogMaxWidth"] = 1400,
+                ["ContentDialogMaxHeight"] = 1000,
+            },
+            SecondaryButtonText = CoreTools.Translate("Close"),
+            //UpdatesDialog.PrimaryButtonText = CoreTools.Translate("Reset");
+            DefaultButton = ContentDialogButton.None,
+            Title = CoreTools.Translate("Manage ignored updates"),
         };
-        UpdatesDialog.Resources["ContentDialogMaxWidth"] = 1400;
-        UpdatesDialog.Resources["ContentDialogMaxHeight"] = 1000;
 
-        UpdatesDialog.SecondaryButtonText = CoreTools.Translate("Close");
-
-        //UpdatesDialog.PrimaryButtonText = CoreTools.Translate("Reset");
-
-        UpdatesDialog.DefaultButton = ContentDialogButton.None;
-        UpdatesDialog.Title = CoreTools.Translate("Manage ignored updates");
         IgnoredUpdatesManager IgnoredUpdatesPage = new();
         UpdatesDialog.Content = IgnoredUpdatesPage;
         IgnoredUpdatesPage.Close += (_, _) => UpdatesDialog.Hide();
@@ -249,11 +249,13 @@ public static partial class DialogHelper
         ContentDialog? ShortcutsDialog = new()
         {
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            XamlRoot = Window.XamlRoot
+            XamlRoot = Window.XamlRoot,
+            Resources = {
+                ["ContentDialogMaxWidth"] = 1400,
+                ["ContentDialogMaxHeight"] = 1000,
+            },
+            Title = CoreTools.Translate("Automatic desktop shortcut remover"),
         };
-        ShortcutsDialog.Resources["ContentDialogMaxWidth"] = 1400;
-        ShortcutsDialog.Resources["ContentDialogMaxHeight"] = 1000;
-        ShortcutsDialog.Title = CoreTools.Translate("Automatic desktop shortcut remover");
 
         DesktopShortcutsManager DesktopShortcutsPage = new(NewShortucts);
         DesktopShortcutsPage.Close += (_, _) => ShortcutsDialog.Hide();
@@ -363,12 +365,14 @@ public static partial class DialogHelper
         ContentDialog? NotesDialog = new()
         {
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            XamlRoot = Window.XamlRoot
+            XamlRoot = Window.XamlRoot,
+            Resources = {
+                ["ContentDialogMaxWidth"] = 12000,
+                ["ContentDialogMaxHeight"] = 10000,
+            },
+            CloseButtonText = CoreTools.Translate("Close"),
+            Title = CoreTools.Translate("Release notes"),
         };
-        NotesDialog.Resources["ContentDialogMaxWidth"] = 12000;
-        NotesDialog.Resources["ContentDialogMaxHeight"] = 10000;
-        NotesDialog.CloseButtonText = CoreTools.Translate("Close");
-        NotesDialog.Title = CoreTools.Translate("Release notes");
         ReleaseNotes? notes = new();
         notes.Close += (_, _) => NotesDialog.Hide();
         NotesDialog.Content = notes;

@@ -4,6 +4,7 @@ using PhotoSauce.MagicScaler;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Core.IconEngine
 {
@@ -317,7 +318,7 @@ namespace UniGetUI.Core.IconEngine
         {
             try
             {
-                return File.Exists(versionPath) && File.ReadAllText(versionPath) == icon.Version;
+                return File.Exists(versionPath) && CoreTools.GetVersionStringAsFloat(File.ReadAllText(versionPath)) >= CoreTools.GetVersionStringAsFloat(icon.Version);
             }
             catch (Exception e)
             {

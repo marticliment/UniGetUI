@@ -19,6 +19,7 @@ using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Operations;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using UniGetUI.Interface.Telemetry;
 
 namespace UniGetUI.Controls.OperationWidgets;
 
@@ -481,8 +482,10 @@ public class OperationControl: INotifyPropertyChanged
 
         if (Operation is SourceOperation sourceOp && !sourceOp.ForceAsAdministrator)
         {
-            var adminButton = new BetterMenuItem { Text = CoreTools.Translate("Retry as administrator") };
-            adminButton.IconName = IconType.UAC;
+            var adminButton = new BetterMenuItem {
+                Text = CoreTools.Translate("Retry as administrator"),
+                IconName = IconType.UAC,
+            };
             adminButton.Click += (_, _) =>
             {
                 callback();
@@ -494,8 +497,10 @@ public class OperationControl: INotifyPropertyChanged
         {
             if (!packageOp.Options.RunAsAdministrator && packageOp.Package.Manager.Capabilities.CanRunAsAdmin)
             {
-                var adminButton = new BetterMenuItem { Text = CoreTools.Translate("Retry as administrator") };
-                adminButton.IconName = IconType.UAC;
+                var adminButton = new BetterMenuItem {
+                    Text = CoreTools.Translate("Retry as administrator"),
+                    IconName = IconType.UAC,
+                };
                 adminButton.Click += (_, _) =>
                 {
                     callback();
@@ -507,8 +512,10 @@ public class OperationControl: INotifyPropertyChanged
             if (!packageOp.Options.InteractiveInstallation &&
                 packageOp.Package.Manager.Capabilities.CanRunInteractively)
             {
-                var interactiveButton = new BetterMenuItem { Text = CoreTools.Translate("Retry interactively") };
-                interactiveButton.IconName = IconType.Interactive;
+                var interactiveButton = new BetterMenuItem {
+                    Text = CoreTools.Translate("Retry interactively"),
+                    IconName = IconType.Interactive,
+                };
                 interactiveButton.Click += (_, _) =>
                 {
                     callback();
@@ -520,8 +527,10 @@ public class OperationControl: INotifyPropertyChanged
             if (!packageOp.Options.SkipHashCheck && packageOp.Package.Manager.Capabilities.CanSkipIntegrityChecks)
             {
                 var skiphashButton =
-                    new BetterMenuItem { Text = CoreTools.Translate("Retry skipping integrity checks") };
-                skiphashButton.IconName = IconType.Checksum;
+                    new BetterMenuItem {
+                        Text = CoreTools.Translate("Retry skipping integrity checks"),
+                        IconName = IconType.Checksum,
+                    };
                 skiphashButton.Click += (_, _) =>
                 {
                     callback();
@@ -539,16 +548,20 @@ public class OperationControl: INotifyPropertyChanged
         var optionsMenu = new List<BetterMenuItem>();
         if (Operation is PackageOperation packageOp)
         {
-            var details = new BetterMenuItem { Text = CoreTools.Translate("Package details") };
-            details.IconName = IconType.Info_Round;
+            var details = new BetterMenuItem {
+                Text = CoreTools.Translate("Package details"),
+                IconName = IconType.Info_Round,
+            };
             details.Click += (_, _) =>
             {
-                DialogHelper.ShowPackageDetails(packageOp.Package, OperationType.None);
+                DialogHelper.ShowPackageDetails(packageOp.Package, OperationType.None, TEL_InstallReferral.DIRECT_SEARCH);
             };
             optionsMenu.Add(details);
 
-            var installationSettings = new BetterMenuItem { Text = CoreTools.Translate("Installation options") };
-            installationSettings.IconName = IconType.Options;
+            var installationSettings = new BetterMenuItem {
+                Text = CoreTools.Translate("Installation options"),
+                IconName = IconType.Options,
+            };
             installationSettings.Click += (_, _) =>
             {
                 _ = DialogHelper.ShowInstallatOptions_Continue(packageOp.Package, OperationType.None);
@@ -556,8 +569,10 @@ public class OperationControl: INotifyPropertyChanged
             optionsMenu.Add(installationSettings);
 
             string? location = packageOp.Package.Manager.DetailsHelper.GetInstallLocation(packageOp.Package);
-            var openLocation = new BetterMenuItem { Text = CoreTools.Translate("Open install location") };
-            openLocation.IconName = IconType.OpenFolder;
+            var openLocation = new BetterMenuItem {
+                Text = CoreTools.Translate("Open install location"),
+                IconName = IconType.OpenFolder,
+            };
             openLocation.Click += (_, _) =>
             {
                 Process.Start(new ProcessStartInfo {
@@ -573,8 +588,10 @@ public class OperationControl: INotifyPropertyChanged
 
         else if (Operation is DownloadOperation downloadOp)
         {
-            var launchInstaller = new BetterMenuItem { Text = CoreTools.Translate("Open") };
-            launchInstaller.IconName = IconType.Launch;
+            var launchInstaller = new BetterMenuItem {
+                Text = CoreTools.Translate("Open"),
+                IconName = IconType.Launch,
+            };
             launchInstaller.Click += (_, _) =>
             {
                 try
@@ -594,8 +611,10 @@ public class OperationControl: INotifyPropertyChanged
             launchInstaller.IsEnabled = downloadOp.Status is OperationStatus.Succeeded;
             optionsMenu.Add(launchInstaller);
 
-            var showFileInExplorer = new BetterMenuItem { Text = CoreTools.Translate("Show in explorer") };
-            showFileInExplorer.IconName = IconType.OpenFolder;
+            var showFileInExplorer = new BetterMenuItem {
+                Text = CoreTools.Translate("Show in explorer"),
+                IconName = IconType.OpenFolder,
+            };
             showFileInExplorer.Click += (_, _) =>
             {
                 try

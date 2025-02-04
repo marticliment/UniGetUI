@@ -18,7 +18,8 @@ public static partial class DialogHelper
         ContentDialog dialog = new()
         {
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style, XamlRoot = Window.XamlRoot,
-            Resources = { ["ContentDialogMaxWidth"] = 850,
+            Resources = {
+                ["ContentDialogMaxWidth"] = 850,
                 ["ContentDialogMaxHeight"] = 800,
             },
             Title = operation.Metadata.FailureTitle,
@@ -183,10 +184,12 @@ public static partial class DialogHelper
         ContentDialog OutputDialog = new ContentDialog
         {
             Style = (Style)Application.Current.Resources["DefaultContentDialogStyle"],
-            XamlRoot = Window.XamlRoot
+            XamlRoot = Window.XamlRoot,
+            Resources = {
+                ["ContentDialogMaxWidth"] = 1200,
+                ["ContentDialogMaxHeight"] = 1000,
+            },
         };
-        OutputDialog.Resources["ContentDialogMaxWidth"] = 1200;
-        OutputDialog.Resources["ContentDialogMaxHeight"] = 1000;
 
         var LiveOutputTextBlock = new RichTextBlock
         {

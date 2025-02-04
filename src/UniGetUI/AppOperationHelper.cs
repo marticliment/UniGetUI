@@ -42,7 +42,7 @@ public partial class MainApp
          * OPERATION CREATION HELPERS
          *
          */
-        public static async Task<AbstractOperation?> AskLocationAndDownload(IPackage? package)
+        public static async Task<AbstractOperation?> AskLocationAndDownload(IPackage? package, TEL_InstallReferral referral)
         {
             if (package is null) return null;
             try
@@ -55,12 +55,12 @@ public partial class MainApp
                 if (details.InstallerUrl is null)
                 {
                     DialogHelper.HideLoadingDialog();
-                    var dialog = new ContentDialog();
-                    dialog.Title = CoreTools.Translate("Download failed");
-                    dialog.Content = CoreTools.Translate("No applicable installer was found for the package {0}", package.Name);
-                    dialog.PrimaryButtonText = CoreTools.Translate("Ok");
-                    dialog.DefaultButton = ContentDialogButton.Primary;
-                    dialog.XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot;
+                    var dialog = new ContentDialog { Title = CoreTools.Translate("Download failed"),
+                        Content = CoreTools.Translate("No applicable installer was found for the package {0}", package.Name),
+                        PrimaryButtonText = CoreTools.Translate("Ok"),
+                        DefaultButton = ContentDialogButton.Primary,
+                        XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot,
+                    };
                     await MainApp.Instance.MainWindow.ShowDialogAsync(dialog);
                     return null;
                 }
@@ -89,6 +89,8 @@ public partial class MainApp
                 if (file is not null)
                 {
                     var op = new DownloadOperation(package, file.Path);
+                    op.OperationSucceeded += (_, _) => TelemetryHandler.DownloadPackage(package, TEL_OP_RESULT.SUCCESS, referral);
+                    op.OperationFailed += (_, _) => TelemetryHandler.DownloadPackage(package, TEL_OP_RESULT.FAILED, referral);
                     Add(op);
                     return op;
                 }
@@ -106,22 +108,25 @@ public partial class MainApp
         /*
          * PACKAGE INSTALLATION
          */
-        public static async Task<AbstractOperation?> Install(IPackage? package, bool? elevated = null, bool? interactive = null, bool? no_integrity = null, bool ignoreParallel = false, AbstractOperation? req = null)
+        public static async Task<AbstractOperation?> Install(IPackage? package, TEL_InstallReferral referral,
+            bool? elevated = null, bool? interactive = null, bool? no_integrity = null, bool ignoreParallel = false,
+            AbstractOperation? req = null)
         {
             if (package is null) return null;
 
             var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, no_integrity);
             var op = new InstallPackageOperation(package, options, ignoreParallel, req);
             Add(op);
-            op.OperationSucceeded += (_, _) => TelemetryHandler.PackageInstalled(package);
+            op.OperationSucceeded += (_, _) => TelemetryHandler.InstallPackage(package, TEL_OP_RESULT.SUCCESS, referral);
+            op.OperationFailed += (_, _) => TelemetryHandler.InstallPackage(package, TEL_OP_RESULT.FAILED, referral);
             return op;
         }
 
-        public static void Install(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? no_integrity = null)
+        public static void Install(IReadOnlyList<IPackage> packages, TEL_InstallReferral referral, bool? elevated = null, bool? interactive = null, bool? no_integrity = null)
         {
             foreach (var package in packages)
             {
-                _ = Install(package, elevated, interactive, no_integrity);
+                _ = Install(package, referral, elevated, interactive, no_integrity);
             }
         }
 
@@ -135,6 +140,8 @@ public partial class MainApp
             var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, no_integrity);
             var op = new UpdatePackageOperation(package, options, ignoreParallel, req);
             Add(op);
+            op.OperationSucceeded += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.SUCCESS);
+            op.OperationFailed += (_, _) => TelemetryHandler.UpdatePackage(package, TEL_OP_RESULT.FAILED);
             return op;
         }
 
@@ -173,6 +180,8 @@ public partial class MainApp
             var options = await InstallationOptions.FromPackageAsync(package, elevated, interactive, remove_data: remove_data);
             var op = new UninstallPackageOperation(package, options, ignoreParallel, req);
             Add(op);
+            op.OperationSucceeded += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.SUCCESS);
+            op.OperationFailed += (_, _) => TelemetryHandler.UninstallPackage(package, TEL_OP_RESULT.FAILED);
             return op;
         }
 

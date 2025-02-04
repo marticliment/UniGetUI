@@ -3,6 +3,9 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Dialogs;
+using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Telemetry;
+using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
@@ -57,41 +60,44 @@ public static partial class DialogHelper
         ContentDialog OptionsDialog = new()
         {
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            XamlRoot = Window.XamlRoot
+            XamlRoot = Window.XamlRoot,
+            Resources = {
+                ["ContentDialogMaxWidth"] = 1200,
+                ["ContentDialogMaxHeight"] = 1000,
+            },
+            SecondaryButtonText = operation switch
+            {
+                OperationType.Install => CoreTools.Translate("Install"),
+                OperationType.Uninstall => CoreTools.Translate("Uninstall"),
+                OperationType.Update => CoreTools.Translate("Update"),
+                _ => ""
+            },
+            PrimaryButtonText = CoreTools.Translate("Save and close"),
+            DefaultButton = ContentDialogButton.Secondary,
+            Title = CoreTools.Translate("{0} installation options", package.Name),
+            Content = OptionsPage,
         };
-        OptionsDialog.Resources["ContentDialogMaxWidth"] = 1200;
-        OptionsDialog.Resources["ContentDialogMaxHeight"] = 1000;
 
-        OptionsDialog.SecondaryButtonText = operation switch
-        {
-            OperationType.Install => CoreTools.Translate("Install"),
-            OperationType.Uninstall => CoreTools.Translate("Uninstall"),
-            OperationType.Update => CoreTools.Translate("Update"),
-            _ => ""
-        };
-
-        OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
-        OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
-        OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
-        OptionsDialog.Content = OptionsPage;
         OptionsPage.Close += (_, _) => { OptionsDialog.Hide(); };
 
         ContentDialogResult result = await Window.ShowDialogAsync(OptionsDialog);
         return (await OptionsPage.GetUpdatedOptions(), result);
     }
 
-    public static async void ShowPackageDetails(IPackage package, OperationType operation)
+    public static async void ShowPackageDetails(IPackage package, OperationType operation, TEL_InstallReferral referral)
     {
-        PackageDetailsPage DetailsPage = new(package, operation);
+        PackageDetailsPage DetailsPage = new(package, operation, referral);
 
         ContentDialog DetailsDialog = new()
         {
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            XamlRoot = Window.XamlRoot
+            XamlRoot = Window.XamlRoot,
+            Resources = {
+                ["ContentDialogMaxWidth"] = 8000,
+                ["ContentDialogMaxHeight"] = 4000,
+            },
+            Content = DetailsPage,
         };
-        DetailsDialog.Resources["ContentDialogMaxWidth"] = 8000;
-        DetailsDialog.Resources["ContentDialogMaxHeight"] = 4000;
-        DetailsDialog.Content = DetailsPage;
         DetailsDialog.SizeChanged += (_, _) =>
         {
             int hOffset = (Window.NavigationPage.ActualWidth < 1300) ? 100 : 300;

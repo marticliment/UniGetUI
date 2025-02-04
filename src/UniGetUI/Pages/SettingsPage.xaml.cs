@@ -509,8 +509,7 @@ namespace UniGetUI.Interface
 
                         if (Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
                         {
-                            SettingsCard SourceManagerCard = new();
-                            SourceManagerCard.Resources["SettingsCardLeftIndention"] = 10;
+                            SettingsCard SourceManagerCard = new() { Resources = { ["SettingsCardLeftIndention"] = 10 } };
                             SourceManager SourceManager = new(Manager);
                             SourceManagerCard.Description = SourceManager;
                             ExtraSettingsCards[Manager].Insert(index++, SourceManagerCard);

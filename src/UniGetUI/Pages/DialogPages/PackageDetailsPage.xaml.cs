@@ -12,6 +12,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.Interface.Widgets;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -43,12 +44,15 @@ namespace UniGetUI.Interface.Dialogs
             Unset
         }
 
+        private TEL_InstallReferral InstallReferral;
+
         private LayoutMode __layout_mode = LayoutMode.Unset;
-        public PackageDetailsPage(IPackage package, OperationType role)
+        public PackageDetailsPage(IPackage package, OperationType role, TEL_InstallReferral referral)
         {
             if (role == OperationType.None)
                 role = OperationType.Install;
 
+            InstallReferral = referral;
             OperationRole = role;
             Package = package;
 
@@ -125,6 +129,8 @@ namespace UniGetUI.Interface.Dialogs
                 SetUpActionButtonAsUninstall();
             }
             _ = LoadInformation();
+
+            TelemetryHandler.PackageDetails(package, referral.ToString());
         }
 
         public void SetUpActionButtonAsInstall()
@@ -444,7 +450,7 @@ namespace UniGetUI.Interface.Dialogs
         {
             if (!Package.Manager.Capabilities.CanDownloadInstaller) return;
             Close?.Invoke(this, EventArgs.Empty);
-            _ = MainApp.Operations.AskLocationAndDownload(Package);
+            _ = MainApp.Operations.AskLocationAndDownload(Package, InstallReferral);
         }
 
         public void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -578,7 +584,7 @@ namespace UniGetUI.Interface.Dialogs
 
             if (action is OperationType.Install)
             {
-                _ = MainApp.Operations.Install(package, AsAdmin, Interactive, SkipHash);
+                _ = MainApp.Operations.Install(package, InstallReferral, AsAdmin, Interactive, SkipHash);
             }
             else if (action is OperationType.Uninstall)
             {

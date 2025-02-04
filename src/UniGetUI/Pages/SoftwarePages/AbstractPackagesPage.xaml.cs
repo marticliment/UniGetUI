@@ -14,7 +14,9 @@ using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
 using Windows.UI.Core;
 using UniGetUI.Interface.Pages;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.Pages.DialogPages;
+using Page = ABI.Microsoft.UI.Xaml.Controls.Page;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -786,14 +788,14 @@ namespace UniGetUI.Interface
             FilterPackages();
         }
 
-        protected void ShowDetailsForPackage(IPackage? package)
+        protected void ShowDetailsForPackage(IPackage? package, TEL_InstallReferral referral)
         {
             if (package is null || package.Source.IsVirtualManager || package is InvalidImportedPackage)
             {
                 return;
             }
 
-            DialogHelper.ShowPackageDetails(package, PAGE_ROLE);
+            DialogHelper.ShowPackageDetails(package, PAGE_ROLE, referral);
         }
 
         protected void OpenPackageInstallLocation(IPackage? package)
@@ -864,7 +866,7 @@ namespace UniGetUI.Interface
 
             if (PAGE_ROLE == OperationType.Install)
             {
-                _ = MainApp.Operations.Install(package);
+                _ = MainApp.Operations.Install(package, TEL_InstallReferral.DIRECT_SEARCH);
             }
             else if (PAGE_ROLE == OperationType.Update)
             {
@@ -893,7 +895,11 @@ namespace UniGetUI.Interface
             if (sender is PackageItemContainer container && container.Package is not null)
             {
                 PackageList.Select(container.Wrapper.Index);
-                ShowDetailsForPackage(container.Package);
+
+                TEL_InstallReferral referral = TEL_InstallReferral.ALREADY_INSTALLED;
+                if (PAGE_NAME == "Bundles") referral = TEL_InstallReferral.FROM_BUNDLE;
+                if (PAGE_NAME == "Discover") referral = TEL_InstallReferral.DIRECT_SEARCH;
+                ShowDetailsForPackage(container.Package, referral);
             }
         }
 
@@ -921,7 +927,12 @@ namespace UniGetUI.Interface
                 else
                 {
                     if (!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
-                        ShowDetailsForPackage(package);
+                    {
+                        TEL_InstallReferral referral = TEL_InstallReferral.ALREADY_INSTALLED;
+                        if (PAGE_NAME == "Bundles") referral = TEL_InstallReferral.FROM_BUNDLE;
+                        if (PAGE_NAME == "Discover") referral = TEL_InstallReferral.DIRECT_SEARCH;
+                        ShowDetailsForPackage(package, referral);
+                    }
                 }
             }
             else if (e.Key == VirtualKey.Space && package is not null)
