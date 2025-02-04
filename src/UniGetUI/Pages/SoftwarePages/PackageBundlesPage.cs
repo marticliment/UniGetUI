@@ -461,7 +461,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 string fileContent = await File.ReadAllTextAsync(file);
 
                 double open_version = await AddFromBundle(fileContent, formatType);
-                TelemetryHandler.ExportBundle(formatType);
+                TelemetryHandler.ImportBundle(formatType);
                 HasUnsavedChanges = false;
 
                 DialogHelper.HideLoadingDialog();
