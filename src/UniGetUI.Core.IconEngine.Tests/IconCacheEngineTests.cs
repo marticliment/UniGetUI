@@ -98,7 +98,7 @@ namespace UniGetUI.Core.IconEngine.Tests
             Assert.NotNull(path);
             DateTime newNewModificationDate = File.GetLastWriteTime(path);
 
-            Assert.NotEqual(oldModificationDate, newNewModificationDate);
+            Assert.Equal(oldModificationDate, newNewModificationDate);
             Assert.Equal(expectedFile, path);
             Assert.True(File.Exists(path));
         }
