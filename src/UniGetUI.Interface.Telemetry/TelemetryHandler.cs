@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.Design;
+using System.ComponentModel.Design;
 using System.Net;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
@@ -63,9 +63,9 @@ public static class TelemetryHandler
 
             foreach (var manager in PEInterface.Managers)
             {
-                if(manager.IsEnabled()) ManagerMagicValue |= mask;
+                if (manager.IsEnabled()) ManagerMagicValue |= mask;
                 mask = mask << 1;
-                if(manager.IsEnabled() && manager.Status.Found) ManagerMagicValue |= mask;
+                if (manager.IsEnabled() && manager.Status.Found) ManagerMagicValue |= mask;
                 mask = mask << 1;
 
                 if (mask == 0x1)
@@ -82,7 +82,7 @@ public static class TelemetryHandler
                 else if (setting.StartsWith("Disable")) enabled = !Settings.Get(setting);
                 else enabled = Settings.Get(setting);
 
-                if(enabled) SettingsMagicValue |= mask;
+                if (enabled) SettingsMagicValue |= mask;
                 mask = mask << 1;
 
                 if (mask == 0x1)
