@@ -78,7 +78,9 @@ languageFlagsRemap = {
     "tg": "ph",
     "sq": "al",
     "kn": "in",
-    "sa": "in"
+    "sa": "in",
+    "gu": "in",
+    "ur": "pk"
 }
 
 

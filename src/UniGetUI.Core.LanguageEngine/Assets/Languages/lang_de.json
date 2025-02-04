@@ -1,5 +1,5 @@
 {
-  "(Last checked: {0})": "(Zuletzt geprüft: {0})",
+  "(Last checked: {0})": "(Letzte Überprüfung: {0})",
   "(Number {0} in the queue)": "(Position {0} in der Warteschlange)",
   "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry": "@Datacra5H, @ebnater, @Seeloewen, @michaelmairegger, @CanePlayz, @1270o1, @yrjarv, @alxhu-dev, @Araxxas, @martinwilco",
   "0 packages found": "0 Pakete gefunden",
@@ -28,7 +28,7 @@
   "Add a source to {0}": "Quelle zu {0} hinzufügen",
   "Add a timestamp to the backup file names": "Zeitstempel an den Sicherungsdateinamen anhängen",
   "Add a timestamp to the backup files": "Zeitstempel an die Sicherungsdateien anhängen",
-  "Add packages or open an existing bundle": "Pakete hinzufügen oder existierendes Bündel öffnen",
+  "Add packages or open an existing bundle": "Pakete hinzufügen oder ein vorhandenes Bündel öffnen",
   "Add packages or open an existing package bundle": "Pakete hinzufügen oder ein vorhandenes Paketbündel öffnen",
   "Add packages to start": "Pakete zum Starten hinzufügen",
   "Add selection to bundle": "Auswahl zum Bündel hinzufügen",
