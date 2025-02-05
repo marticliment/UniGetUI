@@ -1,5 +1,3 @@
-using System.ComponentModel.Design;
-using System.Net;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;

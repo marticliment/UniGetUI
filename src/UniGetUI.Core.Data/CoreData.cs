@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
@@ -10,8 +10,8 @@ namespace UniGetUI.Core.Data
     {
         private static int? __code_page;
         public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
-        public const string VersionName =  "3.1.6-beta3"; // Do not modify this line, use file scripts/apply_versions.py
-        public const int BuildNumber =  78; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName =  "3.1.6-beta4"; // Do not modify this line, use file scripts/apply_versions.py
+        public const int BuildNumber =  79; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 
@@ -171,7 +171,7 @@ namespace UniGetUI.Core.Data
             }
         }
 
-        public static string GSudoPath = "";
+        public static string ElevatorPath = "";
 
         /// <summary>
         /// This method will return the most appropriate data directory.

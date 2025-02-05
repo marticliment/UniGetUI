@@ -57,7 +57,7 @@ namespace UniGetUI.PackageEngine.Operations
                 }
 
                 admin = true;
-                process.StartInfo.FileName = CoreData.GSudoPath;
+                process.StartInfo.FileName = CoreData.ElevatorPath;
                 process.StartInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetAddSourceParameters(Source));
             }
             else
@@ -103,7 +103,7 @@ namespace UniGetUI.PackageEngine.Operations
                 {
                     CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
                 }
-                process.StartInfo.FileName = CoreData.GSudoPath;
+                process.StartInfo.FileName = CoreData.ElevatorPath;
                 process.StartInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetRemoveSourceParameters(Source));
 
             }

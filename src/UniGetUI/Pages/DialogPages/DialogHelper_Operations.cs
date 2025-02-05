@@ -70,7 +70,7 @@ public static partial class DialogHelper
 
         ScrollViewer ScrollView = new()
         {
-            MaxHeight = MainApp.Instance.MainWindow.NavigationPage.ActualHeight > 800? 500: 300,
+            MaxHeight = MainApp.Instance.MainWindow.NavigationPage.ActualHeight > 800 ? 500 : 300,
             MaxWidth = 800,
             CornerRadius = new CornerRadius(6),
             Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"],
@@ -242,7 +242,7 @@ public static partial class DialogHelper
 
         EventHandler<(string, AbstractOperation.LineType)> AddLineLambda = (_, line) => MainApp.Dispatcher.TryEnqueue(() =>
         {
-            if (LastLineWasProgress) par.Inlines.RemoveAt(par.Inlines.Count-1);
+            if (LastLineWasProgress) par.Inlines.RemoveAt(par.Inlines.Count - 1);
 
             LastLineWasProgress = false;
             if (line.Item2 is AbstractOperation.LineType.Information)
@@ -280,9 +280,10 @@ public static partial class DialogHelper
                 if (line is Run run)
                     text += run + "\n";
             }
+
             WindowsClipboard.SetText(text);
         }
+
         operation.LogLineAdded -= AddLineLambda;
     }
 }
-

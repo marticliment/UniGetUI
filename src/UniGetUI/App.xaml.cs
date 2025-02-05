@@ -109,7 +109,7 @@ namespace UniGetUI
             if (!DEBUG && !Settings.Get("DisableUniGetUIElevator"))
             {
                 Logger.ImportantInfo("Using built-in UniGetUI Elevator");
-                CoreData.GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "UniGetUI Elevator.exe");
+                CoreData.ElevatorPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "UniGetUI Elevator.exe");
             }
             else if (Settings.Get("UseUserGSudo"))
             {
@@ -117,18 +117,18 @@ namespace UniGetUI
                 if (found)
                 {
                     Logger.Info($"Using System GSudo at {gsudo_path}");
-                    CoreData.GSudoPath = gsudo_path;
+                    CoreData.ElevatorPath = gsudo_path;
                 }
                 else
                 {
                     Logger.Error("System GSudo enabled but not found!");
-                    CoreData.GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
+                    CoreData.ElevatorPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
                 }
             }
             else
             {
-                Logger.Warn($"Using bundled GSudo at {CoreData.GSudoPath} since UniGetUI Elevator is not available!");
-                CoreData.GSudoPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
+                Logger.Warn($"Using bundled GSudo at {CoreData.ElevatorPath} since UniGetUI Elevator is not available!");
+                CoreData.ElevatorPath = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Utilities", "gsudo.exe");
             }
         }
 

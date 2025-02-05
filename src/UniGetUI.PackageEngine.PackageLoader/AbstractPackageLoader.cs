@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.PackageLoader
@@ -48,11 +49,18 @@ namespace UniGetUI.PackageEngine.PackageLoader
         private readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS;
         private readonly bool DISABLE_RELOAD;
         private readonly bool PACKAGES_CHECKED_BY_DEFAULT;
+        private readonly bool REQUIRES_INTERNET;
         protected string LOADER_IDENTIFIER;
         private int LoadOperationIdentifier;
         protected IEnumerable<IPackageManager> Managers { get; private set; }
 
-        public AbstractPackageLoader(IEnumerable<IPackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false, bool DisableReload = false, bool CheckedBydefault = false)
+        public AbstractPackageLoader(
+            IEnumerable<IPackageManager> managers,
+            string identifier,
+            bool AllowMultiplePackageVersions,
+            bool DisableReload,
+            bool CheckedBydefault,
+            bool RequiresInternet)
         {
             Managers = managers;
             PackageReference = new ConcurrentDictionary<long, IPackage>();
@@ -63,6 +71,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             ALLOW_MULTIPLE_PACKAGE_VERSIONS = AllowMultiplePackageVersions;
             LOADER_IDENTIFIER = identifier;
             ALLOW_MULTIPLE_PACKAGE_VERSIONS = AllowMultiplePackageVersions;
+            REQUIRES_INTERNET = RequiresInternet;
         }
 
         /// <summary>
@@ -107,6 +116,11 @@ namespace UniGetUI.PackageEngine.PackageLoader
             int current_identifier = LoadOperationIdentifier;
             IsLoading = true;
             StartedLoading?.Invoke(this, EventArgs.Empty);
+
+            if (REQUIRES_INTERNET)
+            {
+                await CoreTools.WaitForInternetConnection();
+            }
 
             List<Task<IEnumerable<IPackage>>> tasks = [];
 

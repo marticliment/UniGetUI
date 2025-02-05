@@ -6,6 +6,7 @@ using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageOperations;
 
@@ -55,7 +56,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             return Package.OverridenOptions.RunAsAdministrator is true
                     || Options.RunAsAdministrator
-                    || (Settings.Get("AlwaysElevate" + Package.Manager.Name) && !Package.OverridenOptions.RunAsAdministrator is false);
+                    || (Settings.Get("AlwaysElevate" + Package.Manager.Name) && Package.OverridenOptions.RunAsAdministrator != false);
         }
 
         protected override void ApplyRetryAction(string retryMode)
@@ -94,19 +95,27 @@ namespace UniGetUI.PackageEngine.Operations
                     CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
                 }
 
-                process.StartInfo.FileName = CoreData.GSudoPath;
-                process.StartInfo.Arguments =
-                    $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
+                if (Package.Manager is WinGet)
+                {
+                    string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+                    process.StartInfo.Environment["TEMP"] = WinGetTemp;
+                    process.StartInfo.Environment["TMP"] = WinGetTemp;
+                }
+                process.StartInfo.FileName = CoreData.ElevatorPath;
+                process.StartInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
             else
             {
                 process.StartInfo.FileName = Package.Manager.Status.ExecutablePath;
                 process.StartInfo.Arguments = $"{Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
-            ApplyCapabilities(admin,
+
+            ApplyCapabilities(
+                admin,
                 Options.InteractiveInstallation,
                 (Options.SkipHashCheck && Role is not OperationType.Uninstall),
-                Package.OverridenOptions.Scope ?? Options.InstallationScope);
+                Package.OverridenOptions.Scope ?? Options.InstallationScope
+            );
         }
 
         protected sealed override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)

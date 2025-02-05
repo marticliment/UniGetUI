@@ -349,8 +349,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 if (Settings.Get("DisableUpdateVcpkgGitPorts")) logger.Error("User has disabled updating sources");
                 if (!found) logger.Error("Vcpkg was not found???");
                 if (!gitFound) logger.Error("Vcpkg sources won't be updated since git was not found");
-                if (!vcpkgRootFound) logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable / the custom vcpkg root setting were not set");
-                logger.Close(Settings.Get("DisableUpdateVcpkgGitPorts")? 0: 1);
+                if (!vcpkgRootFound) logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable or custom vcpkg root setting was not set");
+                logger.Close(Settings.Get("DisableUpdateVcpkgGitPorts") ? 0 : 1);
                 return;
             }
 
@@ -404,6 +404,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             {
                 vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
             }
+
             if (vcpkgRoot == null)
             {
                 // Unfortuanately, we can't use `GetVcpkgPath` for this
@@ -461,6 +462,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 {
                     Logger.Warn($"The built-in triplet directory {tripletLocation} does not exist; triplets will not be loaded.");
                 }
+
                 if (Path.Exists(communityTripletLocation))
                 {
                     tripletFiles = tripletFiles.Concat(Directory.EnumerateFiles(communityTripletLocation));
@@ -476,6 +478,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     Triplets.Add(triplet);
                 }
             }
+
             return Triplets;
         }
     }
