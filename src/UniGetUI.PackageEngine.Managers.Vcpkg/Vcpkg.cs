@@ -226,7 +226,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " list",
-                    // vcpkg has an --x-json flag that would list installed packages in JSON, but it's expiremental
+                    // vcpkg has an --x-json flag that would list installed packages in JSON, but it's experimental
                     // TODO: Once --x-json is stable migrate to --x-json
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -407,7 +407,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
             if (vcpkgRoot == null)
             {
-                // Unfortuanately, we can't use `GetVcpkgPath` for this
+                // Unfortunately, we can't use `GetVcpkgPath` for this
                 // as it would become a bunch of functions calling each other
                 var (found, path) = CoreTools.Which("vcpkg");
                 path = Path.GetDirectoryName(path);

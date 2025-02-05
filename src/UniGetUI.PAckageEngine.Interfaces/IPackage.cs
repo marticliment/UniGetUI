@@ -23,7 +23,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         public string AutomationName { get; }
 
         /// <summary>
-        /// Returns an identifier that can be used to compare different packahe instances that refer to the same package.
+        /// Returns an identifier that can be used to compare different package instances that refer to the same package.
         /// What is taken into account:
         ///    - Manager and Source
         ///    - Package Identifier
@@ -32,7 +32,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         public long GetHash();
 
         /// <summary>
-        /// Returns an identifier that can be used to compare different packahe instances that refer to the same package.
+        /// Returns an identifier that can be used to compare different package instances that refer to the same package.
         /// What is taken into account:
         ///    - Manager and Source
         ///    - Package Identifier

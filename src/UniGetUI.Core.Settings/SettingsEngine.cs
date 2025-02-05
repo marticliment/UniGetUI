@@ -16,7 +16,7 @@ namespace UniGetUI.Core.SettingsEngine
                 return result ^ invert;
             }
 
-            // Otherwhise, load the value from disk and cache that setting
+            // Otherwise, load the value from disk and cache that setting
             result = File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting));
             booleanSettings[setting] = result;
             return result ^ invert;
@@ -59,7 +59,7 @@ namespace UniGetUI.Core.SettingsEngine
                 return value;
             }
 
-            // Otherwhise, load the setting from disk and cache that setting
+            // Otherwise, load the setting from disk and cache that setting
             value = "";
             if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
             {

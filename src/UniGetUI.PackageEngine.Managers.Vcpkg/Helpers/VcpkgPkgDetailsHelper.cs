@@ -43,7 +43,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             // https://api.github.com/repos/{VCPKG_REPO}/commits/{CommitHash}
 
             List<string> Tags = [];
-            // TODO: the "features" and "dependencies" keys could also be good candgidates for tags, however their type specifications are all over -
+            // TODO: the "features" and "dependencies" keys could also be good candidates for tags, however their type specifications are all over -
             // strings, dictionaries, arrays - so one would first have to figure out how to handle that.
             // See https://learn.microsoft.com/en-us/vcpkg/reference/vcpkg-json
             if (PackagePrefix.Contains('['))

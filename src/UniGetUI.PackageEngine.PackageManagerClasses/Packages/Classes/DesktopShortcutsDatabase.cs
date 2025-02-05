@@ -28,7 +28,7 @@ public static class DesktopShortcutsDatabase
     /// Adds a desktop shortcut to the deletable desktop shortcuts database
     /// </summary>
     /// <param name="shortcutPath">The path of the shortcut to delete</param>
-    /// <param name="deletable">Whether or not to mark this entry as deletable in the databse. Defaults to true</param>
+    /// <param name="deletable">Whether or not to mark this entry as deletable in the database. Defaults to true</param>
     public static void AddToDatabase(string shortcutPath, bool deletable = true)
     {
         Settings.SetDictionaryItem("DeletableDesktopShortcuts", shortcutPath, deletable);

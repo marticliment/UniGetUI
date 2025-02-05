@@ -121,7 +121,7 @@ public class OperationControl: INotifyPropertyChanged
             if (!isOpRunning) await CoreTools.ResetUACForCurrentProcess();
         }
 
-        // Clean succesful operation from list
+        // Clean successful operation from list
         if (!Settings.Get("MaintainSuccessfulInstalls") && Operation is not DownloadOperation)
             await TimeoutAndClose();
     }

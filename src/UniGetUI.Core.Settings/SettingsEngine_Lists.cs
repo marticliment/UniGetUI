@@ -28,7 +28,7 @@ namespace UniGetUI.Core.SettingsEngine
                     return null;
                 }
 
-                // Otherwhise, load the setting from disk and cache that setting
+                // Otherwise, load the setting from disk and cache that setting
                 List<T> value = [];
 
                 var file = Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json");

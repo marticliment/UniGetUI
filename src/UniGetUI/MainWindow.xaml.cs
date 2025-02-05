@@ -236,7 +236,7 @@ namespace UniGetUI.Interface
         }
 
         /// <summary>
-        /// For a given deep link, perform the appropiate action
+        /// For a given deep link, perform the appropriate action
         /// </summary>
         /// <param name="link">the unigetui:// deep link to handle</param>
         private void HandleDeepLink(string link)

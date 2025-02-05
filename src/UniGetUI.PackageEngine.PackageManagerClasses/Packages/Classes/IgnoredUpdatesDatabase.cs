@@ -118,7 +118,7 @@ public static class IgnoredUpdatesDatabase
     /// </summary>
     /// <param name="ignoredId">The Ignored Identifier to check</param>
     /// <param name="version">The version to check</param>
-    /// <returns>True if the package is ignored, false otherwhise</returns>
+    /// <returns>True if the package is ignored, false otherwise</returns>
     public static bool HasUpdatesIgnored(string ignoredId, string version = "*")
     {
         string? ignoredVersion = Settings.GetDictionaryItem<string, string>("IgnoredPackageUpdates", ignoredId);
