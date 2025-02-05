@@ -21,7 +21,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Microsoft.Windows.AppNotifications;
 using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
-using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
 
@@ -210,8 +209,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                if (MainApp.Operations._operationList.Any()
-                    && MainApp.Operations._operationList.Any(x => x.Operation.Status is OperationStatus.Running or OperationStatus.InQueue))
+                if (MainApp.Operations.AreThereRunningOperations())
                 {
                     args.Cancel = true;
                     ContentDialog d = new()

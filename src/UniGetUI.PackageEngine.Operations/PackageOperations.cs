@@ -92,11 +92,12 @@ namespace UniGetUI.PackageEngine.Operations
                 admin = true;
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
+                    RequestCachingOfUACPrompt();
                 }
 
                 if (Package.Manager is WinGet)
                 {
+                    // Change WinGet's TEMP folder location, to prevent ACL corruption
                     string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
                     process.StartInfo.Environment["TEMP"] = WinGetTemp;
                     process.StartInfo.Environment["TMP"] = WinGetTemp;

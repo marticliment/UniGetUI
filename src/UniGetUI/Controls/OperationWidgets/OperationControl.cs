@@ -20,6 +20,7 @@ using UniGetUI.PackageEngine.Operations;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using UniGetUI.Interface.Telemetry;
+using UniGetUI.PackageEngine;
 
 namespace UniGetUI.Controls.OperationWidgets;
 
@@ -106,24 +107,11 @@ public class OperationControl: INotifyPropertyChanged
         // Success notification
         ShowSuccessToast();
 
-        // Handle UAC for batches
-        if (Settings.Get("DoCacheAdminRightsForBatches"))
-        {
-            bool isOpRunning = false;
-            foreach (var op in MainApp.Operations._operationList)
-            {
-                if (op.Operation.Status is OperationStatus.Running or OperationStatus.InQueue)
-                {
-                    isOpRunning = true;
-                    break;
-                }
-            }
-            if (!isOpRunning) await CoreTools.ResetUACForCurrentProcess();
-        }
-
-        // Clean successful operation from list
+        // Clean succesful operation from list
         if (!Settings.Get("MaintainSuccessfulInstalls") && Operation is not DownloadOperation)
+        {
             await TimeoutAndClose();
+        }
     }
 
     private void OnOperationFailed(object? sender, EventArgs e)
@@ -131,7 +119,7 @@ public class OperationControl: INotifyPropertyChanged
         ShowErrorToast();
     }
 
-    private void OnOperationFinished(object? sender, EventArgs e)
+    private async void OnOperationFinished(object? sender, EventArgs e)
     {
         // Remove progress notification (if any)
         AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
@@ -156,6 +144,24 @@ public class OperationControl: INotifyPropertyChanged
         rawOutput.Add("");
         rawOutput.Add("");
         rawOutput.Add("");
+
+        // Handle UAC for batches
+        if (Settings.Get("DoCacheAdminRightsForBatches"))
+        {
+            if (!MainApp.Operations.AreThereRunningOperations())
+            {
+                Logger.Info("Clearing UAC prompt since there are no remaining operations");
+                await CoreTools.ResetUACForCurrentProcess();
+            }
+        }
+
+        // Handle newly created shortcuts
+        if(Settings.Get("AskToDeleteNewDesktopShortcuts")
+            && !MainApp.Operations.AreThereRunningOperations()
+            && DesktopShortcutsDatabase.GetUnknownShortcuts().Any())
+        {
+            _ = DialogHelper.HandleNewDesktopShortcuts();
+        }
     }
 
     private async void LoadIcon()
@@ -325,13 +331,6 @@ public class OperationControl: INotifyPropertyChanged
 
         MainApp.Operations._operationList.Remove(this);
         while(AbstractOperation.OperationQueue.Remove(Operation));
-
-        if (MainApp.Operations._operationList.Count == 0
-            && DesktopShortcutsDatabase.GetUnknownShortcuts().Count != 0
-            && Settings.Get("AskToDeleteNewDesktopShortcuts"))
-        {
-            _ = DialogHelper.HandleNewDesktopShortcuts();
-        }
     }
 
     private string _buttonText;
@@ -476,9 +475,9 @@ public class OperationControl: INotifyPropertyChanged
         }
     }
 
-    public List<BetterMenuItem> GetRetryOptions(Action callback)
+    public List<MenuFlyoutItemBase> GetRetryOptions(Action callback)
     {
-        var retryOptionsMenu = new List<BetterMenuItem>();
+        var retryOptionsMenu = new List<MenuFlyoutItemBase>();
 
         if (Operation is SourceOperation sourceOp && !sourceOp.ForceAsAdministrator)
         {
@@ -538,14 +537,41 @@ public class OperationControl: INotifyPropertyChanged
                 };
                 retryOptionsMenu.Add(skiphashButton);
             }
+
+            if (packageOp is UpdatePackageOperation && packageOp.Status is OperationStatus.Failed or OperationStatus.Canceled)
+            {
+                retryOptionsMenu.Add(new MenuFlyoutSeparator());
+
+                var skipThisVersion = new BetterMenuItem() { Text = CoreTools.Translate("Skip this version") };
+                skipThisVersion.IconName = IconType.Skip;
+                skipThisVersion.Click += async (_, _) =>
+                {
+                    callback();
+                    await packageOp.Package.AddToIgnoredUpdatesAsync(packageOp.Package.Version);
+                    PEInterface.UpgradablePackagesLoader.Remove(packageOp.Package);
+                    Close();
+                };
+                retryOptionsMenu.Add(skipThisVersion);
+
+                var ignoreUpdates = new BetterMenuItem() { Text = CoreTools.Translate("Ignore updates for this package") };
+                ignoreUpdates.IconName = IconType.Pin;
+                ignoreUpdates.Click += async (_, _) =>
+                {
+                    callback();
+                    await packageOp.Package.AddToIgnoredUpdatesAsync();
+                    PEInterface.UpgradablePackagesLoader.Remove(packageOp.Package);
+                    Close();
+                };
+                retryOptionsMenu.Add(ignoreUpdates);
+            }
         }
 
         return retryOptionsMenu;
     }
 
-    public List<BetterMenuItem> GetOperationOptions()
+    public List<MenuFlyoutItemBase> GetOperationOptions()
     {
-        var optionsMenu = new List<BetterMenuItem>();
+        var optionsMenu = new List<MenuFlyoutItemBase>();
         if (Operation is PackageOperation packageOp)
         {
             var details = new BetterMenuItem {
@@ -583,7 +609,6 @@ public class OperationControl: INotifyPropertyChanged
             };
             openLocation.IsEnabled = location is not null && Directory.Exists(location);
             optionsMenu.Add(openLocation);
-
         }
 
         else if (Operation is DownloadOperation downloadOp)

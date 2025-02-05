@@ -7,6 +7,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
 using UniGetUI.Interface.Telemetry;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.CargoManager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
@@ -21,7 +22,13 @@ public partial class MainApp
 {
     public static class Operations
     {
-        public static ObservableCollection<OperationControl> _operationList = [];
+        public static bool AreThereRunningOperations()
+        {
+            return _operationList.Any() &&
+                   _operationList.Any(x => x.Operation.Status is OperationStatus.Running or OperationStatus.InQueue);
+        }
+
+        public static ObservableCollection<OperationControl> _operationList = new();
 
         public static void Add(AbstractOperation op)
             => _operationList.Add(new(op));

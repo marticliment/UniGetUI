@@ -26,9 +26,13 @@ public enum TEL_OP_RESULT
 
 public static class TelemetryHandler
 {
-
+#if DEBUG
+    private const string HOST = "http://localhost:3000";
+#else
     private const string HOST = "https://marticliment.com/unigetui/statistics";
-    private static string[] SettingsToSend =
+#endif
+
+    private static readonly string[] SettingsToSend =
     [
         "DisableAutoUpdateWingetUI",
         "EnableUniGetUIBeta",
