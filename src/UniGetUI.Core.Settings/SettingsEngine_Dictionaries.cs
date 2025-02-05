@@ -34,7 +34,7 @@ namespace UniGetUI.Core.SettingsEngine
                 }
 
                 // Otherwise, load the setting from disk and cache that setting
-                Dictionary<K, V?> value = new();
+                Dictionary<K, V?> value = [];
                 if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json")))
                 {
                     string result = File.ReadAllText(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json"));
@@ -66,7 +66,7 @@ namespace UniGetUI.Core.SettingsEngine
             {
                 Logger.Error($"Could not load dictionary name {setting}");
                 Logger.Error(ex);
-                return new();
+                return [];
             }
         }
 
@@ -88,7 +88,7 @@ namespace UniGetUI.Core.SettingsEngine
             var file = Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json");
             try
             {
-                if (value.Any()) File.WriteAllText(file, JsonSerializer.Serialize(value));
+                if (value.Count != 0) File.WriteAllText(file, JsonSerializer.Serialize(value));
                 else if (File.Exists(file)) File.Delete(file);
             }
             catch (Exception e)

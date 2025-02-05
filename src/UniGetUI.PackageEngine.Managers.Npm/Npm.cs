@@ -122,7 +122,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 logger.AddToStdOut(strContents);
                 JsonObject? contents = null;
                 if (strContents.Any()) contents = JsonNode.Parse(strContents) as JsonObject;
-                foreach (var (packageId, packageData) in contents?.ToDictionary() ?? new())
+                foreach (var (packageId, packageData) in contents?.ToDictionary() ?? [])
                 {
                     string? version = packageData?["current"]?.ToString();
                     string? newVersion = packageData?["latest"]?.ToString();
@@ -168,7 +168,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 logger.AddToStdOut(strContents);
                 JsonObject? contents = null;
                 if (strContents.Any()) contents = (JsonNode.Parse(strContents) as JsonObject)?["dependencies"] as JsonObject;
-                foreach (var (packageId, packageData) in contents?.ToDictionary() ?? new())
+                foreach (var (packageId, packageData) in contents?.ToDictionary() ?? [])
                 {
                     string? version = packageData?["version"]?.ToString();
                     if (version is not null)

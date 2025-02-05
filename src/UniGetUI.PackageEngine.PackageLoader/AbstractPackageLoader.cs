@@ -18,7 +18,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         public bool Any()
         {
-            return PackageReference.Any();
+            return !PackageReference.IsEmpty;
         }
 
         /// <summary>

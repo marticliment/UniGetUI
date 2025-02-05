@@ -105,7 +105,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
             p.Start();
 
-            Dictionary<string, string> PackageVersions = new();
+            Dictionary<string, string> PackageVersions = [];
             string optionString = CoreTools.Translate("option");
             string unknownVersion = CoreTools.Translate("Unknown");
             while ((line = p.StandardOutput.ReadLine()) is not null)
@@ -191,7 +191,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 // Sample line:
                 // (spaces) package name: package triplet   current -> latest
                 //         brotli:x64-mingw-dynamic         1.0.9#5 -> 1.1.0#1
-                if (line.StartsWith("\t"))
+                if (line.StartsWith('\t'))
                 {
                     line = line.Substring(1);
                     string[] PackageData = Regex.Replace(line, @"\s+", " ").Split(' ');
@@ -242,7 +242,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
             p.Start();
 
-            Dictionary<string, string> PackageVersions = new();
+            Dictionary<string, string> PackageVersions = [];
             while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);

@@ -17,8 +17,10 @@ public static partial class DialogHelper
     {
         ContentDialog dialog = new()
         {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style, XamlRoot = Window.XamlRoot,
-            Resources = {
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            XamlRoot = Window.XamlRoot,
+            Resources =
+            {
                 ["ContentDialogMaxWidth"] = 850,
                 ["ContentDialogMaxHeight"] = 800,
             },
@@ -118,7 +120,7 @@ public static partial class DialogHelper
         Control _retryButton;
 
         var retryOptions = opControl.GetRetryOptions(dialog.Hide);
-        if (retryOptions.Any())
+        if (retryOptions.Count != 0)
         {
             SplitButton RetryButton = new SplitButton
             {

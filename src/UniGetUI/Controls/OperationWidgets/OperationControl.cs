@@ -252,7 +252,7 @@ public class OperationControl: INotifyPropertyChanged
 
         // Load operation-specific entries
         var normalOptions = GetOperationOptions();
-        if (normalOptions.Any())
+        if (normalOptions.Count != 0)
         {
             foreach(var item in normalOptions)
             {
@@ -294,7 +294,7 @@ public class OperationControl: INotifyPropertyChanged
 
             // Add extra retry options, if applicable
             var extraRetry = GetRetryOptions(() => { });
-            if (extraRetry.Any())
+            if (extraRetry.Count != 0)
             {
                 OpMenu.Items.Add(new MenuFlyoutSeparator());
 
@@ -327,7 +327,7 @@ public class OperationControl: INotifyPropertyChanged
         while(AbstractOperation.OperationQueue.Remove(Operation));
 
         if (MainApp.Operations._operationList.Count == 0
-            && DesktopShortcutsDatabase.GetUnknownShortcuts().Any()
+            && DesktopShortcutsDatabase.GetUnknownShortcuts().Count != 0
             && Settings.Get("AskToDeleteNewDesktopShortcuts"))
         {
             _ = DialogHelper.HandleNewDesktopShortcuts();

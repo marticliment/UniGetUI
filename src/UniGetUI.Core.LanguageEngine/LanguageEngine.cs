@@ -59,7 +59,7 @@ namespace UniGetUI.Core.Language
             {
 
                 string BundledLangFileToLoad = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
-                JsonObject BundledContents = new();
+                JsonObject BundledContents = [];
 
                 if (!File.Exists(BundledLangFileToLoad))
                 {
