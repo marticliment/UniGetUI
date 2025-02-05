@@ -89,10 +89,10 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
 
         try
         {
-            var installOptions = NativePackageHandler.GetInstallationOptions(package, operation);
-            if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationRequired
-                or ElevationRequirement.ElevatesSelf)
+            var installOptions = NativePackageHandler.GetInstallationOptions(package, options, operation);
+            if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationRequired or ElevationRequirement.ElevatesSelf)
             {
+                Logger.Info("Package requires elevation, forcing administrator rights...");
                 package.OverridenOptions.RunAsAdministrator = true;
             }
             else if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationProhibited)
@@ -106,11 +106,19 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
                     throw new UnauthorizedAccessException(
                         CoreTools.Translate("This package cannot be installed from an elevated context.")
                         + CoreTools.Translate("Please check the installation options for this package and try again"));
+
                 package.OverridenOptions.RunAsAdministrator = false;
+            }
+            else if(installOptions?.Scope is PackageInstallerScope.System/* or PackageInstallerScope.Unknown*/)
+            {
+                Logger.Info("Package is installed on a system-wide scope, forcing administrator rights...");
+                package.OverridenOptions.RunAsAdministrator = true;
             }
         }
         catch (Exception ex)
         {
+            if (ex is UnauthorizedAccessException) throw;
+
             Logger.Error("Recovered from fatal WinGet exception:");
             Logger.Error(ex);
         }
