@@ -313,6 +313,10 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                     Environment.SetEnvironmentVariable("PATH", $"{status.ExecutablePath.Replace("\\choco.exe", "\\bin")};{path}", EnvironmentVariableTarget.User);
                     Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.User);
                 }
+                else
+                {
+                    Logger.Info("UniGetUI Chocolatey was found in the path");
+                }
             }
 
             // Trick chocolatey into using the wanted installation

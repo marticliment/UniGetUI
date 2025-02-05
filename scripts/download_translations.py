@@ -149,6 +149,8 @@ try:
     print()
     print("  Updating README.md...")
 
+    time.sleep(1)
+
     # Generate language table
     readmeFilename = os.path.join(root_dir, "README.md")
 
