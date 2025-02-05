@@ -210,8 +210,7 @@ namespace UniGetUI.Interface
             }
             else
             {
-                if (MainApp.Operations._operationList.Any()
-                    && MainApp.Operations._operationList.Where(x => x.Operation.Status is OperationStatus.Running or OperationStatus.InQueue).Any())
+                if (MainApp.Operations.AreThereRunningOperations())
                 {
                     args.Cancel = true;
                     ContentDialog d = new()

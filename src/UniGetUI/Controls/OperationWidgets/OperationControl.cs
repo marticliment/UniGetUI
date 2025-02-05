@@ -136,7 +136,7 @@ public class OperationControl: INotifyPropertyChanged
         ShowErrorToast();
     }
 
-    private void OnOperationFinished(object? sender, EventArgs e)
+    private async void OnOperationFinished(object? sender, EventArgs e)
     {
         // Remove progress notification (if any)
         AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
@@ -159,6 +159,14 @@ public class OperationControl: INotifyPropertyChanged
         rawOutput.Add("");
         rawOutput.Add("");
         rawOutput.Add("");
+
+        // Handle newly created shortcuts
+        if(Settings.Get("AskToDeleteNewDesktopShortcuts")
+            && !MainApp.Operations.AreThereRunningOperations()
+            && DesktopShortcutsDatabase.GetUnknownShortcuts().Any())
+        {
+            _ = DialogHelper.HandleNewDesktopShortcuts();
+        }
     }
 
     private async void LoadIcon()
@@ -324,13 +332,6 @@ public class OperationControl: INotifyPropertyChanged
 
         MainApp.Operations._operationList.Remove(this);
         while(AbstractOperation.OperationQueue.Remove(Operation));
-
-        if (MainApp.Operations._operationList.Count == 0
-            && DesktopShortcutsDatabase.GetUnknownShortcuts().Any()
-            && Settings.Get("AskToDeleteNewDesktopShortcuts"))
-        {
-            _ = DialogHelper.HandleNewDesktopShortcuts();
-        }
     }
 
     private string _buttonText;
