@@ -302,7 +302,9 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             status.Version = process.StandardOutput.ReadToEnd().Trim();
 
             // If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
-            if (/*Settings.Get("ShownWelcomeWizard") && */!Settings.Get("UseSystemChocolatey") && !File.Exists(@"C:\ProgramData\Chocolatey\bin\choco.exe"))
+            if (!Settings.Get("UseSystemChocolatey")
+                && !File.Exists("C:\\ProgramData\\Chocolatey\\bin\\choco.exe"))
+                /* && Settings.Get("ShownWelcomeWizard")) */
             {
                 string? path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
                 if (!path?.Contains(status.ExecutablePath.Replace("\\choco.exe", "\\bin")) ?? false)
