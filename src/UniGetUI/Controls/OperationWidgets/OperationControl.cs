@@ -25,6 +25,7 @@ using UniGetUI.PackageEngine.Operations;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using UniGetUI.Interface.Telemetry;
+using UniGetUI.PackageEngine;
 
 namespace UniGetUI.Controls.OperationWidgets;
 
@@ -474,9 +475,9 @@ public class OperationControl: INotifyPropertyChanged
         }
     }
 
-    public List<BetterMenuItem> GetRetryOptions(Action callback)
+    public List<MenuFlyoutItemBase> GetRetryOptions(Action callback)
     {
-        var retryOptionsMenu = new List<BetterMenuItem>();
+        var retryOptionsMenu = new List<MenuFlyoutItemBase>();
 
         if (Operation is SourceOperation sourceOp && !sourceOp.ForceAsAdministrator)
         {
@@ -528,14 +529,41 @@ public class OperationControl: INotifyPropertyChanged
                 };
                 retryOptionsMenu.Add(skiphashButton);
             }
+
+            if (packageOp is UpdatePackageOperation && packageOp.Status is OperationStatus.Failed or OperationStatus.Canceled)
+            {
+                retryOptionsMenu.Add(new MenuFlyoutSeparator());
+
+                var skipThisVersion = new BetterMenuItem() { Text = CoreTools.Translate("Skip this version") };
+                skipThisVersion.IconName = IconType.Skip;
+                skipThisVersion.Click += async (_, _) =>
+                {
+                    callback();
+                    await packageOp.Package.AddToIgnoredUpdatesAsync(packageOp.Package.Version);
+                    PEInterface.UpgradablePackagesLoader.Remove(packageOp.Package);
+                    Close();
+                };
+                retryOptionsMenu.Add(skipThisVersion);
+
+                var ignoreUpdates = new BetterMenuItem() { Text = CoreTools.Translate("Ignore updates for this package") };
+                ignoreUpdates.IconName = IconType.Pin;
+                ignoreUpdates.Click += async (_, _) =>
+                {
+                    callback();
+                    await packageOp.Package.AddToIgnoredUpdatesAsync();
+                    PEInterface.UpgradablePackagesLoader.Remove(packageOp.Package);
+                    Close();
+                };
+                retryOptionsMenu.Add(ignoreUpdates);
+            }
         }
 
         return retryOptionsMenu;
     }
 
-    public List<BetterMenuItem> GetOperationOptions()
+    public List<MenuFlyoutItemBase> GetOperationOptions()
     {
-        var optionsMenu = new List<BetterMenuItem>();
+        var optionsMenu = new List<MenuFlyoutItemBase>();
         if (Operation is PackageOperation packageOp)
         {
             var details = new BetterMenuItem() { Text = CoreTools.Translate("Package details") };
@@ -567,7 +595,6 @@ public class OperationControl: INotifyPropertyChanged
             };
             openLocation.IsEnabled = location is not null && Directory.Exists(location);
             optionsMenu.Add(openLocation);
-
         }
 
         else if (Operation is DownloadOperation downloadOp)
