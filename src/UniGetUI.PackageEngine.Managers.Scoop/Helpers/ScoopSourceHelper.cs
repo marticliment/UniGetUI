@@ -35,9 +35,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
         protected override IEnumerable<IManagerSource> GetSources_UnSafe()
         {
-            using var p = new Process()
+            using var p = new Process
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
                     Arguments = Manager.Properties.ExecutableCallArgs + " bucket list",

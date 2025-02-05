@@ -1,10 +1,8 @@
 using System.Diagnostics;
 using Windows.UI;
-using Microsoft.UI;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
@@ -229,17 +227,17 @@ public static partial class DialogHelper
     {
         ContentDialog? UpdatesDialog = new()
         {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style, XamlRoot = Window.XamlRoot
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style, XamlRoot = Window.XamlRoot,
+            Resources = {
+                ["ContentDialogMaxWidth"] = 1400,
+                ["ContentDialogMaxHeight"] = 1000,
+            },
+            SecondaryButtonText = CoreTools.Translate("Close"),
+            //UpdatesDialog.PrimaryButtonText = CoreTools.Translate("Reset");
+            DefaultButton = ContentDialogButton.None,
+            Title = CoreTools.Translate("Manage ignored updates"),
         };
-        UpdatesDialog.Resources["ContentDialogMaxWidth"] = 1400;
-        UpdatesDialog.Resources["ContentDialogMaxHeight"] = 1000;
 
-        UpdatesDialog.SecondaryButtonText = CoreTools.Translate("Close");
-
-        //UpdatesDialog.PrimaryButtonText = CoreTools.Translate("Reset");
-
-        UpdatesDialog.DefaultButton = ContentDialogButton.None;
-        UpdatesDialog.Title = CoreTools.Translate("Manage ignored updates");
         IgnoredUpdatesManager IgnoredUpdatesPage = new();
         UpdatesDialog.Content = IgnoredUpdatesPage;
         IgnoredUpdatesPage.Close += (_, _) => UpdatesDialog.Hide();
@@ -251,11 +249,13 @@ public static partial class DialogHelper
         ContentDialog? ShortcutsDialog = new()
         {
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            XamlRoot = Window.XamlRoot
+            XamlRoot = Window.XamlRoot,
+            Resources = {
+                ["ContentDialogMaxWidth"] = 1400,
+                ["ContentDialogMaxHeight"] = 1000,
+            },
+            Title = CoreTools.Translate("Automatic desktop shortcut remover"),
         };
-        ShortcutsDialog.Resources["ContentDialogMaxWidth"] = 1400;
-        ShortcutsDialog.Resources["ContentDialogMaxHeight"] = 1000;
-        ShortcutsDialog.Title = CoreTools.Translate("Automatic desktop shortcut remover");
 
         DesktopShortcutsManager DesktopShortcutsPage = new(NewShortucts);
         DesktopShortcutsPage.Close += (_, _) => ShortcutsDialog.Hide();
@@ -270,21 +270,21 @@ public static partial class DialogHelper
 
     public static async Task HandleNewDesktopShortcuts()
     {
-        var UnknownShortcuts = DesktopShortcutsDatabase.GetUnknownShortcuts();
+        var unknownShortcuts = DesktopShortcutsDatabase.GetUnknownShortcuts();
 
         if (!Settings.AreNotificationsDisabled())
         {
-            AppNotificationManager.Default.RemoveByTagAsync(CoreData.NewShortcutsNotificationTag.ToString());
+            await AppNotificationManager.Default.RemoveByTagAsync(CoreData.NewShortcutsNotificationTag.ToString());
             AppNotification notification;
 
-            if (UnknownShortcuts.Count == 1)
+            if (unknownShortcuts.Count == 1)
             {
                 AppNotificationBuilder builder = new AppNotificationBuilder()
                     .SetScenario(AppNotificationScenario.Default)
                     .SetTag(CoreData.NewShortcutsNotificationTag.ToString())
                     .AddText(CoreTools.Translate("Desktop shortcut created"))
                     .AddText(CoreTools.Translate("UniGetUI has detected a new desktop shortcut that can be deleted automatically."))
-                    .SetAttributionText(UnknownShortcuts.First().Split("\\").Last())
+                    .SetAttributionText(unknownShortcuts.First().Split("\\").Last())
                     .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI").Replace("'", "´"))
                         .AddArgument("action", NotificationArguments.Show)
                     )
@@ -295,14 +295,18 @@ public static partial class DialogHelper
             else
             {
                 string attribution = "";
-                foreach (string shortcut in UnknownShortcuts) attribution += shortcut.Split("\\").Last() + ", ";
+                foreach (string shortcut in unknownShortcuts)
+                {
+                    attribution += shortcut.Split("\\").Last() + ", ";
+                }
+
                 attribution = attribution.TrimEnd(' ').TrimEnd(',');
 
                 AppNotificationBuilder builder = new AppNotificationBuilder()
                     .SetScenario(AppNotificationScenario.Default)
                     .SetTag(CoreData.NewShortcutsNotificationTag.ToString())
-                    .AddText(CoreTools.Translate("{0} desktop shortcuts created", UnknownShortcuts.Count))
-                    .AddText(CoreTools.Translate("UniGetUI has detected {0} new desktop shortcuts that can be deleted automatically.", UnknownShortcuts.Count))
+                    .AddText(CoreTools.Translate("{0} desktop shortcuts created", unknownShortcuts.Count))
+                    .AddText(CoreTools.Translate("UniGetUI has detected {0} new desktop shortcuts that can be deleted automatically.", unknownShortcuts.Count))
                     .SetAttributionText(attribution)
                     .AddButton(new AppNotificationButton(CoreTools.Translate("Open UniGetUI").Replace("'", "´"))
                         .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
@@ -316,7 +320,7 @@ public static partial class DialogHelper
             AppNotificationManager.Default.Show(notification);
         }
 
-        await ManageDesktopShortcuts(UnknownShortcuts);
+        await ManageDesktopShortcuts(unknownShortcuts);
     }
 
     public static async void WarnAboutAdminRights()
@@ -361,12 +365,14 @@ public static partial class DialogHelper
         ContentDialog? NotesDialog = new()
         {
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            XamlRoot = Window.XamlRoot
+            XamlRoot = Window.XamlRoot,
+            Resources = {
+                ["ContentDialogMaxWidth"] = 12000,
+                ["ContentDialogMaxHeight"] = 10000,
+            },
+            CloseButtonText = CoreTools.Translate("Close"),
+            Title = CoreTools.Translate("Release notes"),
         };
-        NotesDialog.Resources["ContentDialogMaxWidth"] = 12000;
-        NotesDialog.Resources["ContentDialogMaxHeight"] = 10000;
-        NotesDialog.CloseButtonText = CoreTools.Translate("Close");
-        NotesDialog.Title = CoreTools.Translate("Release notes");
         ReleaseNotes? notes = new();
         notes.Close += (_, _) => NotesDialog.Hide();
         NotesDialog.Content = notes;
@@ -388,7 +394,7 @@ public static partial class DialogHelper
                 "WinGet is being repaired. Please wait until the process finishes.");
             bannerWasOpen = Window.WinGetWarningBanner.IsOpen;
             Window.WinGetWarningBanner.IsOpen = false;
-            Process p = new Process()
+            Process p = new Process
             {
                 StartInfo = new()
                 {
@@ -419,7 +425,7 @@ public static partial class DialogHelper
             if (Settings.Get("ForceLegacyBundledWinGet"))
                 Settings.Set("ForceLegacyBundledWinGet", false);
 
-            var c = new ContentDialog()
+            var c = new ContentDialog
             {
                 Title = CoreTools.Translate("WinGet was repaired successfully"),
                 Content = CoreTools.Translate("It is recommended to restart UniGetUI after WinGet has been repaired") +
@@ -452,7 +458,7 @@ public static partial class DialogHelper
             Logger.Error(ex);
             DialogHelper.HideLoadingDialog();
 
-            var c = new ContentDialog()
+            var c = new ContentDialog
             {
                 Title = CoreTools.Translate("WinGet could not be repaired"),
                 Content =
@@ -471,7 +477,7 @@ public static partial class DialogHelper
 
     public static async void ShowTelemetryDialog()
     {
-        var dialog = new ContentDialog()
+        var dialog = new ContentDialog
         {
             Title = CoreTools.Translate("Share anonymous usage data"),
             XamlRoot = Window.XamlRoot,
@@ -484,19 +490,19 @@ public static partial class DialogHelper
         var p = new Paragraph();
         MessageBlock.Blocks.Add(p);
 
-        p.Inlines.Add(new Run()
+        p.Inlines.Add(new Run
         {
             Text = CoreTools.Translate("UniGetUI collects anonymous usage data with the sole purpose of understanding and improving the user experience.")
         });
         p.Inlines.Add(new LineBreak());
-        p.Inlines.Add(new Run()
+        p.Inlines.Add(new Run
         {
             Text = CoreTools.Translate("No personal information is collected nor sent, and the collected data is anonimized, so it can't be back-tracked to you.")
         });
         p.Inlines.Add(new LineBreak());
         p.Inlines.Add(new LineBreak());
-        var link = new Hyperlink() { NavigateUri = new Uri("https://www.marticliment.com/unigetui/privacy/"), };
-        link.Inlines.Add(new Run()
+        var link = new Hyperlink { NavigateUri = new Uri("https://www.marticliment.com/unigetui/privacy/"), };
+        link.Inlines.Add(new Run
         {
             Text = CoreTools.Translate("More details about the shared data and how it will be processed"),
         });
@@ -504,12 +510,11 @@ public static partial class DialogHelper
         p.Inlines.Add(link);
         p.Inlines.Add(new LineBreak());
         p.Inlines.Add(new LineBreak());
-        p.Inlines.Add(new Run()
+        p.Inlines.Add(new Run
         {
             Text = CoreTools.Translate("Do you accept that UniGetUI collects and sends anonymous usage statistics, with the sole purpose of understanding and improving the user experience?"),
             FontWeight = FontWeights.SemiBold
         });
-
 
         dialog.PrimaryButtonText = CoreTools.Translate("Decline");
         dialog.SecondaryButtonText = CoreTools.Translate("Accept");
@@ -538,7 +543,7 @@ public static partial class DialogHelper
         Window.TelemetryWarner.IsOpen = true;
 
         Window.TelemetryWarner.Background = new SolidColorBrush(Color.FromArgb(62, 66, 135, 245));
-        Window.TelemetryWarner.IconSource = new FontIconSource()
+        Window.TelemetryWarner.IconSource = new FontIconSource
         {
             Glyph = "\uF167",
             FontSize = 14,
@@ -547,7 +552,7 @@ public static partial class DialogHelper
 
         Window.TelemetryWarner.IsClosable = true;
         Window.TelemetryWarner.Visibility = Visibility.Visible;
-        Window.TelemetryWarner.ActionButton = new Button()
+        Window.TelemetryWarner.ActionButton = new Button
         {
             Content = CoreTools.Translate("Settings"),
         };

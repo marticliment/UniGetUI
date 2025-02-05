@@ -30,11 +30,10 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             if (package.Source.IsVirtualManager)
                 return null;
 
-            else if (package.Source.Name == "msstore")
+            if (package.Source.Name == "msstore")
                 return GetMicrosoftStoreIcon(package);
 
-            else
-                return GetWinGetPackageIcon(package);
+            return GetWinGetPackageIcon(package);
         }
 
         protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)

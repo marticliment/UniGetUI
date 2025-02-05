@@ -16,7 +16,6 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
 using YamlDotNet.Serialization;
@@ -236,7 +235,9 @@ namespace UniGetUI.Interface.SoftwarePages
                 };
 
             foreach (AppBarButton toolButton in Icons.Keys)
+            {
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
+            }
 
             PackageDetails.Click += (_, _) =>
             {
@@ -293,9 +294,9 @@ namespace UniGetUI.Interface.SoftwarePages
             RichTextBlock rtb = new();
             var p = new Paragraph();
             rtb.Blocks.Add(p);
-            p.Inlines.Add(new Run() {Text = CoreTools.Translate("Are you sure you want to create a new package bundle? ")});
+            p.Inlines.Add(new Run {Text = CoreTools.Translate("Are you sure you want to create a new package bundle? ")});
             p.Inlines.Add(new LineBreak());
-            p.Inlines.Add(new Run() {Text = CoreTools.Translate("Any unsaved changes will be lost"), FontWeight = FontWeights.Bold});
+            p.Inlines.Add(new Run {Text = CoreTools.Translate("Any unsaved changes will be lost"), FontWeight = FontWeights.Bold});
 
             ContentDialog dialog = new()
             {
@@ -321,10 +322,10 @@ namespace UniGetUI.Interface.SoftwarePages
         public async Task ImportAndInstallPackage(IEnumerable<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? skiphash = null)
         {
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Preparing packages, please wait..."));
-            List<Package> packages_to_install = new();
+            List<Package> packages_to_install = [];
             foreach (IPackage package in packages)
             {
-                if(package is ImportedPackage imported)
+                if (package is ImportedPackage imported)
                 {
                     Logger.ImportantInfo($"Registering package {imported.Id} from manager {imported.Source.AsString}");
                     packages_to_install.Add(await imported.RegisterAndGetPackageAsync());
@@ -437,7 +438,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 {
                     // Select file
                     FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
-                    file = picker.Show(new List<string> { "*.ubundle", "*.json", "*.yaml", "*.xml" });
+                    file = picker.Show(["*.ubundle", "*.json", "*.yaml", "*.xml"]);
                     if (file == String.Empty)
                         return;
                 }
@@ -498,7 +499,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 // Get file
                 string defaultName = CoreTools.Translate("Package bundle") + ".ubundle";
-                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(new List<string> { "*.ubundle", "*.json", "*.yaml", "*.xml" }, defaultName);
+                string file = (new FileSavePicker(MainApp.Instance.MainWindow.GetWindowHandle())).Show(["*.ubundle", "*.json", "*.yaml", "*.xml"], defaultName);
                 if (file != String.Empty)
                 {
                     // Loading dialog
@@ -566,16 +567,18 @@ namespace UniGetUI.Interface.SoftwarePages
 
             static int Comparison(IPackage x, IPackage y)
             {
-                if(x.Id != y.Id) return String.Compare(x.Id, y.Id, StringComparison.Ordinal);
-                if(x.Name != y.Name) return String.Compare(x.Name, y.Name, StringComparison.Ordinal);
+                if (x.Id != y.Id) return String.Compare(x.Id, y.Id, StringComparison.Ordinal);
+                if (x.Name != y.Name) return String.Compare(x.Name, y.Name, StringComparison.Ordinal);
                 return (x.VersionAsFloat > y.VersionAsFloat) ? -1 : 1;
             }
 
             foreach (IPackage package in packages)
+            {
                 if (package is Package && !package.Source.IsVirtualManager)
                     exportable.packages.Add(await Task.Run(package.AsSerializable));
                 else
                     exportable.incompatible_packages.Add(package.AsSerializable_Incompatible());
+            }
 
             Logger.Debug("Finished loading serializable objects. Serializing with format " + formatType);
             string ExportableData;
@@ -639,7 +642,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 throw new ArgumentException("DeserializedData was null");
             }
 
-            List<IPackage> packages = new List<IPackage>();
+            List<IPackage> packages = [];
 
             foreach (SerializablePackage_v1 DeserializedPackage in DeserializedData.packages)
             {

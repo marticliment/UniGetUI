@@ -121,7 +121,7 @@ namespace UniGetUI.Interface.Dialogs
             if (Options.CustomInstallLocation == "") CustomInstallLocation.Text = packageInstallLocation;
             else CustomInstallLocation.Text = Options.CustomInstallLocation;
 
-            if (Options.CustomParameters.Any())
+            if (Options.CustomParameters.Count != 0)
             {
                 CustomParameters.Text = string.Join(' ', Options.CustomParameters);
             }

@@ -36,7 +36,7 @@ namespace UniGetUI.Interface.Widgets
     {
         private IPackageManager Manager { get; set; }
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private ObservableCollection<SourceItem> Sources = new();
+        private ObservableCollection<SourceItem> Sources = [];
 
         private ListView _datagrid { get; set; }
 

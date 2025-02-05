@@ -1,5 +1,3 @@
-using System.ComponentModel.Design;
-using System.Net;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
@@ -35,7 +33,7 @@ public static class TelemetryHandler
 #endif
 
     private static readonly string[] SettingsToSend =
-    {
+    [
         "DisableAutoUpdateWingetUI",
         "EnableUniGetUIBeta",
         "DisableSystemTray",
@@ -49,8 +47,8 @@ public static class TelemetryHandler
         "ForceLegacyBundledWinGet",
         "UseSystemChocolatey",
         "SP1", // UniGetUI is portable
-        "SP2" // UniGetUI was started as daemon
-    };
+        "SP2", // UniGetUI was started as daemon
+    ];
 
     // -------------------------------------------------------------------------
 

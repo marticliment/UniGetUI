@@ -30,7 +30,7 @@ public partial class Cargo : PackageManager
             new ManagerDependency(
                 "cargo-update",
                 Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
-                "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {cargo install cargo-update; if($error.count -ne 0){pause}}\"",
+                "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {cargo install cargo-update; if ($error.count -ne 0){pause}}\"",
                 "cargo install cargo-update",
                 async () => (await CoreTools.WhichAsync("cargo-install-update.exe")).Item1),
         ];
@@ -150,9 +150,9 @@ public partial class Cargo : PackageManager
             var name = CoreTools.FormatAsName(id);
             var oldVersion = match.Groups[2]?.Value?.Trim() ?? "";
             var newVersion = match.Groups[3]?.Value?.Trim() ?? "";
-            if(taskType is LoggableTaskType.ListUpdates && oldVersion != newVersion)
+            if (taskType is LoggableTaskType.ListUpdates && oldVersion != newVersion)
                 Packages.Add(new Package(name, id, oldVersion, newVersion, DefaultSource, this));
-            else if(taskType is LoggableTaskType.ListInstalledPackages)
+            else if (taskType is LoggableTaskType.ListInstalledPackages)
                 Packages.Add(new Package(name, id, oldVersion, DefaultSource, this));
         }
         return Packages;
@@ -160,7 +160,7 @@ public partial class Cargo : PackageManager
 
     private List<Match> GetInstalledCommandOutput()
     {
-        List<Match> output = new();
+        List<Match> output = [];
         Process p = GetProcess(Status.ExecutablePath, "install-update --list");
         IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.OtherTask, p);
         logger.AddToStdOut("Other task: Call the install-update command");

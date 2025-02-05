@@ -20,7 +20,7 @@ internal sealed class PowerShellPkgOperationHelper : PackagePkgOperationHelper
         if (options.CustomParameters is not null)
             parameters.AddRange(options.CustomParameters);
 
-        if(operation is not OperationType.Uninstall)
+        if (operation is not OperationType.Uninstall)
         {
             if (options.PreRelease)
                 parameters.Add("-AllowPrerelease");
@@ -35,7 +35,7 @@ internal sealed class PowerShellPkgOperationHelper : PackagePkgOperationHelper
             }
         }
 
-        if(operation is OperationType.Install)
+        if (operation is OperationType.Install)
         {
             if (options.SkipHashCheck)
                 parameters.Add("-SkipPublisherCheck");

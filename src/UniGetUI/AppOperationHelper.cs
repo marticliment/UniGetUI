@@ -25,8 +25,7 @@ public partial class MainApp
         public static bool AreThereRunningOperations()
         {
             return _operationList.Any() &&
-                   _operationList.Where(x => x.Operation.Status is OperationStatus.Running or OperationStatus.InQueue)
-                       .Any();
+                   _operationList.Any(x => x.Operation.Status is OperationStatus.Running or OperationStatus.InQueue);
         }
 
         public static ObservableCollection<OperationControl> _operationList = new();
@@ -40,7 +39,9 @@ public partial class MainApp
         public static void Remove(AbstractOperation op)
         {
             foreach(var control in _operationList.Where(x => x.Operation == op).ToArray())
+            {
                 _operationList.Remove(control);
+            }
         }
 
         /*
@@ -61,12 +62,12 @@ public partial class MainApp
                 if (details.InstallerUrl is null)
                 {
                     DialogHelper.HideLoadingDialog();
-                    var dialog = new ContentDialog();
-                    dialog.Title = CoreTools.Translate("Download failed");
-                    dialog.Content = CoreTools.Translate("No applicable installer was found for the package {0}", package.Name);
-                    dialog.PrimaryButtonText = CoreTools.Translate("Ok");
-                    dialog.DefaultButton = ContentDialogButton.Primary;
-                    dialog.XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot;
+                    var dialog = new ContentDialog { Title = CoreTools.Translate("Download failed"),
+                        Content = CoreTools.Translate("No applicable installer was found for the package {0}", package.Name),
+                        PrimaryButtonText = CoreTools.Translate("Ok"),
+                        DefaultButton = ContentDialogButton.Primary,
+                        XamlRoot = MainApp.Instance.MainWindow.Content.XamlRoot,
+                    };
                     await MainApp.Instance.MainWindow.ShowDialogAsync(dialog);
                     return null;
                 }
@@ -130,7 +131,10 @@ public partial class MainApp
 
         public static void Install(IReadOnlyList<IPackage> packages, TEL_InstallReferral referral, bool? elevated = null, bool? interactive = null, bool? no_integrity = null)
         {
-            foreach (var package in packages) _ = Install(package, referral, elevated, interactive, no_integrity);
+            foreach (var package in packages)
+            {
+                _ = Install(package, referral, elevated, interactive, no_integrity);
+            }
         }
 
         /*
@@ -150,7 +154,10 @@ public partial class MainApp
 
         public static void Update(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? no_integrity = null)
         {
-            foreach (var package in packages) _ = Update(package, elevated, interactive, no_integrity);
+            foreach (var package in packages)
+            {
+                _ = Update(package, elevated, interactive, no_integrity);
+            }
         }
 
         /*
@@ -187,7 +194,10 @@ public partial class MainApp
 
         public static void Uninstall(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? remove_data = null)
         {
-            foreach (var package in packages) _ = Uninstall(package, elevated, interactive, remove_data);
+            foreach (var package in packages)
+            {
+                _ = Uninstall(package, elevated, interactive, remove_data);
+            }
         }
     }
 }
