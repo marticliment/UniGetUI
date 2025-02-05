@@ -1,7 +1,9 @@
 using System.Diagnostics;
 using System.Text;
 using Windows.System;
+using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 
 namespace UniGetUI.PackageOperations;
@@ -57,6 +59,12 @@ public abstract class AbstractProcessOperation : AbstractOperation
         };
     }
 
+    private bool _requiresUACCache;
+    protected void RequestCachingOfUACPrompt()
+    {
+        _requiresUACCache = true;
+    }
+
     protected override async Task<OperationVeredict> PerformOperation()
     {
         if(process.StartInfo.UseShellExecute) throw new InvalidOperationException("UseShellExecute must be set to false");
@@ -70,6 +78,12 @@ public abstract class AbstractProcessOperation : AbstractOperation
         Line($" - FileName: \"{process.StartInfo.FileName.Trim()}\"", LineType.VerboseDetails);
         Line($" - Arguments: \"{process.StartInfo.Arguments.Trim()}\"", LineType.VerboseDetails);
         Line($"Start Time: \"{DateTime.Now}\"", LineType.VerboseDetails);
+
+        if (_requiresUACCache)
+        {
+            _requiresUACCache = false;
+            await CoreTools.CacheUACForCurrentProcess();
+        }
 
         process.Start();
         // process.BeginOutputReadLine();

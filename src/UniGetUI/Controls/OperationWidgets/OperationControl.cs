@@ -111,24 +111,11 @@ public class OperationControl: INotifyPropertyChanged
         // Success notification
         ShowSuccessToast();
 
-        // Handle UAC for batches
-        if (Settings.Get("DoCacheAdminRightsForBatches"))
-        {
-            bool isOpRunning = false;
-            foreach (var op in MainApp.Operations._operationList)
-            {
-                if (op.Operation.Status is OperationStatus.Running or OperationStatus.InQueue)
-                {
-                    isOpRunning = true;
-                    break;
-                }
-            }
-            if(!isOpRunning) await CoreTools.ResetUACForCurrentProcess();
-        }
-
         // Clean succesful operation from list
-        if(!Settings.Get("MaintainSuccessfulInstalls") && Operation is not DownloadOperation)
+        if (!Settings.Get("MaintainSuccessfulInstalls") && Operation is not DownloadOperation)
+        {
             await TimeoutAndClose();
+        }
     }
 
     private void OnOperationFailed(object? sender, EventArgs e)
@@ -159,6 +146,16 @@ public class OperationControl: INotifyPropertyChanged
         rawOutput.Add("");
         rawOutput.Add("");
         rawOutput.Add("");
+
+        // Handle UAC for batches
+        if (Settings.Get("DoCacheAdminRightsForBatches"))
+        {
+            if (!MainApp.Operations.AreThereRunningOperations())
+            {
+                Logger.Info("Clearing UAC prompt since there are no remaining operations");
+                await CoreTools.ResetUACForCurrentProcess();
+            }
+        }
 
         // Handle newly created shortcuts
         if(Settings.Get("AskToDeleteNewDesktopShortcuts")
