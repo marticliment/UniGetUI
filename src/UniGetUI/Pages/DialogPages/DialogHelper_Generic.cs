@@ -26,11 +26,12 @@ public static partial class DialogHelper
     {
         public static ContentDialog Create()
         {
-            return new ContentDialog()
+            var dialog = new ContentDialog()
             {
                 XamlRoot = Window.MainContentGrid.XamlRoot,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
+            return dialog;
         }
         public static ContentDialog Create(int maxWidth, int maxHeight)
         {
