@@ -237,7 +237,7 @@
                                 />
                             <widgets:ComboboxCard
                                 x:Name="ParallelOperationCount"
-                                Text="Choose how many operations shouls be performed in parallel"
+                                Text="Choose how many operations should be performed in parallel"
                                 SettingName="ParallelOperationCount"
                                 ValueChanged="ParallelOperationCount_OnValueChanged"
                             />
