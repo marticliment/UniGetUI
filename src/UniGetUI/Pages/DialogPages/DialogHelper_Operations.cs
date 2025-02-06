@@ -15,17 +15,8 @@ public static partial class DialogHelper
 {
     public static async Task ShowOperationFailedDialog(AbstractOperation operation, OperationControl opControl)
     {
-        ContentDialog dialog = new()
-        {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            XamlRoot = Window.XamlRoot,
-            Resources =
-            {
-                ["ContentDialogMaxWidth"] = 850,
-                ["ContentDialogMaxHeight"] = 800,
-            },
-            Title = operation.Metadata.FailureTitle,
-        };
+        ContentDialog dialog = DialogFactory.Create(850, 800);
+        dialog.Title = operation.Metadata.FailureTitle;
 
         Grid grid = new()
         {
@@ -183,15 +174,7 @@ public static partial class DialogHelper
     {
         bool LastLineWasProgress = false;
 
-        ContentDialog OutputDialog = new ContentDialog
-        {
-            Style = (Style)Application.Current.Resources["DefaultContentDialogStyle"],
-            XamlRoot = Window.XamlRoot,
-            Resources = {
-                ["ContentDialogMaxWidth"] = 1200,
-                ["ContentDialogMaxHeight"] = 1000,
-            },
-        };
+        ContentDialog OutputDialog = DialogFactory.Create(1200, 1000);
 
         var LiveOutputTextBlock = new RichTextBlock
         {

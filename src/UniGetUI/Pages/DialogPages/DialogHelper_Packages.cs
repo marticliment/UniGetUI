@@ -55,26 +55,19 @@ public static partial class DialogHelper
     {
         InstallOptionsPage OptionsPage = new(package, operation, options);
 
-        ContentDialog OptionsDialog = new()
+        ContentDialog OptionsDialog = DialogFactory.Create(1200, 1000);
+
+        OptionsDialog.SecondaryButtonText = operation switch
         {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            XamlRoot = Window.XamlRoot,
-            Resources = {
-                ["ContentDialogMaxWidth"] = 1200,
-                ["ContentDialogMaxHeight"] = 1000,
-            },
-            SecondaryButtonText = operation switch
-            {
-                OperationType.Install => CoreTools.Translate("Install"),
-                OperationType.Uninstall => CoreTools.Translate("Uninstall"),
-                OperationType.Update => CoreTools.Translate("Update"),
-                _ => ""
-            },
-            PrimaryButtonText = CoreTools.Translate("Save and close"),
-            DefaultButton = ContentDialogButton.Secondary,
-            Title = CoreTools.Translate("{0} installation options", package.Name),
-            Content = OptionsPage,
+            OperationType.Install => CoreTools.Translate("Install"),
+            OperationType.Uninstall => CoreTools.Translate("Uninstall"),
+            OperationType.Update => CoreTools.Translate("Update"),
+            _ => ""
         };
+        OptionsDialog.PrimaryButtonText = CoreTools.Translate("Save and close");
+        OptionsDialog.DefaultButton = ContentDialogButton.Secondary;
+        OptionsDialog.Title = CoreTools.Translate("{0} installation options", package.Name);
+        OptionsDialog.Content = OptionsPage;
 
         OptionsPage.Close += (_, _) => { OptionsDialog.Hide(); };
 
@@ -86,25 +79,8 @@ public static partial class DialogHelper
     {
         PackageDetailsPage DetailsPage = new(package, operation, referral);
 
-        ContentDialog DetailsDialog = new()
-        {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            XamlRoot = Window.XamlRoot,
-            Resources = {
-                ["ContentDialogMaxWidth"] = 8000,
-                ["ContentDialogMaxHeight"] = 4000,
-            },
-            Content = DetailsPage,
-        };
-        DetailsDialog.SizeChanged += (_, _) =>
-        {
-            int hOffset = (Window.NavigationPage.ActualWidth < 1300) ? 100 : 300;
-            DetailsPage.MinWidth = Math.Abs(Window.NavigationPage.ActualWidth - hOffset);
-            DetailsPage.MinHeight = Math.Abs(Window.NavigationPage.ActualHeight - 100);
-            DetailsPage.MaxWidth = Math.Abs(Window.NavigationPage.ActualWidth - hOffset);
-            DetailsPage.MaxHeight = Math.Abs(Window.NavigationPage.ActualHeight - 100);
-        };
-
+        ContentDialog DetailsDialog = DialogFactory.Create_AsWindow(false);
+        DetailsDialog.Content = DetailsPage;
         DetailsPage.Close += (_, _) => { DetailsDialog.Hide(); };
 
         await Window.ShowDialogAsync(DetailsDialog);
@@ -112,16 +88,12 @@ public static partial class DialogHelper
 
     public static async Task<bool> ConfirmUninstallation(IPackage package)
     {
-        ContentDialog dialog = new()
-        {
-            XamlRoot = Window.XamlRoot,
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            Title = CoreTools.Translate("Are you sure?"),
-            PrimaryButtonText = CoreTools.Translate("Yes"),
-            SecondaryButtonText = CoreTools.Translate("No"),
-            DefaultButton = ContentDialogButton.Secondary,
-            Content = CoreTools.Translate("Do you really want to uninstall {0}?", package.Name)
-        };
+        ContentDialog dialog = DialogFactory.Create();
+        dialog.Title = CoreTools.Translate("Are you sure?");
+        dialog.PrimaryButtonText = CoreTools.Translate("Yes");
+        dialog.SecondaryButtonText = CoreTools.Translate("No");
+        dialog.DefaultButton = ContentDialogButton.Secondary;
+        dialog.Content = CoreTools.Translate("Do you really want to uninstall {0}?", package.Name);
 
         return await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary;
     }
@@ -138,15 +110,12 @@ public static partial class DialogHelper
             return await ConfirmUninstallation(packages.First());
         }
 
-        ContentDialog dialog = new()
-        {
-            XamlRoot = Window.XamlRoot,
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            Title = CoreTools.Translate("Are you sure?"),
-            PrimaryButtonText = CoreTools.Translate("Yes"),
-            SecondaryButtonText = CoreTools.Translate("No"),
-            DefaultButton = ContentDialogButton.Secondary,
-        };
+        ContentDialog dialog = DialogFactory.Create();
+        dialog.Title = CoreTools.Translate("Are you sure?");
+        dialog.PrimaryButtonText = CoreTools.Translate("Yes");
+        dialog.SecondaryButtonText = CoreTools.Translate("No");
+        dialog.DefaultButton = ContentDialogButton.Secondary;
+
 
         StackPanel p = new();
         p.Children.Add(new TextBlock

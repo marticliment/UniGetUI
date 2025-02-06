@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Windows.UI;
+using Microsoft.UI;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -21,6 +22,52 @@ namespace UniGetUI.Pages.DialogPages;
 
 public static partial class DialogHelper
 {
+    private static class DialogFactory
+    {
+        public static ContentDialog Create()
+        {
+            return new ContentDialog()
+            {
+                XamlRoot = Window.MainContentGrid.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
+            };
+        }
+        public static ContentDialog Create(int maxWidth, int maxHeight)
+        {
+            var dialog = Create();
+            // dialog.Margin = new Thickness(0, 30, 0, 0);
+            dialog.Resources["ContentDialogMaxWidth"] = maxWidth;
+            dialog.Resources["ContentDialogMaxHeight"] = maxHeight;
+            return dialog;
+        }
+
+        public static ContentDialog Create_AsWindow(bool hasTitle)
+        {
+            var dialog = Create();
+            dialog.Resources["ContentDialogMaxWidth"] = 8192;
+            dialog.Resources["ContentDialogMaxHeight"] = 4096;
+            dialog.SizeChanged += (_, _) =>
+            {
+                if (dialog.Content is Page page)
+                {
+                    double maxW, maxH;
+                    int tresholdW = 1300, tresholdH = 1300;
+                    if (Window.NavigationPage.ActualWidth < tresholdW) maxW = 100;
+                    else if (Window.NavigationPage.ActualWidth >= tresholdW + 200) maxW = 300;
+                    else maxW = Window.NavigationPage.ActualWidth - (tresholdW - 100);
+
+                    if (Window.NavigationPage.ActualHeight < tresholdH) maxH = (hasTitle? 120: 80);
+                    else if (Window.NavigationPage.ActualHeight >= tresholdH + 200) maxH = (hasTitle ? 320 : 280);
+                    else maxH = Window.NavigationPage.ActualHeight - (tresholdH - (hasTitle ? 120 : 80));
+
+                    page.Width = Math.Min(Math.Abs(Window.NavigationPage.ActualWidth - maxW), 8192);
+                    page.Height = Math.Min(Math.Abs(Window.NavigationPage.ActualHeight - maxH), 4096);
+                }
+            };
+            return dialog;
+        }
+    }
+
     public static MainWindow Window { private get; set; } = null!;
 
     public static void ShowLoadingDialog(string text)
@@ -60,7 +107,6 @@ public static partial class DialogHelper
     public static async Task ShowMissingDependency(string dep_name, string exe_name, string exe_args,
         string fancy_command, int current, int total)
     {
-        ContentDialog dialog = new();
 
         if (Settings.GetDictionaryItem<string, string>("DependencyManagement", dep_name) == "skipped")
         {
@@ -72,8 +118,7 @@ public static partial class DialogHelper
         bool NotFirstTime = Settings.GetDictionaryItem<string, string>("DependencyManagement", dep_name) == "attempted";
         Settings.SetDictionaryItem("DependencyManagement", dep_name, "attempted");
 
-        dialog.XamlRoot = Window.MainContentGrid.XamlRoot;
-        dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+        var dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("Missing dependency") + (total > 1 ? $" ({current}/{total})" : "");
         dialog.SecondaryButtonText = CoreTools.Translate("Not right now");
         dialog.PrimaryButtonText = CoreTools.Translate("Install {0}", dep_name);
@@ -157,12 +202,12 @@ public static partial class DialogHelper
                         CoreTools.Translate(
                             "Please wait while {0} is being installed. A black window may show up. Please wait until it closes.",
                             dep_name);
-                    Process p = new()
+                    Process install_dep_p = new()
                     {
                         StartInfo = new ProcessStartInfo { FileName = exe_name, Arguments = exe_args, },
                     };
-                    p.Start();
-                    await p.WaitForExitAsync();
+                    install_dep_p.Start();
+                    await install_dep_p.WaitForExitAsync();
                     dialog.IsPrimaryButtonEnabled = true;
                     dialog.IsSecondaryButtonEnabled = true;
                     if (current < total)
@@ -225,47 +270,32 @@ public static partial class DialogHelper
 
     public static async Task ManageIgnoredUpdates()
     {
-        ContentDialog? UpdatesDialog = new()
-        {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style, XamlRoot = Window.XamlRoot,
-            Resources = {
-                ["ContentDialogMaxWidth"] = 1400,
-                ["ContentDialogMaxHeight"] = 1000,
-            },
-            SecondaryButtonText = CoreTools.Translate("Close"),
-            //UpdatesDialog.PrimaryButtonText = CoreTools.Translate("Reset");
-            DefaultButton = ContentDialogButton.None,
-            Title = CoreTools.Translate("Manage ignored updates"),
-        };
+        ContentDialog dialog = DialogFactory.Create(1400, 1000);
+
+        dialog.SecondaryButtonText = CoreTools.Translate("Close");
+        dialog.DefaultButton = ContentDialogButton.None;
+        dialog.Title = CoreTools.Translate("Manage ignored updates");
 
         IgnoredUpdatesManager IgnoredUpdatesPage = new();
-        UpdatesDialog.Content = IgnoredUpdatesPage;
-        IgnoredUpdatesPage.Close += (_, _) => UpdatesDialog.Hide();
-        await Window.ShowDialogAsync(UpdatesDialog);
+        dialog.Content = IgnoredUpdatesPage;
+        IgnoredUpdatesPage.Close += (_, _) => dialog.Hide();
+        await Window.ShowDialogAsync(dialog);
     }
 
     public static async Task ManageDesktopShortcuts(List<string>? NewShortucts = null)
     {
-        ContentDialog? ShortcutsDialog = new()
-        {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            XamlRoot = Window.XamlRoot,
-            Resources = {
-                ["ContentDialogMaxWidth"] = 1400,
-                ["ContentDialogMaxHeight"] = 1000,
-            },
-            Title = CoreTools.Translate("Automatic desktop shortcut remover"),
-        };
+        ContentDialog dialog = DialogFactory.Create(1400, 1000);
 
         DesktopShortcutsManager DesktopShortcutsPage = new(NewShortucts);
-        DesktopShortcutsPage.Close += (_, _) => ShortcutsDialog.Hide();
+        DesktopShortcutsPage.Close += (_, _) => dialog.Hide();
 
-        ShortcutsDialog.Content = DesktopShortcutsPage;
-        ShortcutsDialog.SecondaryButtonText = CoreTools.Translate("Save and close");
-        ShortcutsDialog.DefaultButton = ContentDialogButton.None;
-        ShortcutsDialog.SecondaryButtonClick += (_, _) => DesktopShortcutsPage.SaveChangesAndClose();
+        dialog.Title = CoreTools.Translate("Automatic desktop shortcut remover");
+        dialog.Content = DesktopShortcutsPage;
+        dialog.SecondaryButtonText = CoreTools.Translate("Save and close");
+        dialog.DefaultButton = ContentDialogButton.None;
+        dialog.SecondaryButtonClick += (_, _) => DesktopShortcutsPage.SaveChangesAndClose();
 
-        await Window.ShowDialogAsync(ShortcutsDialog);
+        await Window.ShowDialogAsync(dialog);
     }
 
     public static async Task HandleNewDesktopShortcuts()
@@ -347,12 +377,8 @@ public static partial class DialogHelper
 
     public static async Task ShowAboutUniGetUI()
     {
-        ContentDialog? AboutDialog = new();
+        ContentDialog AboutDialog = DialogFactory.Create(1200, 1000);
         AboutUniGetUI AboutPage = new();
-        AboutDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-        AboutDialog.XamlRoot = Window.XamlRoot;
-        AboutDialog.Resources["ContentDialogMaxWidth"] = 1200;
-        AboutDialog.Resources["ContentDialogMaxHeight"] = 1000;
         AboutDialog.Content = AboutPage;
         AboutDialog.PrimaryButtonText = CoreTools.Translate("Close");
         AboutPage.Close += (_, _) => AboutDialog.Hide();
@@ -362,26 +388,13 @@ public static partial class DialogHelper
 
     public static async void ShowReleaseNotes()
     {
-        ContentDialog? NotesDialog = new()
-        {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            XamlRoot = Window.XamlRoot,
-            Resources = {
-                ["ContentDialogMaxWidth"] = 12000,
-                ["ContentDialogMaxHeight"] = 10000,
-            },
-            CloseButtonText = CoreTools.Translate("Close"),
-            Title = CoreTools.Translate("Release notes"),
-        };
-        ReleaseNotes? notes = new();
+        ContentDialog NotesDialog = DialogFactory.Create_AsWindow(true);
+
+        // NotesDialog.CloseButtonText = CoreTools.Translate("Close");
+        NotesDialog.Title = CoreTools.Translate("Release notes");
+        ReleaseNotes notes = new();
         notes.Close += (_, _) => NotesDialog.Hide();
         NotesDialog.Content = notes;
-        NotesDialog.SizeChanged += (_, _) =>
-        {
-            notes.MinWidth = Math.Abs(Window.NavigationPage.ActualWidth - 300);
-            notes.MinHeight = Math.Abs(Window.NavigationPage.ActualHeight - 200);
-        };
-
         await Window.ShowDialogAsync(NotesDialog);
     }
 
@@ -425,19 +438,15 @@ public static partial class DialogHelper
             if (Settings.Get("ForceLegacyBundledWinGet"))
                 Settings.Set("ForceLegacyBundledWinGet", false);
 
-            var c = new ContentDialog
-            {
-                Title = CoreTools.Translate("WinGet was repaired successfully"),
-                Content = CoreTools.Translate("It is recommended to restart UniGetUI after WinGet has been repaired") +
-                          "\n\n" +
-                          CoreTools.Translate(
-                              "NOTE: This troubleshooter can be disabled from UniGetUI Settings, on the WinGet section"),
-                PrimaryButtonText = CoreTools.Translate("Close"),
-                SecondaryButtonText = CoreTools.Translate("Restart"),
-                DefaultButton = ContentDialogButton.Secondary,
-                XamlRoot = Window.XamlRoot,
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-            };
+            var c = DialogFactory.Create();
+            c.Title = CoreTools.Translate("WinGet was repaired successfully");
+            c.Content = CoreTools.Translate("It is recommended to restart UniGetUI after WinGet has been repaired") +
+                        "\n\n" +
+                        CoreTools.Translate(
+                            "NOTE: This troubleshooter can be disabled from UniGetUI Settings, on the WinGet section");
+            c.PrimaryButtonText = CoreTools.Translate("Close");
+            c.SecondaryButtonText = CoreTools.Translate("Restart");
+            c.DefaultButton = ContentDialogButton.Secondary;
 
             // Restart UniGetUI or reload packages depending on the user's choice
             if (await Window.ShowDialogAsync(c) == ContentDialogResult.Secondary)
@@ -458,18 +467,14 @@ public static partial class DialogHelper
             Logger.Error(ex);
             DialogHelper.HideLoadingDialog();
 
-            var c = new ContentDialog
-            {
-                Title = CoreTools.Translate("WinGet could not be repaired"),
-                Content =
-                    CoreTools.Translate("An unexpected issue occurred while attempting to repair WinGet. Please try again later") +
-                    "\n\n" + ex.Message + "\n\n" +
-                    CoreTools.Translate("NOTE: This troubleshooter can be disabled from UniGetUI Settings, on the WinGet section"),
-                PrimaryButtonText = CoreTools.Translate("Close"),
-                DefaultButton = ContentDialogButton.None,
-                XamlRoot = Window.XamlRoot
-            };
-
+            var c = DialogFactory.Create();
+            c.Title = CoreTools.Translate("WinGet could not be repaired");
+            c.Content = CoreTools.Translate(
+                            "An unexpected issue occurred while attempting to repair WinGet. Please try again later") +
+                        "\n\n" + ex.Message + "\n\n" + CoreTools.Translate(
+                            "NOTE: This troubleshooter can be disabled from UniGetUI Settings, on the WinGet section");
+            c.PrimaryButtonText = CoreTools.Translate("Close");
+            c.DefaultButton = ContentDialogButton.None;
             await Window.ShowDialogAsync(c);
         }
 
@@ -477,12 +482,8 @@ public static partial class DialogHelper
 
     public static async void ShowTelemetryDialog()
     {
-        var dialog = new ContentDialog
-        {
-            Title = CoreTools.Translate("Share anonymous usage data"),
-            XamlRoot = Window.XamlRoot,
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-        };
+        var dialog = DialogFactory.Create();
+        dialog.Title = CoreTools.Translate("Share anonymous usage data");
 
         var MessageBlock = new RichTextBlock();
         dialog.Content = MessageBlock;
@@ -516,11 +517,10 @@ public static partial class DialogHelper
             FontWeight = FontWeights.SemiBold
         });
 
-
         dialog.SecondaryButtonText = CoreTools.Translate("Decline");
         dialog.PrimaryButtonText = CoreTools.Translate("Accept");
         dialog.DefaultButton = ContentDialogButton.Primary;
-        dialog.Closing += (s, e) =>
+        dialog.Closing += (_, e) =>
         {
             if (e.Result == ContentDialogResult.None) e.Cancel = true;
         };
