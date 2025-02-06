@@ -511,9 +511,9 @@ public static partial class DialogHelper
         });
 
 
-        dialog.PrimaryButtonText = CoreTools.Translate("Decline");
-        dialog.SecondaryButtonText = CoreTools.Translate("Accept");
-        dialog.DefaultButton = ContentDialogButton.Secondary;
+        dialog.SecondaryButtonText = CoreTools.Translate("Decline");
+        dialog.PrimaryButtonText = CoreTools.Translate("Accept");
+        dialog.DefaultButton = ContentDialogButton.Primary;
         dialog.Closing += (s, e) =>
         {
             if (e.Result == ContentDialogResult.None) e.Cancel = true;
@@ -521,7 +521,7 @@ public static partial class DialogHelper
 
         var res = await Window.ShowDialogAsync(dialog);
 
-        if (res is ContentDialogResult.Secondary)
+        if (res is ContentDialogResult.Primary)
         {
             Settings.Set("DisableTelemetry", false);
         }
@@ -537,29 +537,48 @@ public static partial class DialogHelper
         Window.TelemetryWarner.Message = CoreTools.Translate("UniGetUI collects anonymous usage data in order to improve the user experience.");
         Window.TelemetryWarner.IsOpen = true;
 
-        Window.TelemetryWarner.Background = new SolidColorBrush(Color.FromArgb(62, 66, 135, 245));
-        Window.TelemetryWarner.IconSource = new FontIconSource()
-        {
-            Glyph = "\uF167",
-            FontSize = 14,
-            Foreground = new SolidColorBrush(Color.FromArgb(255, 99, 154, 242)),
-        };
-
         Window.TelemetryWarner.IsClosable = true;
         Window.TelemetryWarner.Visibility = Visibility.Visible;
-        Window.TelemetryWarner.ActionButton = new Button()
+
+        var AcceptBtn = new Button()
+        {
+            Content = CoreTools.Translate("Accept"),
+            Style = Application.Current.Resources["AccentButtonStyle"] as Style
+        };
+        AcceptBtn.Click += (_, _) =>
+        {
+            Window.TelemetryWarner.Visibility = Visibility.Collapsed;
+            Window.TelemetryWarner.IsOpen = false;
+            Settings.Set("ShownTelemetryBanner", true);
+        };
+
+        var SettingsBtn = new Button()
         {
             Content = CoreTools.Translate("Settings"),
         };
-
-        Window.TelemetryWarner.CloseButtonClick += (_, _) => Settings.Set("ShownTelemetryBanner", true);
-        Window.TelemetryWarner.ActionButton.Click += (_, _) =>
+        SettingsBtn.Click += (_, _) =>
         {
             Window.TelemetryWarner.Visibility = Visibility.Collapsed;
             Window.TelemetryWarner.IsOpen = false;
             ShowTelemetryDialog();
             Settings.Set("ShownTelemetryBanner", true);
         };
+
+        StackPanel btns = new() { Margin = new Thickness(4,0,4,0), Spacing = 4, Orientation = Orientation.Horizontal };
+        btns.Children.Add(AcceptBtn);
+        btns.Children.Add(SettingsBtn);
+
+        var mainButton = Window.TelemetryWarner.ActionButton = new HyperlinkButton()
+        {
+            Padding = new Thickness(0),
+            Content = btns,
+            Background = new SolidColorBrush(Colors.Transparent),
+            BorderBrush = new SolidColorBrush(Colors.Transparent),
+        };
+        mainButton.Resources["HyperlinkButtonBackgroundPointerOver"] = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+
+        Window.TelemetryWarner.CloseButtonClick += (_, _) => Settings.Set("ShownTelemetryBanner", true);
+
     }
 }
 
