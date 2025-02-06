@@ -1,9 +1,6 @@
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
-using Windows.Storage;
-using Windows.Storage.Pickers;
 using CommunityToolkit.WinUI.Helpers;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
@@ -16,14 +13,10 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
-using UniGetUI.PackageEngine.Operations;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
-using UniGetUI.Controls.OperationWidgets;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Managers.PowerShellManager;
-using AbstractOperation = UniGetUI.PackageOperations.AbstractOperation;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 namespace UniGetUI
@@ -62,8 +55,6 @@ namespace UniGetUI
                 set { _available_updates = value; Instance?.MainWindow?.UpdateSystemTrayStatus(); }
             }
         }
-
-
 
         public bool RaiseExceptionAsFatal = true;
 

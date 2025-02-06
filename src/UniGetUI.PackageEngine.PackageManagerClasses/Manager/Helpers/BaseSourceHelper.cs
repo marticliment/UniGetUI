@@ -62,7 +62,9 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
                 Factory.Reset();
 
                 foreach (IManagerSource source in sources)
+                {
                     Factory.AddSource(source);
+                }
 
                 Logger.Debug($"Loaded {sources.Count()} sources for manager {Manager.Name}");
                 return sources;

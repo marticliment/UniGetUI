@@ -21,7 +21,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Microsoft.Windows.AppNotifications;
 using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
-using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
 
@@ -82,7 +81,7 @@ namespace UniGetUI.Interface
             Title = Title + " - DEBUG BUILD";
             AppTitle.Text = Title;
 #endif
-            var panel = new StackPanel()
+            var panel = new StackPanel
             {
                 Width = 400,
                 Orientation = Orientation.Vertical,
@@ -235,7 +234,7 @@ namespace UniGetUI.Interface
         }
 
         /// <summary>
-        /// For a given deep link, perform the appropiate action
+        /// For a given deep link, perform the appropriate action
         /// </summary>
         /// <param name="link">the unigetui:// deep link to handle</param>
         private void HandleDeepLink(string link)

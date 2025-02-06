@@ -27,7 +27,7 @@ internal sealed class ChocolateyPkgOperationHelper : PackagePkgOperationHelper
         if (options.InteractiveInstallation)
             parameters.Add("--notsilent");
 
-        if(operation is OperationType.Install or OperationType.Update)
+        if (operation is OperationType.Install or OperationType.Update)
         {
             parameters.Add("--no-progress");
 
@@ -53,7 +53,7 @@ internal sealed class ChocolateyPkgOperationHelper : PackagePkgOperationHelper
         IEnumerable<string> processOutput,
         int returnCode)
     {
-        if(returnCode is 3010)
+        if (returnCode is 3010)
         {
             return OperationVeredict.Success;
             // return OperationVeredict.RestartRequired;

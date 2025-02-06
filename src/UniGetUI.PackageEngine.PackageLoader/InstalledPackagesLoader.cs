@@ -49,7 +49,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             IsLoading = true;
             InvokeStartedLoadingEvent();
 
-            List<Task<IEnumerable<IPackage>>> tasks = new();
+            List<Task<IEnumerable<IPackage>>> tasks = [];
 
             foreach (IPackageManager manager in Managers)
             {

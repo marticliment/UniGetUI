@@ -1,4 +1,3 @@
-using Windows.UI;
 using ExternalLibraries.Clipboard;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -18,8 +17,11 @@ public static partial class DialogHelper
     {
         ContentDialog dialog = new()
         {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style, XamlRoot = Window.XamlRoot,
-            Resources = { ["ContentDialogMaxWidth"] = 850,
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+            XamlRoot = Window.XamlRoot,
+            Resources =
+            {
+                ["ContentDialogMaxWidth"] = 850,
                 ["ContentDialogMaxHeight"] = 800,
             },
             Title = operation.Metadata.FailureTitle,
@@ -70,7 +72,7 @@ public static partial class DialogHelper
 
         ScrollViewer ScrollView = new()
         {
-            MaxHeight = MainApp.Instance.MainWindow.NavigationPage.ActualHeight > 800? 500: 300,
+            MaxHeight = MainApp.Instance.MainWindow.NavigationPage.ActualHeight > 800 ? 500 : 300,
             MaxWidth = 800,
             CornerRadius = new CornerRadius(6),
             Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"],
@@ -118,7 +120,7 @@ public static partial class DialogHelper
         Control _retryButton;
 
         var retryOptions = opControl.GetRetryOptions(dialog.Hide);
-        if (retryOptions.Any())
+        if (retryOptions.Count != 0)
         {
             SplitButton RetryButton = new SplitButton
             {
@@ -184,10 +186,12 @@ public static partial class DialogHelper
         ContentDialog OutputDialog = new ContentDialog
         {
             Style = (Style)Application.Current.Resources["DefaultContentDialogStyle"],
-            XamlRoot = Window.XamlRoot
+            XamlRoot = Window.XamlRoot,
+            Resources = {
+                ["ContentDialogMaxWidth"] = 1200,
+                ["ContentDialogMaxHeight"] = 1000,
+            },
         };
-        OutputDialog.Resources["ContentDialogMaxWidth"] = 1200;
-        OutputDialog.Resources["ContentDialogMaxHeight"] = 1000;
 
         var LiveOutputTextBlock = new RichTextBlock
         {
@@ -240,7 +244,7 @@ public static partial class DialogHelper
 
         EventHandler<(string, AbstractOperation.LineType)> AddLineLambda = (_, line) => MainApp.Dispatcher.TryEnqueue(() =>
         {
-            if(LastLineWasProgress) par.Inlines.RemoveAt(par.Inlines.Count-1);
+            if (LastLineWasProgress) par.Inlines.RemoveAt(par.Inlines.Count - 1);
 
             LastLineWasProgress = false;
             if (line.Item2 is AbstractOperation.LineType.Information)
@@ -278,9 +282,10 @@ public static partial class DialogHelper
                 if (line is Run run)
                     text += run + "\n";
             }
+
             WindowsClipboard.SetText(text);
         }
+
         operation.LogLineAdded -= AddLineLambda;
     }
 }
-

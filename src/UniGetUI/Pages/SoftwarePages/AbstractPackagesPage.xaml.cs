@@ -9,7 +9,6 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
@@ -17,7 +16,6 @@ using Windows.UI.Core;
 using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.Pages.DialogPages;
-using Page = ABI.Microsoft.UI.Xaml.Controls.Page;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -96,7 +94,7 @@ namespace UniGetUI.Interface
         protected readonly string NoPackages_SubtitleText_Base;
         protected readonly string NoMatches_BackgroundText;
 
-        private bool PaneIsAnimated = false;
+        private bool PaneIsAnimated;
 
         protected Func<int, int, string> FoundPackages_SubtitleText_Base = (a, b) => CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.", a, b);
 
@@ -191,7 +189,7 @@ namespace UniGetUI.Interface
                 }
 
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
-                if(!DISABLE_FILTER_ON_QUERY_CHANGE)
+                if (!DISABLE_FILTER_ON_QUERY_CHANGE)
                     FilterPackages();
             };
 
@@ -226,7 +224,7 @@ namespace UniGetUI.Interface
 
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 QueryBlock.Text = MegaQueryBlock.Text.Trim();
-                if(!DISABLE_FILTER_ON_QUERY_CHANGE)
+                if (!DISABLE_FILTER_ON_QUERY_CHANGE)
                     FilterPackages();
             };
 
@@ -604,7 +602,9 @@ namespace UniGetUI.Interface
                         if (manager.Capabilities.SupportsCustomSources)
                         {
                             foreach (IManagerSource source in manager.SourcesHelper.Factory.GetAvailableSources())
+                            {
                                 if (!VisibleSources.Contains(source)) VisibleSources.Add(source);
+                            }
                         }
                     }
                 }
@@ -801,7 +801,7 @@ namespace UniGetUI.Interface
         {
             string? path = package?.Manager.DetailsHelper.GetInstallLocation(package);
 
-            if(path is not null)
+            if (path is not null)
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = path,
@@ -915,12 +915,12 @@ namespace UniGetUI.Interface
             {
                 if (IS_ALT_PRESSED)
                 {
-                    if(!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
+                    if (!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
                         ShowInstallationOptionsForPackage(package);
                 }
                 else if (IS_CONTROL_PRESSED)
                 {
-                    if(package is not InvalidImportedPackage)
+                    if (package is not InvalidImportedPackage)
                         PerformMainPackageAction(package);
                 }
                 else
@@ -1050,7 +1050,7 @@ namespace UniGetUI.Interface
             foreach (var wrapper in PackagesWithoutIcon)
             {
                 var icon = await Task.Run(wrapper.Package.GetIconUrlIfAny);
-                if(icon is not null) wrapper.PackageIcon = icon;
+                if (icon is not null) wrapper.PackageIcon = icon;
             }
 
             FilterPackages();

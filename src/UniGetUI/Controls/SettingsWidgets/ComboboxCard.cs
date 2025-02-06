@@ -14,9 +14,9 @@ namespace UniGetUI.Interface.Widgets
     public sealed class ComboboxCard : SettingsCard
     {
         private readonly ComboBox _combobox = new();
-        private readonly ObservableCollection<string> _elements = new();
-        private readonly Dictionary<string, string> _values_ref = new();
-        private readonly Dictionary<string, string> _inverted_val_ref = new();
+        private readonly ObservableCollection<string> _elements = [];
+        private readonly Dictionary<string, string> _values_ref = [];
+        private readonly Dictionary<string, string> _inverted_val_ref = [];
 
         private string settings_name = "";
         public string SettingName

@@ -40,7 +40,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
                 if (info["classifiers"] is JsonArray classifiers)
                 {
-                    List<string> Tags = new();
+                    List<string> Tags = [];
                     foreach (string? line in classifiers)
                     {
                         if (line?.Contains("License ::") ?? false)

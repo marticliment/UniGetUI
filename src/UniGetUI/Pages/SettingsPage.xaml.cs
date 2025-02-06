@@ -272,9 +272,9 @@ namespace UniGetUI.Interface
                     Text = "Change vcpkg root location", ButtonText = "Select",
                 };
                 StackPanel p = new() { Orientation = Orientation.Horizontal, Spacing = 5, };
-                var VcPkgRootLabel = new TextBlock() { VerticalAlignment = VerticalAlignment.Center };
-                var ResetVcPkgRootLabel = new HyperlinkButton() { Content = CoreTools.Translate("Reset") };
-                var OpenVcPkgRootLabel = new HyperlinkButton() { Content = CoreTools.Translate("Open") };
+                var VcPkgRootLabel = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
+                var ResetVcPkgRootLabel = new HyperlinkButton { Content = CoreTools.Translate("Reset") };
+                var OpenVcPkgRootLabel = new HyperlinkButton { Content = CoreTools.Translate("Open") };
 
                 VcPkgRootLabel.Text = Settings.Get("CustomVcpkgRoot")
                     ? Settings.GetValue("CustomVcpkgRoot")
@@ -362,7 +362,7 @@ namespace UniGetUI.Interface
                         ManagerStatus.CornerRadius = new CornerRadius(0);
                         ManagerStatus.BorderThickness = new(0, 1, 0, 0);
 
-                        Button managerLogs = new Button()
+                        Button managerLogs = new Button
                         {
                             Content = new LocalIcon(IconType.Console),
                             CornerRadius = new(0),
@@ -484,7 +484,7 @@ namespace UniGetUI.Interface
                         ManagerPath.Click += async (_, _) =>
                         {
                             WindowsClipboard.SetText(ManagerPath.Description.ToString() ?? "");
-                            ManagerPath.ActionIcon = new FontIcon() { Glyph = "\uE73E" };
+                            ManagerPath.ActionIcon = new FontIcon { Glyph = "\uE73E" };
                             await Task.Delay(1000);
                             ManagerPath.ActionIcon = new SymbolIcon(Symbol.Copy);
                         };
@@ -509,8 +509,7 @@ namespace UniGetUI.Interface
 
                         if (Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
                         {
-                            SettingsCard SourceManagerCard = new();
-                            SourceManagerCard.Resources["SettingsCardLeftIndention"] = 10;
+                            SettingsCard SourceManagerCard = new() { Resources = { ["SettingsCardLeftIndention"] = 10 } };
                             SourceManager SourceManager = new(Manager);
                             SourceManagerCard.Description = SourceManager;
                             ExtraSettingsCards[Manager].Insert(index++, SourceManagerCard);
@@ -640,12 +639,12 @@ namespace UniGetUI.Interface
 
         private void LanguageSelector_ValueChanged(object sender, EventArgs e)
         {
-            if(InterfaceLoaded) GeneralSettingsExpander.ShowRestartRequiredBanner();
+            if (InterfaceLoaded) GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
         private void UpdatesCheckIntervalSelector_ValueChanged(object sender, EventArgs e)
         {
-            if(InterfaceLoaded) GeneralSettingsExpander.ShowRestartRequiredBanner();
+            if (InterfaceLoaded) GeneralSettingsExpander.ShowRestartRequiredBanner();
         }
 
         private void ThemeSelector_ValueChanged(object sender, EventArgs e)
@@ -697,13 +696,13 @@ namespace UniGetUI.Interface
         }
 
         private void DisableWidgetsApi_StateChanged(object sender, EventArgs e)
-        { if(InterfaceLoaded) ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
+        { if (InterfaceLoaded) ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
         private void DisableDownloadingNewTranslations_StateChanged(object sender, EventArgs e)
-        { if(InterfaceLoaded) ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
+        { if (InterfaceLoaded) ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
         private void TextboxCard_ValueChanged(object sender, EventArgs e)
-        { if(InterfaceLoaded) ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
+        { if (InterfaceLoaded) ExperimentalSettingsExpander.ShowRestartRequiredBanner(); }
 
         private async void DoBackup_Click(object sender, EventArgs e)
         {
@@ -737,7 +736,7 @@ namespace UniGetUI.Interface
 
         private void EnablePackageBackupCheckBox_StateChanged(object sender, EventArgs e)
         {
-            if(InterfaceLoaded) EnablePackageBackupUI(EnablePackageBackupCheckBox.Checked);
+            if (InterfaceLoaded) EnablePackageBackupUI(EnablePackageBackupCheckBox.Checked);
         }
 
         public void EnablePackageBackupUI(bool enabled)
@@ -769,7 +768,7 @@ namespace UniGetUI.Interface
 
         private void UseUserGSudoToggle_StateChanged(object sender, EventArgs e)
         {
-            if(InterfaceLoaded)
+            if (InterfaceLoaded)
                 ExperimentalSettingsExpander.ShowRestartRequiredBanner();
         }
 
@@ -792,7 +791,7 @@ namespace UniGetUI.Interface
 
         private void DisableIconsOnPackageLists_OnStateChanged(object? sender, EventArgs e)
         {
-            if(InterfaceLoaded)
+            if (InterfaceLoaded)
                 InterfaceSettingsExpander.ShowRestartRequiredBanner();
         }
 

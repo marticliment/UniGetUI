@@ -59,7 +59,7 @@ namespace UniGetUI.Core.Language
             {
 
                 string BundledLangFileToLoad = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
-                JsonObject BundledContents = new();
+                JsonObject BundledContents = [];
 
                 if (!File.Exists(BundledLangFileToLoad))
                 {
@@ -89,7 +89,7 @@ namespace UniGetUI.Core.Language
                 {
                     Logger.Warn("User has updated translations disabled");
                 }
-                else if(!File.Exists(CachedLangFileToLoad))
+                else if (!File.Exists(CachedLangFileToLoad))
                 {
                     Logger.Warn($"Tried to access a non-existing cached language file! file={CachedLangFileToLoad}");
                 }
@@ -99,7 +99,9 @@ namespace UniGetUI.Core.Language
                     {
                         if (JsonNode.Parse(File.ReadAllText(CachedLangFileToLoad)) is JsonObject parsedObject)
                             foreach (var keyval in parsedObject.ToDictionary(x => x.Key, x => x.Value))
+                            {
                                 LangDict[keyval.Key] = keyval.Value?.ToString() ?? "";
+                            }
                         else
                             throw new ArgumentException($"parsedObject was null for lang file {CachedLangFileToLoad}");
                     }

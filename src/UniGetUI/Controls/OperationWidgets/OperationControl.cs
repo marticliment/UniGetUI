@@ -1,11 +1,6 @@
 using System.ComponentModel;
-using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.JavaScript;
-using Windows.Devices.Sensors;
 using Windows.UI;
-using Microsoft.UI.Dispatching;
-using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
@@ -35,7 +30,7 @@ public class OperationControl: INotifyPropertyChanged
     private bool ErrorTooltipShown;
     public BetterMenu OpMenu;
     public OperationStatus? MenuStateOnLoaded;
-    public ObservableCollection<OperationBadge> Badges = new();
+    public ObservableCollection<OperationBadge> Badges = [];
 
     public OperationControl(AbstractOperation operation)
     {
@@ -131,9 +126,11 @@ public class OperationControl: INotifyPropertyChanged
         MainApp.Tooltip.OperationsInProgress--;
 
         // Generate process output
-        List<string> rawOutput = new();
-        rawOutput.Add("                           ");
-        rawOutput.Add("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄");
+        List<string> rawOutput =
+        [
+            "                           ",
+            "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄",
+        ];
         foreach (var line in Operation.GetOutput())
         {
             rawOutput.Add(line.Item1);
@@ -261,25 +258,27 @@ public class OperationControl: INotifyPropertyChanged
 
         // Load operation-specific entries
         var normalOptions = GetOperationOptions();
-        if (normalOptions.Any())
+        if (normalOptions.Count != 0)
         {
             foreach(var item in normalOptions)
+            {
                 OpMenu.Items.Add(item);
+            }
 
             OpMenu.Items.Add(new MenuFlyoutSeparator());
         }
 
         if (Operation.Status is OperationStatus.InQueue)
         {
-            var skipQueue = new BetterMenuItem() { Text = CoreTools.Translate("Run now"), Icon = new FontIcon(){Glyph = "\uE768"} };
+            var skipQueue = new BetterMenuItem { Text = CoreTools.Translate("Run now"), Icon = new FontIcon {Glyph = "\uE768"} };
             skipQueue.Click += (_, _) => Operation.SkipQueue();
             OpMenu.Items.Add(skipQueue);
 
-            var putNext = new BetterMenuItem() { Text = CoreTools.Translate("Run next"), Icon = new FontIcon(){Glyph = "\uEB9D"} };
+            var putNext = new BetterMenuItem { Text = CoreTools.Translate("Run next"), Icon = new FontIcon {Glyph = "\uEB9D"} };
             putNext.Click += (_, _) => Operation.RunNext();
             OpMenu.Items.Add(putNext);
 
-            var putLast = new BetterMenuItem() { Text = CoreTools.Translate("Run last"), Icon = new FontIcon(){Glyph = "\uEB9E"} };
+            var putLast = new BetterMenuItem { Text = CoreTools.Translate("Run last"), Icon = new FontIcon {Glyph = "\uEB9E"} };
             putLast.Click += (_, _) => Operation.BackOfTheQueue();
             OpMenu.Items.Add(putLast);
 
@@ -289,24 +288,26 @@ public class OperationControl: INotifyPropertyChanged
         // Create Cancel/Retry buttons
         if (Operation.Status is OperationStatus.InQueue or OperationStatus.Running)
         {
-            var cancel = new BetterMenuItem() { Text = CoreTools.Translate("Cancel"), IconName = IconType.Cross, };
+            var cancel = new BetterMenuItem { Text = CoreTools.Translate("Cancel"), IconName = IconType.Cross, };
             cancel.Click += (_, _) => Operation.Cancel();
             OpMenu.Items.Add(cancel);
         }
         else
         {
-            var retry = new BetterMenuItem() { Text = CoreTools.Translate("Retry"), IconName = IconType.Reload, };
+            var retry = new BetterMenuItem { Text = CoreTools.Translate("Retry"), IconName = IconType.Reload, };
             retry.Click += (_, _) => Operation.Retry(AbstractOperation.RetryMode.Retry);
             OpMenu.Items.Add(retry);
 
             // Add extra retry options, if applicable
             var extraRetry = GetRetryOptions(() => { });
-            if (extraRetry.Any())
+            if (extraRetry.Count != 0)
             {
                 OpMenu.Items.Add(new MenuFlyoutSeparator());
 
                 foreach(var item in extraRetry)
+                {
                     OpMenu.Items.Add(item);
+                }
             }
         }
     }
@@ -395,7 +396,6 @@ public class OperationControl: INotifyPropertyChanged
         MainApp.Dispatcher.TryEnqueue(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
     }
 
-
     private void ShowProgressToast()
     {
         if (Settings.AreProgressNotificationsDisabled())
@@ -481,8 +481,10 @@ public class OperationControl: INotifyPropertyChanged
 
         if (Operation is SourceOperation sourceOp && !sourceOp.ForceAsAdministrator)
         {
-            var adminButton = new BetterMenuItem() { Text = CoreTools.Translate("Retry as administrator") };
-            adminButton.IconName = IconType.UAC;
+            var adminButton = new BetterMenuItem {
+                Text = CoreTools.Translate("Retry as administrator"),
+                IconName = IconType.UAC,
+            };
             adminButton.Click += (_, _) =>
             {
                 callback();
@@ -494,8 +496,10 @@ public class OperationControl: INotifyPropertyChanged
         {
             if (!packageOp.Options.RunAsAdministrator && packageOp.Package.Manager.Capabilities.CanRunAsAdmin)
             {
-                var adminButton = new BetterMenuItem() { Text = CoreTools.Translate("Retry as administrator") };
-                adminButton.IconName = IconType.UAC;
+                var adminButton = new BetterMenuItem {
+                    Text = CoreTools.Translate("Retry as administrator"),
+                    IconName = IconType.UAC,
+                };
                 adminButton.Click += (_, _) =>
                 {
                     callback();
@@ -507,8 +511,10 @@ public class OperationControl: INotifyPropertyChanged
             if (!packageOp.Options.InteractiveInstallation &&
                 packageOp.Package.Manager.Capabilities.CanRunInteractively)
             {
-                var interactiveButton = new BetterMenuItem() { Text = CoreTools.Translate("Retry interactively") };
-                interactiveButton.IconName = IconType.Interactive;
+                var interactiveButton = new BetterMenuItem {
+                    Text = CoreTools.Translate("Retry interactively"),
+                    IconName = IconType.Interactive,
+                };
                 interactiveButton.Click += (_, _) =>
                 {
                     callback();
@@ -520,8 +526,10 @@ public class OperationControl: INotifyPropertyChanged
             if (!packageOp.Options.SkipHashCheck && packageOp.Package.Manager.Capabilities.CanSkipIntegrityChecks)
             {
                 var skiphashButton =
-                    new BetterMenuItem() { Text = CoreTools.Translate("Retry skipping integrity checks") };
-                skiphashButton.IconName = IconType.Checksum;
+                    new BetterMenuItem {
+                        Text = CoreTools.Translate("Retry skipping integrity checks"),
+                        IconName = IconType.Checksum,
+                    };
                 skiphashButton.Click += (_, _) =>
                 {
                     callback();
@@ -566,16 +574,20 @@ public class OperationControl: INotifyPropertyChanged
         var optionsMenu = new List<MenuFlyoutItemBase>();
         if (Operation is PackageOperation packageOp)
         {
-            var details = new BetterMenuItem() { Text = CoreTools.Translate("Package details") };
-            details.IconName = IconType.Info_Round;
+            var details = new BetterMenuItem {
+                Text = CoreTools.Translate("Package details"),
+                IconName = IconType.Info_Round,
+            };
             details.Click += (_, _) =>
             {
                 DialogHelper.ShowPackageDetails(packageOp.Package, OperationType.None, TEL_InstallReferral.DIRECT_SEARCH);
             };
             optionsMenu.Add(details);
 
-            var installationSettings = new BetterMenuItem() { Text = CoreTools.Translate("Installation options") };
-            installationSettings.IconName = IconType.Options;
+            var installationSettings = new BetterMenuItem {
+                Text = CoreTools.Translate("Installation options"),
+                IconName = IconType.Options,
+            };
             installationSettings.Click += (_, _) =>
             {
                 _ = DialogHelper.ShowInstallatOptions_Continue(packageOp.Package, OperationType.None);
@@ -583,11 +595,13 @@ public class OperationControl: INotifyPropertyChanged
             optionsMenu.Add(installationSettings);
 
             string? location = packageOp.Package.Manager.DetailsHelper.GetInstallLocation(packageOp.Package);
-            var openLocation = new BetterMenuItem() { Text = CoreTools.Translate("Open install location") };
-            openLocation.IconName = IconType.OpenFolder;
+            var openLocation = new BetterMenuItem {
+                Text = CoreTools.Translate("Open install location"),
+                IconName = IconType.OpenFolder,
+            };
             openLocation.Click += (_, _) =>
             {
-                Process.Start(new ProcessStartInfo() {
+                Process.Start(new ProcessStartInfo {
                     FileName = location ?? "",
                     UseShellExecute = true,
                     Verb = "open"
@@ -599,13 +613,15 @@ public class OperationControl: INotifyPropertyChanged
 
         else if (Operation is DownloadOperation downloadOp)
         {
-            var launchInstaller = new BetterMenuItem() { Text = CoreTools.Translate("Open") };
-            launchInstaller.IconName = IconType.Launch;
+            var launchInstaller = new BetterMenuItem {
+                Text = CoreTools.Translate("Open"),
+                IconName = IconType.Launch,
+            };
             launchInstaller.Click += (_, _) =>
             {
                 try
                 {
-                    Process.Start(new ProcessStartInfo()
+                    Process.Start(new ProcessStartInfo
                     {
                         FileName = downloadOp.DownloadLocation,
                         UseShellExecute = true
@@ -620,8 +636,10 @@ public class OperationControl: INotifyPropertyChanged
             launchInstaller.IsEnabled = downloadOp.Status is OperationStatus.Succeeded;
             optionsMenu.Add(launchInstaller);
 
-            var showFileInExplorer = new BetterMenuItem() { Text = CoreTools.Translate("Show in explorer") };
-            showFileInExplorer.IconName = IconType.OpenFolder;
+            var showFileInExplorer = new BetterMenuItem {
+                Text = CoreTools.Translate("Show in explorer"),
+                IconName = IconType.OpenFolder,
+            };
             showFileInExplorer.Click += (_, _) =>
             {
                 try

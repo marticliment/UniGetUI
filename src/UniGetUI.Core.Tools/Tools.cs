@@ -463,7 +463,7 @@ Crash Traceback:
         /// The long integer is built with the first half of the MD5 sum of the given string
         /// </summary>
         /// <param name="inputString">A non-empty string</param>
-        /// <returns>A long integer containing the first half of the bytes resulting from MD5suming inputString</returns>
+        /// <returns>A long integer containing the first half of the bytes resulting from MD5 summing inputString</returns>
         public static long HashStringAsLong(string inputString)
         {
             byte[] bytes = MD5.HashData(Encoding.UTF8.GetBytes(inputString));
@@ -618,22 +618,23 @@ Crash Traceback:
             {
                 return $"{(number / TeraByte).ToString($"F{decimals}")} TB";
             }
-            else if (number >= GigaByte)
+
+            if (number >= GigaByte)
             {
                 return $"{(number / GigaByte).ToString($"F{decimals}")} GB";
             }
-            else if (number >= MegaByte)
+
+            if (number >= MegaByte)
             {
                 return $"{(number / MegaByte).ToString($"F{decimals}")} MB";
             }
-            else if (number >= KiloByte)
+
+            if (number >= KiloByte)
             {
                 return $"{(number / KiloByte).ToString($"F{decimals}")} KB";
             }
-            else
-            {
-                return $"{number} Bytes";
-            }
+
+            return $"{number} Bytes";
         }
     }
 }

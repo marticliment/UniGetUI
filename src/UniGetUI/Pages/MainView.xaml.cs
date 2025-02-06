@@ -13,10 +13,7 @@ using UniGetUI.Interface.SoftwarePages;
 using Windows.UI.Core;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.Pages.DialogPages;
-using UniGetUI.PackageEngine.Operations;
-using CommunityToolkit.WinUI.Controls;
 using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageEngine;
 using UniGetUI.PackageOperations;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -52,7 +49,7 @@ namespace UniGetUI.Interface
 
         private PageType OldPage_t = PageType.Null;
         private PageType CurrentPage_t = PageType.Null;
-        private readonly HashSet<Page> AddedPages = new();
+        private readonly HashSet<Page> AddedPages = [];
 
         public MainView()
         {
@@ -281,7 +278,7 @@ namespace UniGetUI.Interface
         public void OpenManagerLogs(IPackageManager? manager = null)
         {
             NavigateTo(PageType.ManagerLog);
-            if(manager is not null) ManagerLogPage?.LoadForManager(manager);
+            if (manager is not null) ManagerLogPage?.LoadForManager(manager);
         }
 
         public void UniGetUILogs_Click(object sender, RoutedEventArgs e)
@@ -296,10 +293,8 @@ namespace UniGetUI.Interface
         private void QuitUniGetUI_Click(object sender, RoutedEventArgs e)
             => MainApp.Instance.DisposeAndQuit();
 
-
         private bool ResizingOPLayout;
         private int OpListChanges;
-
 
         bool isCollapsed;
 
@@ -315,7 +310,7 @@ namespace UniGetUI.Interface
 
             if (OpCount > 0)
             {
-                if(isCollapsed)
+                if (isCollapsed)
                 {
                     MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(0);
                     MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(16);
@@ -354,7 +349,7 @@ namespace UniGetUI.Interface
             if (ResizingOPLayout)
                 return;
 
-            if(OpListChanges > 0)
+            if (OpListChanges > 0)
             {
                 OpListChanges--;
                 return;
@@ -376,13 +371,13 @@ namespace UniGetUI.Interface
             if (isCollapsed)
             {
                 isCollapsed = false;
-                ExpandCollapseOpList.Content = new FontIcon() { Glyph = "\uE96E", FontSize = 14 };
+                ExpandCollapseOpList.Content = new FontIcon { Glyph = "\uE96E", FontSize = 14 };
                 UpdateOperationsLayout();
             }
             else
             {
                 isCollapsed = true;
-                ExpandCollapseOpList.Content = new FontIcon() { Glyph = "\uE96D", FontSize = 14 };
+                ExpandCollapseOpList.Content = new FontIcon { Glyph = "\uE96D", FontSize = 14 };
                 UpdateOperationsLayout();
             }
         }

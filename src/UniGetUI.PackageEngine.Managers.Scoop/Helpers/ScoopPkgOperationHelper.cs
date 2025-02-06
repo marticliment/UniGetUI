@@ -17,7 +17,7 @@ internal sealed class ScoopPkgOperationHelper : PackagePkgOperationHelper
             _ => throw new InvalidDataException("Invalid package operation")
         }];
 
-        if(package.Source.Name.Contains("..."))
+        if (package.Source.Name.Contains("..."))
             parameters.Add($"{package.Id}");
         else
             parameters.Add($"{package.Source.Name}/{package.Id}");
@@ -30,7 +30,7 @@ internal sealed class ScoopPkgOperationHelper : PackagePkgOperationHelper
             parameters.Add("--global");
         }
 
-        if(options.CustomParameters?.Any() is true)
+        if (options.CustomParameters?.Any() is true)
             parameters.AddRange(options.CustomParameters);
 
         if (operation is OperationType.Uninstall)

@@ -7,8 +7,8 @@ public class ObservableQueueTests
     {
         var queue = new ObservableQueue<int>();
 
-        List<int> enqueuedElements = new();
-        List<int> dequeuedElements = new();
+        List<int> enqueuedElements = [];
+        List<int> dequeuedElements = [];
 
         queue.ItemEnqueued += (_, e) => enqueuedElements.Add(e.Item);
         queue.ItemDequeued += (_, e) => dequeuedElements.Add(e.Item);

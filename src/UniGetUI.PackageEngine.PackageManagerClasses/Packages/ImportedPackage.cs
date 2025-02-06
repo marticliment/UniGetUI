@@ -21,10 +21,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 if (installation_options is null)
                     return _version;
-                else if (installation_options.Version != "")
+                if (installation_options.Version != "")
                     return installation_options.Version;
-                else
-                    return CoreTools.Translate("Latest");
+                return CoreTools.Translate("Latest");
             }
         }
 

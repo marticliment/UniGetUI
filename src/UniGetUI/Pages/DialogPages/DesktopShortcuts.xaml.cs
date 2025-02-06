@@ -15,17 +15,20 @@ namespace UniGetUI.Interface
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-
     public sealed partial class DesktopShortcutsManager : Page
     {
         public event EventHandler? Close;
-        private readonly ObservableCollection<ShortcutEntry> desktopShortcuts = new ObservableCollection<ShortcutEntry>();
+        private readonly ObservableCollection<ShortcutEntry> desktopShortcuts = [];
 
-        private bool NewOnly;
+        private readonly bool NewOnly;
 
         public DesktopShortcutsManager(List<string>? NewShortcuts)
         {
-            if (NewShortcuts is not null) NewOnly = true;
+            if (NewShortcuts is not null)
+            {
+                NewOnly = true;
+            }
+
             InitializeComponent();
             DeletableDesktopShortcutsList.ItemsSource = desktopShortcuts;
             DeletableDesktopShortcutsList.DoubleTapped += DeletableDesktopShortcutsList_DoubleTapped;
@@ -36,21 +39,31 @@ namespace UniGetUI.Interface
         {
             desktopShortcuts.Clear();
 
-            if (NewShortcuts is not null) foreach (var path in NewShortcuts)
+            if (NewShortcuts is not null)
             {
-                desktopShortcuts.Add(new(path, false));
+                foreach (var path in NewShortcuts)
+                {
+                    desktopShortcuts.Add(new(path, false));
+                }
             }
-            else foreach (var (shortcutPath, shortcutEnabled) in DesktopShortcutsDatabase.GetDatabase())
+            else
             {
-                var shortcutEntry = new ShortcutEntry(shortcutPath, shortcutEnabled);
-                desktopShortcuts.Add(shortcutEntry);
+                foreach (var (shortcutPath, shortcutEnabled) in DesktopShortcutsDatabase.GetDatabase())
+                {
+                    var shortcutEntry = new ShortcutEntry(shortcutPath, shortcutEnabled);
+                    desktopShortcuts.Add(shortcutEntry);
+                }
             }
 
-            foreach(var shortcut in desktopShortcuts)
+            foreach (var shortcut in desktopShortcuts)
             {
                 shortcut.OnReset += (sender, path) =>
                 {
-                    if (sender is not ShortcutEntry sh) throw new InvalidOperationException();
+                    if (sender is not ShortcutEntry sh)
+                    {
+                        throw new InvalidOperationException();
+                    }
+
                     DesktopShortcutsDatabase.ResetShortcut(sh.ShortcutPath);
                     desktopShortcuts.Remove(sh);
                 };
@@ -146,7 +159,11 @@ namespace UniGetUI.Interface
 
         protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
+            }
+
             field = value;
             OnPropertyChanged(propertyName);
             return true;

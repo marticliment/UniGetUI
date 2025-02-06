@@ -12,7 +12,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
 {
     public static string GetIdNamePiece(IPackage package)
     {
-        if(!package.Id.EndsWith("…"))
+        if (!package.Id.EndsWith("…"))
             return $"--id \"{package.Id.TrimEnd('…')}\" --exact";
 
         if (!package.Name.EndsWith("…"))
@@ -55,7 +55,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
         parameters.Add(options.InteractiveInstallation ? "--interactive" : "--silent");
         parameters.AddRange(options.CustomParameters);
 
-        if(operation is OperationType.Update)
+        if (operation is OperationType.Update)
         {
             if (package.Name.Contains("64-bit") || package.Id.ToLower().Contains("x64"))
             {
@@ -68,7 +68,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             parameters.Add("--include-unknown");
         }
 
-        if(operation is not OperationType.Uninstall)
+        if (operation is not OperationType.Uninstall)
         {
             parameters.AddRange(["--accept-package-agreements", "--force"]);
 
@@ -138,7 +138,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
         if (uintCode == 0x8A150109)
         {
             // If the user is required to restart the system to complete the installation
-            if(operation is OperationType.Update) MarkUpgradeAsDone(package);
+            if (operation is OperationType.Update) MarkUpgradeAsDone(package);
             //return OperationVeredict.RestartRequired;
             return OperationVeredict.Success;
         }
@@ -162,18 +162,18 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
         if (uintCode == 0x8A15010D || uintCode == 0x8A15004F || uintCode == 0x8A15010E)
         {
             // Application is already installed
-            if(operation is OperationType.Update) MarkUpgradeAsDone(package);
+            if (operation is OperationType.Update) MarkUpgradeAsDone(package);
             return OperationVeredict.Success;
         }
 
         if (returnCode == 0)
         {
             // Operation succeeded
-            if(operation is OperationType.Update) MarkUpgradeAsDone(package);
+            if (operation is OperationType.Update) MarkUpgradeAsDone(package);
             return OperationVeredict.Success;
         }
 
-        if(uintCode == 0x8A150056 && package.OverridenOptions.RunAsAdministrator != false && !CoreTools.IsAdministrator())
+        if (uintCode == 0x8A150056 && package.OverridenOptions.RunAsAdministrator != false && !CoreTools.IsAdministrator())
         {
             // Installer can't run elevated
             package.OverridenOptions.RunAsAdministrator = false;
