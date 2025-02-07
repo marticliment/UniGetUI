@@ -66,10 +66,10 @@ namespace UniGetUI.Interface
 
             foreach (Page page in new Page[] { DiscoverPage, UpdatesPage, InstalledPage, BundlesPage })
             {
-                Grid.SetColumn(page, 0);
-                Grid.SetRow(page, 0);
-                MainContentPresenterGrid.Children.Add(page);
-                AddedPages.Add(page);
+                //Grid.SetColumn(page, 0);
+                //Grid.SetRow(page, 0);
+                //MainContentPresenterGrid.Children.Add(page);
+                //AddedPages.Add(page);
             }
 
             MoreNavButtonMenu.Closed += (_, _) => SelectNavButtonForPage(CurrentPage_t);
@@ -239,31 +239,30 @@ namespace UniGetUI.Interface
 
             Page NewPage = GetPageForType(NewPage_t);
 
-            if (!AddedPages.TryGetValue(NewPage, out _))
+            /*if (!AddedPages.TryGetValue(NewPage, out _))
             {
                 AddedPages.Add(NewPage);
                 Grid.SetColumn(NewPage, 0);
                 Grid.SetRow(NewPage, 0);
                 MainContentPresenterGrid.Children.Add(NewPage);
-            }
+            }*/
 
-            foreach (Page page in AddedPages)
+            /*foreach (Page page in AddedPages)
             {
                 bool IS_MAIN_PAGE = (page == NewPage);
                 page.Visibility =  IS_MAIN_PAGE? Visibility.Visible : Visibility.Collapsed;
                 page.IsEnabled = IS_MAIN_PAGE;
-            }
+            }*/
+
+            Page? oldPage = ContentFrame.Content as Page;
+            ContentFrame.Content = NewPage;
 
             OldPage_t = CurrentPage_t;
             CurrentPage_t = NewPage_t;
 
             (NewPage as AbstractPackagesPage)?.FocusPackageList();
             (NewPage as IEnterLeaveListener)?.OnEnter();
-            if (OldPage_t is not PageType.Null)
-            {
-                Page oldPage = GetPageForType(OldPage_t);
-                (oldPage as IEnterLeaveListener)?.OnLeave();
-            }
+            (oldPage as IEnterLeaveListener)?.OnLeave();
         }
 
         private void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
@@ -306,14 +305,14 @@ namespace UniGetUI.Interface
             int OpCount = MainApp.Operations._operationList.Count;
             int maxHeight = Math.Max((OpCount * 58) - 7, 0);
 
-            MainContentPresenterGrid.RowDefinitions[2].MaxHeight = maxHeight;
+            ContentGrid.RowDefinitions[2].MaxHeight = maxHeight;
 
             if (OpCount > 0)
             {
                 if (isCollapsed)
                 {
-                    MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(0);
-                    MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(16);
+                    ContentGrid.RowDefinitions[2].Height = new GridLength(0);
+                    ContentGrid.RowDefinitions[1].Height = new GridLength(16);
                     OperationSplitter.Visibility = Visibility.Visible;
                     OperationSplitterMenuButton.Visibility = Visibility.Visible;
                     // OperationScrollView.Visibility = Visibility.Collapsed;
@@ -324,8 +323,8 @@ namespace UniGetUI.Interface
                     //if (int.TryParse(Settings.GetValue("OperationHistoryPreferredHeight"), out int setHeight) && setHeight < maxHeight)
                     //    MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(setHeight);
                     //else
-                        MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(Math.Min(maxHeight, 200));
-                    MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(16);
+                    ContentGrid.RowDefinitions[2].Height = new GridLength(Math.Min(maxHeight, 200));
+                    ContentGrid.RowDefinitions[1].Height = new GridLength(16);
                     OperationSplitter.Visibility = Visibility.Visible;
                     OperationSplitterMenuButton.Visibility = Visibility.Visible;
                     // OperationScrollView.Visibility = Visibility.Visible;
@@ -334,8 +333,8 @@ namespace UniGetUI.Interface
             }
             else
             {
-                MainContentPresenterGrid.RowDefinitions[1].Height = new GridLength(0);
-                MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(0);
+                ContentGrid.RowDefinitions[1].Height = new GridLength(0);
+                ContentGrid.RowDefinitions[2].Height = new GridLength(0);
                 OperationSplitter.Visibility = Visibility.Collapsed;
                 OperationSplitterMenuButton.Visibility = Visibility.Collapsed;
                 // OperationScrollView.Visibility = Visibility.Collapsed;

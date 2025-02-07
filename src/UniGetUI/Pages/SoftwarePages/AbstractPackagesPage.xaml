@@ -905,7 +905,7 @@
                 </Grid>
 
                 <ItemsView x:Name="PackageList" x:FieldModifier="protected" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"
-                    ItemsSource="{x:Bind FilteredPackages, Mode=TwoWay}"
+                    ItemsSource="{x:Bind FilteredPackages, Mode=OneWay}"
                     ItemTemplate="{StaticResource PackageTemplate}" Padding="4,0,4,0"
                     CanBeScrollAnchor="False">
                     <ItemsView.Layout>

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -58,7 +59,7 @@ namespace UniGetUI.Interface
             ExtendsContentIntoTitleBar = true;
             try
             {
-                SetTitleBar(ContentRoot);
+                SetTitleBar(MainContentGrid);
             } catch
             {
                 Logger.Warn("Could not set the title bar to the content root");
@@ -196,6 +197,7 @@ namespace UniGetUI.Interface
                 try
                 {
                     this.Hide(enableEfficiencyMode: true);
+                    MainContentFrame.Content = null;
                     AppWindow.Hide();
                 }
                 catch (Exception ex)
@@ -204,6 +206,7 @@ namespace UniGetUI.Interface
                     Logger.Debug("Windows efficiency mode API crashed, but this was expected");
                     Logger.Debug(ex);
                     this.Hide(enableEfficiencyMode: false);
+                    MainContentFrame.Content = null;
                     AppWindow.Hide();
                 }
             }
@@ -447,7 +450,7 @@ namespace UniGetUI.Interface
             TrayMenu.AreOpenCloseAnimationsEnabled = false;
 
             TrayIcon = new TaskbarIcon();
-            ContentRoot.Children.Add(TrayIcon);
+            MainContentGrid.Children.Add(TrayIcon);
             Closed += (_, _) => TrayIcon.Dispose();
             TrayIcon.ContextMenuMode = ContextMenuMode.PopupMenu;
 
@@ -559,18 +562,29 @@ namespace UniGetUI.Interface
 
         public void SwitchToInterface()
         {
+            __app_titlebar.Visibility = Visibility.Visible;
             SetTitleBar(__app_titlebar);
 
             NavigationPage = new MainView();
-            Grid.SetRow(NavigationPage, 4);
-            Grid.SetColumn(NavigationPage, 0);
-            MainContentGrid.Children.Add(NavigationPage);
 
-            ColumnDefinition ContentColumn = ContentRoot.ColumnDefinitions[1];
-            ContentColumn.Width = new GridLength(1, GridUnitType.Star);
+            object? control = MainContentFrame.Content as Grid;
+            if (control is Grid loadingWindow)
+            {
+                loadingWindow.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Logger.Error("MainContentFrame.Content somehow wasn't the loading window");
+            }
 
-            ColumnDefinition SpashScreenColumn = ContentRoot.ColumnDefinitions[0];
-            SpashScreenColumn.Width = new GridLength(0, GridUnitType.Pixel);
+            MainContentFrame.Content = NavigationPage;
+
+            Activated += (_, e) =>
+            {
+                if(e.WindowActivationState is WindowActivationState.CodeActivated or WindowActivationState.PointerActivated)
+                    MainContentFrame.Content = NavigationPage;
+            };
+
         }
 
         public void ApplyTheme()
@@ -579,16 +593,16 @@ namespace UniGetUI.Interface
             if (preferredTheme == "dark")
             {
                 MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
-                ContentRoot.RequestedTheme = ElementTheme.Dark;
+                MainContentGrid.RequestedTheme = ElementTheme.Dark;
             }
             else if (preferredTheme == "light")
             {
                 MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Light;
-                ContentRoot.RequestedTheme = ElementTheme.Light;
+                MainContentGrid.RequestedTheme = ElementTheme.Light;
             }
             else
             {
-                if (ContentRoot.ActualTheme == ElementTheme.Dark)
+                if (MainContentGrid.ActualTheme == ElementTheme.Dark)
                 {
                     MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Dark;
                 }
@@ -597,7 +611,7 @@ namespace UniGetUI.Interface
                     MainApp.Instance.ThemeListener.CurrentTheme = ApplicationTheme.Light;
                 }
 
-                ContentRoot.RequestedTheme = ElementTheme.Default;
+                MainContentGrid.RequestedTheme = ElementTheme.Default;
             }
 
             if (AppWindowTitleBar.IsCustomizationSupported())
@@ -677,7 +691,7 @@ namespace UniGetUI.Interface
                     await Task.Delay(100);
                 }
 
-                dialog.RequestedTheme = ContentRoot.RequestedTheme;
+                dialog.RequestedTheme = MainContentGrid.RequestedTheme;
                 ContentDialogResult result = await dialog.ShowAsync();
                 DialogQueue.Remove(dialog);
                 return result;
