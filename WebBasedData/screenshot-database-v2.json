@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11747,
-        "done": 5196,
-        "packages_with_icon": 5196,
-        "packages_with_screenshot": 621,
-        "total_screenshots": 1939
+        "total": 11748,
+        "done": 5197,
+        "packages_with_icon": 5197,
+        "packages_with_screenshot": 622,
+        "total_screenshots": 1943
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -48636,6 +48636,15 @@
         "xpdf-utils": {
             "icon": "https://community.chocolatey.org/content/packageimages/xpdf-utils.3.4.0.20170430.png",
             "images": []
+        },
+        "xpipe": {
+            "icon": "https://raw.githubusercontent.com/xpipe-io/xpipe/refs/heads/master/dist/logo/logo.iconset/icon_512x512.png",
+            "images": [
+                "https://github.com/xpipe-io/.github/raw/main/img/banner.png",
+                "https://github.com/xpipe-io/.github/raw/main/img/hub_shadow.png",
+                "https://github.com/xpipe-io/.github/raw/main/img/terminal_shadow.png",
+                "https://github.com/xpipe-io/.github/raw/main/img/browser_shadow.png"
+            ]
         },
         "xplorer": {
             "icon": "",
