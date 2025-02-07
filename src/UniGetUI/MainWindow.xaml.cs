@@ -115,6 +115,12 @@ namespace UniGetUI.Interface
 
             if (!Settings.Get("TransferredOldSettings"))
                 TransferOldSettingsFormats();
+
+            Activated += (_, e) =>
+            {
+                if(e.WindowActivationState is WindowActivationState.CodeActivated or WindowActivationState.PointerActivated)
+                    ThreadHelper.HandleDWMThread(true);
+            };
         }
 
         private static void TransferOldSettingsFormats()
@@ -194,6 +200,7 @@ namespace UniGetUI.Interface
             if (!Settings.Get("DisableSystemTray") || AutoUpdater.UpdateReadyToBeInstalled)
             {
                 args.Cancel = true;
+                ThreadHelper.HandleDWMThread(false);
                 try
                 {
                     this.Hide(enableEfficiencyMode: true);
