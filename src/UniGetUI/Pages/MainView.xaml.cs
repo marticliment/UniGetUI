@@ -260,9 +260,11 @@ namespace UniGetUI.Interface
             OldPage_t = CurrentPage_t;
             CurrentPage_t = NewPage_t;
 
-            (NewPage as AbstractPackagesPage)?.FocusPackageList();
-            (NewPage as IEnterLeaveListener)?.OnEnter();
             (oldPage as IEnterLeaveListener)?.OnLeave();
+
+            (NewPage as AbstractPackagesPage)?.FocusPackageList();
+            (NewPage as AbstractPackagesPage)?.FilterPackages();
+            (NewPage as IEnterLeaveListener)?.OnEnter();
         }
 
         private void ReleaseNotesMenu_Click(object sender, RoutedEventArgs e)
