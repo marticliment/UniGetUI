@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI;
 
@@ -40,6 +41,8 @@ public class DWMThreadHelper
 
     public static void ChangeState_DWM(bool suspend)
     {
+        if (Settings.Get("DisableDMWThreadOptimizations")) return;
+
         if (DWM_IsSuspended && suspend)
         {
             Logger.Debug("DWM Thread was already suspended"); return;
@@ -60,6 +63,8 @@ public class DWMThreadHelper
 
     public static void ChangeState_XAML(bool suspend)
     {
+        if (Settings.Get("DisableDMWThreadOptimizations")) return;
+
         if (XAML_IsSuspended && suspend)
         {
             Logger.Debug("XAML Thread was already suspended"); return;
