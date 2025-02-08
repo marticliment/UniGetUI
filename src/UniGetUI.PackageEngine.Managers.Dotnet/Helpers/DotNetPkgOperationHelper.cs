@@ -33,8 +33,8 @@ internal sealed class DotNetPkgOperationHelper : PackagePkgOperationHelper
         if (options.CustomInstallLocation != "")
             parameters.AddRange(["--tool-path", "\"" + options.CustomInstallLocation + "\""]);
 
-        if (package.OverridenOptions.Scope == PackageScope.Global ||
-           (package.OverridenOptions.Scope is null && options.InstallationScope == PackageScope.Global))
+        if (package.OverridenOptions.Scope is PackageScope.Global ||
+           (package.OverridenOptions.Scope is null && options.InstallationScope is PackageScope.Global))
             parameters.Add("--global");
 
         if (operation is OperationType.Install or OperationType.Update)
@@ -66,6 +66,12 @@ internal sealed class DotNetPkgOperationHelper : PackagePkgOperationHelper
         IEnumerable<string> processOutput,
         int returnCode)
     {
-        return returnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
+        if (returnCode is not 0 && package.OverridenOptions.Scope is not PackageScope.Global)
+        {
+            package.OverridenOptions.Scope = PackageScope.Global;
+            return OperationVeredict.AutoRetry;
+        }
+
+        return returnCode is 0 ? OperationVeredict.Success : OperationVeredict.Failure;
     }
 }

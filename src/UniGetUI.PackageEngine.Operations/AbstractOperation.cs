@@ -242,10 +242,11 @@ public abstract class AbstractOperation : IDisposable
             OperationVeredict result;
             Line(CoreTools.Translate("Starting operation..."), LineType.ProgressIndicator);
             if (Status is OperationStatus.InQueue) Status = OperationStatus.Running;
-            OperationStarting?.Invoke(this, EventArgs.Empty);
 
             do
             {
+                OperationStarting?.Invoke(this, EventArgs.Empty);
+
                 try
                 {
                     // Check if the operation was canceled
