@@ -17,6 +17,18 @@ internal sealed class CargoPkgOperationHelper(Cargo cargo) : PackagePkgOperation
             _ => throw new InvalidDataException("Invalid package operation"),
         };
 
+        if (operation is OperationType.Install or OperationType.Update)
+        {
+            parameters.Add("--no-confirm");
+
+            if(options.SkipHashCheck)
+                parameters.Add("--skip-signatures");
+
+            if(options.CustomInstallLocation != "")
+                parameters.AddRange(["--install-path", options.CustomInstallLocation]);
+        }
+
+        parameters.AddRange(options.CustomParameters);
         return parameters;
     }
 
