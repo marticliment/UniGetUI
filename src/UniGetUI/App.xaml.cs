@@ -400,12 +400,14 @@ namespace UniGetUI
 
         public async void DisposeAndQuit(int outputCode = 0)
         {
-            Logger.Warn("Quitting...");
+            Logger.Warn("Quitting UniGetUI");
+            DWMThreadHelper.ChangeState_DWM(false);
+            DWMThreadHelper.ChangeState_XAML(false);
             MainWindow?.Close();
             BackgroundApi?.Stop();
             Exit();
-            await Task.Delay(100);
-            Environment.Exit(outputCode);
+            // await Task.Delay(100);
+            // Environment.Exit(outputCode);
         }
 
         public void KillAndRestart()
