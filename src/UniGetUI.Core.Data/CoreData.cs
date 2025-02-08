@@ -39,11 +39,22 @@ namespace UniGetUI.Core.Data
                 if (IS_PORTABLE is null)
                     IS_PORTABLE = File.Exists(Path.Join(UniGetUIExecutableDirectory, "ForceUniGetUIPortable"));
 
-                if (IS_PORTABLE == true)
+                if (IS_PORTABLE is true)
                 {
                     string path = Path.Join(UniGetUIExecutableDirectory, "Settings");
-                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                    return path;
+                    try
+                    {
+                        if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                        var testfilepath = Path.Join(path, "PermissionTestFile");
+                        File.WriteAllText(testfilepath, "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+                        return path;
+                    }
+                    catch (Exception ex)
+                    {
+                        IS_PORTABLE = false;
+                        Logger.Error($"Could not acces/write path {path}. UniGetUI will NOT be run in portable mode, and User settings will be used instead");
+                        Logger.Error(ex);
+                    }
                 }
 
                 string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
