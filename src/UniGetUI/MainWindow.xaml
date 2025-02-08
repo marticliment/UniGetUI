@@ -30,7 +30,8 @@
                         <BitmapImage DecodePixelHeight="16" UriSource="ms-appx:///Assets/Images/icon.png"/>
                     </Image.Source>
                 </Image>
-                <widgets:TranslatedTextBlock x:Name="AppTitle" Text="WingetUI" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="12"/>
+                <TextBlock x:Name="AppTitle" Text="UniGetUI" VerticalAlignment="Stretch" HorizontalAlignment="Center" FontSize="12"/>
+                <TextBlock x:Name="AppSubTitle" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="12" Opacity="0.8"/>
             </StackPanel>
         </Border>
         <StackPanel Grid.Row="1" Spacing="0" Padding="0" Margin="0,-4,0,0">

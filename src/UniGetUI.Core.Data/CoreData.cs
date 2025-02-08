@@ -28,6 +28,7 @@ namespace UniGetUI.Core.Data
         }
 
         private static bool? IS_PORTABLE;
+        public static bool IsPortable { get => IS_PORTABLE ?? false; }
 
         /// <summary>
         /// The directory where all the user data is stored. The directory is automatically created if it does not exist.

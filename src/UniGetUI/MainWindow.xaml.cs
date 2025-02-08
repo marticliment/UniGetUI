@@ -75,14 +75,18 @@ namespace UniGetUI.Interface
 
             if (CoreTools.IsAdministrator())
             {
-                Title = "UniGetUI " + CoreTools.Translate("[RAN AS ADMINISTRATOR]");
-                AppTitle.Text = Title;
+                AddToSubtitle(CoreTools.Translate("[RAN AS ADMINISTRATOR]"));
+            }
+
+            if (CoreData.IsPortable)
+            {
+                AddToSubtitle(CoreTools.Translate("Portable mode"));
             }
 
 #if DEBUG
-            Title = Title + " - DEBUG BUILD";
-            AppTitle.Text = Title;
+            AddToSubtitle(CoreTools.Translate("DEBUG BUILD"));
 #endif
+
             var panel = new StackPanel
             {
                 Width = 400,
@@ -147,6 +151,20 @@ namespace UniGetUI.Interface
             {
                 Activate();
             }
+        }
+
+        private void AddToSubtitle(string line)
+        {
+            if (AppSubTitle.Text.Length > 0)
+                AppSubTitle.Text += " - ";
+            AppSubTitle.Text += line;
+            Title = "UniGetUI - " + AppSubTitle.Text;
+        }
+
+        private void ClearSubtitle()
+        {
+            AppSubTitle.Text = "";
+            Title = "UniGetUI";
         }
 
         private static void TransferOldSettingsFormats()
