@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
 using CommunityToolkit.WinUI.Helpers;
+using H.NotifyIcon;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -349,14 +350,9 @@ namespace UniGetUI
             await MainWindow.HandleMissingDependencies(missing_deps);
         }
 
-        protected override async void OnLaunched(LaunchActivatedEventArgs args)
+        protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            if (!CoreData.IsDaemon)
-            {
-                await ShowMainWindowFromLaunchAsync();
-            }
-
-            CoreData.IsDaemon = false;
+            MainWindow?.Activate();
         }
 
         public async Task ShowMainWindowFromRedirectAsync(AppActivationArguments rawArgs)
@@ -386,14 +382,6 @@ namespace UniGetUI
             {
                 Logger.Warn("REDIRECTOR ACTIVATOR: args.Kind is not Launch but rather " + kind);
             }
-
-            MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);
-        }
-
-        public async Task ShowMainWindowFromLaunchAsync()
-        {
-            while (MainWindow is null)
-                await Task.Delay(100);
 
             MainWindow.DispatcherQueue.TryEnqueue(MainWindow.Activate);
         }
