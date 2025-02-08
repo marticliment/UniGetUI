@@ -118,8 +118,12 @@ namespace UniGetUI.Interface
 
             Activated += (_, e) =>
             {
-                if(e.WindowActivationState is WindowActivationState.CodeActivated or WindowActivationState.PointerActivated)
-                    ThreadHelper.HandleDWMThread(true);
+                if (e.WindowActivationState is WindowActivationState.CodeActivated
+                    or WindowActivationState.PointerActivated)
+                {
+                    DWMThreadHelper.ChangeState_DWM(false);
+                    DWMThreadHelper.ChangeState_XAML(false);
+                }
             };
         }
 
@@ -200,21 +204,22 @@ namespace UniGetUI.Interface
             if (!Settings.Get("DisableSystemTray") || AutoUpdater.UpdateReadyToBeInstalled)
             {
                 args.Cancel = true;
-                ThreadHelper.HandleDWMThread(false);
+                DWMThreadHelper.ChangeState_DWM(true);
+                DWMThreadHelper.ChangeState_XAML(true);
                 try
                 {
-                    this.Hide(enableEfficiencyMode: true);
-                    MainContentFrame.Content = null;
+                    // this.Hide(enableEfficiencyMode: true);
                     AppWindow.Hide();
+                    MainContentFrame.Content = null;
                 }
                 catch (Exception ex)
                 {
                     // Somewhere, Sometimes, MS Window Efficiency mode just crashes
-                    Logger.Debug("Windows efficiency mode API crashed, but this was expected");
+                    Logger.Debug("Windows efficiency mode API crashed, but this was [kinda] expected");
                     Logger.Debug(ex);
-                    this.Hide(enableEfficiencyMode: false);
-                    MainContentFrame.Content = null;
+                    // this.Hide(enableEfficiencyMode: false);
                     AppWindow.Hide();
+                    MainContentFrame.Content = null;
                 }
             }
             else
@@ -364,6 +369,9 @@ namespace UniGetUI.Interface
 
         public new void Activate()
         {
+            DWMThreadHelper.ChangeState_DWM(false);
+            DWMThreadHelper.ChangeState_XAML(false);
+
             if (!HasLoadedLastGeometry)
             {
                 RestoreGeometry();
