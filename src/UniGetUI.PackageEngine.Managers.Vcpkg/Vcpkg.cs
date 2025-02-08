@@ -21,6 +21,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         public Dictionary<string, ManagerSource> TripletSourceMap;
         public static Uri URI_VCPKG_IO = new Uri("https://vcpkg.io/");
 
+        private bool hasBeenBootstrapped;
+
         public Vcpkg()
         {
             Dependencies = [
@@ -373,6 +375,30 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             processLogger.AddToStdOut(p.StandardOutput.ReadToEnd());
             processLogger.AddToStdErr(p.StandardError.ReadToEnd());
             processLogger.Close(p.ExitCode);
+
+            if (!hasBeenBootstrapped)
+            {
+                p = new()
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "cmd.exe",
+                        WorkingDirectory = vcpkgRoot,
+                        Arguments = "/C .\\bootstrap-vcpkg.bat",
+                        UseShellExecute = false,
+                        // RedirectStandardOutput = true,
+                        // RedirectStandardError = true,
+                        CreateNoWindow = true
+                    }
+                };
+                IProcessTaskLogger processLogger2 = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+                p.Start();
+                p.WaitForExit();
+                // processLogger2.AddToStdOut(p.StandardOutput.ReadToEnd());
+                // processLogger2.AddToStdErr(p.StandardError.ReadToEnd());
+                processLogger2.Close(p.ExitCode);
+                hasBeenBootstrapped = true;
+            }
         }
 
         public static Tuple<bool, string> GetVcpkgPath()
