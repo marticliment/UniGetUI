@@ -15,6 +15,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Vertical">
                 <widgets:TranslatedTextBlock
@@ -25,6 +26,13 @@
                 </StackPanel>
                 <Button
                     Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    Margin="10,0,0,0"
+                    Click="ManualScanButton_Click">
+                    <widgets:TranslatedTextBlock Text="Manual scan"/>
+                </Button>
+                <Button
+                    Grid.Column="2"
                     HorizontalAlignment="Stretch"
                     Margin="10,0,0,0">
                     <widgets:TranslatedTextBlock Text="Reset list"/>

@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
+using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -77,6 +78,13 @@ namespace UniGetUI.Interface
                 shortcut.ResetConfiguration();
                 desktopShortcuts.Remove(shortcut);
             }
+        }
+
+        private void ManualScanButton_Click(object sender, RoutedEventArgs e)
+        {
+            DesktopShortcutsDatabase.TryRemoveNewShortcuts([]);
+            Close?.Invoke(this, EventArgs.Empty);
+            DialogHelper.ManageDesktopShortcuts(DesktopShortcutsDatabase.GetUnknownShortcuts());
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
