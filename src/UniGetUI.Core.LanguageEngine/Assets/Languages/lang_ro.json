@@ -752,7 +752,7 @@
   "You will be prompted only once, and administrator rights will be granted to packages that request them.": "Vi se va cere o singură dată și se vor acorda drepturi de administrator pachetelor care le solicită.",
   "You will be prompted only once, and every future installation will be elevated automatically.": "Vi se va cere o singură dată și la fiecare instalare viitoare va fi aplicat automat.",
   "You will likely need to interact with the installer.": null,
-  "[RAN AS ADMINISTRATOR]": "[RULAT CA ADMINISTRATOR]",
+  "[RAN AS ADMINISTRATOR]": "RULAT CA ADMINISTRATOR",
   "buy me a coffee": "Cumpără-mi o cafea",
   "extracted": "extras",
   "feature": "caracteristică",

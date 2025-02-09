@@ -752,7 +752,7 @@
   "You will be prompted only once, and administrator rights will be granted to packages that request them.": "Do të kërkohet vetëm një herë dhe të drejtat e administratorit do të jepen paketave që i kërkojnë ato.",
   "You will be prompted only once, and every future installation will be elevated automatically.": "Do të kërkohet vetëm një herë dhe çdo instalim i ardhshëm do të instalohet me privilegje të ngritura automatikisht.",
   "You will likely need to interact with the installer.": null,
-  "[RAN AS ADMINISTRATOR]": "[EKZEKUTUAR SI ADMINISTRATOR]",
+  "[RAN AS ADMINISTRATOR]": "EKZEKUTUAR SI ADMINISTRATOR",
   "buy me a coffee": "më bli një kafe",
   "extracted": "nxjerrë",
   "feature": "veçori",

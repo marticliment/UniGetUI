@@ -752,7 +752,7 @@
   "You will be prompted only once, and administrator rights will be granted to packages that request them.": "คุณจะได้รับคำขอสิทธิ์ผู้ดูแลระบบเพียงครั้งเดียวเท่านั้น และสิทธิ์ผู้ดูแลระบบจะถูกมอบให้แก่แพ็กเกจที่ขอใช้งานสิทธิ์นั้น",
   "You will be prompted only once, and every future installation will be elevated automatically.": "คุณจะได้รับคำขอสิทธิ์ผู้ดูแลระบบเพียงครั้งเดียวเท่านั้น และการติดตั้งในอนาคตทุก ๆ ครั้งจะถูกยกระดับสิทธิ์โดยอัตโนมัติ",
   "You will likely need to interact with the installer.": null,
-  "[RAN AS ADMINISTRATOR]": "[เรียกใช้ในฐานะผู้ดูแลระบบ]",
+  "[RAN AS ADMINISTRATOR]": "เรียกใช้ในฐานะผู้ดูแลระบบ",
   "buy me a coffee": "เลี้ยงขนมเราหน่อย",
   "extracted": "แตกไฟล์แล้ว",
   "feature": null,

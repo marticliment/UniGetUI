@@ -752,7 +752,7 @@
   "You will be prompted only once, and administrator rights will be granted to packages that request them.": "Бићете упитани само једном, и администраторска права биће додељена пакетима који их захтевају.",
   "You will be prompted only once, and every future installation will be elevated automatically.": "Бићете упитани само једном, и свака будућа инсталација биће аутоматски повишена.",
   "You will likely need to interact with the installer.": null,
-  "[RAN AS ADMINISTRATOR]": "[ПОКРЕНУТО КАО АДМИНИСТРАТОР]",
+  "[RAN AS ADMINISTRATOR]": "ПОКРЕНУТО КАО АДМИНИСТРАТОР",
   "buy me a coffee": "купи ми кафу",
   "extracted": "извучено",
   "feature": null,
