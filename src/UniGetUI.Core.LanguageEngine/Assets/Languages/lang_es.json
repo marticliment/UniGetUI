@@ -752,7 +752,7 @@
   "You will be prompted only once, and administrator rights will be granted to packages that request them.": "Sólo se te preguntará una vez, y se concederán privilegios de administrador a los paquetes que lo soliciten.",
   "You will be prompted only once, and every future installation will be elevated automatically.": "Sólo se te preguntará una vez, y cada instalación futura se elevará automáticamente.",
   "You will likely need to interact with the installer.": "Es muy probable que sea necesario interactuar con el instalador",
-  "[RAN AS ADMINISTRATOR]": "[EJECUTADO COMO ADMINISTRADOR]",
+  "[RAN AS ADMINISTRATOR]": "EJECUTADO COMO ADMINISTRADOR",
   "buy me a coffee": "comprarme un café",
   "extracted": "extraído",
   "feature": "caracteristica",

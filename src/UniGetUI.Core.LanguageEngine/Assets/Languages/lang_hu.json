@@ -752,7 +752,7 @@
   "You will be prompted only once, and administrator rights will be granted to packages that request them.": "A rendszer csak egyszer fogja kérni, és a rendszergazdai jogokat az azokat igénylő csomagok kapják meg.",
   "You will be prompted only once, and every future installation will be elevated automatically.": "A rendszer csak egyszer fogja kérni, és minden további telepítés auto. emelt jogokal történik.",
   "You will likely need to interact with the installer.": null,
-  "[RAN AS ADMINISTRATOR]": "[RENDSZERGAZDAKÉNT FUTOTT]",
+  "[RAN AS ADMINISTRATOR]": "RENDSZERGAZDAKÉNT FUTOTT",
   "buy me a coffee": "hívjon meg egy kávéra",
   "extracted": "kivont",
   "feature": "funkció",

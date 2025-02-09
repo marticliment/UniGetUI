@@ -752,7 +752,7 @@
   "You will be prompted only once, and administrator rights will be granted to packages that request them.": "Anda hanya akan diminta sekali, dan hak administrator akan diberikan ke paket yang memintanya.",
   "You will be prompted only once, and every future installation will be elevated automatically.": "Anda hanya akan diminta satu kali, dan setiap penginstalan di masa mendatang akan ditinggikan secara otomatis.",
   "You will likely need to interact with the installer.": null,
-  "[RAN AS ADMINISTRATOR]": "[JALANKAN SEBAGAI ADMINISTRATOR]",
+  "[RAN AS ADMINISTRATOR]": "JALANKAN SEBAGAI ADMINISTRATOR",
   "buy me a coffee": "Belikan saya kopi",
   "extracted": null,
   "feature": null,

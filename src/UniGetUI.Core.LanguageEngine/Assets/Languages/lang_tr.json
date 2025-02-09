@@ -752,7 +752,7 @@
   "You will be prompted only once, and administrator rights will be granted to packages that request them.": "Yalnızca bir kez uyarılacaksınız ve yönetici hakları talep eden tüm paketlere yönetici ayrıcalıkları verilecek.",
   "You will be prompted only once, and every future installation will be elevated automatically.": "Yalnızca bir kez uyarılacaksınız ve gelecekteki tüm yüklemeler yönetici ayrıcalıklarıyla gerçekleştirilecek.",
   "You will likely need to interact with the installer.": "Muhtemelen yükleyiciyle etkileşime girmeniz gerekecektir.",
-  "[RAN AS ADMINISTRATOR]": "[YÖNETİCİ OLARAK ÇALIŞTIR]",
+  "[RAN AS ADMINISTRATOR]": "YÖNETİCİ OLARAK ÇALIŞTIR",
   "buy me a coffee": "Bir kahve ısmarla",
   "extracted": "Çıkarıldı",
   "feature": "özellik",
