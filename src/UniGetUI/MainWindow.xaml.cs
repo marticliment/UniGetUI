@@ -19,6 +19,7 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Interfaces;
 using Windows.ApplicationModel.DataTransfer;
+using H.NotifyIcon.EfficiencyMode;
 using Microsoft.Windows.AppNotifications;
 using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
@@ -119,6 +120,37 @@ namespace UniGetUI.Interface
 
             if (!Settings.Get("TransferredOldSettings"))
                 TransferOldSettingsFormats();
+
+            Activated += (_, e) =>
+            {
+                if (e.WindowActivationState is WindowActivationState.CodeActivated
+                    or WindowActivationState.PointerActivated)
+                {
+                    DWMThreadHelper.ChangeState_DWM(false);
+                    DWMThreadHelper.ChangeState_XAML(false);
+                }
+            };
+
+            if (CoreData.IsDaemon)
+            {
+                try
+                {
+                    TrayIcon?.ForceCreate(true);
+                }
+                catch (Exception ex)
+                {
+                    TrayIcon?.ForceCreate(false);
+                    Logger.Error("Could not create taskbar tray with efficiency mode enabled");
+                    Logger.Error(ex);
+                }
+                DWMThreadHelper.ChangeState_DWM(true);
+                DWMThreadHelper.ChangeState_XAML(true);
+                CoreData.IsDaemon = false;
+            }
+            else
+            {
+                Activate();
+            }
         }
 
         private void AddToSubtitle(string line)
@@ -212,21 +244,21 @@ namespace UniGetUI.Interface
             if (!Settings.Get("DisableSystemTray") || AutoUpdater.UpdateReadyToBeInstalled)
             {
                 args.Cancel = true;
+                DWMThreadHelper.ChangeState_DWM(true);
+                DWMThreadHelper.ChangeState_XAML(true);
+
                 try
                 {
-                    this.Hide(enableEfficiencyMode: true);
-                    MainContentFrame.Content = null;
-                    AppWindow.Hide();
+                    EfficiencyModeUtilities.SetEfficiencyMode(true);
                 }
                 catch (Exception ex)
                 {
-                    // Somewhere, Sometimes, MS Window Efficiency mode just crashes
-                    Logger.Debug("Windows efficiency mode API crashed, but this was expected");
-                    Logger.Debug(ex);
-                    this.Hide(enableEfficiencyMode: false);
-                    MainContentFrame.Content = null;
-                    AppWindow.Hide();
+                    Logger.Error("Could not disable efficiency mode");
+                    Logger.Error(ex);
                 }
+
+                MainContentFrame.Content = null;
+                AppWindow.Hide();
             }
             else
             {
@@ -375,6 +407,19 @@ namespace UniGetUI.Interface
 
         public new void Activate()
         {
+            try
+            {
+                EfficiencyModeUtilities.SetEfficiencyMode(false);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Could not disable efficiency mode");
+                Logger.Error(ex);
+            }
+
+            DWMThreadHelper.ChangeState_DWM(false);
+            DWMThreadHelper.ChangeState_XAML(false);
+
             if (!HasLoadedLastGeometry)
             {
                 RestoreGeometry();

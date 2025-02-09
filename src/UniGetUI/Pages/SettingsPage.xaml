@@ -333,6 +333,11 @@
                             Icon="experimental">
                         <Toolkit:SettingsExpander.Items>
                             <widgets:CheckboxCard
+                                Name="DisableDMWThreadOptimizations"
+                                SettingName="DisableDMWThreadOptimizations"
+                                Text="Enable background CPU Usage optimizations (see Pull Request #3278)"
+                            />
+                            <widgets:CheckboxCard
                                 x:Name="DisableWidgetsApi"
                                 Text="Enable background api (WingetUI Widgets and Sharing, port 7058)"
                                 SettingName="DisableApi"

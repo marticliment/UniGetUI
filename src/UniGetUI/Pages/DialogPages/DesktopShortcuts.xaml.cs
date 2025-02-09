@@ -111,7 +111,7 @@ namespace UniGetUI.Interface
             ConfirmResetFlyout.Hide();
         }
 
-        private void NoResetButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void NoResetButton_Click(object sender, RoutedEventArgs e)
         {
             ConfirmResetFlyout.Hide();
         }
