@@ -752,7 +752,7 @@
   "You will be prompted only once, and administrator rights will be granted to packages that request them.": "Du vil berre bli bedt om å gje administratorrettar ein gong, og rettane kjem til å bli gitt til pakkar som ber om det.",
   "You will be prompted only once, and every future installation will be elevated automatically.": "Du vil berre bli bedd om å gje administratorrettar ein gong, og alle framtidige installasjoner kjem til å bli gitt rettar automatisk.",
   "You will likely need to interact with the installer.": null,
-  "[RAN AS ADMINISTRATOR]": "[KØYRTE SOM ADMINISTRATOR]",
+  "[RAN AS ADMINISTRATOR]": "KØYRTE SOM ADMINISTRATOR",
   "buy me a coffee": "spander ein kopp kaffi på meg",
   "extracted": "utpakka",
   "feature": null,

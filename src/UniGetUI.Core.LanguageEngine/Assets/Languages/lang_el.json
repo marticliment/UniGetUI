@@ -752,7 +752,7 @@
   "You will be prompted only once, and administrator rights will be granted to packages that request them.": "Θα ερωτηθείτε μόνο μια φορά, και τα δικαιώματα διαχειριστή θα παραχωρούνται αυτόματα σε πακέτα που τα χρειάζονται.",
   "You will be prompted only once, and every future installation will be elevated automatically.": "Θα ερωτηθείτε μόνο μία φορά και σε κάθε μελλοντική εγκατάσταση τα δικαιώματα θα παραχωρούνται αυτόματα.",
   "You will likely need to interact with the installer.": null,
-  "[RAN AS ADMINISTRATOR]": "[ΕΚΤΕΛΕΣΤΗΚΕ ΜΕ ΔΙΚΑΙΩΜΑΤΑ ΔΙΑΧΕΙΡΙΣΤΗ]",
+  "[RAN AS ADMINISTRATOR]": "ΕΚΤΕΛΕΣΤΗΚΕ ΜΕ ΔΙΚΑΙΩΜΑΤΑ ΔΙΑΧΕΙΡΙΣΤΗ",
   "buy me a coffee": "αγοράστε μου έναν καφέ",
   "extracted": "αποσυμπιέστηκε",
   "feature": null,

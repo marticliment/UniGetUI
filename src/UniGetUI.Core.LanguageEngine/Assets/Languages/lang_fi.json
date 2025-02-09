@@ -752,7 +752,7 @@
   "You will be prompted only once, and administrator rights will be granted to packages that request them.": "Sinulta pyydetään vain kerran lupaa pakettien asennukselle ylläpitäjän oikeuksilla.",
   "You will be prompted only once, and every future installation will be elevated automatically.": "Sinulta pyydetään vain kerran lupaa pakettien asennukselle korotetuilla oikeuksilla.",
   "You will likely need to interact with the installer.": null,
-  "[RAN AS ADMINISTRATOR]": "[AJETTU JÄRJESTELMÄNVALVOJANA]",
+  "[RAN AS ADMINISTRATOR]": "AJETTU JÄRJESTELMÄNVALVOJANA",
   "buy me a coffee": "tarjoa minulle kupillinen kahvia",
   "extracted": "purettu",
   "feature": "ominaisuus",

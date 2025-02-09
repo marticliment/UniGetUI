@@ -752,7 +752,7 @@
   "You will be prompted only once, and administrator rights will be granted to packages that request them.": "Poziv boste prejeli samo enkrat, skrbniške pravice pa bodo dodeljene paketom, ki jih zahtevajo.",
   "You will be prompted only once, and every future installation will be elevated automatically.": "Pozvani boste le enkrat in vsaka prihodnja namestitev bo samodejno dvignjena.",
   "You will likely need to interact with the installer.": null,
-  "[RAN AS ADMINISTRATOR]": "[ZAGNANO KOT SKRBNIK]",
+  "[RAN AS ADMINISTRATOR]": "ZAGNANO KOT SKRBNIK",
   "buy me a coffee": "kupiš kavo",
   "extracted": "ekstrahirano",
   "feature": "funkcija",

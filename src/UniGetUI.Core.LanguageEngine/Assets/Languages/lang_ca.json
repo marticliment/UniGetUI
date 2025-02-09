@@ -752,7 +752,7 @@
   "You will be prompted only once, and administrator rights will be granted to packages that request them.": "Només se us demanaran una cop i es concediran drets d'administrador als paquets que en sol·licitin.",
   "You will be prompted only once, and every future installation will be elevated automatically.": "Només se us demanaran un cop i totes les instal·lacions futures s'elevaran automàticament.",
   "You will likely need to interact with the installer.": "Segurament haureu d'interactuar amb l'instal·lador.",
-  "[RAN AS ADMINISTRATOR]": "[EXECUTAT COM A ADMINISTRADOR]",
+  "[RAN AS ADMINISTRATOR]": "EXECUTAT COM A ADMINISTRADOR",
   "buy me a coffee": "comprar-me un cafè",
   "extracted": "extret",
   "feature": "característica",
