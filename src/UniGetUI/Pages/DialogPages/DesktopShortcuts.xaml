@@ -15,66 +15,92 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="200"/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical" Spacing="4">
                 <widgets:TranslatedTextBlock
                     FontWeight="Bold"
                     Text="UniGetUI has detected the following desktop shortcuts which can be removed automatically on future upgrades"/>
                 <widgets:TranslatedTextBlock
                     Text="Here you can change UniGetUI's behaviour regarding the following shortcuts. Checking a shortcut will make UniGetUI delete it if if gets created on a future upgrade. Unchecking it will keep the shortcut intact"/>
                 </StackPanel>
-                <Button
-                    Grid.Column="1"
-                    HorizontalAlignment="Stretch"
-                    Margin="10,0,0,0"
-                    Click="ManualScanButton_Click">
-                    <widgets:TranslatedTextBlock Text="Manual scan"/>
-                </Button>
-                <Button
-                    Grid.Column="2"
-                    HorizontalAlignment="Stretch"
-                    Margin="10,0,0,0">
-                    <widgets:TranslatedTextBlock Text="Reset list"/>
-                    <Button.Flyout>
-                        <Flyout
-                            x:Name="ConfirmResetFlyout"
-                            LightDismissOverlayMode="Off"
-                            Placement="Bottom">
-                            <Grid Width="300" ColumnSpacing="8" RowSpacing="16">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock
-                                    Grid.ColumnSpan="2"
-                                    Text="Do you really want to reset this list? This action cannot be reverted."
-                                    Margin="0,0,0,0"
-                                    TextWrapping="WrapWholeWords"
-                                    />
-                                <Button
-                                    Name="NoResetButton"
-                                    Click="NoResetButton_Click"
-                                    Grid.Row="1" Grid.Column="1"
-                                    HorizontalAlignment="Stretch"
-                                    Style="{ThemeResource AccentButtonStyle}">
-                                    <widgets:TranslatedTextBlock Text="No"/>
-                                </Button>
-                                <Button
-                                    Name="YesResetButton"
-                                    Click="YesResetButton_Click"
-                                    Grid.Row="1" Grid.Column="0"
-                                    HorizontalAlignment="Stretch">
-                                    <widgets:TranslatedTextBlock Text="Yes"/>
-                                </Button>
-                            </Grid>
-                        </Flyout>
-                    </Button.Flyout>
-                </Button>
+                <StackPanel Grid.Column="1" Orientation="Vertical" Spacing="4" VerticalAlignment="Bottom">
+                    <Button
+                        HorizontalAlignment="Stretch"
+                        Margin="10,0,0,0">
+                        <widgets:TranslatedTextBlock Text="Manual scan"/>
+                        <Button.Flyout>
+                            <Flyout
+                                x:Name="ManualScanFlyout"
+                                LightDismissOverlayMode="Off"
+                                Placement="Bottom">
+                                <Grid Width="300" ColumnSpacing="8" RowSpacing="16">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        Grid.ColumnSpan="2"
+                                        Text="Existing shortcuts on your desktop will be scanned, and you will need to pick which ones to keep and which ones to remove."
+                                        Margin="0,0,0,0"
+                                        TextWrapping="WrapWholeWords"
+                                        />
+                                    <Button
+                                        Click="ManualScanButton_Click"
+                                        Style="{ThemeResource AccentButtonStyle}"
+                                        Grid.Row="1" Grid.Column="1"
+                                        HorizontalAlignment="Stretch">
+                                        <widgets:TranslatedTextBlock Text="Continue"/>
+                                    </Button>
+                                </Grid>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                    <Button
+                        HorizontalAlignment="Stretch"
+                        Margin="10,0,0,0">
+                        <widgets:TranslatedTextBlock Text="Reset list"/>
+                        <Button.Flyout>
+                            <Flyout
+                                x:Name="ConfirmResetFlyout"
+                                LightDismissOverlayMode="Off"
+                                Placement="Bottom">
+                                <Grid Width="300" ColumnSpacing="8" RowSpacing="16">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        Grid.ColumnSpan="2"
+                                        Text="Do you really want to reset this list? This action cannot be reverted."
+                                        Margin="0,0,0,0"
+                                        TextWrapping="WrapWholeWords"
+                                        />
+                                    <Button
+                                        Click="NoResetButton_Click"
+                                        Grid.Row="1" Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        Style="{ThemeResource AccentButtonStyle}">
+                                        <widgets:TranslatedTextBlock Text="No"/>
+                                    </Button>
+                                    <Button
+                                        Click="YesResetButton_Click"
+                                        Grid.Row="1" Grid.Column="0"
+                                        HorizontalAlignment="Stretch">
+                                        <widgets:TranslatedTextBlock Text="Yes"/>
+                                    </Button>
+                                </Grid>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
             </Grid>
             <ScrollViewer>
                 <ListView

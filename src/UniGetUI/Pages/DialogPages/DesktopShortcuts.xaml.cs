@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.Pages.DialogPages;
 
@@ -80,11 +81,19 @@ namespace UniGetUI.Interface
             }
         }
 
-        private void ManualScanButton_Click(object sender, RoutedEventArgs e)
+        private async void ManualScanButton_Click(object sender, RoutedEventArgs e)
         {
             DesktopShortcutsDatabase.TryRemoveNewShortcuts([]);
             Close?.Invoke(this, EventArgs.Empty);
-            DialogHelper.ManageDesktopShortcuts(DesktopShortcutsDatabase.GetUnknownShortcuts());
+            var shortcuts = DesktopShortcutsDatabase.GetUnknownShortcuts();
+            if (shortcuts.Any())
+            {
+                await DialogHelper.ManageDesktopShortcuts(shortcuts);
+            }
+            else
+            {
+                await DialogHelper.NoDesktopShortcutsFound();
+            }
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
