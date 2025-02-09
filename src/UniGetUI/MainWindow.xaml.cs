@@ -167,20 +167,6 @@ namespace UniGetUI.Interface
             Title = "UniGetUI";
         }
 
-        private void AddToSubtitle(string line)
-        {
-            if (AppSubTitle.Text.Length > 0)
-                AppSubTitle.Text += " - ";
-            AppSubTitle.Text += line;
-            Title = "UniGetUI - " + AppSubTitle.Text;
-        }
-
-        private void ClearSubtitle()
-        {
-            AppSubTitle.Text = "";
-            Title = "UniGetUI";
-        }
-
         private static void TransferOldSettingsFormats()
         {
             foreach (IPackageManager Manager in PEInterface.Managers)
