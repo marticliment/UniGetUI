@@ -587,5 +587,14 @@ public static partial class DialogHelper
         Window.TelemetryWarner.CloseButtonClick += (_, _) => Settings.Set("ShownTelemetryBanner", true);
 
     }
+
+    public static async Task NoDesktopShortcutsFound()
+    {
+        var dialog = DialogFactory.Create();
+        dialog.Title = CoreTools.Translate("Manual scan");
+        dialog.Content = CoreTools.Translate("No new shortcuts were found during the scan.");
+        dialog.CloseButtonText = CoreTools.Translate("Close");
+        await Window.ShowDialogAsync(dialog);
+    }
 }
 
