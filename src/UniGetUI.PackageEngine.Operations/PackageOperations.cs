@@ -119,7 +119,7 @@ namespace UniGetUI.PackageEngine.Operations
             );
         }
 
-        protected sealed override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
+        protected sealed override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, List<string> Output)
         {
             return Task.FromResult(Package.Manager.OperationHelper.GetResult(Package, Role, Output, ReturnCode));
         }

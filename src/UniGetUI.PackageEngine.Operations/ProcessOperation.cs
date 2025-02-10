@@ -129,9 +129,16 @@ public abstract class AbstractProcessOperation : AbstractOperation
         if (ProcessKilled)
             return OperationVeredict.Canceled;
 
-        return await GetProcessVeredict(process.ExitCode, []);
+        List<string> output = new();
+        foreach (var line in GetOutput())
+        {
+            if (line.Item2 is LineType.VerboseDetails && line.Item1 == "-----------------------") output.Clear();
+            if (line.Item2 is LineType.Error or LineType.Information) output.Add(line.Item1);
+        }
+
+        return await GetProcessVeredict(process.ExitCode, output);
     }
 
-    protected abstract Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output);
+    protected abstract Task<OperationVeredict> GetProcessVeredict(int ReturnCode, List<string> Output);
     protected abstract void PrepareProcessStartInfo();
 }

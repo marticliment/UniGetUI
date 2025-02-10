@@ -69,9 +69,9 @@ namespace UniGetUI.PackageEngine.Operations
            ApplyCapabilities(admin, false, false, null);
         }
 
-        protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
+        protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, List<string> Output)
         {
-            return Task.Run(() => Source.Manager.SourcesHelper.GetAddOperationVeredict(Source, ReturnCode, Output));
+            return Task.Run(() => Source.Manager.SourcesHelper.GetAddOperationVeredict(Source, ReturnCode, Output.ToArray()));
         }
 
         protected override void Initialize()
@@ -114,9 +114,9 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
+        protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, List<string> Output)
         {
-            return Task.Run(() => Source.Manager.SourcesHelper.GetRemoveOperationVeredict(Source, ReturnCode, Output));
+            return Task.Run(() => Source.Manager.SourcesHelper.GetRemoveOperationVeredict(Source, ReturnCode, Output.ToArray()));
         }
 
         protected override void Initialize()
