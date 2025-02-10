@@ -88,6 +88,12 @@ namespace UniGetUI.Core.Tools
         {
             command = command.Replace(";", "").Replace("&", "").Trim();
             Logger.Debug($"Begin \"which\" search for command {command}");
+
+            string PATH = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User) + ";";
+            PATH += Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine) + ";";
+            PATH += Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
+            PATH = PATH.Replace(";;", ";").Trim(';');
+
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
@@ -106,6 +112,7 @@ namespace UniGetUI.Core.Tools
             {
                 process.StartInfo = UpdateEnvironmentVariables(process.StartInfo);
             }
+            process.StartInfo.Environment["PATH"] = PATH;
 
             try
             {
