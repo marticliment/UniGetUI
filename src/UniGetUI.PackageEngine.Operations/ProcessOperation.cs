@@ -100,12 +100,22 @@ public abstract class AbstractProcessOperation : AbstractOperation
                 {
                     if (lastStringBeforeLF is not null)
                     {
+                        if (lastStringBeforeLF.Contains("For the question below") || lastStringBeforeLF.Contains("Would remove:"))
+                        {
+                            await process.StandardInput.WriteLineAsync("");
+                        }
                         Line(lastStringBeforeLF, LineType.Information);
                         lastStringBeforeLF = null;
                     }
                     continue;
                 }
-                Line(currentLine.ToString(), LineType.Information);
+
+                string line = currentLine.ToString();
+                if (line.Contains("For the question below") || line.Contains("Would remove:"))
+                {
+                    await process.StandardInput.WriteLineAsync("");
+                }
+                Line(line, LineType.Information);
                 currentLine.Clear();
             }
             else if (c == '\r')
