@@ -22,7 +22,6 @@ internal sealed class PipPkgOperationHelper : PackagePkgOperationHelper
             options.Version != string.Empty? $"{package.Id}=={options.Version}" : package.Id,
             "--no-input",
             "--no-color",
-            "--no-python-version-warning",
             "--no-cache"
         ]);
 
