@@ -575,7 +575,7 @@
   "The source {source} was added to {manager} successfully": "Die Quelle {source} wurde erfolgreich zu {manager} hinzugefügt",
   "The source {source} was removed from {manager} successfully": "Die Quelle {source} wurde erfolgreich von {manager} entfernt",
   "The update process has been aborted.": "Der Update-Vorgang wurde abgebrochen.",
-  "The update process will start after closing UniGetUI": "Das Update wird nach dem Beenden von UniGetUI starten",
+  "The update process will start after closing UniGetUI": "Das Update wird nach dem Beenden von UniGetUI durchgeführt.",
   "The update will be installed upon closing WingetUI": "Das Update wird nach dem Schließen von UniGetUI installiert",
   "The update will not continue.": "Das Update wird nicht fortgesetzt.",
   "The user has canceled {0}, that was a requirement for {1} to be run": "Der Benutzer hat {0} abgebrochen, das eine Voraussetzung für die Ausführung von {1} war.",
