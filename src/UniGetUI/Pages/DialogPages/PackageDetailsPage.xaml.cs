@@ -423,7 +423,7 @@ namespace UniGetUI.Interface.Dialogs
 
         public async void LoadScreenshots()
         {
-            IEnumerable<Uri> screenshots = await Task.Run(Package.GetScreenshots);
+            IReadOnlyList<Uri> screenshots = await Task.Run(Package.GetScreenshots);
             PackageHasScreenshots = screenshots.Any();
             if (PackageHasScreenshots)
             {

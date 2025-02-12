@@ -98,7 +98,7 @@ public static partial class DialogHelper
         return await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary;
     }
 
-    public static async Task<bool> ConfirmUninstallation(IEnumerable<IPackage> packages)
+    public static async Task<bool> ConfirmUninstallation(IReadOnlyList<IPackage> packages)
     {
         if (!packages.Any())
         {

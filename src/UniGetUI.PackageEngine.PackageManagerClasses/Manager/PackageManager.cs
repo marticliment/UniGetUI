@@ -23,7 +23,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         public IManagerSource DefaultSource { get => Properties.DefaultSource; }
         public bool ManagerReady { get; set; }
         public IManagerLogger TaskLogger { get; }
-        public IEnumerable<ManagerDependency> Dependencies { get; protected set; } = [];
+        public IReadOnlyList<ManagerDependency> Dependencies { get; protected set; } = [];
         public IMultiSourceHelper SourcesHelper { get; protected set; } = new NullSourceHelper();
         public IPackageDetailsHelper DetailsHelper { get; protected set; } = null!;
         public IPackageOperationHelper OperationHelper { get; protected set; } = null!;
@@ -70,7 +70,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
 
                 if (IsReady() && Capabilities.SupportsCustomSources)
                 {
-                    Task<IEnumerable<IManagerSource>> sourcesTask = Task.Run(SourcesHelper.GetSources);
+                    Task<IReadOnlyList<IManagerSource>> sourcesTask = Task.Run(SourcesHelper.GetSources);
 
                     if (sourcesTask.Wait(TimeSpan.FromSeconds(15)))
                     {
@@ -141,10 +141,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of Package objects that the manager lists for the given query. Depending on the manager, the list may
         /// also include similar results. This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public IEnumerable<IPackage> FindPackages(string query)
+        public IReadOnlyList<IPackage> FindPackages(string query)
             => _findPackages(query, false);
 
-        private IEnumerable<IPackage> _findPackages(string query, bool SecondAttempt)
+        private IReadOnlyList<IPackage> _findPackages(string query, bool SecondAttempt)
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet FindPackages was called"); return []; }
             try
@@ -189,10 +189,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of UpgradablePackage objects that represent the available updates reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public IEnumerable<IPackage> GetAvailableUpdates()
+        public IReadOnlyList<IPackage> GetAvailableUpdates()
             => _getAvailableUpdates(false);
 
-        private IEnumerable<IPackage> _getAvailableUpdates(bool SecondAttempt)
+        private IReadOnlyList<IPackage> _getAvailableUpdates(bool SecondAttempt)
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetAvailableUpdates was called"); return []; }
             try
@@ -240,10 +240,10 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// Returns an array of Package objects that represent the installed reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public IEnumerable<IPackage> GetInstalledPackages()
+        public IReadOnlyList<IPackage> GetInstalledPackages()
             => _getInstalledPackages(false);
 
-        private IEnumerable<IPackage> _getInstalledPackages(bool SecondAttempt)
+        private IReadOnlyList<IPackage> _getInstalledPackages(bool SecondAttempt)
         {
             if (!IsReady()) { Logger.Warn($"Manager {Name} is disabled but yet GetInstalledPackages was called"); return []; }
             try
@@ -291,21 +291,21 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Manager
         /// </summary>
         /// <param name="query">The query string to search for</param>
         /// <returns>An array of Package objects</returns>
-        protected abstract IEnumerable<Package> FindPackages_UnSafe(string query);
+        protected abstract IReadOnlyList<Package> FindPackages_UnSafe(string query);
 
         /// <summary>
         /// Returns the available updates reported by the manager.
         /// Each manager MUST implement this method.
         /// </summary>
         /// <returns>An array of UpgradablePackage objects</returns>
-        protected abstract IEnumerable<Package> GetAvailableUpdates_UnSafe();
+        protected abstract IReadOnlyList<Package> GetAvailableUpdates_UnSafe();
 
         /// <summary>
         /// Returns an array of Package objects containing the installed packages reported by the manager.
         /// Each manager MUST implement this method.
         /// </summary>
         /// <returns>An array of Package objects</returns>
-        protected abstract IEnumerable<Package> GetInstalledPackages_UnSafe();
+        protected abstract IReadOnlyList<Package> GetInstalledPackages_UnSafe();
 
         /// <summary>
         /// Refreshes the Package Manager sources/indexes

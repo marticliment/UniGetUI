@@ -38,12 +38,12 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             public string id;
         }
 
-        protected sealed override IEnumerable<Package> FindPackages_UnSafe(string query)
+        protected sealed override IReadOnlyList<Package> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];
             INativeTaskLogger logger = TaskLogger.CreateNew(Enums.LoggableTaskType.FindPackages);
 
-            IEnumerable<IManagerSource> sources;
+            IReadOnlyList<IManagerSource> sources;
             if (Capabilities.SupportsCustomSources)
             {
                 sources = SourcesHelper.GetSources();

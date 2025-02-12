@@ -60,7 +60,7 @@ internal sealed class CargoPkgDetailsHelper(Cargo manager) : BasePkgDetailsHelpe
         throw new NotImplementedException();
     }
 
-    protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
+    protected override IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package)
     {
         throw new NotImplementedException();
     }
@@ -70,7 +70,7 @@ internal sealed class CargoPkgDetailsHelper(Cargo manager) : BasePkgDetailsHelpe
         return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cargo", "bin");
     }
 
-    protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
+    protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
     {
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions);
         try

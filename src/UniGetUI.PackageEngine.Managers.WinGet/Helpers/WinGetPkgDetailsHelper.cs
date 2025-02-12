@@ -15,7 +15,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public WinGetPkgDetailsHelper(WinGet manager) : base(manager) { }
 
-        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
+        protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             return WinGetHelper.Instance.GetInstallableVersions_Unsafe(package);
         }
@@ -36,7 +36,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             return GetWinGetPackageIcon(package);
         }
 
-        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
+        protected override IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             if (package.Source.Name != "msstore")
             {

@@ -85,7 +85,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// <summary>
         /// Retrieves a list og URIs representing the available screenshots for this package.
         /// </summary>
-        public IEnumerable<Uri> GetScreenshots();
+        public IReadOnlyList<Uri> GetScreenshots();
 
         /// <summary>
         /// Adds the package to the ignored updates list. If no version is provided, all updates are ignored.

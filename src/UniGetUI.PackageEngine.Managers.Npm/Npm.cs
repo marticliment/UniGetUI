@@ -45,7 +45,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             OperationHelper = new NpmPkgOperationHelper(this);
         }
 
-        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
+        protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
         {
             Process p = new()
             {
@@ -94,7 +94,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
+        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
             List<Package> Packages = [];
             foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })
@@ -140,7 +140,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+        protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
             foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })

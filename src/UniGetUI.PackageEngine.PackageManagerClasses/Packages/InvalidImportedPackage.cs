@@ -131,7 +131,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             return null;
         }
 
-        public IEnumerable<Uri> GetScreenshots()
+        public IReadOnlyList<Uri> GetScreenshots()
         {
             return [];
         }

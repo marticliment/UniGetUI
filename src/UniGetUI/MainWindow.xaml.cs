@@ -772,7 +772,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        public async Task HandleMissingDependencies(IEnumerable<ManagerDependency> dependencies)
+        public async Task HandleMissingDependencies(IReadOnlyList<ManagerDependency> dependencies)
         {
             int current = 1;
             int total = dependencies.Count();

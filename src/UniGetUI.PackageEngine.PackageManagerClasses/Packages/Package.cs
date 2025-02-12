@@ -188,7 +188,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             }
         }
 
-        public virtual IEnumerable<Uri> GetScreenshots()
+        public virtual IReadOnlyList<Uri> GetScreenshots()
         {
             return Manager.DetailsHelper.GetScreenshots(this);
         }

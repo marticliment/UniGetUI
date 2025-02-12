@@ -319,7 +319,7 @@ namespace UniGetUI.Interface.SoftwarePages
             return false;
         }
 
-        public async Task ImportAndInstallPackage(IEnumerable<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? skiphash = null)
+        public async Task ImportAndInstallPackage(IReadOnlyList<IPackage> packages, bool? elevated = null, bool? interactive = null, bool? skiphash = null)
         {
             DialogHelper.ShowLoadingDialog(CoreTools.Translate("Preparing packages, please wait..."));
             List<Package> packages_to_install = [];
@@ -555,7 +555,7 @@ namespace UniGetUI.Interface.SoftwarePages
             }
         }
 
-        public static async Task<string> CreateBundle(IEnumerable<IPackage> unsorted_packages, BundleFormatType formatType = BundleFormatType.UBUNDLE)
+        public static async Task<string> CreateBundle(IReadOnlyList<IPackage> unsorted_packages, BundleFormatType formatType = BundleFormatType.UBUNDLE)
         {
             SerializableBundle_v1 exportable = new()
             {

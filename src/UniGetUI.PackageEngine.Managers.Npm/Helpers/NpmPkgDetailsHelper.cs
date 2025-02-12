@@ -78,7 +78,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             throw new NotImplementedException();
         }
 
-        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
+        protected override IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
@@ -91,7 +91,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
                 "node_modules", package.Id);
         }
 
-        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
+        protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             Process p = new()
             {

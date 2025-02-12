@@ -20,7 +20,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         Manager = manager;
     }
 
-    public IEnumerable<Package> GetAvailableUpdates_UnSafe()
+    public IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
     {
         List<Package> Packages = [];
         Process p = new()
@@ -124,7 +124,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return Packages;
     }
 
-    public IEnumerable<Package> GetInstalledPackages_UnSafe()
+    public IReadOnlyList<Package> GetInstalledPackages_UnSafe()
     {
         List<Package> Packages = [];
         Process p = new()
@@ -215,7 +215,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return Packages;
     }
 
-    public IEnumerable<Package> FindPackages_UnSafe(string query)
+    public IReadOnlyList<Package> FindPackages_UnSafe(string query)
     {
         List<Package> Packages = [];
         Process p = new()
@@ -519,7 +519,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return;
     }
 
-    public IEnumerable<string> GetInstallableVersions_Unsafe(IPackage package)
+    public IReadOnlyList<string> GetInstallableVersions_Unsafe(IPackage package)
     {
         Process p = new()
         {
@@ -566,7 +566,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return versions;
     }
 
-    public IEnumerable<IManagerSource> GetSources_UnSafe()
+    public IReadOnlyList<IManagerSource> GetSources_UnSafe()
     {
         List<IManagerSource> sources = [];
 

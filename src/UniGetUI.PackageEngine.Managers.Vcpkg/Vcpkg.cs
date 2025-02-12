@@ -81,7 +81,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             OperationHelper = new VcpkgPkgOperationHelper(this);
         }
 
-        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
+        protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
         {
             string Triplet = GetDefaultTriplet();
 
@@ -164,7 +164,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
+        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
             List<Package> Packages = [];
 
@@ -220,7 +220,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+        protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
         {
             Process p = new()
             {

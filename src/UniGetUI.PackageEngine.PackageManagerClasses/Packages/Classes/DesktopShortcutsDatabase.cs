@@ -153,7 +153,7 @@ public static class DesktopShortcutsDatabase
     /// Will attempt to remove new desktop shortcuts, if applicable.
     /// </summary>
     /// <param name="PreviousShortCutList"></param>
-    public static void TryRemoveNewShortcuts(IEnumerable<string> PreviousShortCutList)
+    public static void TryRemoveNewShortcuts(IReadOnlyList<string> PreviousShortCutList)
     {
         HashSet<string> ShortcutSet = PreviousShortCutList.ToHashSet();
         List<string> CurrentShortcutList = DesktopShortcutsDatabase.GetShortcuts();

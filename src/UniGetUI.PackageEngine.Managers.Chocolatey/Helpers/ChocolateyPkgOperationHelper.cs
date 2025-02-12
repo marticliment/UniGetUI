@@ -8,7 +8,7 @@ internal sealed class ChocolateyPkgOperationHelper : PackagePkgOperationHelper
 {
     public ChocolateyPkgOperationHelper(Chocolatey manager) : base(manager) { }
 
-    protected override IEnumerable<string> _getOperationParameters(
+    protected override IReadOnlyList<string> _getOperationParameters(
         IPackage package,
         IInstallationOptions options,
         OperationType operation)
@@ -50,7 +50,7 @@ internal sealed class ChocolateyPkgOperationHelper : PackagePkgOperationHelper
     protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
-        IEnumerable<string> processOutput,
+        IReadOnlyList<string> processOutput,
         int returnCode)
     {
         if (returnCode is 3010)

@@ -7,7 +7,7 @@ internal sealed class PowerShellPkgOperationHelper : PackagePkgOperationHelper
 {
     public PowerShellPkgOperationHelper(PowerShell manager) : base(manager) { }
 
-    protected override IEnumerable<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
         List<string> parameters = [operation switch {
             OperationType.Install => Manager.Properties.InstallVerb,
@@ -50,7 +50,7 @@ internal sealed class PowerShellPkgOperationHelper : PackagePkgOperationHelper
     protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
-        IEnumerable<string> processOutput,
+        IReadOnlyList<string> processOutput,
         int returnCode)
     {
         string output_string = string.Join("\n", processOutput);

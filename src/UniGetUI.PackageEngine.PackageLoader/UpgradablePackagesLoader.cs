@@ -17,7 +17,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public ConcurrentDictionary<string, IPackage> IgnoredPackages = new();
 
-        public UpgradablePackagesLoader(IEnumerable<IPackageManager> managers)
+        public UpgradablePackagesLoader(IReadOnlyList<IPackageManager> managers)
         : base(managers,
             identifier: "UPGRADABLE_PACKAGES",
             AllowMultiplePackageVersions: false,
@@ -42,7 +42,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             return true;
         }
 
-        protected override IEnumerable<IPackage> LoadPackagesFromManager(IPackageManager manager)
+        protected override IReadOnlyList<IPackage> LoadPackagesFromManager(IPackageManager manager)
         {
             return manager.GetAvailableUpdates();
         }

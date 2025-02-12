@@ -71,7 +71,7 @@ public partial class Cargo : PackageManager
         OperationHelper = new CargoPkgOperationHelper(this);
     }
 
-    protected override IEnumerable<Package> FindPackages_UnSafe(string query)
+    protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
     {
         Process p = GetProcess(Status.ExecutablePath, "search -q --color=never " + query);
         IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
@@ -124,12 +124,12 @@ public partial class Cargo : PackageManager
         return [.. BinPackages];
     }
 
-    protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
+    protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
     {
         return GetPackages(LoggableTaskType.ListUpdates);
     }
 
-    protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+    protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
     {
         return GetPackages(LoggableTaskType.ListInstalledPackages);
     }
@@ -154,7 +154,7 @@ public partial class Cargo : PackageManager
         return new() { ExecutablePath = executablePath, Found = found, Version = version };
     }
 
-    private IEnumerable<Package> GetPackages(LoggableTaskType taskType)
+    private IReadOnlyList<Package> GetPackages(LoggableTaskType taskType)
     {
         List<Package> Packages = [];
         foreach(var match in TaskRecycler<List<Match>>.RunOrAttach(GetInstalledCommandOutput, 15))

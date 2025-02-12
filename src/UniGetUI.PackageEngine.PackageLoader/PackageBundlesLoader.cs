@@ -9,7 +9,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
     {
         public static PackageBundlesLoader Instance = null!;
 
-        public PackageBundlesLoader(IEnumerable<IPackageManager> managers)
+        public PackageBundlesLoader(IReadOnlyList<IPackageManager> managers)
         : base(managers,
             identifier: "PACKAGE_BUNDLES",
             AllowMultiplePackageVersions: true,
@@ -25,7 +25,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             return Task.FromResult(true);
         }
 
-        protected override IEnumerable<IPackage> LoadPackagesFromManager(IPackageManager manager)
+        protected override IReadOnlyList<IPackage> LoadPackagesFromManager(IPackageManager manager)
         {
             return [];
         }
@@ -38,7 +38,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             return Task.CompletedTask;
         }
 
-        public async Task AddPackagesAsync(IEnumerable<IPackage> foreign_packages)
+        public async Task AddPackagesAsync(IReadOnlyList<IPackage> foreign_packages)
         {
             foreach (IPackage foreign in foreign_packages)
             {
@@ -76,7 +76,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             InvokePackagesChangedEvent();
         }
 
-        public void RemoveRange(IEnumerable<IPackage> packages)
+        public void RemoveRange(IReadOnlyList<IPackage> packages)
         {
             foreach(IPackage package in packages)
             {

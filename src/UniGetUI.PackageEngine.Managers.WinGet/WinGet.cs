@@ -85,17 +85,17 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             MicrosoftStoreSource = new(this, "Microsoft Store", IconType.MsStore);
         }
 
-        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
+        protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
         {
             return WinGetHelper.Instance.FindPackages_UnSafe(query);
         }
 
-        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
+        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
             return WinGetHelper.Instance.GetAvailableUpdates_UnSafe();
         }
 
-        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+        protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
         {
             try
             {

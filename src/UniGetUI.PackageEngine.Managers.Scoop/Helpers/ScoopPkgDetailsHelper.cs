@@ -165,7 +165,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             throw new NotImplementedException();
         }
 
-        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
+        protected override IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
@@ -176,7 +176,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 package.Id, "current");
         }
 
-        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
+        protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             throw new InvalidOperationException("Scoop does not support custom package versions");
         }

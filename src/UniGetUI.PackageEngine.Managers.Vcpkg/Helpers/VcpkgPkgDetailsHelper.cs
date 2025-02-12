@@ -62,7 +62,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             throw new NotImplementedException();
         }
 
-        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
+        protected override IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
@@ -81,7 +81,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Directory.Exists(PackagePath) ? PackagePath : (Directory.Exists(VcpkgInstalledPath) ? VcpkgInstalledPath : Path.GetDirectoryName(PackageId));
         }
 
-        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
+        protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }

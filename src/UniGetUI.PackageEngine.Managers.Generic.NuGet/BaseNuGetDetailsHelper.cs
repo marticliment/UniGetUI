@@ -139,12 +139,12 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             return new CacheableIcon(new Uri(possibleIconUrl.Groups[1].Value), package.Version);
         }
 
-        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
+        protected override IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
 
-        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
+        protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             Uri SearchUrl = new($"{package.Source.Url}/FindPackagesById()?id='{package.Id}'");
             Logger.Debug($"Begin package version search with url={SearchUrl} on manager {Manager.Name}");
