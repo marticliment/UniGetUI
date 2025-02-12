@@ -394,7 +394,7 @@
   "Please wait while {0} is being installed. A black window may show up. Please wait until it closes.": "Veuillez patienter pendant l'installation de {0}. Une fenêtre noire peut s'afficher. Veuillez patienter jusqu'à ce qu'elle se ferme.",
   "Please wait...": "Veuillez patienter...",
   "Portable": "Portable",
-  "PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>": "Le gestionnaire de paquets de PowerShell. Bibliothèques et  scripts pour étendre les capacités de PowerShell.<br>Contient : <b>Modules, Scripts, Cmdlets</b>\n",
+  "PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>": "Le gestionnaire de paquets de PowerShell. Bibliothèques et scripts pour étendre les capacités de PowerShell.<br>Contient : <b>Modules, Scripts, Cmdlets</b>\n",
   "PreRelease": "Préversion",
   "Preparing packages, please wait...": "Préparation des paquets, veuillez patienter...",
   "Proceed at your own risk.": "Procédez à vos propres risques.",
