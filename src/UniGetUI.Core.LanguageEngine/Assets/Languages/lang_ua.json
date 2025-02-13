@@ -171,7 +171,7 @@
   "Do not remove successful operations from the list automatically": "Не видаляти успішні операції зі списку автоматично",
   "Do not show this dialog again for {0}": "Більше не показувати цей діалог для {0}",
   "Do not update package indexes on launch": "Не оновлювати індекси пакетів при запуску",
-  "Do you accept that UniGetUI collects and sends anonymous usage statistics, with the sole purpose of understanding and improving the user experience?": "Чи ви погоджуєтесь з тим, що UniGetUI збирає та відправляє анонімну статистику використання, єдина ціль якої - краще зрозуміти та покращити користувацький досвід?",
+  "Do you accept that UniGetUI collects and sends anonymous usage statistics, with the sole purpose of understanding and improving the user experience?": "Чи ви погоджуєтесь з тим, що UniGetUI збиратиме та відправлятиме анонімну статистику використання, єдина ціль якої - краще зрозуміти та покращити користувацький досвід?",
   "Do you find WingetUI useful? If you can, you may want to support my work, so I can continue making WingetUI the ultimate package managing interface.": "Чи вважаєте ви UniGetUI корисним? Якщо так, то ви можете підтримати мою роботу, щоби я продовжив перетворювати UniGetUI на найкращій графічний інтерфейс для менеджерів пакетів.",
   "Do you find WingetUI useful? You'd like to support the developer? If so, you can {0}, it helps a lot!": "Чи вважаєте ви WingetUI корисним? Бажаєте підтримати розробника? Якщо це так, ви можете {0}, це дуже допоможе!",
   "Do you really want to uninstall the following {0} packages?": "Ви дійсно хочете видалити наступні {0} пакетів?",
