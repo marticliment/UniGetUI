@@ -171,7 +171,7 @@
   "Do not remove successful operations from the list automatically": "No esborris automàticament de la llista les operacions completades satisfactòriament",
   "Do not show this dialog again for {0}": "No mostris mai aquest diàleg per al {0}",
   "Do not update package indexes on launch": "No actualitzar els índexos de paquets en iniciar l'UniGetUI",
-  "Do you accept that UniGetUI collects and sends anonymous usage statistics, with the sole purpose of understanding and improving the user experience?": "Accepteu que l'UniGetUI reculli i enviï",
+  "Do you accept that UniGetUI collects and sends anonymous usage statistics, with the sole purpose of understanding and improving the user experience?": "Accepteu que l'UniGetUI reculli i enviï dades d'ús anònimes, amb l'únic propòsit d'entendre i millorar l'experiència de l'ususari?",
   "Do you find WingetUI useful? If you can, you may want to support my work, so I can continue making WingetUI the ultimate package managing interface.": "Trobeu l'UniGetUI una eina útil? Si voleu, podeu recolzar el desenvolupament per a que pugui continuar fent del l'UniGetUI la interfície d'administració de paquets definitiva.",
   "Do you find WingetUI useful? You'd like to support the developer? If so, you can {0}, it helps a lot!": "Heu trobat l'UniGetUI útil? Voleu recolzar el desenvolupador? Si voleu, podeu {0}, ajuda molt!",
   "Do you really want to uninstall the following {0} packages?": "Voleu desinstal·lar els següents {0} paquets?",
