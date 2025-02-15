@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11748,
-        "done": 5197,
-        "packages_with_icon": 5197,
-        "packages_with_screenshot": 622,
-        "total_screenshots": 1943
+        "done": 5198,
+        "packages_with_icon": 5198,
+        "packages_with_screenshot": 623,
+        "total_screenshots": 1955
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -14429,38 +14429,51 @@
             "images": []
         },
         "firefox": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Firefox_logo%2C_2019.svg/800px-Firefox_logo%2C_2019.svg.png",
+            "icon": "https://i.postimg.cc/RCLmpNTX/Firefox-icon.png",
             "images": [
-                "https://i.postimg.cc/zBRhkhmQ/Firefox-96-screenshot.png",
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png/1024px-Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png"
+                "https://i.postimg.cc/3Jr4Jyrc/ff1.png",
+                "https://i.postimg.cc/Wb9DD2hb/ff2.png",
+                "https://i.postimg.cc/526XLZC5/ff3.png"
             ]
         },
         "firefox-beta": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Firefox_beta_logo.png",
+            "icon": "https://i.postimg.cc/B6tFYdrC/firefox-beta.png",
             "images": [
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png/1024px-Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png"
+                "https://i.postimg.cc/3Jr4Jyrc/ff1.png",
+                "https://i.postimg.cc/Wb9DD2hb/ff2.png",
+                "https://i.postimg.cc/526XLZC5/ff3.png"
             ]
         },
         "firefox-developeredition": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Firefox_Developer_Edition_logo%2C_2019.svg/800px-Firefox_Developer_Edition_logo%2C_2019.svg.png",
+            "icon": "https://i.postimg.cc/d19f6TKC/Firefox-Developer-Edition.png",
             "images": [
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png/1024px-Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png"
+                "https://i.postimg.cc/3Jr4Jyrc/ff1.png",
+                "https://i.postimg.cc/Wb9DD2hb/ff2.png",
+                "https://i.postimg.cc/526XLZC5/ff3.png"
             ]
         },
         "firefox-eme-free": {
-            "icon": "",
-            "images": []
+            "icon": "https://i.postimg.cc/RCLmpNTX/Firefox-icon.png",
+            "images": [
+                "https://i.postimg.cc/3Jr4Jyrc/ff1.png",
+                "https://i.postimg.cc/Wb9DD2hb/ff2.png",
+                "https://i.postimg.cc/526XLZC5/ff3.png"
+            ]
         },
         "firefox-esr": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Firefox_logo%2C_2019.svg/800px-Firefox_logo%2C_2019.svg.png",
+            "icon": "https://i.postimg.cc/RCLmpNTX/Firefox-icon.png",
             "images": [
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png/1024px-Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png"
+                "https://i.postimg.cc/3Jr4Jyrc/ff1.png",
+                "https://i.postimg.cc/Wb9DD2hb/ff2.png",
+                "https://i.postimg.cc/526XLZC5/ff3.png"
             ]
         },
         "firefox-nightly": {
-            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Firefox_Nightly_logo%2C_2019.svg/800px-Firefox_Nightly_logo%2C_2019.svg.png",
+            "icon": "https://i.postimg.cc/k5T8ynp4/Firefox-nightly-logo.png",
             "images": [
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png/1024px-Capture_d%27%C3%A9cran_de_Mozilla_Firefox_version_100.0.png"
+                "https://i.postimg.cc/3Jr4Jyrc/ff1.png",
+                "https://i.postimg.cc/Wb9DD2hb/ff2.png",
+                "https://i.postimg.cc/526XLZC5/ff3.png"
             ]
         },
         "firefoxdownloadsview": {
@@ -14719,15 +14732,15 @@
             "images": []
         },
         "flow-launcher": {
-            "icon": "https://imgur.com/ofCO4cO",
+            "icon": "https://i.postimg.cc/PrS6Pjtt/flow-ico.png",
             "images": [
-                "https://imgur.com/R34RBgy",
-                "https://imgur.com/Z0MNbw5",
-                "https://imgur.com/uAr1VZf",
-                "https://imgur.com/CNPjvsg",
-                "https://imgur.com/e9qOZpy",
-                "https://imgur.com/Kuialsw",
-                "https://imgur.com/N5QrhaY"
+                "https://i.postimg.cc/SK21Bvbm/flow1.png",
+                "https://i.postimg.cc/25s9r7Ch/flow2.png",
+                "https://i.postimg.cc/kG9jtM65/flow3.png",
+                "https://i.postimg.cc/Y03dNcYz/flow4.png",
+                "https://i.postimg.cc/DZ1jZ4zD/flow5.png",
+                "https://i.postimg.cc/T2qNvbF5/flow6.png",
+                "https://i.postimg.cc/5N4740W7/flow7.png"
             ]
         },
         "flowdock": {
