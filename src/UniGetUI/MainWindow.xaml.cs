@@ -139,9 +139,18 @@ namespace UniGetUI.Interface
                 }
                 catch (Exception ex)
                 {
-                    TrayIcon?.ForceCreate(false);
-                    Logger.Error("Could not create taskbar tray with efficiency mode enabled");
-                    Logger.Error(ex);
+                    try
+                    {
+                        TrayIcon?.ForceCreate(false);
+                        Logger.Warn("Could not create taskbar tray with efficiency mode enabled");
+                        Logger.Warn(ex);
+                    }
+                    catch (Exception ex2)
+                    {
+                        TrayIcon?.ForceCreate(false);
+                        Logger.Error("Could not create taskbar tray (hard crash)");
+                        Logger.Error(ex2);
+                    }
                 }
                 DWMThreadHelper.ChangeState_DWM(true);
                 DWMThreadHelper.ChangeState_XAML(true);
