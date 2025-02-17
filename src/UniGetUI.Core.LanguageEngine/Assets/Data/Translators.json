@@ -488,10 +488,6 @@
   ],
   "ru": [
     {
-      "name": "Aleksei Rybin @tapnisu",
-      "link": ""
-    },
-    {
       "name": "bropines",
       "link": "https://github.com/bropines"
     },
@@ -512,7 +508,7 @@
       "link": ""
     },
     {
-      "name": "Ilia Petrov @solarscream",
+      "name": "Ilia Petrov",
       "link": ""
     },
     {
@@ -526,6 +522,14 @@
     {
       "name": "sklart",
       "link": ""
+    },
+    {
+      "name": "solarscream",
+      "link": "https://github.com/solarscream"
+    },
+    {
+      "name": "tapnisu",
+      "link": "https://github.com/tapnisu"
     }
   ],
   "sa": [
