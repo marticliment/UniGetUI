@@ -394,7 +394,7 @@
   "Please wait while {0} is being installed. A black window may show up. Please wait until it closes.": "Vui lòng đợi trong khi {0} đang được cài đặt. Một cửa sổ màu đen có thể xuất hiện. Vui lòng đợi cho đến khi nó đóng lại.",
   "Please wait...": "Vui lòng chờ.....",
   "Portable": "Di động",
-  "PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>": "Trình quản lý gói của PowerShell. Tìm thư viện và tập lệnh để mở rộng khả năng của PowerShell<br>Chứa: <b>Mô-đun, Tập lệnh, Lệnh ghép ngắn</b>",
+  "PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>": "Trình quản lý gói của PowerShell. Tìm thư viện và tập lệnh để mở rộng khả năng của PowerShell<br>Bao gồm: <b>Mô-đun, Tập lệnh, Lệnh ghép ngắn</b>",
   "PreRelease": "Trước khi phát hành",
   "Preparing packages, please wait...": "Đang chuẩn bị gói, vui lòng đợi...",
   "Proceed at your own risk.": "Tiến hành tự chịu rủi ro",
