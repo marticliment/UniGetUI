@@ -179,7 +179,8 @@ public static partial class DialogHelper
         var LiveOutputTextBlock = new RichTextBlock
         {
             Margin = new Thickness(8),
-            FontFamily = new FontFamily("Consolas")
+            FontFamily = new FontFamily("Consolas"),
+            TextWrapping = TextWrapping.WrapWholeWords
         };
 
         var LiveOutputScrollBar = new ScrollViewer

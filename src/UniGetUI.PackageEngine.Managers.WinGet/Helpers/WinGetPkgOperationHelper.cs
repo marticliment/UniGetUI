@@ -43,7 +43,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             _ => []
         });
 
-        if (operation is OperationType.Uninstall && package.Version != "Unknown")
+        if (operation is OperationType.Uninstall && package.Version != "Unknown" && package.OverridenOptions.WinGet_SpecifyVersion is not false)
         {
             parameters.AddRange(["--version", $"\"{package.Version}\""]);
         }
@@ -135,55 +135,54 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
         // See https://github.com/microsoft/winget-cli/blob/master/doc/windows/package-manager/winget/returnCodes.md for reference
         uint uintCode = (uint)returnCode;
 
-        if (uintCode == 0x8A150109)
-        {
-            // If the user is required to restart the system to complete the installation
+        if (uintCode is 0x8A150109)
+        {   // TODO: Restart required to finish installation
             if (operation is OperationType.Update) MarkUpgradeAsDone(package);
-            //return OperationVeredict.RestartRequired;
             return OperationVeredict.Success;
         }
 
-        if (uintCode == 0x8A150077 || uintCode == 0x8A15010C || uintCode == 0x8A150005)
-        {
+        if (uintCode is 0x8A150077 or 0x8A15010C or 0x8A150005)
+        {   // At some point, the user clicked cancel or Ctrl+C
             return OperationVeredict.Canceled;
         }
 
-        if (uintCode == 0x8A150011)
-        {
-            // TODO: Needs skip checksum
+        if (operation is OperationType.Uninstall && uintCode is 0x8A150017 && package.OverridenOptions.WinGet_SpecifyVersion is not false)
+        {   // No manifest found matching criteria
+            package.OverridenOptions.WinGet_SpecifyVersion = false;
+            return OperationVeredict.AutoRetry;
+        }
+
+        if (uintCode is 0x8A150011)
+        {   // TODO: Integrity failed
             return OperationVeredict.Failure;
         }
 
-		if (uintCode == 0x8A15002B)
-		{
+		if (uintCode is 0x8A15002B)
+		{   // TODO: The update cannot be installed (not applicable)
 			return OperationVeredict.Failure;
 		}
 
-        if (uintCode == 0x8A15010D || uintCode == 0x8A15004F || uintCode == 0x8A15010E)
-        {
-            // Application is already installed
+        if (uintCode is 0x8A15010D or 0x8A15004F or 0x8A15010E)
+        {   // Application is already installed
             if (operation is OperationType.Update) MarkUpgradeAsDone(package);
             return OperationVeredict.Success;
         }
 
-        if (returnCode == 0)
-        {
-            // Operation succeeded
+        if (returnCode is 0)
+        {   // Operation succeeded
             if (operation is OperationType.Update) MarkUpgradeAsDone(package);
             return OperationVeredict.Success;
         }
 
-        if (uintCode == 0x8A150056 && package.OverridenOptions.RunAsAdministrator != false && !CoreTools.IsAdministrator())
-        {
-            // Installer can't run elevated
+        if (uintCode is 0x8A150056 && package.OverridenOptions.RunAsAdministrator is not false && !CoreTools.IsAdministrator())
+        {   // Installer can't run elevated, but this condition hasn't been forced on UniGetUI
             package.OverridenOptions.RunAsAdministrator = false;
             return OperationVeredict.AutoRetry;
         }
 
-        if ((uintCode is 0x8A150019 or 0x80073D28) && package.OverridenOptions.RunAsAdministrator != true)
-        {
+        if ((uintCode is 0x8A150019 or 0x80073D28) && package.OverridenOptions.RunAsAdministrator is not true)
+        {   // Installer needs to run elevated, handle autoelevation
             // Code 0x80073D28 was added after https://github.com/marticliment/UniGetUI/issues/3093
-            // Installer needs to run elevated
             package.OverridenOptions.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;
         }
