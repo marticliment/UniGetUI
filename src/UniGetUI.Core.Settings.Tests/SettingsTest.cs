@@ -31,23 +31,23 @@ namespace UniGetUI.Core.SettingsEngine.Tests
         {
             Settings.Set(SettingName, st1);
             Assert.Equal(st1, Settings.Get(SettingName));
-            Assert.Equal(st1, File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.Equal(st1, File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, SettingName)));
 
             Settings.Set(SettingName, st2);
             Assert.Equal(st2, Settings.Get(SettingName));
-            Assert.Equal(st2, File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.Equal(st2, File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, SettingName)));
 
             Settings.Set(SettingName, st3);
             Assert.Equal(st3, Settings.Get(SettingName));
-            Assert.Equal(st3, File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.Equal(st3, File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, SettingName)));
 
             Settings.Set(SettingName, st4);
             Assert.Equal(st4, Settings.Get(SettingName));
-            Assert.Equal(st4, File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.Equal(st4, File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, SettingName)));
 
             Settings.Set(SettingName, false); // Cleanup
             Assert.False(Settings.Get(SettingName));
-            Assert.False(File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.False(File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, SettingName)));
         }
 
         [Theory]
@@ -60,24 +60,24 @@ namespace UniGetUI.Core.SettingsEngine.Tests
         {
             Settings.SetValue(SettingName, st1);
             Assert.Equal(st1, Settings.GetValue(SettingName));
-            Assert.Equal(st1 != "", File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.Equal(st1 != "", File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, SettingName)));
 
             Settings.SetValue(SettingName, st2);
             Assert.Equal(st2, Settings.GetValue(SettingName));
-            Assert.Equal(st2 != "", File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.Equal(st2 != "", File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, SettingName)));
 
             Settings.SetValue(SettingName, st3);
             Assert.Equal(st3, Settings.GetValue(SettingName));
-            Assert.Equal(st3 != "", File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.Equal(st3 != "", File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, SettingName)));
 
             Settings.SetValue(SettingName, st4);
             Assert.Equal(st4, Settings.GetValue(SettingName));
-            Assert.Equal(st4 != "", File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.Equal(st4 != "", File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, SettingName)));
 
             Settings.Set(SettingName, false); // Cleanup
             Assert.False(Settings.Get(SettingName));
             Assert.Equal("", Settings.GetValue(SettingName));
-            Assert.False(File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, SettingName)));
+            Assert.False(File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, SettingName)));
         }
 
         [Theory]
@@ -114,7 +114,7 @@ namespace UniGetUI.Core.SettingsEngine.Tests
             Assert.Equal("this is now a test case", Settings.GetListItem<string>(SettingName, 3));
             Assert.Null(Settings.GetListItem<string>(SettingName, 4));
 
-            Assert.Equal(Settings.GetListItem<string>(SettingName, 0), JsonSerializer.Deserialize<List<string>>(File.ReadAllText(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json")))[0]);
+            Assert.Equal(Settings.GetListItem<string>(SettingName, 0), JsonSerializer.Deserialize<List<string>>(File.ReadAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{SettingName}.json")))[0]);
 
             Settings.ClearList(SettingName);
             Assert.Empty(Settings.GetList<object>(SettingName) ?? ["this shouldn't be null; something's wrong"]);
@@ -137,7 +137,7 @@ namespace UniGetUI.Core.SettingsEngine.Tests
             Assert.Equal(ls3[1].sub.sub, Settings.GetListItem<SerializableTest>(SettingName, 0)?.sub.sub);
             Settings.ClearList(SettingName); // Cleanup
             Assert.Empty(Settings.GetList<object>(SettingName) ?? ["this shouldn't be null; something's wrong"]);
-            Assert.False(File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json")));
+            Assert.False(File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{SettingName}.json")));
         }
 
         [Theory]
@@ -168,7 +168,7 @@ namespace UniGetUI.Core.SettingsEngine.Tests
             Settings.SetDictionaryItem(randStr, "key", 12);
             Assert.Equal(12, Settings.GetDictionaryItem<string, int>(randStr, "key"));
             Settings.SetDictionary(SettingName, test);
-            Assert.Equal(JsonSerializer.Serialize(test), File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json"))[0]);
+            Assert.Equal(JsonSerializer.Serialize(test), File.ReadAllLines(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{SettingName}.json"))[0]);
             Assert.Equal(test[keyArray[0]]?.sub.count, Settings.GetDictionary<string, SerializableTest?>(SettingName)?[keyArray[0]]?.sub.count);
             Assert.Equal(test[keyArray[1]]?.sub.count, Settings.GetDictionaryItem<string, SerializableTest?>(SettingName, keyArray[1])?.sub.count);
             Settings.SetDictionaryItem(SettingName, keyArray[0], test[keyArray[1]]);
@@ -200,12 +200,12 @@ namespace UniGetUI.Core.SettingsEngine.Tests
 
             Assert.Equal(
                 JsonSerializer.Serialize(Settings.GetDictionary<string, SerializableTest>(SettingName)),
-                File.ReadAllLines(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json"))[0]
+                File.ReadAllLines(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{SettingName}.json"))[0]
             );
 
             Settings.ClearDictionary(SettingName); // Cleanup
             Assert.Empty(Settings.GetDictionary<string, SerializableTest?>(SettingName) ?? nonEmptyDictionary);
-            Assert.False(File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"{SettingName}.json")));
+            Assert.False(File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{SettingName}.json")));
         }
     }
 }

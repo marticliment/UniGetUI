@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
@@ -72,7 +72,7 @@ namespace UniGetUI.Core.Data
             get
             {
                 string oldConfigPath = UniGetUIDataDirectory; // Old config path was the data directory itself
-                string newConfigPath = Path.Join(dataDir, "Configuration");
+            string newConfigPath = Path.Join(UniGetUIDataDirectory, "Configuration");
 
                 if (Directory.Exists(oldConfigPath) && !Directory.Exists(newConfigPath))
                 {
@@ -100,7 +100,7 @@ namespace UniGetUI.Core.Data
                                 // Clean up old file to avoid duplicates and confusion
                                 else
                                 {
-                                    Logger.Warning($"Configuration file '{newFile}' already exists, skipping move from '{file}'.");
+                                Logger.Warn($"Configuration file '{newFile}' already exists, skipping move from '{file}'.");
                                     File.Delete(file);
                                 }
                             }
