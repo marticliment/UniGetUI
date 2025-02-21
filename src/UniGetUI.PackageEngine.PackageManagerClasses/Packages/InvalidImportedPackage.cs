@@ -35,9 +35,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public string Version { get; }
 
-        public double VersionAsFloat { get; }
+        public CoreTools.Version VersionAsFloat { get; }
 
-        public double NewVersionAsFloat { get => .0F; }
+        public CoreTools.Version NewVersionAsFloat { get => CoreTools.Version.Null; }
 
         public IManagerSource Source { get; }
 
@@ -60,7 +60,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Name = data.Name;
             Id = data.Id.Split('\\')[^1];
             Version = data.Version;
-            VersionAsFloat = CoreTools.GetVersionStringAsFloat(data.Version);
+            VersionAsFloat = CoreTools.VersionStringToStruct(data.Version);
             SourceAsString = data.Source;
             AutomationName = data.Name;
             Manager = source.Manager;

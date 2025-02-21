@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Structs;
@@ -13,8 +14,8 @@ namespace UniGetUI.PackageEngine.Interfaces
         public string Name { get; }
         public string Id { get; }
         public string Version { get; }
-        public double VersionAsFloat { get; }
-        public double NewVersionAsFloat { get; }
+        public CoreTools.Version VersionAsFloat { get; }
+        public CoreTools.Version NewVersionAsFloat { get; }
         public IManagerSource Source { get; }
         public IPackageManager Manager { get; }
         public string NewVersion { get; }

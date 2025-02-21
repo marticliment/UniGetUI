@@ -318,6 +318,8 @@ Crash Traceback:
 
         public struct Version: IComparable<Version>, IEquatable<Version>
         {
+            public static readonly Version Null = new(-1, -1, -1, -1);
+
             public readonly int Major;
             public readonly int Minor;
             public readonly int Patch;
@@ -407,9 +409,8 @@ Crash Traceback:
             }
             catch
             {
-                throw;
                 Logger.Warn($"Failed to parse version {Version} to float");
-                return new(-1, -1, -1, -1);
+                return CoreTools.Version.Null;
             }
         }
 
