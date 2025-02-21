@@ -1,8 +1,8 @@
 {
     "package_count": {
         "total": 11748,
-        "done": 5198,
-        "packages_with_icon": 5198,
+        "done": 5202,
+        "packages_with_icon": 5202,
         "packages_with_screenshot": 623,
         "total_screenshots": 1955
     },
@@ -14984,7 +14984,7 @@
             "images": []
         },
         "fork": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/bryY17ng/fork-logo.png",
             "images": []
         },
         "forkgram": {
@@ -26328,7 +26328,7 @@
             "images": []
         },
         "mullvadvpn": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/0jX6jk4D/mullvad-VPN.png",
             "images": []
         },
         "multi-gitter": {
@@ -26809,7 +26809,7 @@
             "images": []
         },
         "nbtexplorer": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/BZFQ1C1R/NBTExplorer.png",
             "images": []
         },
         "ncalayer": {
@@ -34555,7 +34555,7 @@
             "images": []
         },
         "remotedesktopmanager": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/gjFS5psy/RDM.png",
             "images": []
         },
         "remotedesktopmanagerfr\u2026": {
