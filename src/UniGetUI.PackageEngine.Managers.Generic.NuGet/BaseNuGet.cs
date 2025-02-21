@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
@@ -112,30 +113,75 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates);
 
             var installedPackages = TaskRecycler<IReadOnlyList<IPackage>>.RunOrAttach(GetInstalledPackages);
+            var Packages = new List<Package>();
 
-            var packageIds = new StringBuilder();
-            var packageVers = new StringBuilder();
-            foreach(var package in installedPackages)
+            Dictionary<IManagerSource, List<IPackage>> sourceMapping = new();
+
+            foreach (var package in installedPackages)
             {
-                packageIds.Append(package.Id + "|");
-                packageVers.Append(package.VersionString + "|");
+                var uri = package.Source;
+                if (!sourceMapping.ContainsKey(uri)) sourceMapping[uri] = new();
+                sourceMapping[uri].Add(package);
             }
 
-            var SearchUrl = $"https://www.powershellgallery.com/api/v2/GetUpdates()?" +
-                            $"?packageIds='{HttpUtility.UrlEncode(packageIds.ToString())}'" +
-                            $"&versions='{HttpUtility.UrlEncode(packageVers.ToString())}'" +
-                            $"&includePrerelease=0&includeAllVersions=0";
-
-            using HttpClient client = new(CoreData.GenericHttpClientParameters);
-            client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-            HttpResponseMessage response = client.GetAsync(SearchUrl).GetAwaiter().GetResult();
-
-            if (!response.IsSuccessStatusCode)
+            foreach (var pair in sourceMapping)
             {
-                logger.Error($"Failed to fetch api at Url={SearchUrl} with status code {response.StatusCode}");
+                var packageIds = new StringBuilder();
+                var packageVers = new StringBuilder();
+                foreach (var package in pair.Value)
+                {
+                    packageIds.Append(package.Id + "|");
+                    packageVers.Append(package.VersionString + "|");
+                }
+
+                var SearchUrl = $"{pair.Key.Url.ToString().Trim('/')}/GetUpdates()" +
+                                $"?packageIds=%27{HttpUtility.UrlEncode(packageIds.ToString())}%27" +
+                                $"&versions=%27{HttpUtility.UrlEncode(packageVers.ToString())}%27" +
+                                $"&includePrerelease=0&includeAllVersions=0";
+
+                using HttpClient client = new(CoreData.GenericHttpClientParameters);
+                client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
+                HttpResponseMessage response = client.GetAsync(SearchUrl).GetAwaiter().GetResult();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    logger.Error($"Failed to fetch api at Url={SearchUrl} with status code {response.StatusCode}");
+                }
+                else
+                {
+                    string SearchResults = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    MatchCollection matches = Regex.Matches(SearchResults, "<entry>([\\s\\S]*?)<\\/entry>");
+
+                    Dictionary<string, SearchResult> AlreadyProcessedPackages = [];
+
+                    foreach (Match match in matches)
+                    {
+                        if (!match.Success)
+                        {
+                            continue;
+                        }
+
+                        string id = Regex.Match(match.Value, "<d:Id>'([^</']+)</'").Groups[1].Value;
+                        string version = Regex.Match(match.Value, "<d:Version>'([^</']+)</'").Groups[1].Value;
+                        var float_version = CoreTools.VersionStringToStruct(version);
+                        // Match title = Regex.Match(match.Value, "<title[ \\\"\\=A-Za-z0-9]+>([^<>]+)<\\/title>");
+
+                        if (AlreadyProcessedPackages.TryGetValue(id, out var value) && value.version_float >= float_version)
+                        {
+                            continue;
+                        }
+
+                        AlreadyProcessedPackages[id] = new SearchResult { id = id, version = version, version_float = float_version };
+                    }
+                    foreach (SearchResult package in AlreadyProcessedPackages.Values)
+                    {
+                        logger.Log($"Found package {package.id} version {package.version} on source {pair.Key.Name}");
+                        Packages.Add(new Package(CoreTools.FormatAsName(package.id), package.id, package.version, package.version, pair.Key, this));
+                    }
+                }
             }
 
-            return installedPackages;
+            return Packages;
         }
     }
 

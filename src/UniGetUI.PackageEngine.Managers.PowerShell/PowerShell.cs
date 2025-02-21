@@ -55,7 +55,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             SourcesHelper = new PowerShellSourceHelper(this);
             OperationHelper = new PowerShellPkgOperationHelper(this);
         }
-        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
+        /*protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
             Process p = new()
             {
@@ -140,7 +140,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             logger.Close(p.ExitCode);
 
             return Packages;
-        }
+        }*/
 
         protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
         {

@@ -63,7 +63,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             OperationHelper = new ChocolateyPkgOperationHelper(this);
         }
 
-        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
+        /*protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
             Process p = new()
             {
@@ -115,7 +115,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             logger.Close(p.ExitCode);
 
             return Packages;
-        }
+        }*/
 
         protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
         {

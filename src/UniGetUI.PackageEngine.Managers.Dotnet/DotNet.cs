@@ -66,7 +66,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             OperationHelper = new DotNetPkgOperationHelper(this);
         }
 
-        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
+        /*protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
             var (found, path) = CoreTools.Which("dotnet-tools-outdated.exe");
             if (!found)
@@ -153,7 +153,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             logger.Close(p.ExitCode);
 
             return Packages;
-        }
+        }*/
 
         protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
         {
