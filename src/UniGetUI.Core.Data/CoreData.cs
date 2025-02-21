@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
@@ -61,6 +61,20 @@ namespace UniGetUI.Core.Data
                 string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
                 string new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI");
                 return GetNewDataDirectoryOrMoveOld(old_path, new_path);
+            }
+        }
+
+        /// <summary>
+        /// The directory where the user configurations are stored. The directory is automatically created if it does not exist.
+        /// </summary>
+        public static string UniGetUIUserConfigurationDirectory
+        {
+            //TODO: add functionality to move old configurations to new location
+            get
+            {
+                string path = Path.Join(UniGetUIDataDirectory, "Configuration");
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                return path;
             }
         }
 
