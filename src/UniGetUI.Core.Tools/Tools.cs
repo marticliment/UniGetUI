@@ -316,7 +316,7 @@ Crash Traceback:
         }
 
 
-        public struct Version: IComparable<Version>, IEquatable<Version>
+        public struct Version: IComparable
         {
             public static readonly Version Null = new(-1, -1, -1, -1);
 
@@ -333,8 +333,10 @@ Crash Traceback:
                 Remainder = remainder;
             }
 
-            public int CompareTo(Version other)
+            public int CompareTo(object? other_)
             {
+                if (other_ is not Version other) return 0;
+
                 int major = Major.CompareTo(other.Major);
                 if (major != 0) return major;
 
