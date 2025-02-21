@@ -43,9 +43,9 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             _ => []
         });
 
-        if (operation is OperationType.Uninstall && package.Version != "Unknown" && package.OverridenOptions.WinGet_SpecifyVersion is not false)
+        if (operation is OperationType.Uninstall && package.VersionString != "Unknown" && package.OverridenOptions.WinGet_SpecifyVersion is not false)
         {
-            parameters.AddRange(["--version", $"\"{package.Version}\""]);
+            parameters.AddRange(["--version", $"\"{package.VersionString}\""]);
         }
         else if (operation is OperationType.Install && options.Version != "")
         {
@@ -192,11 +192,11 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
 
     private static void MarkUpgradeAsDone(IPackage package)
     {
-        Settings.SetDictionaryItem<string, string>("WinGetAlreadyUpgradedPackages", package.Id, package.NewVersion);
+        Settings.SetDictionaryItem<string, string>("WinGetAlreadyUpgradedPackages", package.Id, package.NewVersionString);
     }
 
     public static bool UpdateAlreadyInstalled(IPackage package)
     {
-        return Settings.GetDictionaryItem<string, string>("WinGetAlreadyUpgradedPackages", package.Id) == package.NewVersion;
+        return Settings.GetDictionaryItem<string, string>("WinGetAlreadyUpgradedPackages", package.Id) == package.NewVersionString;
     }
 }

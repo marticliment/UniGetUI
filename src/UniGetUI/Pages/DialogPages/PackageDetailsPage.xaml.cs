@@ -110,22 +110,22 @@ namespace UniGetUI.Interface.Dialogs
             {
                 MainActionButton.Content = CoreTools.Translate("Install");
                 SetTextToItem(Version_Label, CoreTools.Translate("Version"));
-                SetTextToItem(Version_Content, AvailablePackage?.Version ?? "NULL");
+                SetTextToItem(Version_Content, AvailablePackage?.VersionString ?? "NULL");
                 SetUpActionButtonAsInstall();
             }
             else if (OperationRole is OperationType.Update)
             {
-                MainActionButton.Content = CoreTools.Translate("Update to version {0}", UpgradablePackage?.NewVersion ?? "NULL");
+                MainActionButton.Content = CoreTools.Translate("Update to version {0}", UpgradablePackage?.NewVersionString ?? "NULL");
                 SetTextToItem(Version_Label, CoreTools.Translate("Installed Version"));
-                SetTextToItem(Version_Content, (UpgradablePackage?.Version ?? "NULL")
-                                               + $" - {CoreTools.Translate("Update to {0} available", UpgradablePackage?.NewVersion ?? "NULL")}");
+                SetTextToItem(Version_Content, (UpgradablePackage?.VersionString ?? "NULL")
+                                               + $" - {CoreTools.Translate("Update to {0} available", UpgradablePackage?.NewVersionString ?? "NULL")}");
                 SetUpActionButtonAsUpdate();
             }
             else /* OperationRole is OperationType.Uninstall */
             {
                 MainActionButton.Content = CoreTools.Translate("Uninstall");
                 SetTextToItem(Version_Label, CoreTools.Translate("Installed Version"));
-                SetTextToItem(Version_Content, InstalledPackage?.Version ?? "NULL");
+                SetTextToItem(Version_Content, InstalledPackage?.VersionString ?? "NULL");
                 SetUpActionButtonAsUninstall();
             }
             _ = LoadInformation();
@@ -167,7 +167,7 @@ namespace UniGetUI.Interface.Dialogs
                 ExtendedActionsMenu.Items.Add(new MenuFlyoutSeparator());
                 var Upgrade = new BetterMenuItem
                 {
-                    Text = CoreTools.Translate("Update to version {0}", UpgradablePackage.NewVersion),
+                    Text = CoreTools.Translate("Update to version {0}", UpgradablePackage.NewVersionString),
                     IconName = IconType.Update
                 };
                 Upgrade.Click += (_, _) => DoAction(UpgradablePackage, OperationType.Update);
@@ -271,7 +271,7 @@ namespace UniGetUI.Interface.Dialogs
                 ExtendedActionsMenu.Items.Add(new MenuFlyoutSeparator());
                 var Upgrade = new BetterMenuItem
                 {
-                    Text = CoreTools.Translate("Update to version {0}", UpgradablePackage.NewVersion),
+                    Text = CoreTools.Translate("Update to version {0}", UpgradablePackage.NewVersionString),
                     IconName = IconType.Update
                 };
                 Upgrade.Click += (_, _) => DoAction(UpgradablePackage, OperationType.Update);

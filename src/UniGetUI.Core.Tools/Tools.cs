@@ -315,53 +315,104 @@ Crash Traceback:
             return 0;
         }
 
+
+        public struct Version: IComparable
+        {
+            public static readonly Version Null = new(-1, -1, -1, -1);
+
+            public readonly int Major;
+            public readonly int Minor;
+            public readonly int Patch;
+            public readonly int Remainder;
+
+            public Version(int major, int minor = 0, int patch = 0, int remainder = 0)
+            {
+                Major = major;
+                Minor = minor;
+                Patch = patch;
+                Remainder = remainder;
+            }
+
+            public int CompareTo(object? other_)
+            {
+                if (other_ is not Version other) return 0;
+
+                int major = Major.CompareTo(other.Major);
+                if (major != 0) return major;
+
+                int minor = Minor.CompareTo(other.Minor);
+                if (minor != 0) return minor;
+
+                int patch = Patch.CompareTo(other.Patch);
+                if (patch != 0) return patch;
+
+                return Remainder.CompareTo(other.Remainder);
+            }
+
+            public static bool operator ==(Version left, Version right)
+                => left.CompareTo(right) == 0;
+
+            public static bool operator !=(Version left, Version right)
+                => left.CompareTo(right) != 0;
+
+            public static bool operator >=(Version left, Version right)
+                => left.CompareTo(right) >= 0;
+
+            public static bool operator <=(Version left, Version right)
+                => left.CompareTo(right) <= 0;
+
+            public static bool operator >(Version left, Version right)
+                => left.CompareTo(right) > 0;
+
+            public static bool operator <(Version left, Version right)
+                => left.CompareTo(right) < 0;
+
+            public bool Equals(Version other)
+                => Major == other.Major && Minor == other.Minor && Patch == other.Patch && Remainder == other.Remainder;
+
+            public override bool Equals(object? obj)
+                => obj is Version other && Equals(other);
+
+            public override int GetHashCode()
+                => HashCode.Combine(Major, Minor, Patch, Remainder);
+        }
+
         /// <summary>
         /// Converts a string into a double floating-point number.
         /// </summary>
         /// <param name="Version">Any string</param>
         /// <returns>The best approximation of the string as a Version</returns>
-        public static double GetVersionStringAsFloat(string Version)
+        public static Version VersionStringToStruct(string Version)
         {
             try
             {
-                string _ver = "";
-                bool _dotAdded = false;
-                foreach (char _char in Version)
+                char[] separators = ['.', '-', '/', '#'];
+                string[] versionItems = ["", "", "", ""];
+
+                int dotCount = 0;
+                bool first = true;
+
+                foreach (char c in Version)
                 {
-                    if (char.IsDigit(_char))
-                    {
-                        _ver += _char;
-                    }
-                    else if (_char == '.')
-                    {
-                        if (!_dotAdded)
-                        {
-                            _ver += _char;
-                            _dotAdded = true;
-                        }
-                    }
+                    if (char.IsDigit(c)) versionItems[dotCount] += c;
+                    else if (!first && separators.Contains(c)) if (dotCount < 3) dotCount++;
+                    first = false;
                 }
 
-                double res = -1;
-                if (_ver is not "" and not ".")
+                int[] numbers = { 0, 0, 0, 0 };
+                for (int i = 0; i < 4; i++)
                 {
-                    try
-                    {
-                        double val = double.Parse(_ver, CultureInfo.InvariantCulture);
-                        return val;
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
+                    if (int.TryParse(versionItems[i], out int val))
+                        numbers[i] = val;
                 }
 
-                return res;
+                var ver = new Version(numbers[0], numbers[1], numbers[2], numbers[3]);
+                return ver;
             }
             catch
             {
                 Logger.Warn($"Failed to parse version {Version} to float");
-                return -1;
+                return CoreTools.Version.Null;
             }
         }
 

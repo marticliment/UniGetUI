@@ -72,7 +72,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                 string? iconUrl = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
                 if (iconUrl is not null)
                 {
-                    return new CacheableIcon(new Uri(iconUrl), package.Version);
+                    return new CacheableIcon(new Uri(iconUrl), package.VersionString);
                 }
 
                 return null;

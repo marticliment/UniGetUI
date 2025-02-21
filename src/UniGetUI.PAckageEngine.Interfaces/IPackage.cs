@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Structs;
@@ -12,12 +13,12 @@ namespace UniGetUI.PackageEngine.Interfaces
         public bool IsChecked { get; set; }
         public string Name { get; }
         public string Id { get; }
-        public string Version { get; }
-        public double VersionAsFloat { get; }
-        public double NewVersionAsFloat { get; }
+        public string VersionString { get; }
+        public CoreTools.Version NormalizedVersion { get; }
+        public CoreTools.Version NormalizedNewVersion { get; }
         public IManagerSource Source { get; }
         public IPackageManager Manager { get; }
-        public string NewVersion { get; }
+        public string NewVersionString { get; }
         public bool IsUpgradable { get; }
         public ref OverridenInstallationOptions OverridenOptions { get; }
         public string AutomationName { get; }

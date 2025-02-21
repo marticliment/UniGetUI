@@ -34,7 +34,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         private struct SearchResult
         {
             public string version;
-            public double version_float;
+            public CoreTools.Version version_float;
             public string id;
         }
 
@@ -82,7 +82,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
                     string id = Regex.Match(match.Value, "Id='([^<>']+)'").Groups[1].Value;
                     string version = Regex.Match(match.Value, "Version='([^<>']+)'").Groups[1].Value;
-                    double float_version = CoreTools.GetVersionStringAsFloat(version);
+                    var float_version = CoreTools.VersionStringToStruct(version);
                     // Match title = Regex.Match(match.Value, "<title[ \\\"\\=A-Za-z0-9]+>([^<>]+)<\\/title>");
 
                     if (AlreadyProcessedPackages.TryGetValue(id, out var value) && value.version_float >= float_version)

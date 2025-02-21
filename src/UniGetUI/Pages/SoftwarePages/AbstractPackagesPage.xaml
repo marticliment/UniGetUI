@@ -581,8 +581,8 @@
                     <TextBlock
                         Grid.Column="6" Grid.Row="0"
                         VerticalAlignment="Center"
-                        Text="{x:Bind Package.Version, Mode=OneWay}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                        ToolTipService.ToolTip="{x:Bind Package.Version}"
+                        Text="{x:Bind Package.VersionString, Mode=OneWay}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                        ToolTipService.ToolTip="{x:Bind Package.VersionString}"
                     />
                     <widgets:LocalIcon
                         FontWeight="ExtraLight" FontSize="24"
@@ -593,8 +593,8 @@
                     <TextBlock
                         Grid.Column="8" Grid.Row="0"
                         VerticalAlignment="Center" Visibility="{x:Bind Package.IsUpgradable}"
-                        Text="{x:Bind Package.NewVersion}" FontSize="13" FontFamily="Segoe UI Variable Text"
-                        ToolTipService.ToolTip="{x:Bind Package.NewVersion}"
+                        Text="{x:Bind Package.NewVersionString}" FontSize="13" FontFamily="Segoe UI Variable Text"
+                        ToolTipService.ToolTip="{x:Bind Package.NewVersionString}"
                     />
                     <widgets:LocalIcon
                         Grid.Column="9" Grid.Row="0" FontWeight="ExtraLight" FontSize="24"

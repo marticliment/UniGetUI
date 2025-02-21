@@ -318,7 +318,7 @@ namespace UniGetUI.Core.IconEngine
         {
             try
             {
-                return File.Exists(versionPath) && CoreTools.GetVersionStringAsFloat(File.ReadAllText(versionPath)) >= CoreTools.GetVersionStringAsFloat(icon.Version);
+                return File.Exists(versionPath) && CoreTools.VersionStringToStruct(File.ReadAllText(versionPath)) >= CoreTools.VersionStringToStruct(icon.Version);
             }
             catch (Exception e)
             {

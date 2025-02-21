@@ -15,7 +15,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         private readonly string _version;
 
-        public override string Version
+        public override string VersionString
         {
             get
             {
@@ -65,7 +65,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public void FirePackageVersionChangedEvent()
         {
-            OnPropertyChanged(nameof(Version));
+            OnPropertyChanged(nameof(VersionString));
         }
 
     }
