@@ -8,6 +8,8 @@ using Microsoft.UI.Xaml.Input;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.Pages.DialogPages;
+using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Logging;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,9 +25,13 @@ namespace UniGetUI.Interface
         private readonly ObservableCollection<ShortcutEntry> desktopShortcuts = [];
 
         private readonly bool NewOnly;
+        private bool DeleteAllShortcuts;
+        private bool IgnoreFirstCheck;
 
         public DesktopShortcutsManager(List<string>? NewShortcuts)
         {
+            DeleteAllShortcuts = Settings.Get("RemoveAllDesktopShortcuts");
+            IgnoreFirstCheck = DeleteAllShortcuts; // Otherwise the Checked handler is called when the dialog opens
             if (NewShortcuts is not null)
             {
                 NewOnly = true;
@@ -114,6 +120,22 @@ namespace UniGetUI.Interface
         private void NoResetButton_Click(object sender, RoutedEventArgs e)
         {
             ConfirmResetFlyout.Hide();
+        }
+
+        private async void HandleAllDesktop_Checked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            if (!IgnoreFirstCheck)
+            {
+                SaveChangesAndClose();
+                await DialogHelper.ConfirmSetDeleteAllShortcutsSetting();
+                await DialogHelper.ManageDesktopShortcuts();
+            }
+            IgnoreFirstCheck = false;
+        }
+
+        private void HandleAllDesktop_Unchecked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            Settings.Set("RemoveAllDesktopShortcuts", false);
         }
 
         public void SaveChangesAndClose()
