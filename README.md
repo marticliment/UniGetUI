@@ -104,12 +104,9 @@ UniGetUI has a built-in autoupdater. However, it can also be updated like any ot
 
 ✅: Supported on UniGetUI<br>
 ☑️: Not directly supported but can be easily achieved<br>
-⚠️: Some packages might not follow this setting<br>
+⚠️: May not work in some cases<br>
 ❌: Not supported by the Package Manager<br>
 <br>
-**1\.** Some packages do not support installing to a custom location or scope and will ignore this setting<br>
-**2\.** Despite the Package Manager may not support _PreReleases_, some packages can be found duplicated, with one of the copies being the beta version of it.<br>
-**3\.** Some installers do not have a GUI, and will ignore the `interactive` flag<br>
 
 # Translating UniGetUI to other languages
 To translate UniGetUI to other languages or to update an old translation, please see [Translating UniGetUI - UniGetUI Wiki](https://github.com/marticliment/UniGetUI/wiki#translating-wingetui) for more info.
