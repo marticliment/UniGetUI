@@ -4,6 +4,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
@@ -147,10 +148,11 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             return OperationVeredict.Failure;
         }
 
-		if (uintCode == 0x8A15002B)
-		{
-			return OperationVeredict.Failure;
-		}
+        if (uintCode == 0x8A15002B)
+        {
+            IgnoredUpdatesDatabase.Add(IgnoredUpdatesDatabase.GetIgnoredIdForPackage(package), package.Version);
+            return OperationVeredict.Failure;
+        }
 
         if (uintCode == 0x8A15010D || uintCode == 0x8A15004F || uintCode == 0x8A15010E)
         {
