@@ -51,7 +51,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public string Name { get; }
         public string AutomationName { get; }
         public string Id { get; }
-        public virtual string Version { get; }
+        public virtual string VersionString { get; }
         public CoreTools.Version VersionAsFloat { get; }
         public CoreTools.Version NewVersionAsFloat { get; }
         public bool IsPopulated { get; set; }
@@ -61,7 +61,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// IPackageManager is guaranteed to be PackageManager, but C# doesn't allow covariant attributes
         /// </summary>
         public IPackageManager Manager { get; }
-        public string NewVersion { get; }
+        public string NewVersionString { get; }
         public virtual bool IsUpgradable { get; }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             Name = name;
             Id = id;
-            Version = version;
+            VersionString = version;
             VersionAsFloat = CoreTools.VersionStringToStruct(version);
             Source = source;
             Manager = manager;
@@ -87,13 +87,13 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 _overriden_options = (OverridenInstallationOptions)options;
             }
 
-            NewVersion = "";
+            NewVersionString = "";
             Tag = PackageTag.Default;
             AutomationName = CoreTools.Translate("Package {name} from {manager}",
                 new Dictionary<string, object?> { { "name", Name }, { "manager", Source.AsString_DisplayName } });
 
             __hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.AsString_DisplayName + "\\" + Id);
-            __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.AsString_DisplayName + "\\" + Id + "\\" + (this as Package).Version);
+            __versioned_hash = CoreTools.HashStringAsLong(Manager.Name + "\\" + Source.AsString_DisplayName + "\\" + Id + "\\" + (this as Package).VersionString);
             IsUpgradable = false;
 
             ignoredId = IgnoredUpdatesDatabase.GetIgnoredIdForPackage(this);
@@ -125,7 +125,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             : this(name, id, installed_version, source, manager, options)
         {
             IsUpgradable = true;
-            NewVersion = new_version;
+            NewVersionString = new_version;
             NewVersionAsFloat = CoreTools.VersionStringToStruct(new_version);
         }
 
@@ -291,8 +291,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public virtual bool IsUpdateMinor()
         {
             if (!IsUpgradable) return false;
-            string[] VersionSplit = Version.Split(".");
-            string[] NewVersionSplit = NewVersion.Split(".");
+            string[] VersionSplit = VersionString.Split(".");
+            string[] NewVersionSplit = NewVersionString.Split(".");
 
             // When in doubt, return false
             if (VersionSplit.Length < 3 || NewVersionSplit.Length < 3) return false;
@@ -311,7 +311,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 Id = Id,
                 Name = Name,
-                Version = Version,
+                Version = VersionString,
                 Source = Source.Name,
                 ManagerName = Manager.Name,
                 InstallationOptions = InstallationOptions.FromPackage(this).AsSerializable(),
@@ -329,7 +329,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 Id = Id,
                 Name = Name,
-                Version = Version,
+                Version = VersionString,
                 Source = Source.Name,
             };
         }

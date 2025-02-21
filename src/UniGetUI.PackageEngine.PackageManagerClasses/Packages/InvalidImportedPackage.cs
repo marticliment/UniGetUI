@@ -33,7 +33,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public string Id { get; }
 
-        public string Version { get; }
+        public string VersionString { get; }
 
         public CoreTools.Version VersionAsFloat { get; }
 
@@ -43,7 +43,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public IPackageManager Manager { get; }
 
-        public string NewVersion { get => ""; }
+        public string NewVersionString { get => ""; }
 
         public bool IsUpgradable { get => false; }
 
@@ -59,7 +59,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             Name = data.Name;
             Id = data.Id.Split('\\')[^1];
-            Version = data.Version;
+            VersionString = data.Version;
             VersionAsFloat = CoreTools.VersionStringToStruct(data.Version);
             SourceAsString = data.Source;
             AutomationName = data.Name;
@@ -86,7 +86,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 Name = Name,
                 Id = Id,
-                Version = Version,
+                Version = VersionString,
                 Source = SourceAsString,
             };
         }

@@ -31,8 +31,8 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         protected override async Task<bool> IsPackageValid(IPackage package)
         {
-            if (package.Version == package.NewVersion) return false;
-            if (await package.HasUpdatesIgnoredAsync(package.NewVersion))
+            if (package.VersionString == package.NewVersionString) return false;
+            if (await package.HasUpdatesIgnoredAsync(package.NewVersionString))
             {
                 IgnoredPackages[package.Id] = package;
                 return false;

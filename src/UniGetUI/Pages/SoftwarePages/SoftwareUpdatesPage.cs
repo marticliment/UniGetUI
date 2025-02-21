@@ -366,9 +366,9 @@ namespace UniGetUI.Interface.SoftwarePages
 
                             .AddText(CoreTools.Translate("An update was found!"))
                             .AddText(CoreTools.Translate("{0} is being updated to version {1}",
-                                upgradablePackages[0].Name, upgradablePackages[0].NewVersion))
+                                upgradablePackages[0].Name, upgradablePackages[0].NewVersionString))
                             .SetAttributionText(CoreTools.Translate("You have currently version {0} installed",
-                                upgradablePackages[0].Version))
+                                upgradablePackages[0].VersionString))
 
                             .AddArgument("action", NotificationArguments.ShowOnUpdatesTab);
                         notification = builder.BuildNotification();
@@ -381,9 +381,9 @@ namespace UniGetUI.Interface.SoftwarePages
 
                             .AddText(CoreTools.Translate("An update was found!"))
                             .AddText(CoreTools.Translate("{0} can be updated to version {1}",
-                                upgradablePackages[0].Name, upgradablePackages[0].NewVersion))
+                                upgradablePackages[0].Name, upgradablePackages[0].NewVersionString))
                             .SetAttributionText(CoreTools.Translate("You have currently version {0} installed",
-                                upgradablePackages[0].Version))
+                                upgradablePackages[0].VersionString))
 
                             .AddArgument("action", NotificationArguments.ShowOnUpdatesTab)
                             .AddButton(new AppNotificationButton(CoreTools.Translate("View on UniGetUI").Replace("'", "´"))
@@ -492,7 +492,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 return;
             }
 
-            _ = package.AddToIgnoredUpdatesAsync(package.NewVersion);
+            _ = package.AddToIgnoredUpdatesAsync(package.NewVersionString);
             PEInterface.UpgradablePackagesLoader.Remove(package);
             PEInterface.UpgradablePackagesLoader.IgnoredPackages[package.Id] = package;
         }

@@ -103,7 +103,7 @@ public partial class Cargo : PackageManager
             var package = Packages[i];
             try
             {
-                var versionInfo = CratesIOClient.GetManifestVersion(package.Id, package.Version);
+                var versionInfo = CratesIOClient.GetManifestVersion(package.Id, package.VersionString);
                 if (versionInfo.bin_names?.Length > 0)
                 {
                     BinPackages.Add(package);

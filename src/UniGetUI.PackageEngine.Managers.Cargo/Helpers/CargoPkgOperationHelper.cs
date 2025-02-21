@@ -8,7 +8,7 @@ internal sealed class CargoPkgOperationHelper(Cargo cargo) : PackagePkgOperation
 {
     protected override IReadOnlyList<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
-        var version = options.Version == string.Empty ? package.Version : options.Version;
+        var version = options.Version == string.Empty ? package.VersionString : options.Version;
         List<string> parameters = operation switch
         {
             OperationType.Install => [Manager.Properties.InstallVerb, "--version", version, package.Id],

@@ -136,7 +136,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
 
             // Logger.Debug($"A native icon with Url={possibleIconUrl.Groups[1].Value} was found");
-            return new CacheableIcon(new Uri(possibleIconUrl.Groups[1].Value), package.Version);
+            return new CacheableIcon(new Uri(possibleIconUrl.Groups[1].Value), package.VersionString);
         }
 
         protected override IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package)

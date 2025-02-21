@@ -51,7 +51,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
                 details.Publisher = (contents?["maintainers"] as JsonArray)?[0]?.ToString();
                 details.Author = contents?["author"]?.ToString();
-                details.UpdateDate = contents?["time"]?[contents?["dist-tags"]?["latest"]?.ToString() ?? details.Package.Version]?.ToString();
+                details.UpdateDate = contents?["time"]?[contents?["dist-tags"]?["latest"]?.ToString() ?? details.Package.VersionString]?.ToString();
 
                 if (Uri.TryCreate(contents?["dist"]?["tarball"]?.ToString() ?? "", UriKind.RelativeOrAbsolute, out var installerUrl))
                     details.InstallerUrl = installerUrl;

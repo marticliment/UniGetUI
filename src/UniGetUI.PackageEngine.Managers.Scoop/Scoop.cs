@@ -185,9 +185,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             Dictionary<string, IPackage> InstalledPackages = [];
             foreach (IPackage InstalledPackage in GetInstalledPackages())
             {
-                if (!InstalledPackages.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.Version))
+                if (!InstalledPackages.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.VersionString))
                 {
-                    InstalledPackages.Add(InstalledPackage.Id + "." + InstalledPackage.Version, InstalledPackage);
+                    InstalledPackages.Add(InstalledPackage.Id + "." + InstalledPackage.VersionString, InstalledPackage);
                 }
             }
 

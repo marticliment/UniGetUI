@@ -38,7 +38,7 @@ internal sealed class CargoPkgDetailsHelper(Cargo manager) : BasePkgDetailsHelpe
         var categories = manifest.categories?.Select(c => c.category);
         details.Tags = [.. keywords, .. categories];
 
-        var versionData = manifest.versions.Where((v) => v.num == details.Package.Version).First();
+        var versionData = manifest.versions.Where((v) => v.num == details.Package.VersionString).First();
 
         details.Author = versionData.published_by?.name;
         details.License = versionData.license;

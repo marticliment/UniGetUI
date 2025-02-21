@@ -13,12 +13,12 @@ namespace UniGetUI.PackageEngine.Interfaces
         public bool IsChecked { get; set; }
         public string Name { get; }
         public string Id { get; }
-        public string Version { get; }
+        public string VersionString { get; }
         public CoreTools.Version VersionAsFloat { get; }
         public CoreTools.Version NewVersionAsFloat { get; }
         public IManagerSource Source { get; }
         public IPackageManager Manager { get; }
-        public string NewVersion { get; }
+        public string NewVersionString { get; }
         public bool IsUpgradable { get; }
         public ref OverridenInstallationOptions OverridenOptions { get; }
         public string AutomationName { get; }
