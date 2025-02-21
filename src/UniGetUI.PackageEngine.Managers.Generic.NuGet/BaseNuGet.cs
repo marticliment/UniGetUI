@@ -1,7 +1,10 @@
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Tools;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -104,6 +107,36 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             return Packages;
         }
 
+        protected sealed override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
+        {
+            var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates);
+
+            var installedPackages = TaskRecycler<IReadOnlyList<IPackage>>.RunOrAttach(GetInstalledPackages);
+
+            var packageIds = new StringBuilder();
+            var packageVers = new StringBuilder();
+            foreach(var package in installedPackages)
+            {
+                packageIds.Append(package.Id + "|");
+                packageVers.Append(package.VersionString + "|");
+            }
+
+            var SearchUrl = $"https://www.powershellgallery.com/api/v2/GetUpdates()?" +
+                            $"?packageIds='{HttpUtility.UrlEncode(packageIds.ToString())}'" +
+                            $"&versions='{HttpUtility.UrlEncode(packageVers.ToString())}'" +
+                            $"&includePrerelease=0&includeAllVersions=0";
+
+            using HttpClient client = new(CoreData.GenericHttpClientParameters);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
+            HttpResponseMessage response = client.GetAsync(SearchUrl).GetAwaiter().GetResult();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                logger.Error($"Failed to fetch api at Url={SearchUrl} with status code {response.StatusCode}");
+            }
+
+            return installedPackages;
+        }
     }
 
 }
