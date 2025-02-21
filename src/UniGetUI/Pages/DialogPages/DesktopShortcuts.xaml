@@ -44,7 +44,7 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBlock
                                         Grid.ColumnSpan="2"
-                                        Text="Existing shortcuts on your desktop will be scanned, and you will need to pick which ones to keep and which ones to remove."
+                                        Text="Existing shortcuts on your desktop will be scanned, and you will need to pick which ones to keep and which ones to remove. If 'Delete all desktop shortcuts after an install or upgrade' is enabled, they will be deleted automatically."
                                         Margin="0,0,0,0"
                                         TextWrapping="WrapWholeWords"
                                         />

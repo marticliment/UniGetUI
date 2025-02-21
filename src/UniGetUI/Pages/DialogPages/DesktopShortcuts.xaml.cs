@@ -90,13 +90,13 @@ namespace UniGetUI.Interface
         private async void ManualScanButton_Click(object sender, RoutedEventArgs e)
         {
             DesktopShortcutsDatabase.TryRemoveNewShortcuts([]);
-            Close?.Invoke(this, EventArgs.Empty);
+            SaveChangesAndClose();
             var shortcuts = DesktopShortcutsDatabase.GetUnknownShortcuts();
             if (shortcuts.Any())
             {
                 await DialogHelper.ManageDesktopShortcuts(shortcuts);
             }
-            else
+            else if (!Settings.Get("RemoveAllDesktopShortcuts"))
             {
                 await DialogHelper.NoDesktopShortcutsFound();
             }
