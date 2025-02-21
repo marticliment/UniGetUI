@@ -14,8 +14,8 @@ namespace UniGetUI.PackageEngine.Interfaces
         public string Name { get; }
         public string Id { get; }
         public string VersionString { get; }
-        public CoreTools.Version VersionAsFloat { get; }
-        public CoreTools.Version NewVersionAsFloat { get; }
+        public CoreTools.Version NormalizedVersion { get; }
+        public CoreTools.Version NormalizedNewVersion { get; }
         public IManagerSource Source { get; }
         public IPackageManager Manager { get; }
         public string NewVersionString { get; }

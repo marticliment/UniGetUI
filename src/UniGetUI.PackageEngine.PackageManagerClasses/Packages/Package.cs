@@ -52,8 +52,8 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public string AutomationName { get; }
         public string Id { get; }
         public virtual string VersionString { get; }
-        public CoreTools.Version VersionAsFloat { get; }
-        public CoreTools.Version NewVersionAsFloat { get; }
+        public CoreTools.Version NormalizedVersion { get; }
+        public CoreTools.Version NormalizedNewVersion { get; }
         public bool IsPopulated { get; set; }
         public IManagerSource Source { get; }
 
@@ -78,7 +78,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             Name = name;
             Id = id;
             VersionString = version;
-            VersionAsFloat = CoreTools.VersionStringToStruct(version);
+            NormalizedVersion = CoreTools.VersionStringToStruct(version);
             Source = source;
             Manager = manager;
 
@@ -126,7 +126,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         {
             IsUpgradable = true;
             NewVersionString = new_version;
-            NewVersionAsFloat = CoreTools.VersionStringToStruct(new_version);
+            NormalizedNewVersion = CoreTools.VersionStringToStruct(new_version);
         }
 
         public long GetHash()

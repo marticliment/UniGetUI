@@ -569,7 +569,7 @@ namespace UniGetUI.Interface.SoftwarePages
             {
                 if (x.Id != y.Id) return String.Compare(x.Id, y.Id, StringComparison.Ordinal);
                 if (x.Name != y.Name) return String.Compare(x.Name, y.Name, StringComparison.Ordinal);
-                return (x.VersionAsFloat > y.VersionAsFloat) ? -1 : 1;
+                return (x.NormalizedVersion > y.NormalizedVersion) ? -1 : 1;
             }
 
             foreach (IPackage package in packages)

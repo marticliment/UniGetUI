@@ -52,11 +52,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
                     break;
 
                 case Sorter.Version:
-                    SortingSelector = x => x.Package.VersionAsFloat;
+                    SortingSelector = x => x.Package.NormalizedVersion;
                     break;
 
                 case Sorter.NewVersion:
-                    SortingSelector = x => x.Package.NewVersionAsFloat;
+                    SortingSelector = x => x.Package.NormalizedNewVersion;
                     break;
 
                 case Sorter.Source:
