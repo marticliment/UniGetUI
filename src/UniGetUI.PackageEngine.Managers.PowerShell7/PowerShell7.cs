@@ -62,7 +62,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = "",
+                    Arguments = "-NoProfile",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
@@ -275,7 +275,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = " -Version",
+                    Arguments = "-NoProfile -Version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

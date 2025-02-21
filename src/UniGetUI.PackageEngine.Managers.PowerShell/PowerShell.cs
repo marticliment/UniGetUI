@@ -62,7 +62,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = "",
+                    Arguments = "-NoProfile",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
@@ -155,7 +155,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                     RedirectStandardInput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
+                    StandardOutputEncoding = Encoding.UTF8
                 }
             };
 
