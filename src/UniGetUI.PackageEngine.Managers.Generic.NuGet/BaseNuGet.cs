@@ -108,8 +108,10 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             return Packages;
         }
 
-        protected sealed override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
+
+        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
+            int errors = 0;
             var logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates);
 
             var installedPackages = TaskRecycler<IReadOnlyList<IPackage>>.RunOrAttach(GetInstalledPackages);
@@ -128,15 +130,17 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             {
                 var packageIds = new StringBuilder();
                 var packageVers = new StringBuilder();
+                var packageIdVersion = new Dictionary<string, string>();
                 foreach (var package in pair.Value)
                 {
                     packageIds.Append(package.Id + "|");
                     packageVers.Append(package.VersionString + "|");
+                    packageIdVersion[package.Id.ToLower()] = package.VersionString;
                 }
 
                 var SearchUrl = $"{pair.Key.Url.ToString().Trim('/')}/GetUpdates()" +
-                                $"?packageIds=%27{HttpUtility.UrlEncode(packageIds.ToString())}%27" +
-                                $"&versions=%27{HttpUtility.UrlEncode(packageVers.ToString())}%27" +
+                                $"?packageIds=%27{HttpUtility.UrlEncode(packageIds.ToString().Trim('|'))}%27" +
+                                $"&versions=%27{HttpUtility.UrlEncode(packageVers.ToString().Trim('|'))}%27" +
                                 $"&includePrerelease=0&includeAllVersions=0";
 
                 using HttpClient client = new(CoreData.GenericHttpClientParameters);
@@ -146,43 +150,37 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 if (!response.IsSuccessStatusCode)
                 {
                     logger.Error($"Failed to fetch api at Url={SearchUrl} with status code {response.StatusCode}");
+                    errors++;
                 }
                 else
                 {
                     string SearchResults = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     MatchCollection matches = Regex.Matches(SearchResults, "<entry>([\\s\\S]*?)<\\/entry>");
 
-                    Dictionary<string, SearchResult> AlreadyProcessedPackages = [];
-
                     foreach (Match match in matches)
                     {
-                        if (!match.Success)
-                        {
-                            continue;
-                        }
+                        if (!match.Success) continue;
 
-                        string id = Regex.Match(match.Value, "<d:Id>'([^</']+)</'").Groups[1].Value;
-                        string version = Regex.Match(match.Value, "<d:Version>'([^</']+)</'").Groups[1].Value;
-                        var float_version = CoreTools.VersionStringToStruct(version);
+                        string id = Regex.Match(match.Value, "<d:Id>([^<]+)</d:Id>").Groups[1].Value;
+                        string new_version = Regex.Match(match.Value, "<d:Version>([^<]+)</d:Version>").Groups[1].Value;
                         // Match title = Regex.Match(match.Value, "<title[ \\\"\\=A-Za-z0-9]+>([^<>]+)<\\/title>");
 
-                        if (AlreadyProcessedPackages.TryGetValue(id, out var value) && value.version_float >= float_version)
-                        {
-                            continue;
-                        }
-
-                        AlreadyProcessedPackages[id] = new SearchResult { id = id, version = version, version_float = float_version };
-                    }
-                    foreach (SearchResult package in AlreadyProcessedPackages.Values)
-                    {
-                        logger.Log($"Found package {package.id} version {package.version} on source {pair.Key.Name}");
-                        Packages.Add(new Package(CoreTools.FormatAsName(package.id), package.id, package.version, package.version, pair.Key, this));
+                        logger.Log($"Found package {id} version {new_version} on source {pair.Key.Name}");
+                        Packages.Add(new Package(CoreTools.FormatAsName(id), id, packageIdVersion[id.ToLower()], new_version, pair.Key, this));
                     }
                 }
             }
 
+            logger.Close(errors);
             return Packages;
         }
+
+        protected sealed override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
+            => TaskRecycler<IReadOnlyList<Package>>.RunOrAttach(_getInstalledPackages_UnSafe);
+
+        protected abstract IReadOnlyList<Package> _getInstalledPackages_UnSafe();
+
+
     }
 
 }
