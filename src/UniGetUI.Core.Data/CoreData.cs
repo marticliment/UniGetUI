@@ -69,12 +69,62 @@ namespace UniGetUI.Core.Data
         /// </summary>
         public static string UniGetUIUserConfigurationDirectory
         {
-            //TODO: add functionality to move old configurations to new location
             get
             {
-                string path = Path.Join(UniGetUIDataDirectory, "Configuration");
-                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                return path;
+                string oldConfigPath = UniGetUIDataDirectory; // Old config path was the data directory itself
+                string newConfigPath = Path.Join(dataDir, "Configuration");
+
+                if (Directory.Exists(oldConfigPath) && !Directory.Exists(newConfigPath))
+                {
+                    //Migration case
+                    try
+                    {
+                        Logger.Info($"Moving configuration files from '{oldConfigPath}' to '{newConfigPath}'");
+                        Directory.CreateDirectory(newConfigPath);
+
+                        foreach (string file in Directory.GetFiles(oldConfigPath, "*.*", SearchOption.TopDirectoryOnly))
+                        {
+                            string fileName = Path.GetFileName(file);
+                            string fileExtension = Path.GetExtension(file);
+                            bool isConfigFile = string.IsNullOrEmpty(fileExtension) || fileExtension.ToLowerInvariant() == ".json";
+
+                            if (isConfigFile)
+                            {
+                                string newFile = Path.Join(newConfigPath, fileName);
+                                // Avoid overwriting if somehow file already exists
+                                if (!File.Exists(newFile))
+                                {
+                                    File.Move(file, newFile);
+                                    Logger.Debug($"Moved configuration file '{file}' to '{newFile}'");
+                                }
+                                // Clean up old file to avoid duplicates and confusion
+                                else
+                                {
+                                    Logger.Warning($"Configuration file '{newFile}' already exists, skipping move from '{file}'.");
+                                    File.Delete(file);
+                                }
+                            }
+                            else
+                            {
+                                Logger.Debug($"Skipping non-configuration file '{file}' during migration.");
+                            }
+                        }
+                        Logger.Info($"Configuration files moved successfully to '{newConfigPath}'");
+                    }
+                    catch (Exception ex)
+                    {
+                        // Fallback to old path if migration fails to not break functionality
+                        Logger.Error($"Error moving configuration files from '{oldConfigPath}' to '{newConfigPath}'. Using old path for now. Manual migration might be needed.");
+                        Logger.Error(ex);
+                        return oldConfigPath;
+                    }
+                }
+                else if (!Directory.Exists(newConfigPath))
+                {
+                    //New install case, migration not needed
+                    Directory.CreateDirectory(newConfigPath);
+                }
+                return newConfigPath;
             }
         }
 
