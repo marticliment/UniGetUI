@@ -500,15 +500,6 @@ namespace UniGetUI.Interface
                             (AdminCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
                         ExtraSettingsCards[Manager].Insert(index++, AdminCard);
 
-                        /*CheckboxCard ParallelCard = new()
-                        {
-                            Text = CoreTools.AutoTranslated("Allow {pm} operations to be performed in parallel"),
-                            SettingName = Manager.Name,
-                            SettingDictionary = "AllowParallelInstallsForManager"
-                        };
-                        ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
-                        ExtraSettingsCards[Manager].Insert(index++, ParallelCard);*/
-
                         CheckboxCard DisableNotifsCard = new()
                         {
                             Text = CoreTools.AutoTranslated("Disable update available notifications for {pm}"),
