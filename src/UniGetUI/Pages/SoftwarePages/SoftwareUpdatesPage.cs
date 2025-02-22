@@ -400,7 +400,8 @@ namespace UniGetUI.Interface.SoftwarePages
                     string attribution = "";
                     foreach (IPackage package in upgradablePackages)
                     {
-                        attribution += package.Name + ", ";
+                        if (!Settings.GetDictionaryItem<string, bool>("DisabledPackageManagerNotifications", package.Manager.Name))
+                            attribution += package.Name + ", ";
                     }
 
                     attribution = attribution.TrimEnd(' ').TrimEnd(',');
@@ -441,8 +442,20 @@ namespace UniGetUI.Interface.SoftwarePages
                     }
                 }
 
-                notification.ExpiresOnReboot = true;
-                AppNotificationManager.Default.Show(notification);
+                bool SendNotification = false;
+                foreach (var Package in upgradablePackages)
+                {
+                    if (!Settings.GetDictionaryItem<string, bool>("DisabledPackageManagerNotifications", Package.Manager.Name))
+                    {
+                        SendNotification = true;
+                        break;
+                    }
+                }
+                if (SendNotification)
+                {
+                    notification.ExpiresOnReboot = true;
+                    AppNotificationManager.Default.Show(notification);
+                }
             }
             catch (Exception ex)
             {

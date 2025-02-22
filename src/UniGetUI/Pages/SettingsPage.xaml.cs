@@ -507,6 +507,16 @@ namespace UniGetUI.Interface
                         ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
                         ExtraSettingsCards[Manager].Insert(index++, ParallelCard);*/
 
+                        CheckboxCard DisableNotifsCard = new()
+                        {
+                            Text = CoreTools.AutoTranslated("Disable update available notifications for {pm}"),
+                            SettingName = Manager.Name,
+                            SettingDictionary = "DisabledPackageManagerNotifications"
+                        };
+                        DisableNotifsCard._checkbox.Content =
+                            (DisableNotifsCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
+                        ExtraSettingsCards[Manager].Insert(index++, DisableNotifsCard);
+
                         if (Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
                         {
                             SettingsCard SourceManagerCard = new() { Resources = { ["SettingsCardLeftIndention"] = 10 } };
