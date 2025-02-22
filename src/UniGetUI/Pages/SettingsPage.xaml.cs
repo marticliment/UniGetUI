@@ -493,7 +493,8 @@ namespace UniGetUI.Interface
                         CheckboxCard AdminCard = new()
                         {
                             Text = CoreTools.AutoTranslated("Always run {pm} operations with administrator rights"),
-                            SettingName = "AlwaysElevate" + Manager.Name,
+                            SettingName = Manager.Name,
+                            SettingDictionary = "AlwaysElevate"
                         };
                         AdminCard._checkbox.Content =
                             (AdminCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
@@ -502,7 +503,8 @@ namespace UniGetUI.Interface
                         /*CheckboxCard ParallelCard = new()
                         {
                             Text = CoreTools.AutoTranslated("Allow {pm} operations to be performed in parallel"),
-                            SettingName = "AllowParallelInstallsForManager" + Manager.Name,
+                            SettingName = Manager.Name,
+                            SettingDictionary = "AllowParallelInstallsForManager"
                         };
                         ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
                         ExtraSettingsCards[Manager].Insert(index++, ParallelCard);*/

@@ -118,7 +118,7 @@ namespace UniGetUI.Interface
 
             _ = AutoUpdater.UpdateCheckLoop(this, UpdatesBanner);
 
-            if (!Settings.Get("TransferredOldSettings"))
+            if (!Settings.Get("TransferredOldSettings") || !Settings.Get("TransferredOldSettings-2"))
                 TransferOldSettingsFormats();
 
             Activated += (_, e) =>
@@ -178,38 +178,53 @@ namespace UniGetUI.Interface
 
         private static void TransferOldSettingsFormats()
         {
+            if (!Settings.Get("TransferredOldSettings"))
+            {
+                foreach (IPackageManager Manager in PEInterface.Managers)
+                {
+                    string SettingName = "Disable" + Manager.Name;
+                    if (Settings.Get(SettingName))
+                    {
+                        Settings.SetDictionaryItem("DisabledManagers", Manager.Name, true);
+                        Settings.Set(SettingName, false);
+                    }
+                }
+
+                // Dependency checks don't need to be transferred, because the worst case scenario is the user has to click the "don't show again" again
+
+                foreach (string Page in new[]{ "Discover", "Installed", "Bundles", "Updates"})
+                {
+                    if (Settings.Get($"HideToggleFilters{Page}Page"))
+                    {
+                        Settings.SetDictionaryItem("HideToggleFilters", Page, true);
+                        Settings.Set($"HideToggleFilters{Page}Page", false);
+                    }
+
+                    if (Settings.Get($"DisableInstantSearch{Page}Tab"))
+                    {
+                        Settings.SetDictionaryItem("DisableInstantSearch", Page, true);
+                        Settings.Set($"DisableInstantSearch{Page}Tab", false);
+                    }
+
+                    if (!int.TryParse(Settings.GetValue($"SidepanelWidth{Page}Page"), out int sidepanelWidth)) sidepanelWidth = 250;
+                    Settings.SetDictionaryItem("SidepanelWidths", Page, sidepanelWidth);
+                    Settings.Set($"SidepanelWidth{Page}Page", false);
+                }
+
+                Settings.Set("TransferredOldSettings", true);
+            }
+
             foreach (IPackageManager Manager in PEInterface.Managers)
             {
-                string SettingName = "Disable" + Manager.Name;
+                string SettingName = "AlwaysElevate" + Manager.Name;
                 if (Settings.Get(SettingName))
                 {
-                    Settings.SetDictionaryItem("DisabledManagers", Manager.Name, true);
+                    Settings.SetDictionaryItem("AlwaysElevate", Manager.Name, true);
                     Settings.Set(SettingName, false);
                 }
             }
 
-            // Dependency checks don't need to be transferred, because the worst case scenario is the user has to click the "don't show again" again
-
-            foreach (string Page in new[]{ "Discover", "Installed", "Bundles", "Updates"})
-            {
-                if (Settings.Get($"HideToggleFilters{Page}Page"))
-                {
-                    Settings.SetDictionaryItem("HideToggleFilters", Page, true);
-                    Settings.Set($"HideToggleFilters{Page}Page", false);
-                }
-
-                if (Settings.Get($"DisableInstantSearch{Page}Tab"))
-                {
-                    Settings.SetDictionaryItem("DisableInstantSearch", Page, true);
-                    Settings.Set($"DisableInstantSearch{Page}Tab", false);
-                }
-
-                if (!int.TryParse(Settings.GetValue($"SidepanelWidth{Page}Page"), out int sidepanelWidth)) sidepanelWidth = 250;
-                Settings.SetDictionaryItem("SidepanelWidths", Page, sidepanelWidth);
-                Settings.Set($"SidepanelWidth{Page}Page", false);
-            }
-
-            Settings.Set("TransferredOldSettings", true);
+            Settings.Set("TransferredOldSettings-2", true);
         }
 
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)
