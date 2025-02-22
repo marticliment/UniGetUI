@@ -154,7 +154,9 @@ namespace UniGetUI.PackageEngine.Operations
 
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
-                DesktopShortcutsDatabase.TryRemoveNewShortcuts(DesktopShortcutsBeforeStart);
+                // If RemoveAllDesktopShortcuts is enabled, we don't care if the shortcuts were there before the oepration or not;
+                // we just want them all removed.
+                DesktopShortcutsDatabase.TryRemoveNewShortcuts(Settings.Get("RemoveAllDesktopShortcuts") ? [] : DesktopShortcutsBeforeStart);
             }
             return Task.CompletedTask;
         }
