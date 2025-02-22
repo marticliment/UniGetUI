@@ -10,44 +10,8 @@ namespace UniGetUI.Core.Data
     {
         private static int? __code_page;
         public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
-
-        private static int GetCodePage()
-        {
-            try
-            {
-                Process p = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = "chcp.com",
-                        RedirectStandardOutput = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true,
-                    }
-                };
-                p.Start();
-                string contents = p.StandardOutput.ReadToEnd();
-                string purifiedString = "";
-
-                foreach (var c in contents.Split(':')[^1].Trim())
-                {
-                    if (c >= '0' && c <= '9')
-                    {
-                        purifiedString += c;
-                    }
-                }
-
-                return int.Parse(purifiedString);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-                return 0;
-            }
-        }
-
-        public const string VersionName =  "3.1.6-beta1"; // Do not modify this line, use file scripts/apply_versions.py
-        public const int BuildNumber =  76; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName =  "3.1.7-beta1"; // Do not modify this line, use file scripts/apply_versions.py
+        public const int BuildNumber =  81; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 
@@ -63,6 +27,9 @@ namespace UniGetUI.Core.Data
             }
         }
 
+        private static bool? IS_PORTABLE;
+        public static bool IsPortable { get => IS_PORTABLE ?? false; }
+
         /// <summary>
         /// The directory where all the user data is stored. The directory is automatically created if it does not exist.
         /// </summary>
@@ -70,6 +37,27 @@ namespace UniGetUI.Core.Data
         {
             get
             {
+                if (IS_PORTABLE is null)
+                    IS_PORTABLE = File.Exists(Path.Join(UniGetUIExecutableDirectory, "ForceUniGetUIPortable"));
+
+                if (IS_PORTABLE is true)
+                {
+                    string path = Path.Join(UniGetUIExecutableDirectory, "Settings");
+                    try
+                    {
+                        if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                        var testfilepath = Path.Join(path, "PermissionTestFile");
+                        File.WriteAllText(testfilepath, "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+                        return path;
+                    }
+                    catch (Exception ex)
+                    {
+                        IS_PORTABLE = false;
+                        Logger.Error($"Could not acces/write path {path}. UniGetUI will NOT be run in portable mode, and User settings will be used instead");
+                        Logger.Error(ex);
+                    }
+                }
+
                 string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
                 string new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI");
                 return GetNewDataDirectoryOrMoveOld(old_path, new_path);
@@ -84,11 +72,7 @@ namespace UniGetUI.Core.Data
             get
             {
                 string path = Path.Join(UniGetUIDataDirectory, "InstallationOptions");
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
                 return path;
             }
         }
@@ -100,9 +84,9 @@ namespace UniGetUI.Core.Data
         {
             get
             {
-                string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedData");
-                string new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI", "CachedMetadata");
-                return GetNewDataDirectoryOrMoveOld(old_path, new_path);
+                string path = Path.Join(UniGetUIDataDirectory, "CachedMetadata");
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                return path;
             }
         }
 
@@ -113,9 +97,9 @@ namespace UniGetUI.Core.Data
         {
             get
             {
-                string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedIcons");
-                string new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI", "CachedMedia");
-                return GetNewDataDirectoryOrMoveOld(old_path, new_path);
+                string path  = Path.Join(UniGetUIDataDirectory, "CachedMedia");
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                return path;
             }
         }
 
@@ -126,9 +110,9 @@ namespace UniGetUI.Core.Data
         {
             get
             {
-                string old_dir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WingetUI", "CachedLangFiles");
-                string new_dir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI", "CachedLanguageFiles");
-                return GetNewDataDirectoryOrMoveOld(old_dir, new_dir);
+                string path= Path.Join(UniGetUIDataDirectory, "CachedLanguageFiles");
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                return path;
             }
         }
 
@@ -146,6 +130,7 @@ namespace UniGetUI.Core.Data
         }
 
         public static bool IsDaemon;
+        public static bool WasDaemon;
 
         /// <summary>
         /// The ID of the notification that is used to inform the user that updates are available
@@ -198,7 +183,7 @@ namespace UniGetUI.Core.Data
             }
         }
 
-        public static string GSudoPath = "";
+        public static string ElevatorPath = "";
 
         /// <summary>
         /// This method will return the most appropriate data directory.
@@ -308,5 +293,41 @@ namespace UniGetUI.Core.Data
             TypeInfoResolverChain = { new DefaultJsonTypeInfoResolver() },
             WriteIndented = true,
         };
+
+        private static int GetCodePage()
+        {
+            try
+            {
+                Process p = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "chcp.com",
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                    }
+                };
+                p.Start();
+                string contents = p.StandardOutput.ReadToEnd();
+                string purifiedString = "";
+
+                foreach (var c in contents.Split(':')[^1].Trim())
+                {
+                    if (c >= '0' && c <= '9')
+                    {
+                        purifiedString += c;
+                    }
+                }
+
+                return int.Parse(purifiedString);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                return 0;
+            }
+        }
+
     }
 }

@@ -12,6 +12,7 @@ namespace UniGetUI.Core.Language
     public class LanguageEngine
     {
         private Dictionary<string, string> MainLangDict = [];
+        public static string SelectedLocale = "??";
 
         [NotNull]
         public string? Locale { get; private set; }
@@ -39,15 +40,16 @@ namespace UniGetUI.Core.Language
             {
                 Locale = lang;
             }
-            else if (LanguageData.LanguageReference.ContainsKey(lang[0..2]))
+            else if (LanguageData.LanguageReference.ContainsKey(lang[0..2].Replace("uk", "ua")))
             {
-                Locale = lang[0..2];
+                Locale = lang[0..2].Replace("uk", "ua");
             }
 
             MainLangDict = LoadLanguageFile(Locale);
             Formatter = new() { Locale = Locale.Replace('_', '-') };
 
             LoadStaticTranslation();
+            SelectedLocale = Locale;
             Logger.Info("Loaded language locale: " + Locale);
         }
 
@@ -57,7 +59,7 @@ namespace UniGetUI.Core.Language
             {
 
                 string BundledLangFileToLoad = Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Languages", "lang_" + LangKey + ".json");
-                JsonObject BundledContents = new();
+                JsonObject BundledContents = [];
 
                 if (!File.Exists(BundledLangFileToLoad))
                 {
@@ -87,7 +89,7 @@ namespace UniGetUI.Core.Language
                 {
                     Logger.Warn("User has updated translations disabled");
                 }
-                else if(!File.Exists(CachedLangFileToLoad))
+                else if (!File.Exists(CachedLangFileToLoad))
                 {
                     Logger.Warn($"Tried to access a non-existing cached language file! file={CachedLangFileToLoad}");
                 }
@@ -97,7 +99,9 @@ namespace UniGetUI.Core.Language
                     {
                         if (JsonNode.Parse(File.ReadAllText(CachedLangFileToLoad)) is JsonObject parsedObject)
                             foreach (var keyval in parsedObject.ToDictionary(x => x.Key, x => x.Value))
+                            {
                                 LangDict[keyval.Key] = keyval.Value?.ToString() ?? "";
+                            }
                         else
                             throw new ArgumentException($"parsedObject was null for lang file {CachedLangFileToLoad}");
                     }

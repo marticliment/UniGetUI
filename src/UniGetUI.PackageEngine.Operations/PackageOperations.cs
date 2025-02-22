@@ -1,15 +1,12 @@
-using System.Diagnostics;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.PackageClasses;
+using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageOperations;
 
@@ -31,8 +28,9 @@ namespace UniGetUI.PackageEngine.Operations
             IPackage package,
             IInstallationOptions options,
             OperationType role,
-            bool IgnoreParallelInstalls = false)
-            : base(!IgnoreParallelInstalls)
+            bool IgnoreParallelInstalls = false,
+            AbstractOperation? req = null)
+            : base(!IgnoreParallelInstalls, req)
         {
             Package = package;
             Options = options;
@@ -54,17 +52,11 @@ namespace UniGetUI.PackageEngine.Operations
             OperationFailed += (_, _) => HandleFailure();
         }
 
-        public PackageOperation(
-            IPackage package,
-            OperationType role,
-            bool IgnoreParallelInstalls = false)
-            : this(package, InstallationOptions.FromPackage(package), role, IgnoreParallelInstalls) { }
-
         private bool RequiresAdminRights()
         {
             return Package.OverridenOptions.RunAsAdministrator is true
                     || Options.RunAsAdministrator
-                    || (Settings.Get("AlwaysElevate" + Package.Manager.Name) && !Package.OverridenOptions.RunAsAdministrator is false);
+                    || (Settings.Get("AlwaysElevate" + Package.Manager.Name) && Package.OverridenOptions.RunAsAdministrator != false);
         }
 
         protected override void ApplyRetryAction(string retryMode)
@@ -87,7 +79,6 @@ namespace UniGetUI.PackageEngine.Operations
             }
             Metadata.OperationInformation = "Retried package operation for Package=" + Package.Id + " with Manager=" +
                                             Package.Manager.Name + "\nUpdated installation options: " + Options.ToString();
-
         }
 
         protected sealed override void PrepareProcessStartInfo()
@@ -101,25 +92,34 @@ namespace UniGetUI.PackageEngine.Operations
                 admin = true;
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
-                    CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
+                    RequestCachingOfUACPrompt();
                 }
 
-                process.StartInfo.FileName = CoreData.GSudoPath;
-                process.StartInfo.Arguments =
-                    $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
+                if (Package.Manager is WinGet)
+                {
+                    // Change WinGet's TEMP folder location, to prevent ACL corruption
+                    string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+                    process.StartInfo.Environment["TEMP"] = WinGetTemp;
+                    process.StartInfo.Environment["TMP"] = WinGetTemp;
+                }
+                process.StartInfo.FileName = CoreData.ElevatorPath;
+                process.StartInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
             else
             {
                 process.StartInfo.FileName = Package.Manager.Status.ExecutablePath;
                 process.StartInfo.Arguments = $"{Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
-            ApplyCapabilities(admin,
+
+            ApplyCapabilities(
+                admin,
                 Options.InteractiveInstallation,
                 (Options.SkipHashCheck && Role is not OperationType.Uninstall),
-                Package.OverridenOptions.Scope ?? Options.InstallationScope);
+                Package.OverridenOptions.Scope ?? Options.InstallationScope
+            );
         }
 
-        protected sealed override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
+        protected sealed override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, List<string> Output)
         {
             return Task.FromResult(Package.Manager.OperationHelper.GetResult(Package, Role, Output, ReturnCode));
         }
@@ -136,14 +136,9 @@ namespace UniGetUI.PackageEngine.Operations
         public InstallPackageOperation(
             IPackage package,
             IInstallationOptions options,
-            bool IgnoreParallelInstalls = false)
-            : base(package, options, OperationType.Install, IgnoreParallelInstalls)
-        { }
-
-        public InstallPackageOperation(
-            IPackage package,
-            bool IgnoreParallelInstalls = false)
-            : base(package, OperationType.Install, IgnoreParallelInstalls)
+            bool IgnoreParallelInstalls = false,
+            AbstractOperation? req = null)
+            : base(package, options, OperationType.Install, IgnoreParallelInstalls, req)
         { }
 
         protected override Task HandleFailure()
@@ -189,14 +184,9 @@ namespace UniGetUI.PackageEngine.Operations
         public UpdatePackageOperation(
             IPackage package,
             IInstallationOptions options,
-            bool IgnoreParallelInstalls = false)
-            : base(package, options, OperationType.Update, IgnoreParallelInstalls)
-        { }
-
-        public UpdatePackageOperation(
-            IPackage package,
-            bool IgnoreParallelInstalls = false)
-            : base(package, OperationType.Update, IgnoreParallelInstalls)
+            bool IgnoreParallelInstalls = false,
+            AbstractOperation? req = null)
+            : base(package, options, OperationType.Update, IgnoreParallelInstalls, req)
         { }
 
         protected override Task HandleFailure()
@@ -228,7 +218,7 @@ namespace UniGetUI.PackageEngine.Operations
                                             Package.Manager.Name + "\nInstallation options: " + Options.ToString();
 
             Metadata.Title = CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
-            Metadata.Status = CoreTools.Translate("{0} is being updated to version {1}", Package.Name, Package.NewVersion);
+            Metadata.Status = CoreTools.Translate("{0} is being updated to version {1}", Package.Name, Package.NewVersionString);
             Metadata.SuccessTitle = CoreTools.Translate("Update succeeded");
             Metadata.SuccessMessage = CoreTools.Translate("{package} was updated successfully",  new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.FailureTitle = CoreTools.Translate("Update failed", new Dictionary<string, object?> { { "package", Package.Name } });
@@ -247,14 +237,9 @@ namespace UniGetUI.PackageEngine.Operations
         public UninstallPackageOperation(
             IPackage package,
             IInstallationOptions options,
-            bool IgnoreParallelInstalls = false)
-            : base(package, options, OperationType.Uninstall, IgnoreParallelInstalls)
-        { }
-
-        public UninstallPackageOperation(
-            IPackage package,
-            bool IgnoreParallelInstalls = false)
-            : base(package, OperationType.Uninstall, IgnoreParallelInstalls)
+            bool IgnoreParallelInstalls = false,
+            AbstractOperation? req = null)
+            : base(package, options, OperationType.Uninstall, IgnoreParallelInstalls, req)
         { }
 
         protected override Task HandleFailure()

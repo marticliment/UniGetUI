@@ -45,6 +45,6 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// Returns the available sources
         /// </summary>
         /// <returns>An array of ManagerSource objects</returns>
-        public IEnumerable<IManagerSource> GetSources();
+        public IReadOnlyList<IManagerSource> GetSources();
     }
 }

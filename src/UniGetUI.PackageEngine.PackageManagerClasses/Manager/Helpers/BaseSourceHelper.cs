@@ -24,7 +24,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
 
         public OperationVeredict GetAddOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
-            TaskRecycler<IEnumerable<IManagerSource>>.RemoveFromCache(_getSources);
+            TaskRecycler<IReadOnlyList<IManagerSource>>.RemoveFromCache(_getSources);
             if (ReturnCode is 999 && Output.Last() == "Error: The operation was canceled by the user.")
             {
                 Logger.Warn("Elevator [or GSudo] UAC prompt was canceled, not showing error message...");
@@ -35,7 +35,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
 
         public OperationVeredict GetRemoveOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
         {
-            TaskRecycler<IEnumerable<IManagerSource>>.RemoveFromCache(_getSources);
+            TaskRecycler<IReadOnlyList<IManagerSource>>.RemoveFromCache(_getSources);
             if (ReturnCode is 999 && Output.Last() == "Error: The operation was canceled by the user.")
             {
                 Logger.Warn("Elevator [or GSudo] UAC prompt was canceled, not showing error message...");
@@ -47,22 +47,24 @@ namespace UniGetUI.PackageEngine.Classes.Manager.Providers
         /// <summary>
         /// Loads the sources for the manager. This method SHOULD NOT handle exceptions
         /// </summary>
-        protected abstract IEnumerable<IManagerSource> GetSources_UnSafe();
+        protected abstract IReadOnlyList<IManagerSource> GetSources_UnSafe();
 
-        public virtual IEnumerable<IManagerSource> GetSources()
-            => TaskRecycler<IEnumerable<IManagerSource>>.RunOrAttach(_getSources, 15);
+        public virtual IReadOnlyList<IManagerSource> GetSources()
+            => TaskRecycler<IReadOnlyList<IManagerSource>>.RunOrAttach(_getSources, 15);
 
-        public virtual IEnumerable<IManagerSource> _getSources()
+        public virtual IReadOnlyList<IManagerSource> _getSources()
         {
             if (!Manager.IsReady()) { Logger.Warn($"Manager {Manager.Name} is disabled but yet GetSources was called"); return []; }
 
             try
             {
-                IEnumerable<IManagerSource> sources = GetSources_UnSafe().ToArray();
+                IReadOnlyList<IManagerSource> sources = GetSources_UnSafe().ToArray();
                 Factory.Reset();
 
                 foreach (IManagerSource source in sources)
+                {
                     Factory.AddSource(source);
+                }
 
                 Logger.Debug($"Loaded {sources.Count()} sources for manager {Manager.Name}");
                 return sources;

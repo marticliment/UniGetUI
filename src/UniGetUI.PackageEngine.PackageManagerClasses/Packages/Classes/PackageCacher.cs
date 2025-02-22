@@ -102,7 +102,7 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         {
             foreach (Package found in __installed_pkgs.Values)
             {
-                if (found.IsEquivalentTo(other) && found.VersionAsFloat == other.NewVersionAsFloat)
+                if (found.IsEquivalentTo(other) && found.NormalizedVersion == other.NormalizedNewVersion)
                 {
                     return true;
                 }

@@ -8,7 +8,7 @@ internal sealed class ScoopPkgOperationHelper : PackagePkgOperationHelper
 {
     public ScoopPkgOperationHelper(Scoop manager) : base(manager) { }
 
-    protected override IEnumerable<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
         List<string> parameters = [operation switch {
             OperationType.Install => Manager.Properties.InstallVerb,
@@ -17,7 +17,7 @@ internal sealed class ScoopPkgOperationHelper : PackagePkgOperationHelper
             _ => throw new InvalidDataException("Invalid package operation")
         }];
 
-        if(package.Source.Name.Contains("..."))
+        if (package.Source.Name.Contains("..."))
             parameters.Add($"{package.Id}");
         else
             parameters.Add($"{package.Source.Name}/{package.Id}");
@@ -30,7 +30,7 @@ internal sealed class ScoopPkgOperationHelper : PackagePkgOperationHelper
             parameters.Add("--global");
         }
 
-        if(options.CustomParameters?.Any() is true)
+        if (options.CustomParameters?.Any() is true)
             parameters.AddRange(options.CustomParameters);
 
         if (operation is OperationType.Uninstall)
@@ -58,7 +58,7 @@ internal sealed class ScoopPkgOperationHelper : PackagePkgOperationHelper
     protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
-        IEnumerable<string> processOutput,
+        IReadOnlyList<string> processOutput,
         int returnCode)
     {
         string output_string = string.Join("\n", processOutput);
@@ -78,19 +78,9 @@ internal sealed class ScoopPkgOperationHelper : PackagePkgOperationHelper
             return OperationVeredict.AutoRetry;
         }
 
-        if (operation is OperationType.Uninstall)
-        {
-            if (output_string.Contains("was uninstalled"))
-                return OperationVeredict.Success;
-
+        if (output_string.Contains("ERROR") || returnCode is not 0)
             return OperationVeredict.Failure;
-        }
-        else
-        {
-            if (output_string.Contains("ERROR"))
-                return OperationVeredict.Failure;
 
-            return OperationVeredict.Success;
-        }
+        return OperationVeredict.Success;
     }
 }

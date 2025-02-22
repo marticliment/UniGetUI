@@ -33,11 +33,11 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return ["bucket", "rm", source.Name];
         }
 
-        protected override IEnumerable<IManagerSource> GetSources_UnSafe()
+        protected override IReadOnlyList<IManagerSource> GetSources_UnSafe()
         {
-            using var p = new Process()
+            using var p = new Process
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
                     Arguments = Manager.Properties.ExecutableCallArgs + " bucket list",

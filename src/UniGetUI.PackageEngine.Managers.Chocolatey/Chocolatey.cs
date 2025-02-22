@@ -19,13 +19,14 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
     public class Chocolatey : BaseNuGet
     {
         public static new string[] FALSE_PACKAGE_IDS = ["Directory", "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"];
-        public static new string[] FALSE_PACKAGE_VERSIONS = ["", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"];
+        public static new string[] FALSE_PACKAGE_VERSIONS = ["", "of", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"];
 
         public Chocolatey()
         {
             Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
+                CanDownloadInstaller = true,
                 CanSkipIntegrityChecks = true,
                 CanRunInteractively = true,
                 SupportsCustomVersions = true,
@@ -62,7 +63,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             OperationHelper = new ChocolateyPkgOperationHelper(this);
         }
 
-        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
+        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
             Process p = new()
             {
@@ -116,7 +117,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+        protected override IReadOnlyList<Package> _getInstalledPackages_UnSafe()
         {
             Process p = new()
             {
@@ -301,7 +302,9 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             status.Version = process.StandardOutput.ReadToEnd().Trim();
 
             // If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
-            if (/*Settings.Get("ShownWelcomeWizard") && */!Settings.Get("UseSystemChocolatey") && !File.Exists(@"C:\ProgramData\Chocolatey\bin\choco.exe"))
+            if (!Settings.Get("UseSystemChocolatey")
+                && !File.Exists("C:\\ProgramData\\Chocolatey\\bin\\choco.exe"))
+                /* && Settings.Get("ShownWelcomeWizard")) */
             {
                 string? path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
                 if (!path?.Contains(status.ExecutablePath.Replace("\\choco.exe", "\\bin")) ?? false)
@@ -309,6 +312,10 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                     Logger.ImportantInfo("Adding chocolatey to path since it was not on path.");
                     Environment.SetEnvironmentVariable("PATH", $"{status.ExecutablePath.Replace("\\choco.exe", "\\bin")};{path}", EnvironmentVariableTarget.User);
                     Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.User);
+                }
+                else
+                {
+                    Logger.Info("UniGetUI Chocolatey was found in the path");
                 }
             }
 

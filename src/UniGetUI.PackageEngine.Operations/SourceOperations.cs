@@ -1,11 +1,6 @@
-using System.Diagnostics;
-using Windows.Media.Capture;
 using UniGetUI.Core.Data;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface;
-using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageOperations;
@@ -20,7 +15,7 @@ namespace UniGetUI.PackageEngine.Operations
         protected IManagerSource Source;
         public bool ForceAsAdministrator { get; private set; }
 
-        public SourceOperation(IManagerSource source) : base(false)
+        public SourceOperation(IManagerSource source) : base(false, null)
         {
             Source = source;
             Initialize();
@@ -62,7 +57,7 @@ namespace UniGetUI.PackageEngine.Operations
                 }
 
                 admin = true;
-                process.StartInfo.FileName = CoreData.GSudoPath;
+                process.StartInfo.FileName = CoreData.ElevatorPath;
                 process.StartInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetAddSourceParameters(Source));
             }
             else
@@ -74,9 +69,9 @@ namespace UniGetUI.PackageEngine.Operations
            ApplyCapabilities(admin, false, false, null);
         }
 
-        protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
+        protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, List<string> Output)
         {
-            return Task.Run(() => Source.Manager.SourcesHelper.GetAddOperationVeredict(Source, ReturnCode, Output));
+            return Task.Run(() => Source.Manager.SourcesHelper.GetAddOperationVeredict(Source, ReturnCode, Output.ToArray()));
         }
 
         protected override void Initialize()
@@ -108,7 +103,7 @@ namespace UniGetUI.PackageEngine.Operations
                 {
                     CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
                 }
-                process.StartInfo.FileName = CoreData.GSudoPath;
+                process.StartInfo.FileName = CoreData.ElevatorPath;
                 process.StartInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetRemoveSourceParameters(Source));
 
             }
@@ -119,9 +114,9 @@ namespace UniGetUI.PackageEngine.Operations
             }
         }
 
-        protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, string[] Output)
+        protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, List<string> Output)
         {
-            return Task.Run(() => Source.Manager.SourcesHelper.GetRemoveOperationVeredict(Source, ReturnCode, Output));
+            return Task.Run(() => Source.Manager.SourcesHelper.GetRemoveOperationVeredict(Source, ReturnCode, Output.ToArray()));
         }
 
         protected override void Initialize()

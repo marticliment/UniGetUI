@@ -12,7 +12,7 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// that the requested operation is performed over the given package, with its corresponding
         /// installation options.
         /// </summary>
-        public IEnumerable<string> GetParameters(
+        public IReadOnlyList<string> GetParameters(
             IPackage package,
             IInstallationOptions options,
             OperationType operation
@@ -25,7 +25,7 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         public OperationVeredict GetResult(
             IPackage package,
             OperationType operation,
-            IEnumerable<string> processOutput,
+            IReadOnlyList<string> processOutput,
             int returnCode
         );
     }

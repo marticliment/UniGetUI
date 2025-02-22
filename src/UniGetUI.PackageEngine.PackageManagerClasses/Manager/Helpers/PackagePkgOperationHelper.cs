@@ -14,7 +14,7 @@ public abstract class PackagePkgOperationHelper : IPackageOperationHelper
         Manager = manager;
     }
 
-    protected abstract IEnumerable<string> _getOperationParameters(
+    protected abstract IReadOnlyList<string> _getOperationParameters(
         IPackage package,
         IInstallationOptions options,
         OperationType operation);
@@ -22,10 +22,10 @@ public abstract class PackagePkgOperationHelper : IPackageOperationHelper
     protected abstract OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
-        IEnumerable<string> processOutput,
+        IReadOnlyList<string> processOutput,
         int returnCode);
 
-    public IEnumerable<string> GetParameters(
+    public IReadOnlyList<string> GetParameters(
         IPackage package,
         IInstallationOptions options,
         OperationType operation)
@@ -41,7 +41,7 @@ public abstract class PackagePkgOperationHelper : IPackageOperationHelper
     public OperationVeredict GetResult(
         IPackage package,
         OperationType operation,
-        IEnumerable<string> processOutput,
+        IReadOnlyList<string> processOutput,
         int returnCode)
     {
 

@@ -49,6 +49,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             {
                 CanRunAsAdmin = true,
                 CanSkipIntegrityChecks = true,
+                CanDownloadInstaller = true,
                 CanRemoveDataOnUninstall = true,
                 SupportsCustomArchitectures = true,
                 SupportedCustomArchitectures = [Architecture.X86, Architecture.X64, Architecture.Arm64],
@@ -90,7 +91,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             OperationHelper = new ScoopPkgOperationHelper(this);
         }
 
-        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
+        protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];
 
@@ -179,14 +180,14 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
+        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
             Dictionary<string, IPackage> InstalledPackages = [];
             foreach (IPackage InstalledPackage in GetInstalledPackages())
             {
-                if (!InstalledPackages.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.Version))
+                if (!InstalledPackages.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.VersionString))
                 {
-                    InstalledPackages.Add(InstalledPackage.Id + "." + InstalledPackage.Version, InstalledPackage);
+                    InstalledPackages.Add(InstalledPackage.Id + "." + InstalledPackage.VersionString, InstalledPackage);
                 }
             }
 
@@ -265,9 +266,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
-            => TaskRecycler<IEnumerable<Package>>.RunOrAttach(_getInstalledPackages_UnSafe, 15);
-        private IEnumerable<Package> _getInstalledPackages_UnSafe()
+        protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
+            => TaskRecycler<IReadOnlyList<Package>>.RunOrAttach(_getInstalledPackages_UnSafe, 15);
+        private IReadOnlyList<Package> _getInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
 

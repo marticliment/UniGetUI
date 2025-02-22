@@ -15,6 +15,7 @@ namespace UniGetUI
             try
             {
                 CoreData.IsDaemon = args.Contains("--daemon");
+                CoreData.WasDaemon = CoreData.IsDaemon;
 
                 if (args.Contains("--uninstall-unigetui") || args.Contains("--uninstall-wingetui"))
                 {
@@ -56,6 +57,7 @@ namespace UniGetUI
                 Logger.ImportantInfo(textart);
                 Logger.ImportantInfo("  ");
                 Logger.ImportantInfo($"Build {CoreData.BuildNumber}");
+                Logger.ImportantInfo($"Data directory {CoreData.UniGetUIDataDirectory}");
                 Logger.ImportantInfo($"Encoding Code Page set to {CoreData.CODE_PAGE}");
 
                 // WinRT single-instance fancy stuff

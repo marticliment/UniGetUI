@@ -7,7 +7,7 @@ internal sealed class VcpkgPkgOperationHelper : PackagePkgOperationHelper
 {
     public VcpkgPkgOperationHelper(Vcpkg manager) : base(manager) { }
 
-    protected override IEnumerable<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
         List<string> parameters = operation switch {
             OperationType.Install => [Manager.Properties.InstallVerb, package.Id],
@@ -23,7 +23,7 @@ internal sealed class VcpkgPkgOperationHelper : PackagePkgOperationHelper
     protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
-        IEnumerable<string> processOutput,
+        IReadOnlyList<string> processOutput,
         int returnCode)
     {
         return returnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;

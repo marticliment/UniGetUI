@@ -11,7 +11,7 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
         public ChocolateyDetailsHelper(BaseNuGet manager) : base(manager)
         { }
 
-        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
+        protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             Process p = new()
             {

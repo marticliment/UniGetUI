@@ -114,19 +114,24 @@ namespace UniGetUI.Core.Tools.Tests
         }
 
         [Theory]
-        [InlineData("1000.0", 1000.0, 0.0)]
-        [InlineData("2.4", 2.4, 0.001)]
-        [InlineData("33a.12-beta", 33.12, 0.0)]
-        [InlineData("0", 0.0, 0.0)]
-        [InlineData("", -1, 0.0)]
-        [InlineData("dfgfdsgdfg", -1, 0.0)]
-        [InlineData("-12", 12.0, 0.0)]
-        [InlineData("4.0.0.1.0", 4.001, 0.01)]
-        [InlineData("2024.30.04.1223", 2024.30041223, 0.0)]
-        [InlineData("0.0", 0.0, 0.0)]
-        public void TestGetVersionStringAsFloat(string version, double expected, double tolerance)
+        [InlineData("1000.0", 1000, 0, 0, 0)]
+        [InlineData("2.4", 2, 4, 0, 0)]
+        [InlineData("33a.12-beta5", 33, 12, 5, 0)]
+        [InlineData("0", 0,0,0,0)]
+        [InlineData("", 0,0,0,0)]
+        [InlineData("dfgfdsgdfg", 0,0,0,0)]
+        [InlineData("-12", 12,0,0,0)]
+        [InlineData("4.0.0.1.0", 4,0,0,10)]
+        [InlineData("4.0.0.1.05", 4,0,0,105)]
+        [InlineData("2024.30.04.1223", 2024, 30, 4, 1223)]
+        [InlineData("0.0", 0,0,0,0)]
+        public void TestGetVersionStringAsFloat(string version, int i1, int i2, int i3, int i4)
         {
-            Assert.Equal(expected, CoreTools.GetVersionStringAsFloat(version), tolerance);
+            CoreTools.Version v = CoreTools.VersionStringToStruct(version);
+            Assert.Equal(i1, v.Major);
+            Assert.Equal(i2, v.Minor);
+            Assert.Equal(i3, v.Patch);
+            Assert.Equal(i4, v.Remainder);
         }
 
         [Theory]
@@ -188,6 +193,28 @@ namespace UniGetUI.Core.Tools.Tests
             ProcessStartInfo info = CoreTools.UpdateEnvironmentVariables();
             info.Environment.TryGetValue(ENV, out string? result);
             Assert.Equal(oldpath, result);
+        }
+
+        [Theory]
+        [InlineData(10, 33, "hello", "[###.......] 33% (hello)")]
+        [InlineData(20, 37, null, "[#######.............] 37%")]
+        [InlineData(10, 0, "", "[..........] 0% ()")]
+        [InlineData(10, 100, "3/3", "[##########] 100% (3/3)")]
+        public void TestTextProgressbarGenerator(int length, int progress, string? extra, string? expected)
+        {
+            Assert.Equal(CoreTools.TextProgressGenerator(length, progress, extra), expected);
+        }
+
+        [Theory]
+        [InlineData(0, 1, "0 Bytes")]
+        [InlineData(10, 1, "10 Bytes")]
+        [InlineData(1024*34, 0, "34 KB")]
+        [InlineData(65322450, 3, "62.296 MB")]
+        [InlineData(65322450000, 3, "60.836 GB")]
+        [InlineData(65322450000000, 3, "59.410 TB")]
+        public void TestFormatSize(long size, int decPlaces, string expected)
+        {
+            Assert.Equal(CoreTools.FormatAsSize(size, decPlaces).Replace(',', '.'), expected);
         }
     }
 }

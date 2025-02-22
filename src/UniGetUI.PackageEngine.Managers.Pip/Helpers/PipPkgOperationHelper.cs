@@ -7,7 +7,7 @@ internal sealed class PipPkgOperationHelper : PackagePkgOperationHelper
 {
     public PipPkgOperationHelper(Pip manager) : base(manager) { }
 
-    protected override IEnumerable<string> _getOperationParameters(
+    protected override IReadOnlyList<string> _getOperationParameters(
         IPackage package,
         IInstallationOptions options,
         OperationType operation)
@@ -19,10 +19,9 @@ internal sealed class PipPkgOperationHelper : PackagePkgOperationHelper
             _ => throw new InvalidDataException("Invalid package operation")
         }];
         parameters.AddRange([
-            options.Version != string.Empty? $"{package.Id}=={options.Version}" : package.Id,
+            options.Version.Any()? $"{package.Id}=={options.Version}" : package.Id,
             "--no-input",
             "--no-color",
-            "--no-python-version-warning",
             "--no-cache"
         ]);
 
@@ -49,7 +48,7 @@ internal sealed class PipPkgOperationHelper : PackagePkgOperationHelper
     protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
-        IEnumerable<string> processOutput,
+        IReadOnlyList<string> processOutput,
         int returnCode)
     {
         if (returnCode == 0)

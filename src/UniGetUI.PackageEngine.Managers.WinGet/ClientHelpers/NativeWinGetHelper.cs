@@ -46,7 +46,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         }
     }
 
-    public IEnumerable<Package> FindPackages_UnSafe(string query)
+    public IReadOnlyList<Package> FindPackages_UnSafe(string query)
     {
         List<Package> packages = [];
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages);
@@ -148,11 +148,11 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return packages;
     }
 
-    public IEnumerable<Package> GetAvailableUpdates_UnSafe()
+    public IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates);
         List<Package> packages = [];
-        foreach (var nativePackage in TaskRecycler<IEnumerable<CatalogPackage>>.RunOrAttach(GetLocalWinGetPackages))
+        foreach (var nativePackage in TaskRecycler<IReadOnlyList<CatalogPackage>>.RunOrAttach(GetLocalWinGetPackages))
         {
             if (nativePackage.IsUpdateAvailable)
             {
@@ -187,11 +187,11 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
 
     }
 
-    public IEnumerable<Package> GetInstalledPackages_UnSafe()
+    public IReadOnlyList<Package> GetInstalledPackages_UnSafe()
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages);
         List<Package> packages = [];
-        foreach (var nativePackage in TaskRecycler<IEnumerable<CatalogPackage>>.RunOrAttach(GetLocalWinGetPackages, 15))
+        foreach (var nativePackage in TaskRecycler<IReadOnlyList<CatalogPackage>>.RunOrAttach(GetLocalWinGetPackages, 15))
         {
             IManagerSource source;
             if (nativePackage.DefaultInstallVersion is not null && nativePackage.DefaultInstallVersion.PackageCatalog is not null)
@@ -216,7 +216,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return packages;
     }
 
-    private IEnumerable<CatalogPackage> GetLocalWinGetPackages()
+    private IReadOnlyList<CatalogPackage> GetLocalWinGetPackages()
     {
         var logger = Manager.TaskLogger.CreateNew(LoggableTaskType.OtherTask);
         logger.Log("OtherTask: GetWinGetLocalPackages");
@@ -256,7 +256,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return foundPackages;
     }
 
-    public IEnumerable<IManagerSource> GetSources_UnSafe()
+    public IReadOnlyList<IManagerSource> GetSources_UnSafe()
     {
         List<ManagerSource> sources = [];
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources);
@@ -282,7 +282,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         return sources;
     }
 
-    public IEnumerable<string> GetInstallableVersions_Unsafe(IPackage package)
+    public IReadOnlyList<string> GetInstallableVersions_Unsafe(IPackage package)
     {
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions);
 

@@ -10,6 +10,7 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI.Core.Tools
 {
@@ -87,6 +88,12 @@ namespace UniGetUI.Core.Tools
         {
             command = command.Replace(";", "").Replace("&", "").Trim();
             Logger.Debug($"Begin \"which\" search for command {command}");
+
+            string PATH = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User) + ";";
+            PATH += Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine) + ";";
+            PATH += Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
+            PATH = PATH.Replace(";;", ";").Trim(';');
+
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
@@ -105,6 +112,7 @@ namespace UniGetUI.Core.Tools
             {
                 process.StartInfo = UpdateEnvironmentVariables(process.StartInfo);
             }
+            process.StartInfo.Environment["PATH"] = PATH;
 
             try
             {
@@ -140,7 +148,9 @@ namespace UniGetUI.Core.Tools
         /// <returns>The formatted string</returns>
         public static string FormatAsName(string name)
         {
-            name = name.Replace(".install", "").Replace(".portable", "").Replace("-", " ").Replace("_", " ").Split("/")[^1].Split(":")[0];
+            name =
+                name.Replace(".install", "").Replace(".portable", "").Replace("-", " ").Replace("_", " ").Split("/")[^1]
+                    .Split(":")[0];
             string newName = "";
             for (int i = 0; i < name.Length; i++)
             {
@@ -153,6 +163,7 @@ namespace UniGetUI.Core.Tools
                     newName += name[i];
                 }
             }
+
             newName = newName.Replace(" [", "[").Replace("[", " [");
             return newName;
         }
@@ -200,7 +211,8 @@ Crash Traceback:
 
             Console.WriteLine(Error_String);
 
-            string ErrorBody = "https://www.marticliment.com/error-report/?appName=UniGetUI^&errorBody=" + Uri.EscapeDataString(Error_String.Replace("\n", "{l}"));
+            string ErrorBody = "https://www.marticliment.com/error-report/?appName=UniGetUI^&errorBody=" +
+                               Uri.EscapeDataString(Error_String.Replace("\n", "{l}"));
 
             Console.WriteLine(ErrorBody);
 
@@ -244,7 +256,7 @@ Crash Traceback:
             try
             {
                 return new WindowsPrincipal(WindowsIdentity.GetCurrent())
-                          .IsInRole(WindowsBuiltInRole.Administrator);
+                    .IsInRole(WindowsBuiltInRole.Administrator);
             }
             catch (Exception e)
             {
@@ -299,7 +311,70 @@ Crash Traceback:
                 Logger.Warn($"Could not load file size for url={url}");
                 Logger.Warn(e);
             }
+
             return 0;
+        }
+
+
+        public struct Version: IComparable
+        {
+            public static readonly Version Null = new(-1, -1, -1, -1);
+
+            public readonly int Major;
+            public readonly int Minor;
+            public readonly int Patch;
+            public readonly int Remainder;
+
+            public Version(int major, int minor = 0, int patch = 0, int remainder = 0)
+            {
+                Major = major;
+                Minor = minor;
+                Patch = patch;
+                Remainder = remainder;
+            }
+
+            public int CompareTo(object? other_)
+            {
+                if (other_ is not Version other) return 0;
+
+                int major = Major.CompareTo(other.Major);
+                if (major != 0) return major;
+
+                int minor = Minor.CompareTo(other.Minor);
+                if (minor != 0) return minor;
+
+                int patch = Patch.CompareTo(other.Patch);
+                if (patch != 0) return patch;
+
+                return Remainder.CompareTo(other.Remainder);
+            }
+
+            public static bool operator ==(Version left, Version right)
+                => left.CompareTo(right) == 0;
+
+            public static bool operator !=(Version left, Version right)
+                => left.CompareTo(right) != 0;
+
+            public static bool operator >=(Version left, Version right)
+                => left.CompareTo(right) >= 0;
+
+            public static bool operator <=(Version left, Version right)
+                => left.CompareTo(right) <= 0;
+
+            public static bool operator >(Version left, Version right)
+                => left.CompareTo(right) > 0;
+
+            public static bool operator <(Version left, Version right)
+                => left.CompareTo(right) < 0;
+
+            public bool Equals(Version other)
+                => Major == other.Major && Minor == other.Minor && Patch == other.Patch && Remainder == other.Remainder;
+
+            public override bool Equals(object? obj)
+                => obj is Version other && Equals(other);
+
+            public override int GetHashCode()
+                => HashCode.Combine(Major, Minor, Patch, Remainder);
         }
 
         /// <summary>
@@ -307,47 +382,37 @@ Crash Traceback:
         /// </summary>
         /// <param name="Version">Any string</param>
         /// <returns>The best approximation of the string as a Version</returns>
-        public static double GetVersionStringAsFloat(string Version)
+        public static Version VersionStringToStruct(string Version)
         {
             try
             {
-                string _ver = "";
-                bool _dotAdded = false;
-                foreach (char _char in Version)
+                char[] separators = ['.', '-', '/', '#'];
+                string[] versionItems = ["", "", "", ""];
+
+                int dotCount = 0;
+                bool first = true;
+
+                foreach (char c in Version)
                 {
-                    if (char.IsDigit(_char))
-                    {
-                        _ver += _char;
-                    }
-                    else if (_char == '.')
-                    {
-                        if (!_dotAdded)
-                        {
-                            _ver += _char;
-                            _dotAdded = true;
-                        }
-                    }
-                }
-                double res = -1;
-                if (_ver is not "" and not ".")
-                {
-                    try
-                    {
-                        double val = double.Parse(_ver, CultureInfo.InvariantCulture);
-                        return val;
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
+                    if (char.IsDigit(c)) versionItems[dotCount] += c;
+                    else if (!first && separators.Contains(c)) if (dotCount < 3) dotCount++;
+                    first = false;
                 }
 
-                return res;
+                int[] numbers = { 0, 0, 0, 0 };
+                for (int i = 0; i < 4; i++)
+                {
+                    if (int.TryParse(versionItems[i], out int val))
+                        numbers[i] = val;
+                }
+
+                var ver = new Version(numbers[0], numbers[1], numbers[2], numbers[3]);
+                return ver;
             }
             catch
             {
                 Logger.Warn($"Failed to parse version {Version} to float");
-                return -1;
+                return CoreTools.Version.Null;
             }
         }
 
@@ -359,18 +424,18 @@ Crash Traceback:
         public static string EnsureSafeQueryString(string query)
         {
             return query.Replace(";", string.Empty)
-                        .Replace("&", string.Empty)
-                        .Replace("|", string.Empty)
-                        .Replace(">", string.Empty)
-                        .Replace("<", string.Empty)
-                        .Replace("%", string.Empty)
-                        .Replace("\"", string.Empty)
-                        .Replace("~", string.Empty)
-                        .Replace("?", string.Empty)
-                        .Replace("/", string.Empty)
-                        .Replace("'", string.Empty)
-                        .Replace("\\", string.Empty)
-                        .Replace("`", string.Empty);
+                .Replace("&", string.Empty)
+                .Replace("|", string.Empty)
+                .Replace(">", string.Empty)
+                .Replace("<", string.Empty)
+                .Replace("%", string.Empty)
+                .Replace("\"", string.Empty)
+                .Replace("~", string.Empty)
+                .Replace("?", string.Empty)
+                .Replace("/", string.Empty)
+                .Replace("'", string.Empty)
+                .Replace("\\", string.Empty)
+                .Replace("`", string.Empty);
         }
 
         /// <summary>
@@ -413,7 +478,7 @@ Crash Traceback:
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = CoreData.GSudoPath,
+                    FileName = CoreData.ElevatorPath,
                     Arguments = "cache on --pid " + Environment.ProcessId + " -d 1",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -437,7 +502,7 @@ Crash Traceback:
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = CoreData.GSudoPath,
+                    FileName = CoreData.ElevatorPath,
                     Arguments = "cache off --pid " + Environment.ProcessId,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -456,7 +521,7 @@ Crash Traceback:
         /// The long integer is built with the first half of the MD5 sum of the given string
         /// </summary>
         /// <param name="inputString">A non-empty string</param>
-        /// <returns>A long integer containing the first half of the bytes resulting from MD5suming inputString</returns>
+        /// <returns>A long integer containing the first half of the bytes resulting from MD5 summing inputString</returns>
         public static long HashStringAsLong(string inputString)
         {
             byte[] bytes = MD5.HashData(Encoding.UTF8.GetBytes(inputString));
@@ -525,11 +590,13 @@ Crash Traceback:
             {
                 info.Environment[env.Key?.ToString() ?? "UNKNOWN"] = env.Value?.ToString();
             }
+
             foreach (DictionaryEntry env in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User))
             {
                 string key = env.Key.ToString() ?? "";
                 string newValue = env.Value?.ToString() ?? "";
-                if (info.Environment.TryGetValue(key, out string? oldValue) && oldValue is not null && oldValue.Contains(';') && newValue != "")
+                if (info.Environment.TryGetValue(key, out string? oldValue) && oldValue is not null &&
+                    oldValue.Contains(';') && newValue != "")
                 {
                     info.Environment[key] = oldValue + ";" + newValue;
                 }
@@ -538,6 +605,7 @@ Crash Traceback:
                     info.Environment[key] = newValue;
                 }
             }
+
             return info;
         }
 
@@ -549,8 +617,10 @@ Crash Traceback:
 
         public static async Task _waitForInternetConnection()
         {
+            if (Settings.Get("DisableWaitForInternetConnection")) return;
+
             Logger.Debug("Checking for internet connectivity. Pinging google.com, microsoft.com, couldflare.com and marticliment.com");
-            string[] hosts = ["google.com", "microsoft.com", "cloudflare.com", "marticliment.com"];
+            string[] hosts = ["google.com", "microsoft.com", "cloudflare.com", "github.com"];
             while (true)
             {
                 foreach (var host in hosts)
@@ -562,7 +632,8 @@ Crash Traceback:
                             PingReply reply = await pinger.SendPingAsync(host, 10);
                             if (reply.Status is IPStatus.Success)
                             {
-                                Logger.Debug($"{host} responded successfully to ping, internet connection was validated.");
+                                Logger.Debug(
+                                    $"{host} responded successfully to ping, internet connection was validated.");
                                 return;
                             }
 
@@ -570,12 +641,58 @@ Crash Traceback:
                         }
                         catch (Exception ex)
                         {
-                            Logger.Debug($"Could not ping {host} with error {ex.Message}. Are you connected to the internet?");
+                            Logger.Debug(
+                                $"Could not ping {host} with error {ex.Message}. Are you connected to the internet?");
                         }
                     }
                 }
+
                 await Task.Delay(TimeSpan.FromSeconds(5));
             }
+        }
+
+        public static string TextProgressGenerator(int length, int progressPercent, string? extra)
+        {
+            int done = (int)((progressPercent / 100.0) * (length));
+            int rest = length - done;
+
+            return new StringBuilder()
+                .Append('[')
+                .Append(new string('#', done))
+                .Append(new string('.', rest))
+                .Append($"] {progressPercent}%")
+                .Append(extra is null ? "" : $" ({extra})")
+                .ToString();
+        }
+
+        public static string FormatAsSize(long number, int decimals = 1)
+        {
+            const double KiloByte = 1024d;
+            const double MegaByte = 1024d * 1024d;
+            const double GigaByte = 1024d * 1024d * 1024d;
+            const double TeraByte = 1024d * 1024d * 1024d * 1024d;
+
+            if (number >= TeraByte)
+            {
+                return $"{(number / TeraByte).ToString($"F{decimals}")} TB";
+            }
+
+            if (number >= GigaByte)
+            {
+                return $"{(number / GigaByte).ToString($"F{decimals}")} GB";
+            }
+
+            if (number >= MegaByte)
+            {
+                return $"{(number / MegaByte).ToString($"F{decimals}")} MB";
+            }
+
+            if (number >= KiloByte)
+            {
+                return $"{(number / KiloByte).ToString($"F{decimals}")} KB";
+            }
+
+            return $"{number} Bytes";
         }
     }
 }
