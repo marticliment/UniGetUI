@@ -30,6 +30,8 @@ namespace UniGetUI.Core.Data
         private static bool? IS_PORTABLE;
         public static bool IsPortable { get => IS_PORTABLE ?? false; }
 
+    public static string? TEST_DataDirectoryOverride { private get; set; }
+
         /// <summary>
         /// The directory where all the user data is stored. The directory is automatically created if it does not exist.
         /// </summary>
@@ -37,6 +39,11 @@ namespace UniGetUI.Core.Data
         {
             get
             {
+            if (TEST_DataDirectoryOverride is not null)
+            {
+                return TEST_DataDirectoryOverride;
+            }
+
                 if (IS_PORTABLE is null)
                     IS_PORTABLE = File.Exists(Path.Join(UniGetUIExecutableDirectory, "ForceUniGetUIPortable"));
 
