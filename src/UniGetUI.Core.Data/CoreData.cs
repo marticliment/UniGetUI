@@ -30,7 +30,7 @@ namespace UniGetUI.Core.Data
         private static bool? IS_PORTABLE;
         public static bool IsPortable { get => IS_PORTABLE ?? false; }
 
-    public static string? TEST_DataDirectoryOverride { private get; set; }
+        public static string? TEST_DataDirectoryOverride { private get; set; }
 
         /// <summary>
         /// The directory where all the user data is stored. The directory is automatically created if it does not exist.
@@ -39,10 +39,10 @@ namespace UniGetUI.Core.Data
         {
             get
             {
-            if (TEST_DataDirectoryOverride is not null)
-            {
-                return TEST_DataDirectoryOverride;
-            }
+                if (TEST_DataDirectoryOverride is not null)
+                {
+                    return TEST_DataDirectoryOverride;
+                }
 
                 if (IS_PORTABLE is null)
                     IS_PORTABLE = File.Exists(Path.Join(UniGetUIExecutableDirectory, "ForceUniGetUIPortable"));
@@ -79,7 +79,7 @@ namespace UniGetUI.Core.Data
             get
             {
                 string oldConfigPath = UniGetUIDataDirectory; // Old config path was the data directory itself
-            string newConfigPath = Path.Join(UniGetUIDataDirectory, "Configuration");
+                string newConfigPath = Path.Join(UniGetUIDataDirectory, "Configuration");
 
                 if (Directory.Exists(oldConfigPath) && !Directory.Exists(newConfigPath))
                 {
@@ -107,7 +107,7 @@ namespace UniGetUI.Core.Data
                                 // Clean up old file to avoid duplicates and confusion
                                 else
                                 {
-                                Logger.Warn($"Configuration file '{newFile}' already exists, skipping move from '{file}'.");
+                                    Logger.Warn($"Configuration file '{newFile}' already exists, skipping move from '{file}'.");
                                     File.Delete(file);
                                 }
                             }
