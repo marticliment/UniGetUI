@@ -17,7 +17,7 @@ namespace UniGetUI.Core.SettingsEngine
             }
 
             // Otherwise, load the value from disk and cache that setting
-            result = File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting));
+            result = File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting));
             booleanSettings[setting] = result;
             return result ^ invert;
         }
@@ -30,17 +30,17 @@ namespace UniGetUI.Core.SettingsEngine
                 booleanSettings[setting] = value;
 
                 // Update changes on disk if applicable
-                if (value && !File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+                if (value && !File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting)))
                 {
-                    File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), "");
+                    File.WriteAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting), "");
                 }
                 else if (!value)
                 {
                     valueSettings[setting] = "";
 
-                    if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+                    if (File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting)))
                     {
-                        File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, setting));
+                        File.Delete(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting));
                     }
                 }
 
@@ -61,9 +61,9 @@ namespace UniGetUI.Core.SettingsEngine
 
             // Otherwise, load the setting from disk and cache that setting
             value = "";
-            if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+            if (File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting)))
             {
-                value = File.ReadAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting));
+                value = File.ReadAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting));
             }
 
             valueSettings[setting] = value;
@@ -83,7 +83,7 @@ namespace UniGetUI.Core.SettingsEngine
                 }
                 else
                 {
-                    File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), value);
+                    File.WriteAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting), value);
                     booleanSettings[setting] = true;
                     valueSettings[setting] = value;
                 }
