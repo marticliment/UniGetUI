@@ -493,19 +493,22 @@ namespace UniGetUI.Interface
                         CheckboxCard AdminCard = new()
                         {
                             Text = CoreTools.AutoTranslated("Always run {pm} operations with administrator rights"),
-                            SettingName = "AlwaysElevate" + Manager.Name,
+                            SettingName = Manager.Name,
+                            SettingDictionary = "AlwaysElevate"
                         };
                         AdminCard._checkbox.Content =
                             (AdminCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
                         ExtraSettingsCards[Manager].Insert(index++, AdminCard);
 
-                        /*CheckboxCard ParallelCard = new()
+                        CheckboxCard DisableNotifsCard = new()
                         {
-                            Text = CoreTools.AutoTranslated("Allow {pm} operations to be performed in parallel"),
-                            SettingName = "AllowParallelInstallsForManager" + Manager.Name,
+                            Text = CoreTools.AutoTranslated("Disable update available notifications for {pm}"),
+                            SettingName = Manager.Name,
+                            SettingDictionary = "DisabledPackageManagerNotifications"
                         };
-                        ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
-                        ExtraSettingsCards[Manager].Insert(index++, ParallelCard);*/
+                        DisableNotifsCard._checkbox.Content =
+                            (DisableNotifsCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
+                        ExtraSettingsCards[Manager].Insert(index++, DisableNotifsCard);
 
                         if (Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
                         {
