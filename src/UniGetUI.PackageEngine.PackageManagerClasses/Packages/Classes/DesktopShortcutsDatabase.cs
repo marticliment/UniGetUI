@@ -155,20 +155,27 @@ public static class DesktopShortcutsDatabase
     /// <param name="PreviousShortCutList"></param>
     public static void TryRemoveNewShortcuts(IReadOnlyList<string> PreviousShortCutList)
     {
-        HashSet<string> ShortcutSet = PreviousShortCutList.ToHashSet();
-        List<string> CurrentShortcutList = DesktopShortcutsDatabase.GetShortcuts();
+        HashSet<string> ShortcutSet = [.. PreviousShortCutList];
+        List<string> CurrentShortcutList = GetShortcuts();
         foreach (string shortcut in CurrentShortcutList)
         {
             if (ShortcutSet.Contains(shortcut)) continue;
-            switch (DesktopShortcutsDatabase.GetStatus(shortcut))
+            switch (GetStatus(shortcut))
             {
                 case Status.Delete:
-                    DesktopShortcutsDatabase.DeleteFromDisk(shortcut);
+                    DeleteFromDisk(shortcut);
                     break;
                 case Status.Maintain:
                     Logger.Debug("Refraining from deleting new shortcut " + shortcut + ": user disabled its deletion");
                     break;
                 case Status.Unknown:
+                    if (Settings.Get("RemoveAllDesktopShortcuts"))
+                    {
+                        AddToDatabase(shortcut, true);
+                        DeleteFromDisk(shortcut);
+                        RemoveFromUnknownShortcuts(shortcut);
+                        break;
+                    }
                     if (UnknownShortcuts.Contains(shortcut)) continue;
                     Logger.Info("Marking the shortcut " + shortcut + " to be asked to be deleted");
                     UnknownShortcuts.Add(shortcut);

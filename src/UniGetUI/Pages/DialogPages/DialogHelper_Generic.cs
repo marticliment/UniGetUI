@@ -596,5 +596,15 @@ public static partial class DialogHelper
         dialog.CloseButtonText = CoreTools.Translate("Close");
         await Window.ShowDialogAsync(dialog);
     }
-}
 
+    public static async Task ConfirmSetDeleteAllShortcutsSetting()
+    {
+        var dialog = DialogFactory.Create();
+        dialog.Title = CoreTools.Translate("Are you sure you want to delete all shortcuts?");
+        dialog.Content = CoreTools.Translate("By enabling this, any time UniGetUI encounters a shortcut on your desktop after a check for updates, it will be deleted. Shortcuts unselected in the dialog will not be deleted. Only enable this if you are sure.");
+        dialog.PrimaryButtonText = CoreTools.Translate("Confirm");
+        dialog.PrimaryButtonClick += (_, _) => Settings.Set("RemoveAllDesktopShortcuts", true);
+        dialog.CloseButtonText = CoreTools.Translate("Cancel");
+        await Window.ShowDialogAsync(dialog);
+    }
+}
