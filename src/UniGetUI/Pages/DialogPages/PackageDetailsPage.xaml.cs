@@ -106,16 +106,24 @@ namespace UniGetUI.Interface.Dialogs
             InstallOptionsPage = new InstallOptionsPage(package, OperationRole, options);
             InstallOptionsExpander.Content = InstallOptionsPage;
 
+            MainActionButton.Padding = new Thickness(0);
+            var textBlock = new TextBlock()
+            {
+                TextWrapping = TextWrapping.WrapWholeWords,
+                Padding = new Thickness(0),
+                TextAlignment = TextAlignment.Center
+            };
+            MainActionButton.Content = textBlock;
             if (OperationRole is OperationType.Install)
             {
-                MainActionButton.Content = CoreTools.Translate("Install");
+                textBlock.Text = CoreTools.Translate("Install");
                 SetTextToItem(Version_Label, CoreTools.Translate("Version"));
                 SetTextToItem(Version_Content, AvailablePackage?.VersionString ?? "NULL");
                 SetUpActionButtonAsInstall();
             }
             else if (OperationRole is OperationType.Update)
             {
-                MainActionButton.Content = CoreTools.Translate("Update to version {0}", UpgradablePackage?.NewVersionString ?? "NULL");
+                textBlock.Text = CoreTools.Translate("Update to version {0}", UpgradablePackage?.NewVersionString ?? "NULL");
                 SetTextToItem(Version_Label, CoreTools.Translate("Installed Version"));
                 SetTextToItem(Version_Content, (UpgradablePackage?.VersionString ?? "NULL")
                                                + $" - {CoreTools.Translate("Update to {0} available", UpgradablePackage?.NewVersionString ?? "NULL")}");
@@ -123,7 +131,7 @@ namespace UniGetUI.Interface.Dialogs
             }
             else /* OperationRole is OperationType.Uninstall */
             {
-                MainActionButton.Content = CoreTools.Translate("Uninstall");
+                textBlock.Text = CoreTools.Translate("Uninstall");
                 SetTextToItem(Version_Label, CoreTools.Translate("Installed Version"));
                 SetTextToItem(Version_Content, InstalledPackage?.VersionString ?? "NULL");
                 SetUpActionButtonAsUninstall();

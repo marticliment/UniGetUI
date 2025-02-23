@@ -117,7 +117,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             return Packages;
         }
 
-        protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
+        protected override IReadOnlyList<Package> _getInstalledPackages_UnSafe()
         {
             Process p = new()
             {

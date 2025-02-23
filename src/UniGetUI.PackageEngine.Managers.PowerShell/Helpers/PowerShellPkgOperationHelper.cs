@@ -55,7 +55,8 @@ internal sealed class PowerShellPkgOperationHelper : PackagePkgOperationHelper
     {
         string output_string = string.Join("\n", processOutput);
 
-        if (!package.OverridenOptions.RunAsAdministrator != true && output_string.Contains("AdminPrivilegesAreRequired"))
+        if (package.OverridenOptions.RunAsAdministrator is not true &&
+            (output_string.Contains("AdminPrivilegesAreRequired") || output_string.Contains("AdminPrivilegeRequired")))
         {
             package.OverridenOptions.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;
