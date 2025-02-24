@@ -9,6 +9,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface;
 using UniGetUI.Interface.Enums;
 
 namespace UniGetUI;
@@ -262,11 +263,12 @@ public class AutoUpdater
         }
         else
         {
-            Logger.Debug("Waiting for mainWindow to be closed or for user to trigger the update from the notification...");
+            Logger.Debug("Waiting for mainWindow to be closed, operations to complete, or for user to trigger the update from the notification...");
             while (
                 !ReleaseLockForAutoupdate_Window &&
                 !ReleaseLockForAutoupdate_Notification &&
-                !ReleaseLockForAutoupdate_UpdateBanner)
+                !ReleaseLockForAutoupdate_UpdateBanner &&
+                MainApp.Operations._operationList.Count == 0)
             {
                 await Task.Delay(100);
             }
