@@ -492,8 +492,8 @@ namespace UniGetUI.Interface
 
         public void PackageList_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            string key = ((char)e.Key).ToString().ToLower();
-            if ("abcdefghijklmnopqrsztuvwxyz1234567890".IndexOf(key) > -1)
+            string key = e.Key.ToString().ToLower();
+            if (key.Length == 1 && "abcdefghijklmnopqrsztuvwxyz1234567890".Contains(key))
             {
                 if (Environment.TickCount - LastKeyDown > QUERY_SEPARATION_TIME)
                 {
