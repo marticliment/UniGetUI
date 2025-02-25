@@ -490,18 +490,17 @@ namespace UniGetUI.Interface
             ));
         }
 
-        public void PackageList_KeyDown(object sender, KeyRoutedEventArgs e)
+        public void PackageList_CharacterReceived(object sender, CharacterReceivedRoutedEventArgs e)
         {
-            string key = e.Key.ToString().ToLower();
-            if (key.Length == 1 && "abcdefghijklmnopqrsztuvwxyz1234567890".Contains(key))
+            if ("abcdefghijklmnopqrsztuvwxyz1234567890".IndexOf(e.Character) > -1)
             {
                 if (Environment.TickCount - LastKeyDown > QUERY_SEPARATION_TIME)
                 {
-                    TypeQuery = key;
+                    TypeQuery = e.Character.ToString();
                 }
                 else
                 {
-                    TypeQuery += key;
+                    TypeQuery += e.Character.ToString();
                 }
 
                 int IdQueryIndex = -1;
