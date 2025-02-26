@@ -492,15 +492,18 @@ namespace UniGetUI.Interface
 
         public void PackageList_CharacterReceived(object sender, CharacterReceivedRoutedEventArgs e)
         {
-            if ("abcdefghijklmnopqrsztuvwxyz1234567890".IndexOf(e.Character) > -1)
+            char ch = Char.ToLower(e.Character);
+
+            if (('a' <= ch && ch <= 'z')
+                || ('0' <= ch && ch <= '9'))
             {
                 if (Environment.TickCount - LastKeyDown > QUERY_SEPARATION_TIME)
                 {
-                    TypeQuery = e.Character.ToString();
+                    TypeQuery = ch.ToString();
                 }
                 else
                 {
-                    TypeQuery += e.Character.ToString();
+                    TypeQuery += ch.ToString();
                 }
 
                 int IdQueryIndex = -1;
