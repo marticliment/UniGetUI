@@ -152,7 +152,7 @@ public static class DesktopShortcutsDatabase
     /// <summary>
     /// Will attempt to remove new desktop shortcuts, if applicable.
     /// </summary>
-    /// <param name="PreviousShortCutList"></param>
+    /// <param name="PreviousShortCutList">The shortcuts that already existed</param>
     public static void TryRemoveNewShortcuts(IReadOnlyList<string> PreviousShortCutList)
     {
         HashSet<string> ShortcutSet = [.. PreviousShortCutList];
@@ -174,11 +174,12 @@ public static class DesktopShortcutsDatabase
                         AddToDatabase(shortcut, true);
                         DeleteFromDisk(shortcut);
                         RemoveFromUnknownShortcuts(shortcut);
-                        break;
                     }
-                    if (UnknownShortcuts.Contains(shortcut)) continue;
-                    Logger.Info("Marking the shortcut " + shortcut + " to be asked to be deleted");
-                    UnknownShortcuts.Add(shortcut);
+                    else if (!UnknownShortcuts.Contains(shortcut))
+                    {
+                        Logger.Info("Marking the shortcut " + shortcut + " to be asked to be deleted");
+                        UnknownShortcuts.Add(shortcut);
+                    }
                     break;
             }
         }

@@ -122,7 +122,7 @@ namespace UniGetUI.Interface
             ConfirmResetFlyout.Hide();
         }
 
-        private async void HandleAllDesktop_Checked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private async void HandleAllDesktop_Checked(object sender, RoutedEventArgs e)
         {
             if (!IgnoreFirstCheck)
             {
@@ -133,7 +133,7 @@ namespace UniGetUI.Interface
             IgnoreFirstCheck = false;
         }
 
-        private void HandleAllDesktop_Unchecked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void HandleAllDesktop_Unchecked(object sender, RoutedEventArgs e)
         {
             Settings.Set("RemoveAllDesktopShortcuts", false);
         }
