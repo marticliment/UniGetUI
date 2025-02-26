@@ -504,7 +504,8 @@
                 Package="{x:Bind Package}" Wrapper="{x:Bind Self}"
                 RightTapped="PackageItemContainer_RightTapped"
                 DoubleTapped="PackageItemContainer_DoubleTapped"
-                KeyUp="PackageItemContainer_KeyUp">
+                KeyUp="PackageItemContainer_KeyUp"
+                PreviewKeyDown="PackageItemContainer_PreviewKeyDown">
 
                 <Grid ColumnSpacing="5" Opacity="{x:Bind ListedOpacity, Mode=OneWay}" Padding="12,3,8,3">
                     <Grid.RowDefinitions>

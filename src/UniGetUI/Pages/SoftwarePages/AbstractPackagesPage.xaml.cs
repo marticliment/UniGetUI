@@ -483,10 +483,16 @@ namespace UniGetUI.Interface
 
         private void SelectAndScrollTo(int index)
         {
+            PackageWrapper packageWrapper = FilteredPackages[index];
             PackageList.Select(index);
-            PackageItemContainer? selectedItem = PackageList.FindDescendant<PackageItemContainer>(c => c.IsSelected);
-            selectedItem?.Focus(FocusState.Programmatic);
-            PackageList.StartBringItemIntoView(index, new BringIntoViewOptions());
+            PackageList.StartBringItemIntoView(FilteredPackages.IndexOf(packageWrapper), new BringIntoViewOptions());
+
+            PackageItemContainer? packageToSelect = PackageList.FindDescendant<PackageItemContainer>(c => c.Wrapper == packageWrapper);
+            if (packageToSelect != null)
+            {
+                packageToSelect.IsSelected = true;
+                packageToSelect.Focus(FocusState.Programmatic);
+            }
         }
 
         public void PackageList_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -1065,6 +1071,29 @@ namespace UniGetUI.Interface
         {
             Visibility = Visibility.Collapsed;
             IsEnabled = false;
+        }
+
+        private void PackageItemContainer_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key is not (VirtualKey.Up or VirtualKey.Down or VirtualKey.Home or VirtualKey.End) ||
+                sender is not PackageItemContainer packageItemContainer)
+            {
+                return;
+            }
+
+            int index = FilteredPackages.IndexOf(packageItemContainer.Wrapper);
+            switch (e.Key)
+            {
+                case VirtualKey.Up when index > 0:
+                    SelectAndScrollTo(index - 1); break;
+                case VirtualKey.Down when index < FilteredPackages.Count - 1:
+                    SelectAndScrollTo(index + 1); break;
+                case VirtualKey.Home when index > 0:
+                    SelectAndScrollTo(0); break;
+                case VirtualKey.End when index < FilteredPackages.Count - 1:
+                    SelectAndScrollTo(FilteredPackages.Count - 1); break;
+            }
+            e.Handled = true;
         }
     }
 }
