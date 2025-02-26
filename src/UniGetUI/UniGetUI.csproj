@@ -24,6 +24,7 @@
     <WindowsPackageType>None</WindowsPackageType>
     <!--WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion-->
 
+    <Optimize>true</Optimize>
     <PublishTrimmed>false</PublishTrimmed>
     <!--TrimMode>partial</TrimMode-->
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>

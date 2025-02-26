@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 11748,
-        "done": 5202,
-        "packages_with_icon": 5202,
+        "total": 11784,
+        "done": 5238,
+        "packages_with_icon": 5238,
         "packages_with_screenshot": 623,
         "total_screenshots": 1955
     },
@@ -218,6 +218,10 @@
         },
         "3rvx": {
             "icon": "https://community.chocolatey.org/content/packageimages/3rvx.2.9.2.10.png",
+            "images": []
+        },
+        "4297127d64ec6": {
+            "icon": "https://cdn2.steamgriddb.com/icon/b7a782741f667201b54880c925faec4b.png",
             "images": []
         },
         "4gb-patch": {
@@ -6025,6 +6029,10 @@
             "icon": "",
             "images": []
         },
+        "bun": {
+            "icon": "https://i.postimg.cc/RVBnrTYP/logo.png",
+            "images": []
+        },
         "bundlerminifier": {
             "icon": "",
             "images": []
@@ -8499,6 +8507,10 @@
         },
         "copay": {
             "icon": "",
+            "images": []
+        },
+        "copilot": {
+            "icon": "https://i.postimg.cc/T31K2tXf/Brand-Logo-org-Microsoft-Copilot-Logo.png",
             "images": []
         },
         "coppeliasim": {
@@ -24888,6 +24900,10 @@
             "icon": "https://community.chocolatey.org/content/packageimages/microsip-lite.3.21.3.png",
             "images": []
         },
+        "microsoftofficehub": {
+            "icon": "https://i.postimg.cc/T31K2tXf/Brand-Logo-org-Microsoft-Copilot-Logo.png",
+            "images": []
+        },
         "microsoft-band-sync": {
             "icon": "https://community.chocolatey.org/content/packageimages/Microsoft-Band-Sync.1.3.1021.3.png",
             "images": []
@@ -25133,6 +25149,10 @@
         },
         "minecraftnoteb\u2026": {
             "icon": "",
+            "images": []
+        },
+        "minecraftuwp": {
+            "icon": "https://cdn2.steamgriddb.com/icon/b7a782741f667201b54880c925faec4b.png",
             "images": []
         },
         "minermanager": {
@@ -25847,6 +25867,10 @@
         },
         "mozillahistoryview": {
             "icon": "https://community.chocolatey.org/content/packageimages/mozillahistoryview.1.65.png",
+            "images": []
+        },
+        "mozillamaintenanceservice": {
+            "icon": "https://i.postimg.cc/RCLmpNTX/Firefox-icon.png",
             "images": []
         },
         "mozjpeg": {
@@ -28136,7 +28160,7 @@
             "images": []
         },
         "numpy": {
-            "icon": "https://seeklogo.com/images/N/numpy-logo-479C24EC79-seeklogo.com.png",
+            "icon": "https://images.seeklogo.com/logo-png/39/1/numpy-logo-png_seeklogo-398690.png",
             "images": []
         },
         "nunit": {
@@ -36225,6 +36249,10 @@
             "icon": "",
             "images": []
         },
+        "screensketch": {
+            "icon": "https://static.wikia.nocookie.net/logopedia/images/a/a3/Win-SnippingTool.png/revision/latest?cb=20211201013441",
+            "images": []
+        },
         "screentogif": {
             "icon": "https://community.chocolatey.org/content/packageimages/screentogif.2.41.0.png",
             "images": []
@@ -39286,6 +39314,22 @@
         },
         "steamcmd": {
             "icon": "",
+            "images": []
+        },
+        "steam:32440": {
+            "icon": "https://cdn2.steamgriddb.com/icon/0b70b95deb2dfeeb11aa462c44169894.png",
+            "images": []
+        },
+        "steam:32510": {
+            "icon": "https://cdn2.steamgriddb.com/icon/013d407166ec4fa56eb1e1f8cbe183b9/8/32x32.png",
+            "images": []
+        },
+        "steam:322170": {
+            "icon": "https://upload.wikimedia.org/wikipedia/en/thumb/4/4d/Logo_of_Geometry_Dash.svg/1200px-Logo_of_Geometry_Dash.svg.png",
+            "images": []
+        },
+        "steam:920210": {
+            "icon": "https://cdn2.steamgriddb.com/icon/b156769842d5235767f769b5c8617399/32/32x32.png",
             "images": []
         },
         "steascree": {
@@ -42743,6 +42787,18 @@
             "icon": "https://i.imgur.com/kTVX1t5.png",
             "images": []
         },
+        "ui.xaml.2.6": {
+            "icon": "https://user-images.githubusercontent.com/7389110/64734952-8a06ae80-d4df-11e9-830a-2c451a6c0694.png",
+            "images": []
+        },
+        "ui.xaml.2.7": {
+            "icon": "https://user-images.githubusercontent.com/7389110/64734952-8a06ae80-d4df-11e9-830a-2c451a6c0694.png",
+            "images": []
+        },
+        "ui.xaml.2.8": {
+            "icon": "https://user-images.githubusercontent.com/7389110/64734952-8a06ae80-d4df-11e9-830a-2c451a6c0694.png",
+            "images": []
+        },
         "uiforetw": {
             "icon": "",
             "images": []
@@ -43686,6 +43742,14 @@
             "icon": "https://static-00.iconduck.com/assets.00/file-type-meson-icon-256x256-ias65td0.png",
             "images": []
         },
+        "vclibs": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
+        "vclibs.desktop.14": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
         "vcredist": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
@@ -43694,7 +43758,15 @@
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
+        "vcredist.2005.x64": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
         "vcredist-2005-x86": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
+        "vcredist.2005.x86": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
@@ -43702,7 +43774,15 @@
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
+        "vcredist.2008.x64": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
         "vcredist-2008-x86": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
+        "vcredist.2008.x86": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
@@ -43710,7 +43790,15 @@
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
+        "vcredist.2010.x64": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
         "vcredist-2010-x86": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
+        "vcredist.2010.x86": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
@@ -43718,7 +43806,15 @@
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
+        "vcredist.2012.x64": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
         "vcredist-2012-x86": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
+        "vcredist.2012.x86": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
@@ -43726,7 +43822,15 @@
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
+        "vcredist.2013.x64": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
         "vcredist-2013-x86": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
+        "vcredist.2013.x86": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
@@ -43734,7 +43838,15 @@
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
+        "vcredist.2015+.x64": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
         "vcredist-2015+-x86": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
+        "vcredist.2015+.x86": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
@@ -43742,11 +43854,15 @@
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
+        "vcredist.2019.arm64": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
         "vcredist-2022-arm64": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
-        "vcredist-aio": {
+        "vcredist.2022.arm64": {
             "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
@@ -46931,6 +47047,10 @@
             "icon": "https://community.chocolatey.org/content/packageimages/windowinspector.3.1.png",
             "images": []
         },
+        "windowsstore": {
+            "icon": "https://apps.microsoft.com/assets/icons/logo-256x256.png",
+            "images": []
+        },
         "windows-11-installation-assistant": {
             "icon": "https://community.chocolatey.org/content/packageimages/windows-11-installation-assistant.1.4.19041.1285.png",
             "images": []
@@ -47059,6 +47179,10 @@
             "icon": "",
             "images": []
         },
+        "windowsalarms": {
+            "icon": "https://i.postimg.cc/wMgJpBs7/Windows-Clock-App-Icon.png",
+            "images": []
+        },
         "windowsapplicationdriver": {
             "icon": "",
             "images": []
@@ -47094,6 +47218,10 @@
         },
         "windowsazurepowershell": {
             "icon": "",
+            "images": []
+        },
+        "windowscamera": {
+            "icon": "https://winaero.com/blog/wp-content/uploads/2020/04/Windows-10-Camera-Icon-Fluent-Colorful-2020-1.png",
             "images": []
         },
         "windowsdesktop-runtime": {
@@ -47134,6 +47262,10 @@
         },
         "windowslivemesh": {
             "icon": "https://community.chocolatey.org/content/packageimages/WindowsLiveMesh.2011.0.0.png",
+            "images": []
+        },
+        "windowsnotepad": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Windows_Notepad_icon.png",
             "images": []
         },
         "windowspchealthcheck": {
@@ -48284,6 +48416,10 @@
                 "https://i.postimg.cc/7L4W8zKK/xmouse5.png"
             ]
         },
+        "x-vpn": {
+            "icon": "https://img.icons8.com/color/512/x-vpn.png",
+            "images": []
+        },
         "x264": {
             "icon": "https://upload.wikimedia.org/wikipedia/commons/6/6f/X264.png",
             "images": []
@@ -48941,6 +49077,10 @@
             "icon": "",
             "images": []
         },
+        "yourphone": {
+            "icon": "https://i.postimg.cc/qMSQHJqG/Your-Phone-app-icon-2-Photoroom.png",
+            "images": []
+        },
         "youtrack": {
             "icon": "https://resources.jetbrains.com/storage/products/youtrack/img/meta/youtrack_logo_300x300.png",
             "images": []
@@ -49567,6 +49707,10 @@
         },
         "zulufx-19-jdk": {
             "icon": "https://i.postimg.cc/bwR9h2mZ/zulu-icon.png",
+            "images": []
+        },
+        "zunemusic": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Media_Player_Windows_11_logo.svg/2048px-Media_Player_Windows_11_logo.svg.png",
             "images": []
         },
         "zwift": {
