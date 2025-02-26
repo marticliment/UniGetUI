@@ -35,9 +35,9 @@ namespace UniGetUI.Core.SettingsEngine
 
                 // Otherwise, load the setting from disk and cache that setting
                 Dictionary<K, V?> value = [];
-                if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json")))
+                if (File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{setting}.json")))
                 {
-                    string result = File.ReadAllText(Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json"));
+                    string result = File.ReadAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{setting}.json"));
                     try
                     {
                         if (result != "")
@@ -85,7 +85,7 @@ namespace UniGetUI.Core.SettingsEngine
                 kvp => (object?)kvp.Value
             );
 
-            var file = Path.Join(CoreData.UniGetUIDataDirectory, $"{setting}.json");
+            var file = Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{setting}.json");
             try
             {
                 if (value.Count != 0) File.WriteAllText(file, JsonSerializer.Serialize(value));

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
@@ -10,8 +10,8 @@ namespace UniGetUI.Core.Data
     {
         private static int? __code_page;
         public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
-        public const string VersionName =  "3.1.7-beta1"; // Do not modify this line, use file scripts/apply_versions.py
-        public const int BuildNumber =  81; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName = "3.1.7-beta1"; // Do not modify this line, use file scripts/apply_versions.py
+        public const int BuildNumber = 81; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 
@@ -30,6 +30,8 @@ namespace UniGetUI.Core.Data
         private static bool? IS_PORTABLE;
         public static bool IsPortable { get => IS_PORTABLE ?? false; }
 
+        public static string? TEST_DataDirectoryOverride { private get; set; }
+
         /// <summary>
         /// The directory where all the user data is stored. The directory is automatically created if it does not exist.
         /// </summary>
@@ -37,6 +39,11 @@ namespace UniGetUI.Core.Data
         {
             get
             {
+                if (TEST_DataDirectoryOverride is not null)
+                {
+                    return TEST_DataDirectoryOverride;
+                }
+
                 if (IS_PORTABLE is null)
                     IS_PORTABLE = File.Exists(Path.Join(UniGetUIExecutableDirectory, "ForceUniGetUIPortable"));
 
@@ -61,6 +68,70 @@ namespace UniGetUI.Core.Data
                 string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
                 string new_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UniGetUI");
                 return GetNewDataDirectoryOrMoveOld(old_path, new_path);
+            }
+        }
+
+        /// <summary>
+        /// The directory where the user configurations are stored. The directory is automatically created if it does not exist.
+        /// </summary>
+        public static string UniGetUIUserConfigurationDirectory
+        {
+            get
+            {
+                string oldConfigPath = UniGetUIDataDirectory; // Old config path was the data directory itself
+                string newConfigPath = Path.Join(UniGetUIDataDirectory, "Configuration");
+
+                if (Directory.Exists(oldConfigPath) && !Directory.Exists(newConfigPath))
+                {
+                    //Migration case
+                    try
+                    {
+                        Logger.Info($"Moving configuration files from '{oldConfigPath}' to '{newConfigPath}'");
+                        Directory.CreateDirectory(newConfigPath);
+
+                        foreach (string file in Directory.GetFiles(oldConfigPath, "*.*", SearchOption.TopDirectoryOnly))
+                        {
+                            string fileName = Path.GetFileName(file);
+                            string fileExtension = Path.GetExtension(file);
+                            bool isConfigFile = string.IsNullOrEmpty(fileExtension) || fileExtension.ToLowerInvariant() == ".json";
+
+                            if (isConfigFile)
+                            {
+                                string newFile = Path.Join(newConfigPath, fileName);
+                                // Avoid overwriting if somehow file already exists
+                                if (!File.Exists(newFile))
+                                {
+                                    File.Move(file, newFile);
+                                    Logger.Debug($"Moved configuration file '{file}' to '{newFile}'");
+                                }
+                                // Clean up old file to avoid duplicates and confusion
+                                else
+                                {
+                                    Logger.Warn($"Configuration file '{newFile}' already exists, skipping move from '{file}'.");
+                                    File.Delete(file);
+                                }
+                            }
+                            else
+                            {
+                                Logger.Debug($"Skipping non-configuration file '{file}' during migration.");
+                            }
+                        }
+                        Logger.Info($"Configuration files moved successfully to '{newConfigPath}'");
+                    }
+                    catch (Exception ex)
+                    {
+                        // Fallback to old path if migration fails to not break functionality
+                        Logger.Error($"Error moving configuration files from '{oldConfigPath}' to '{newConfigPath}'. Using old path for now. Manual migration might be needed.");
+                        Logger.Error(ex);
+                        return oldConfigPath;
+                    }
+                }
+                else if (!Directory.Exists(newConfigPath))
+                {
+                    //New install case, migration not needed
+                    Directory.CreateDirectory(newConfigPath);
+                }
+                return newConfigPath;
             }
         }
 
@@ -97,7 +168,7 @@ namespace UniGetUI.Core.Data
         {
             get
             {
-                string path  = Path.Join(UniGetUIDataDirectory, "CachedMedia");
+                string path = Path.Join(UniGetUIDataDirectory, "CachedMedia");
                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);
                 return path;
             }
@@ -110,7 +181,7 @@ namespace UniGetUI.Core.Data
         {
             get
             {
-                string path= Path.Join(UniGetUIDataDirectory, "CachedLanguageFiles");
+                string path = Path.Join(UniGetUIDataDirectory, "CachedLanguageFiles");
                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);
                 return path;
             }
