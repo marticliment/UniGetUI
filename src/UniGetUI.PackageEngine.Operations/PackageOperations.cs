@@ -96,14 +96,14 @@ namespace UniGetUI.PackageEngine.Operations
                 }
 
                 if (Package.Manager is WinGet)
-                {
-                    // Change WinGet's TEMP folder location, to prevent ACL corruption
-                    string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
-                    process.StartInfo.Environment["TEMP"] = WinGetTemp;
-                    process.StartInfo.Environment["TMP"] = WinGetTemp;
-                }
+                    RedirectWinGetTempFolder();
+
                 process.StartInfo.FileName = CoreData.ElevatorPath;
                 process.StartInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
+            }
+            else if (CoreTools.IsAdministrator() && Package.Manager is WinGet)
+            {
+                RedirectWinGetTempFolder();
             }
             else
             {
