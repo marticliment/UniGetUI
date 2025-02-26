@@ -28,6 +28,7 @@ namespace UniGetUI.Core.Data
         }
 
         private static bool? IS_PORTABLE;
+        private static string? PORTABLE_PATH;
         public static bool IsPortable { get => IS_PORTABLE ?? false; }
 
         public static string? TEST_DataDirectoryOverride { private get; set; }
@@ -45,24 +46,31 @@ namespace UniGetUI.Core.Data
                 }
 
                 if (IS_PORTABLE is null)
+                {
                     IS_PORTABLE = File.Exists(Path.Join(UniGetUIExecutableDirectory, "ForceUniGetUIPortable"));
 
-                if (IS_PORTABLE is true)
+                    if (IS_PORTABLE is true)
+                    {
+                        string path = Path.Join(UniGetUIExecutableDirectory, "Settings");
+                        try
+                        {
+                            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                            var testfilepath = Path.Join(path, "PermissionTestFile");
+                            File.WriteAllText(testfilepath, "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+                            PORTABLE_PATH = path;
+                            return path;
+                        }
+                        catch (Exception ex)
+                        {
+                            IS_PORTABLE = false;
+                            Logger.Error(
+                                $"Could not acces/write path {path}. UniGetUI will NOT be run in portable mode, and User settings will be used instead");
+                            Logger.Error(ex);
+                        }
+                    }
+                } else if (IS_PORTABLE is true)
                 {
-                    string path = Path.Join(UniGetUIExecutableDirectory, "Settings");
-                    try
-                    {
-                        if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                        var testfilepath = Path.Join(path, "PermissionTestFile");
-                        File.WriteAllText(testfilepath, "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-                        return path;
-                    }
-                    catch (Exception ex)
-                    {
-                        IS_PORTABLE = false;
-                        Logger.Error($"Could not acces/write path {path}. UniGetUI will NOT be run in portable mode, and User settings will be used instead");
-                        Logger.Error(ex);
-                    }
+                    return PORTABLE_PATH ?? throw new Exception("This shouldn't be possible");
                 }
 
                 string old_path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wingetui");
