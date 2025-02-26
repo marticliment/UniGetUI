@@ -601,7 +601,7 @@ public static partial class DialogHelper
     {
         var dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("Are you sure you want to delete all shortcuts?");
-        dialog.Content = CoreTools.Translate("By enabling this, after a package is installed or updated, ANY existing desktop shortcut will be deleted. (Desktop shortcuts unchecked above will be kept back). Are you really sure you want to enable this feature?");
+        dialog.Content = CoreTools.Translate("By enabling this, after a package is installed or updated, ANY existing desktop shortcut will be deleted. (Desktop shortcuts unchecked above will be kept). Are you really sure you want to enable this feature?");
         dialog.PrimaryButtonText = CoreTools.Translate("Yes");
         dialog.CloseButtonText = CoreTools.Translate("No");
         dialog.DefaultButton = ContentDialogButton.Close;
