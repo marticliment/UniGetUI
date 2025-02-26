@@ -13,6 +13,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
 using Windows.UI.Core;
+using CommunityToolkit.WinUI;
 using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.Pages.DialogPages;
@@ -483,11 +484,9 @@ namespace UniGetUI.Interface
         private void SelectAndScrollTo(int index)
         {
             PackageList.Select(index);
-            PackageList.ScrollView?.ScrollTo(0, Math.Max(0, (index - 3) * 39), new ScrollingScrollOptions
-            (
-                ScrollingAnimationMode.Disabled,
-                ScrollingSnapPointsMode.Ignore
-            ));
+            PackageItemContainer? selectedItem = PackageList.FindDescendant<PackageItemContainer>(c => c.IsSelected);
+            selectedItem?.Focus(FocusState.Programmatic);
+            PackageList.StartBringItemIntoView(index, new BringIntoViewOptions());
         }
 
         public void PackageList_KeyDown(object sender, KeyRoutedEventArgs e)
