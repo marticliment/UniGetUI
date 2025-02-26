@@ -268,7 +268,7 @@ public class AutoUpdater
                 !ReleaseLockForAutoupdate_Window &&
                 !ReleaseLockForAutoupdate_Notification &&
                 !ReleaseLockForAutoupdate_UpdateBanner &&
-                MainApp.Operations._operationList.Count == 0)
+                MainApp.Operations.AreThereRunningOperations())
             {
                 await Task.Delay(100);
             }
