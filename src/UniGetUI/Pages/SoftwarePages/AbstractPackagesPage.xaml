@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     Name="ABSTRACT_PAGE"
     NavigationCacheMode="Required"
-    xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses" xmlns:controls="using:UniGetUI.Controls"
     CharacterReceived="{x:Bind PackageList_CharacterReceived}">
     <!-- PreviewKeyDown="{x:Bind PackageList_PreviewKeyDown}" -->
 
@@ -936,9 +936,9 @@
             <Grid x:Name="MegaQueryBlockGrid" x:FieldModifier="protected" Visibility="Collapsed"
                   Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*" MinHeight="50"/>
                     <RowDefinition Height="80"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="3*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -959,7 +959,7 @@
                         </AnimatedIcon.FallbackIconSource>
                     </AnimatedIcon>
                 </Button>
-
+                <controls:PackagesRanking Grid.ColumnSpan="4" Grid.Row="2" x:Name="RankingControl" Visibility="Collapsed" x:FieldModifier="protected"/>
             </Grid>
         </Grid>
     </Grid>

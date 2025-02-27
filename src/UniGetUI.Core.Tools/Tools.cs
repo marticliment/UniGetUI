@@ -146,10 +146,11 @@ namespace UniGetUI.Core.Tools
         /// </summary>
         /// <param name="name">A string containing the Id of a package</param>
         /// <returns>The formatted string</returns>
-        public static string FormatAsName(string name)
+        public static string FormatAsName(string name, bool isWinget = false)
         {
-            name =
-                name.Replace(".install", "").Replace(".portable", "").Replace("-", " ").Replace("_", " ").Split("/")[^1]
+            if (isWinget) name = string.Join('.', name.Split('.')[1..]);
+
+            name = name.Replace(".install", "").Replace(".portable", "").Replace("-", " ").Replace("_", " ").Split("/")[^1]
                     .Split(":")[0];
             string newName = "";
             for (int i = 0; i < name.Length; i++)

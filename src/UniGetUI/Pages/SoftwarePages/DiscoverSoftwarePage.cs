@@ -11,6 +11,7 @@ using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.Pages.DialogPages;
+using UniGetUI.Controls;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -52,6 +53,9 @@ namespace UniGetUI.Interface.SoftwarePages
 
             QueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) { Event_SearchPackages(s, e); } };
             MegaQueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) { Event_SearchPackages(s, e); } };
+
+            RankingControl.Visibility = Visibility.Visible;
+            _ = RankingControl.Reload();
         }
 
         public override BetterMenu GenerateContextMenu()

@@ -24,7 +24,6 @@
     <WindowsPackageType>None</WindowsPackageType>
     <!--WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion-->
 
-    <Optimize>true</Optimize>
     <PublishTrimmed>false</PublishTrimmed>
     <!--TrimMode>partial</TrimMode-->
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -172,6 +171,9 @@
     <None Update="Assets\Utilities\uninstall_scoop.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Controls\PackageRanking.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Interface\Dialogs\PackageDetailsPage.xaml">

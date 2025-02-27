@@ -3,7 +3,7 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Classes.Packages
 {
-    internal static class PackageCacher
+    public static class PackageCacher
     {
         private static readonly ConcurrentDictionary<long, Package> __available_pkgs = [];
         private static readonly ConcurrentDictionary<long, Package> __upgradable_pkgs = [];
