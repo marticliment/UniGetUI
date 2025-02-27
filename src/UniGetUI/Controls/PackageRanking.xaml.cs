@@ -25,6 +25,10 @@ using Windows.Devices.SmartCards;
 using System.Diagnostics;
 using UniGetUI.PackageEngine.Classes.Packages;
 using UniGetUI.PackageEngine;
+using Windows.ApplicationModel.Activation;
+using UniGetUI.Pages.DialogPages;
+using UniGetUI.Interface.Telemetry;
+using UniGetUI.PackageEngine.Enums;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -167,6 +171,11 @@ namespace UniGetUI.Controls
             if (_source is null) _source = _manager.DefaultSource;
 
             return new Package(CoreTools.FormatAsName(id, isWinget: source == "winget"), id, "latest", _source, _manager, new());
+        }
+
+        public void ShowDetails()
+        {
+            if(package is not null) DialogHelper.ShowPackageDetails(package, OperationType.Install, TEL_InstallReferral.FROM_RANKING);
         }
     }
 }

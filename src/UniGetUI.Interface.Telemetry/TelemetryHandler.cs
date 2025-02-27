@@ -15,6 +15,7 @@ public enum TEL_InstallReferral
     FROM_BUNDLE,
     FROM_WEB_SHARE,
     ALREADY_INSTALLED,
+    FROM_RANKING
 }
 
 public enum TEL_OP_RESULT
