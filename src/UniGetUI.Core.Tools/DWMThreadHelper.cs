@@ -55,7 +55,7 @@ public class DWMThreadHelper
         DWMThreadAdress ??= GetTargetFunctionAddress("dwmcorei.dll", 0x54F70);
         if (DWMThreadAdress is null)
         {
-            Logger.Error("Failed to resolve thread start adress."); return;
+            Logger.Error("Failed to resolve DWM thread start adress."); return;
         }
 
         ChangeState(suspend, (IntPtr)DWMThreadAdress, ref DWM_IsSuspended, ref DWMThreadId, "DWM");
@@ -74,12 +74,12 @@ public class DWMThreadHelper
             Logger.Debug("XAML Thread was already running"); return;
         }
 
-        // The reported offset on ProcessExplorer seems to be missing 0x6280 somehow
-        // 0x54F70 + 0x6280 = 0x5B1F0
-        XAMLThreadAdress ??= GetTargetFunctionAddress("Microsoft.UI.Xaml.dll", 0x5B1F0);
+        // The reported offset on ProcessExplorer seems to be missing a part somehow.
+        // To find the real adress, set offset to 0, and then get the offset from the Debugger.Break at ChangeState()
+        XAMLThreadAdress ??= GetTargetFunctionAddress("Microsoft.UI.Xaml.dll", 0x5b320);
         if (XAMLThreadAdress is null)
         {
-            Logger.Error("Failed to resolve thread start adress."); return;
+            Logger.Error("Failed to resolve XAML thread start adress."); return;
         }
 
         ChangeState(suspend, (IntPtr)XAMLThreadAdress, ref XAML_IsSuspended, ref XAMLThreadId, "XAML");
@@ -97,24 +97,36 @@ public class DWMThreadHelper
         return adress;
     }
 
-    private static void ChangeState(bool suspend, IntPtr threadAdress, ref bool IsSuspended, ref int? threadId,
+    private static void ChangeState(bool suspend, IntPtr expectedAdress, ref bool IsSuspended, ref int? threadId,
         string loggerName, bool canRetry = true)
     {
+        IntPtr minId = -1;
+        uint LastDiff = uint.MaxValue;
+
         if (threadId is null)
         {
             foreach (ProcessThread thread in Process.GetCurrentProcess().Threads)
             {
-                if (GetThreadStartAdress(thread.Id) == threadAdress)
+                var adress = GetThreadStartAdress(thread.Id);
+                if (adress == expectedAdress)
                 {
                     threadId = thread.Id;
                     Logger.Info($"Thread with Id {threadId} was assigned as {loggerName} thread");
+                    break;
+                }
+                else if (((uint)adress - (uint)expectedAdress) < LastDiff)
+                {
+                    LastDiff = (uint)adress - (uint)expectedAdress;
+                    minId = thread.Id;
                 }
             }
         }
 
         if (threadId is null)
         {
-            Logger.Error($"No thread matching {loggerName} with start adress {threadAdress:X} was found");
+            Logger.Error($"No thread matching {loggerName} with start adress {expectedAdress:X} was found. " +
+                         $"Best guess was {minId} with adress offset {LastDiff}");
+            if(Debugger.IsAttached) Debugger.Break();
             return;
         }
 
@@ -124,7 +136,7 @@ public class DWMThreadHelper
             if (canRetry)
             {
                 threadId = null; // On first try, reset argument threadId so it does get loaded again.
-                ChangeState(suspend, threadAdress, ref IsSuspended, ref threadId, loggerName, false);
+                ChangeState(suspend, expectedAdress, ref IsSuspended, ref threadId, loggerName, false);
                 return;
             }
             // The threadId was already reloaded
