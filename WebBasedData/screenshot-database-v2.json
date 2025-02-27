@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11784,
-        "done": 5238,
-        "packages_with_icon": 5238,
-        "packages_with_screenshot": 623,
-        "total_screenshots": 1955
+        "total": 11786,
+        "done": 5241,
+        "packages_with_icon": 5241,
+        "packages_with_screenshot": 625,
+        "total_screenshots": 1957
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -16178,6 +16178,12 @@
                 "https://i.postimg.cc/j5k2pfRR/git3.png"
             ]
         },
+        "gitbutler": {
+            "icon": "https://gitbutler.com/favicon/favicon-64x64.png",
+            "images": [
+                "https://docs.gitbutler.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finitial-workspace.8084a3ae.png&w=3840&q=75"
+            ]
+        },
         "git-aliases": {
             "icon": "",
             "images": []
@@ -25315,6 +25321,10 @@
             "icon": "",
             "images": []
         },
+        "mise-en-place": {
+            "icon": "https://raw.githubusercontent.com/jdx/mise/refs/heads/main/docs/public/favicon-32x32.png",
+            "images": []
+        },
         "misfitmodel3d": {
             "icon": "",
             "images": []
@@ -28747,8 +28757,10 @@
             "images": []
         },
         "onecommander": {
-            "icon": "",
-            "images": []
+            "icon": "https://onecommander.com/images/apple-touch-icon-114x114.png",
+            "images": [
+                "https://onecommander.com/images/OneCommander-Hero.png"
+            ]
         },
         "onecopy": {
             "icon": "",
