@@ -148,7 +148,7 @@ namespace UniGetUI.Core.Tools
         /// <returns>The formatted string</returns>
         public static string FormatAsName(string name, bool isWinget = false)
         {
-            if (isWinget) name = string.Join('.', name.Split('.')[1..]);
+            if (isWinget) name = string.Join(' ', name.Split('.')[1..]);
 
             name = name.Replace(".install", "").Replace(".portable", "").Replace("-", " ").Replace("_", " ").Split("/")[^1]
                     .Split(":")[0];

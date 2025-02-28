@@ -81,17 +81,17 @@ namespace UniGetUI.Controls
                     var response = await client.GetStringAsync("https://marticliment.com/unigetui/rankings/daily-ranking.json");
                     var rankings = JsonSerializer.Deserialize<Rankings>(response);
 
-                    foreach (var item in rankings.popular[0..4])
+                    foreach (var item in rankings.popular[0..5])
                     {
                         PopularRank.Add(new(item));
                     }
 
-                    foreach (var item in rankings.installed[0..4])
+                    foreach (var item in rankings.installed[0..5])
                     {
                         InstalledRank.Add(new(item));
                     }
 
-                    foreach (var item in rankings.uninstalled[0..4])
+                    foreach (var item in rankings.uninstalled[0..5])
                     {
                         WallOfShame.Add(new(item));
                     }
@@ -125,7 +125,7 @@ namespace UniGetUI.Controls
         private string id;
         private string manager;
         private string source;
-        private Package? package;
+        private IPackage package;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -162,7 +162,7 @@ namespace UniGetUI.Controls
             }
         }
 
-        public Package? GetPackage()
+        public IPackage GetPackage()
         {
             IPackageManager? _manager = null;
             foreach (var candidate in PEInterface.Managers)
@@ -186,7 +186,9 @@ namespace UniGetUI.Controls
 
             if (_source is null) _source = _manager.DefaultSource;
 
-            return new Package(CoreTools.FormatAsName(id, isWinget: source == "winget"), id, "latest", _source, _manager, new());
+            var package =  new Package(CoreTools.FormatAsName(id, isWinget: source == "winget"), id, "latest", _source, _manager, new());
+
+            return PackageCacher.GetExistingOne(package) ?? package;
         }
 
         public void ShowDetails()
