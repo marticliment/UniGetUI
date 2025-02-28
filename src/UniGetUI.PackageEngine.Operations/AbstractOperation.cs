@@ -290,7 +290,6 @@ public abstract class AbstractOperation : IDisposable
                 }
             } while (result == OperationVeredict.AutoRetry);
 
-            OperationFinished?.Invoke(this, EventArgs.Empty);
 
             while (OperationQueue.Remove(this));
             // END OPERATION
@@ -298,12 +297,14 @@ public abstract class AbstractOperation : IDisposable
             if (result == OperationVeredict.Success)
             {
                 Status = OperationStatus.Succeeded;
+                OperationFinished?.Invoke(this, EventArgs.Empty);
                 OperationSucceeded?.Invoke(this, EventArgs.Empty);
                 Line(Metadata.SuccessMessage, LineType.Information);
             }
             else if (result == OperationVeredict.Failure)
             {
                 Status = OperationStatus.Failed;
+                OperationFinished?.Invoke(this, EventArgs.Empty);
                 OperationFailed?.Invoke(this, EventArgs.Empty);
                 Line(Metadata.FailureMessage, LineType.Error);
                 Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"),
@@ -312,6 +313,7 @@ public abstract class AbstractOperation : IDisposable
             else if (result == OperationVeredict.Canceled)
             {
                 Status = OperationStatus.Canceled;
+                OperationFinished?.Invoke(this, EventArgs.Empty);
                 Line(CoreTools.Translate("Operation canceled by user"), LineType.Error);
             }
         }
