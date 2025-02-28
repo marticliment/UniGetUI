@@ -579,8 +579,8 @@ public static partial class DialogHelper
         {
             Padding = new Thickness(0),
             Content = btns,
-            Background = new SolidColorBrush(Colors.Transparent),
-            BorderBrush = new SolidColorBrush(Colors.Transparent),
+            Background = new SolidColorBrush(Microsoft.UI.Colors.Transparent),
+            BorderBrush = new SolidColorBrush(Microsoft.UI.Colors.Transparent),
         };
         mainButton.Resources["HyperlinkButtonBackgroundPointerOver"] = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
 

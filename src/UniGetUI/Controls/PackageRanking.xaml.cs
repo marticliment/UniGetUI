@@ -56,7 +56,7 @@ namespace UniGetUI.Controls
             link.Inlines.Add(new Run() { Text = CoreTools.Translate("More info") });
             (InstalledDescription.Blocks[0] as Paragraph)?.Inlines.Add(link);
 
-            (UninstalledDescription.Blocks[0] as Paragraph)?.Inlines.Add(new Run { Text = CoreTools.Translate("Packages that have been uninstalled the most times through UniGetUI.") + " " });
+            (UninstalledDescription.Blocks[0] as Paragraph)?.Inlines.Add(new Run { Text = CoreTools.Translate("The packages that have been uninstalled most times through UniGetUI.") + " " });
             link = new Hyperlink { NavigateUri = new Uri("about:blank") };
             link.Inlines.Add(new Run() { Text = CoreTools.Translate("More info") });
             (UninstalledDescription.Blocks[0] as Paragraph)?.Inlines.Add(link);
