@@ -29,6 +29,7 @@ using Windows.ApplicationModel.Activation;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Enums;
+using Microsoft.UI.Xaml.Documents;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -44,6 +45,21 @@ namespace UniGetUI.Controls
         public PackagesRanking()
         {
             this.InitializeComponent();
+
+            (PopularDescription.Blocks[0] as Paragraph)?.Inlines.Add(new Run { Text = CoreTools.Translate("The most popular packages among UniGetUI users.") + " " });
+            var link = new Hyperlink { NavigateUri = new Uri("about:blank") };
+            link.Inlines.Add(new Run() { Text = CoreTools.Translate("More info") });
+            (PopularDescription.Blocks[0] as Paragraph)?.Inlines.Add(link);
+
+            (InstalledDescription.Blocks[0] as Paragraph)?.Inlines.Add(new Run { Text = CoreTools.Translate("Packages installed the most through UniGetUI.") + " " });
+            link = new Hyperlink { NavigateUri = new Uri("about:blank") };
+            link.Inlines.Add(new Run() { Text = CoreTools.Translate("More info") });
+            (InstalledDescription.Blocks[0] as Paragraph)?.Inlines.Add(link);
+
+            (UninstalledDescription.Blocks[0] as Paragraph)?.Inlines.Add(new Run { Text = CoreTools.Translate("Packages that have been uninstalled the most times through UniGetUI.") + " " });
+            link = new Hyperlink { NavigateUri = new Uri("about:blank") };
+            link.Inlines.Add(new Run() { Text = CoreTools.Translate("More info") });
+            (UninstalledDescription.Blocks[0] as Paragraph)?.Inlines.Add(link);
         }
 
         public void ReloadButton_Click(object sender, RoutedEventArgs e)

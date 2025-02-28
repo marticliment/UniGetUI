@@ -47,18 +47,35 @@
                 <ColumnDefinition Width="1000*" MaxWidth="350"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Vertical" Grid.Column="1">
-                <widgets:TranslatedTextBlock HorizontalAlignment="Center" Text="Popular packages" FontWeight="Bold" FontSize="20" MinHeight="40"/>
+            <StackPanel Orientation="Vertical" Grid.Column="1" Spacing="8">
+                <widgets:TranslatedTextBlock HorizontalAlignment="Center" Text="Popular packages" FontWeight="Bold" FontSize="20" MinHeight="32"/>
+                <RichTextBlock Name="PopularDescription" TextAlignment="Center">
+                    <Paragraph/>
+                </RichTextBlock>
                 <ItemsRepeater ItemTemplate="{StaticResource PackageRankingEntry}" ItemsSource="{x:Bind PopularRank}"/>
+                <HyperlinkButton HorizontalAlignment="Stretch">
+                    <widgets:TranslatedTextBlock Text="View more packages"/>
+                </HyperlinkButton>
             </StackPanel>
-            <StackPanel Orientation="Vertical" Grid.Column="2">
-                <widgets:TranslatedTextBlock HorizontalAlignment="Center" Text="The most installed" FontWeight="Bold" FontSize="20" MinHeight="40"/>
+            <StackPanel Orientation="Vertical" Grid.Column="2" Spacing="8">
+                <widgets:TranslatedTextBlock HorizontalAlignment="Center" Text="The most installed" FontWeight="Bold" FontSize="20" MinHeight="32"/>
+                <RichTextBlock Name="InstalledDescription" TextAlignment="Center">
+                    <Paragraph/>
+                </RichTextBlock>
                 <ItemsRepeater ItemTemplate="{StaticResource PackageRankingEntry}" ItemsSource="{x:Bind InstalledRank}"/>
-
+                <HyperlinkButton HorizontalAlignment="Stretch" >
+                    <widgets:TranslatedTextBlock Text="View more packages"/>
+                </HyperlinkButton>
             </StackPanel>
-            <StackPanel Orientation="Vertical" Grid.Column="3">
-                <widgets:TranslatedTextBlock HorizontalAlignment="Center" Text="The most uninstalled" FontWeight="Bold" FontSize="20" MinHeight="40"/>
+            <StackPanel Orientation="Vertical" Grid.Column="3" Spacing="8">
+                <widgets:TranslatedTextBlock HorizontalAlignment="Center" Text="The wall of shame" FontWeight="Bold" FontSize="20" MinHeight="32"/>
+                <RichTextBlock Name="UninstalledDescription" TextAlignment="Center">
+                    <Paragraph/>
+                </RichTextBlock>
                 <ItemsRepeater ItemTemplate="{StaticResource PackageRankingEntry}" ItemsSource="{x:Bind WallOfShame}"/>
+                <HyperlinkButton HorizontalAlignment="Stretch" >
+                    <widgets:TranslatedTextBlock Text="View more packages"/>
+                </HyperlinkButton>
             </StackPanel>
             <Button VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="4" Name="ReloadButton" Click="ReloadButton_Click">Reload</Button>
             <ProgressRing IsIndeterminate="True" Visibility="Collapsed" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="5" Width="100" Height="100" Name="ReloadRing"/>
