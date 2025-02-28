@@ -18,7 +18,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Image Grid.Row="0" Grid.RowSpan="2" Height="48" Width="48">
+                    <Image Grid.Row="0" Grid.RowSpan="2" Height="44" Width="44" Margin="4">
                         <Image.Source>
                             <BitmapImage UriSource="{x:Bind IconUri, Mode=OneWay}"/>
                         </Image.Source>
