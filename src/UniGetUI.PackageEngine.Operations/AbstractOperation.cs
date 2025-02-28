@@ -316,6 +316,10 @@ public abstract class AbstractOperation : IDisposable
                 OperationFinished?.Invoke(this, EventArgs.Empty);
                 Line(CoreTools.Translate("Operation canceled by user"), LineType.Error);
             }
+            else
+            {
+                throw new InvalidCastException();
+            }
         }
         catch (Exception ex)
         {
