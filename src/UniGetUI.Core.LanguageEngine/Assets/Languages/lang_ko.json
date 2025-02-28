@@ -36,7 +36,7 @@
   "Add packages to start": null,
   "Add selection to bundle": "번들에 선택 항목 추가",
   "Add source": "소스 추가",
-  "Adding source {source}": null,
+  "Adding source {source}": "{source} 소스 추가하기",
   "Adding source {source} to {manager}": "{manager}에 {source} 소스 추가하기",
   "Addition succeeded": "추가 성공",
   "Administrator privileges": "관리자 권한",
