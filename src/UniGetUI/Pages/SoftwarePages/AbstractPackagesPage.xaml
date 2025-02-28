@@ -938,7 +938,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" MinHeight="50"/>
                     <RowDefinition Height="80"/>
-                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="4*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -959,7 +959,9 @@
                         </AnimatedIcon.FallbackIconSource>
                     </AnimatedIcon>
                 </Button>
-                <controls:PackagesRanking Grid.ColumnSpan="4" Grid.Row="2" x:Name="RankingControl" Visibility="Collapsed" x:FieldModifier="protected"/>
+                <ScrollView Grid.ColumnSpan="4" Grid.Row="3">
+                    <controls:PackagesRanking x:Name="RankingControl" Visibility="Visible" x:FieldModifier="protected"/>
+                </ScrollView>
             </Grid>
         </Grid>
     </Grid>
