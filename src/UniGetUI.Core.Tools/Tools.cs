@@ -196,19 +196,45 @@ namespace UniGetUI.Core.Tools
             }
 
             string Error_String = $@"
-                        OS: {Environment.OSVersion.Platform}
-                   Version: {Environment.OSVersion.VersionString}
-           OS Architecture: {Environment.Is64BitOperatingSystem}
-          APP Architecture: {Environment.Is64BitProcess}
+           Windows version: {Environment.OSVersion.VersionString}
                   Language: {LangName}
                APP Version: {CoreData.VersionName}
+          APP Build number: {CoreData.BuildNumber}
                 Executable: {Environment.ProcessPath}
 
-Crash HResult: {(uint)e.HResult}
+Crash HResult: 0x{(uint)e.HResult:X} ({(uint)e.HResult}, {e.HResult})
 Crash Message: {e.Message}
 
 Crash Traceback:
 {e.StackTrace}";
+
+            try
+            {
+                int i = 0;
+                while (e.InnerException is not null)
+                {
+                    i++;
+                    e = e.InnerException;
+                    Error_String += $@"
+
+
+---------------------
+Inner exception ({i}):
+Crash HResult: 0x{(uint)e.HResult:X} ({(uint)e.HResult}, {e.HResult})
+Crash Message: {e.Message}
+
+Crash Traceback:
+{e.StackTrace}";
+                }
+
+                if (i == 0)
+                {
+                    Error_String += $"\n\n\nNo inner exceptions found";
+                }
+            } catch
+            {
+                // ignore
+            }
 
             Console.WriteLine(Error_String);
 
