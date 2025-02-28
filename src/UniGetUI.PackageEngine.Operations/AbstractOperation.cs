@@ -297,15 +297,15 @@ public abstract class AbstractOperation : IDisposable
             if (result == OperationVeredict.Success)
             {
                 Status = OperationStatus.Succeeded;
-                OperationFinished?.Invoke(this, EventArgs.Empty);
                 OperationSucceeded?.Invoke(this, EventArgs.Empty);
+                OperationFinished?.Invoke(this, EventArgs.Empty);
                 Line(Metadata.SuccessMessage, LineType.Information);
             }
             else if (result == OperationVeredict.Failure)
             {
                 Status = OperationStatus.Failed;
-                OperationFinished?.Invoke(this, EventArgs.Empty);
                 OperationFailed?.Invoke(this, EventArgs.Empty);
+                OperationFinished?.Invoke(this, EventArgs.Empty);
                 Line(Metadata.FailureMessage, LineType.Error);
                 Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"),
                     LineType.ProgressIndicator);
