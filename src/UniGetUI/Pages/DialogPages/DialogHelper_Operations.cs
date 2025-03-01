@@ -1,4 +1,3 @@
-using Windows.UI;
 using ExternalLibraries.Clipboard;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -16,12 +15,7 @@ public static partial class DialogHelper
 {
     public static async Task ShowOperationFailedDialog(AbstractOperation operation, OperationControl opControl)
     {
-        ContentDialog dialog = new()
-        {
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style, XamlRoot = Window.XamlRoot
-        };
-        dialog.Resources["ContentDialogMaxWidth"] = 850;
-        dialog.Resources["ContentDialogMaxHeight"] = 800;
+        ContentDialog dialog = DialogFactory.Create(850, 800);
         dialog.Title = operation.Metadata.FailureTitle;
 
         Grid grid = new()
@@ -69,7 +63,7 @@ public static partial class DialogHelper
 
         ScrollViewer ScrollView = new()
         {
-            MaxHeight = MainApp.Instance.MainWindow.NavigationPage.ActualHeight > 800? 500: 300,
+            MaxHeight = MainApp.Instance.MainWindow.NavigationPage.ActualHeight > 800 ? 500 : 300,
             MaxWidth = 800,
             CornerRadius = new CornerRadius(6),
             Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"],
@@ -85,11 +79,11 @@ public static partial class DialogHelper
 
         foreach (var line in operation.GetOutput())
         {
-            if (line.Item2 is AbstractOperation.LineType.StdOUT)
+            if (line.Item2 is AbstractOperation.LineType.Information)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a" });
             }
-            else if (line.Item2 is AbstractOperation.LineType.OperationInfo)
+            else if (line.Item2 is AbstractOperation.LineType.VerboseDetails)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = debugColor });
             }
@@ -106,7 +100,7 @@ public static partial class DialogHelper
         Grid.SetRow(headerContent, 0);
         Grid.SetRow(ScrollView, 1);
 
-        var CloseButton = new Button()
+        var CloseButton = new Button
         {
             Content = CoreTools.Translate("Close"), HorizontalAlignment = HorizontalAlignment.Stretch, Height = 30,
         };
@@ -116,10 +110,10 @@ public static partial class DialogHelper
         };
         Control _retryButton;
 
-        var retryOptions = opControl.GetRetryOptions(() => dialog.Hide());
-        if (retryOptions.Any())
+        var retryOptions = opControl.GetRetryOptions(dialog.Hide);
+        if (retryOptions.Count != 0)
         {
-            SplitButton RetryButton = new SplitButton()
+            SplitButton RetryButton = new SplitButton
             {
                 Content = CoreTools.Translate("Retry"),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -141,7 +135,7 @@ public static partial class DialogHelper
         }
         else
         {
-            var RetryButton = new Button()
+            var RetryButton = new Button
             {
                 Content = CoreTools.Translate("Retry"),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -163,8 +157,8 @@ public static partial class DialogHelper
             HorizontalAlignment = HorizontalAlignment.Stretch,
             Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"]
         };
-        sp.ColumnDefinitions.Add(new ColumnDefinition(){Width = new(1, GridUnitType.Star)});
-        sp.ColumnDefinitions.Add(new ColumnDefinition(){Width = new(1, GridUnitType.Star)});
+        sp.ColumnDefinitions.Add(new ColumnDefinition {Width = new(1, GridUnitType.Star)});
+        sp.ColumnDefinitions.Add(new ColumnDefinition {Width = new(1, GridUnitType.Star)});
         sp.Children.Add(_retryButton);
         Grid.SetColumn(CloseButton, 1);
         sp.Children.Add(CloseButton);
@@ -180,18 +174,13 @@ public static partial class DialogHelper
     {
         bool LastLineWasProgress = false;
 
-        ContentDialog OutputDialog = new ContentDialog
-        {
-            Style = (Style)Application.Current.Resources["DefaultContentDialogStyle"],
-            XamlRoot = Window.XamlRoot
-        };
-        OutputDialog.Resources["ContentDialogMaxWidth"] = 1200;
-        OutputDialog.Resources["ContentDialogMaxHeight"] = 1000;
+        ContentDialog OutputDialog = DialogFactory.Create(1200, 1000);
 
         var LiveOutputTextBlock = new RichTextBlock
         {
             Margin = new Thickness(8),
-            FontFamily = new FontFamily("Consolas")
+            FontFamily = new FontFamily("Consolas"),
+            TextWrapping = TextWrapping.WrapWholeWords
         };
 
         var LiveOutputScrollBar = new ScrollViewer
@@ -223,11 +212,11 @@ public static partial class DialogHelper
 
         foreach (var line in operation.GetOutput())
         {
-            if (line.Item2 is AbstractOperation.LineType.StdOUT)
+            if (line.Item2 is AbstractOperation.LineType.Information)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a" });
             }
-            else if (line.Item2 is AbstractOperation.LineType.OperationInfo)
+            else if (line.Item2 is AbstractOperation.LineType.VerboseDetails)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = debugColor });
             }
@@ -239,18 +228,18 @@ public static partial class DialogHelper
 
         EventHandler<(string, AbstractOperation.LineType)> AddLineLambda = (_, line) => MainApp.Dispatcher.TryEnqueue(() =>
         {
-            if(LastLineWasProgress) par.Inlines.RemoveAt(par.Inlines.Count-1);
+            if (LastLineWasProgress) par.Inlines.RemoveAt(par.Inlines.Count - 1);
 
             LastLineWasProgress = false;
-            if (line.Item2 is AbstractOperation.LineType.StdOUT)
+            if (line.Item2 is AbstractOperation.LineType.Information)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a" });
             }
-            else if (line.Item2 is AbstractOperation.LineType.OperationInfo)
+            else if (line.Item2 is AbstractOperation.LineType.VerboseDetails)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = debugColor });
             }
-            else if (line.Item2 is AbstractOperation.LineType.StdERR)
+            else if (line.Item2 is AbstractOperation.LineType.Error)
             {
                 par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = errorColor });
             }
@@ -277,9 +266,10 @@ public static partial class DialogHelper
                 if (line is Run run)
                     text += run + "\n";
             }
+
             WindowsClipboard.SetText(text);
         }
+
         operation.LogLineAdded -= AddLineLambda;
     }
 }
-

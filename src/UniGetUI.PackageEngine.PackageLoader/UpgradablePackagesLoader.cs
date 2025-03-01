@@ -17,8 +17,13 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public ConcurrentDictionary<string, IPackage> IgnoredPackages = new();
 
-        public UpgradablePackagesLoader(IEnumerable<IPackageManager> managers)
-        : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false, CheckedBydefault: !Settings.Get("DisableSelectingUpdatesByDefault"))
+        public UpgradablePackagesLoader(IReadOnlyList<IPackageManager> managers)
+        : base(managers,
+            identifier: "UPGRADABLE_PACKAGES",
+            AllowMultiplePackageVersions: false,
+            DisableReload: false,
+            CheckedBydefault: !Settings.Get("DisableSelectingUpdatesByDefault"),
+            RequiresInternet: true)
         {
             Instance = this;
             FinishedLoading += (_, _) => StartAutoCheckTimeout();
@@ -26,8 +31,8 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         protected override async Task<bool> IsPackageValid(IPackage package)
         {
-            if (package.Version == package.NewVersion) return false;
-            if (await package.HasUpdatesIgnoredAsync(package.NewVersion))
+            if (package.VersionString == package.NewVersionString) return false;
+            if (await package.HasUpdatesIgnoredAsync(package.NewVersionString))
             {
                 IgnoredPackages[package.Id] = package;
                 return false;
@@ -37,7 +42,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             return true;
         }
 
-        protected override IEnumerable<IPackage> LoadPackagesFromManager(IPackageManager manager)
+        protected override IReadOnlyList<IPackage> LoadPackagesFromManager(IPackageManager manager)
         {
             return manager.GetAvailableUpdates();
         }

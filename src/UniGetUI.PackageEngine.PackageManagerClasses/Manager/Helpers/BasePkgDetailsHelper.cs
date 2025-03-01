@@ -29,7 +29,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
             }
         }
 
-        public IEnumerable<string> GetVersions(IPackage package)
+        public IReadOnlyList<string> GetVersions(IPackage package)
         {
             if (!Manager.IsReady())
             {
@@ -72,7 +72,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
                 string? iconUrl = IconDatabase.Instance.GetIconUrlForId(package.GetIconId());
                 if (iconUrl is not null)
                 {
-                    return new CacheableIcon(new Uri(iconUrl), package.Version);
+                    return new CacheableIcon(new Uri(iconUrl), package.VersionString);
                 }
 
                 return null;
@@ -84,11 +84,11 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
             }
         }
 
-        public IEnumerable<Uri> GetScreenshots(IPackage package)
+        public IReadOnlyList<Uri> GetScreenshots(IPackage package)
         {
             try
             {
-                IEnumerable<Uri> URIs = [];
+                IReadOnlyList<Uri> URIs = [];
 
                 if (Manager.Capabilities.SupportsCustomPackageScreenshots)
                 {
@@ -122,9 +122,9 @@ namespace UniGetUI.PackageEngine.Classes.Manager.BaseProviders
         }
 
         protected abstract void GetDetails_UnSafe(IPackageDetails details);
-        protected abstract IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package);
+        protected abstract IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package);
         protected abstract CacheableIcon? GetIcon_UnSafe(IPackage package);
-        protected abstract IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package);
+        protected abstract IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package);
         protected abstract string? GetInstallLocation_UnSafe(IPackage package);
 
         public string? GetInstallLocation(IPackage package)

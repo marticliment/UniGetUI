@@ -33,11 +33,11 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return ["bucket", "rm", source.Name];
         }
 
-        protected override IEnumerable<IManagerSource> GetSources_UnSafe()
+        protected override IReadOnlyList<IManagerSource> GetSources_UnSafe()
         {
-            using var p = new Process()
+            using var p = new Process
             {
-                StartInfo = new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
                     Arguments = Manager.Properties.ExecutableCallArgs + " bucket list",
@@ -80,6 +80,10 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                             {
                                 elements[1] = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                                     "scoop", "buckets", elements[0].Trim());
+                            }
+                            else
+                            {
+                                elements[1] = Regex.Replace(elements[1], @"^(.*)\.git$", "$1");
                             }
 
                             sources.Add(new ManagerSource(Manager, elements[0].Trim(), new Uri(elements[1]), int.Parse(elements[4].Trim()), elements[2].Trim() + " " + elements[3].Trim()));

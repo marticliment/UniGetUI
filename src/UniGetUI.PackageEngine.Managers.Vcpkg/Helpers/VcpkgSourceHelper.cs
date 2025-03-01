@@ -21,7 +21,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         protected override OperationVeredict _getRemoveSourceOperationVeredict(IManagerSource source, int ReturnCode, string[] Output)
             => throw new NotImplementedException();
 
-        protected override IEnumerable<IManagerSource> GetSources_UnSafe()
+        protected override IReadOnlyList<IManagerSource> GetSources_UnSafe()
         {
             List<ManagerSource> Sources = [];
 

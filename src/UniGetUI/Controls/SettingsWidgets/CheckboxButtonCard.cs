@@ -48,9 +48,12 @@ namespace UniGetUI.Interface.Widgets
         private bool _buttonAlwaysOn;
         public bool ButtonAlwaysOn
         {
-            set => _buttonAlwaysOn = value;
+            set
+            {
+                _buttonAlwaysOn = value;
+                Button.IsEnabled = (CheckBox.IsChecked ?? false) || _buttonAlwaysOn ;
+            }
         }
-
 
         public CheckboxButtonCard()
         {
@@ -78,7 +81,6 @@ namespace UniGetUI.Interface.Widgets
                 StateChanged?.Invoke(this, EventArgs.Empty);
                 Button.IsEnabled = _buttonAlwaysOn;
             };
-
 
             Button.MinWidth = 200;
             Button.Click += (s, e) => Click?.Invoke(s, e);

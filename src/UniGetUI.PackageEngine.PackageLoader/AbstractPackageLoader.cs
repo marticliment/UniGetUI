@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.PackageLoader
@@ -17,7 +18,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         public bool Any()
         {
-            return PackageReference.Any();
+            return !PackageReference.IsEmpty;
         }
 
         /// <summary>
@@ -48,11 +49,18 @@ namespace UniGetUI.PackageEngine.PackageLoader
         private readonly bool ALLOW_MULTIPLE_PACKAGE_VERSIONS;
         private readonly bool DISABLE_RELOAD;
         private readonly bool PACKAGES_CHECKED_BY_DEFAULT;
+        private readonly bool REQUIRES_INTERNET;
         protected string LOADER_IDENTIFIER;
         private int LoadOperationIdentifier;
-        protected IEnumerable<IPackageManager> Managers { get; private set; }
+        protected IReadOnlyList<IPackageManager> Managers { get; private set; }
 
-        public AbstractPackageLoader(IEnumerable<IPackageManager> managers, string identifier, bool AllowMultiplePackageVersions = false, bool DisableReload = false, bool CheckedBydefault = false)
+        public AbstractPackageLoader(
+            IReadOnlyList<IPackageManager> managers,
+            string identifier,
+            bool AllowMultiplePackageVersions,
+            bool DisableReload,
+            bool CheckedBydefault,
+            bool RequiresInternet)
         {
             Managers = managers;
             PackageReference = new ConcurrentDictionary<long, IPackage>();
@@ -63,6 +71,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             ALLOW_MULTIPLE_PACKAGE_VERSIONS = AllowMultiplePackageVersions;
             LOADER_IDENTIFIER = identifier;
             ALLOW_MULTIPLE_PACKAGE_VERSIONS = AllowMultiplePackageVersions;
+            REQUIRES_INTERNET = RequiresInternet;
         }
 
         /// <summary>
@@ -73,7 +82,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             LoadOperationIdentifier = -1;
             IsLoaded = false;
             IsLoading = false;
-            if(emitFinishSignal) InvokeFinishedLoadingEvent();
+            if (emitFinishSignal) InvokeFinishedLoadingEvent();
         }
 
         protected void InvokePackagesChangedEvent()
@@ -96,7 +105,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         public virtual async Task ReloadPackages()
         {
-            if(DISABLE_RELOAD)
+            if (DISABLE_RELOAD)
             {
                 InvokePackagesChangedEvent();
                 return;
@@ -108,20 +117,25 @@ namespace UniGetUI.PackageEngine.PackageLoader
             IsLoading = true;
             StartedLoading?.Invoke(this, EventArgs.Empty);
 
-            List<Task<IEnumerable<IPackage>>> tasks = new();
+            if (REQUIRES_INTERNET)
+            {
+                await CoreTools.WaitForInternetConnection();
+            }
+
+            List<Task<IReadOnlyList<IPackage>>> tasks = [];
 
             foreach (IPackageManager manager in Managers)
             {
                 if (manager.IsReady())
                 {
-                    Task<IEnumerable<IPackage>> task = Task.Run(() => LoadPackagesFromManager(manager));
+                    Task<IReadOnlyList<IPackage>> task = Task.Run(() => LoadPackagesFromManager(manager));
                     tasks.Add(task);
                 }
             }
 
             while (tasks.Count > 0)
             {
-                foreach (Task<IEnumerable<IPackage>> task in tasks.ToArray())
+                foreach (Task<IReadOnlyList<IPackage>> task in tasks.ToArray())
                 {
                     if (!task.IsCompleted)
                     {
@@ -174,7 +188,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// </summary>
         /// <param name="manager">The manager from which to load packages</param>
         /// <returns>A task that will load the packages</returns>
-        protected abstract IEnumerable<IPackage> LoadPackagesFromManager(IPackageManager manager);
+        protected abstract IReadOnlyList<IPackage> LoadPackagesFromManager(IPackageManager manager);
 
         /// <summary>
         /// Checks whether the package is valid or must be skipped
@@ -274,8 +288,8 @@ namespace UniGetUI.PackageEngine.PackageLoader
         /// This method does NOT follow the equivalence settings for this loader
         /// </summary>
         /// <param name="package">The package for which to find the equivalent packages</param>
-        /// <returns>A IEnumerable<Package> object</returns>
-        public IEnumerable<IPackage> GetEquivalentPackages(IPackage? package)
+        /// <returns>A IReadOnlyList<Package> object</returns>
+        public IReadOnlyList<IPackage> GetEquivalentPackages(IPackage? package)
         {
             if (package is null)
             {

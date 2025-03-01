@@ -15,7 +15,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
         /// <returns>A Uri object</returns>
         public static Uri GetManifestUrl(IPackage package)
         {
-            return new Uri($"{package.Source.Url}/Packages(Id='{package.Id}',Version='{package.Version}')");
+            return new Uri($"{package.Source.Url}/Packages(Id='{package.Id}',Version='{package.VersionString}')");
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
         /// <returns>A Uri object</returns>
         public static Uri GetNuPkgUrl(IPackage package)
         {
-            return new Uri($"{package.Source.Url}/package/{package.Id}/{package.Version}");
+            return new Uri($"{package.Source.Url}/package/{package.Id}/{package.VersionString}");
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
                 {
                     client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                     HttpResponseMessage response = client.GetAsync(PackageManifestUrl).GetAwaiter().GetResult();
-                    if (!response.IsSuccessStatusCode && package.Version.EndsWith(".0"))
+                    if (!response.IsSuccessStatusCode && package.VersionString.EndsWith(".0"))
                     {
                         response = client.GetAsync(new Uri(PackageManifestUrl.ToString().Replace(".0')", "')"))).GetAwaiter().GetResult();
                     }

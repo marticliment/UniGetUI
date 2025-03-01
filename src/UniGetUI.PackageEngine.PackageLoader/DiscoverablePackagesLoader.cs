@@ -10,8 +10,13 @@ namespace UniGetUI.PackageEngine.PackageLoader
 
         private string QUERY_TEXT = string.Empty;
 
-        public DiscoverablePackagesLoader(IEnumerable<IPackageManager> managers)
-            : base(managers, "DISCOVERABLE_PACKAGES", AllowMultiplePackageVersions: false, CheckedBydefault: false)
+        public DiscoverablePackagesLoader(IReadOnlyList<IPackageManager> managers)
+            : base(managers,
+                identifier: "DISCOVERABLE_PACKAGES",
+                AllowMultiplePackageVersions: false,
+                DisableReload: false,
+                CheckedBydefault: false,
+                RequiresInternet: true)
         {
             Instance = this;
         }
@@ -37,7 +42,7 @@ namespace UniGetUI.PackageEngine.PackageLoader
             return await Task.FromResult(true);
         }
 
-        protected override IEnumerable<IPackage> LoadPackagesFromManager(IPackageManager manager)
+        protected override IReadOnlyList<IPackage> LoadPackagesFromManager(IPackageManager manager)
         {
             string text = QUERY_TEXT;
             text = CoreTools.EnsureSafeQueryString(text);

@@ -4,6 +4,7 @@ using PhotoSauce.MagicScaler;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Core.IconEngine
 {
@@ -247,7 +248,7 @@ namespace UniGetUI.Core.IconEngine
                 if (width > MAX_SIDE || height > MAX_SIDE)
                 {
                     File.Move(cachedIconFile, $"{cachedIconFile}.copy");
-                    var image = MagicImageProcessor.BuildPipeline($"{cachedIconFile}.copy", new ProcessImageSettings()
+                    var image = MagicImageProcessor.BuildPipeline($"{cachedIconFile}.copy", new ProcessImageSettings
                     {
                         Width = MAX_SIDE,
                         Height = MAX_SIDE,
@@ -317,7 +318,7 @@ namespace UniGetUI.Core.IconEngine
         {
             try
             {
-                return File.Exists(versionPath) && File.ReadAllText(versionPath) == icon.Version;
+                return File.Exists(versionPath) && CoreTools.VersionStringToStruct(File.ReadAllText(versionPath)) >= CoreTools.VersionStringToStruct(icon.Version);
             }
             catch (Exception e)
             {
@@ -350,7 +351,9 @@ namespace UniGetUI.Core.IconEngine
             try
             {
                 foreach (string file in Directory.GetFiles(iconLocation))
+                {
                     File.Delete(file);
+                }
             }
             catch (Exception e)
             {
@@ -358,7 +361,7 @@ namespace UniGetUI.Core.IconEngine
             }
         }
 
-        public static readonly ReadOnlyDictionary<string, string> MimeToExtension = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>()
+        public static readonly ReadOnlyDictionary<string, string> MimeToExtension = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>
         {
             {"image/avif", "avif"},
             {"image/gif", "gif"},
@@ -373,7 +376,7 @@ namespace UniGetUI.Core.IconEngine
             {"image/tiff", "tif"},
         });
 
-        public static readonly ReadOnlyDictionary<string, string> ExtensionToMime = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>()
+        public static readonly ReadOnlyDictionary<string, string> ExtensionToMime = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>
         {
             {"avif", "image/avif"},
             {"gif", "image/gif"},

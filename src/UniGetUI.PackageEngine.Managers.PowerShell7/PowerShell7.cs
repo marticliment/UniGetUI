@@ -25,6 +25,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 SupportsCustomScopes = true,
                 SupportsCustomSources = true,
                 SupportsPreRelease = true,
+                CanDownloadInstaller = true,
                 SupportsCustomPackageIcons = true,
                 Sources = new SourceCapabilities
                 {
@@ -54,150 +55,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             SourcesHelper = new PowerShell7SourceHelper(this);
             OperationHelper = new PowerShell7PkgOperationHelper(this);
         }
-        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
-        {
-            Process p = new()
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = Status.ExecutablePath,
-                    Arguments = "",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8,
-                    StandardInputEncoding = new UTF8Encoding(false),
-                }
-            };
 
-            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
-
-            p.Start();
-
-            string command = """
-                function Get-MaxVersion {
-                    param (
-                        [Parameter(Mandatory, ValueFromPipeline)] [PSCustomObject] $InputObject
-                    )
-
-                    begin {
-                        $maxVersions = @{}
-                        $moduleObjects = @{}
-                    }
-
-                    process {
-                        if (-not $maxVersions.ContainsKey($InputObject.Name)) {
-                            $maxVersions[$InputObject.Name] = $InputObject.Version
-                            $moduleObjects[$InputObject.Name] = $InputObject
-                        } elseif ($InputObject.Version -gt $maxVersions[$InputObject.Name]) {
-                            $maxVersions[$InputObject.Name] = $InputObject.Version
-                            $moduleObjects[$InputObject.Name] = $InputObject
-                        }
-                    }
-
-                    end {
-                        $moduleObjects.GetEnumerator() | ForEach-Object {
-                            $_.Value
-                        }
-                    }
-                }
-
-                function Test-GalleryModuleUpdate_Legacy {
-                    param (
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [version] $Version,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Repository,
-                        [switch] $NeedUpdateOnly
-                    )
-                    process {
-                        $URLs = @{}
-                        @(Get-PSRepository).ForEach({$URLs[$_.Name] = If ($_.Uri) {$_.Uri.AbsoluteUri} Else {$_.SourceLocation}})
-                        $page = Invoke-WebRequest -Uri ($URLs[$Repository] + "/package/$Name") -UseBasicParsing -ea Ignore
-                        [version]$latest = Split-Path -Path ($page.BaseResponse.RequestMessage.RequestUri -replace "$Name." -replace ".nupkg") -Leaf
-                        $needsupdate = $Latest -gt $Version
-                        if ($needsupdate) {
-                                Write-Output($Name + "|" + $Version.ToString() + "|" + $Latest.ToString() + "|" + $Repository)
-                        }
-                    }
-                }
-
-                function Test-GalleryModuleUpdate {
-                    param (
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Name,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [version] $Version,
-                        [Parameter(Mandatory,ValueFromPipelineByPropertyName)] [string] $Repository,
-                        [switch] $NeedUpdateOnly
-                    )
-                    process {
-                        $URLs = @{}
-                        @(Get-PSRepository).ForEach({$URLs[$_.Name] = If ($_.Uri) {$_.Uri.AbsoluteUri} Else {$_.SourceLocation}})
-
-                        $packageUrl = "$($URLs[$Repository])/FindPackagesById()?id='$Name'&`$filter=IsLatestVersion"
-                        $page = Invoke-WebRequest -Uri $packageUrl -UseBasicParsing -ea Ignore
-                        $latestVersionMatch = [regex]::Match($page.Content, '<d:Version>(.*?)</d:Version>')
-                        if ($latestVersionMatch.Success) {
-                            [version]$latest = $latestVersionMatch.Groups[1].Value
-                            $needsupdate = $latest -gt $Version
-                            if ($needsupdate) {
-                                    Write-Output($Name + "|" + $Version.ToString() + "|" + $latest.ToString() + "|" + $Repository)
-                            }
-                        } else {
-                            Write-Warning("Could not parse version for package " + $Name)
-                            Test-GalleryModuleUpdate_Legacy -Name $Name -Version $Version -Repository $Repository -NeedUpdateOnly:$NeedUpdateOnly
-                        }
-                    }
-                }
-
-                Get-PSResource | Get-MaxVersion | Test-GalleryModuleUpdate
-
-
-
-                exit
-                """;
-            p.StandardInput.WriteLine(command);
-            logger.AddToStdIn(command);
-            p.StandardInput.Close();
-
-            string? line;
-            List<Package> Packages = [];
-            while ((line = p.StandardOutput.ReadLine()) is not null)
-            {
-                logger.AddToStdOut(line);
-                if (line.StartsWith(">>"))
-                {
-                    continue;
-                }
-
-                string[] elements = line.Split('|');
-                if (elements.Length < 4)
-                {
-                    continue;
-                }
-
-                for (int i = 0; i < elements.Length; i++)
-                {
-                    elements[i] = elements[i].Trim();
-                }
-
-                if (elements[1] + ".0" == elements[2] || elements[1] + ".0.0" == elements[2])
-                {
-                    continue;
-                }
-
-                Packages.Add(new Package(CoreTools.FormatAsName(elements[0]), elements[0], elements[1],
-                    elements[2], SourcesHelper.Factory.GetSourceOrDefault(elements[3]), this));
-            }
-
-            logger.AddToStdErr(p.StandardError.ReadToEnd());
-            p.WaitForExit();
-            logger.Close(p.ExitCode);
-
-            return Packages;
-        }
-
-        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+        protected override IReadOnlyList<Package> _getInstalledPackages_UnSafe()
         {
             Process p = new()
             {
@@ -274,7 +133,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = " -Version",
+                    Arguments = "-NoProfile -Version",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
