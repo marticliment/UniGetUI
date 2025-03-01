@@ -25,3 +25,15 @@ body:
       placeholder: For what would it be useful?
     validations:
       required: true
+  - type: textarea
+    attributes:
+      label: Environment details
+      placeholder: Provide details about your environment, such as operating system, browser, and version.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Additional information
+      placeholder: Provide any additional information that may help in understanding the new feature.
+    validations:
+      required: false

@@ -1,7 +1,7 @@
-name: '🐞 Report a bug or an issue'
-description: Report issues or unexpected behaviors.
-title: "[BUG] (Enter your description here)"
-labels: ["bug"]
+name: '🔒 Report a security issue'
+description: Report security vulnerabilities in UniGetUI.
+title: "[SECURITY] (Enter your description here)"
+labels: ["security"]
 assignees: marticliment
 body:
   - type: checkboxes
@@ -15,7 +15,7 @@ body:
           required: true
         - label: I have checked the [FAQ](https://github.com/marticliment/WingetUI#frequently-asked-questions) section for solutions.
           required: true
-        - label: This issue is about a bug (if it is not, please use the [correct template](https://github.com/marticliment/WingetUI/issues/new/choose)).
+        - label: This issue is about a security vulnerability (if it is not, please use the [correct template](https://github.com/marticliment/WingetUI/issues/new/choose)).
           required: true
   - type: input
     attributes:
@@ -31,8 +31,8 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: Describe your issue
-      placeholder: Explain the issue you are experiencing, providing as many details as possible.
+      label: Describe the security issue
+      placeholder: Explain the security vulnerability you are reporting, providing as many details as possible.
     validations:
       required: true
   - type: textarea
@@ -43,40 +43,8 @@ body:
       required: false
   - type: textarea
     attributes:
-      label: UniGetUI Log
-      render: "text"
-      placeholder: Paste your UniGetUI logs here. Click the button on the bottom-left corner of UniGetUI -> UniGetUI Log.
-    validations:
-      required: true
-  - type: textarea
-    attributes:
-      label: Package Managers Logs
-      render: "text"
-      placeholder: Paste your Package Manager logs here. Click the button on the bottom-left corner of UniGetUI -> Package Manager logs.
-    validations:
-      required: true
-  - type: textarea
-    attributes:
-      label: Relevant information
-      placeholder: Other relevant information about this issue. Perhaps you have some special settings enabled or any other detail that could be related.
-    validations:
-      required: false
-  - type: textarea
-    attributes:
-      label: Screenshots and videos
-      placeholder: If applicable, please post here a video or a screenshot of the issue.
-    validations:
-      required: false
-  - type: textarea
-    attributes:
       label: Environment details
       placeholder: Provide details about your environment, such as operating system, browser, and version.
-    validations:
-      required: false
-  - type: textarea
-    attributes:
-      label: Steps to reproduce
-      placeholder: Provide steps to reproduce the issue, if applicable.
     validations:
       required: false
   - type: textarea

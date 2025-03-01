@@ -1,7 +1,7 @@
-name: '🧩 Report an issue with Widgets for UniGetUI'
-description: Report issues or unexpected behaviors with Widgets for UniGetUI.
-title: "[WIDGETS BUG] (Enter your description here)"
-labels: ["bug", "widgets-for-unigetui"]
+name: '🚀 Report a performance issue'
+description: Report issues related to the performance of the application.
+title: "[PERFORMANCE] (Enter your description here)"
+labels: ["performance"]
 assignees: marticliment
 body:
   - type: checkboxes
@@ -15,18 +15,12 @@ body:
           required: true
         - label: I have checked the [FAQ](https://github.com/marticliment/WingetUI#frequently-asked-questions) section for solutions.
           required: true
-        - label: This issue is about a bug (if it is not, please use the [correct template](https://github.com/marticliment/WingetUI/issues/new/choose)).
+        - label: This issue is about a performance problem (if it is not, please use the [correct template](https://github.com/marticliment/WingetUI/issues/new/choose)).
           required: true
   - type: input
     attributes:
       label: UniGetUI Version
       placeholder: 'x.y.z (e.g., 3.1.0)'
-    validations:
-      required: true
-  - type: input
-    attributes:
-      label: Widgets for UniGetUI Version
-      placeholder: 'x.y.z.w (e.g., 0.6.1.0)'
     validations:
       required: true
   - type: input
@@ -37,8 +31,8 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: Describe your issue
-      placeholder: Explain the issue you are experiencing, providing as many details as possible.
+      label: Describe the performance issue
+      placeholder: Explain the performance issue you are experiencing, providing as many details as possible.
     validations:
       required: true
   - type: textarea
@@ -70,7 +64,7 @@ body:
   - type: textarea
     attributes:
       label: Screenshots and videos
-      placeholder: If applicable, please post a video or a screenshot of the issue here.
+      placeholder: If applicable, please post here a video or a screenshot of the issue.
     validations:
       required: false
   - type: textarea

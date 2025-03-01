@@ -34,3 +34,15 @@ body:
       placeholder: Do you have any other valuable information about this issue?
     validations:
       required: false
+  - type: textarea
+    attributes:
+      label: Environment details
+      placeholder: Provide details about your environment, such as operating system, browser, and version.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Additional information
+      placeholder: Provide any additional information that may help in resolving the issue.
+    validations:
+      required: false
