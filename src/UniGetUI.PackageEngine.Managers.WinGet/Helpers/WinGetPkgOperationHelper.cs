@@ -182,12 +182,6 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             return OperationVeredict.AutoRetry;
         }
 
-        if (uintCode == 0x8A150014 && operation is OperationType.Uninstall)
-        {
-            // Application not found
-            return OperationVeredict.Success;
-        }
-
         return OperationVeredict.Failure;
     }
 
