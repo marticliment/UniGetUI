@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Controls.OperationWidgets;
@@ -19,7 +14,7 @@ public class OperationBadge
         Tooltip = tooltip;
         Icon = icon;
         PrimaryBanner = primaryBanner;
-        if(secondaryBanner is null || secondaryBanner == String.Empty)
+        if (secondaryBanner is null || secondaryBanner == String.Empty)
         {
             SecondaryBannerVisible = false;
             SecondaryBanner = "";

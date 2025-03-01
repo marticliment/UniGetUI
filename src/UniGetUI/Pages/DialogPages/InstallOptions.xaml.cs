@@ -21,6 +21,7 @@ namespace UniGetUI.Interface.Dialogs
         public IPackage Package;
         public event EventHandler? Close;
         private readonly OperationType Operation;
+        private readonly string packageInstallLocation;
 
         public InstallOptionsPage(IPackage package, SerializableInstallationOptions_v1 options) : this(package, OperationType.None, options) { }
         public InstallOptionsPage(IPackage package, OperationType operation, SerializableInstallationOptions_v1 options)
@@ -29,6 +30,8 @@ namespace UniGetUI.Interface.Dialogs
             InitializeComponent();
             Operation = operation;
             Options = options;
+
+            packageInstallLocation = Package.Manager.DetailsHelper.GetInstallLocation(package) ?? CoreTools.Translate("Unset or unknown");
 
             AdminCheckBox.IsChecked = Options.RunAsAdministrator;
             AdminCheckBox.IsEnabled = Package.Manager.Capabilities.CanRunAsAdmin;
@@ -114,9 +117,11 @@ namespace UniGetUI.Interface.Dialogs
 
             ResetDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
             SelectDir.IsEnabled = Package.Manager.Capabilities.SupportsCustomLocations;
-            CustomInstallLocation.Text = Options.CustomInstallLocation;
 
-            if (Options.CustomParameters.Any())
+            if (Options.CustomInstallLocation == "") CustomInstallLocation.Text = packageInstallLocation;
+            else CustomInstallLocation.Text = Options.CustomInstallLocation;
+
+            if (Options.CustomParameters.Count != 0)
             {
                 CustomParameters.Text = string.Join(' ', Options.CustomParameters);
             }
@@ -134,7 +139,7 @@ namespace UniGetUI.Interface.Dialogs
             IgnoreUpdatesCheckbox.IsChecked = await Package.HasUpdatesIgnoredAsync();
             VersionComboBox.IsEnabled = false;
 
-            IEnumerable<string> versions = await Task.Run(() => Package.Manager.DetailsHelper.GetVersions(Package));
+            IReadOnlyList<string> versions = await Task.Run(() => Package.Manager.DetailsHelper.GetVersions(Package));
             foreach (string ver in versions)
             {
                 VersionComboBox.Items.Add(ver);
@@ -176,7 +181,9 @@ namespace UniGetUI.Interface.Dialogs
                 Options.InstallationScope = "";
             }
 
-            Options.CustomInstallLocation = CustomInstallLocation.Text;
+            if (CustomInstallLocation.Text == packageInstallLocation) Options.CustomInstallLocation = "";
+            else Options.CustomInstallLocation = CustomInstallLocation.Text;
+
             Options.CustomParameters = CustomParameters.Text.Split(' ').ToList();
             Options.PreRelease = VersionComboBox.SelectedValue.ToString() == CoreTools.Translate("PreRelease");
 
@@ -216,7 +223,7 @@ namespace UniGetUI.Interface.Dialogs
 
         private void ResetDir_Click(object sender, RoutedEventArgs e)
         {
-            CustomInstallLocation.Text = "";
+            CustomInstallLocation.Text = packageInstallLocation;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

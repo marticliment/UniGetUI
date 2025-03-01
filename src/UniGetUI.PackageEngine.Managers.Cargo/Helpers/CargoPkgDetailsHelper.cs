@@ -38,7 +38,7 @@ internal sealed class CargoPkgDetailsHelper(Cargo manager) : BasePkgDetailsHelpe
         var categories = manifest.categories?.Select(c => c.category);
         details.Tags = [.. keywords, .. categories];
 
-        var versionData = manifest.versions.Where((v) => v.num == details.Package.Version).First();
+        var versionData = manifest.versions.Where((v) => v.num == details.Package.VersionString).First();
 
         details.Author = versionData.published_by?.name;
         details.License = versionData.license;
@@ -60,7 +60,7 @@ internal sealed class CargoPkgDetailsHelper(Cargo manager) : BasePkgDetailsHelpe
         throw new NotImplementedException();
     }
 
-    protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
+    protected override IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package)
     {
         throw new NotImplementedException();
     }
@@ -70,7 +70,7 @@ internal sealed class CargoPkgDetailsHelper(Cargo manager) : BasePkgDetailsHelpe
         return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cargo", "bin");
     }
 
-    protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
+    protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
     {
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(Enums.LoggableTaskType.LoadPackageVersions);
         try

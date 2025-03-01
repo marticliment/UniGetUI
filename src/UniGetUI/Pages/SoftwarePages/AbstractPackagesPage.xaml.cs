@@ -9,12 +9,12 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
 using Windows.UI.Core;
 using UniGetUI.Interface.Pages;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.Pages.DialogPages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -94,7 +94,7 @@ namespace UniGetUI.Interface
         protected readonly string NoPackages_SubtitleText_Base;
         protected readonly string NoMatches_BackgroundText;
 
-        private bool PaneIsAnimated = false;
+        private bool PaneIsAnimated;
 
         protected Func<int, int, string> FoundPackages_SubtitleText_Base = (a, b) => CoreTools.Translate("{0} packages were found, {1} of which match the specified filters.", a, b);
 
@@ -189,7 +189,7 @@ namespace UniGetUI.Interface
                 }
 
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
-                if(!DISABLE_FILTER_ON_QUERY_CHANGE)
+                if (!DISABLE_FILTER_ON_QUERY_CHANGE)
                     FilterPackages();
             };
 
@@ -224,7 +224,7 @@ namespace UniGetUI.Interface
 
                 MegaQueryBlockGrid.Visibility = Visibility.Collapsed;
                 QueryBlock.Text = MegaQueryBlock.Text.Trim();
-                if(!DISABLE_FILTER_ON_QUERY_CHANGE)
+                if (!DISABLE_FILTER_ON_QUERY_CHANGE)
                     FilterPackages();
             };
 
@@ -490,18 +490,20 @@ namespace UniGetUI.Interface
             ));
         }
 
-        public void PackageList_KeyDown(object sender, KeyRoutedEventArgs e)
+        public void PackageList_CharacterReceived(object sender, CharacterReceivedRoutedEventArgs e)
         {
-            string key = ((char)e.Key).ToString().ToLower();
-            if ("abcdefghijklmnopqrsztuvwxyz1234567890".IndexOf(key) > -1)
+            char ch = Char.ToLower(e.Character);
+
+            if (('a' <= ch && ch <= 'z')
+                || ('0' <= ch && ch <= '9'))
             {
                 if (Environment.TickCount - LastKeyDown > QUERY_SEPARATION_TIME)
                 {
-                    TypeQuery = key;
+                    TypeQuery = ch.ToString();
                 }
                 else
                 {
-                    TypeQuery += key;
+                    TypeQuery += ch.ToString();
                 }
 
                 int IdQueryIndex = -1;
@@ -602,7 +604,9 @@ namespace UniGetUI.Interface
                         if (manager.Capabilities.SupportsCustomSources)
                         {
                             foreach (IManagerSource source in manager.SourcesHelper.Factory.GetAvailableSources())
+                            {
                                 if (!VisibleSources.Contains(source)) VisibleSources.Add(source);
+                            }
                         }
                     }
                 }
@@ -695,7 +699,7 @@ namespace UniGetUI.Interface
                         PackageList.Select(i);
                         PackageList.ScrollView?.ScrollTo(0, Math.Max(0, (i - 3) * 39), new ScrollingScrollOptions
                         (
-                            ScrollingAnimationMode.Enabled,
+                            ScrollingAnimationMode.Disabled,
                             ScrollingSnapPointsMode.Ignore
                         ));
                         break;
@@ -785,21 +789,21 @@ namespace UniGetUI.Interface
             FilterPackages();
         }
 
-        protected void ShowDetailsForPackage(IPackage? package)
+        protected void ShowDetailsForPackage(IPackage? package, TEL_InstallReferral referral)
         {
             if (package is null || package.Source.IsVirtualManager || package is InvalidImportedPackage)
             {
                 return;
             }
 
-            DialogHelper.ShowPackageDetails(package, PAGE_ROLE);
+            DialogHelper.ShowPackageDetails(package, PAGE_ROLE, referral);
         }
 
         protected void OpenPackageInstallLocation(IPackage? package)
         {
             string? path = package?.Manager.DetailsHelper.GetInstallLocation(package);
 
-            if(path is not null)
+            if (path is not null)
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = path,
@@ -838,7 +842,7 @@ namespace UniGetUI.Interface
                 return;
 
 
-            if (e.NewSize.Width == ((int)(e.NewSize.Width / 10)) || e.NewSize.Width == 25)
+            if ((int)e.NewSize.Width == (int)(e.NewSize.Width / 10) || (int)e.NewSize.Width == 25)
             {
                 return;
             }
@@ -863,15 +867,15 @@ namespace UniGetUI.Interface
 
             if (PAGE_ROLE == OperationType.Install)
             {
-                MainApp.Operations.Add((new InstallPackageOperation(package)));
+                _ = MainApp.Operations.Install(package, TEL_InstallReferral.DIRECT_SEARCH);
             }
             else if (PAGE_ROLE == OperationType.Update)
             {
-                MainApp.Operations.Add((new UpdatePackageOperation(package)));
+                _ = MainApp.Operations.Update(package);
             }
             else // if (PageRole == OperationType.Uninstall)
             {
-                MainApp.Operations.Add((new UninstallPackageOperation(package)));
+                MainApp.Operations.ConfirmAndUninstall(package);
             }
         }
 
@@ -892,7 +896,11 @@ namespace UniGetUI.Interface
             if (sender is PackageItemContainer container && container.Package is not null)
             {
                 PackageList.Select(container.Wrapper.Index);
-                ShowDetailsForPackage(container.Package);
+
+                TEL_InstallReferral referral = TEL_InstallReferral.ALREADY_INSTALLED;
+                if (PAGE_NAME == "Bundles") referral = TEL_InstallReferral.FROM_BUNDLE;
+                if (PAGE_NAME == "Discover") referral = TEL_InstallReferral.DIRECT_SEARCH;
+                ShowDetailsForPackage(container.Package, referral);
             }
         }
 
@@ -909,18 +917,23 @@ namespace UniGetUI.Interface
             {
                 if (IS_ALT_PRESSED)
                 {
-                    if(!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
+                    if (!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
                         ShowInstallationOptionsForPackage(package);
                 }
                 else if (IS_CONTROL_PRESSED)
                 {
-                    if(package is not InvalidImportedPackage)
+                    if (package is not InvalidImportedPackage)
                         PerformMainPackageAction(package);
                 }
                 else
                 {
-                    if(!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
-                        ShowDetailsForPackage(package);
+                    if (!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
+                    {
+                        TEL_InstallReferral referral = TEL_InstallReferral.ALREADY_INSTALLED;
+                        if (PAGE_NAME == "Bundles") referral = TEL_InstallReferral.FROM_BUNDLE;
+                        if (PAGE_NAME == "Discover") referral = TEL_InstallReferral.DIRECT_SEARCH;
+                        ShowDetailsForPackage(package, referral);
+                    }
                 }
             }
             else if (e.Key == VirtualKey.Space && package is not null)
@@ -1039,7 +1052,7 @@ namespace UniGetUI.Interface
             foreach (var wrapper in PackagesWithoutIcon)
             {
                 var icon = await Task.Run(wrapper.Package.GetIconUrlIfAny);
-                if(icon is not null) wrapper.PackageIcon = icon;
+                if (icon is not null) wrapper.PackageIcon = icon;
             }
 
             FilterPackages();

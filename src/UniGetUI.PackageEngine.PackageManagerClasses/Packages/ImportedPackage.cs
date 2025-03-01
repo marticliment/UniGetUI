@@ -15,16 +15,15 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         private readonly string _version;
 
-        public override string Version
+        public override string VersionString
         {
             get
             {
                 if (installation_options is null)
                     return _version;
-                else if (installation_options.Version != "")
+                if (installation_options.Version != "")
                     return installation_options.Version;
-                else
-                    return CoreTools.Translate("Latest");
+                return CoreTools.Translate("Latest");
             }
         }
 
@@ -66,7 +65,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
         public void FirePackageVersionChangedEvent()
         {
-            OnPropertyChanged(nameof(Version));
+            OnPropertyChanged(nameof(VersionString));
         }
 
     }

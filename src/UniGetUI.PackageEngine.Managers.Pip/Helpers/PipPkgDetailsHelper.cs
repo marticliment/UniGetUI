@@ -40,7 +40,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
                 if (info["classifiers"] is JsonArray classifiers)
                 {
-                    List<string> Tags = new();
+                    List<string> Tags = [];
                     foreach (string? line in classifiers)
                     {
                         if (line?.Contains("License ::") ?? false)
@@ -83,7 +83,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             throw new NotImplementedException();
         }
 
-        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
+        protected override IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
@@ -94,7 +94,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return Directory.Exists(full_path) ? full_path : Path.GetDirectoryName(full_path);
         }
 
-        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
+        protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             Process p = new()
             {

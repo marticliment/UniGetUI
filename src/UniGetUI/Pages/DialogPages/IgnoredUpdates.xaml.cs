@@ -20,7 +20,7 @@ namespace UniGetUI.Interface
     public sealed partial class IgnoredUpdatesManager : Page
     {
         public event EventHandler? Close;
-        private readonly ObservableCollection<IgnoredPackageEntry> ignoredPackages = new ObservableCollection<IgnoredPackageEntry>();
+        private readonly ObservableCollection<IgnoredPackageEntry> ignoredPackages = [];
 
         public IgnoredUpdatesManager()
         {
@@ -106,12 +106,12 @@ namespace UniGetUI.Interface
                 Version = version;
             }
 
-            string CurrentVersion = PEInterface.InstalledPackagesLoader.GetPackageForId(id)?.Version ?? "Unknown";
+            string CurrentVersion = PEInterface.InstalledPackagesLoader.GetPackageForId(id)?.VersionString ?? "Unknown";
 
             if (PEInterface.UpgradablePackagesLoader.IgnoredPackages.TryGetValue(Id, out IPackage? package)
-                && package.NewVersion != package.Version)
+                && package.NewVersionString != package.VersionString)
             {
-                NewVersion = CurrentVersion + " \u27a4 " + package.NewVersion;
+                NewVersion = CurrentVersion + " \u27a4 " + package.NewVersionString;
             }
             else if (CurrentVersion != "Unknown")
             {
@@ -133,7 +133,7 @@ namespace UniGetUI.Interface
 
             // If possible, add the package to the software updates tab again
             if (PEInterface.UpgradablePackagesLoader.IgnoredPackages.TryRemove(Id, out IPackage? nativePackage)
-                && nativePackage.NewVersion != nativePackage.Version)
+                && nativePackage.NewVersionString != nativePackage.VersionString)
             {
                 PEInterface.UpgradablePackagesLoader.AddForeign(nativePackage);
             }

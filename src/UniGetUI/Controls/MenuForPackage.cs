@@ -22,8 +22,7 @@ namespace UniGetUI.Interface.Widgets
         {
             set
             {
-                var icon = new LocalIcon(value);
-                icon.FontSize = 24;
+                var icon = new LocalIcon(value) { FontSize = 24 };
                 Icon = icon;
             }
         }

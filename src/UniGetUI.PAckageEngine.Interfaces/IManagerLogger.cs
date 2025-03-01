@@ -4,32 +4,32 @@ using UniGetUI.PackageEngine.Enums;
 namespace UniGetUI.PackageEngine.ManagerClasses.Classes;
 public interface IManagerLogger
 {
-    public IEnumerable<ITaskLogger> Operations { get; }
+    public IReadOnlyList<ITaskLogger> Operations { get; }
     INativeTaskLogger CreateNew(LoggableTaskType type);
     IProcessTaskLogger CreateNew(LoggableTaskType type, Process process);
 }
 
 public interface ITaskLogger
 {
-    IEnumerable<string> AsColoredString(bool verbose = false);
+    IReadOnlyList<string> AsColoredString(bool verbose = false);
     void Close(int returnCode);
 }
 
 public interface INativeTaskLogger : ITaskLogger
 {
     void Error(Exception? e);
-    void Error(IEnumerable<string> lines);
+    void Error(IReadOnlyList<string> lines);
     void Error(string? line);
-    void Log(IEnumerable<string> lines);
+    void Log(IReadOnlyList<string> lines);
     void Log(string? line);
 }
 
 public interface IProcessTaskLogger : ITaskLogger
 {
-    void AddToStdErr(IEnumerable<string> lines);
+    void AddToStdErr(IReadOnlyList<string> lines);
     void AddToStdErr(string? line);
-    void AddToStdIn(IEnumerable<string> lines);
+    void AddToStdIn(IReadOnlyList<string> lines);
     void AddToStdIn(string? line);
-    void AddToStdOut(IEnumerable<string> lines);
+    void AddToStdOut(IReadOnlyList<string> lines);
     void AddToStdOut(string? line);
 }

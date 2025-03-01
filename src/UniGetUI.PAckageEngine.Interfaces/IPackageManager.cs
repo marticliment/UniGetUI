@@ -19,7 +19,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         public IMultiSourceHelper SourcesHelper { get; }
         public IPackageDetailsHelper DetailsHelper { get; }
         public IPackageOperationHelper OperationHelper { get; }
-        public IEnumerable<ManagerDependency> Dependencies { get; }
+        public IReadOnlyList<ManagerDependency> Dependencies { get; }
 
         /// <summary>
         /// Initializes the Package Manager (asynchronously). Must be run before using any other method of the manager.
@@ -40,19 +40,19 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// Returns an array of Package objects that the manager lists for the given query. Depending on the manager, the list may
         /// also include similar results. This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public IEnumerable<IPackage> FindPackages(string query);
+        public IReadOnlyList<IPackage> FindPackages(string query);
 
         /// <summary>
         /// Returns an array of UpgradablePackage objects that represent the available updates reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public IEnumerable<IPackage> GetAvailableUpdates();
+        public IReadOnlyList<IPackage> GetAvailableUpdates();
 
         /// <summary>
         /// Returns an array of Package objects that represent the installed reported by the manager.
         /// This method is fail-safe and will return an empty array if an error occurs.
         /// </summary>
-        public IEnumerable<IPackage> GetInstalledPackages();
+        public IReadOnlyList<IPackage> GetInstalledPackages();
 
         /// <summary>
         /// Refreshes the Package Manager sources/indexes

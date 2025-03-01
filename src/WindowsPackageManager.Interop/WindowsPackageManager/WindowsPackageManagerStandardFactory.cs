@@ -21,7 +21,7 @@ public class WindowsPackageManagerStandardFactory : WindowsPackageManagerFactory
         try
         {
             CLSCTX clsctx = CLSCTX.CLSCTX_LOCAL_SERVER;
-            if(_allowLowerTrustRegistration)
+            if (_allowLowerTrustRegistration)
             {
                 clsctx |= CLSCTX.CLSCTX_ALLOW_LOWER_TRUST_REGISTRATION;
             }

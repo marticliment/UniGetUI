@@ -23,7 +23,7 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// </summary>
         /// <param name="package">The package from which to load its versions</param>
         /// <returns>An array of stings containing the found versions, an empty array if none.</returns>
-        public IEnumerable<string> GetVersions(IPackage package);
+        public IReadOnlyList<string> GetVersions(IPackage package);
 
         /// <summary>
         /// Returns an Uri pointing to the icon of this package.
@@ -38,7 +38,7 @@ namespace UniGetUI.PackageEngine.Interfaces.ManagerProviders
         /// </summary>
         /// <param name="package">The package from which to load the screenshots</param>
         /// <returns>An array with valid URIs to the screenshots</returns>
-        public IEnumerable<Uri> GetScreenshots(IPackage package);
+        public IReadOnlyList<Uri> GetScreenshots(IPackage package);
 
         /// <summary>
         /// Returns the location where the package is installed, or null if the location cannot be loaded.

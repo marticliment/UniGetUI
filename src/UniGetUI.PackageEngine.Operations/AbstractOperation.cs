@@ -62,7 +62,7 @@ public abstract class AbstractOperation : IDisposable
     }
 
     public readonly OperationMetadata Metadata = new();
-    public static readonly List<AbstractOperation> OperationQueue = new();
+    public static readonly List<AbstractOperation> OperationQueue = [];
 
     public event EventHandler<OperationStatus>? StatusChanged;
     public event EventHandler<EventArgs>? CancelRequested;
@@ -99,13 +99,13 @@ public abstract class AbstractOperation : IDisposable
 
     public enum LineType
     {
-        OperationInfo,
-        Progress,
-        StdOUT,
-        StdERR
+        VerboseDetails,
+        ProgressIndicator,
+        Information,
+        Error
     }
 
-    private List<(string, LineType)> LogList = new();
+    private readonly List<(string, LineType)> LogList = [];
     private OperationStatus _status = OperationStatus.InQueue;
     public OperationStatus Status
     {
@@ -117,15 +117,23 @@ public abstract class AbstractOperation : IDisposable
     protected bool QUEUE_ENABLED;
     protected bool FORCE_HOLD_QUEUE;
 
-    public AbstractOperation(bool queue_enabled)
+    private readonly AbstractOperation? requirement;
+
+    public AbstractOperation(bool queue_enabled, AbstractOperation? req)
     {
         QUEUE_ENABLED = queue_enabled;
-        Status = OperationStatus.InQueue;
-        Line("Please wait...", LineType.Progress);
-
-        if(int.TryParse(Settings.GetValue("ParallelOperationCount"), out int _maxPps))
+        if (req is not null)
         {
-            MAX_OPERATIONS = _maxPps; 
+            requirement = req;
+            QUEUE_ENABLED = false;
+        }
+
+        Status = OperationStatus.InQueue;
+        Line("Please wait...", LineType.ProgressIndicator);
+
+        if (int.TryParse(Settings.GetValue("ParallelOperationCount"), out int _maxPps))
+        {
+            MAX_OPERATIONS = _maxPps;
             Logger.Debug($"Parallel operation limit set to {MAX_OPERATIONS}");
         }
         else
@@ -161,7 +169,7 @@ public abstract class AbstractOperation : IDisposable
 
     protected void Line(string line, LineType type)
     {
-        if(type != LineType.Progress) LogList.Add((line, type));
+        if (type != LineType.ProgressIndicator) LogList.Add((line, type));
         LogLineAdded?.Invoke(this, (line, type));
     }
 
@@ -189,15 +197,27 @@ public abstract class AbstractOperation : IDisposable
                 throw new InvalidOperationException("This operation was already on the queue");
 
             Status = OperationStatus.InQueue;
-            Line(Metadata.OperationInformation, LineType.OperationInfo);
-            Line(Metadata.Status, LineType.Progress);
+            Line(Metadata.OperationInformation, LineType.VerboseDetails);
+            Line(Metadata.Status, LineType.ProgressIndicator);
 
-            // BEGIN QUEUE HANDLER
-            if (QUEUE_ENABLED)
-            {
+            Enqueued?.Invoke(this, EventArgs.Empty);
+
+            if (requirement != null)
+            {   // OPERATION REQUIREMENT HANDLER
+                Logger.Info($"Operation {Metadata.Title} is waiting for requirement operation {requirement.Metadata.Title}");
+                Line(CoreTools.Translate("Waiting for {0} to complete...", requirement.Metadata.Title), LineType.ProgressIndicator);
+                {
+                    while (requirement.Status is OperationStatus.Running or OperationStatus.InQueue)
+                    {
+                        await Task.Delay(100);
+                        if (SKIP_QUEUE) break;
+                    }
+                }
+            }
+            else if (QUEUE_ENABLED)
+            {   // QUEUE HANDLER
                 SKIP_QUEUE = false;
                 OperationQueue.Add(this);
-                Enqueued?.Invoke(this, EventArgs.Empty);
                 int lastPos = -2;
 
                 while (FORCE_HOLD_QUEUE || (OperationQueue.IndexOf(this) >= MAX_OPERATIONS && !SKIP_QUEUE))
@@ -210,7 +230,7 @@ public abstract class AbstractOperation : IDisposable
                     if (pos != lastPos)
                     {
                         lastPos = pos;
-                        Line(CoreTools.Translate("Operation on queue (position {0})...", pos), LineType.Progress);
+                        Line(CoreTools.Translate("Operation on queue (position {0})...", pos), LineType.ProgressIndicator);
                     }
 
                     await Task.Delay(100);
@@ -220,12 +240,13 @@ public abstract class AbstractOperation : IDisposable
 
             // BEGIN ACTUAL OPERATION
             OperationVeredict result;
-            Line(CoreTools.Translate("Starting operation..."), LineType.Progress);
-            if(Status is OperationStatus.InQueue) Status = OperationStatus.Running;
-            OperationStarting?.Invoke(this, EventArgs.Empty);
+            Line(CoreTools.Translate("Starting operation..."), LineType.ProgressIndicator);
+            if (Status is OperationStatus.InQueue) Status = OperationStatus.Running;
 
             do
             {
+                OperationStarting?.Invoke(this, EventArgs.Empty);
+
                 try
                 {
                     // Check if the operation was canceled
@@ -233,6 +254,23 @@ public abstract class AbstractOperation : IDisposable
                     {
                         result = OperationVeredict.Canceled;
                         break;
+                    }
+
+                    if (requirement is not null)
+                    {
+                        if (requirement.Status is OperationStatus.Failed)
+                        {
+                            Line(CoreTools.Translate("{0} has failed, that was a requirement for {1} to be run", requirement.Metadata.Title, Metadata.Title), LineType.Error);
+                            result = OperationVeredict.Failure;
+                            break;
+                        }
+
+                        if (requirement.Status is OperationStatus.Canceled)
+                        {
+                            Line(CoreTools.Translate("The user has canceled {0}, that was a requirement for {1} to be run", requirement.Metadata.Title, Metadata.Title), LineType.Error);
+                            result = OperationVeredict.Canceled;
+                            break;
+                        }
                     }
 
                     Task<OperationVeredict> op = PerformOperation();
@@ -245,11 +283,13 @@ public abstract class AbstractOperation : IDisposable
                 {
                     result = OperationVeredict.Failure;
                     Logger.Error(e);
-                    foreach (string l in e.ToString().Split("\n")) Line(l, LineType.StdERR);
+                    foreach (string l in e.ToString().Split("\n"))
+                    {
+                        Line(l, LineType.Error);
+                    }
                 }
             } while (result == OperationVeredict.AutoRetry);
 
-            OperationFinished?.Invoke(this, EventArgs.Empty);
 
             while (OperationQueue.Remove(this));
             // END OPERATION
@@ -258,27 +298,36 @@ public abstract class AbstractOperation : IDisposable
             {
                 Status = OperationStatus.Succeeded;
                 OperationSucceeded?.Invoke(this, EventArgs.Empty);
-                Line(Metadata.SuccessMessage, LineType.StdOUT);
+                OperationFinished?.Invoke(this, EventArgs.Empty);
+                Line(Metadata.SuccessMessage, LineType.Information);
             }
             else if (result == OperationVeredict.Failure)
             {
                 Status = OperationStatus.Failed;
                 OperationFailed?.Invoke(this, EventArgs.Empty);
-                Line(Metadata.FailureMessage, LineType.StdERR);
+                OperationFinished?.Invoke(this, EventArgs.Empty);
+                Line(Metadata.FailureMessage, LineType.Error);
                 Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"),
-                    LineType.Progress);
+                    LineType.ProgressIndicator);
             }
             else if (result == OperationVeredict.Canceled)
             {
                 Status = OperationStatus.Canceled;
-                Line(CoreTools.Translate("Operation canceled by user"), LineType.StdERR);
+                OperationFinished?.Invoke(this, EventArgs.Empty);
+                Line(CoreTools.Translate("Operation canceled by user"), LineType.Error);
+            }
+            else
+            {
+                throw new InvalidCastException();
             }
         }
         catch (Exception ex)
         {
-            Line("An internal error occurred:", LineType.StdERR);
+            Line("An internal error occurred:", LineType.Error);
             foreach (var line in ex.ToString().Split("\n"))
-                Line(line, LineType.StdERR);
+            {
+                Line(line, LineType.Error);
+            }
 
             while (OperationQueue.Remove(this)) ;
 
@@ -290,14 +339,16 @@ public abstract class AbstractOperation : IDisposable
             }
             catch (Exception e2)
             {
-                Line("An internal error occurred while handling an internal error:", LineType.StdERR);
+                Line("An internal error occurred while handling an internal error:", LineType.Error);
                 foreach (var line in e2.ToString().Split("\n"))
-                    Line(line, LineType.StdERR);
+                {
+                    Line(line, LineType.Error);
+                }
             }
 
-            Line(Metadata.FailureMessage, LineType.StdERR);
+            Line(Metadata.FailureMessage, LineType.Error);
             Line(Metadata.FailureMessage + " - " + CoreTools.Translate("Click here for more details"),
-                LineType.Progress);
+                LineType.ProgressIndicator);
         }
     }
 
@@ -338,10 +389,10 @@ public abstract class AbstractOperation : IDisposable
             throw new InvalidOperationException("We weren't supposed to reach this, weren't we?");
 
         ApplyRetryAction(retryMode);
-        Line($"", LineType.OperationInfo);
-        Line($"-----------------------", LineType.OperationInfo);
-        Line($"Retrying operation with RetryMode={retryMode}", LineType.OperationInfo);
-        Line($"", LineType.OperationInfo);
+        Line($"", LineType.VerboseDetails);
+        Line($"-----------------------", LineType.VerboseDetails);
+        Line($"Retrying operation with RetryMode={retryMode}", LineType.VerboseDetails);
+        Line($"", LineType.VerboseDetails);
         if (Status is OperationStatus.Running or OperationStatus.InQueue) return;
         _ = MainThread();
     }

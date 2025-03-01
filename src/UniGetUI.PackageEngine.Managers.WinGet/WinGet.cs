@@ -40,6 +40,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 CanSkipIntegrityChecks = true,
                 CanRunInteractively = true,
                 SupportsCustomVersions = true,
+                CanDownloadInstaller = true,
                 SupportsCustomArchitectures = true,
                 SupportedCustomArchitectures = [Architecture.X86, Architecture.X64, Architecture.Arm64],
                 SupportsCustomScopes = true,
@@ -84,17 +85,17 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             MicrosoftStoreSource = new(this, "Microsoft Store", IconType.MsStore);
         }
 
-        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
+        protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
         {
             return WinGetHelper.Instance.FindPackages_UnSafe(query);
         }
 
-        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
+        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
             return WinGetHelper.Instance.GetAvailableUpdates_UnSafe();
         }
 
-        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+        protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
         {
             try
             {
@@ -116,44 +117,42 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 return MicrosoftStoreSource;
             }
-            else
+
+            string MeaningfulId = IdPieces[^1];
+
+            // Fast Local PC Check
+            if (MeaningfulId[0] == '{')
             {
-                string MeaningfulId = IdPieces[^1];
-
-                // Fast Local PC Check
-                if (MeaningfulId[0] == '{')
-                {
-                    return LocalPcSource;
-                }
-
-                // Check if source is android
-                if(MeaningfulId.Count(x => x == '.') >= 2 && MeaningfulId.All(c => (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '.' || c == '…'))
-                {
-                    return AndroidSubsystemSource;
-                }
-
-                // Check if source is Steam
-                if (MeaningfulId == "Steam" || MeaningfulId.StartsWith("Steam App"))
-                {
-                    return SteamSource;
-                }
-
-                // Check if source is Ubisoft Connect
-                if (MeaningfulId == "Uplay" || MeaningfulId.StartsWith("Uplay Install"))
-                {
-                    return UbisoftConnectSource;
-                }
-
-                // Check if source is GOG
-                if (MeaningfulId.EndsWith("_is1") &&
-                    MeaningfulId.Replace("_is1", "").All(c => (c >= '0' && c <= '9')))
-                {
-                    return GOGSource;
-                }
-
-                // Otherwise they are Local PC
                 return LocalPcSource;
             }
+
+            // Check if source is android
+            if (MeaningfulId.Count(x => x == '.') >= 2 && MeaningfulId.All(c => (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '.' || c == '…'))
+            {
+                return AndroidSubsystemSource;
+            }
+
+            // Check if source is Steam
+            if (MeaningfulId == "Steam" || MeaningfulId.StartsWith("Steam App"))
+            {
+                return SteamSource;
+            }
+
+            // Check if source is Ubisoft Connect
+            if (MeaningfulId == "Uplay" || MeaningfulId.StartsWith("Uplay Install"))
+            {
+                return UbisoftConnectSource;
+            }
+
+            // Check if source is GOG
+            if (MeaningfulId.EndsWith("_is1") &&
+                MeaningfulId.Replace("_is1", "").All(c => (c >= '0' && c <= '9')))
+            {
+                return GOGSource;
+            }
+
+            // Otherwise they are Local PC
+            return LocalPcSource;
         }
 
         protected override ManagerStatus LoadManager()
@@ -197,6 +196,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     StandardErrorEncoding = Encoding.UTF8
                 }
             };
+
+            if (CoreTools.IsAdministrator())
+            {
+                string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+                process.StartInfo.Environment["TEMP"] = WinGetTemp;
+                process.StartInfo.Environment["TMP"] = WinGetTemp;
+            }
+
             process.Start();
             status.Version = $"{(FORCE_BUNDLED ? "Bundled" : "System")} WinGet CLI Version: {process.StandardOutput.ReadToEnd().Trim()}";
             string error = process.StandardError.ReadToEnd();
@@ -258,8 +265,6 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             }
         }
 
-
-
         public override void RefreshPackageIndexes()
         {
             Process p = new()
@@ -278,6 +283,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             };
 
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+
+            if (CoreTools.IsAdministrator())
+            {
+                string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+                logger.AddToStdErr($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+                p.StartInfo.Environment["TEMP"] = WinGetTemp;
+                p.StartInfo.Environment["TMP"] = WinGetTemp;
+            }
 
             p.Start();
             logger.AddToStdOut(p.StandardOutput.ReadToEnd());
