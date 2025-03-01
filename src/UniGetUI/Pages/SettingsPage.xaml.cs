@@ -166,9 +166,16 @@ namespace UniGetUI.Interface
                 _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
             };
 
+            CheckboxCard WinGet_HideNonApplicableUpdates = new()
+            {
+                Text = CoreTools.Translate("Add updates that fail with a 'no applicable update found' to the ignored updates list"),
+                SettingName = "IgnoreUpdatesNotApplicable"
+            };
+
             ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_EnableTroubleshooter);
             ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_ResetWindowsIPackageManager);
             ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_UseBundled);
+            ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_HideNonApplicableUpdates);
 
             // ----------------------------------------------------------------------------------------
 

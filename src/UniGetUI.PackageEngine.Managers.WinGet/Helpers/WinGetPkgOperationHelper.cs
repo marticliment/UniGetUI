@@ -150,7 +150,8 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
 
         if (uintCode == 0x8A15002B)
         {
-            IgnoredUpdatesDatabase.Add(IgnoredUpdatesDatabase.GetIgnoredIdForPackage(package), package.Version);
+            if (Settings.Get("IgnoreUpdatesNotApplicable"))
+                IgnoredUpdatesDatabase.Add(IgnoredUpdatesDatabase.GetIgnoredIdForPackage(package), package.Version);
             return OperationVeredict.Failure;
         }
 
