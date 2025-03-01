@@ -1,9 +1,10 @@
 using System.Collections.Concurrent;
+using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.PackageEngine.Classes.Packages
 {
-    internal static class PackageCacher
+    public static class PackageCacher
     {
         private static readonly ConcurrentDictionary<long, Package> __available_pkgs = [];
         private static readonly ConcurrentDictionary<long, Package> __upgradable_pkgs = [];
@@ -115,6 +116,16 @@ namespace UniGetUI.PackageEngine.Classes.Packages
         {
             long hash = map == __installed_pkgs ? package.GetVersionedHash() : package.GetHash();
             map.TryAdd(hash, package);
+        }
+
+        public static IPackage? GetExistingOne(IPackage? sample)
+        {
+            foreach (Package found in __installed_pkgs.Values)
+            {
+                if (found.IsEquivalentTo(sample)) return found;
+            }
+
+            return null;
         }
     }
 }
