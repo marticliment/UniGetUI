@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 11786,
-        "done": 5241,
-        "packages_with_icon": 5241,
+        "total": 11788,
+        "done": 5244,
+        "packages_with_icon": 5244,
         "packages_with_screenshot": 625,
         "total_screenshots": 1957
     },
@@ -8262,7 +8262,7 @@
             "images": []
         },
         "compass-full": {
-            "icon": "https://raw.githubusercontent.com/mongodb-js/compass/main/packages/compass/app-icons/linux/mongodb-compass.png",
+            "icon": "https://cdn.meowcat285.com/public/UnigetIcons%2Fmongodb-compass-logo-stable.png",
             "images": [
                 "https://raw.githubusercontent.com/mongodb-js/compass/main/packages/compass/compass-screenshot.png"
             ]
@@ -39493,7 +39493,7 @@
             "images": []
         },
         "streamer": {
-            "icon": "",
+            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/VirtualDesktop.png",
             "images": []
         },
         "streaming-video-downloader": {
@@ -49731,6 +49731,14 @@
         },
         "zxpinstaller": {
             "icon": "",
+            "images": []
+        },
+        "bambustudio": {
+            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/BambuStudio.png",
+            "images": []
+        },
+        "dbbrowserforsqlite": {
+            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/DBBrowser.png",
             "images": []
         }
     }

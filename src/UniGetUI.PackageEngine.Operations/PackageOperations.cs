@@ -203,13 +203,13 @@ namespace UniGetUI.PackageEngine.Operations
 
             UpgradablePackagesLoader.Instance.Remove(Package);
 
-            if (await Package.HasUpdatesIgnoredAsync() && await Package.GetIgnoredUpdatesVersionAsync() != "*")
-                await Package.RemoveFromIgnoredUpdatesAsync();
-
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
                 DesktopShortcutsDatabase.TryRemoveNewShortcuts(DesktopShortcutsBeforeStart);
             }
+
+            if (await Package.HasUpdatesIgnoredAsync() && await Package.GetIgnoredUpdatesVersionAsync() != "*")
+                await Package.RemoveFromIgnoredUpdatesAsync();
         }
 
         protected override void Initialize()
