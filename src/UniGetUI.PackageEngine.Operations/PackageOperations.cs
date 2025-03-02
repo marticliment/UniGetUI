@@ -96,14 +96,14 @@ namespace UniGetUI.PackageEngine.Operations
                 }
 
                 if (Package.Manager is WinGet)
-                {
-                    // Change WinGet's TEMP folder location, to prevent ACL corruption
-                    string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
-                    process.StartInfo.Environment["TEMP"] = WinGetTemp;
-                    process.StartInfo.Environment["TMP"] = WinGetTemp;
-                }
+                    RedirectWinGetTempFolder();
+
                 process.StartInfo.FileName = CoreData.ElevatorPath;
                 process.StartInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
+            }
+            else if (CoreTools.IsAdministrator() && Package.Manager is WinGet)
+            {
+                RedirectWinGetTempFolder();
             }
             else
             {
@@ -205,13 +205,13 @@ namespace UniGetUI.PackageEngine.Operations
 
             UpgradablePackagesLoader.Instance.Remove(Package);
 
-            if (await Package.HasUpdatesIgnoredAsync() && await Package.GetIgnoredUpdatesVersionAsync() != "*")
-                await Package.RemoveFromIgnoredUpdatesAsync();
-
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
                 DesktopShortcutsDatabase.TryRemoveNewShortcuts(DesktopShortcutsBeforeStart);
             }
+
+            if (await Package.HasUpdatesIgnoredAsync() && await Package.GetIgnoredUpdatesVersionAsync() != "*")
+                await Package.RemoveFromIgnoredUpdatesAsync();
         }
 
         protected override void Initialize()

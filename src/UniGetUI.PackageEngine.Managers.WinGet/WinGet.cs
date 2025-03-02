@@ -196,6 +196,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     StandardErrorEncoding = Encoding.UTF8
                 }
             };
+
+            if (CoreTools.IsAdministrator())
+            {
+                string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+                process.StartInfo.Environment["TEMP"] = WinGetTemp;
+                process.StartInfo.Environment["TMP"] = WinGetTemp;
+            }
+
             process.Start();
             status.Version = $"{(FORCE_BUNDLED ? "Bundled" : "System")} WinGet CLI Version: {process.StandardOutput.ReadToEnd().Trim()}";
             string error = process.StandardError.ReadToEnd();
@@ -275,6 +283,14 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             };
 
             IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+
+            if (CoreTools.IsAdministrator())
+            {
+                string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+                logger.AddToStdErr($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+                p.StartInfo.Environment["TEMP"] = WinGetTemp;
+                p.StartInfo.Environment["TMP"] = WinGetTemp;
+            }
 
             p.Start();
             logger.AddToStdOut(p.StandardOutput.ReadToEnd());

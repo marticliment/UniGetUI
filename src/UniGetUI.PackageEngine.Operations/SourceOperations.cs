@@ -3,6 +3,7 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Managers.WingetManager;
 using UniGetUI.PackageOperations;
 
 namespace UniGetUI.PackageEngine.Operations
@@ -56,9 +57,13 @@ namespace UniGetUI.PackageEngine.Operations
                     CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
                 }
 
+                if (Source.Manager is WinGet)
+                    RedirectWinGetTempFolder();
+
                 admin = true;
                 process.StartInfo.FileName = CoreData.ElevatorPath;
                 process.StartInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetAddSourceParameters(Source));
+
             }
             else
             {
@@ -97,21 +102,27 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void PrepareProcessStartInfo()
         {
+            bool admin = false;
             if (ForceAsAdministrator || Source.Manager.Capabilities.Sources.MustBeInstalledAsAdmin)
             {
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
                     CoreTools.CacheUACForCurrentProcess().GetAwaiter().GetResult();
                 }
+
+                if (Source.Manager is WinGet)
+                    RedirectWinGetTempFolder();
+
+                admin = true;
                 process.StartInfo.FileName = CoreData.ElevatorPath;
                 process.StartInfo.Arguments = $"\"{Source.Manager.Status.ExecutablePath}\" " + Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetRemoveSourceParameters(Source));
-
             }
             else
             {
                 process.StartInfo.FileName = Source.Manager.Status.ExecutablePath;
                 process.StartInfo.Arguments = Source.Manager.Properties.ExecutableCallArgs + " " + string.Join(" ", Source.Manager.SourcesHelper.GetRemoveSourceParameters(Source));
             }
+            ApplyCapabilities(admin, false, false, null);
         }
 
         protected override Task<OperationVeredict> GetProcessVeredict(int ReturnCode, List<string> Output)

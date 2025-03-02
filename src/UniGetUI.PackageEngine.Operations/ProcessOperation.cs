@@ -63,6 +63,13 @@ public abstract class AbstractProcessOperation : AbstractOperation
         _requiresUACCache = true;
     }
 
+    protected void RedirectWinGetTempFolder()
+    {
+        string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+        process.StartInfo.Environment["TEMP"] = WinGetTemp;
+        process.StartInfo.Environment["TMP"] = WinGetTemp;
+    }
+
     protected override async Task<OperationVeredict> PerformOperation()
     {
         if (process.StartInfo.UseShellExecute) throw new InvalidOperationException("UseShellExecute must be set to false");
