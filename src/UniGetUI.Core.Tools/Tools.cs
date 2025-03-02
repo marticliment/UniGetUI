@@ -6,6 +6,7 @@ using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
+using Windows.Networking.Connectivity;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
@@ -639,42 +640,27 @@ Crash Traceback:
         /// Pings the update server and 3 well-known sites to check for internet availability
         /// </summary>
         public static async Task WaitForInternetConnection()
-            => await (await TaskRecycler<Task>.RunOrAttachAsync(_waitForInternetConnection));
+            => await TaskRecycler<int>.RunOrAttachAsync_VOID(_waitForInternetConnection);
 
-        public static async Task _waitForInternetConnection()
+        public static void _waitForInternetConnection()
         {
             if (Settings.Get("DisableWaitForInternetConnection")) return;
 
-            Logger.Debug("Checking for internet connectivity. Pinging google.com, microsoft.com, couldflare.com and marticliment.com");
-            string[] hosts = ["google.com", "microsoft.com", "cloudflare.com", "github.com"];
-            while (true)
+            Logger.Debug("Checking for internet connectivity...");
+            bool internetLost = false;
+
+            var profile = NetworkInformation.GetInternetConnectionProfile();
+            while (profile is null || profile.GetNetworkConnectivityLevel() is not NetworkConnectivityLevel.InternetAccess)
             {
-                foreach (var host in hosts)
+                Thread.Sleep(1000);
+                profile = NetworkInformation.GetInternetConnectionProfile();
+                if (!internetLost)
                 {
-                    using (var pinger = new Ping())
-                    {
-                        try
-                        {
-                            PingReply reply = await pinger.SendPingAsync(host, 10);
-                            if (reply.Status is IPStatus.Success)
-                            {
-                                Logger.Debug(
-                                    $"{host} responded successfully to ping, internet connection was validated.");
-                                return;
-                            }
-
-                            Logger.Debug($"Could not ping {host}!");
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Debug(
-                                $"Could not ping {host} with error {ex.Message}. Are you connected to the internet?");
-                        }
-                    }
+                    Logger.Warn("User is not connected to the internet, waiting for an internet connectio to be available...");
+                    internetLost = true;
                 }
-
-                await Task.Delay(TimeSpan.FromSeconds(5));
             }
+            Logger.Debug("Internet connectivity was established.");
         }
 
         public static string TextProgressGenerator(int length, int progressPercent, string? extra)
