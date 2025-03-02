@@ -89,6 +89,10 @@ namespace UniGetUI.Interface
 
         private async void ManualScanButton_Click(object sender, RoutedEventArgs e)
         {
+            // Manual scan should ask the user about _all_ shortcuts
+            bool RemoveAllDesktopShortcuts = Settings.Get("RemoveAllDesktopShortcuts");
+            Settings.Set("RemoveAllDesktopShortcuts", false);
+
             DesktopShortcutsDatabase.TryRemoveNewShortcuts([]);
             SaveChangesAndClose();
             var shortcuts = DesktopShortcutsDatabase.GetUnknownShortcuts();
@@ -100,6 +104,8 @@ namespace UniGetUI.Interface
             {
                 await DialogHelper.NoDesktopShortcutsFound();
             }
+
+            Settings.Set("RemoveAllDesktopShortcuts", RemoveAllDesktopShortcuts);
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
