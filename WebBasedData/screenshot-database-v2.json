@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 11788,
-        "done": 5244,
-        "packages_with_icon": 5244,
+        "total": 11793,
+        "done": 5251,
+        "packages_with_icon": 5251,
         "packages_with_screenshot": 625,
         "total_screenshots": 1957
     },
@@ -8262,7 +8262,7 @@
             "images": []
         },
         "compass-full": {
-            "icon": "https://cdn.meowcat285.com/public/UnigetIcons%2Fmongodb-compass-logo-stable.png",
+            "icon": "https://cdn.meowcat285.com/unigeticons/mongodb-compass-logo-stable.png",
             "images": [
                 "https://raw.githubusercontent.com/mongodb-js/compass/main/packages/compass/compass-screenshot.png"
             ]
@@ -10267,7 +10267,7 @@
             "images": []
         },
         "devhome": {
-            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/DevHome.png",
+            "icon": "https://cdn.meowcat285.com/unigeticons/DevHome.png",
             "images": [
                 "https://github.com/microsoft/devhome/blob/main/src/Assets/Preview/StoreDisplay-150.png",
                 "https://i.postimg.cc/6qBmSkFB/devhome-machine-config.png",
@@ -13517,7 +13517,7 @@
             ]
         },
         "everything-alpha": {
-            "icon": "",
+            "icon": "https://cdn.meowcat285.com/unigeticons/EverythingAlpha.png",
             "images": []
         },
         "everything-beta": {
@@ -16171,7 +16171,7 @@
             "images": []
         },
         "git": {
-            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/git.2.46.2.png",
+            "icon": "https://cdn.meowcat285.com/unigeticons/git.2.46.2.png",
             "images": [
                 "https://i.postimg.cc/QMmHqPP9/git1.png",
                 "https://i.postimg.cc/cHJ6khyD/git2.png",
@@ -16758,7 +16758,7 @@
             "images": []
         },
         "go": {
-            "icon": "https://community.chocolatey.org/content/packageimages/go.1.20.1.png",
+            "icon": "https://cdn.meowcat285.com/unigeticons/Go-Logo_Blue.png",
             "images": []
         },
         "go-contact-sync-mod": {
@@ -21104,7 +21104,7 @@
             "images": []
         },
         "kalilinux": {
-            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/KaliLinux.png",
+            "icon": "https://cdn.meowcat285.com/unigeticons/KaliLinux.png",
             "images": []
         },
         "kalk": {
@@ -23402,7 +23402,7 @@
             "images": []
         },
         "llvm": {
-            "icon": "",
+            "icon": "https://cdn.meowcat285.com/unigeticons/LLVM-Logo-Derivative-4.png",
             "images": []
         },
         "lmath": {
@@ -25812,11 +25812,11 @@
             "images": []
         },
         "mountain-duck": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mountain-duck.4.0.1.16800.png",
+            "icon": "https://cdn.meowcat285.com/unigeticons/MountainDuck.png",
             "images": []
         },
         "mountainduck": {
-            "icon": "https://community.chocolatey.org/content/packageimages/mountainduck.4.13.5.20986.png",
+            "icon": "https://cdn.meowcat285.com/unigeticons/MountainDuck.png",
             "images": []
         },
         "mouse-jiggler": {
@@ -26124,7 +26124,7 @@
             "images": []
         },
         "msedgeredirect": {
-            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/msedgeredirect.0.7.5.3.png",
+            "icon": "https://cdn.meowcat285.com/unigeticons/msedgeredirect.0.7.5.3.png",
             "images": []
         },
         "mseries": {
@@ -26649,7 +26649,7 @@
             "images": []
         },
         "mysql-workbench": {
-            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/MySQLWorkbench.png",
+            "icon": "https://cdn.meowcat285.com/unigeticons/MySQLWorkbench.png",
             "images": []
         },
         "mysqlnotifier": {
@@ -32132,7 +32132,7 @@
             "images": []
         },
         "prismlauncher": {
-            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/prismlauncher.8.4.20240820.png",
+            "icon": "https://cdn.meowcat285.com/unigeticons/prismlauncher.8.4.20240820.png",
             "images": []
         },
         "pritunl-client": {
@@ -39493,7 +39493,7 @@
             "images": []
         },
         "streamer": {
-            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/VirtualDesktop.png",
+            "icon": "https://cdn.meowcat285.com/unigeticons/VirtualDesktop.png",
             "images": []
         },
         "streaming-video-downloader": {
@@ -41926,7 +41926,7 @@
             "images": []
         },
         "tortoisegit": {
-            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/tortoisegit.png",
+            "icon": "https://cdn.meowcat285.com/unigeticons/tortoisegit.png",
             "images": []
         },
         "tortoisegit-latest": {
@@ -44584,8 +44584,16 @@
             "icon": "https://pics.computerbase.de/9/9/2/3/0-e36f805671c3b980/logo-256.png",
             "images": []
         },
+        "visualstudio.2022.buildtools": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
+            "images": []
+        },
         "visualstudio-2022-commun\u2026": {
             "icon": "https://pics.computerbase.de/9/9/2/3/0-e36f805671c3b980/logo-256.png",
+            "images": []
+        },
+        "visualstudio.2022.community": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
         "visualstudio-2022-enterp\u2026": {
@@ -49734,11 +49742,23 @@
             "images": []
         },
         "bambustudio": {
-            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/BambuStudio.png",
+            "icon": "https://cdn.meowcat285.com/unigeticons/BambuStudio.png",
             "images": []
         },
         "dbbrowserforsqlite": {
-            "icon": "https://cdn.meowcat285.com/public/UnigetIcons/DBBrowser.png",
+            "icon": "https://cdn.meowcat285.com/unigeticons/DBBrowser.png",
+            "images": []
+        },
+        "inimanager": {
+            "icon": "https://cdn.meowcat285.com/unigeticons/iniManager.png",
+            "images": []
+        },
+        "mysqlworkbench": {
+            "icon": "https://cdn.meowcat285.com/unigeticons/MySQLWorkbench.png",
+            "images": []
+        },
+        "orcaslicer": {
+            "icon": "https://cdn.meowcat285.com/unigeticons/OrcaSlicer.png",
             "images": []
         }
     }
