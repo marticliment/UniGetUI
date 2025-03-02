@@ -345,7 +345,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
             var (gitFound, gitPath) = CoreTools.Which("git");
 
-            if (!found || !gitFound || !vcpkgRootFound || Settings.Get("DisableUpdateVcpkgGitPorts"))
+            if (!found || !gitFound || !vcpkgRootFound)
             {
                 INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
                 if (Settings.Get("DisableUpdateVcpkgGitPorts")) logger.Error("User has disabled updating sources");

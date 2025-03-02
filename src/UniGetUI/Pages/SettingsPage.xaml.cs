@@ -252,14 +252,6 @@ namespace UniGetUI.Interface
 
                 // ----------------------------------------------------------------------------------------
 
-                CheckboxCard Vcpkg_UpdateGitPorts = new()
-                {
-                    Text = CoreTools.Translate(
-                        "Update vcpkg's Git portfiles automatically (requires Git installed)"),
-                    SettingName = "DisableUpdateVcpkgGitPorts"
-                };
-                ExtraSettingsCards[PEInterface.Vcpkg].Add(Vcpkg_UpdateGitPorts);
-
                 // GetDefaultTriplet factors in the `DefaultVcpkgTriplet` setting as its first priority
                 Settings.SetValue("DefaultVcpkgTriplet", Vcpkg.GetDefaultTriplet());
                 ComboboxCard Vcpkg_DefaultTriplet = new()

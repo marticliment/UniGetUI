@@ -1,6 +1,6 @@
 # <img src="https://raw.githubusercontent.com/marticliment/UniGetUI/main/media/icon.png" height="40">UniGetUI (formerly WingetUI)
 
-[![Downloads@latest](https://img.shields.io/github/downloads/marticliment/UniGetUI/3.1.1/total?style=for-the-badge)](https://github.com/marticliment/UniGetUI/releases/latest/download/UniGetUI.Installer.exe)
+[![Downloads@latest](https://img.shields.io/github/downloads/marticliment/UniGetUI/3.1.6/total?style=for-the-badge)](https://github.com/marticliment/UniGetUI/releases/latest/download/UniGetUI.Installer.exe)
 [![Release Version Badge](https://img.shields.io/github/v/release/marticliment/UniGetUI?style=for-the-badge)](https://github.com/marticliment/UniGetUI/releases)
 [![Issues Badge](https://img.shields.io/github/issues/marticliment/UniGetUI?style=for-the-badge)](https://github.com/marticliment/UniGetUI/issues)
 [![Closed Issues Badge](https://img.shields.io/github/issues-closed/marticliment/UniGetUI?color=%238256d0&style=for-the-badge)](https://github.com/marticliment/UniGetUI/issues?q=is%3Aissue+is%3Aclosed)<br>
