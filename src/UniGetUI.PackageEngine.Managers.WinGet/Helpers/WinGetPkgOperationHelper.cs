@@ -163,8 +163,9 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             if (Settings.Get("IgnoreUpdatesNotApplicable")) {
                 Logger.Info("Ignoring update " + package.Name + " as the update is not applicable to the platform");
                 IgnoredUpdatesDatabase.Add(IgnoredUpdatesDatabase.GetIgnoredIdForPackage(package), package.VersionString);
+                return OperationVeredict.Success;
             }
-            return OperationVeredict.Success;
+            return OperationVeredict.Failure;
         }
 
         if (uintCode is 0x8A15010D or 0x8A15004F or 0x8A15010E)
