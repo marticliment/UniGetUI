@@ -1058,7 +1058,7 @@ namespace UniGetUI.Interface
             FilterPackages();
         }
 
-        public void OnEnter()
+        public virtual void OnEnter()
         {
             Visibility = Visibility.Visible;
             IsEnabled = true;

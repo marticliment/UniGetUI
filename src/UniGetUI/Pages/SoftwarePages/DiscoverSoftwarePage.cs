@@ -11,6 +11,7 @@ using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.Pages.DialogPages;
+using UniGetUI.Controls;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
@@ -41,8 +42,8 @@ namespace UniGetUI.Interface.SoftwarePages
             NoMatches_BackgroundText = CoreTools.Translate("No results were found matching the input criteria"),
 
             PageTitle = CoreTools.Translate("Discover Packages"),
-            Glyph = "\uF6FA"
-        })
+            Glyph = "\uF6FA"            
+       })
         {
             InstantSearchCheckbox.IsEnabled = false;
             InstantSearchCheckbox.Visibility = Visibility.Collapsed;
@@ -52,6 +53,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
             QueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) { Event_SearchPackages(s, e); } };
             MegaQueryBlock.KeyUp += (s, e) => { if (e.Key == VirtualKey.Enter) { Event_SearchPackages(s, e); } };
+
+            RankingControl.Visibility = Visibility.Visible;
         }
 
         public override BetterMenu GenerateContextMenu()
@@ -132,6 +135,17 @@ namespace UniGetUI.Interface.SoftwarePages
             menu.Items.Add(menuDetails);
 
             return menu;
+        }
+
+        bool rankingsLoaded;
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            if (!rankingsLoaded)
+            {
+                _ = RankingControl.Reload();
+                rankingsLoaded = true;
+            }
         }
 
         public override void GenerateToolBar()
