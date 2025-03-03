@@ -17411,7 +17411,7 @@
             "images": []
         },
         "graphviz": {
-            "icon": "https://community.chocolatey.org/content/packageimages/Graphviz.7.1.0.png",
+            "icon": "https://upload.wikimedia.org/wikipedia/en/4/48/GraphvizLogo.png",
             "images": []
         },
         "grasshopper": {
@@ -39328,19 +39328,19 @@
             "icon": "",
             "images": []
         },
-        "steam:32440": {
+        "steam-32440": {
             "icon": "https://cdn2.steamgriddb.com/icon/0b70b95deb2dfeeb11aa462c44169894.png",
             "images": []
         },
-        "steam:32510": {
+        "steam-32510": {
             "icon": "https://cdn2.steamgriddb.com/icon/013d407166ec4fa56eb1e1f8cbe183b9/8/32x32.png",
             "images": []
         },
-        "steam:322170": {
+        "steam-322170": {
             "icon": "https://upload.wikimedia.org/wikipedia/en/thumb/4/4d/Logo_of_Geometry_Dash.svg/1200px-Logo_of_Geometry_Dash.svg.png",
             "images": []
         },
-        "steam:920210": {
+        "steam-920210": {
             "icon": "https://cdn2.steamgriddb.com/icon/b156769842d5235767f769b5c8617399/32/32x32.png",
             "images": []
         },
