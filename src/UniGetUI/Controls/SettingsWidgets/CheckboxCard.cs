@@ -20,7 +20,10 @@ namespace UniGetUI.Interface.Widgets
             set {
                 setting_name = value;
                 IS_INVERTED = value.StartsWith("Disable");
-                _checkbox.IsChecked = Settings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
+                _checkbox.IsChecked = (SettingDictionary == null ?
+                        Settings.Get(setting_name) :
+                        Settings.GetDictionaryItem<string, bool>(SettingDictionary, setting_name))
+                    ^ IS_INVERTED ^ ForceInversion;
             }
         }
         public string? SettingDictionary { get; set; }
