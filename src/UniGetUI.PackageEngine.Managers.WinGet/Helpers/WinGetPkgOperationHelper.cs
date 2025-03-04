@@ -92,7 +92,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             var installOptions = NativePackageHandler.GetInstallationOptions(package, options, operation);
             if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationRequired or ElevationRequirement.ElevatesSelf)
             {
-                Logger.Info("Package requires elevation, forcing administrator rights...");
+                Logger.Info($"WinGet package {package.Id} requires elevation, forcing administrator rights...");
                 package.OverridenOptions.RunAsAdministrator = true;
             }
             else if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationProhibited)
@@ -111,7 +111,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             }
             else if(installOptions?.Scope is PackageInstallerScope.System/* or PackageInstallerScope.Unknown*/)
             {
-                Logger.Info("Package is installed on a system-wide scope, forcing administrator rights...");
+                Logger.Info($"WinGet package {package.Id} is installed on a system-wide scope, forcing administrator rights...");
                 package.OverridenOptions.RunAsAdministrator = true;
             }
         }

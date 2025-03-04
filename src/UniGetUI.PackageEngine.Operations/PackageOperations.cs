@@ -78,45 +78,44 @@ namespace UniGetUI.PackageEngine.Operations
                     throw new InvalidOperationException($"Retry mode {retryMode} is not supported in this context");
             }
             Metadata.OperationInformation = "Retried package operation for Package=" + Package.Id + " with Manager=" +
-                                            Package.Manager.Name + "\nUpdated installation options: " + Options.ToString();
+                                            Package.Manager.Name + "\nUpdated installation options: " + Options.ToString()
+                                            + "\nOverriden options: " + Package.OverridenOptions.ToString();
         }
 
         protected sealed override void PrepareProcessStartInfo()
         {
-            bool admin = CoreTools.IsAdministrator();
+            bool IsAdmin = CoreTools.IsAdministrator();
             Package.SetTag(PackageTag.OnQueue);
             string operation_args = string.Join(" ", Package.Manager.OperationHelper.GetParameters(Package, Options, Role));
+            string FileName, Arguments;
 
-            if (RequiresAdminRights())
+            if (RequiresAdminRights() && IsAdmin is false)
             {
-                admin = true;
+                IsAdmin = true;
                 if (Settings.Get("DoCacheAdminRights") || Settings.Get("DoCacheAdminRightsForBatches"))
                 {
                     RequestCachingOfUACPrompt();
                 }
 
-                if (Package.Manager is WinGet)
-                {
-                    RedirectWinGetTempFolder();
-                }
-
-                process.StartInfo.FileName = CoreData.ElevatorPath;
-                process.StartInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
-            }
-            else if (CoreTools.IsAdministrator() && Package.Manager is WinGet)
-            {
-                RedirectWinGetTempFolder();
-                process.StartInfo.FileName = Package.Manager.Status.ExecutablePath;
-                process.StartInfo.Arguments = $"{Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
+                FileName = CoreData.ElevatorPath;
+                Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
             else
             {
-                process.StartInfo.FileName = Package.Manager.Status.ExecutablePath;
-                process.StartInfo.Arguments = $"{Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
+                FileName = Package.Manager.Status.ExecutablePath;
+                Arguments = $"{Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
 
+            if (IsAdmin && Package.Manager is WinGet)
+            {
+                RedirectWinGetTempFolder();
+            }
+
+            process.StartInfo.FileName = FileName;
+            process.StartInfo.Arguments = Arguments;
+
             ApplyCapabilities(
-                admin,
+                IsAdmin,
                 Options.InteractiveInstallation,
                 (Options.SkipHashCheck && Role is not OperationType.Uninstall),
                 Package.OverridenOptions.Scope ?? Options.InstallationScope
@@ -165,8 +164,9 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected override void Initialize()
         {
-            Metadata.OperationInformation = "Package install operation for Package=" + Package.Id + " with Manager=" +
-                                            Package.Manager.Name + "\nInstallation options: " + Options.ToString();
+            Metadata.OperationInformation = "Package install operation for Package=" + Package.Id + " with Manager="
+                                            + Package.Manager.Name + "\nInstallation options: " + Options.ToString()
+                                            + "\nOverriden options: " + Package.OverridenOptions.ToString();
 
             Metadata.Title = CoreTools.Translate("{package} Installation", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.Status = CoreTools.Translate("{0} is being installed", Package.Name);
@@ -219,7 +219,8 @@ namespace UniGetUI.PackageEngine.Operations
         protected override void Initialize()
         {
             Metadata.OperationInformation = "Package update operation for Package=" + Package.Id + " with Manager=" +
-                                            Package.Manager.Name + "\nInstallation options: " + Options.ToString();
+                                            Package.Manager.Name + "\nInstallation options: " + Options.ToString()
+                                            + "\nOverriden options: " + Package.OverridenOptions.ToString();
 
             Metadata.Title = CoreTools.Translate("{package} Update", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.Status = CoreTools.Translate("{0} is being updated to version {1}", Package.Name, Package.NewVersionString);
@@ -265,7 +266,8 @@ namespace UniGetUI.PackageEngine.Operations
         protected override void Initialize()
         {
             Metadata.OperationInformation = "Package uninstall operation for Package=" + Package.Id + " with Manager=" +
-                                            Package.Manager.Name + "\nInstallation options: " + Options.ToString();
+                                            Package.Manager.Name + "\nInstallation options: " + Options.ToString()
+                                            + "\nOverriden options: " + Package.OverridenOptions.ToString();
 
             Metadata.Title = CoreTools.Translate("{package} Uninstall", new Dictionary<string, object?> { { "package", Package.Name } });
             Metadata.Status = CoreTools.Translate("{0} is being uninstalled", Package.Name);
