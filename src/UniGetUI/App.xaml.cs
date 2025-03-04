@@ -42,13 +42,6 @@ namespace UniGetUI
                 set { _restart_required = value; Instance?.MainWindow?.UpdateSystemTrayStatus(); }
             }
 
-            private static int _operations_in_progress;
-            public static int OperationsInProgress
-            {
-                get => _operations_in_progress;
-                set { _operations_in_progress = value; Instance?.MainWindow?.UpdateSystemTrayStatus(); }
-            }
-
             private static int _available_updates;
             public static int AvailableUpdates
             {
