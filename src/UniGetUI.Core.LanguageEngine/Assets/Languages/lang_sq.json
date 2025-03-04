@@ -146,7 +146,7 @@
   "Custom arguments:": "Argumentet e personalizuara:",
   "Custom command-line arguments:": "Argumentet e personalizuara të rreshtit të komandës:",
   "Customize WingetUI - for hackers and advanced users only": "Personalizo UniGetUI - vetëm për hakerat dhe përdoruesit e përparuar",
-  "DEBUG BUILD": null,
+  "DEBUG BUILD": "DEBUG BUILD",
   "DISCLAIMER: WE ARE NOT RESPONSIBLE FOR THE DOWNLOADED PACKAGES. PLEASE MAKE SURE TO INSTALL ONLY TRUSTED SOFTWARE.": "MOSPRANIM PËRGJEGJËSIE: NE NUK JEMI PËRGJEGJËS PËR PAKETAT E SHKARKUARA. TË LUTEM SIGUROHU TË INSTALOSH VETËM PROGRAME TË BESUESHËME.",
   "Dark": "Errët",
   "Decline": "Refuzo",
