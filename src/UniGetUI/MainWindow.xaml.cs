@@ -147,7 +147,6 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex2)
                     {
-                        TrayIcon?.ForceCreate(false);
                         Logger.Error("Could not create taskbar tray (hard crash)");
                         Logger.Error(ex2);
                     }
