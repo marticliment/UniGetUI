@@ -83,7 +83,7 @@ namespace UniGetUI.PackageEngine.Operations
 
         protected sealed override void PrepareProcessStartInfo()
         {
-            bool admin = false;
+            bool admin = CoreTools.IsAdministrator();
             Package.SetTag(PackageTag.OnQueue);
             string operation_args = string.Join(" ", Package.Manager.OperationHelper.GetParameters(Package, Options, Role));
 
@@ -96,7 +96,9 @@ namespace UniGetUI.PackageEngine.Operations
                 }
 
                 if (Package.Manager is WinGet)
+                {
                     RedirectWinGetTempFolder();
+                }
 
                 process.StartInfo.FileName = CoreData.ElevatorPath;
                 process.StartInfo.Arguments = $"\"{Package.Manager.Status.ExecutablePath}\" {Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
@@ -104,6 +106,8 @@ namespace UniGetUI.PackageEngine.Operations
             else if (CoreTools.IsAdministrator() && Package.Manager is WinGet)
             {
                 RedirectWinGetTempFolder();
+                process.StartInfo.FileName = Package.Manager.Status.ExecutablePath;
+                process.StartInfo.Arguments = $"{Package.Manager.Properties.ExecutableCallArgs} {operation_args}";
             }
             else
             {
