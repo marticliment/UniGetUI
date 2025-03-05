@@ -12,8 +12,7 @@
     mc:Ignorable="d"
     Name="ABSTRACT_PAGE"
     NavigationCacheMode="Required"
-    xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses"
-    CharacterReceived="{x:Bind PackageList_CharacterReceived}">
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses">
     <!-- PreviewKeyDown="{x:Bind PackageList_PreviewKeyDown}" -->
 
     <animations:Implicit.ShowAnimations>
@@ -908,7 +907,8 @@
                 <ItemsView x:Name="PackageList" x:FieldModifier="protected" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"
                     ItemsSource="{x:Bind FilteredPackages, Mode=OneWay}"
                     ItemTemplate="{StaticResource PackageTemplate}" Padding="4,0,4,0"
-                    CanBeScrollAnchor="False">
+                    CanBeScrollAnchor="False"
+                    CharacterReceived="{x:Bind PackageList_CharacterReceived}">
                     <ItemsView.Layout>
                         <StackLayout Spacing="3"/>
                     </ItemsView.Layout>
