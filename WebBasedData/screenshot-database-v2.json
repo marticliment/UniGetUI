@@ -1,10 +1,10 @@
 {
     "package_count": {
         "total": 11793,
-        "done": 5251,
-        "packages_with_icon": 5251,
-        "packages_with_screenshot": 625,
-        "total_screenshots": 1957
+        "done": 5255,
+        "packages_with_icon": 5255,
+        "packages_with_screenshot": 626,
+        "total_screenshots": 1961
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -2185,7 +2185,7 @@
             "images": []
         },
         "android-studio": {
-            "icon": "",
+            "icon": "https://i.imgur.com/FfKcF2R.png",
             "images": []
         },
         "android11react": {
@@ -9234,8 +9234,13 @@
             "images": []
         },
         "curseforge": {
-            "icon": "",
-            "images": []
+            "icon": "https://console-apps.overwolf.com/prod/apps/cchhcaiapeikjbdbpfplgmpobbcdkdaphclbmkbj/assets/c2738f03-c55f-4baa-aa13-9c670b76c3b3.png",
+            "images": [
+                "https://i.imgur.com/81rahEC.png",
+                "https://i.imgur.com/1JV8HPN.png",
+                "https://i.imgur.com/WHKHrax.png",
+                "https://i.imgur.com/90Q2KLk.png"
+            ]
         },
         "cursor-commander": {
             "icon": "https://community.chocolatey.org/content/packageimages/cursor-commander.1.0.0.0.png",
@@ -27207,7 +27212,7 @@
             "images": []
         },
         "netextender": {
-            "icon": "",
+            "icon": "https://postimg.cc/qtZcPS5b",
             "images": []
         },
         "netfoxdetective": {
@@ -27742,7 +27747,7 @@
             "images": []
         },
         "nordlocker": {
-            "icon": "",
+            "icon": "https://community.chocolatey.org/content/packageimages/nordlocker.5.1.2.png",
             "images": []
         },
         "nordpass": {
