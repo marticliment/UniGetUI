@@ -158,9 +158,13 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             return OperationVeredict.Failure;
         }
 
-        if (uintCode == 0x8A15002B)
+        if (uintCode is 0x8A15002B)
         {
-            IgnoredUpdatesDatabase.Add(IgnoredUpdatesDatabase.GetIgnoredIdForPackage(package), package.Version);
+            if (Settings.Get("IgnoreUpdatesNotApplicable")) {
+                Logger.Info("Ignoring update " + package.Name + " as the update is not applicable to the platform");
+                IgnoredUpdatesDatabase.Add(IgnoredUpdatesDatabase.GetIgnoredIdForPackage(package), package.VersionString);
+                return OperationVeredict.Success;
+            }
             return OperationVeredict.Failure;
         }
 
@@ -187,12 +191,6 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             // Code 0x80073D28 was added after https://github.com/marticliment/UniGetUI/issues/3093
             package.OverridenOptions.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;
-        }
-
-        if (uintCode == 0x8A150014 && operation is OperationType.Uninstall)
-        {
-            // Application not found
-            return OperationVeredict.Success;
         }
 
         return OperationVeredict.Failure;
