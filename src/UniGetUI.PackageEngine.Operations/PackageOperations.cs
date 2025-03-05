@@ -56,7 +56,7 @@ namespace UniGetUI.PackageEngine.Operations
         {
             return Package.OverridenOptions.RunAsAdministrator is true
                     || Options.RunAsAdministrator
-                    || (Settings.Get("AlwaysElevate" + Package.Manager.Name) && Package.OverridenOptions.RunAsAdministrator != false);
+                    || (Settings.GetDictionaryItem<string, bool>("AlwaysElevate", Package.Manager.Name) && Package.OverridenOptions.RunAsAdministrator != false);
         }
 
         protected override void ApplyRetryAction(string retryMode)
