@@ -48,23 +48,23 @@ public static class IgnoredUpdatesDatabase
             {
                 int Years = Months / 12;
                 if (Years > 1) return CoreTools.Translate("{0} years", Years);
-                else return CoreTools.Translate("1 year");
+                return CoreTools.Translate("1 year");
             }
-            else if (Months >= 1)
+
+            if (Months >= 1)
             {
                 if (Months > 1) return CoreTools.Translate("{0} months", Months);
-                else return CoreTools.Translate("1 month");
+                return CoreTools.Translate("1 month");
             }
-            else if (Weeks >= 1)
+
+            if (Weeks >= 1)
             {
                 if (Weeks > 1) return CoreTools.Translate("{0} weeks", Weeks);
-                else return CoreTools.Translate("1 week");
+                return CoreTools.Translate("1 week");
             }
-            else
-            {
-                if (Days != 1) return CoreTools.Translate("{0} days", Days);
-                else return CoreTools.Translate("1 day");
-            }
+
+            if (Days != 1) return CoreTools.Translate("{0} days", Days);
+            return CoreTools.Translate("1 day");
         }
     }
 
@@ -101,12 +101,10 @@ public static class IgnoredUpdatesDatabase
             // Remove the entry and propagate changes to disk
             return Settings.RemoveDictionaryKey<string, string>("IgnoredPackageUpdates", ignoredId) != null;
         }
-        else
-        {
-            // Do nothing if the entry was not there
-            Logger.Warn($"Attempted to remove from ignored updates a package {{ignoredId={ignoredId}}} that was not found there");
-            return false;
-        }
+
+        // Do nothing if the entry was not there
+        Logger.Warn($"Attempted to remove from ignored updates a package {{ignoredId={ignoredId}}} that was not found there");
+        return false;
     }
 
     /// <summary>
@@ -120,7 +118,7 @@ public static class IgnoredUpdatesDatabase
     /// </summary>
     /// <param name="ignoredId">The Ignored Identifier to check</param>
     /// <param name="version">The version to check</param>
-    /// <returns>True if the package is ignored, false otherwhise</returns>
+    /// <returns>True if the package is ignored, false otherwise</returns>
     public static bool HasUpdatesIgnored(string ignoredId, string version = "*")
     {
         string? ignoredVersion = Settings.GetDictionaryItem<string, string>("IgnoredPackageUpdates", ignoredId);
@@ -131,7 +129,7 @@ public static class IgnoredUpdatesDatabase
             {
                 var ignoreDate = DateTime.ParseExact(ignoredVersion[1..], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 if (ignoreDate > DateTime.Now) return true;
-                else Remove(ignoredId);
+                Remove(ignoredId);
             }
             catch (FormatException ex)
             {

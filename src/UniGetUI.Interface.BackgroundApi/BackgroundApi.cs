@@ -201,7 +201,7 @@ namespace UniGetUI.Interface
                         continue; // Do not show already processed packages on queue
 
                     string icon = $"http://localhost:7058/widgets/v2/get_icon_for_package?packageId={HttpUtility.UrlEncode(package.Id)}&packageSource={HttpUtility.UrlEncode(package.Source.Name)}&token={ApiTokenHolder.Token}";
-                    packages.Append($"{package.Name.Replace('|', '-')}|{package.Id}|{package.Version}|{package.NewVersion}|{package.Source.AsString_DisplayName}|{package.Manager.Name}|{icon}&&");
+                    packages.Append($"{package.Name.Replace('|', '-')}|{package.Id}|{package.VersionString}|{package.NewVersionString}|{package.Source.AsString_DisplayName}|{package.Manager.Name}|{icon}&&");
                 }
 
                 string pkgs_ = packages.ToString();

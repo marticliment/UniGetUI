@@ -1,10 +1,8 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
-using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
@@ -20,7 +18,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         public Pip()
         {
-            Dependencies = [
+            Dependencies = [];
+            /*Dependencies = [
                 // parse_pip_search is required for pip package finding to work
                 new ManagerDependency(
                     "parse-pip-search",
@@ -41,13 +40,14 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                         else return false;
                     }
                 )
-            ];
+            ];*/
 
             Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
                 SupportsCustomVersions = true,
                 SupportsCustomScopes = true,
+                CanDownloadInstaller = true,
                 SupportsPreRelease = true,
             };
 
@@ -71,7 +71,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             OperationHelper = new PipPkgOperationHelper(this);
         }
 
-        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
+        protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];
 
@@ -159,7 +159,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
+        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
             Process p = new()
             {
@@ -220,7 +220,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+        protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
         {
 
             Process p = new()
@@ -317,6 +317,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 return status;
             }
 
+
+            Environment.SetEnvironmentVariable("PIP_REQUIRE_VIRTUALENV", "false", EnvironmentVariableTarget.Process);
             return status;
         }
     }

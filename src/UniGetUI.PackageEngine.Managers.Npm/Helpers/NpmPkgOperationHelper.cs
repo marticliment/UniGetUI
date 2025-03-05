@@ -7,11 +7,11 @@ internal sealed class NpmPkgOperationHelper : PackagePkgOperationHelper
 {
     public NpmPkgOperationHelper(Npm manager) : base(manager) { }
 
-    protected override IEnumerable<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
         List<string> parameters = operation switch {
-            OperationType.Install => [Manager.Properties.InstallVerb, $"{package.Id}@{(options.Version == string.Empty? package.Version: options.Version)}"],
-            OperationType.Update => [Manager.Properties.UpdateVerb, $"{package.Id}@{package.NewVersion}"],
+            OperationType.Install => [Manager.Properties.InstallVerb, $"{package.Id}@{(options.Version == string.Empty? package.VersionString: options.Version)}"],
+            OperationType.Update => [Manager.Properties.UpdateVerb, $"{package.Id}@{package.NewVersionString}"],
             OperationType.Uninstall => [Manager.Properties.UninstallVerb, package.Id],
             _ => throw new InvalidDataException("Invalid package operation")
         };
@@ -33,7 +33,7 @@ internal sealed class NpmPkgOperationHelper : PackagePkgOperationHelper
     protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
-        IEnumerable<string> processOutput,
+        IReadOnlyList<string> processOutput,
         int returnCode)
     {
         return returnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;

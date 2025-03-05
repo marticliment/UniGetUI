@@ -1,3 +1,4 @@
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.Tools;
@@ -17,10 +18,10 @@ namespace UniGetUI.Interface.Pages.LogPage
 
         public void LoadForManager(IPackageManager manager)
         {
-            bool IS_DARK = ActualTheme == Microsoft.UI.Xaml.ElementTheme.Dark;
+            bool IS_DARK = this.ActualTheme == ElementTheme.Dark;
             bool verbose = LogLevelCombo.SelectedValue?.ToString()?.Contains(CoreTools.Translate("Verbose")) ?? false;
 
-            if(!verbose) SelectLogLevelByName(manager.DisplayName);
+            if (!verbose) SelectLogLevelByName(manager.DisplayName);
 
             IManagerLogger TaskLogger = manager.TaskLogger;
             LogTextBox.Blocks.Clear();
@@ -62,7 +63,7 @@ namespace UniGetUI.Interface.Pages.LogPage
                     break;
                 }
 
-                if(isReload) MainScroller.ScrollToVerticalOffset(MainScroller.ScrollableHeight);
+                if (isReload) MainScroller.ScrollToVerticalOffset(MainScroller.ScrollableHeight);
             }
         }
 

@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
@@ -23,18 +25,10 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
 
         public DotNet()
         {
-            Dependencies = [
-                new ManagerDependency(
-                    ".NET Tools Outdated",
-                    Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
-                    "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {dotnet tool install --global dotnet-tools-outdated --add-source https://api.nuget.org/v3/index.json; if($error.count -ne 0){pause}}\"",
-                    "dotnet tool install --global dotnet-tools-outdated --add-source https://api.nuget.org/v3/index.json",
-                    async () => (await CoreTools.WhichAsync("dotnet-tools-outdated.exe")).Item1)
-            ];
-
             Capabilities = new ManagerCapabilities
             {
                 CanRunAsAdmin = true,
+                CanDownloadInstaller = true,
                 SupportsCustomScopes = true,
                 SupportsCustomArchitectures = true,
                 SupportedCustomArchitectures = [Architecture.X86, Architecture.X64, Architecture.Arm64, Architecture.Arm],
@@ -63,105 +57,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             OperationHelper = new DotNetPkgOperationHelper(this);
         }
 
-        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
-        {
-            var (found, path) = CoreTools.Which("dotnet-tools-outdated.exe");
-            if (!found)
-            {
-                Process proc = new()
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " install --global dotnet-tools-outdated",
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        CreateNoWindow = true,
-                    }
-                };
-
-                IProcessTaskLogger aux_logger = TaskLogger.CreateNew(LoggableTaskType.InstallManagerDependency, proc);
-                proc.Start();
-
-                aux_logger.AddToStdOut(proc.StandardOutput.ReadToEnd());
-                aux_logger.AddToStdErr(proc.StandardError.ReadToEnd());
-                proc.WaitForExit();
-                aux_logger.Close(proc.ExitCode);
-
-                path = "dotnet-tools-outdated.exe";
-            }
-
-            Process p = new()
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = path,
-                    Arguments = "",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                }
-            };
-
-            p.StartInfo = CoreTools.UpdateEnvironmentVariables(p.StartInfo);
-            IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
-            p.Start();
-
-            string? line;
-            bool DashesPassed = false;
-            List<Package> Packages = [];
-            while ((line = p.StandardOutput.ReadLine()) is not null)
-            {
-                logger.AddToStdOut(line);
-                if (!DashesPassed)
-                {
-                    if (line.Contains("----"))
-                    {
-                        DashesPassed = true;
-                    }
-                }
-                else
-                {
-                    string[] elements = Regex.Replace(line, " {2,}", " ").Split(' ');
-                    if (elements.Length < 3)
-                    {
-                        continue;
-                    }
-
-                    for (int i = 0; i < elements.Length; i++)
-                    {
-                        elements[i] = elements[i].Trim();
-                    }
-
-                    if (FALSE_PACKAGE_IDS.Contains(elements[0]) || FALSE_PACKAGE_VERSIONS.Contains(elements[1]))
-                    {
-                        continue;
-                    }
-
-                    if(elements[2].Trim() == "") continue;
-
-                    Packages.Add(new Package(
-                        CoreTools.FormatAsName(elements[0]),
-                        elements[0],
-                        elements[1],
-                        elements[2],
-                        DefaultSource,
-                        this,
-                        new(PackageScope.Global)
-                    ));
-                }
-            }
-            logger.AddToStdErr(p.StandardError.ReadToEnd());
-            p.WaitForExit();
-            logger.Close(p.ExitCode);
-
-            return Packages;
-        }
-
-        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+        protected override IReadOnlyList<Package> _getInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
             foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })

@@ -20,7 +20,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         Manager = manager;
     }
 
-    public IEnumerable<Package> GetAvailableUpdates_UnSafe()
+    public IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
     {
         List<Package> Packages = [];
         Process p = new()
@@ -39,6 +39,14 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         };
 
         IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListUpdates, p);
+
+        if (CoreTools.IsAdministrator())
+        {
+            string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+            logger.AddToStdErr($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+            p.StartInfo.Environment["TEMP"] = WinGetTemp;
+            p.StartInfo.Environment["TMP"] = WinGetTemp;
+        }
 
         p.Start();
 
@@ -124,7 +132,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return Packages;
     }
 
-    public IEnumerable<Package> GetInstalledPackages_UnSafe()
+    public IReadOnlyList<Package> GetInstalledPackages_UnSafe()
     {
         List<Package> Packages = [];
         Process p = new()
@@ -142,6 +150,14 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         };
 
         IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListInstalledPackages, p);
+
+        if (CoreTools.IsAdministrator())
+        {
+            string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+            logger.AddToStdErr($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+            p.StartInfo.Environment["TEMP"] = WinGetTemp;
+            p.StartInfo.Environment["TMP"] = WinGetTemp;
+        }
 
         p.Start();
 
@@ -215,7 +231,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return Packages;
     }
 
-    public IEnumerable<Package> FindPackages_UnSafe(string query)
+    public IReadOnlyList<Package> FindPackages_UnSafe(string query)
     {
         List<Package> Packages = [];
         Process p = new()
@@ -234,6 +250,14 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         };
 
         IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+
+        if (CoreTools.IsAdministrator())
+        {
+            string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+            logger.AddToStdErr($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+            p.StartInfo.Environment["TEMP"] = WinGetTemp;
+            p.StartInfo.Environment["TMP"] = WinGetTemp;
+        }
 
         p.Start();
 
@@ -307,6 +331,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
         // Get the output for the best matching locale
         Process process = new();
+
         List<string> output = [];
         bool LocaleFound = true;
         ProcessStartInfo startInfo = new()
@@ -323,6 +348,15 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             StandardOutputEncoding = Encoding.UTF8
         };
         process.StartInfo = startInfo;
+
+        if (CoreTools.IsAdministrator())
+        {
+            string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+            Logger.Warn($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+            process.StartInfo.Environment["TEMP"] = WinGetTemp;
+            process.StartInfo.Environment["TMP"] = WinGetTemp;
+        }
+
         process.Start();
 
         string? _line;
@@ -361,6 +395,13 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
             process.StartInfo = startInfo;
+            if (CoreTools.IsAdministrator())
+            {
+                string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+                Logger.Warn($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+                process.StartInfo.Environment["TEMP"] = WinGetTemp;
+                process.StartInfo.Environment["TMP"] = WinGetTemp;
+            }
             process.Start();
 
             while ((_line = process.StandardOutput.ReadLine()) is not null)
@@ -398,6 +439,13 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
                 StandardOutputEncoding = System.Text.Encoding.UTF8
             };
             process.StartInfo = startInfo;
+            if (CoreTools.IsAdministrator())
+            {
+                string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+                Logger.Warn($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+                process.StartInfo.Environment["TEMP"] = WinGetTemp;
+                process.StartInfo.Environment["TMP"] = WinGetTemp;
+            }
             process.Start();
 
             while ((_line = process.StandardOutput.ReadLine()) is not null)
@@ -519,7 +567,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return;
     }
 
-    public IEnumerable<string> GetInstallableVersions_Unsafe(IPackage package)
+    public IReadOnlyList<string> GetInstallableVersions_Unsafe(IPackage package)
     {
         Process p = new()
         {
@@ -538,7 +586,13 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         };
 
         IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.LoadPackageVersions, p);
-
+        if (CoreTools.IsAdministrator())
+        {
+            string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+            Logger.Warn($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+            p.StartInfo.Environment["TEMP"] = WinGetTemp;
+            p.StartInfo.Environment["TMP"] = WinGetTemp;
+        }
         p.Start();
 
         string? line;
@@ -566,7 +620,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
         return versions;
     }
 
-    public IEnumerable<IManagerSource> GetSources_UnSafe()
+    public IReadOnlyList<IManagerSource> GetSources_UnSafe()
     {
         List<IManagerSource> sources = [];
 
@@ -585,9 +639,16 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
             }
         };
 
+        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
+        if (CoreTools.IsAdministrator())
+        {
+            string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+            Logger.Warn($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+            p.StartInfo.Environment["TEMP"] = WinGetTemp;
+            p.StartInfo.Environment["TMP"] = WinGetTemp;
+        }
         p.Start();
 
-        IProcessTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
 
         bool dashesPassed = false;
         string? line;

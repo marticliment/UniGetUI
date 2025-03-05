@@ -214,7 +214,7 @@
                         <Run x:Name="InstallerHash_Label" FontWeight="Bold">Installer hash:</Run>
                         <Run x:Name="InstallerHash_Content">Helo</Run>
                         <LineBreak/>
-                        <Hyperlink x:Name="DownloadInstaller_Button" FontWeight="Bold" TextDecorations="None" NavigateUri="about:blank">Download installer</Hyperlink>
+                        <Hyperlink x:Name="DownloadInstaller_Button" FontWeight="Bold" TextDecorations="None">Download installer</Hyperlink>
                         <Run x:Name="InstallerSize_Content"></Run>
                         <LineBreak/>
                         <LineBreak/>

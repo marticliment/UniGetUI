@@ -62,8 +62,7 @@
                                         <widgets:TranslatedTextBlock Text="Is your language missing or incomplete?" Opacity=".8" VerticalAlignment="Center"/>
                                         <HyperlinkButton
                                         Padding="0"
-                                            NavigateUri="https://github.com/marticliment/WingetUI/wiki#translating-wingetui"
-                                        >
+                                            NavigateUri="https://github.com/marticliment/WingetUI/wiki#translating-wingetui">
                                             <widgets:TranslatedTextBlock Text="Become a translator"/>
                                         </HyperlinkButton>
                                     </StackPanel>
@@ -79,12 +78,18 @@
                                 CheckboxText="Update WingetUI automatically"
                                 ButtonText="Check for updates"
                                 SettingName="DisableAutoUpdateWingetUI"
+                                ButtonAlwaysOn="true"
                                 Click="ForceUpdateUniGetUI_OnClick"
                                 />
                             <widgets:CheckboxCard
                                 Text="Install prerelease versions of UniGetUI"
                                 SettingName="EnableUniGetUIBeta"
                                 />
+                            <widgets:ButtonCard
+                                Text="Manage telemetry settings"
+                                ButtonText="Manage"
+                                Click="ManageTelemetrySettings_Click"
+                            />
                             <widgets:ButtonCard
                                 Text="Import settings from a local file"
                                 ButtonText="Import"
@@ -106,7 +111,7 @@
                     <!-- User interface -->
                     <widgets:SettingsEntry
                             Text="User interface preferences"
-                            UnderText="Action when double-clicking packages, hide successful installations"
+                            UnderText="Application theme, startup page, package icons, clear successful installs automatically"
                             x:Name="InterfaceSettingsExpander"
                             Icon="interactive">
                         <Toolkit:SettingsExpander.Items>
@@ -328,6 +333,11 @@
                             Icon="experimental">
                         <Toolkit:SettingsExpander.Items>
                             <widgets:CheckboxCard
+                                Name="DisableDMWThreadOptimizations"
+                                SettingName="DisableDMWThreadOptimizations"
+                                Text="Enable background CPU Usage optimizations (see Pull Request #3278)"
+                            />
+                            <widgets:CheckboxCard
                                 x:Name="DisableWidgetsApi"
                                 Text="Enable background api (WingetUI Widgets and Sharing, port 7058)"
                                 SettingName="DisableApi"
@@ -356,6 +366,12 @@
                                 SettingName="DisableLangAutoUpdater"
                                 StateChanged="DisableDownloadingNewTranslations_StateChanged"
                                 />
+                            <widgets:CheckboxCard
+                                x:Name="DisableWaitForInternetConnection"
+                                Text="Wait for the device to be connected to the internet before attempting to do tasks that require internet connectivity."
+                                SettingName="DisableWaitForInternetConnection"
+                                StateChanged="DisableDownloadingNewTranslations_StateChanged"
+                            />
                             <widgets:TextboxCard
                                 Text="Use a custom icon and screenshot database URL"
                                 Placeholder="Leave empty for default"

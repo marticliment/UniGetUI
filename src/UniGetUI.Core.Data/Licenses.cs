@@ -16,19 +16,23 @@ namespace UniGetUI.Core.Data
             {"InnoDependencyInstaller", "CPOL 1.02" },
 
             // Package managers and related
-            {"Winget",                  "MIT"},
+            {"WinGet",                  "MIT"},
             {"Scoop",                   "MIT"},
             {"scoop-search",            "MIT"},
             {"Chocolatey",              "Apache v2"},
-            {"Npm",                     "Artistic License 2.0"},
+            {"npm",                     "Artistic License 2.0"},
             {"Pip",                     "MIT"},
             {"parse_pip_search",        "MIT"},
             {"PowerShell Gallery",      "Unknown"},
-            {".NET Sdk",                "MIT"},
-            {"dotnet-tools-outdated",   "MIT"},
+            {".NET SDK",                "MIT"},
+            {"Cargo",                   "MIT"},
+            {"cargo-binstall",          "GPL-3.0-only"},
+            {"cargo-update",            "MIT"},
+            {"vcpkg",                   "MIT"},
 
             // Other
-            {"Gsudo",                   "MIT"},
+            {"GSudo",                   "MIT"},
+            {"UniGetUI Elevator",       "MIT"},
             {"Icons",                   "By Icons8"},
         };
 
@@ -46,19 +50,23 @@ namespace UniGetUI.Core.Data
             {"InnoDependencyInstaller", new Uri("https://github.com/DomGries/InnoDependencyInstaller/blob/master/LICENSE.md") },
 
             // Package managers and related
-            {"Winget",                  new Uri("https://github.com/microsoft/winget-cli/blob/master/LICENSE")},
+            {"WinGet",                  new Uri("https://github.com/microsoft/winget-cli/blob/master/LICENSE")},
             {"Scoop",                   new Uri("https://github.com/ScoopInstaller/Scoop/blob/master/LICENSE")},
             {"scoop-search",            new Uri("https://github.com/shilangyu/scoop-search/blob/master/LICENSE")},
             {"Chocolatey",              new Uri("https://github.com/chocolatey/choco/blob/develop/LICENSE")},
-            {"Npm",                     new Uri("https://github.com/npm/cli/blob/latest/LICENSE")},
+            {"npm",                     new Uri("https://github.com/npm/cli/blob/latest/LICENSE")},
             {"Pip",                     new Uri("https://github.com/pypa/pip/blob/main/LICENSE.txt")},
             {"parse_pip_search",        new Uri("https://github.com/marticliment/parseable_pip_search/blob/master/LICENSE.md")},
-            {".NET Sdk",                new Uri("https://github.com/dotnet/sdk/blob/main/LICENSE.TXT")},
-            {"dotnet-tools-outdated",   new Uri("https://github.com/rychlym/dotnet-tools-outdated/blob/master/LICENSE")},
+            {".NET SDK",                new Uri("https://github.com/dotnet/sdk/blob/main/LICENSE.TXT")},
             {"PowerShell Gallery",      new Uri("https://www.powershellgallery.com/")},
+            {"Cargo",                   new Uri("https://github.com/rust-lang/cargo/blob/master/LICENSE-MIT")},
+            {"cargo-binstall",          new Uri("https://spdx.org/licenses/GPL-3.0-only.html")},
+            {"cargo-update",            new Uri("https://github.com/nabijaczleweli/cargo-update/blob/master/LICENSE")},
+            {"vcpkg",                   new Uri("https://github.com/microsoft/vcpkg/blob/master/LICENSE.txt")},
 
             // Other
-            {"Gsudo",                   new Uri("https://github.com/gerardog/gsudo/blob/master/LICENSE.txt")},
+            {"GSudo",                   new Uri("https://github.com/gerardog/gsudo/blob/master/LICENSE.txt")},
+            {"UniGetUI Elevator",       new Uri("https://github.com/marticliment/GSudo-for-UniGetUI/blob/main/LICENSE.txt")},
             {"Icons",                   new Uri("https://icons8.com/license")},
         };
 
@@ -76,19 +84,23 @@ namespace UniGetUI.Core.Data
             {"InnoDependencyInstaller", new Uri("https://github.com/DomGries/InnoDependencyInstaller")},
 
             // Package managers and related
-            {"Winget",                  new Uri("https://github.com/microsoft/winget-cli/")},
+            {"WinGet",                  new Uri("https://github.com/microsoft/winget-cli/")},
             {"Scoop",                   new Uri("https://github.com/ScoopInstaller/Scoop/")},
             {"scoop-search",            new Uri("https://github.com/shilangyu/scoop-search/")},
             {"Chocolatey",              new Uri("https://github.com/chocolatey/choco/")},
-            {"Npm",                     new Uri("https://github.com/npm/cli/")},
+            {"npm",                     new Uri("https://github.com/npm/cli/")},
             {"Pip",                     new Uri("https://github.com/pypa/pip/")},
             {"parse_pip_search",        new Uri("https://github.com/marticliment/parseable_pip_search/")},
-            {".NET Sdk",                new Uri("https://dotnet.microsoft.com/")},
-            {"dotnet-tools-outdated",   new Uri("https://github.com/rychlym/dotnet-tools-outdated/")},
+            {".NET SDK",                new Uri("https://dotnet.microsoft.com/")},
             {"PowerShell Gallery",      new Uri("https://www.powershellgallery.com/")},
+            {"Cargo",                   new Uri("https://github.com/rust-lang/cargo")},
+            {"cargo-binstall",          new Uri("https://github.com/cargo-bins/cargo-binstall")},
+            {"cargo-update",            new Uri("https://github.com/nabijaczleweli/cargo-update/")},
+            {"vcpkg",                   new Uri("https://github.com/microsoft/vcpkg")},
 
             // Other
-            {"Gsudo",                   new Uri("https://github.com/gerardog/gsudo/")},
+            {"GSudo",                   new Uri("https://github.com/gerardog/gsudo/")},
+            {"UniGetUI Elevator",       new Uri("https://github.com/marticliment/GSudo-for-UniGetUI/")},
             {"Icons",                   new Uri("https://icons8.com")},
         };
 
