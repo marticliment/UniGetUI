@@ -184,7 +184,20 @@ namespace UniGetUI.Interface
                     _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
                 };
 
+
+                CheckboxCard WinGet_EnableTroubleshooter_v2 = new()
+                {
+                    Text = CoreTools.Translate("Enable an [experimental] improved WinGet troubleshooter"),
+                    SettingName = "EnableNewWinGetTroubleshooter"
+                };
+                WinGet_EnableTroubleshooter_v2.StateChanged += (_, _) =>
+                {
+                    MainApp.Instance.MainWindow.WinGetWarningBanner.IsOpen = false;
+                    _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
+                };
+
                 ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_EnableTroubleshooter);
+                ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_EnableTroubleshooter_v2);
                 ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_ResetWindowsIPackageManager);
                 ExtraSettingsCards[PEInterface.WinGet].Add(WinGet_UseBundled);
 
