@@ -368,6 +368,13 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
             StandardOutputEncoding = System.Text.Encoding.UTF8
         };
         process.StartInfo = startInfo;
+        if (CoreTools.IsAdministrator())
+        {
+            string WinGetTemp = Path.Join(Path.GetTempPath(), "UniGetUI", "ElevatedWinGetTemp");
+            Logger.Warn($"[WARN] Redirecting %TEMP% folder to {WinGetTemp}, since UniGetUI was run as admin");
+            process.StartInfo.Environment["TEMP"] = WinGetTemp;
+            process.StartInfo.Environment["TMP"] = WinGetTemp;
+        }
         process.Start();
 
         logger.Log("Begin loading installers:");

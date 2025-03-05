@@ -73,8 +73,14 @@ namespace UniGetUI.Interface
             }
 
             MoreNavButtonMenu.Closed += (_, _) => SelectNavButtonForPage(CurrentPage_t);
-            KeyUp += (s, e) =>
+            KeyDown += (s, e) =>
             {
+                if (e.KeyStatus.WasKeyDown)
+                {
+                    // ignore repeated KeyDown events when pressing and holding a key
+                    return;
+                }
+
                 bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
                 bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 

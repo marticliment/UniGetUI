@@ -59,43 +59,47 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             foreach(IManagerSource source in sources)
             {
-                Uri SearchUrl = new($"{source.Url}/Search()?searchTerm=%27{HttpUtility.UrlEncode(query)}%27&targetFramework=%27%27&includePrerelease=false");
+                string sortingPiece = "&$orderby=Published%20desc";
+                if (source.Url.Host == "www.powershellgallery.com") sortingPiece = "";
+                Uri SearchUrl = new($"{source.Url}/Search()?searchTerm=%27{HttpUtility.UrlEncode(query)}%27&targetFramework=%27%27&includePrerelease=false{sortingPiece}");
                 logger.Log($"Begin package search with url={SearchUrl} on manager {Name}");
+                Dictionary<string, SearchResult> AlreadyProcessedPackages = [];
+
 
                 using HttpClient client = new(CoreData.GenericHttpClientParameters);
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
-                HttpResponseMessage response = client.GetAsync(SearchUrl).GetAwaiter().GetResult();
+                    HttpResponseMessage response = client.GetAsync(SearchUrl).GetAwaiter().GetResult();
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    logger.Error($"Failed to fetch api at Url={SearchUrl} with status code {response.StatusCode}");
-                    continue;
-                }
-
-                string SearchResults = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                MatchCollection matches = Regex.Matches(SearchResults, "<entry>([\\s\\S]*?)<\\/entry>");
-
-                Dictionary<string, SearchResult> AlreadyProcessedPackages = [];
-
-                foreach (Match match in matches)
-                {
-                    if (!match.Success)
+                    if (!response.IsSuccessStatusCode)
                     {
+                        logger.Error($"Failed to fetch api at Url={SearchUrl} with status code {response.StatusCode}");
                         continue;
                     }
 
-                    string id = Regex.Match(match.Value, "Id='([^<>']+)'").Groups[1].Value;
-                    string version = Regex.Match(match.Value, "Version='([^<>']+)'").Groups[1].Value;
-                    var float_version = CoreTools.VersionStringToStruct(version);
-                    // Match title = Regex.Match(match.Value, "<title[ \\\"\\=A-Za-z0-9]+>([^<>]+)<\\/title>");
+                    string SearchResults = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    MatchCollection matches = Regex.Matches(SearchResults, "<entry>([\\s\\S]*?)<\\/entry>");
 
-                    if (AlreadyProcessedPackages.TryGetValue(id, out var value) && value.version_float >= float_version)
+                    foreach (Match match in matches)
                     {
-                        continue;
+                        if (!match.Success)
+                        {
+                            continue;
+                        }
+
+                        string id = Regex.Match(match.Value, "Id='([^<>']+)'").Groups[1].Value;
+                        string version = Regex.Match(match.Value, "Version='([^<>']+)'").Groups[1].Value;
+                        var float_version = CoreTools.VersionStringToStruct(version);
+                        // Match title = Regex.Match(match.Value, "<title[ \\\"\\=A-Za-z0-9]+>([^<>]+)<\\/title>");
+
+                        if (AlreadyProcessedPackages.TryGetValue(id, out var value) &&
+                            value.version_float >= float_version)
+                        {
+                            continue;
+                        }
+
+                        AlreadyProcessedPackages[id] = new SearchResult { id = id, version = version, version_float = float_version };
                     }
 
-                    AlreadyProcessedPackages[id] = new SearchResult { id = id, version = version, version_float = float_version };
-                }
                 foreach (SearchResult package in AlreadyProcessedPackages.Values)
                 {
                     logger.Log($"Found package {package.id} version {package.version} on source {source.Name}");

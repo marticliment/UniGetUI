@@ -147,7 +147,6 @@ namespace UniGetUI.Interface
                     }
                     catch (Exception ex2)
                     {
-                        TrayIcon?.ForceCreate(false);
                         Logger.Error("Could not create taskbar tray (hard crash)");
                         Logger.Error(ex2);
                     }
@@ -548,7 +547,7 @@ namespace UniGetUI.Interface
                 string modifier = "_empty";
                 string tooltip = CoreTools.Translate("Everything is up to date") + " - " + Title;
 
-                if (MainApp.Tooltip.OperationsInProgress > 0)
+                if (MainApp.Operations.AreThereRunningOperations())
                 {
                     modifier = "_blue";
                     tooltip = CoreTools.Translate("Operation in progress") + " - " + Title;

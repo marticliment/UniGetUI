@@ -100,13 +100,18 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
             _iconId = Manager.Name switch
             {
-                "Winget" => string.Join('.', id.ToLower().Split(".")[1..]),
+                "Winget" => Source.Name switch
+                {
+                    "Steam" => id.ToLower().Split("\\")[^1].Replace("steam app ", "steam-").Trim(),
+                    "Local PC" => id.ToLower().Split("\\")[^1],
+                    "Microsoft Store" => id.IndexOf('_') < id.IndexOf('.') ? // If the first underscore is before the period, this ID has no publisher
+                        string.Join('_', id.ToLower().Split("\\")[1].Split("_")[0..^4]) : // no publisher: remove `MSIX\`, then the standard ending _version_arch__{random id}
+                        string.Join('_', string.Join('.', id.ToLower().Split(".")[1..]).Split("_")[0..^4]), // remove the publisher (before the first .), then the standard _version_arch__{random id}
+                    _ => string.Join('.', id.ToLower().Split(".")[1..]),
+                },
                 "Scoop" => id.ToLower().Replace(".app", ""),
                 "Chocolatey" => id.ToLower().Replace(".install", "").Replace(".portable", ""),
                 "vcpkg" => id.ToLower().Split(":")[0].Split("[")[0],
-                "Steam" => id.ToLower().Split("\\")[^1].Replace("Steam App", "steam:"),
-                "Local PC" => id.ToLower().Split("\\")[^1],
-                "Microsoft Store" => id.ToLower().Split(".")[1].Split("_")[0],
                 _ => id.ToLower()
             };
         }
