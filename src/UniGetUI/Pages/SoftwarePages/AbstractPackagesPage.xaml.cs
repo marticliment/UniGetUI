@@ -950,44 +950,6 @@ namespace UniGetUI.Interface
             }
         }
 
-        private void PackageItemContainer_KeyUp(object sender, KeyRoutedEventArgs e)
-        {
-            IPackage? package = (sender as PackageItemContainer)?.Package;
-
-            bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-            //bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
-            bool IS_ALT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftMenu).HasFlag(CoreVirtualKeyStates.Down);
-            IS_ALT_PRESSED |= InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.RightMenu).HasFlag(CoreVirtualKeyStates.Down);
-
-            if (e.Key == VirtualKey.Enter && package is not null)
-            {
-                if (IS_ALT_PRESSED)
-                {
-                    if (!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
-                        ShowInstallationOptionsForPackage(package);
-                }
-                else if (IS_CONTROL_PRESSED)
-                {
-                    if (package is not InvalidImportedPackage)
-                        PerformMainPackageAction(package);
-                }
-                else
-                {
-                    if (!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
-                    {
-                        TEL_InstallReferral referral = TEL_InstallReferral.ALREADY_INSTALLED;
-                        if (PAGE_NAME == "Bundles") referral = TEL_InstallReferral.FROM_BUNDLE;
-                        if (PAGE_NAME == "Discover") referral = TEL_InstallReferral.DIRECT_SEARCH;
-                        ShowDetailsForPackage(package, referral);
-                    }
-                }
-            }
-            else if (e.Key == VirtualKey.Space && package is not null)
-            {
-                package.IsChecked = !package.IsChecked;
-            }
-        }
-
         private void SelectAllCheckBox_ValueChanged(object sender, RoutedEventArgs e)
         {
             if (SelectAllCheckBox.IsChecked == true)
@@ -1118,7 +1080,7 @@ namespace UniGetUI.Interface
 
         private void PackageItemContainer_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key is not (VirtualKey.Up or VirtualKey.Down or VirtualKey.Home or VirtualKey.End) ||
+            if (e.Key is not (VirtualKey.Up or VirtualKey.Down or VirtualKey.Home or VirtualKey.End or VirtualKey.Enter or VirtualKey.Space) ||
                 sender is not PackageItemContainer packageItemContainer)
             {
                 return;
@@ -1128,15 +1090,63 @@ namespace UniGetUI.Interface
             switch (e.Key)
             {
                 case VirtualKey.Up when index > 0:
-                    SelectAndScrollTo(index - 1, true); break;
+                    SelectAndScrollTo(index - 1, true); e.Handled = true; break;
                 case VirtualKey.Down when index < FilteredPackages.Count - 1:
-                    SelectAndScrollTo(index + 1, true); break;
+                    SelectAndScrollTo(index + 1, true); e.Handled = true; break;
                 case VirtualKey.Home when index > 0:
-                    SelectAndScrollTo(0, true); break;
+                    SelectAndScrollTo(0, true); e.Handled = true; break;
                 case VirtualKey.End when index < FilteredPackages.Count - 1:
-                    SelectAndScrollTo(FilteredPackages.Count - 1, true); break;
+                    SelectAndScrollTo(FilteredPackages.Count - 1, true); e.Handled = true; break;
             }
-            e.Handled = true;
+
+            if (e.KeyStatus.WasKeyDown)
+            {
+                // ignore repeated KeyDown events when pressing and holding a key
+                return;
+            }
+
+            IPackage? package = packageItemContainer.Package;
+
+            bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            //bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+            bool IS_ALT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftMenu).HasFlag(CoreVirtualKeyStates.Down);
+            IS_ALT_PRESSED |= InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.RightMenu).HasFlag(CoreVirtualKeyStates.Down);
+
+            if (e.Key == VirtualKey.Enter && package is not null)
+            {
+                if (IS_ALT_PRESSED)
+                {
+                    if (!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
+                    {
+                        ShowInstallationOptionsForPackage(package);
+                        e.Handled = true;
+                    }
+                }
+                else if (IS_CONTROL_PRESSED)
+                {
+                    if (package is not InvalidImportedPackage)
+                    {
+                        PerformMainPackageAction(package);
+                        e.Handled = true;
+                    }
+                }
+                else
+                {
+                    if (!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
+                    {
+                        TEL_InstallReferral referral = TEL_InstallReferral.ALREADY_INSTALLED;
+                        if (PAGE_NAME == "Bundles") referral = TEL_InstallReferral.FROM_BUNDLE;
+                        if (PAGE_NAME == "Discover") referral = TEL_InstallReferral.DIRECT_SEARCH;
+                        ShowDetailsForPackage(package, referral);
+                        e.Handled = true;
+                    }
+                }
+            }
+            else if (e.Key == VirtualKey.Space && package is not null)
+            {
+                package.IsChecked = !package.IsChecked;
+                e.Handled = true;
+            }
         }
     }
 }
