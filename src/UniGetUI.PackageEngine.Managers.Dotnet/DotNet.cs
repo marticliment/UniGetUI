@@ -62,7 +62,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             List<Package> Packages = [];
             foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })
             {
-                Process p = new()
+                using Process p = new()
                 {
                     StartInfo = new ProcessStartInfo
                     {

@@ -42,7 +42,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
         {
             List<ManagerSource> sources = [];
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new()
                 {

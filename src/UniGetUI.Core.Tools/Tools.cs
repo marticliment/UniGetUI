@@ -264,7 +264,7 @@ Crash Traceback:
         /// <param name="RunAsAdmin">Whether the batch file should be launched elevated or not</param>
         public static async void LaunchBatchFile(string path, string WindowTitle = "", bool RunAsAdmin = false)
         {
-            Process p = new();
+            using Process p = new();
             p.StartInfo.FileName = "cmd.exe";
             p.StartInfo.Arguments = "/C start \"" + WindowTitle + "\" \"" + path + "\"";
             p.StartInfo.UseShellExecute = true;
@@ -501,7 +501,7 @@ Crash Traceback:
         public static async Task CacheUACForCurrentProcess()
         {
             Logger.Info("Caching admin rights for process id " + Environment.ProcessId);
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -525,7 +525,7 @@ Crash Traceback:
         public static async Task ResetUACForCurrentProcess()
         {
             Logger.Info("Resetting administrator rights cache for process id " + Environment.ProcessId);
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {

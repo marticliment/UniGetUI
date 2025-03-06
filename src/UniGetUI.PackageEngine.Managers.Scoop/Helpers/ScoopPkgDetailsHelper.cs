@@ -39,7 +39,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             else
                 packageId = $"{details.Package.Source.Name}/{details.Package.Id}";
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {

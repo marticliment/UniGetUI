@@ -725,7 +725,7 @@ namespace UniGetUI.Interface
 
         private void EditAutostartSettings_Click(object sender, EventArgs e)
         {
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {

@@ -327,7 +327,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
 
         public override void RefreshPackageIndexes()
         {
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {

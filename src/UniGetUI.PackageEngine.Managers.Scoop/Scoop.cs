@@ -119,7 +119,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 path = "scoop-search.exe";
             }
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -193,7 +193,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
             List<Package> Packages = [];
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -272,7 +272,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
         {
             List<Package> Packages = [];
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -349,7 +349,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 return;
             }
             LastScoopSourceUpdateTime = DateTime.Now.Ticks;
-            Process p = new();
+            using Process p = new();
             ProcessStartInfo StartInfo = new()
             {
                 FileName = Status.ExecutablePath,
@@ -408,7 +408,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             Logger.Info("Starting scoop cleanup...");
             foreach (string command in new[] { " cache rm *", " cleanup --all --cache", " cleanup --all --global --cache" })
             {
-                Process p = new()
+                using Process p = new()
                 {
                     StartInfo = new ProcessStartInfo
                     {
