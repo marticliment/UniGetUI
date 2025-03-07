@@ -1,7 +1,7 @@
 {
   "(Last checked: {0})": "(Letzte Überprüfung: {0})",
   "(Number {0} in the queue)": "(Position {0} in der Warteschlange)",
-  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry": "@Datacra5H, @ebnater, @Seeloewen, @michaelmairegger, @CanePlayz, @1270o1, @yrjarv, @alxhu-dev, @Araxxas, @martinwilco",
+  "0 0 0 Contributors, please add your names/usernames separated by comas (for credit purposes). DO NOT Translate this entry": "@Datacra5H, @ebnater, @Seeloewen, @michaelmairegger, @CanePlayz, @1270o1, @yrjarv, @alxhu-dev, @Araxxas, @martinwilco, @tkohlmeier",
   "0 packages found": "0 Pakete gefunden",
   "0 updates found": "0 Updates gefunden",
   "1 - Errors": "1 - Fehler",
@@ -146,7 +146,7 @@
   "Custom arguments:": "Benutzerdefinierte Befehle:",
   "Custom command-line arguments:": "Benutzerdefinierte Kommandozeilen-Argumente:",
   "Customize WingetUI - for hackers and advanced users only": "UniGetUI anpassen - nur für Hacker und fortgeschrittene Benutzer",
-  "DEBUG BUILD": "Debugbuild",
+  "DEBUG BUILD": "DEBUG-BUILD",
   "DISCLAIMER: WE ARE NOT RESPONSIBLE FOR THE DOWNLOADED PACKAGES. PLEASE MAKE SURE TO INSTALL ONLY TRUSTED SOFTWARE.": "HAFTUNGSAUSSCHLUSS: WIR SIND NICHT FÜR DIE HERUNTERGELADENEN PAKETE VERANTWORTLICH. BITTE STELLEN SIE SICHER, DASS SIE NUR VERTRAUENSWÜRDIGE SOFTWARE INSTALLIEREN.",
   "Dark": "Dunkel",
   "Decline": "Ablehnen",
