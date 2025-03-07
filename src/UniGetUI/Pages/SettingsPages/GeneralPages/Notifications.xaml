@@ -30,6 +30,7 @@
             SettingName="DisableUpdatesNotifications"
             x:Name="DisableUpdatesNotifications"
             CornerRadius="8,8,0,0"
+            IsEnabled="{x:Bind DisableNotifications._checkbox.IsOn, Mode=OneWay}"
             />
 
         <widgets:CheckboxCard
@@ -37,6 +38,7 @@
             SettingName="DisableProgressNotifications"
             x:Name="DisableProgressNotifications"
             CornerRadius="0" BorderThickness="1,0"
+            IsEnabled="{x:Bind DisableNotifications._checkbox.IsOn, Mode=OneWay}"
             />
 
         <widgets:CheckboxCard
@@ -44,12 +46,14 @@
             SettingName="DisableUpdatesNotifications"
             x:Name="DisableErrorNotifications"
             CornerRadius="0"
+            IsEnabled="{x:Bind DisableNotifications._checkbox.IsOn, Mode=OneWay}"
             />
         <widgets:CheckboxCard
             Text="Show a notification when an operation finishes successfully"
             SettingName="DisableSuccessNotifications"
             x:Name="DisableSuccessNotifications"
             CornerRadius="0,0,8,8" BorderThickness="1,0,1,1"
+            IsEnabled="{x:Bind DisableNotifications._checkbox.IsOn, Mode=OneWay}"
             />
     </StackPanel>
 </Page>

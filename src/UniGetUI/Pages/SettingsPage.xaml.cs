@@ -504,8 +504,7 @@ namespace UniGetUI.Interface
                             Text = CoreTools.AutoTranslated("Always run {pm} operations with administrator rights"),
                             SettingName = "AlwaysElevate" + Manager.Name,
                         };
-                        AdminCard._checkbox.Content =
-                            (AdminCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
+                        AdminCard._checkbox.OnContent = AdminCard._checkbox.OffContent = (AdminCard._checkbox.OnContent.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
                         ExtraSettingsCards[Manager].Insert(index++, AdminCard);
 
                         /*CheckboxCard ParallelCard = new()
