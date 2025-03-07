@@ -5,12 +5,39 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets"
     mc:Ignorable="d"
     NavigationCacheMode="Required"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
 
-    <Grid>
+    <StackPanel Orientation="Vertical" Spacing="8">
 
-    </Grid>
+        <widgets:CheckboxCard
+            x:Name="DisableAutoCheckForUpdates"
+            Text="Check for package updates periodically"
+            SettingName="DisableAutoCheckforUpdates"/>
+
+        <widgets:ComboboxCard
+            x:Name="UpdatesCheckIntervalSelector"
+            Text="Check for updates every:"
+            SettingName="UpdatesCheckInterval"
+            ValueChanged="ShowRestartBanner"/>
+        
+        <widgets:CheckboxCard
+            Text="Install available updates automatically"
+            SettingName="AutomaticallyUpdatePackages"/>
+
+        <widgets:CheckboxButtonCard
+            CheckboxText="Ask to delete desktop shortcuts created during an install or upgrade."
+            SettingName="AskToDeleteNewDesktopShortcuts"
+            ButtonText="Manage shortcuts"
+            Click="ManageDesktopShortcutsButton_Click"/>
+
+        <widgets:ComboboxCard
+            x:Name="ParallelOperationCount"
+            Text="Choose how many operations shouls be performed in parallel"
+            SettingName="ParallelOperationCount"
+            ValueChanged="ParallelOperationCount_OnValueChanged"/>
+
+    </StackPanel>
 </Page>

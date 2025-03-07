@@ -121,10 +121,8 @@ namespace UniGetUI.Interface
 
                 // Backup Section
                 BackupDirectoryLabel = (TextBlock)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(0);
-                ResetBackupDirectory =
-                    (HyperlinkButton)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(1);
-                OpenBackupDirectory =
-                    (HyperlinkButton)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2);
+                ResetBackupDirectory = (HyperlinkButton)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(1);
+                OpenBackupDirectory = (HyperlinkButton)((StackPanel)ChangeBackupDirectory.Description).Children.ElementAt(2);
 
                 EnablePackageBackupUI(Settings.Get("EnablePackageBackup"));
                 ResetBackupDirectory.Content = CoreTools.Translate("Reset");

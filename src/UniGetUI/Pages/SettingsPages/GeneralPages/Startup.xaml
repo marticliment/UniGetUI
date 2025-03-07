@@ -5,12 +5,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets"
     mc:Ignorable="d"
     NavigationCacheMode="Required"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
 
-    <Grid>
+    <StackPanel Spacing="8" Orientation="Vertical">
+        <widgets:ButtonCard
+            Text="Manage WingetUI autostart behaviour from the Settings app"
+            ButtonText="Open"
+            Click="EditAutostartSettings_Click"/>
+        
+        <widgets:CheckboxCard
+            Text="Enable Scoop cleanup on launch"
+            SettingName="EnableScoopCleanup"/>
 
-    </Grid>
+    </StackPanel>
 </Page>

@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +14,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using UniGetUI.Core.Tools;
+using System.Diagnostics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -34,5 +36,19 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
         public event EventHandler? RestartRequired;
         public event EventHandler<Type>? NavigationRequested;
+
+        private void EditAutostartSettings_Click(object sender, EventArgs e)
+        {
+            using Process p = new()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "ms-settings:startupapps",
+                    UseShellExecute = true,
+                    CreateNoWindow = true
+                }
+            };
+            p.Start();
+        }
     }
 }

@@ -13,6 +13,8 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using UniGetUI.Core.Tools;
+using UniGetUI.Pages.DialogPages;
+using UniGetUI.PackageOperations;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,11 +31,23 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             this.InitializeComponent();
         }
 
-        public bool CanGoBack => true;
+        public void ShowRestartBanner(object sender, EventArgs e)
+            => RestartRequired?.Invoke(this, e);
+        private void ManageDesktopShortcutsButton_Click(object sender, RoutedEventArgs e)
+            => _ = DialogHelper.ManageDesktopShortcuts();
 
+        public bool CanGoBack => true;
         public string ShortTitle => CoreTools.Translate("Operation preferences");
 
         public event EventHandler? RestartRequired;
         public event EventHandler<Type>? NavigationRequested;
+
+        private void ParallelOperationCount_OnValueChanged(object sender, EventArgs e)
+        {
+            if (int.TryParse(ParallelOperationCount.SelectedValue(), out int value))
+            {
+                AbstractOperation.MAX_OPERATIONS = value;
+            }
+        }
     }
 }
