@@ -24,13 +24,15 @@
             Text="Check for updates every:"
             SettingName="UpdatesCheckInterval"
             ValueChanged="ShowRestartBanner"
-            CornerRadius="0" BorderThickness="1,0" 
+            CornerRadius="0" BorderThickness="1,0"
+            IsEnabled="{x:Bind DisableAutoCheckForUpdates._checkbox.IsOn, Mode=OneWay}"
             />
         
         <widgets:CheckboxCard
             Text="Install available updates automatically"
             SettingName="AutomaticallyUpdatePackages"
             CornerRadius="0,0,8,8"
+            IsEnabled="{x:Bind DisableAutoCheckForUpdates._checkbox.IsOn, Mode=OneWay}"
             />
 
         <UserControl Height="16"/>

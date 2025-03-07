@@ -5,10 +5,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    xmlns:converters="using:CommunityToolkit.WinUI.Converters"
     mc:Ignorable="d"
     NavigationCacheMode="Required"
     Background="Transparent">
+
+    <Page.Resources>
+        <converters:BoolNegationConverter x:Key="BoolNegationConverter" />
+    </Page.Resources>
 
     <StackPanel>
         <widgets:CheckboxCard
@@ -16,17 +22,17 @@
             Text="Ask only once for administrator privileges (not recommended)"
             SettingName="DoCacheAdminRights"
             StateChanged="RestartCache"
-            CornerRadius="8"
+            CornerRadius="8,8,0,0"
+            BorderThickness="1,1,1,0"
             />
-
-        <UserControl Height="16"/>
 
         <widgets:CheckboxCard
             x:Name="DoCacheAdminRightsForBatches"
             Text="Ask for administrator privileges once for each batch of operations"
             SettingName="DoCacheAdminRightsForBatches"
             StateChanged="RestartCache"
-            CornerRadius="8"
+            CornerRadius="0,0,8,8"
+            IsEnabled="{x:Bind DoCacheAdminRights._checkbox.IsOn, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
             />
     </StackPanel>
 </Page>

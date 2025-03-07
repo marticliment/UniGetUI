@@ -27,6 +27,12 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public Administrator()
         {
             this.InitializeComponent();
+
+            if(DoCacheAdminRights.Checked && DoCacheAdminRightsForBatches.Checked)
+            {
+                DoCacheAdminRights.IsEnabled = true;
+                DoCacheAdminRightsForBatches.IsEnabled = true;
+            }
         }
 
         public bool CanGoBack => true;

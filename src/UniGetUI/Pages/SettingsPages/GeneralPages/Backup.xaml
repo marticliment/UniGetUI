@@ -40,7 +40,8 @@
             ButtonText="Backup"
             x:Name="BackupNowButton"
             CornerRadius="8"
-            Click="DoBackup_Click"/>
+            Click="DoBackup_Click"
+            IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"/>
 
         <UserControl Height="16"/>
 
@@ -50,7 +51,8 @@
             ButtonText="Select"
             CornerRadius="8"
             x:Name="ChangeBackupDirectory"
-            Click="ChangeBackupDirectory_Click">
+            Click="ChangeBackupDirectory_Click"
+            IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}">
             <Toolkit:SettingsCard.Description>
                 <StackPanel Orientation="Horizontal" Spacing="5">
                     <TextBlock Name="BackupDirectoryLabel" VerticalAlignment="Center"/>
@@ -70,6 +72,7 @@
             SettingName="ChangeBackupFileName"
             x:Name="ChangeBackupFileNameTextBox"
             CornerRadius="8,8,0,0"
+            IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"
             />
 
         <widgets:CheckboxCard
@@ -77,6 +80,7 @@
             x:Name="EnableBackupTimestampingCheckBox"
             SettingName="EnableBackupTimestamping"
             CornerRadius="0,0,8,8" BorderThickness="1,0,1,1"
+            IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"
             />
 
 
