@@ -5,12 +5,40 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets"
     mc:Ignorable="d"
     NavigationCacheMode="Required"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-
-    </Grid>
+    <StackPanel Orientation="Vertical" Spacing="8">
+        <widgets:TranslatedTextBlock
+            x:Name="ToolbarText"
+            Text="The system tray icon must be enabled in order for notifications to work"
+            Visibility="Collapsed"/>
+        <widgets:CheckboxCard
+            Text="Enable WingetUI notifications"
+            SettingName="DisableNotifications"
+            x:Name="DisableNotifications"
+            />
+        <widgets:CheckboxCard
+            Text="Show a notification when there are available updates"
+            SettingName="DisableUpdatesNotifications"
+            x:Name="DisableUpdatesNotifications"
+            />
+        <widgets:CheckboxCard
+            Text="Show a notification when an operation fails"
+            SettingName="DisableUpdatesNotifications"
+            x:Name="DisableErrorNotifications"
+            />
+        <widgets:CheckboxCard
+            Text="Show a notification when an operation finishes successfully"
+            SettingName="DisableSuccessNotifications"
+            x:Name="DisableSuccessNotifications"
+            />
+        <widgets:CheckboxCard
+            Text="Show a silent notification when an operation is running"
+            SettingName="DisableProgressNotifications"
+            x:Name="DisableProgressNotifications"
+            />
+    </StackPanel>
 </Page>

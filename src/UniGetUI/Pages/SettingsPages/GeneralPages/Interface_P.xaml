@@ -5,12 +5,51 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets"
     mc:Ignorable="d"
     NavigationCacheMode="Required"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
 
-    <Grid>
-
-    </Grid>
+    <StackPanel Orientation="Vertical" Spacing="8">
+        <widgets:ComboboxCard
+                x:Name="ThemeSelector"
+                Text="Application theme:"
+                SettingName="PreferredTheme"
+                ValueChanged="ThemeSelector_ValueChanged"
+                />
+        <widgets:ComboboxCard
+                x:Name="StartupPageSelector"
+                Text="UniGetUI startup page:"
+                SettingName="StartupPage"
+                />
+        <widgets:CheckboxCard
+                Text="Show UniGetUI on the system tray"
+                SettingName="DisableSystemTray"
+                x:Name="DisableSystemTray"
+                StateChanged="DisableSystemTray_StateChanged"
+                />
+        <widgets:CheckboxCard
+                Text="Show package icons on package lists"
+                SettingName="DisableIconsOnPackageLists"
+                x:Name="DisableIconsOnPackageLists"
+                StateChanged="ShowRestartBanner"
+            />
+        <widgets:ButtonCard
+                Text="Clear the local icon cache"
+                ButtonText="Clear cache"
+                x:Name="ResetIconCache"
+                Click="ResetIconCache_OnClick"
+            />
+        <widgets:CheckboxCard
+                Name="DisableSelectingUpdatesByDefault"
+                Text="Select upgradable packages by default"
+                SettingName="DisableSelectingUpdatesByDefault"
+                StateChanged="ShowRestartBanner"
+            />
+        <widgets:CheckboxCard
+            ForceInversion="True"
+            Text="Clear successful operations from the operation list after a 5 second delay"
+            SettingName="MaintainSuccessfulInstalls"
+            />
+    </StackPanel>
 </Page>

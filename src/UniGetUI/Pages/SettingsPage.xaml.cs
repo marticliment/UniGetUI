@@ -108,7 +108,6 @@ namespace UniGetUI.Interface
                 for (int i = 1; i <= 10; i++)
                 {
                     ParallelOperationCount.AddItem(i.ToString(), i.ToString(), false);
-
                 }
 
                 ParallelOperationCount.AddItem("15", "15", false);
