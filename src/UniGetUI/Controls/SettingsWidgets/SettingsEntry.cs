@@ -50,7 +50,6 @@ namespace UniGetUI.Interface.Widgets
             RestartButton.Click += (_, _) => { MainApp.Instance.KillAndRestart(); };
             ItemsHeader = infoBar;
 
-            DefaultStyleKey = typeof(SettingsExpander);
         }
 
         public void ShowRestartRequiredBanner()

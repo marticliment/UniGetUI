@@ -64,7 +64,6 @@ namespace UniGetUI.Interface.Widgets
             //ContentAlignment = ContentAlignment.Left;
             //HorizontalAlignment = HorizontalAlignment.Stretch;
 
-            DefaultStyleKey = typeof(CheckboxCard);
             Description = CheckBox;
             Content = Button;
             CheckBox.HorizontalAlignment = HorizontalAlignment.Stretch;

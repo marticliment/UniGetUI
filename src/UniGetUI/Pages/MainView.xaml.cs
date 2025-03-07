@@ -15,6 +15,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageOperations;
+using UniGetUI.Pages.SettingsPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -41,7 +42,7 @@ namespace UniGetUI.Interface
         public SoftwareUpdatesPage UpdatesPage;
         public InstalledPackagesPage InstalledPage;
         public PackageBundlesPage BundlesPage;
-        private SettingsPage? SettingsPage;
+        private SettingsBasePage? SettingsPage;
         private UniGetUILogPage? UniGetUILogPage;
         private ManagerLogsPage? ManagerLogPage;
         private OperationHistoryPage? OperationHistoryPage;
@@ -168,7 +169,7 @@ namespace UniGetUI.Interface
                 PageType.Updates => UpdatesPage,
                 PageType.Installed => InstalledPage,
                 PageType.Bundles => BundlesPage,
-                PageType.Settings => SettingsPage ??= new SettingsPage(),
+                PageType.Settings => SettingsPage ??= new SettingsBasePage(),
                 PageType.OwnLog => UniGetUILogPage ??= new UniGetUILogPage(),
                 PageType.ManagerLog => ManagerLogPage ??= new ManagerLogsPage(),
                 PageType.OperationHistory => OperationHistoryPage ??= new OperationHistoryPage(),
