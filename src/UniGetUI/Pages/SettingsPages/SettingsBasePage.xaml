@@ -15,14 +15,19 @@
         <animations:OpacityAnimation Duration="0:0:0.25" From="0" To="1"/>
     </animations:Implicit.ShowAnimations>
 
-    <ScrollView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+    <ScrollViewer
+        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+        Margin="0,0,-8,0"
+        Padding="0,0,8,0"
+        >
         <StackPanel MaxWidth="800" Spacing="12">
             <Border
-                Padding="24,16,24,16" CornerRadius="24"
+                Padding="24,16,24,16" CornerRadius="8"
                 Background="{ThemeResource ButtonBackground}">
                 <widgets:Announcer x:Name="SettingsAnnouncer" Url="https://marticliment.com/resources/annoucements/unigetui"/>
             </Border>
-            <InfoBar Name="RestartRequired" Severity="Warning"/>
+            <InfoBar Name="RestartRequired" Severity="Warning" CornerRadius="8"/>
 
             <Grid ColumnSpacing="10" Name="SettingsHeaderGrid">
                 <Grid.ColumnDefinitions>
@@ -50,5 +55,5 @@
             </Grid>
             <Frame Name="MainNavigationFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         </StackPanel>
-    </ScrollView>
+    </ScrollViewer>
 </Page>

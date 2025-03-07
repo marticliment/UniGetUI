@@ -10,18 +10,23 @@
     NavigationCacheMode="Required"
     Background="Transparent">
 
-    <StackPanel Spacing="8">
+    <StackPanel>
         <widgets:CheckboxCard
             x:Name="DoCacheAdminRights"
             Text="Ask only once for administrator privileges (not recommended)"
             SettingName="DoCacheAdminRights"
             StateChanged="RestartCache"
+            CornerRadius="8"
             />
+
+        <UserControl Height="16"/>
+
         <widgets:CheckboxCard
             x:Name="DoCacheAdminRightsForBatches"
             Text="Ask for administrator privileges once for each batch of operations"
             SettingName="DoCacheAdminRightsForBatches"
             StateChanged="RestartCache"
+            CornerRadius="8"
             />
     </StackPanel>
 </Page>

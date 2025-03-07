@@ -10,34 +10,50 @@
     NavigationCacheMode="Required"
     Background="Transparent">
 
-    <StackPanel Orientation="Vertical" Spacing="8">
+    <StackPanel Orientation="Vertical">
 
         <widgets:CheckboxCard
             x:Name="DisableAutoCheckForUpdates"
             Text="Check for package updates periodically"
-            SettingName="DisableAutoCheckforUpdates"/>
+            SettingName="DisableAutoCheckforUpdates"
+            CornerRadius="8,8,0,0"
+            />
 
         <widgets:ComboboxCard
             x:Name="UpdatesCheckIntervalSelector"
             Text="Check for updates every:"
             SettingName="UpdatesCheckInterval"
-            ValueChanged="ShowRestartBanner"/>
+            ValueChanged="ShowRestartBanner"
+            CornerRadius="0" BorderThickness="1,0" 
+            />
         
         <widgets:CheckboxCard
             Text="Install available updates automatically"
-            SettingName="AutomaticallyUpdatePackages"/>
+            SettingName="AutomaticallyUpdatePackages"
+            CornerRadius="0,0,8,8"
+            />
+
+        <UserControl Height="16"/>
+        
+        <widgets:ComboboxCard
+            x:Name="ParallelOperationCount"
+            Text="Choose how many operations shouls be performed in parallel"
+            SettingName="ParallelOperationCount"
+            ValueChanged="ParallelOperationCount_OnValueChanged"
+            CornerRadius="8"
+            />
+
+        <UserControl Height="16"/>
 
         <widgets:CheckboxButtonCard
             CheckboxText="Ask to delete desktop shortcuts created during an install or upgrade."
             SettingName="AskToDeleteNewDesktopShortcuts"
             ButtonText="Manage shortcuts"
-            Click="ManageDesktopShortcutsButton_Click"/>
+            Click="ManageDesktopShortcutsButton_Click"
+            CornerRadius="8"
+            />
 
-        <widgets:ComboboxCard
-            x:Name="ParallelOperationCount"
-            Text="Choose how many operations shouls be performed in parallel"
-            SettingName="ParallelOperationCount"
-            ValueChanged="ParallelOperationCount_OnValueChanged"/>
+        
 
     </StackPanel>
 </Page>

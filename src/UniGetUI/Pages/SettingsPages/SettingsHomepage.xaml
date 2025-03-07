@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     Background="Transparent">
 
-    <StackPanel Orientation="Vertical" Spacing="4">
+    <StackPanel Orientation="Vertical">
         <widgets:SettingsPageButton
             x:Name="GeneralSettingsExpander"
             Text="General preferences"
@@ -17,54 +17,75 @@
             Click="General"
             Icon="settings"/>
 
+        <UserControl Height="16"/>
+
+
         <widgets:SettingsPageButton
             Text="User interface preferences"
             UnderText="Application theme, startup page, package icons, clear successful installs automatically"
             x:Name="InterfaceSettingsExpander"
             Icon="interactive"
-            Click="Interface"/>
+            Click="Interface"
+            CornerRadius="8,8,0,0"
+            />
         
         <widgets:SettingsPageButton
             x:Name="NotificationSettingsEntry"
             Text="Notification preferences"
             UnderText="Show notifications on different events"
             Icon="megaphone"
-            Click="Notifications"/>
+            Click="Notifications"
+            CornerRadius="0"
+            BorderThickness="1,0"
+            />
         
         <widgets:SettingsPageButton
             Text="Startup options"
             x:Name="StartupOptionsExpander"
             UnderText="WingetUI autostart behaviour, application launch settings"
             Icon="launch"
-            Click="Startup"/>
+            Click="Startup"
+            CornerRadius="0,0,8,8"
+            />
+
+        <UserControl Height="16"/>
 
         <widgets:SettingsPageButton
             Text="Install and update preferences"
             x:Name="UpdatesOptionsExpander"
             UnderText="Change how UniGetUI installs packages, and checks and installs available updates"
             Icon="update"
-            Click="Operations"/>
+            Click="Operations"
+            CornerRadius="8,8,0,0"/>
         
         <widgets:SettingsPageButton
             Text="Backup installed packages"
             x:Name="BackupOptionsExpander"
             UnderText="Automatically save a list of all your installed packages to easily restore them."
             Icon="disk"
-            Click="Backup"/>
-        
+            Click="Backup"
+            BorderThickness="1,0,1,1"
+            CornerRadius="0,0,8,8"/>
+
+        <UserControl Height="16"/>
+
         <widgets:SettingsPageButton
             x:Name="AdminSettingsExpander"
             Text="Administrator privileges preferences"
             UnderText="Ask once or always for administrator rights, elevate installations by default"
             Icon="uac"
-            Click="Administrator"/>
-        
+            Click="Administrator"
+            CornerRadius="8"/>
+
+        <UserControl Height="16"/>
+
         <widgets:SettingsPageButton
             x:Name="ExperimentalSettingsExpander"
             Text="Experimental settings and developer options"
             UnderText="Beta features and other options that shouldn't be touched"
             Icon="experimental"
-            Click="Experimental"/>
+            Click="Experimental"
+            CornerRadius="8"/>
 
     </StackPanel>
 </Page>
