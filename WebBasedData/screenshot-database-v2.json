@@ -1,8 +1,8 @@
 {
     "package_count": {
-        "total": 11793,
-        "done": 5255,
-        "packages_with_icon": 5255,
+        "total": 11803,
+        "done": 5273,
+        "packages_with_icon": 5273,
         "packages_with_screenshot": 626,
         "total_screenshots": 1961
     },
@@ -2731,6 +2731,10 @@
         },
         "appharborcli": {
             "icon": "https://community.chocolatey.org/content/packageimages/appharborcli.install.1.2.png",
+            "images": []
+        },
+        "appinstaller": {
+            "icon": "https://i.postimg.cc/bvmN1dfM/App-Installer-icon.png",
             "images": []
         },
         "appinstallerfilebuilder": {
@@ -22528,7 +22532,7 @@
             "images": []
         },
         "launcher": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
             "images": []
         },
         "launchy": {
@@ -24052,7 +24056,7 @@
             "images": []
         },
         "make": {
-            "icon": "",
+            "icon": "https://i.postimg.cc/PJjZN2sh/png-clipart-gnu-compiler-collection-gnu-make-gnu-project-tor-mammal-sheep-thumbnail-Photoroom.png",
             "images": []
         },
         "makehuman": {
@@ -33085,27 +33089,55 @@
             "images": []
         },
         "python310": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
             "images": []
         },
         "python311": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
             "images": []
         },
         "python35": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
             "images": []
         },
         "python36": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
             "images": []
         },
         "python37": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
             "images": []
         },
         "python38": {
-            "icon": "",
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
+            "images": []
+        },
+        "python.3.10": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
+            "images": []
+        },
+        "python.3.11": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
+            "images": []
+        },
+        "python.3.12": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
+            "images": []
+        },
+        "python.3.5": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
+            "images": []
+        },
+        "python.3.6": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
+            "images": []
+        },
+        "python.3.7": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
+            "images": []
+        },
+        "python.3.8": {
+            "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Python_Windows_setup_icon_2016.svg/512px-Python_Windows_setup_icon_2016.svg.png",
             "images": []
         },
         "pythonlauncher": {
@@ -36730,6 +36762,10 @@
         },
         "service-fabric-tools": {
             "icon": "https://community.chocolatey.org/content/packageimages/service-fabric-tools.2.5.20615.png",
+            "images": []
+        },
+        "servicebridge": {
+            "icon": "https://i.postimg.cc/yNNzCHDC/LSB.png",
             "images": []
         },
         "servicebusexplorer": {
@@ -47307,6 +47343,10 @@
         },
         "windowssdk": {
             "icon": "",
+            "images": []
+        },
+        "windowssdk.10.0.19041": {
+            "icon": "https://i.postimg.cc/rwGzh5vf/Visual-Studio-Icon-2022.png",
             "images": []
         },
         "windowsspyblocker": {
