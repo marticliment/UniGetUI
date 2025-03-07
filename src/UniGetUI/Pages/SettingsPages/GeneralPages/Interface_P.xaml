@@ -29,7 +29,7 @@
         <UserControl Height="16"/>
 
         <widgets:CheckboxCard
-            Text="Show UniGetUI on the system tray"
+            Text="Close UniGetUI to the system tray"
             SettingName="DisableSystemTray"
             x:Name="DisableSystemTray"
             StateChanged="DisableSystemTray_StateChanged"

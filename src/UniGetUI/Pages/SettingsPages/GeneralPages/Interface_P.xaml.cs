@@ -49,6 +49,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             StartupPageSelector.AddItem(CoreTools.AutoTranslated("Package Bundles"), "bundles");
             StartupPageSelector.AddItem(CoreTools.AutoTranslated("Settings"), "settings");
             StartupPageSelector.ShowAddedItems();
+
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
