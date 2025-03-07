@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using UniGetUI.Core.Tools;
+using Microsoft.UI.Xaml.Media.Animation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,10 +28,14 @@ namespace UniGetUI.Pages.SettingsPages
         public SettingsBasePage()
         {
             this.InitializeComponent();
-            BackButton.Click += (_, _) => MainNavigationFrame.NavigateToType(typeof(SettingsHomepage), null, new());
+            BackButton.Click += (_, _) =>
+            {
+                if (MainNavigationFrame.CanGoBack) MainNavigationFrame.GoBack();
+                else MainNavigationFrame.Navigate(typeof(SettingsHomepage), null, new DrillInNavigationTransitionInfo());
+            };
             MainNavigationFrame.Navigated += MainNavigationFrame_Navigated;
             MainNavigationFrame.Navigating += MainNavigationFrame_Navigating;
-            MainNavigationFrame.NavigateToType(typeof(SettingsHomepage), null, new());
+            MainNavigationFrame.Navigate(typeof(SettingsHomepage), null, new DrillInNavigationTransitionInfo());
 
             RestartRequired.Message = CoreTools.Translate("Restart WingetUI to fully apply changes");
             var RestartButton = new Button
@@ -71,7 +76,7 @@ namespace UniGetUI.Pages.SettingsPages
 
         private void Page_NavigationRequested(object? sender, Type e)
         {
-            MainNavigationFrame.NavigateToType(e, null, new());
+            MainNavigationFrame.Navigate(e, null, new DrillInNavigationTransitionInfo());
         }
     }
 }

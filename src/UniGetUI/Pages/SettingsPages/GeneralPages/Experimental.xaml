@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets"
     mc:Ignorable="d"
+    NavigationCacheMode="Required"
     Background="Transparent">
 
     <StackPanel Orientation="Vertical" Spacing="4">
