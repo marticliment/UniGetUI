@@ -118,8 +118,8 @@ namespace UniGetUI.Interface
 
             _ = AutoUpdater.UpdateCheckLoop(this, UpdatesBanner);
 
-            if (!Settings.Get("TransferredOldSettings") || !Settings.Get("TransferredOldSettings-2"))
-                TransferOldSettingsFormats();
+
+            TransferOldSettingsFormats();
 
             Activated += (_, e) =>
             {
@@ -214,17 +214,19 @@ namespace UniGetUI.Interface
                 Settings.Set("TransferredOldSettings", true);
             }
 
-            foreach (IPackageManager Manager in PEInterface.Managers)
+            if (!Settings.Get("TransferredOldSettingsv2"))
             {
-                string SettingName = "AlwaysElevate" + Manager.Name;
-                if (Settings.Get(SettingName))
+                foreach (IPackageManager Manager in PEInterface.Managers)
                 {
-                    Settings.SetDictionaryItem("AlwaysElevate", Manager.Name, true);
-                    Settings.Set(SettingName, false);
+                    string SettingName = "AlwaysElevate" + Manager.Name;
+                    if (Settings.Get(SettingName))
+                    {
+                        Settings.SetDictionaryItem("AlwaysElevate", Manager.Name, true);
+                        Settings.Set(SettingName, false);
+                    }
                 }
+                Settings.Set("TransferredOldSettingsv2", true);
             }
-
-            Settings.Set("TransferredOldSettings-2", true);
         }
 
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)
