@@ -223,7 +223,7 @@ Root: HKA; Subkey: "Software\Classes\UniGetUI.PackageBundle\shell\open\command";
 Source: "unigetui_bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: TripleKill('WingetUI.exe', 'UniGetUI.exe', 'choco.exe');
 Source: "unigetui_bin\*"; DestDir: "{app}"; Flags: createallsubdirs ignoreversion recursesubdirs;
 Source: "src\UniGetUI.PackageEngine.Managers.Chocolatey\choco-cli\*"; DestDir: "{userpf}\..\UniGetUI\Chocolatey"; Flags: createallsubdirs ignoreversion recursesubdirs uninsneveruninstall; Tasks: regularinstall\chocoinstall; Check: not CmdLineParamExists('/NoChocolatey');
-Source: "InstallerExtras\EnsureWinGet.ps1"; DestDir: "{tmp}"; Flags: deleteafterinstall
+; Source: "InstallerExtras\EnsureWinGet.ps1"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "InstallerExtras\ForceUniGetUIPortable"; DestDir: "{app}"; Tasks: portableinstall
 
 
@@ -233,9 +233,7 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: re
 
 [Run]
 ; Filename: "powershell.exe"; Parameters: "-ExecutionPolicy Bypass -File -NonInteractive ""{tmp}\EnsureWinGet.ps1"""; StatusMsg: "Ensuring WinGet is properly installed... (this may take a while)"; WorkingDir: {app}; Check: not CmdLineParamExists('/NoWinGet'); Flags: runhidden
- 
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall; Check: not CmdLineParamExists('/NoAutoStart');
-
 Filename: "{app}\{#MyAppExeName}"; Parameters: "--migrate-wingetui-to-unigetui"; StatusMsg: "Removing old icons...";
 
 
