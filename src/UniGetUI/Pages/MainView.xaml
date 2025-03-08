@@ -176,7 +176,7 @@
             <Frame Grid.Column="0" Grid.Row="0" Name="ContentFrame"/>
             <controls:GridSplitter
                 Grid.Column="0" Grid.Row="1"
-                Name="OperationSplitter"
+                x:Name="OperationSplitter"
                 Orientation="Horizontal"
                 CornerRadius="4" Height="12" Padding="0,0,0,0"
                 Margin="1,0,1,0"/>
