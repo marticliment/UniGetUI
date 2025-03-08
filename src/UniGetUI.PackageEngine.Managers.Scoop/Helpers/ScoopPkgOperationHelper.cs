@@ -41,7 +41,7 @@ internal sealed class ScoopPkgOperationHelper : PackagePkgOperationHelper
         else
         {
             if (options.SkipHashCheck)
-                parameters.Add("--skip");
+                parameters.Add("--skip-hash-check");
 
             parameters.AddRange(options.Architecture switch
             {

@@ -4,6 +4,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
@@ -92,7 +93,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             var installOptions = NativePackageHandler.GetInstallationOptions(package, options, operation);
             if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationRequired or ElevationRequirement.ElevatesSelf)
             {
-                Logger.Info("Package requires elevation, forcing administrator rights...");
+                Logger.Info($"WinGet package {package.Id} requires elevation, forcing administrator rights...");
                 package.OverridenOptions.RunAsAdministrator = true;
             }
             else if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationProhibited)
@@ -111,7 +112,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             }
             else if(installOptions?.Scope is PackageInstallerScope.System/* or PackageInstallerScope.Unknown*/)
             {
-                Logger.Info("Package is installed on a system-wide scope, forcing administrator rights...");
+                Logger.Info($"WinGet package {package.Id} is installed on a system-wide scope, forcing administrator rights...");
                 package.OverridenOptions.RunAsAdministrator = true;
             }
         }
@@ -157,10 +158,16 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             return OperationVeredict.Failure;
         }
 
-		if (uintCode is 0x8A15002B)
-		{   // TODO: The update cannot be installed (not applicable)
-			return OperationVeredict.Failure;
-		}
+        if (uintCode is 0x8A15002B)
+        {
+            if (Settings.Get("IgnoreUpdatesNotApplicable"))
+            {
+                Logger.Warn($"Ignoring update {package.Id} as the update is not applicable to the platform, and the user has enabled IgnoreUpdatesNotApplicable");
+                IgnoredUpdatesDatabase.Add(IgnoredUpdatesDatabase.GetIgnoredIdForPackage(package), package.VersionString);
+                return OperationVeredict.Success;
+            }
+            return OperationVeredict.Failure;
+        }
 
         if (uintCode is 0x8A15010D or 0x8A15004F or 0x8A15010E)
         {   // Application is already installed

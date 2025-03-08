@@ -101,7 +101,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 path = "parse_pip_search.exe";
             }
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -161,7 +161,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
 
         protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -223,7 +223,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
         protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
         {
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {

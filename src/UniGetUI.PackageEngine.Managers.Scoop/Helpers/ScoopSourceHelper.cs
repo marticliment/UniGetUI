@@ -81,6 +81,10 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                                 elements[1] = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                                     "scoop", "buckets", elements[0].Trim());
                             }
+                            else
+                            {
+                                elements[1] = Regex.Replace(elements[1], @"^(.*)\.git$", "$1");
+                            }
 
                             sources.Add(new ManagerSource(Manager, elements[0].Trim(), new Uri(elements[1]), int.Parse(elements[4].Trim()), elements[2].Trim() + " " + elements[3].Trim()));
                         }

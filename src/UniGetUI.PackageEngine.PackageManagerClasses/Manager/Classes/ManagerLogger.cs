@@ -253,7 +253,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             }
             else
             {
-                result.Add($"2Return code: FAILED ({ReturnCode})");
+                result.Add($"2Return code: FAILED (0x{(uint)ReturnCode:X}, {(uint)ReturnCode}, {ReturnCode})");
             }
 
             result.Add("0");
@@ -398,7 +398,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             }
             else
             {
-                result.Add($"2The task reported a failure ({ReturnCode})");
+                result.Add($"2The task reported a failure (0x{(uint)ReturnCode:X}, {(uint)ReturnCode}, {ReturnCode})");
             }
 
             result.Add("0");

@@ -65,7 +65,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
         protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -119,7 +119,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
 
         protected override IReadOnlyList<Package> _getInstalledPackages_UnSafe()
         {
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {

@@ -168,6 +168,12 @@
                             </FlipViewItem>
                         </FlipView.Items>
                     </FlipView>
+                    <PipsPager x:Name="FlipViewPipsPager"
+                        HorizontalAlignment="Center"
+                        Margin="0"
+                        NumberOfPages="{x:Bind ScreenshotsCarroussel.Items.Count}"
+                        SelectedPageIndex="{x:Bind Path=ScreenshotsCarroussel.SelectedIndex, Mode=TwoWay}" />
+
                     <Grid Name="IconsExtraBanner" Visibility="Collapsed">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>

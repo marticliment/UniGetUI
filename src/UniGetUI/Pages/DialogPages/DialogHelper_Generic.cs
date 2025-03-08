@@ -408,7 +408,7 @@ public static partial class DialogHelper
                 "WinGet is being repaired. Please wait until the process finishes.");
             bannerWasOpen = Window.WinGetWarningBanner.IsOpen;
             Window.WinGetWarningBanner.IsOpen = false;
-            Process p = new Process
+            using Process p = new Process
             {
                 StartInfo = new()
                 {

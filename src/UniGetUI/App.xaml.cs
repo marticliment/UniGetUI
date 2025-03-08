@@ -19,6 +19,7 @@ using Microsoft.Windows.AppNotifications;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Interfaces;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+using UniGetUI.Pages.SettingsPages;
 
 namespace UniGetUI
 {
@@ -42,13 +43,6 @@ namespace UniGetUI
                 set { _restart_required = value; Instance?.MainWindow?.UpdateSystemTrayStatus(); }
             }
 
-            private static int _operations_in_progress;
-            public static int OperationsInProgress
-            {
-                get => _operations_in_progress;
-                set { _operations_in_progress = value; Instance?.MainWindow?.UpdateSystemTrayStatus(); }
-            }
-
             private static int _available_updates;
             public static int AvailableUpdates
             {
@@ -59,7 +53,6 @@ namespace UniGetUI
 
         public bool RaiseExceptionAsFatal = true;
 
-        public SettingsPage settings = null!;
         public MainWindow MainWindow = null!;
         public ThemeListener ThemeListener = null!;
 

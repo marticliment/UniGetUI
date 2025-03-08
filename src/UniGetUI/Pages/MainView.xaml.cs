@@ -15,6 +15,7 @@ using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.Pages.DialogPages;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageOperations;
+using UniGetUI.Pages.SettingsPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,6 +29,7 @@ namespace UniGetUI.Interface
         Installed,
         Bundles,
         Settings,
+        Managers,
         OwnLog,
         ManagerLog,
         OperationHistory,
@@ -41,7 +43,8 @@ namespace UniGetUI.Interface
         public SoftwareUpdatesPage UpdatesPage;
         public InstalledPackagesPage InstalledPage;
         public PackageBundlesPage BundlesPage;
-        private SettingsPage? SettingsPage;
+        private SettingsBasePage? SettingsPage;
+        private SettingsBasePage? ManagersPage;
         private UniGetUILogPage? UniGetUILogPage;
         private ManagerLogsPage? ManagerLogPage;
         private OperationHistoryPage? OperationHistoryPage;
@@ -49,7 +52,6 @@ namespace UniGetUI.Interface
 
         private PageType OldPage_t = PageType.Null;
         private PageType CurrentPage_t = PageType.Null;
-        private readonly HashSet<Page> AddedPages = [];
 
         public MainView()
         {
@@ -64,17 +66,15 @@ namespace UniGetUI.Interface
             InstalledPage = new InstalledPackagesPage();
             BundlesPage = new PackageBundlesPage();
 
-            foreach (Page page in new Page[] { DiscoverPage, UpdatesPage, InstalledPage, BundlesPage })
-            {
-                //Grid.SetColumn(page, 0);
-                //Grid.SetRow(page, 0);
-                //MainContentPresenterGrid.Children.Add(page);
-                //AddedPages.Add(page);
-            }
-
             MoreNavButtonMenu.Closed += (_, _) => SelectNavButtonForPage(CurrentPage_t);
-            KeyUp += (s, e) =>
+            KeyDown += (s, e) =>
             {
+                if (e.KeyStatus.WasKeyDown)
+                {
+                    // ignore repeated KeyDown events when pressing and holding a key
+                    return;
+                }
+
                 bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
                 bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
@@ -162,7 +162,8 @@ namespace UniGetUI.Interface
                 PageType.Updates => UpdatesPage,
                 PageType.Installed => InstalledPage,
                 PageType.Bundles => BundlesPage,
-                PageType.Settings => SettingsPage ??= new SettingsPage(),
+                PageType.Settings => SettingsPage ??= new SettingsBasePage(false),
+                PageType.Managers => ManagersPage ??= new SettingsBasePage(true),
                 PageType.OwnLog => UniGetUILogPage ??= new UniGetUILogPage(),
                 PageType.ManagerLog => ManagerLogPage ??= new ManagerLogsPage(),
                 PageType.OperationHistory => OperationHistoryPage ??= new OperationHistoryPage(),
@@ -179,7 +180,8 @@ namespace UniGetUI.Interface
                 PageType.Updates => PageType.Installed,
                 PageType.Installed => PageType.Bundles,
                 PageType.Bundles => PageType.Settings,
-                PageType.Settings => PageType.Discover,
+                PageType.Settings => PageType.Managers,
+                PageType.Managers => PageType.Discover,
 
                 // "Extra" pages
                 PageType.OperationHistory => PageType.Discover,
@@ -199,6 +201,7 @@ namespace UniGetUI.Interface
                 PageType.Installed => PageType.Updates,
                 PageType.Bundles => PageType.Installed,
                 PageType.Settings => PageType.Bundles,
+                PageType.Managers => PageType.Settings,
 
                 // "Extra" pages
                 PageType.OperationHistory => PageType.Discover,
@@ -212,22 +215,23 @@ namespace UniGetUI.Interface
         private void SettingsNavButton_Click(object sender, EventArgs e)
             => NavigateTo(PageType.Settings);
 
+        private void ManagersNavButton_Click(object sender, EventArgs e)
+            => NavigateTo(PageType.Managers);
+
         private void SelectNavButtonForPage(PageType page)
         {
             DiscoverNavButton.IsChecked = page is PageType.Discover;
             UpdatesNavButton.IsChecked = page is PageType.Updates;
             InstalledNavButton.IsChecked = page is PageType.Installed;
             BundlesNavButton.IsChecked = page is PageType.Bundles;
-
+            ManagersNavButton.IsChecked = page is PageType.Managers;
             SettingsNavButton.IsChecked = page is PageType.Settings;
-            AboutNavButton.IsChecked = false;
             MoreNavButton.IsChecked = page is PageType.Help or PageType.ManagerLog or PageType.OperationHistory or PageType.OwnLog;
         }
 
-        private async void AboutNavButton_Click(object sender, EventArgs e)
+        private async void AboutNavButton_Click(object sender, RoutedEventArgs e)
         {
             SelectNavButtonForPage(PageType.Null);
-            AboutNavButton.IsChecked = true;
             await DialogHelper.ShowAboutUniGetUI();
             SelectNavButtonForPage(CurrentPage_t);
         }
@@ -238,21 +242,6 @@ namespace UniGetUI.Interface
             if (CurrentPage_t == NewPage_t) return;
 
             Page NewPage = GetPageForType(NewPage_t);
-
-            /*if (!AddedPages.TryGetValue(NewPage, out _))
-            {
-                AddedPages.Add(NewPage);
-                Grid.SetColumn(NewPage, 0);
-                Grid.SetRow(NewPage, 0);
-                MainContentPresenterGrid.Children.Add(NewPage);
-            }*/
-
-            /*foreach (Page page in AddedPages)
-            {
-                bool IS_MAIN_PAGE = (page == NewPage);
-                page.Visibility =  IS_MAIN_PAGE? Visibility.Visible : Visibility.Collapsed;
-                page.IsEnabled = IS_MAIN_PAGE;
-            }*/
 
             Page? oldPage = ContentFrame.Content as Page;
             ContentFrame.Content = NewPage;
@@ -317,19 +306,14 @@ namespace UniGetUI.Interface
                     ContentGrid.RowDefinitions[1].Height = new GridLength(16);
                     OperationSplitter.Visibility = Visibility.Visible;
                     OperationSplitterMenuButton.Visibility = Visibility.Visible;
-                    // OperationScrollView.Visibility = Visibility.Collapsed;
                     OperationSplitter.IsEnabled = false;
                 }
                 else
                 {
-                    //if (int.TryParse(Settings.GetValue("OperationHistoryPreferredHeight"), out int setHeight) && setHeight < maxHeight)
-                    //    MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(setHeight);
-                    //else
                     ContentGrid.RowDefinitions[2].Height = new GridLength(Math.Min(maxHeight, 200));
                     ContentGrid.RowDefinitions[1].Height = new GridLength(16);
                     OperationSplitter.Visibility = Visibility.Visible;
                     OperationSplitterMenuButton.Visibility = Visibility.Visible;
-                    // OperationScrollView.Visibility = Visibility.Visible;
                     OperationSplitter.IsEnabled = true;
                 }
             }
@@ -339,12 +323,10 @@ namespace UniGetUI.Interface
                 ContentGrid.RowDefinitions[2].Height = new GridLength(0);
                 OperationSplitter.Visibility = Visibility.Collapsed;
                 OperationSplitterMenuButton.Visibility = Visibility.Collapsed;
-                // OperationScrollView.Visibility = Visibility.Collapsed;
             }
             ResizingOPLayout = false;
         }
 
-        // int lastSaved = -1;
         private async void OperationScrollView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (ResizingOPLayout)
@@ -355,11 +337,6 @@ namespace UniGetUI.Interface
                 OpListChanges--;
                 return;
             }
-
-            //lastSaved = (int)e.NewSize.Height;
-            //await Task.Delay(100);
-            //if ((int)e.NewSize.Height == lastSaved)
-            //    Settings.SetValue("OperationHistoryPreferredHeight", lastSaved.ToString());
         }
 
         private void OperationSplitterMenuButton_Click(object sender, RoutedEventArgs e)
