@@ -153,13 +153,14 @@ public static class DesktopShortcutsDatabase
     /// Will attempt to remove new desktop shortcuts, if applicable.
     /// </summary>
     /// <param name="PreviousShortCutList">The shortcuts that already existed</param>
-    public static void TryRemoveNewShortcuts(IReadOnlyList<string> PreviousShortCutList)
+    public static void TryRemoveNewShortcuts(IReadOnlyList<string> PreviousShortCutList, bool AllowAutoDelete = true)
     {
         HashSet<string> ShortcutSet = [.. PreviousShortCutList];
         List<string> CurrentShortcutList = GetShortcuts();
         foreach (string shortcut in CurrentShortcutList)
         {
-            if (ShortcutSet.Contains(shortcut)) continue;
+            Logger.Debug("Shortcut found: " + shortcut);
+            if (ShortcutSet.Contains(shortcut) && !(AllowAutoDelete && Settings.Get("RemoveAllDesktopShortcuts"))) continue;
             switch (GetStatus(shortcut))
             {
                 case Status.Delete:
@@ -169,7 +170,7 @@ public static class DesktopShortcutsDatabase
                     Logger.Debug("Refraining from deleting new shortcut " + shortcut + ": user disabled its deletion");
                     break;
                 case Status.Unknown:
-                    if (Settings.Get("RemoveAllDesktopShortcuts"))
+                    if (AllowAutoDelete && Settings.Get("RemoveAllDesktopShortcuts"))
                     {
                         AddToDatabase(shortcut, true);
                         DeleteFromDisk(shortcut);
@@ -182,6 +183,44 @@ public static class DesktopShortcutsDatabase
                     }
                     break;
             }
+        }
+    }
+
+    /// <summary>
+    /// Will attempt to remove all desktop shortcuts, deleting them automatically if the user has that setting enabled, otherwise asking the user.
+    /// If the setting is not enabled and a previous shortcut list is passed, it will pass that on to TryRemoveNewShortcuts and ask about those shortcuts.
+    /// </summary>
+    /// <param name="PreviousShortCutList">The shortcuts that already existed. If null, the method will try to remove all shortcuts.</param>
+    public static void TryRemoveAllShortcuts(bool AllowAutoDelete = true, IReadOnlyList<string>? PreviousShortCutList = null)
+    {
+        if (AllowAutoDelete && Settings.Get("RemoveAllDesktopShortcuts"))
+        {
+            List<string> CurrentShortcutList = GetShortcuts();
+            foreach (string shortcut in CurrentShortcutList)
+            {
+                switch (GetStatus(shortcut))
+                {
+                    case Status.Delete:
+                        DeleteFromDisk(shortcut);
+                        break;
+                    case Status.Maintain:
+                        Logger.Debug("Refraining from deleting new shortcut " + shortcut + ": user disabled its deletion");
+                        break;
+                    case Status.Unknown:
+                        AddToDatabase(shortcut, true);
+                        DeleteFromDisk(shortcut);
+                        RemoveFromUnknownShortcuts(shortcut);
+                        break;
+                }
+            }
+        }
+        else if (PreviousShortCutList == null)
+        {
+            TryRemoveNewShortcuts([], AllowAutoDelete);
+        }
+        else
+        {
+            TryRemoveNewShortcuts(PreviousShortCutList, AllowAutoDelete);
         }
     }
 }
