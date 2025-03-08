@@ -72,7 +72,9 @@ namespace UniGetUI.Pages.SettingsPages
             SettingsTitle.Text = page.ShortTitle;
             page.NavigationRequested += Page_NavigationRequested;
             page.RestartRequired += Page_RestartRequired;
-            if (page is PackageManagerPage pmpage) pmpage.ReapplyProperties += SettingsBasePage_ReapplyProperties; 
+            if (page is PackageManagerPage pmpage) pmpage.ReapplyProperties += SettingsBasePage_ReapplyProperties;
+
+            Scroller.ChangeView(0, 0, 1, true);
         }
 
         private void SettingsBasePage_ReapplyProperties(object? sender, EventArgs e)

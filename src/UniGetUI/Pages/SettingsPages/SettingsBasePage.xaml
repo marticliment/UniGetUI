@@ -64,7 +64,7 @@
         <ScrollViewer Grid.Row="3" Grid.Column="1"
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
             HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-            Margin="0,0,-8,0"
+            Margin="0,0,-8,0" x:Name="Scroller"
             Padding="0,0,8,0"
             >
             <Frame Name="MainNavigationFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
