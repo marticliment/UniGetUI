@@ -154,7 +154,7 @@ public class OperationControl: INotifyPropertyChanged
         }
 
         // Handle newly created shortcuts
-        if (Settings.Get("AskToDeleteNewDesktopShortcuts")
+        if(Settings.Get("AskToDeleteNewDesktopShortcuts")
             && !MainApp.Operations.AreThereRunningOperations()
             && DesktopShortcutsDatabase.GetUnknownShortcuts().Any())
         {
