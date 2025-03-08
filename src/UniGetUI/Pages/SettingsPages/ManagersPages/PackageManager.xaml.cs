@@ -1,20 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.VisualBasic;
 using UniGetUI.Core.Tools;
-using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Interfaces;
 using System.Diagnostics;
 using UniGetUI.PackageEngine.Managers.WingetManager;
@@ -30,7 +17,6 @@ using UniGetUI.PackageEngine.Managers.VcpkgManager;
 using UniGetUI.PackageEngine.Managers.DotNetManager;
 using ExternalLibraries.Clipboard;
 using CommunityToolkit.WinUI.Controls;
-using System.Reflection;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.Core.Data;
 using UniGetUI.Pages.DialogPages;
@@ -86,11 +72,21 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             EnableManager.SettingName = Manager.Name;
             EnableManager.Text = CoreTools.Translate("Enable {pm}").Replace("{pm}", Manager.DisplayName);
 
-            var AlwaysElevateManagerOP = new CheckboxCard()
+            var AlwaysElevateManagerOP = new CheckboxCard_Dict()
             {
                 Text = CoreTools.Translate("Always run {pm} operations with administrator rights").Replace("{pm}", Manager.DisplayName),
-                SettingName = "AlwaysElevate" + Manager.Name,
-                CornerRadius = new CornerRadius(8)
+                DictionaryName = "AlwaysElevate",
+                SettingName = Manager.Name,
+                CornerRadius = new CornerRadius(8,8,0,0),
+                BorderThickness = new Thickness(1,1,1,0),
+            };
+
+            var DisableNotifsCard = new CheckboxCard_Dict()
+            {
+                Text = CoreTools.Translate("Ignore packages from {pm} when showing a notification about updates").Replace("{pm}", Manager.DisplayName),
+                DictionaryName = "DisabledPackageManagerNotifications",
+                ForceInversion = true,
+                SettingName = Manager.Name
             };
 
             ManagerLogsLabel.Text = CoreTools.Translate("View {0} logs", Manager.DisplayName);
@@ -115,9 +111,10 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             if (Manager is WinGet)
             {
-                AlwaysElevateManagerOP.CornerRadius = new CornerRadius(8, 8, 0, 0);
-                AlwaysElevateManagerOP.BorderThickness = new Thickness(1, 1, 1, 0);
+                DisableNotifsCard.CornerRadius = new CornerRadius(0);
+                DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
                 ExtraControls.Children.Add(AlwaysElevateManagerOP);
+                ExtraControls.Children.Add(DisableNotifsCard);
 
                 ButtonCard WinGet_ResetWindowsIPackageManager = new()
                 {
@@ -180,9 +177,10 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             else if (Manager is Scoop)
             {
-                AlwaysElevateManagerOP.CornerRadius = new CornerRadius(8, 8, 0, 0);
-                AlwaysElevateManagerOP.BorderThickness = new Thickness(1, 1, 1, 0);
+                DisableNotifsCard.CornerRadius = new CornerRadius(0);
+                DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
                 ExtraControls.Children.Add(AlwaysElevateManagerOP);
+                ExtraControls.Children.Add(DisableNotifsCard);
 
                 ButtonCard Scoop_Install = new()
                 {
@@ -235,9 +233,10 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             else if (Manager is Chocolatey)
             {
-                AlwaysElevateManagerOP.CornerRadius = new CornerRadius(8, 8, 0, 0);
-                AlwaysElevateManagerOP.BorderThickness = new Thickness(1, 1, 1, 0);
+                DisableNotifsCard.CornerRadius = new CornerRadius(0);
+                DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
                 ExtraControls.Children.Add(AlwaysElevateManagerOP);
+                ExtraControls.Children.Add(DisableNotifsCard);
 
                 CheckboxCard Chocolatey_SystemChoco = new()
                 {
@@ -253,9 +252,10 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
             else if (Manager is Vcpkg)
             {
-                AlwaysElevateManagerOP.CornerRadius = new CornerRadius(8, 8, 0, 0);
-                AlwaysElevateManagerOP.BorderThickness = new Thickness(1, 1, 1, 0);
+                DisableNotifsCard.CornerRadius = new CornerRadius(0);
+                DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 0);
                 ExtraControls.Children.Add(AlwaysElevateManagerOP);
+                ExtraControls.Children.Add(DisableNotifsCard);
 
                 Settings.SetValue("DefaultVcpkgTriplet", Vcpkg.GetDefaultTriplet());
                 ComboboxCard Vcpkg_DefaultTriplet = new()
@@ -329,9 +329,10 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             // -------------------------------- DEFAULT EXTRA SETTINGS --------------------------------------
             else
             {
-                AlwaysElevateManagerOP.CornerRadius = new CornerRadius(8);
-                AlwaysElevateManagerOP.BorderThickness = new Thickness(1);
+                DisableNotifsCard.CornerRadius = new CornerRadius(0,0,8,8);
+                DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 1);
                 ExtraControls.Children.Add(AlwaysElevateManagerOP);
+                ExtraControls.Children.Add(DisableNotifsCard);
             }
 
                 base.OnNavigatedTo(e);

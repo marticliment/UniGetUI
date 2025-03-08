@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -118,8 +117,8 @@ namespace UniGetUI.Interface
 
             _ = AutoUpdater.UpdateCheckLoop(this, UpdatesBanner);
 
-            if (!Settings.Get("TransferredOldSettings"))
-                TransferOldSettingsFormats();
+
+            TransferOldSettingsFormats();
 
             Activated += (_, e) =>
             {
@@ -177,38 +176,55 @@ namespace UniGetUI.Interface
 
         private static void TransferOldSettingsFormats()
         {
-            foreach (IPackageManager Manager in PEInterface.Managers)
+            if (!Settings.Get("TransferredOldSettings"))
             {
-                string SettingName = "Disable" + Manager.Name;
-                if (Settings.Get(SettingName))
+                foreach (IPackageManager Manager in PEInterface.Managers)
                 {
-                    Settings.SetDictionaryItem("DisabledManagers", Manager.Name, true);
-                    Settings.Set(SettingName, false);
+                    string SettingName = "Disable" + Manager.Name;
+                    if (Settings.Get(SettingName))
+                    {
+                        Settings.SetDictionaryItem("DisabledManagers", Manager.Name, true);
+                        Settings.Set(SettingName, false);
+                    }
                 }
+
+                // Dependency checks don't need to be transferred, because the worst case scenario is the user has to click the "don't show again" again
+
+                foreach (string Page in new[]{ "Discover", "Installed", "Bundles", "Updates"})
+                {
+                    if (Settings.Get($"HideToggleFilters{Page}Page"))
+                    {
+                        Settings.SetDictionaryItem("HideToggleFilters", Page, true);
+                        Settings.Set($"HideToggleFilters{Page}Page", false);
+                    }
+
+                    if (Settings.Get($"DisableInstantSearch{Page}Tab"))
+                    {
+                        Settings.SetDictionaryItem("DisableInstantSearch", Page, true);
+                        Settings.Set($"DisableInstantSearch{Page}Tab", false);
+                    }
+
+                    if (!int.TryParse(Settings.GetValue($"SidepanelWidth{Page}Page"), out int sidepanelWidth)) sidepanelWidth = 250;
+                    Settings.SetDictionaryItem("SidepanelWidths", Page, sidepanelWidth);
+                    Settings.Set($"SidepanelWidth{Page}Page", false);
+                }
+
+                Settings.Set("TransferredOldSettings", true);
             }
 
-            // Dependency checks don't need to be transferred, because the worst case scenario is the user has to click the "don't show again" again
-
-            foreach (string Page in new[]{ "Discover", "Installed", "Bundles", "Updates"})
+            if (!Settings.Get("TransferredOldSettingsv2"))
             {
-                if (Settings.Get($"HideToggleFilters{Page}Page"))
+                foreach (IPackageManager Manager in PEInterface.Managers)
                 {
-                    Settings.SetDictionaryItem("HideToggleFilters", Page, true);
-                    Settings.Set($"HideToggleFilters{Page}Page", false);
+                    string SettingName = "AlwaysElevate" + Manager.Name;
+                    if (Settings.Get(SettingName))
+                    {
+                        Settings.SetDictionaryItem("AlwaysElevate", Manager.Name, true);
+                        Settings.Set(SettingName, false);
+                    }
                 }
-
-                if (Settings.Get($"DisableInstantSearch{Page}Tab"))
-                {
-                    Settings.SetDictionaryItem("DisableInstantSearch", Page, true);
-                    Settings.Set($"DisableInstantSearch{Page}Tab", false);
-                }
-
-                if (!int.TryParse(Settings.GetValue($"SidepanelWidth{Page}Page"), out int sidepanelWidth)) sidepanelWidth = 250;
-                Settings.SetDictionaryItem("SidepanelWidths", Page, sidepanelWidth);
-                Settings.Set($"SidepanelWidth{Page}Page", false);
+                Settings.Set("TransferredOldSettingsv2", true);
             }
-
-            Settings.Set("TransferredOldSettings", true);
         }
 
         public void HandleNotificationActivation(AppNotificationActivatedEventArgs args)
