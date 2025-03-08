@@ -30,7 +30,7 @@ namespace UniGetUI.Pages.SettingsPages
     public sealed partial class ManagersHomepage : Page, ISettingsPage
     {
         public bool CanGoBack => false;
-        public string ShortTitle => CoreTools.Translate("Package Manager settings");
+        public string ShortTitle => CoreTools.Translate("Package manager preferences");
 
         public event EventHandler? RestartRequired;
 

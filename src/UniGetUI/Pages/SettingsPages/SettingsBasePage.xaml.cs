@@ -17,6 +17,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
 using UniGetUI.Pages.SettingsPages.GeneralPages;
+using UniGetUI.Interface.Pages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,10 +27,12 @@ namespace UniGetUI.Pages.SettingsPages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SettingsBasePage : Page
+    public sealed partial class SettingsBasePage : Page, IEnterLeaveListener
     {
+        bool IsManagers;
         public SettingsBasePage(bool isManagers)
         {
+            IsManagers = isManagers;
             this.InitializeComponent();
             BackButton.Click += (_, _) =>
             {
@@ -99,6 +102,16 @@ namespace UniGetUI.Pages.SettingsPages
             {
                 MainNavigationFrame.Navigate(e, null, new DrillInNavigationTransitionInfo());
             }
+        }
+
+        public void OnEnter()
+        {
+            MainNavigationFrame.Navigate(IsManagers ? typeof(ManagersHomepage) : typeof(SettingsHomepage), null, new DrillInNavigationTransitionInfo());
+        }
+
+        public void OnLeave()
+        {
+            
         }
     }
 }
