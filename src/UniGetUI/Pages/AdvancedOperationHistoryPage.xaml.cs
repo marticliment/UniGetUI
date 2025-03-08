@@ -27,23 +27,28 @@ namespace UniGetUI.Interface.Pages
         {
             InitializeComponent();
 
+            AdvancedOperationHistoryList.ItemsSource = Items;
+        }
+
+        private void LoadOperationHistory()
+        {
+            Items.Clear();
+
             Items.Add(new OperationHistoryEntry { Title = "Test 1", Content = "Content 1" });
             Items.Add(new OperationHistoryEntry { Title = "Test 2", Content = "Content 2" });
             Items.Add(new OperationHistoryEntry { Title = "Test 3", Content = "Content 3" });
             Items.Add(new OperationHistoryEntry { Title = "Test 4", Content = "Content 4" });
             Items.Add(new OperationHistoryEntry { Title = "Test 5", Content = "Content 5" });
-
-            AdvancedOperationHistoryList.ItemsSource = Items;
         }
 
         public void ReloadTriggered()
-        { }
+            => LoadOperationHistory();
         public void SelectAllTriggered()
         { }
         public void SearchTriggered()
         { }
         public void OnEnter()
-        { }
+            => LoadOperationHistory();
         public void OnLeave()
         { }
     }
