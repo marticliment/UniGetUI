@@ -5,7 +5,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniGetUI.Interface.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+    xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets"
     mc:Ignorable="d">
 
     <animations:Implicit.ShowAnimations>
@@ -13,37 +16,41 @@
         <animations:OpacityAnimation Duration="0:0:0.25" From="0" To="1"/>
     </animations:Implicit.ShowAnimations>
 
-    <Grid RowSpacing="4">
-        <!-- <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0" ColumnSpacing="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Name="CopyButton" Click="CopyButton_Click" CornerRadius="6,0,0,6">
-                <widgets:TranslatedTextBlock Text="Copy to clipboard"/>
-            </Button>
-            <Button Grid.Column="1" Name="ExportButton" Click="ExportButton_Click" CornerRadius="0,6,6,0">
-                <widgets:TranslatedTextBlock Text="Export to a file"/>
-            </Button>
-            <StackPanel Name="LogLevelPane" Grid.Column="3" Orientation="Horizontal" Spacing="10">
-                <widgets:TranslatedTextBlock Text="Log level:" VerticalAlignment="Center"/>
-                <ComboBox Name="LogLevelCombo" x:FieldModifier="protected" SelectionChanged="LogLevelCombo_SelectionChanged" PlaceholderText="Pick a color" Width="250" CornerRadius="6"/>
-            </StackPanel>
-            <Button Grid.Column="5" Name="ReloadButton" Click="ReloadButton_Click">
-                <widgets:TranslatedTextBlock Text="Reload log"/>
-            </Button>
-        </Grid>
-        <ScrollViewer  x:FieldModifier="protected" Name="MainScroller" Grid.Row="1" HorizontalScrollMode="Disabled" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" CornerRadius="8">
-            <RichTextBlock  x:FieldModifier="protected" LineHeight="18"  Name="LogTextBox" FontFamily="Consolas" TextWrapping="WrapWholeWords" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="8"/>
-        </ScrollViewer> -->
-		<widgets:TranslatedTextBlock Text="Hello" />
+    <Grid>
+        <StackPanel x:Name="MainLayout" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" Orientation="Vertical" Spacing="8" Margin="0,0,0,20">
+            <widgets:TranslatedTextBlock FontSize="40" FontWeight="Bold" WrappingMode="NoWrap" Text="Advanced Operation History" HorizontalAlignment="Center"/>
+            <ListView x:Name="AdvancedOperationHistoryList" VerticalAlignment="Stretch" HorizontalAlignment="Center" Width="800">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <Grid>
+                                        <ContentPresenter />
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:OperationHistoryEntry">
+                        <widgets:SettingsEntry Text="{x:Bind Title}" Margin="8">
+                            <Toolkit:SettingsExpander.Items>
+                                <widgets:TranslatedTextBlock Text="{x:Bind Content}" Margin="8" />
+                            </Toolkit:SettingsExpander.Items>
+                        </widgets:SettingsEntry>
+                        <!--<Expander Header="{x:Bind Title}" HorizontalAlignment="Stretch" MaxWidth="600" BorderThickness="0">
+                            <widgets:TranslatedTextBlock Text="{x:Bind Content}" Margin="10" />
+                        </Expander>-->
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
     </Grid>
 </Page>
