@@ -232,7 +232,7 @@ Name: "{autostartmenu}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: regularinstall\desktopicon
 
 [Run]
-Filename: "powershell.exe"; Parameters: "-ExecutionPolicy Bypass -File -NonInteractive ""{tmp}\EnsureWinGet.ps1"""; StatusMsg: "Ensuring WinGet is properly installed... (this may take a while)"; WorkingDir: {app}; Check: not CmdLineParamExists('/NoWinGet'); Flags: runhidden
+; Filename: "powershell.exe"; Parameters: "-ExecutionPolicy Bypass -File -NonInteractive ""{tmp}\EnsureWinGet.ps1"""; StatusMsg: "Ensuring WinGet is properly installed... (this may take a while)"; WorkingDir: {app}; Check: not CmdLineParamExists('/NoWinGet'); Flags: runhidden
  
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runasoriginaluser nowait postinstall; Check: not CmdLineParamExists('/NoAutoStart');
 
@@ -241,6 +241,6 @@ Filename: "{app}\{#MyAppExeName}"; Parameters: "--migrate-wingetui-to-unigetui";
 
 [UninstallRun]    
 ; Remove WingetUI Notification registries
-Filename: "{app}\{#MyAppExeName}"; Parameters: "--uninstall-unigetui"; Flags: skipifdoesntexist runhidden;
+; Filename: "{app}\{#MyAppExeName}"; Parameters: "--uninstall-unigetui"; Flags: skipifdoesntexist runhidden;
 Filename: {sys}\taskkill.exe; Parameters: "/f /im WingetUI.exe"; Flags: skipifdoesntexist runhidden;
 Filename: {sys}\taskkill.exe; Parameters: "/f /im UniGetUI.exe"; Flags: skipifdoesntexist runhidden;
