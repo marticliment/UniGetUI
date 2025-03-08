@@ -72,7 +72,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             => _ = DialogHelper.ManageDesktopShortcuts();
 
         public bool CanGoBack => true;
-        public string ShortTitle => CoreTools.Translate("Operation preferences");
+        public string ShortTitle => CoreTools.Translate("Install and update preferences");
 
         public event EventHandler? RestartRequired;
         public event EventHandler<Type>? NavigationRequested;

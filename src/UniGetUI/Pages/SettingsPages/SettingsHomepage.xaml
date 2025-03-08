@@ -58,7 +58,7 @@
             CornerRadius="8,8,0,0"/>
         
         <widgets:SettingsPageButton
-            Text="Backup installed packages"
+            Text="Package backup"
             x:Name="BackupOptionsExpander"
             UnderText="Automatically save a list of all your installed packages to easily restore them."
             Icon="disk"

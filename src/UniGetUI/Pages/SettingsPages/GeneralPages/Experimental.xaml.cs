@@ -31,7 +31,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
         public bool CanGoBack => true;
 
-        public string ShortTitle => CoreTools.Translate("Experimental preferences");
+        public string ShortTitle => CoreTools.Translate("Experimental settings and developer options");
 
         public event EventHandler? RestartRequired;
         public event EventHandler<Type>? NavigationRequested;

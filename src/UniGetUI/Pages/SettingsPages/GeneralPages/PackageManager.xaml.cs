@@ -49,8 +49,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         IPackageManager? Manager;
         public event EventHandler? RestartRequired;
         public event EventHandler<Type>? NavigationRequested;
+        public event EventHandler? ReapplyProperties;
         public bool CanGoBack => true;
-        public string ShortTitle => Manager is null? "Ligma": CoreTools.Translate("{0} Settings", Manager.DisplayName);
+        public string ShortTitle => Manager is null? "": CoreTools.Translate("{0} settings", Manager.DisplayName);
 
         public PackageManagerPage()
         {
@@ -60,9 +61,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            Manager = null;
             if (e.Parameter is not Type Manager_T) throw new InvalidDataException("The passed parameter was not a type");
             // Can't do switch with types
-            Manager = null;
             if (Manager_T == typeof(WinGet)) Manager = PEInterface.WinGet;
             else if (Manager_T == typeof(Chocolatey)) Manager = PEInterface.Chocolatey;
             else if (Manager_T == typeof(Scoop)) Manager = PEInterface.Scoop;
@@ -75,18 +76,19 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             else if (Manager_T == typeof(DotNet)) Manager = PEInterface.DotNet;
             else throw new InvalidCastException("The specified type was not a package manager!");
 
+            ReapplyProperties?.Invoke(this, new());
+
             LongVersionTextBlock.Text = Manager.Status.Version + "\n";
             SetManagerStatus(false);
 
             LocationLabel.Text = Manager.Status.ExecutablePath;
             if (LocationLabel.Text == "") LocationLabel.Text = CoreTools.Translate("The executable file for {0} was not found", Manager.DisplayName);
             EnableManager.SettingName = Manager.Name;
-            EnableManager.Text = CoreTools.Translate("Enable {0}", Manager.DisplayName);
-
+            EnableManager.Text = CoreTools.Translate("Enable {pm}").Replace("{pm}", Manager.DisplayName);
 
             var AlwaysElevateManagerOP = new CheckboxCard()
             {
-                Text = CoreTools.AutoTranslated("Always run {pm} operations with administrator rights").Replace("{pm}", Manager.DisplayName),
+                Text = CoreTools.Translate("Always run {pm} operations with administrator rights").Replace("{pm}", Manager.DisplayName),
                 SettingName = "AlwaysElevate" + Manager.Name,
                 CornerRadius = new CornerRadius(8)
             };

@@ -6,7 +6,7 @@
     xmlns:local="using:UniGetUI.Pages.SettingsPages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:converters="using:CommunityToolkit.WinUI.Converters"
     mc:Ignorable="d"
     Background="Transparent">
    
@@ -15,45 +15,59 @@
         <animations:OpacityAnimation Duration="0:0:0.25" From="0" To="1"/>
     </animations:Implicit.ShowAnimations>
 
-    <ScrollViewer
-        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-        HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-        Margin="0,0,-8,0"
-        Padding="0,0,8,0"
-        >
-        <StackPanel MaxWidth="800" Spacing="12">
-            <Border
-                Padding="24,16,24,16" CornerRadius="8"
-                Background="{ThemeResource ButtonBackground}">
-                <widgets:Announcer x:Name="SettingsAnnouncer" Url="https://marticliment.com/resources/annoucements/unigetui"/>
-            </Border>
-            <InfoBar Name="RestartRequired" Severity="Warning" CornerRadius="8"/>
 
-            <Grid ColumnSpacing="10" Name="SettingsHeaderGrid">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Button
-                    Name="BackButton" BorderThickness="0"
-                    Background="Transparent" Width="40" Height="40"
-                    Padding="6" VerticalAlignment="Center">
-                    <AnimatedIcon>
-                        <AnimatedIcon.Source>
-                            <animatedvisuals:AnimatedBackVisualSource/>
-                        </AnimatedIcon.Source>
-                        <AnimatedIcon.FallbackIconSource>
-                            <SymbolIconSource Symbol="Back"/>
-                        </AnimatedIcon.FallbackIconSource>
-                    </AnimatedIcon>
-                </Button>
-                <TextBlock
-                    Name="SettingsTitle"
-                    Grid.Column="1" FontSize="40" Height="60"
-                    FontWeight="Bold" Text=""
-                    HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-            </Grid>
+    <Grid RowSpacing="12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="1000*" MaxWidth="800"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border
+            Grid.Row="0" Grid.Column="1"
+            Padding="24,16,24,16" CornerRadius="8" Name="AnnouncerBorder"
+            Background="{ThemeResource ButtonBackground}">
+            <widgets:Announcer x:Name="SettingsAnnouncer" Url="https://marticliment.com/resources/annoucements/unigetui"/>
+        </Border>
+        <InfoBar 
+            Grid.Row="1" Grid.Column="1" Name="RestartRequired" Severity="Warning" CornerRadius="8"/>
+
+        <Grid Grid.Row="2" Grid.Column="1" ColumnSpacing="10" Name="SettingsHeaderGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button
+                Name="BackButton" BorderThickness="0"
+                Background="Transparent" Width="40" Height="40"
+                Padding="6" VerticalAlignment="Center">
+                <AnimatedIcon>
+                    <AnimatedIcon.Source>
+                        <animatedvisuals:AnimatedBackVisualSource/>
+                    </AnimatedIcon.Source>
+                    <AnimatedIcon.FallbackIconSource>
+                        <SymbolIconSource Symbol="Back"/>
+                    </AnimatedIcon.FallbackIconSource>
+                </AnimatedIcon>
+            </Button>
+            <TextBlock
+                Name="SettingsTitle"
+                Grid.Column="1" FontSize="30"
+                FontWeight="Bold" Text="" TextWrapping="Wrap"
+                HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+        </Grid>
+        <ScrollViewer Grid.Row="3" Grid.Column="1"
+            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+            Margin="0,0,-8,0"
+            Padding="0,0,8,0"
+            >
             <Frame Name="MainNavigationFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        </StackPanel>
-    </ScrollViewer>
+        </ScrollViewer>
+    </Grid>
 </Page>

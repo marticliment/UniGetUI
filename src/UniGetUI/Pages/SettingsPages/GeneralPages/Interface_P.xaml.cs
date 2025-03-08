@@ -60,7 +60,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
         public bool CanGoBack => true;
 
-        public string ShortTitle => CoreTools.Translate("Interface preferences");
+        public string ShortTitle => CoreTools.Translate("User interface preferences");
 
         public event EventHandler? RestartRequired;
         public event EventHandler<Type>? NavigationRequested;

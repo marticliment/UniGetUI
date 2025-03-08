@@ -41,7 +41,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
         public bool CanGoBack => true;
 
-        public string ShortTitle => CoreTools.Translate("Backup");
+        public string ShortTitle => CoreTools.Translate("Package backup");
 
         public event EventHandler? RestartRequired;
         public event EventHandler<Type>? NavigationRequested;
