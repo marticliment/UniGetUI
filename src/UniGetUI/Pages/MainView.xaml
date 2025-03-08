@@ -23,7 +23,13 @@
                 <MenuFlyoutSeparator Height="5"/>
                 <widgets:BetterMenuItem Text="WingetUI Log" IconName="buggy" Name="WingetUILogs" Click="UniGetUILogs_Click" />
                 <widgets:BetterMenuItem Text="Package Manager logs" IconName="console" Name="ManagerLogsMenu" Click="ManagerLogsMenu_Click" />
-                <widgets:BetterMenuItem Text="Operation history" IconName="history" Name="OperationHistoryMenu" Click="OperationHistoryMenu_Click" />
+                <MenuFlyoutSubItem x:Name="OperationHistorySubMenu" Text="Operation history">
+                    <MenuFlyoutSubItem.Icon>
+                        <widgets:LocalIcon FontSize="24" Icon="History" />
+                    </MenuFlyoutSubItem.Icon>
+                    <widgets:BetterMenuItem Text="Operation logs" Name="OperationHistoryMenu" Click="OperationHistoryMenu_Click" />
+                    <widgets:BetterMenuItem Text="Advanced operation history" Name="AdvancedOperationHistoryMenu" Click="AdvancedOperationHistoryMenu_Click" />
+                </MenuFlyoutSubItem>
                 <MenuFlyoutSeparator Height="5"/>
                 <widgets:BetterMenuItem x:Name="VersionMenuItem" IconName="info_round" IsEnabled="False" />
                 <widgets:BetterMenuItem Text="Release notes" IconName="megaphone" Name="ReleaseNotesMenu" Click="ReleaseNotesMenu_Click" />
