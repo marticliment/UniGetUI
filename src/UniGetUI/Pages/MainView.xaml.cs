@@ -31,6 +31,7 @@ namespace UniGetUI.Interface
         OwnLog,
         ManagerLog,
         OperationHistory,
+        AdvancedOperationHistory,
         Help,
         Null // Used for initializers
     }
@@ -45,6 +46,7 @@ namespace UniGetUI.Interface
         private UniGetUILogPage? UniGetUILogPage;
         private ManagerLogsPage? ManagerLogPage;
         private OperationHistoryPage? OperationHistoryPage;
+        private AdvancedOperationHistoryPage? AdvancedOperationHistoryPage;
         private HelpPage? HelpPage;
 
         private PageType OldPage_t = PageType.Null;
@@ -172,6 +174,7 @@ namespace UniGetUI.Interface
                 PageType.OwnLog => UniGetUILogPage ??= new UniGetUILogPage(),
                 PageType.ManagerLog => ManagerLogPage ??= new ManagerLogsPage(),
                 PageType.OperationHistory => OperationHistoryPage ??= new OperationHistoryPage(),
+                PageType.AdvancedOperationHistory => AdvancedOperationHistoryPage ??= new AdvancedOperationHistoryPage(),
                 PageType.Help => HelpPage ??= new HelpPage(),
                 PageType.Null => throw new InvalidCastException("Page type is Null"),
                 _ => throw new InvalidDataException($"Unknown page type {type}")
@@ -189,6 +192,7 @@ namespace UniGetUI.Interface
 
                 // "Extra" pages
                 PageType.OperationHistory => PageType.Discover,
+                PageType.AdvancedOperationHistory => PageType.Discover,
                 PageType.OwnLog => PageType.Discover,
                 PageType.ManagerLog => PageType.Discover,
                 PageType.Help => PageType.Discover,
@@ -208,6 +212,7 @@ namespace UniGetUI.Interface
 
                 // "Extra" pages
                 PageType.OperationHistory => PageType.Discover,
+                PageType.AdvancedOperationHistory => PageType.Discover,
                 PageType.OwnLog => PageType.Discover,
                 PageType.ManagerLog => PageType.Discover,
                 PageType.Help => PageType.Discover,
@@ -227,7 +232,7 @@ namespace UniGetUI.Interface
 
             SettingsNavButton.IsChecked = page is PageType.Settings;
             AboutNavButton.IsChecked = false;
-            MoreNavButton.IsChecked = page is PageType.Help or PageType.ManagerLog or PageType.OperationHistory or PageType.OwnLog;
+            MoreNavButton.IsChecked = page is PageType.Help or PageType.ManagerLog or PageType.OperationHistory or PageType.AdvancedOperationHistory or PageType.OwnLog;
         }
 
         private async void AboutNavButton_Click(object sender, EventArgs e)
@@ -278,6 +283,9 @@ namespace UniGetUI.Interface
 
         private void OperationHistoryMenu_Click(object sender, RoutedEventArgs e)
             => NavigateTo(PageType.OperationHistory);
+
+        private void AdvancedOperationHistoryMenu_Click(object sender, RoutedEventArgs e)
+            => NavigateTo(PageType.AdvancedOperationHistory);
 
         private void ManagerLogsMenu_Click(object sender, RoutedEventArgs e)
             => OpenManagerLogs();
