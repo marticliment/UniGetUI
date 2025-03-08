@@ -16,6 +16,7 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.Pages.SettingsPages.GeneralPages;
 using UniGetUI.PackageEngine;
+using Windows.ApplicationModel.Activation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,19 +39,24 @@ namespace UniGetUI.Pages.SettingsPages
         {
             this.InitializeComponent();
 
+            bool first = true;
             foreach(var manager in PEInterface.Managers)
             {
                 var button = new SettingsPageButton()
                 {
                     Text = manager.DisplayName,
                     Description = manager.Properties.Description.Replace("<br>", "\n").Replace("<b>", "").Replace("</b>", ""),
-                    HeaderIcon = new LocalIcon(manager.Properties.IconId)
+                    HeaderIcon = new LocalIcon(manager.Properties.IconId),
                 };
+                button.CornerRadius = first ? new CornerRadius(8, 8, 0, 0) : new CornerRadius(0);
+                button.BorderThickness = first ? new Thickness(1) : new Thickness(1,0,1,1);
                 button.Click += (_, _) => NavigationRequested?.Invoke(this, manager.GetType());
-
+                first = false;
                 SettingsEntries.Children.Add(button);
-                SettingsEntries.Children.Add(new UserControl() { Height = 16 });
+                // SettingsEntries.Items.Add(new UserControl() { Height = 16 });
             }
+            var last = (SettingsPageButton)SettingsEntries.Children[^1];
+            last.CornerRadius = new CornerRadius(0, 0, 8, 8);
         }
 
         public void Administrator(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Administrator));
