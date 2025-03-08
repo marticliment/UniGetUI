@@ -50,7 +50,6 @@ namespace UniGetUI.Interface
 
         private PageType OldPage_t = PageType.Null;
         private PageType CurrentPage_t = PageType.Null;
-        private readonly HashSet<Page> AddedPages = [];
 
         public MainView()
         {
@@ -64,14 +63,6 @@ namespace UniGetUI.Interface
             };
             InstalledPage = new InstalledPackagesPage();
             BundlesPage = new PackageBundlesPage();
-
-            foreach (Page page in new Page[] { DiscoverPage, UpdatesPage, InstalledPage, BundlesPage })
-            {
-                //Grid.SetColumn(page, 0);
-                //Grid.SetRow(page, 0);
-                //MainContentPresenterGrid.Children.Add(page);
-                //AddedPages.Add(page);
-            }
 
             MoreNavButtonMenu.Closed += (_, _) => SelectNavButtonForPage(CurrentPage_t);
             KeyDown += (s, e) =>
@@ -246,21 +237,6 @@ namespace UniGetUI.Interface
 
             Page NewPage = GetPageForType(NewPage_t);
 
-            /*if (!AddedPages.TryGetValue(NewPage, out _))
-            {
-                AddedPages.Add(NewPage);
-                Grid.SetColumn(NewPage, 0);
-                Grid.SetRow(NewPage, 0);
-                MainContentPresenterGrid.Children.Add(NewPage);
-            }*/
-
-            /*foreach (Page page in AddedPages)
-            {
-                bool IS_MAIN_PAGE = (page == NewPage);
-                page.Visibility =  IS_MAIN_PAGE? Visibility.Visible : Visibility.Collapsed;
-                page.IsEnabled = IS_MAIN_PAGE;
-            }*/
-
             Page? oldPage = ContentFrame.Content as Page;
             ContentFrame.Content = NewPage;
 
@@ -324,19 +300,14 @@ namespace UniGetUI.Interface
                     ContentGrid.RowDefinitions[1].Height = new GridLength(16);
                     OperationSplitter.Visibility = Visibility.Visible;
                     OperationSplitterMenuButton.Visibility = Visibility.Visible;
-                    // OperationScrollView.Visibility = Visibility.Collapsed;
                     OperationSplitter.IsEnabled = false;
                 }
                 else
                 {
-                    //if (int.TryParse(Settings.GetValue("OperationHistoryPreferredHeight"), out int setHeight) && setHeight < maxHeight)
-                    //    MainContentPresenterGrid.RowDefinitions[2].Height = new GridLength(setHeight);
-                    //else
                     ContentGrid.RowDefinitions[2].Height = new GridLength(Math.Min(maxHeight, 200));
                     ContentGrid.RowDefinitions[1].Height = new GridLength(16);
                     OperationSplitter.Visibility = Visibility.Visible;
                     OperationSplitterMenuButton.Visibility = Visibility.Visible;
-                    // OperationScrollView.Visibility = Visibility.Visible;
                     OperationSplitter.IsEnabled = true;
                 }
             }
@@ -346,12 +317,10 @@ namespace UniGetUI.Interface
                 ContentGrid.RowDefinitions[2].Height = new GridLength(0);
                 OperationSplitter.Visibility = Visibility.Collapsed;
                 OperationSplitterMenuButton.Visibility = Visibility.Collapsed;
-                // OperationScrollView.Visibility = Visibility.Collapsed;
             }
             ResizingOPLayout = false;
         }
 
-        // int lastSaved = -1;
         private async void OperationScrollView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (ResizingOPLayout)
@@ -362,11 +331,6 @@ namespace UniGetUI.Interface
                 OpListChanges--;
                 return;
             }
-
-            //lastSaved = (int)e.NewSize.Height;
-            //await Task.Delay(100);
-            //if ((int)e.NewSize.Height == lastSaved)
-            //    Settings.SetValue("OperationHistoryPreferredHeight", lastSaved.ToString());
         }
 
         private void OperationSplitterMenuButton_Click(object sender, RoutedEventArgs e)
