@@ -169,7 +169,7 @@ namespace UniGetUI.Interface
                 PageType.Updates => UpdatesPage,
                 PageType.Installed => InstalledPage,
                 PageType.Bundles => BundlesPage,
-                PageType.Settings => new SettingsBasePage(),
+                PageType.Settings => SettingsPage ??= new SettingsBasePage(),
                 PageType.OwnLog => UniGetUILogPage ??= new UniGetUILogPage(),
                 PageType.ManagerLog => ManagerLogPage ??= new ManagerLogsPage(),
                 PageType.OperationHistory => OperationHistoryPage ??= new OperationHistoryPage(),
