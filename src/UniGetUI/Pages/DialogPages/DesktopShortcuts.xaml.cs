@@ -51,7 +51,7 @@ namespace UniGetUI.Interface
             {
                 foreach (var path in NewShortcuts)
                 {
-                    desktopShortcuts.Add(new(path, false));
+                    desktopShortcuts.Add(new(path, true));
                 }
             }
             else
