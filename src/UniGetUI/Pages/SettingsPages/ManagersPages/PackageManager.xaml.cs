@@ -153,7 +153,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 CheckboxCard WinGet_EnableTroubleshooter_v2 = new()
                 {
                     Text = CoreTools.Translate("Enable an [experimental] improved WinGet troubleshooter"),
-                    SettingName = "EnableNewWinGetTroubleshooter",
+                    SettingName = "DisableNewWinGetTroubleshooter",
                     CornerRadius = new CornerRadius(0),
                     BorderThickness = new Thickness(1,0,1,0),
                 };
