@@ -7,6 +7,9 @@
         <Authors>Martí Climent and the contributors</Authors>
         <PublisherName>Martí Climent</PublisherName>
         <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <Optimize>true</Optimize>
     </PropertyGroup>
 

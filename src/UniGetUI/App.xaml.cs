@@ -19,6 +19,7 @@ using Microsoft.Windows.AppNotifications;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Interfaces;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+using UniGetUI.Pages.SettingsPages;
 
 namespace UniGetUI
 {
@@ -52,7 +53,6 @@ namespace UniGetUI
 
         public bool RaiseExceptionAsFatal = true;
 
-        public SettingsPage settings = null!;
         public MainWindow MainWindow = null!;
         public ThemeListener ThemeListener = null!;
 
