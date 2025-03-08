@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
 using CommunityToolkit.WinUI.Helpers;
-using H.NotifyIcon;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -42,13 +41,6 @@ namespace UniGetUI
                 set { _restart_required = value; Instance?.MainWindow?.UpdateSystemTrayStatus(); }
             }
 
-            private static int _operations_in_progress;
-            public static int OperationsInProgress
-            {
-                get => _operations_in_progress;
-                set { _operations_in_progress = value; Instance?.MainWindow?.UpdateSystemTrayStatus(); }
-            }
-
             private static int _available_updates;
             public static int AvailableUpdates
             {
@@ -59,7 +51,6 @@ namespace UniGetUI
 
         public bool RaiseExceptionAsFatal = true;
 
-        public SettingsPage settings = null!;
         public MainWindow MainWindow = null!;
         public ThemeListener ThemeListener = null!;
 

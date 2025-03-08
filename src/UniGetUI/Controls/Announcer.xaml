@@ -9,16 +9,13 @@
     mc:Ignorable="d">
 
     <Grid TabIndex="99">
-        <Grid x:Name="g">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="80"/>
-            </Grid.RowDefinitions>
+        <Grid x:Name="g" ColumnSpacing="8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="80"/>
             </Grid.ColumnDefinitions>
             <RichTextBlock x:Name="_textblock" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
-            <Image x:Name="_image" Grid.Column="1" Grid.Row="0" Width="80" Height="80"></Image>
+            <Image x:Name="_image" Grid.Column="1" Grid.Row="0" Width="80"/>
         </Grid>
     </Grid>
 </UserControl>

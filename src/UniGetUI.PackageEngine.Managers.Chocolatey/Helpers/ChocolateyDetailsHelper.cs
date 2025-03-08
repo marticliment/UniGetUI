@@ -13,7 +13,7 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
 
         protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
         {
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {

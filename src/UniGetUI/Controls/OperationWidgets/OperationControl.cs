@@ -98,7 +98,6 @@ public class OperationControl: INotifyPropertyChanged
     private void OnOperationStarting(object? sender, EventArgs e)
     {
         ShowProgressToast();
-        MainApp.Tooltip.OperationsInProgress++;
         MainApp.Instance.MainWindow.NavigationPage.OperationList.SmoothScrollIntoViewWithItemAsync(this);
     }
 
@@ -123,7 +122,6 @@ public class OperationControl: INotifyPropertyChanged
     {
         // Remove progress notification (if any)
         AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
-        MainApp.Tooltip.OperationsInProgress--;
 
         // Generate process output
         List<string> rawOutput =

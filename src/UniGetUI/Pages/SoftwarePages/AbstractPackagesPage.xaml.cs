@@ -13,9 +13,11 @@ using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
 using Windows.UI.Core;
+using CommunityToolkit.WinUI;
 using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.Pages.DialogPages;
+using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -480,14 +482,61 @@ namespace UniGetUI.Interface
             Loader_PackagesChanged(this, EventArgs.Empty);
         }
 
-        private void SelectAndScrollTo(int index)
+        private void SelectAndScrollTo(int index, bool focus)
         {
+            if (index < 0 || index >= FilteredPackages.Count)
+                return;
+
             PackageList.Select(index);
-            PackageList.ScrollView?.ScrollTo(0, Math.Max(0, (index - 3) * 39), new ScrollingScrollOptions
-            (
-                ScrollingAnimationMode.Disabled,
-                ScrollingSnapPointsMode.Ignore
-            ));
+
+            if (PackageList.ScrollView?.VerticalOffset > index * 39)
+            {
+                PackageList.ScrollView.ScrollTo(0, index * 39, new ScrollingScrollOptions(
+                    ScrollingAnimationMode.Disabled,
+                    ScrollingSnapPointsMode.Ignore
+                ));
+            }
+            else if (PackageList.ScrollView?.VerticalOffset + PackageList.ScrollView?.ViewportHeight < (index + 1) * 39)
+            {
+                PackageList.ScrollView?.ScrollTo(0, (index + 1) * 39 - PackageList.ScrollView.ViewportHeight, new ScrollingScrollOptions(
+                    ScrollingAnimationMode.Disabled,
+                    ScrollingSnapPointsMode.Ignore
+                ));
+            }
+
+            if (focus)
+                Focus(FilteredPackages[index].Package);
+        }
+
+        private void Focus(IPackage packageToFocus, int retryCount = 0)
+        {
+            if (retryCount > 20)
+                return;
+
+            DispatcherQueue.TryEnqueue(
+                DispatcherQueuePriority.Low,
+                () =>
+                {
+                    PackageItemContainer? containerToFocus = PackageList.FindDescendant<PackageItemContainer>(c => c.Package?.Equals(packageToFocus) == true);
+                    if (containerToFocus == null)
+                    {
+                        Focus(packageToFocus, ++retryCount);
+                        return;
+                    }
+
+                    if (!containerToFocus.IsSelected)
+                    {
+                        PackageItemContainer? selectedContainer = PackageList.FindDescendant<PackageItemContainer>(c => c.IsSelected);
+                        if (selectedContainer?.Package?.Equals(packageToFocus) == true)
+                            containerToFocus = selectedContainer;
+                        else
+                        {
+                            Focus(packageToFocus, ++retryCount);
+                            return;
+                        }
+                    }
+                    containerToFocus.Focus(FocusState.Keyboard);
+                });
         }
 
         public void PackageList_CharacterReceived(object sender, CharacterReceivedRoutedEventArgs e)
@@ -514,7 +563,7 @@ namespace UniGetUI.Interface
                 {
                     if (FilteredPackages[i].Package.Name.ToLower().StartsWith(TypeQuery))
                     {
-                        SelectAndScrollTo(i);
+                        SelectAndScrollTo(i, true);
                         SelectedPackage = true;
                         break;
                     }
@@ -566,11 +615,11 @@ namespace UniGetUI.Interface
                             }
                         }
 
-                        SelectAndScrollTo(FirstIdx + (IndexOffset % (LastIdx - FirstIdx + 1)));
+                        SelectAndScrollTo(FirstIdx + (IndexOffset % (LastIdx - FirstIdx + 1)), true);
                     }
                     else if (QueryIndex > -1)
                     {
-                        SelectAndScrollTo(QueryIndex);
+                        SelectAndScrollTo(QueryIndex, true);
                     }
                 }
             }
@@ -696,12 +745,7 @@ namespace UniGetUI.Interface
                 {
                     if (FilteredPackages[i].Package.Equals(previousSelection.Package))
                     {
-                        PackageList.Select(i);
-                        PackageList.ScrollView?.ScrollTo(0, Math.Max(0, (i - 3) * 39), new ScrollingScrollOptions
-                        (
-                            ScrollingAnimationMode.Disabled,
-                            ScrollingSnapPointsMode.Ignore
-                        ));
+                        SelectAndScrollTo(i, false);
                         break;
                     }
                 }
@@ -887,6 +931,7 @@ namespace UniGetUI.Interface
             if (sender is PackageItemContainer container && container.Package is not null)
             {
                 PackageList.Select(container.Wrapper.Index);
+                container.Focus(FocusState.Keyboard);
                 WhenShowingContextMenu(container.Package);
             }
         }
@@ -896,49 +941,12 @@ namespace UniGetUI.Interface
             if (sender is PackageItemContainer container && container.Package is not null)
             {
                 PackageList.Select(container.Wrapper.Index);
+                container.Focus(FocusState.Keyboard);
 
                 TEL_InstallReferral referral = TEL_InstallReferral.ALREADY_INSTALLED;
                 if (PAGE_NAME == "Bundles") referral = TEL_InstallReferral.FROM_BUNDLE;
                 if (PAGE_NAME == "Discover") referral = TEL_InstallReferral.DIRECT_SEARCH;
                 ShowDetailsForPackage(container.Package, referral);
-            }
-        }
-
-        private void PackageItemContainer_KeyUp(object sender, KeyRoutedEventArgs e)
-        {
-            IPackage? package = (sender as PackageItemContainer)?.Package;
-
-            bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
-            //bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
-            bool IS_ALT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftMenu).HasFlag(CoreVirtualKeyStates.Down);
-            IS_ALT_PRESSED |= InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.RightMenu).HasFlag(CoreVirtualKeyStates.Down);
-
-            if (e.Key == VirtualKey.Enter && package is not null)
-            {
-                if (IS_ALT_PRESSED)
-                {
-                    if (!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
-                        ShowInstallationOptionsForPackage(package);
-                }
-                else if (IS_CONTROL_PRESSED)
-                {
-                    if (package is not InvalidImportedPackage)
-                        PerformMainPackageAction(package);
-                }
-                else
-                {
-                    if (!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
-                    {
-                        TEL_InstallReferral referral = TEL_InstallReferral.ALREADY_INSTALLED;
-                        if (PAGE_NAME == "Bundles") referral = TEL_InstallReferral.FROM_BUNDLE;
-                        if (PAGE_NAME == "Discover") referral = TEL_InstallReferral.DIRECT_SEARCH;
-                        ShowDetailsForPackage(package, referral);
-                    }
-                }
-            }
-            else if (e.Key == VirtualKey.Space && package is not null)
-            {
-                package.IsChecked = !package.IsChecked;
             }
         }
 
@@ -1068,6 +1076,77 @@ namespace UniGetUI.Interface
         {
             Visibility = Visibility.Collapsed;
             IsEnabled = false;
+        }
+
+        private void PackageItemContainer_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key is not (VirtualKey.Up or VirtualKey.Down or VirtualKey.Home or VirtualKey.End or VirtualKey.Enter or VirtualKey.Space) ||
+                sender is not PackageItemContainer packageItemContainer)
+            {
+                return;
+            }
+
+            int index = FilteredPackages.IndexOf(packageItemContainer.Wrapper);
+            switch (e.Key)
+            {
+                case VirtualKey.Up when index > 0:
+                    SelectAndScrollTo(index - 1, true); e.Handled = true; break;
+                case VirtualKey.Down when index < FilteredPackages.Count - 1:
+                    SelectAndScrollTo(index + 1, true); e.Handled = true; break;
+                case VirtualKey.Home when index > 0:
+                    SelectAndScrollTo(0, true); e.Handled = true; break;
+                case VirtualKey.End when index < FilteredPackages.Count - 1:
+                    SelectAndScrollTo(FilteredPackages.Count - 1, true); e.Handled = true; break;
+            }
+
+            if (e.KeyStatus.WasKeyDown)
+            {
+                // ignore repeated KeyDown events when pressing and holding a key
+                return;
+            }
+
+            IPackage? package = packageItemContainer.Package;
+
+            bool IS_CONTROL_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            //bool IS_SHIFT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+            bool IS_ALT_PRESSED = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftMenu).HasFlag(CoreVirtualKeyStates.Down);
+            IS_ALT_PRESSED |= InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.RightMenu).HasFlag(CoreVirtualKeyStates.Down);
+
+            if (e.Key == VirtualKey.Enter && package is not null)
+            {
+                if (IS_ALT_PRESSED)
+                {
+                    if (!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
+                    {
+                        ShowInstallationOptionsForPackage(package);
+                        e.Handled = true;
+                    }
+                }
+                else if (IS_CONTROL_PRESSED)
+                {
+                    if (package is not InvalidImportedPackage)
+                    {
+                        PerformMainPackageAction(package);
+                        e.Handled = true;
+                    }
+                }
+                else
+                {
+                    if (!package.Source.IsVirtualManager && package is not InvalidImportedPackage)
+                    {
+                        TEL_InstallReferral referral = TEL_InstallReferral.ALREADY_INSTALLED;
+                        if (PAGE_NAME == "Bundles") referral = TEL_InstallReferral.FROM_BUNDLE;
+                        if (PAGE_NAME == "Discover") referral = TEL_InstallReferral.DIRECT_SEARCH;
+                        ShowDetailsForPackage(package, referral);
+                        e.Handled = true;
+                    }
+                }
+            }
+            else if (e.Key == VirtualKey.Space && package is not null)
+            {
+                package.IsChecked = !package.IsChecked;
+                e.Handled = true;
+            }
         }
     }
 }

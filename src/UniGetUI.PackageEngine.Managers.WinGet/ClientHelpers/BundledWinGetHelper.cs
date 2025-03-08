@@ -23,7 +23,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
     public IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
     {
         List<Package> Packages = [];
-        Process p = new()
+        using Process p = new()
         {
             StartInfo = new()
             {
@@ -135,7 +135,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
     public IReadOnlyList<Package> GetInstalledPackages_UnSafe()
     {
         List<Package> Packages = [];
-        Process p = new()
+        using Process p = new()
         {
             StartInfo = new()
             {
@@ -234,7 +234,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
     public IReadOnlyList<Package> FindPackages_UnSafe(string query)
     {
         List<Package> Packages = [];
-        Process p = new()
+        using Process p = new()
         {
             StartInfo = new()
             {
@@ -569,7 +569,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
 
     public IReadOnlyList<string> GetInstallableVersions_Unsafe(IPackage package)
     {
-        Process p = new()
+        using Process p = new()
         {
             StartInfo = new ProcessStartInfo
             {
@@ -624,7 +624,7 @@ internal sealed class BundledWinGetHelper : IWinGetManagerHelper
     {
         List<IManagerSource> sources = [];
 
-        Process p = new()
+        using Process p = new()
         {
             StartInfo = new()
             {

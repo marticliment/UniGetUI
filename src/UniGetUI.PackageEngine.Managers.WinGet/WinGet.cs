@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
@@ -182,6 +184,8 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 return status;
             }
 
+            TryRepairTempFolderPermissions();
+
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
@@ -250,24 +254,80 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             {
                 if (WinGetHelper.Instance is NativeWinGetHelper)
                 {
-                    Logger.ImportantInfo("Attempting to reconnec to WinGet COM Server...");
+                    Logger.ImportantInfo("Attempting to reconnect to WinGet COM Server...");
                     ReRegisterCOMServer();
+                    TryRepairTempFolderPermissions();
                     NO_PACKAGES_HAVE_BEEN_LOADED = false;
+
                 }
                 else
                 {
                     Logger.Warn("Attempted to reconnect to COM Server but Bundled WinGet is being used.");
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Logger.Error("An error ocurred while attempting to reconnect to COM Server");
                 Logger.Error(ex);
             }
         }
 
+        private static void TryRepairTempFolderPermissions()
+        {
+            if (!Settings.Get("EnableNewWinGetTroubleshooter")) return;
+
+            try
+            {
+                string tempPath = Path.GetTempPath();
+                string winGetTempPath = Path.Combine(tempPath, "WinGet");
+
+                if (!Directory.Exists(winGetTempPath))
+                {
+                    Logger.Warn("WinGet temp folder does not exist, creating it...");
+                    Directory.CreateDirectory(winGetTempPath);
+                }
+
+                var directoryInfo = new DirectoryInfo(winGetTempPath);
+                var accessControl = directoryInfo.GetAccessControl();
+                var rules = accessControl.GetAccessRules(true, true, typeof(NTAccount));
+
+                bool userHasAccess = false;
+                string currentUser = WindowsIdentity.GetCurrent().Name;
+
+                foreach (FileSystemAccessRule rule in rules)
+                {
+                    if (rule.IdentityReference.Value.Equals(currentUser, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        userHasAccess = true;
+                        break;
+                    }
+                }
+
+                if (!userHasAccess)
+                {
+                    Logger.Warn("WinGet temp folder does not have correct permissions set, adding the current user...");
+                    var rule = new FileSystemAccessRule(
+                        currentUser,
+                        FileSystemRights.FullControl,
+                        InheritanceFlags.ContainerInherit |
+                        InheritanceFlags.ObjectInherit,
+                        PropagationFlags.None,
+                        AccessControlType.Allow);
+
+                    accessControl.AddAccessRule(rule);
+                    directoryInfo.SetAccessControl(accessControl);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("An error occurred while attempting to properly configure WinGet's temp folder permissions.");
+                Logger.Error(ex);
+            }
+        }
+
         public override void RefreshPackageIndexes()
         {
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {

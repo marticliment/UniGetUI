@@ -35,7 +35,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
         {
             List<ManagerSource> sources = [];
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new()
                 {
