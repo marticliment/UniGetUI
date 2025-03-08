@@ -17,7 +17,7 @@
         </widgets:CheckboxCard_Dict>
 
         <UserControl Height="16"/>
-        
+
         <!-- STATUS INFO BAR -->
         <InfoBar
             x:Name="ManagerStatusBar"
@@ -42,7 +42,7 @@
             </InfoBar.Content>
         </InfoBar>
         <controls:SettingsCard
-            Name="ManagerPath"
+            x:Name="ManagerPath"
             IsClickEnabled="True" Click="ManagerPath_Click" Padding="24,0,0,0"
             CornerRadius="0,0,8,8" BorderThickness="1,0,1,1">
             <controls:SettingsCard.ActionIcon>
@@ -61,9 +61,9 @@
         <UserControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsEnabled="{x:Bind EnableManager._checkbox.IsOn, Mode=OneWay}">
             <StackPanel Orientation="Vertical" Name="ExtraControls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </UserControl>
-        
+
         <UserControl Height="16"/>
-        
+
         <controls:SettingsCard
             Name="ManagerLogs"
             IsClickEnabled="True" Click="ManagerLogs_Click"
@@ -71,7 +71,7 @@
             <controls:SettingsCard.HeaderIcon>
                 <widgets:LocalIcon Icon="Console"/>
             </controls:SettingsCard.HeaderIcon>
-            
+
             <controls:SettingsCard.Description>
                 <TextBlock Name="ManagerLogsLabel" FontFamily="Consolas" FontSize="14" TextWrapping="Wrap"/>
             </controls:SettingsCard.Description>
