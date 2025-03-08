@@ -344,8 +344,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 if (upgradablePackages.Count == 0)
                     return;
 
-                bool EnableAutoUpdate = Settings.Get("AutomaticallyUpdatePackages") ||
-                                   Environment.GetCommandLineArgs().Contains("--updateapps");
+                bool EnableAutoUpdate = Settings.Get("AutomaticallyUpdatePackages");
+                EnableAutoUpdate |= Environment.GetCommandLineArgs().Contains("--updateapps");
 
                 if (EnableAutoUpdate)
                     UpdateAll();
