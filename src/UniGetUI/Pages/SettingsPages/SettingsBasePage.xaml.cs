@@ -28,17 +28,17 @@ namespace UniGetUI.Pages.SettingsPages
     /// </summary>
     public sealed partial class SettingsBasePage : Page
     {
-        public SettingsBasePage()
+        public SettingsBasePage(bool isManagers)
         {
             this.InitializeComponent();
             BackButton.Click += (_, _) =>
             {
                 if (MainNavigationFrame.CanGoBack) MainNavigationFrame.GoBack();
-                else MainNavigationFrame.Navigate(typeof(SettingsHomepage), null, new DrillInNavigationTransitionInfo());
+                else MainNavigationFrame.Navigate(isManagers? typeof(ManagersHomepage): typeof(SettingsHomepage), null, new DrillInNavigationTransitionInfo());
             };
             MainNavigationFrame.Navigated += MainNavigationFrame_Navigated;
             MainNavigationFrame.Navigating += MainNavigationFrame_Navigating;
-            MainNavigationFrame.Navigate(typeof(SettingsHomepage), null, new DrillInNavigationTransitionInfo());
+            MainNavigationFrame.Navigate(isManagers ? typeof(ManagersHomepage) : typeof(SettingsHomepage), null, new DrillInNavigationTransitionInfo());
 
             RestartRequired.Message = CoreTools.Translate("Restart WingetUI to fully apply changes");
             var RestartButton = new Button

@@ -11,6 +11,7 @@
     Background="Transparent">
 
     <StackPanel Orientation="Vertical" Name="SettingsEntries">
+
         <widgets:SettingsPageButton
             x:Name="GeneralSettingsExpander"
             Text="General preferences"
@@ -86,11 +87,6 @@
             Icon="experimental"
             Click="Experimental"
             CornerRadius="8"/>
-
-
-        <UserControl Height="32"/>
-        <widgets:TranslatedTextBlock Text="Package Manager settings" FontWeight="Bold" FontSize="30"/>
-        <UserControl Height="16"/>
 
     </StackPanel>
 </Page>

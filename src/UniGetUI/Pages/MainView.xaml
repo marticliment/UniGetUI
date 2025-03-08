@@ -19,14 +19,15 @@
 
         <ResourceDictionary>
             <widgets:BetterMenu x:Name="MoreNavButtonMenu" Placement="Right">
-                <widgets:BetterMenuItem Text="Help" IconName="help" Name="HelpMenu" Click="HelpMenu_Click" />
-                <MenuFlyoutSeparator Height="5"/>
                 <widgets:BetterMenuItem Text="WingetUI Log" IconName="buggy" Name="WingetUILogs" Click="UniGetUILogs_Click" />
                 <widgets:BetterMenuItem Text="Package Manager logs" IconName="console" Name="ManagerLogsMenu" Click="ManagerLogsMenu_Click" />
                 <widgets:BetterMenuItem Text="Operation history" IconName="history" Name="OperationHistoryMenu" Click="OperationHistoryMenu_Click" />
                 <MenuFlyoutSeparator Height="5"/>
                 <widgets:BetterMenuItem x:Name="VersionMenuItem" IconName="info_round" IsEnabled="False" />
                 <widgets:BetterMenuItem Text="Release notes" IconName="megaphone" Name="ReleaseNotesMenu" Click="ReleaseNotesMenu_Click" />
+                <MenuFlyoutSeparator Height="5"/>
+                <widgets:BetterMenuItem Text="Help" IconName="help" Name="HelpMenu" Click="HelpMenu_Click" />
+                <widgets:BetterMenuItem Text="About" IconName="Info_Round" Name="InfoMenu" Click="AboutNavButton_Click" />
                 <MenuFlyoutSeparator Height="5"/>
                 <widgets:BetterMenuItem Text="Quit WingetUI" IconName="close_round" Name="QuitWingetUI" Click="QuitUniGetUI_Click" />
             </widgets:BetterMenu>
@@ -288,12 +289,12 @@
                     Width="70"
                     Spacing="4" Orientation="Vertical" VerticalAlignment="Bottom">
                     <widgets:NavButton
-                        Text="About" x:Name="AboutNavButton"
-                        Glyph="&#xE946;" Click="AboutNavButton_Click"
-                        />
-                    <widgets:NavButton
                         Text="Settings" x:Name="SettingsNavButton"
                         Glyph="&#xE713;" Click="SettingsNavButton_Click"
+                        />
+                    <widgets:NavButton
+                        Text="Package managers" x:Name="ManagersNavButton"
+                        Glyph="&#xE835;" Click="ManagersNavButton_Click"
                         />
                     <widgets:NavButton
                         Text="More" x:Name="MoreNavButton"

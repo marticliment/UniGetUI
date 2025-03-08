@@ -29,6 +29,7 @@ namespace UniGetUI.Interface
         Installed,
         Bundles,
         Settings,
+        Managers,
         OwnLog,
         ManagerLog,
         OperationHistory,
@@ -43,6 +44,7 @@ namespace UniGetUI.Interface
         public InstalledPackagesPage InstalledPage;
         public PackageBundlesPage BundlesPage;
         private SettingsBasePage? SettingsPage;
+        private SettingsBasePage? ManagersPage;
         private UniGetUILogPage? UniGetUILogPage;
         private ManagerLogsPage? ManagerLogPage;
         private OperationHistoryPage? OperationHistoryPage;
@@ -160,7 +162,8 @@ namespace UniGetUI.Interface
                 PageType.Updates => UpdatesPage,
                 PageType.Installed => InstalledPage,
                 PageType.Bundles => BundlesPage,
-                PageType.Settings => SettingsPage ??= new SettingsBasePage(),
+                PageType.Settings => SettingsPage ??= new SettingsBasePage(false),
+                PageType.Managers => ManagersPage ??= new SettingsBasePage(true),
                 PageType.OwnLog => UniGetUILogPage ??= new UniGetUILogPage(),
                 PageType.ManagerLog => ManagerLogPage ??= new ManagerLogsPage(),
                 PageType.OperationHistory => OperationHistoryPage ??= new OperationHistoryPage(),
@@ -177,7 +180,8 @@ namespace UniGetUI.Interface
                 PageType.Updates => PageType.Installed,
                 PageType.Installed => PageType.Bundles,
                 PageType.Bundles => PageType.Settings,
-                PageType.Settings => PageType.Discover,
+                PageType.Settings => PageType.Managers,
+                PageType.Managers => PageType.Discover,
 
                 // "Extra" pages
                 PageType.OperationHistory => PageType.Discover,
@@ -197,6 +201,7 @@ namespace UniGetUI.Interface
                 PageType.Installed => PageType.Updates,
                 PageType.Bundles => PageType.Installed,
                 PageType.Settings => PageType.Bundles,
+                PageType.Managers => PageType.Settings,
 
                 // "Extra" pages
                 PageType.OperationHistory => PageType.Discover,
@@ -210,22 +215,23 @@ namespace UniGetUI.Interface
         private void SettingsNavButton_Click(object sender, EventArgs e)
             => NavigateTo(PageType.Settings);
 
+        private void ManagersNavButton_Click(object sender, EventArgs e)
+            => NavigateTo(PageType.Managers);
+
         private void SelectNavButtonForPage(PageType page)
         {
             DiscoverNavButton.IsChecked = page is PageType.Discover;
             UpdatesNavButton.IsChecked = page is PageType.Updates;
             InstalledNavButton.IsChecked = page is PageType.Installed;
             BundlesNavButton.IsChecked = page is PageType.Bundles;
-
+            ManagersNavButton.IsChecked = page is PageType.Managers;
             SettingsNavButton.IsChecked = page is PageType.Settings;
-            AboutNavButton.IsChecked = false;
             MoreNavButton.IsChecked = page is PageType.Help or PageType.ManagerLog or PageType.OperationHistory or PageType.OwnLog;
         }
 
-        private async void AboutNavButton_Click(object sender, EventArgs e)
+        private async void AboutNavButton_Click(object sender, RoutedEventArgs e)
         {
             SelectNavButtonForPage(PageType.Null);
-            AboutNavButton.IsChecked = true;
             await DialogHelper.ShowAboutUniGetUI();
             SelectNavButtonForPage(CurrentPage_t);
         }
