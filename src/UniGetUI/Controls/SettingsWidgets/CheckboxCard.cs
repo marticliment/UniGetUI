@@ -20,13 +20,9 @@ namespace UniGetUI.Interface.Widgets
             set {
                 setting_name = value;
                 IS_INVERTED = value.StartsWith("Disable");
-                _checkbox.IsChecked = (SettingDictionary == null ?
-                        Settings.Get(setting_name) :
-                        Settings.GetDictionaryItem<string, bool>(SettingDictionary, setting_name))
-                    ^ IS_INVERTED ^ ForceInversion;
+                _checkbox.IsChecked = Settings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
             }
         }
-        public string? SettingDictionary { get; set; }
 
         public bool ForceInversion { get; set; }
 
@@ -52,20 +48,8 @@ namespace UniGetUI.Interface.Widgets
             DefaultStyleKey = typeof(CheckboxCard);
             Content = _checkbox;
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            _checkbox.Checked += (_, _) =>
-            {
-                bool value = true ^ IS_INVERTED ^ ForceInversion;
-                if (SettingDictionary == null) Settings.Set(setting_name, value);
-                else Settings.SetDictionaryItem(SettingDictionary, setting_name, value);
-                StateChanged?.Invoke(this, EventArgs.Empty);
-            };
-            _checkbox.Unchecked += (_, _) =>
-            {
-                bool value = false ^ IS_INVERTED ^ ForceInversion;
-                if (SettingDictionary == null) Settings.Set(setting_name, value);
-                else Settings.SetDictionaryItem(SettingDictionary, setting_name, value);
-                StateChanged?.Invoke(this, EventArgs.Empty);
-            };
+            _checkbox.Checked += (_, _) => { Settings.Set(setting_name, true ^ IS_INVERTED ^ ForceInversion); StateChanged?.Invoke(this, EventArgs.Empty); };
+            _checkbox.Unchecked += (_, _) => { Settings.Set(setting_name, false ^ IS_INVERTED ^ ForceInversion); StateChanged?.Invoke(this, EventArgs.Empty); };
         }
     }
 }
