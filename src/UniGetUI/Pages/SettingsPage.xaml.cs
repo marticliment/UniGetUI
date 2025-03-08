@@ -103,6 +103,7 @@ namespace UniGetUI.Interface
                 StartupPageSelector.AddItem(CoreTools.AutoTranslated("Installed Packages"), "installed");
                 StartupPageSelector.AddItem(CoreTools.AutoTranslated("Package Bundles"), "bundles");
                 StartupPageSelector.AddItem(CoreTools.AutoTranslated("Settings"), "settings");
+                StartupPageSelector.AddItem(CoreTools.AutoTranslated("Operation History"), "ophist");
                 StartupPageSelector.ShowAddedItems();
 
                 for (int i = 1; i <= 10; i++)

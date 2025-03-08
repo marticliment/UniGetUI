@@ -139,6 +139,7 @@ namespace UniGetUI.Interface
                 "installed" => PageType.Installed,
                 "bundles" => PageType.Bundles,
                 "settings" => PageType.Settings,
+                "ophist" => PageType.AdvancedOperationHistory,
                 _ => MainApp.Tooltip.AvailableUpdates > 0 ? PageType.Updates : PageType.Discover
             };
             NavigateTo(type);
