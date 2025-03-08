@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 using System.Web;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;

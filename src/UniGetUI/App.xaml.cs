@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Windows.ApplicationModel.Activation;
 using CommunityToolkit.WinUI.Helpers;
-using H.NotifyIcon;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -19,7 +18,6 @@ using Microsoft.Windows.AppNotifications;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.PackageEngine.Interfaces;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
-using UniGetUI.Pages.SettingsPages;
 
 namespace UniGetUI
 {
