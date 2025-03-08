@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     Background="Transparent">
 
-    <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical" Name="SettingsEntries">
         <widgets:SettingsPageButton
             x:Name="GeneralSettingsExpander"
             Text="General preferences"
@@ -18,7 +18,6 @@
             Icon="settings"/>
 
         <UserControl Height="16"/>
-
 
         <widgets:SettingsPageButton
             Text="User interface preferences"
@@ -86,6 +85,10 @@
             Icon="experimental"
             Click="Experimental"
             CornerRadius="8"/>
+
+
+        <UserControl Height="16"/>
+        <UserControl Height="16"/>
 
     </StackPanel>
 </Page>

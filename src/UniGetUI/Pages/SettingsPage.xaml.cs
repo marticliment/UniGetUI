@@ -181,7 +181,6 @@ namespace UniGetUI.Interface
                     _ = PEInterface.InstalledPackagesLoader.ReloadPackages();
                 };
 
-
                 CheckboxCard WinGet_EnableTroubleshooter_v2 = new()
                 {
                     Text = CoreTools.Translate("Enable an [experimental] improved WinGet troubleshooter"),
@@ -339,39 +338,39 @@ namespace UniGetUI.Interface
                     {
 
                         // Creation of the actual expander
-                        SettingsEntry ManagerExpander = new()
+                        /*SettingsEntry ManagerExpander = new()
                         {
                             Text = Manager.DisplayName,
                             Description = Manager.Properties.Description.Replace("<br>", "\n").Replace("<b>", "")
                                 .Replace("</b>", "")
                         };
                         IPackageManagerExpanders.Add(Manager, ManagerExpander);
-                        ManagerExpander.HeaderIcon = new LocalIcon(Manager.Properties.IconId);
+                        ManagerExpander.HeaderIcon = new LocalIcon(Manager.Properties.IconId);*/
 
                         // Creation of the status footer
 
-                        InfoBar ManagerStatus = new();
+                        // InfoBar ManagerStatus = new();
 
-                        TextBlock LongVersion = new();
-                        HyperlinkButton ShowVersionButton = new()
+                        //  TextBlock LongVersion = new();
+                        /*HyperlinkButton ShowVersionButton = new()
                         {
                             Content = CoreTools.Translate("Expand version"), Visibility = Visibility.Collapsed
                         };
-                        ManagerStatus.ActionButton = ShowVersionButton;
-                        ShowVersionButton.Click += (_, _) => { SetManagerStatus(Manager, true); };
+                        ManagerStatus.ActionButton = ShowVersionButton;*/
+                        // ShowVersionButton.Click += (_, _) => { SetManagerStatus(Manager, true); };
 
-                        LongVersion.TextWrapping = TextWrapping.Wrap;
-                        LongVersion.Text = Manager.Status.Version + "\n";
-                        LongVersion.FontFamily = new FontFamily("Consolas");
-                        LongVersion.Visibility = Visibility.Collapsed;
-                        ManagerStatus.Content = LongVersion;
+                        // LongVersion.TextWrapping = TextWrapping.Wrap;
+                        // LongVersion.Text = Manager.Status.Version + "\n";
+                        //LongVersion.FontFamily = new FontFamily("Consolas");
+                        //LongVersion.Visibility = Visibility.Collapsed;
+                        //ManagerStatus.Content = LongVersion;
 
-                        ManagerStatus.IsClosable = false;
+                        /*ManagerStatus.IsClosable = false;
                         ManagerStatus.IsOpen = true;
                         ManagerStatus.CornerRadius = new CornerRadius(0);
-                        ManagerStatus.BorderThickness = new(0, 1, 0, 0);
+                        ManagerStatus.BorderThickness = new(0, 1, 0, 0);*/
 
-                        Button managerLogs = new Button
+                        /*Button managerLogs = new Button
                         {
                             Content = new LocalIcon(IconType.Console),
                             CornerRadius = new(0),
@@ -400,9 +399,9 @@ namespace UniGetUI.Interface
                         g.Children.Add(managerLogs);
                         Grid.SetColumn(ManagerStatus, 0);
                         Grid.SetColumn(managerLogs, 1);
-                        ManagerExpander.ItemsFooter = g;
+                        ManagerExpander.ItemsFooter = g;*/
 
-                        void SetManagerStatus(IPackageManager manager, bool ShowVersion = false)
+                        /*void SetManagerStatus(IPackageManager manager, bool ShowVersion = false)
                         {
                             ShowVersionButton.Visibility = Visibility.Collapsed;
                             LongVersion.Visibility = Visibility.Collapsed;
@@ -449,11 +448,11 @@ namespace UniGetUI.Interface
                                 ManagerStatus.Message = CoreTools.Translate("Enable it to install packages from {pm}.",
                                     new Dictionary<string, object?> { { "pm", manager.DisplayName } });
                             }
-                        }
+                        }*/
 
                         // Switch to enable/disable said manager
 
-                        ToggleSwitch ManagerSwitch = new() { IsOn = Manager.IsEnabled() };
+                        /*ToggleSwitch ManagerSwitch = new() { IsOn = Manager.IsEnabled() };
                         ManagerSwitch.Toggled += (_, _) =>
                         {
                             Settings.SetDictionaryItem("DisabledManagers", Manager.Name, !ManagerSwitch.IsOn);
@@ -507,13 +506,7 @@ namespace UniGetUI.Interface
                         AdminCard._checkbox.OnContent = AdminCard._checkbox.OffContent = (AdminCard._checkbox.OnContent.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
                         ExtraSettingsCards[Manager].Insert(index++, AdminCard);
 
-                        /*CheckboxCard ParallelCard = new()
-                        {
-                            Text = CoreTools.AutoTranslated("Allow {pm} operations to be performed in parallel"),
-                            SettingName = "AllowParallelInstallsForManager" + Manager.Name,
-                        };
-                        ParallelCard._checkbox.Content = (ParallelCard._checkbox.Content.ToString() ?? "").Replace("{pm}", Manager.DisplayName);
-                        ExtraSettingsCards[Manager].Insert(index++, ParallelCard);*/
+                       
 
                         if (Manager.Capabilities.SupportsCustomSources && Manager is not Vcpkg)
                         {
@@ -533,7 +526,7 @@ namespace UniGetUI.Interface
 
                         SetManagerStatus(Manager);
                         EnableOrDisableEntries();
-                        MainLayout.Children.Add(ManagerExpander);
+                        MainLayout.Children.Add(ManagerExpander);*/
                     }
                     catch (Exception ex)
                     {

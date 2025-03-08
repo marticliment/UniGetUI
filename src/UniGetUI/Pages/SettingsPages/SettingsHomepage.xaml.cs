@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Navigation;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.Pages.SettingsPages.GeneralPages;
+using UniGetUI.PackageEngine;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,6 +37,20 @@ namespace UniGetUI.Pages.SettingsPages
         public SettingsHomepage()
         {
             this.InitializeComponent();
+
+            foreach(var manager in PEInterface.Managers)
+            {
+                var button = new SettingsPageButton()
+                {
+                    Text = manager.DisplayName,
+                    Description = manager.Properties.Description.Replace("<br>", "\n").Replace("<b>", "").Replace("</b>", ""),
+                    HeaderIcon = new LocalIcon(manager.Properties.IconId)
+                };
+                button.Click += (_, _) => NavigationRequested?.Invoke(this, manager.GetType());
+
+                SettingsEntries.Children.Add(button);
+                SettingsEntries.Children.Add(new UserControl() { Height = 16 });
+            }
         }
 
         public void Administrator(object s, RoutedEventArgs e) => NavigationRequested?.Invoke(this, typeof(Administrator));

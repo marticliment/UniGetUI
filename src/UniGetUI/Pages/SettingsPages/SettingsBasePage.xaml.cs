@@ -14,6 +14,9 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using UniGetUI.Core.Tools;
 using Microsoft.UI.Xaml.Media.Animation;
+using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.ManagerClasses.Manager;
+using UniGetUI.Pages.SettingsPages.GeneralPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -76,7 +79,14 @@ namespace UniGetUI.Pages.SettingsPages
 
         private void Page_NavigationRequested(object? sender, Type e)
         {
-            MainNavigationFrame.Navigate(e, null, new DrillInNavigationTransitionInfo());
+            if(e.IsSubclassOf(typeof(PackageManager)))
+            {
+                MainNavigationFrame.Navigate(typeof(PackageManagerPage), e, new DrillInNavigationTransitionInfo());
+            }
+            else
+            {
+                MainNavigationFrame.Navigate(e, null, new DrillInNavigationTransitionInfo());
+            }
         }
     }
 }

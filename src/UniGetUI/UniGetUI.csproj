@@ -69,6 +69,7 @@
     <None Remove="Pages\SettingsPages\GeneralPages\General.xaml" />
     <None Remove="Pages\SettingsPages\GeneralPages\Notifications.xaml" />
     <None Remove="Pages\SettingsPages\GeneralPages\Operations.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\PackageManager.xaml" />
     <None Remove="Pages\SettingsPages\GeneralPages\Startup.xaml" />
     <None Remove="Pages\SettingsPages\SettingsHomepage.xaml" />
   </ItemGroup>
@@ -180,6 +181,9 @@
     <None Update="Assets\Utilities\uninstall_scoop.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Pages\SettingsPages\GeneralPages\PackageManager.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Pages\SettingsPages\GeneralPages\Experimental.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
