@@ -6,14 +6,14 @@
   - [Contributors](#contributors)
 - [Third Party Licenses - Development](#third-party-licenses---development)
 - [Third Party Licenses - Runtime](#third-party-licenses---runtime)
-  - [7-Zip @ 24.08](#7-zip--2408)
+  - [7-Zip @ 24.09](#7-zip--2409)
   - [AlphaFS @ 2.1.3](#alphafs--213)
   - [Checksum @ 0.3.1](#checksum--031)
   - [log4net @ 2.0.12](#log4net--2012)
   - [Microsoft.Bcl.HashCode @ 1.1.1](#microsoftbclhashcode--111)
   - [Microsoft.Web.Xdt @ 3.1.0](#microsoftwebxdt--310)
   - [Newtonsoft.Json @ 13.0.1](#newtonsoftjson--1301)
-  - [Chocolatey.NuGet.Client @ 3.4.2](#chocolateynugetclient--342)
+  - [Chocolatey.NuGet.Client @ 3.4.3](#chocolateynugetclient--343)
   - [Rhino.Licensing @ 1.4.1 (modified)](#rhinolicensing--141-modified)
   - [Shim Generator (shimgen) @ 2.0.0](#shim-generator-shimgen--200)
   - [SimpleInjector @ 2.8.3](#simpleinjector--283)
@@ -73,7 +73,7 @@ We would like to credit other super sweet tools/frameworks that aid in the devel
 Chocolatey CLI (choco) uses a number of 3rd-party components.
 Their details are below.
 
-### 7-Zip @ 24.08
+### 7-Zip @ 24.09
 
 Chocolatey uses [7-Zip](http://www.7-zip.org/) for uncompressing archives.
 [License terms](http://www.7-zip.org/license.txt):
@@ -799,7 +799,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-### Chocolatey.NuGet.Client @ 3.4.2
+### Chocolatey.NuGet.Client @ 3.4.3
 
 Chocolatey uses [NuGet.Client](https://github.com/NuGet/NuGet.Client) [(modified)](https://github.com/chocolatey/NuGet.Client) to work with packaging.
 [License terms](https://github.com/NuGet/NuGet.Client/blob/72f9f2b2eab28c9d91a22065c55aa7702abf7e01/LICENSE.txt):
