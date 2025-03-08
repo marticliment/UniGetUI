@@ -290,13 +290,13 @@ public abstract class AbstractOperation : IDisposable
                 }
             } while (result == OperationVeredict.AutoRetry);
 
+
             while (OperationQueue.Remove(this));
             // END OPERATION
 
             if (result == OperationVeredict.Success)
             {
                 Status = OperationStatus.Succeeded;
-                OperationFinished?.Invoke(this, EventArgs.Empty);
                 OperationSucceeded?.Invoke(this, EventArgs.Empty);
                 OperationFinished?.Invoke(this, EventArgs.Empty);
                 Line(Metadata.SuccessMessage, LineType.Information);
@@ -304,7 +304,6 @@ public abstract class AbstractOperation : IDisposable
             else if (result == OperationVeredict.Failure)
             {
                 Status = OperationStatus.Failed;
-                OperationFinished?.Invoke(this, EventArgs.Empty);
                 OperationFailed?.Invoke(this, EventArgs.Empty);
                 OperationFinished?.Invoke(this, EventArgs.Empty);
                 Line(Metadata.FailureMessage, LineType.Error);
