@@ -377,7 +377,7 @@ namespace UniGetUI.Core.Data
         {
             try
             {
-                Process p = new Process
+                using Process p = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {

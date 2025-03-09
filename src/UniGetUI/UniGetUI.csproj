@@ -24,7 +24,6 @@
     <WindowsPackageType>None</WindowsPackageType>
     <!--WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion-->
 
-    <Optimize>true</Optimize>
     <PublishTrimmed>false</PublishTrimmed>
     <!--TrimMode>partial</TrimMode-->
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -64,6 +63,15 @@
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
     <None Remove="PackageEngine\OperationControl.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\Administrator.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\Backup.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\Experimental.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\General.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\Notifications.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\Operations.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\PackageManager.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\Startup.xaml" />
+    <None Remove="Pages\SettingsPages\SettingsHomepage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -72,6 +80,7 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.1.240916" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.1.240916" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.1.240916" />
+    <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.1.240916" />
     <PackageReference Include="H.NotifyIcon.WinUI" Version="2.2.0" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.250205002" />
@@ -172,6 +181,39 @@
     <None Update="Assets\Utilities\uninstall_scoop.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Pages\SettingsPages\GeneralPages\PackageManager.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Experimental.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Administrator.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Operations.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Backup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Startup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Notifications.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Interface_P.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\General.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\SettingsHomepage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\SettingsBasePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Interface\Dialogs\PackageDetailsPage.xaml">

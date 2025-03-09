@@ -9,18 +9,21 @@ using UniGetUI.Core.Tools;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public sealed partial class CheckboxCard : SettingsCard
+    public partial class CheckboxCard : SettingsCard
     {
-        public CheckBox _checkbox;
-        private bool IS_INVERTED;
+        public ToggleSwitch _checkbox;
+        public TextBlock _textblock;
+        protected bool IS_INVERTED;
 
-        private string setting_name = "";
-        public string SettingName
+        protected string setting_name = "";
+        public virtual string SettingName
         {
-            set {
+            set
+            {
                 setting_name = value;
                 IS_INVERTED = value.StartsWith("Disable");
-                _checkbox.IsChecked = Settings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
+                _checkbox.IsOn = Settings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
+                _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
             }
         }
 
@@ -28,28 +31,94 @@ namespace UniGetUI.Interface.Widgets
 
         public bool Checked
         {
-            get => _checkbox.IsChecked ?? false;
+            get => _checkbox.IsOn;
         }
-        public event EventHandler<EventArgs>? StateChanged;
+        public virtual event EventHandler<EventArgs>? StateChanged;
 
         public string Text
         {
-            set => _checkbox.Content = CoreTools.Translate(value);
+            set => _textblock.Text = CoreTools.Translate(value);
         }
 
         public CheckboxCard()
         {
-            _checkbox = new CheckBox();
+            _checkbox = new ToggleSwitch()
+            {
+                Margin = new Thickness(-8, 0, 0, 0)
+            };
+            _textblock = new TextBlock()
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new(12, 0, 8, 0),
+                TextWrapping = TextWrapping.Wrap
+            };
+
+            _checkbox.OnContent = _checkbox.OffContent = "";
             IS_INVERTED = false;
 
             ContentAlignment = ContentAlignment.Left;
             HorizontalAlignment = HorizontalAlignment.Stretch;
 
-            DefaultStyleKey = typeof(CheckboxCard);
-            Content = _checkbox;
+            Grid g = new Grid();
+            g.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
+            g.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            g.Children.Add(_checkbox);
+            g.Children.Add(_textblock);
+            Grid.SetColumn(_textblock, 1);
+            Content = g;
+
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            _checkbox.Checked += (_, _) => { Settings.Set(setting_name, true ^ IS_INVERTED ^ ForceInversion); StateChanged?.Invoke(this, EventArgs.Empty); };
-            _checkbox.Unchecked += (_, _) => { Settings.Set(setting_name, false ^ IS_INVERTED ^ ForceInversion); StateChanged?.Invoke(this, EventArgs.Empty); };
+            _checkbox.Toggled += _checkbox_Toggled;
+        }
+        protected virtual void _checkbox_Toggled(object sender, RoutedEventArgs e)
+        {
+            Settings.Set(setting_name, _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion);
+            StateChanged?.Invoke(this, EventArgs.Empty);
+            _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
+        }
+    }
+
+    public partial class CheckboxCard_Dict : CheckboxCard
+    {
+        public override event EventHandler<EventArgs>? StateChanged;
+
+        private string _dictName = "";
+        public string DictionaryName 
+        {
+            set
+            {
+                _dictName = value;
+                IS_INVERTED = value.StartsWith("Disable");
+                if (setting_name != "")
+                {
+                    _checkbox.IsOn = Settings.GetDictionaryItem<string, bool>(_dictName, setting_name) ^ IS_INVERTED ^ ForceInversion;
+                    _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
+                }
+            }
+        }
+
+        public override string SettingName
+        {
+            set
+            {
+                setting_name = value;
+                if (_dictName != "")
+                {
+                    _checkbox.IsOn = Settings.GetDictionaryItem<string, bool>(_dictName, setting_name) ^ IS_INVERTED ^ ForceInversion;
+                    _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
+                }
+            }
+        }
+
+        public CheckboxCard_Dict() : base()
+        {
+        }
+
+        protected override void _checkbox_Toggled(object sender, RoutedEventArgs e)
+        {
+            Settings.SetDictionaryItem(_dictName, setting_name, _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion);
+            StateChanged?.Invoke(this, EventArgs.Empty);
+            _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
         }
     }
 }

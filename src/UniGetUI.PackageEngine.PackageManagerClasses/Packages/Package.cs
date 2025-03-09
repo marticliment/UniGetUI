@@ -102,7 +102,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             {
                 "Winget" => Source.Name switch
                 {
-                    "Steam" => id.ToLower().Split("\\")[^1].Replace("steam app ", "steam:").Trim(),
+                    "Steam" => id.ToLower().Split("\\")[^1].Replace("steam app ", "steam-").Trim(),
                     "Local PC" => id.ToLower().Split("\\")[^1],
                     "Microsoft Store" => id.IndexOf('_') < id.IndexOf('.') ? // If the first underscore is before the period, this ID has no publisher
                         string.Join('_', id.ToLower().Split("\\")[1].Split("_")[0..^4]) : // no publisher: remove `MSIX\`, then the standard ending _version_arch__{random id}

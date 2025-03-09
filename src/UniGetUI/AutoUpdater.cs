@@ -289,7 +289,7 @@ public class AutoUpdater
     private static async Task LaunchInstallerAndQuit(string installerLocation)
     {
         Logger.Debug("Launching the updater...");
-        Process p = new()
+        using Process p = new()
         {
             StartInfo = new()
             {

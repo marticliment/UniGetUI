@@ -58,7 +58,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
 
         protected override IReadOnlyList<Package> _getInstalledPackages_UnSafe()
         {
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {

@@ -73,7 +73,7 @@ public partial class Cargo : PackageManager
 
     protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
     {
-        Process p = GetProcess(Status.ExecutablePath, "search -q --color=never " + query);
+        using Process p = GetProcess(Status.ExecutablePath, "search -q --color=never " + query);
         IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
         p.Start();
 
@@ -142,7 +142,7 @@ public partial class Cargo : PackageManager
             return new(){ ExecutablePath = executablePath, Found = false, Version = ""};
         }
 
-        Process p = GetProcess(executablePath, "--version");
+        using Process p = GetProcess(executablePath, "--version");
         p.Start();
         string version = p.StandardOutput.ReadToEnd().Trim();
         string error = p.StandardError.ReadToEnd();
@@ -174,7 +174,7 @@ public partial class Cargo : PackageManager
     private List<Match> GetInstalledCommandOutput()
     {
         List<Match> output = [];
-        Process p = GetProcess(Status.ExecutablePath, "install-update --list");
+        using Process p = GetProcess(Status.ExecutablePath, "install-update --list");
         IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.OtherTask, p);
         logger.AddToStdOut("Other task: Call the install-update command");
         p.Start();

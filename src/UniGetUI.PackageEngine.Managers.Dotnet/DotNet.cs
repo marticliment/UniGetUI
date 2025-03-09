@@ -1,12 +1,9 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
-using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
@@ -62,7 +59,7 @@ namespace UniGetUI.PackageEngine.Managers.DotNetManager
             List<Package> Packages = [];
             foreach (var options in new OverridenInstallationOptions[] { new(PackageScope.Local), new(PackageScope.Global) })
             {
-                Process p = new()
+                using Process p = new()
                 {
                     StartInfo = new ProcessStartInfo
                     {

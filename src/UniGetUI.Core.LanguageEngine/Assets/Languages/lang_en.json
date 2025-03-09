@@ -180,7 +180,7 @@
   "Do you really want to uninstall {0}?": "Do you really want to uninstall {0}?",
   "Do you want to restart your computer now?": "Do you want to restart your computer now?",
   "Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>": "Do you want to translate UniGetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>",
-  "Don't feel like donating? Don't worry, you can always share WingetUI with your friends. Spread the word about WingetUI.": "Don't feel like donating? Don't worry, you can always share UniGetUI with your friends. Spread the word about WingetUI.",
+  "Don't feel like donating? Don't worry, you can always share WingetUI with your friends. Spread the word about WingetUI.": "Don't feel like donating? Don't worry, you can always share UniGetUI with your friends. Spread the word about UniGetUI.",
   "Donate": "Donate",
   "Download failed": "Download failed",
   "Download installer": "Download installer",

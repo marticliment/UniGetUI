@@ -85,7 +85,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         {
             string Triplet = GetDefaultTriplet();
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -168,7 +168,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         {
             List<Package> Packages = [];
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -222,7 +222,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
         protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
         {
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -345,7 +345,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
             var (gitFound, gitPath) = CoreTools.Which("git");
 
-            if (!found || !gitFound || !vcpkgRootFound || Settings.Get("DisableUpdateVcpkgGitPorts"))
+            if (!found || !gitFound || !vcpkgRootFound)
             {
                 INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
                 if (Settings.Get("DisableUpdateVcpkgGitPorts")) logger.Error("User has disabled updating sources");
@@ -356,7 +356,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 return;
             }
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -378,7 +378,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
             if (!hasBeenBootstrapped)
             {
-                p = new()
+                using Process p2 = new()
                 {
                     StartInfo = new ProcessStartInfo
                     {
@@ -392,11 +392,11 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     }
                 };
                 IProcessTaskLogger processLogger2 = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
-                p.Start();
-                p.WaitForExit();
-                // processLogger2.AddToStdOut(p.StandardOutput.ReadToEnd());
-                // processLogger2.AddToStdErr(p.StandardError.ReadToEnd());
-                processLogger2.Close(p.ExitCode);
+                p2.Start();
+                p2.WaitForExit();
+                // processLogger2.AddToStdOut(p2.StandardOutput.ReadToEnd());
+                // processLogger2.AddToStdErr(p2.StandardError.ReadToEnd());
+                processLogger2.Close(p2.ExitCode);
                 hasBeenBootstrapped = true;
             }
         }
