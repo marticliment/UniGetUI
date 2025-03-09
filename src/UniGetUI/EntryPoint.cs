@@ -20,7 +20,7 @@ namespace UniGetUI
                 if (args.Contains("--uninstall-unigetui") || args.Contains("--uninstall-wingetui"))
                 {
                     // If the app is being uninstalled, run the cleaner and exit
-                    UninstallPreps();
+                    return;
                 }
                 else if (args.Contains("--migrate-wingetui-to-unigetui"))
                 {
@@ -118,21 +118,6 @@ namespace UniGetUI
                 Logger.Warn(e);
                 return false;
             }
-        }
-
-        /// <summary>
-        /// This method should be called when the app is being uninstalled
-        /// It removes system links and other stuff that should be removed on uninstall
-        /// </summary>
-        private static void UninstallPreps()
-        {
-            /*try
-            {
-                AppNotificationManager.Default.UnregisterAll();
-            }
-            catch
-            {
-            }*/
         }
 
         // This method shall be ran as administrator
