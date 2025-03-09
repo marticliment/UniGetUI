@@ -1,31 +1,37 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Application
     x:Class="UniGetUI.MainApp"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    xmlns:local="using:UniGetUI">
+    xmlns:local="using:UniGetUI"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
-                <!-- Other merged dictionaries here -->
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <!--  Other merged dictionaries here  -->
             </ResourceDictionary.MergedDictionaries>
-            <!-- Other app resources here -->
+            <!--  Other app resources here  -->
 
-            <Style TargetType="MenuFlyoutItem" x:Key="BetterMenuItem" BasedOn="{StaticResource DefaultMenuFlyoutItemStyle}">
-                <Setter Property="CornerRadius" Value="4"/>
-                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                <Setter Property="Height" Value="36"/>
+            <Style
+                x:Key="BetterMenuItem"
+                BasedOn="{StaticResource DefaultMenuFlyoutItemStyle}"
+                TargetType="MenuFlyoutItem">
+                <Setter Property="CornerRadius" Value="4" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Height" Value="36" />
             </Style>
 
             <FontFamily x:Key="SymbolFont">/Assets/Symbols/Font/fonts/UniGetUI-Symbols.ttf#UniGetUI-Symbols</FontFamily>
 
 
-            <Style TargetType="MenuFlyoutPresenter" x:Name="BetterContextMenu" BasedOn="{StaticResource DefaultMenuFlyoutPresenterStyle}">
-                <Setter Property="CornerRadius" Value="8"/>
-                <Setter Property="Margin" Value="0"/>
-                <Setter Property="BorderBrush" Value="{ThemeResource DividerStrokeColorDefaultBrush}"/>
+            <Style
+                x:Name="BetterContextMenu"
+                BasedOn="{StaticResource DefaultMenuFlyoutPresenterStyle}"
+                TargetType="MenuFlyoutPresenter">
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Margin" Value="0" />
+                <Setter Property="BorderBrush" Value="{ThemeResource DividerStrokeColorDefaultBrush}" />
             </Style>
 
         </ResourceDictionary>

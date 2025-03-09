@@ -1,85 +1,109 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="UniGetUI.Pages.SettingsPages.GeneralPages.PackageManagerPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets" xmlns:controls="using:CommunityToolkit.WinUI.Controls"
-    mc:Ignorable="d"
-    Background="Transparent">
+    xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    Background="Transparent"
+    mc:Ignorable="d">
 
     <ScrollViewer
-        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-        HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-        Margin="0,0,-8,0" x:Name="Scroller"
+        x:Name="Scroller"
+        Margin="0,0,-8,0"
         Padding="0,0,8,0"
-        >
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Center"
+        VerticalContentAlignment="Center">
         <StackPanel Orientation="Vertical">
             <widgets:CheckboxCard_Dict
-            DictionaryName="DisabledManagers"
-            x:Name="EnableManager" FontSize="18" FontWeight="SemiBold"
-            CornerRadius="8">
-            </widgets:CheckboxCard_Dict>
+                x:Name="EnableManager"
+                CornerRadius="8"
+                DictionaryName="DisabledManagers"
+                FontSize="18"
+                FontWeight="SemiBold" />
 
-            <UserControl Height="16"/>
+            <UserControl Height="16" />
 
-            <!-- STATUS INFO BAR -->
+            <!--  STATUS INFO BAR  -->
             <InfoBar
-            x:Name="ManagerStatusBar"
-            IsClosable="false"
-            IsOpen="True"
-            CornerRadius="8,8,0,0">
+                x:Name="ManagerStatusBar"
+                CornerRadius="8,8,0,0"
+                IsClosable="false"
+                IsOpen="True">
                 <InfoBar.ActionButton>
-                    <HyperlinkButton
-                    x:Name="ShowVersionHyperlink"
-                    Click="ShowVersionHyperlink_Click"
-                    >
-                        <widgets:TranslatedTextBlock Text="Expand version"/>
+                    <HyperlinkButton x:Name="ShowVersionHyperlink" Click="ShowVersionHyperlink_Click">
+                        <widgets:TranslatedTextBlock Text="Expand version" />
                     </HyperlinkButton>
                 </InfoBar.ActionButton>
                 <InfoBar.Content>
                     <TextBlock
-                    TextWrapping="Wrap"
-                    FontFamily="Consolas"
-                    Name="LongVersionTextBlock"
-                    Visibility="Collapsed">
-                    </TextBlock>
+                        Name="LongVersionTextBlock"
+                        FontFamily="Consolas"
+                        TextWrapping="Wrap"
+                        Visibility="Collapsed" />
                 </InfoBar.Content>
             </InfoBar>
             <controls:SettingsCard
-            x:Name="ManagerPath"
-            IsClickEnabled="True" Click="ManagerPath_Click" Padding="24,0,0,0"
-            CornerRadius="0,0,8,8" BorderThickness="1,0,1,1">
+                x:Name="ManagerPath"
+                Padding="24,0,0,0"
+                BorderThickness="1,0,1,1"
+                Click="ManagerPath_Click"
+                CornerRadius="0,0,8,8"
+                IsClickEnabled="True">
                 <controls:SettingsCard.ActionIcon>
-                    <widgets:LocalIcon Icon="Empty"/>
+                    <widgets:LocalIcon Icon="Empty" />
                 </controls:SettingsCard.ActionIcon>
                 <controls:SettingsCard.Content>
-                    <SymbolIcon Name="CopyButtonIcon" Symbol="Copy" Margin="0" Height="24"/>
+                    <SymbolIcon
+                        Name="CopyButtonIcon"
+                        Height="24"
+                        Margin="0"
+                        Symbol="Copy" />
                 </controls:SettingsCard.Content>
                 <controls:SettingsCard.Description>
-                    <TextBlock Name="LocationLabel" FontFamily="Consolas" FontSize="14" TextWrapping="Wrap"/>
+                    <TextBlock
+                        Name="LocationLabel"
+                        FontFamily="Consolas"
+                        FontSize="14"
+                        TextWrapping="Wrap" />
                 </controls:SettingsCard.Description>
             </controls:SettingsCard>
 
-            <UserControl Height="16"/>
+            <UserControl Height="16" />
 
-            <UserControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsEnabled="{x:Bind EnableManager._checkbox.IsOn, Mode=OneWay}">
-                <StackPanel Orientation="Vertical" Name="ExtraControls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <UserControl
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                IsEnabled="{x:Bind EnableManager._checkbox.IsOn, Mode=OneWay}">
+                <StackPanel
+                    Name="ExtraControls"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Orientation="Vertical" />
             </UserControl>
 
-            <UserControl Height="16"/>
+            <UserControl Height="16" />
 
             <controls:SettingsCard
-            Name="ManagerLogs"
-            IsClickEnabled="True" Click="ManagerLogs_Click"
-            CornerRadius="8">
+                Name="ManagerLogs"
+                Click="ManagerLogs_Click"
+                CornerRadius="8"
+                IsClickEnabled="True">
                 <controls:SettingsCard.HeaderIcon>
-                    <widgets:LocalIcon Icon="Console"/>
+                    <widgets:LocalIcon Icon="Console" />
                 </controls:SettingsCard.HeaderIcon>
 
                 <controls:SettingsCard.Description>
-                    <TextBlock Name="ManagerLogsLabel" FontFamily="Consolas" FontSize="14" TextWrapping="Wrap"/>
+                    <TextBlock
+                        Name="ManagerLogsLabel"
+                        FontFamily="Consolas"
+                        FontSize="14"
+                        TextWrapping="Wrap" />
                 </controls:SettingsCard.Description>
             </controls:SettingsCard>
         </StackPanel>

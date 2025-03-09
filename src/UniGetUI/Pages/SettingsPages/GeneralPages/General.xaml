@@ -1,89 +1,90 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="UniGetUI.Pages.SettingsPages.GeneralPages.General"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
+    xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets" xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
-    mc:Ignorable="d"
-    Background="Transparent">
+    xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    Background="Transparent"
+    mc:Ignorable="d">
 
     <ScrollViewer
-        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-        HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-        Margin="0,0,-8,0" x:Name="Scroller"
+        x:Name="Scroller"
+        Margin="0,0,-8,0"
         Padding="0,0,8,0"
-        >
-        <StackPanel Spacing="0" Orientation="Vertical">
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Center"
+        VerticalContentAlignment="Center">
+        <StackPanel Orientation="Vertical" Spacing="0">
             <widgets:ComboboxCard
-            x:Name="LanguageSelector"
-            Text="WingetUI display language:"
-            SettingName="PreferredLanguage"
-            ValueChanged="ShowRestartBanner"
-            CornerRadius="8"
-            >
+                x:Name="LanguageSelector"
+                CornerRadius="8"
+                SettingName="PreferredLanguage"
+                Text="WingetUI display language:"
+                ValueChanged="ShowRestartBanner">
                 <Toolkit:SettingsCard.Description>
                     <StackPanel Orientation="Horizontal" Spacing="4">
-                        <widgets:TranslatedTextBlock Text="Is your language missing or incomplete?" Opacity=".8" VerticalAlignment="Center"/>
-                        <HyperlinkButton
-                Padding="0"
-                    NavigateUri="https://github.com/marticliment/WingetUI/wiki#translating-wingetui">
-                            <widgets:TranslatedTextBlock Text="Become a translator"/>
+                        <widgets:TranslatedTextBlock
+                            VerticalAlignment="Center"
+                            Opacity=".8"
+                            Text="Is your language missing or incomplete?" />
+                        <HyperlinkButton Padding="0" NavigateUri="https://github.com/marticliment/WingetUI/wiki#translating-wingetui">
+                            <widgets:TranslatedTextBlock Text="Become a translator" />
                         </HyperlinkButton>
                     </StackPanel>
                 </Toolkit:SettingsCard.Description>
             </widgets:ComboboxCard>
-            <!--widgets:ButtonCard
-            Text="Open the welcome wizard"
-            ButtonText="Open"
-            Click="OpenWelcomeWizard"
-            IsEnabled="False"
-        /-->
-            <UserControl Height="16"/>
+            <!--
+                widgets:ButtonCard
+                Text="Open the welcome wizard"
+                ButtonText="Open"
+                Click="OpenWelcomeWizard"
+                IsEnabled="False"
+                /
+            -->
+            <UserControl Height="16" />
 
             <widgets:CheckboxButtonCard
-            CheckboxText="Update WingetUI automatically"
-            ButtonText="Check for updates"
-            SettingName="DisableAutoUpdateWingetUI"
-            ButtonAlwaysOn="true"
-            Click="ForceUpdateUniGetUI_OnClick"
-            CornerRadius="8,8,0,0"
-            />
+                ButtonAlwaysOn="true"
+                ButtonText="Check for updates"
+                CheckboxText="Update WingetUI automatically"
+                Click="ForceUpdateUniGetUI_OnClick"
+                CornerRadius="8,8,0,0"
+                SettingName="DisableAutoUpdateWingetUI" />
             <widgets:CheckboxCard
-            Text="Install prerelease versions of UniGetUI"
-            SettingName="EnableUniGetUIBeta"
-            CornerRadius="0,0,8,8"
-            BorderThickness="1,0,1,1"
-            />
-            <UserControl Height="16"/>
+                BorderThickness="1,0,1,1"
+                CornerRadius="0,0,8,8"
+                SettingName="EnableUniGetUIBeta"
+                Text="Install prerelease versions of UniGetUI" />
+            <UserControl Height="16" />
 
             <widgets:ButtonCard
-            Text="Manage telemetry settings"
-            ButtonText="Manage"
-            Click="ManageTelemetrySettings_Click"
-            CornerRadius="8"
-        />
-            <UserControl Height="16"/>
+                ButtonText="Manage"
+                Click="ManageTelemetrySettings_Click"
+                CornerRadius="8"
+                Text="Manage telemetry settings" />
+            <UserControl Height="16" />
 
             <widgets:ButtonCard
-            Text="Import settings from a local file"
-            ButtonText="Import"
-            Click="ImportSettings"
-            CornerRadius="8,8,0,0"
-        />
+                ButtonText="Import"
+                Click="ImportSettings"
+                CornerRadius="8,8,0,0"
+                Text="Import settings from a local file" />
             <widgets:ButtonCard
-            Text="Export settings to a local file"
-            ButtonText="Export"
-            Click="ExportSettings"
-            CornerRadius="0" BorderThickness="1,0"
-        />
+                BorderThickness="1,0"
+                ButtonText="Export"
+                Click="ExportSettings"
+                CornerRadius="0"
+                Text="Export settings to a local file" />
             <widgets:ButtonCard
-            Text="Reset WingetUI"
-            ButtonText="Reset UniGetUI"
-            Click="ResetWingetUI"
-            CornerRadius="0,0,8,8"
-        />
+                ButtonText="Reset UniGetUI"
+                Click="ResetWingetUI"
+                CornerRadius="0,0,8,8"
+                Text="Reset WingetUI" />
         </StackPanel>
     </ScrollViewer>
 </Page>

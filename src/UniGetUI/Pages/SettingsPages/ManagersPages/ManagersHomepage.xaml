@@ -1,29 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="UniGetUI.Pages.SettingsPages.ManagersHomepage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UniGetUI.Pages.SettingsPages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    mc:Ignorable="d"
+    xmlns:local="using:UniGetUI.Pages.SettingsPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    Background="Transparent"
     NavigationCacheMode="Required"
-    Background="Transparent">
+    mc:Ignorable="d">
 
     <ScrollViewer
-        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-        HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-        Margin="0,0,-8,0" x:Name="Scroller"
+        x:Name="Scroller"
+        Margin="0,0,-8,0"
         Padding="0,0,8,0"
-        >
-        <StackPanel Orientation="Vertical" Name="SettingsEntries">
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Center"
+        VerticalContentAlignment="Center">
+        <StackPanel Name="SettingsEntries" Orientation="Vertical">
             <Border
-            Padding="24,16,24,16" CornerRadius="8" Name="AnnouncerBorder"
-            Background="{ThemeResource ButtonBackground}">
-                <widgets:Announcer x:Name="SettingsAnnouncer" Url="https://marticliment.com/resources/annoucements/unigetui"/>
+                Name="AnnouncerBorder"
+                Padding="24,16,24,16"
+                Background="{ThemeResource ButtonBackground}"
+                CornerRadius="8">
+                <widgets:Announcer x:Name="SettingsAnnouncer" Url="https://marticliment.com/resources/annoucements/unigetui" />
             </Border>
 
-            <UserControl Height="16"/>
+            <UserControl Height="16" />
         </StackPanel>
     </ScrollViewer>
 </Page>
