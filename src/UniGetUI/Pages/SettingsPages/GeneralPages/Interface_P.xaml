@@ -9,15 +9,21 @@
     mc:Ignorable="d"
     Background="Transparent">
 
-    <StackPanel Orientation="Vertical">
-        <widgets:ComboboxCard
+    <ScrollViewer
+        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+        Margin="0,0,-8,0" x:Name="Scroller"
+        Padding="0,0,8,0"
+        >
+        <StackPanel Orientation="Vertical">
+            <widgets:ComboboxCard
             x:Name="ThemeSelector"
             Text="Application theme:"
             SettingName="PreferredTheme"
             ValueChanged="ThemeSelector_ValueChanged"
             CornerRadius="8,8,0,0"
             />
-        <widgets:ComboboxCard
+            <widgets:ComboboxCard
             x:Name="StartupPageSelector"
             Text="UniGetUI startup page:"
             SettingName="StartupPage"
@@ -25,9 +31,9 @@
             BorderThickness="1,0,1,1"
             />
 
-        <UserControl Height="16"/>
+            <UserControl Height="16"/>
 
-        <widgets:CheckboxCard
+            <widgets:CheckboxCard
             Text="Close UniGetUI to the system tray"
             SettingName="DisableSystemTray"
             x:Name="DisableSystemTray"
@@ -35,15 +41,15 @@
             CornerRadius="8"
             />
 
-        <UserControl Height="16"/>
-        <widgets:CheckboxCard
+            <UserControl Height="16"/>
+            <widgets:CheckboxCard
             Text="Show package icons on package lists"
             SettingName="DisableIconsOnPackageLists"
             x:Name="DisableIconsOnPackageLists"
             StateChanged="ShowRestartBanner"
             CornerRadius="8,8,0,0"
             />
-        <widgets:ButtonCard
+            <widgets:ButtonCard
             Text="Clear the local icon cache"
             ButtonText="Clear cache"
             x:Name="ResetIconCache"
@@ -51,8 +57,8 @@
             CornerRadius="0,0,8,8" BorderThickness="1,0,1,1"
             />
 
-        <UserControl Height="16"/>
-        <widgets:CheckboxCard
+            <UserControl Height="16"/>
+            <widgets:CheckboxCard
             Name="DisableSelectingUpdatesByDefault"
             Text="Select upgradable packages by default"
             SettingName="DisableSelectingUpdatesByDefault"
@@ -60,12 +66,13 @@
             CornerRadius="8"
             />
 
-        <UserControl Height="16"/>
-        <widgets:CheckboxCard
+            <UserControl Height="16"/>
+            <widgets:CheckboxCard
             ForceInversion="True"
             Text="Clear successful operations from the operation list after a 5 second delay"
             SettingName="MaintainSuccessfulInstalls"
             CornerRadius="8"
             />
-    </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

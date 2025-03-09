@@ -10,14 +10,20 @@
     NavigationCacheMode="Required"
     Background="Transparent">
 
-    <StackPanel Orientation="Vertical" Name="SettingsEntries">
-        <Border
+    <ScrollViewer
+        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+        Margin="0,0,-8,0" x:Name="Scroller"
+        Padding="0,0,8,0"
+        >
+        <StackPanel Orientation="Vertical" Name="SettingsEntries">
+            <Border
             Padding="24,16,24,16" CornerRadius="8" Name="AnnouncerBorder"
             Background="{ThemeResource ButtonBackground}">
-            <widgets:Announcer x:Name="SettingsAnnouncer" Url="https://marticliment.com/resources/annoucements/unigetui"/>
-        </Border>
+                <widgets:Announcer x:Name="SettingsAnnouncer" Url="https://marticliment.com/resources/annoucements/unigetui"/>
+            </Border>
 
-        <UserControl Height="16"/>
-    </StackPanel>
-
+            <UserControl Height="16"/>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

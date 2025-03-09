@@ -65,7 +65,7 @@ namespace UniGetUI.Pages.SettingsPages
             page.RestartRequired += Page_RestartRequired;
             if (page is PackageManagerPage pmpage) pmpage.ReapplyProperties += SettingsBasePage_ReapplyProperties;
 
-            Scroller.ChangeView(0, 0, 1, true);
+            // Scroller.ChangeView(0, 0, 1, true);
         }
 
         private void SettingsBasePage_ReapplyProperties(object? sender, EventArgs e)
@@ -84,11 +84,11 @@ namespace UniGetUI.Pages.SettingsPages
         {
             if(e.IsSubclassOf(typeof(PackageManager)))
             {
-                MainNavigationFrame.Navigate(typeof(PackageManagerPage), e, new DrillInNavigationTransitionInfo());
+                MainNavigationFrame.Navigate(typeof(PackageManagerPage), e, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight} );
             }
             else
             {
-                MainNavigationFrame.Navigate(e, null, new DrillInNavigationTransitionInfo());
+                MainNavigationFrame.Navigate(e, null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight} );
             }
         }
 

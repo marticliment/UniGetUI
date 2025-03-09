@@ -15,8 +15,14 @@
         <converters:BoolNegationConverter x:Key="BoolNegationConverter" />
     </Page.Resources>
 
-    <StackPanel>
-        <widgets:CheckboxCard
+    <ScrollViewer
+        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+        Margin="0,0,-8,0" x:Name="Scroller"
+        Padding="0,0,8,0"
+        >
+        <StackPanel>
+            <widgets:CheckboxCard
             x:Name="DoCacheAdminRights"
             Text="Ask only once for administrator privileges (not recommended)"
             SettingName="DoCacheAdminRights"
@@ -25,7 +31,7 @@
             BorderThickness="1,1,1,0"
             />
 
-        <widgets:CheckboxCard
+            <widgets:CheckboxCard
             x:Name="DoCacheAdminRightsForBatches"
             Text="Ask for administrator privileges once for each batch of operations"
             SettingName="DoCacheAdminRightsForBatches"
@@ -33,5 +39,6 @@
             CornerRadius="0,0,8,8"
             IsEnabled="{x:Bind DoCacheAdminRights._checkbox.IsOn, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
             />
-    </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

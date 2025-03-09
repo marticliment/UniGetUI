@@ -9,9 +9,15 @@
     mc:Ignorable="d"
     Background="Transparent">
 
-    <StackPanel Orientation="Vertical">
-        
-        <widgets:CheckboxCard
+    <ScrollViewer
+        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+        Margin="0,0,-8,0" x:Name="Scroller"
+        Padding="0,0,8,0"
+        >
+        <StackPanel Orientation="Vertical">
+
+            <widgets:CheckboxCard
             x:Name="DisableWidgetsApi"
             Text="Enable background api (WingetUI Widgets and Sharing, port 7058)"
             SettingName="DisableApi"
@@ -20,7 +26,7 @@
             BorderThickness="1,1,1,0"
         />
 
-        <widgets:CheckboxCard
+            <widgets:CheckboxCard
             x:Name="DisableWaitForInternetConnection"
             Text="Wait for the device to be connected to the internet before attempting to do tasks that require internet connectivity."
             SettingName="DisableWaitForInternetConnection"
@@ -28,18 +34,18 @@
             CornerRadius="0,0,8,8"
         />
 
-        <UserControl Height="16"/>
+            <UserControl Height="16"/>
 
-        <widgets:CheckboxCard
+            <widgets:CheckboxCard
             Text="Disable the 1-minute timeout for package-related operations"
             ForceInversion="True"
             SettingName="DisableTimeoutOnPackageListingTasks"
             CornerRadius="8"
         />
 
-        <UserControl Height="16"/>
+            <UserControl Height="16"/>
 
-        <widgets:CheckboxCard
+            <widgets:CheckboxCard
             x:Name="DisableUniGetUIElevatorToggle"
             Text="Enable the new UniGetUI-Branded UAC Elevator"
             SettingName="DisableUniGetUIElevator"
@@ -47,7 +53,7 @@
             CornerRadius="8,8,0,0"
             BorderThickness="1,1,1,0"
         />
-        <widgets:CheckboxCard
+            <widgets:CheckboxCard
             x:Name="UseUserGSudoToggle"
             Text="Use installed GSudo instead of the bundled one"
             SettingName="UseUserGSudo"
@@ -55,9 +61,9 @@
             CornerRadius="0,0,8,8"
         />
 
-        <UserControl Height="16"/>
+            <UserControl Height="16"/>
 
-        <widgets:CheckboxCard
+            <widgets:CheckboxCard
             x:Name="DisableDownloadingNewTranslations"
             Text="Download updated language files from GitHub automatically"
             SettingName="DisableLangAutoUpdater"
@@ -66,7 +72,7 @@
             BorderThickness="1,1,1,0"
         />
 
-        <widgets:TextboxCard
+            <widgets:TextboxCard
             Text="Use a custom icon and screenshot database URL"
             Placeholder="Leave empty for default"
             SettingName="IconDataBaseURL"
@@ -75,13 +81,14 @@
             CornerRadius="0,0,8,8"
         />
 
-        <UserControl Height="16"/>
-        
-        <widgets:CheckboxCard
+            <UserControl Height="16"/>
+
+            <widgets:CheckboxCard
             Name="DisableDMWThreadOptimizations"
             SettingName="DisableDMWThreadOptimizations"
             Text="Enable background CPU Usage optimizations (see Pull Request #3278)"
             CornerRadius="8"
         />
-    </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

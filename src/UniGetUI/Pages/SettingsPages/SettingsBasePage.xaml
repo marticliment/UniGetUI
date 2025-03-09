@@ -55,13 +55,6 @@
                 FontWeight="Bold" Text="" TextWrapping="Wrap"
                 HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
         </Grid>
-        <ScrollViewer Grid.Row="3" Grid.Column="1"
-            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-            Margin="0,0,-8,0" x:Name="Scroller"
-            Padding="0,0,8,0"
-            >
-            <Frame Name="MainNavigationFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        </ScrollViewer>
+        <Frame Grid.Row="3" Grid.Column="1" Name="MainNavigationFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
     </Grid>
 </Page>

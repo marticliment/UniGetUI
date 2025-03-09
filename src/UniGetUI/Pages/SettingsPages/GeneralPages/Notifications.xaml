@@ -9,22 +9,28 @@
     mc:Ignorable="d"
     Background="Transparent">
 
-    <StackPanel Orientation="Vertical">
-        <widgets:TranslatedTextBlock
+    <ScrollViewer
+        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+        Margin="0,0,-8,0" x:Name="Scroller"
+        Padding="0,0,8,0"
+        >
+        <StackPanel Orientation="Vertical">
+            <widgets:TranslatedTextBlock
             x:Name="ToolbarText"
             Text="The system tray icon must be enabled in order for notifications to work"
             Foreground="{ThemeResource SystemErrorTextColor}" HorizontalAlignment="Center"
             Margin="0,0,0,8"
             Visibility="Collapsed"/>
-        <widgets:CheckboxCard
+            <widgets:CheckboxCard
             Text="Enable WingetUI notifications"
             SettingName="DisableNotifications"
             x:Name="DisableNotifications"
             CornerRadius="8"
             />
 
-        <UserControl Height="16"/>
-        <widgets:CheckboxCard
+            <UserControl Height="16"/>
+            <widgets:CheckboxCard
             Text="Show a notification when there are available updates"
             SettingName="DisableUpdatesNotifications"
             x:Name="DisableUpdatesNotifications"
@@ -32,7 +38,7 @@
             IsEnabled="{x:Bind DisableNotifications._checkbox.IsOn, Mode=OneWay}"
             />
 
-        <widgets:CheckboxCard
+            <widgets:CheckboxCard
             Text="Show a silent notification when an operation is running"
             SettingName="DisableProgressNotifications"
             x:Name="DisableProgressNotifications"
@@ -40,19 +46,20 @@
             IsEnabled="{x:Bind DisableNotifications._checkbox.IsOn, Mode=OneWay}"
             />
 
-        <widgets:CheckboxCard
+            <widgets:CheckboxCard
             Text="Show a notification when an operation fails"
             SettingName="DisableUpdatesNotifications"
             x:Name="DisableErrorNotifications"
             CornerRadius="0"
             IsEnabled="{x:Bind DisableNotifications._checkbox.IsOn, Mode=OneWay}"
             />
-        <widgets:CheckboxCard
+            <widgets:CheckboxCard
             Text="Show a notification when an operation finishes successfully"
             SettingName="DisableSuccessNotifications"
             x:Name="DisableSuccessNotifications"
             CornerRadius="0,0,8,8" BorderThickness="1,0,1,1"
             IsEnabled="{x:Bind DisableNotifications._checkbox.IsOn, Mode=OneWay}"
             />
-    </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

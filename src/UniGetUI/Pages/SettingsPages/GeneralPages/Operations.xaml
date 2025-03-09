@@ -9,16 +9,22 @@
     mc:Ignorable="d"
     Background="Transparent">
 
-    <StackPanel Orientation="Vertical">
+    <ScrollViewer
+        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+        Margin="0,0,-8,0" x:Name="Scroller"
+        Padding="0,0,8,0"
+        >
+        <StackPanel Orientation="Vertical">
 
-        <widgets:CheckboxCard
+            <widgets:CheckboxCard
             x:Name="DisableAutoCheckForUpdates"
             Text="Check for package updates periodically"
             SettingName="DisableAutoCheckforUpdates"
             CornerRadius="8,8,0,0"
             />
 
-        <widgets:ComboboxCard
+            <widgets:ComboboxCard
             x:Name="UpdatesCheckIntervalSelector"
             Text="Check for updates every:"
             SettingName="UpdatesCheckInterval"
@@ -26,17 +32,17 @@
             CornerRadius="0" BorderThickness="1,0"
             IsEnabled="{x:Bind DisableAutoCheckForUpdates._checkbox.IsOn, Mode=OneWay}"
             />
-        
-        <widgets:CheckboxCard
+
+            <widgets:CheckboxCard
             Text="Install available updates automatically"
             SettingName="AutomaticallyUpdatePackages"
             CornerRadius="0,0,8,8"
             IsEnabled="{x:Bind DisableAutoCheckForUpdates._checkbox.IsOn, Mode=OneWay}"
             />
 
-        <UserControl Height="16"/>
-        
-        <widgets:ComboboxCard
+            <UserControl Height="16"/>
+
+            <widgets:ComboboxCard
             x:Name="ParallelOperationCount"
             Text="Choose how many operations shouls be performed in parallel"
             SettingName="ParallelOperationCount"
@@ -44,9 +50,9 @@
             CornerRadius="8"
             />
 
-        <UserControl Height="16"/>
+            <UserControl Height="16"/>
 
-        <widgets:CheckboxButtonCard
+            <widgets:CheckboxButtonCard
             CheckboxText="Ask to delete desktop shortcuts created during an install or upgrade."
             SettingName="AskToDeleteNewDesktopShortcuts"
             ButtonText="Manage shortcuts"
@@ -54,7 +60,6 @@
             CornerRadius="8"
             />
 
-        
-
-    </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

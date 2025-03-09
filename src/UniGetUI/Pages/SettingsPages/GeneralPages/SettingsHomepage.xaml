@@ -10,25 +10,31 @@
     NavigationCacheMode="Required"
     Background="Transparent">
 
-    <StackPanel Orientation="Vertical" Name="SettingsEntries">
-        <Border
+    <ScrollViewer
+        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+        Margin="0,0,-8,0" x:Name="Scroller"
+        Padding="0,0,8,0"
+        >
+        <StackPanel Orientation="Vertical" Name="SettingsEntries">
+            <Border
             Padding="24,16,24,16" CornerRadius="8" Name="AnnouncerBorder"
             Background="{ThemeResource ButtonBackground}">
-            <widgets:Announcer x:Name="SettingsAnnouncer" Url="https://marticliment.com/resources/annoucements/unigetui"/>
-        </Border>
+                <widgets:Announcer x:Name="SettingsAnnouncer" Url="https://marticliment.com/resources/annoucements/unigetui"/>
+            </Border>
 
-        <UserControl Height="16"/>
+            <UserControl Height="16"/>
 
-        <widgets:SettingsPageButton
+            <widgets:SettingsPageButton
             x:Name="GeneralSettingsExpander"
             Text="General preferences"
             UnderText="Language, theme and other miscellaneous preferences"
             Click="General"
             Icon="settings"/>
 
-        <UserControl Height="16"/>
+            <UserControl Height="16"/>
 
-        <widgets:SettingsPageButton
+            <widgets:SettingsPageButton
             Text="User interface preferences"
             UnderText="Application theme, startup page, package icons, clear successful installs automatically"
             x:Name="InterfaceSettingsExpander"
@@ -37,7 +43,7 @@
             CornerRadius="8,8,0,0"
             />
 
-        <widgets:SettingsPageButton
+            <widgets:SettingsPageButton
             x:Name="NotificationSettingsEntry"
             Text="Notification preferences"
             UnderText="Show notifications on different events"
@@ -47,7 +53,7 @@
             BorderThickness="1,0"
             />
 
-        <widgets:SettingsPageButton
+            <widgets:SettingsPageButton
             Text="Startup options"
             x:Name="StartupOptionsExpander"
             UnderText="WingetUI autostart behaviour, application launch settings"
@@ -56,9 +62,9 @@
             CornerRadius="0,0,8,8"
             />
 
-        <UserControl Height="16"/>
+            <UserControl Height="16"/>
 
-        <widgets:SettingsPageButton
+            <widgets:SettingsPageButton
             Text="Install and update preferences"
             x:Name="UpdatesOptionsExpander"
             UnderText="Change how UniGetUI installs packages, and checks and installs available updates"
@@ -66,7 +72,7 @@
             Click="Operations"
             CornerRadius="8,8,0,0"/>
 
-        <widgets:SettingsPageButton
+            <widgets:SettingsPageButton
             Text="Package backup"
             x:Name="BackupOptionsExpander"
             UnderText="Automatically save a list of all your installed packages to easily restore them."
@@ -75,9 +81,9 @@
             BorderThickness="1,0,1,1"
             CornerRadius="0,0,8,8"/>
 
-        <UserControl Height="16"/>
+            <UserControl Height="16"/>
 
-        <widgets:SettingsPageButton
+            <widgets:SettingsPageButton
             x:Name="AdminSettingsExpander"
             Text="Administrator privileges preferences"
             UnderText="Ask once or always for administrator rights, elevate installations by default"
@@ -85,9 +91,9 @@
             Click="Administrator"
             CornerRadius="8"/>
 
-        <UserControl Height="16"/>
+            <UserControl Height="16"/>
 
-        <widgets:SettingsPageButton
+            <widgets:SettingsPageButton
             x:Name="ExperimentalSettingsExpander"
             Text="Experimental settings and developer options"
             UnderText="Beta features and other options that shouldn't be touched"
@@ -95,5 +101,6 @@
             Click="Experimental"
             CornerRadius="8"/>
 
-    </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </Page>
