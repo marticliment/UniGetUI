@@ -1,13 +1,12 @@
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Interfaces;
+using UniGetUI.PackageEngine.Managers.PowerShellManager;
 
 namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
 {
     internal static class NuGetManifestLoader
     {
-        private static readonly Dictionary<string, string> __manifest_cache = [];
-
         /// <summary>
         /// Returns the URL to the manifest of a NuGet-based package
         /// </summary>
@@ -35,13 +34,14 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
         /// <returns>A string containing the contents of the manifest</returns>
         public static string? GetManifestContent(IPackage package)
         {
-            string? PackageManifestContent = "";
-            string PackageManifestUrl = GetManifestUrl(package).ToString();
-            if (__manifest_cache.TryGetValue(PackageManifestUrl, out var content))
+            if (BaseNuGet.Manifests.TryGetValue(package.GetHash(), out string? manifest))
             {
                 Logger.Debug($"Loading cached NuGet manifest for package {package.Id} on manager {package.Manager.Name}");
-                return content;
+                return manifest;
             }
+
+            string? PackageManifestContent = "";
+            string PackageManifestUrl = GetManifestUrl(package).ToString();
 
             try
             {
@@ -62,7 +62,7 @@ namespace UniGetUI.PackageEngine.Managers.Generic.NuGet.Internal
 
                     PackageManifestContent = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 }
-                __manifest_cache[PackageManifestUrl] = PackageManifestContent;
+                BaseNuGet.Manifests[package.GetHash()] = PackageManifestContent;
                 return PackageManifestContent;
             }
             catch (Exception e)
