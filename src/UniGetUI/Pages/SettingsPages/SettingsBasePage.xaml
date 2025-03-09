@@ -9,7 +9,7 @@
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" xmlns:animations="using:CommunityToolkit.WinUI.Animations" xmlns:converters="using:CommunityToolkit.WinUI.Converters"
     mc:Ignorable="d"
     Background="Transparent">
-   
+
     <animations:Implicit.ShowAnimations>
         <animations:TranslationAnimation Duration="0:0:0.25" From="0,100,0" To="0"/>
         <animations:OpacityAnimation Duration="0:0:0.25" From="0" To="1"/>
@@ -28,13 +28,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Border
-            Grid.Row="0" Grid.Column="1"
-            Padding="24,16,24,16" CornerRadius="8" Name="AnnouncerBorder"
-            Background="{ThemeResource ButtonBackground}">
-            <widgets:Announcer x:Name="SettingsAnnouncer" Url="https://marticliment.com/resources/annoucements/unigetui"/>
-        </Border>
-        <InfoBar 
+        <InfoBar
             Grid.Row="1" Grid.Column="1" Name="RestartRequired" Severity="Warning" CornerRadius="8"/>
 
         <Grid Grid.Row="2" Grid.Column="1" ColumnSpacing="10" Name="SettingsHeaderGrid">

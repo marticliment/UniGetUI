@@ -10,6 +10,14 @@
     NavigationCacheMode="Required"
     Background="Transparent">
 
-    <StackPanel Orientation="Vertical" Name="SettingsEntries"/>
+    <StackPanel Orientation="Vertical" Name="SettingsEntries">
+        <Border
+            Padding="24,16,24,16" CornerRadius="8" Name="AnnouncerBorder"
+            Background="{ThemeResource ButtonBackground}">
+            <widgets:Announcer x:Name="SettingsAnnouncer" Url="https://marticliment.com/resources/annoucements/unigetui"/>
+        </Border>
+
+        <UserControl Height="16"/>
+    </StackPanel>
 
 </Page>

@@ -11,6 +11,13 @@
     Background="Transparent">
 
     <StackPanel Orientation="Vertical" Name="SettingsEntries">
+        <Border
+            Padding="24,16,24,16" CornerRadius="8" Name="AnnouncerBorder"
+            Background="{ThemeResource ButtonBackground}">
+            <widgets:Announcer x:Name="SettingsAnnouncer" Url="https://marticliment.com/resources/annoucements/unigetui"/>
+        </Border>
+
+        <UserControl Height="16"/>
 
         <widgets:SettingsPageButton
             x:Name="GeneralSettingsExpander"
@@ -29,7 +36,7 @@
             Click="Interface"
             CornerRadius="8,8,0,0"
             />
-        
+
         <widgets:SettingsPageButton
             x:Name="NotificationSettingsEntry"
             Text="Notification preferences"
@@ -39,7 +46,7 @@
             CornerRadius="0"
             BorderThickness="1,0"
             />
-        
+
         <widgets:SettingsPageButton
             Text="Startup options"
             x:Name="StartupOptionsExpander"
@@ -58,7 +65,7 @@
             Icon="update"
             Click="Operations"
             CornerRadius="8,8,0,0"/>
-        
+
         <widgets:SettingsPageButton
             Text="Package backup"
             x:Name="BackupOptionsExpander"
