@@ -1,5 +1,6 @@
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
@@ -7,6 +8,7 @@ using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.WingetManager;
+using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageEngine.PackageLoader;
 using UniGetUI.PackageOperations;
 
@@ -47,9 +49,30 @@ namespace UniGetUI.PackageEngine.Operations
 
                 Package.SetTag(PackageTag.OnQueue);
             };
-            CancelRequested += (_, _) => Package.SetTag(PackageTag.Default);
-            OperationSucceeded += (_, _) => HandleSuccess();
-            OperationFailed += (_, _) => HandleFailure();
+            CancelRequested += (_, _) =>
+            {
+                Settings.AddToList("AdvancedOperationHistory", new AdvancedOperationHistoryEntry(
+                    Package, Role, OperationStatus.Canceled,
+                    string.Join("\n", GetOutput().Select(item => item.Item1))
+                ));
+                Package.SetTag(PackageTag.Default);
+            };
+            OperationSucceeded += (_, _) =>
+            {
+                Settings.AddToList("AdvancedOperationHistory", new AdvancedOperationHistoryEntry(
+                    Package, Role, OperationStatus.Succeeded,
+                    string.Join("\n", GetOutput().Select(item => item.Item1))
+                ));
+                HandleSuccess();
+            };
+            OperationFailed += (_, _) =>
+            {
+                Settings.AddToList("AdvancedOperationHistory", new AdvancedOperationHistoryEntry(
+                    Package, Role, OperationStatus.Failed,
+                    string.Join("\n", GetOutput().Select(item => item.Item1))
+                ));
+                HandleFailure();
+            };
         }
 
         private bool RequiresAdminRights()
