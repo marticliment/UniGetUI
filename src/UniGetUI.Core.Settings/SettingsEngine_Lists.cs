@@ -102,7 +102,7 @@ namespace UniGetUI.Core.SettingsEngine
         public static void AddToList<T>(string setting, T value)
         {
             List<T>? list = _getList<T>(setting);
-            if (list == null) return;
+            list ??= [];
 
             list.Add(value);
             SetList(setting, list);
