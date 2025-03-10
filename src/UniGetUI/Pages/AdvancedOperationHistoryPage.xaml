@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniGetUI.Interface.Pages"
+    xmlns:packages="using:UniGetUI.PackageEngine.PackageClasses"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:animations="using:CommunityToolkit.WinUI.Animations"
@@ -39,15 +40,15 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="local:AdvancedOperationHistoryEntry">
+                    <DataTemplate x:DataType="packages:SimplePackage">
                         <widgets:SettingsEntry
-                            Text="{x:Bind Title}"
+                            Text="{x:Bind Name}"
                             UnderText="[updated] on [March 10, 2025] at [11:27 AM]"
                             x:Name="InterfaceSettingsExpander"
                             Icon="interactive"
                             Margin="8">
                             <Toolkit:SettingsExpander.Items>
-                                <widgets:TranslatedTextBlock Text="{x:Bind Content}" Margin="8" />
+                                <widgets:TranslatedTextBlock Text="{x:Bind Description}" Margin="8" />
                             </Toolkit:SettingsExpander.Items>
                         </widgets:SettingsEntry>
                         <!--<Expander Header="{x:Bind Title}" HorizontalAlignment="Stretch" MaxWidth="600" BorderThickness="0">
