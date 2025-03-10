@@ -7,8 +7,7 @@
     xmlns:local="using:UniGetUI.Interface"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    Width="900"
-    MaxWidth="1100"
+    MaxWidth="950"
     mc:Ignorable="d">
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -165,6 +164,11 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </ScrollViewer>
+            <CheckBox
+                Content="Delete all desktop shortcuts after an install or upgrade."
+                IsChecked="{x:Bind DeleteAllShortcuts}"
+                Checked="HandleAllDesktop_Checked"
+                Unchecked="HandleAllDesktop_Unchecked" />
         </StackPanel>
         <!--  Close Button  -->
         <widgets:DialogCloseButton Margin="0,-63,-24,0" Click="CloseButton_Click" />
