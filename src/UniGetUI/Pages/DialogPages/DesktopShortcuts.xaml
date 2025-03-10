@@ -7,8 +7,7 @@
     xmlns:local="using:UniGetUI.Interface"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    Width="900"
-    MaxWidth="1100"
+    MaxWidth="950"
     mc:Ignorable="d">
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
