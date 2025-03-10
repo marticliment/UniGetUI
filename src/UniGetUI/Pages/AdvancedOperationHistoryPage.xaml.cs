@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Enums;
@@ -11,18 +12,21 @@ namespace UniGetUI.Interface.Pages
 
     public partial class AdvancedOperationHistoryPage : IKeyboardShortcutListener, IEnterLeaveListener
     {
-        private readonly ObservableCollection<AdvancedOperationHistoryEntry> Items = [];
+        private ObservableCollection<AdvancedOperationHistoryEntry> Items = [];
 
         public AdvancedOperationHistoryPage()
         {
             InitializeComponent();
 
-            AdvancedOperationHistoryList.ItemsSource = Items;
+            LoadOperationHistory();
         }
 
         private void LoadOperationHistory()
         {
             Items.Clear();
+
+            Items = [.. Settings.GetList<AdvancedOperationHistoryEntry>("AdvancedOperationHistory") ?? []];
+            AdvancedOperationHistoryList.ItemsSource = Items;
         }
 
         public void ReloadTriggered()

@@ -41,19 +41,28 @@
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="packages:AdvancedOperationHistoryEntry">
-                        <widgets:SettingsEntry
-                            Text="{x:Bind Name}"
-                            UnderText="[updated] on [March 10, 2025] at [11:27 AM]"
-                            x:Name="InterfaceSettingsExpander"
-                            Icon="interactive"
-                            Margin="8">
-                            <Toolkit:SettingsExpander.Items>
-                                <widgets:TranslatedTextBlock Text="{x:Bind Description}" Margin="8" />
-                            </Toolkit:SettingsExpander.Items>
-                        </widgets:SettingsEntry>
-                        <!--<Expander Header="{x:Bind Title}" HorizontalAlignment="Stretch" MaxWidth="600" BorderThickness="0">
-                            <widgets:TranslatedTextBlock Text="{x:Bind Content}" Margin="10" />
-                        </Expander>-->
+                        <Expander HorizontalAlignment="Stretch" MaxWidth="800" BorderThickness="0" Margin="0,0,0,10">
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <widgets:LocalIcon Icon="Android" />
+                                    <TextBlock Text="{x:Bind Name}" Margin="20,0,0,0" />
+                                </StackPanel>
+                            </Expander.Header>
+                            <Expander.Content>
+                                <ScrollViewer Height="100">
+                                    <TextBlock TextWrapping="Wrap">
+                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+                                        sed do eiusmod tempor incididunt ut labore et dolore magna 
+                                        aliqua. Ut enim ad minim veniam, quis nostrud exercitation 
+                                        ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+                                        Duis aute irure dolor in reprehenderit in voluptate velit 
+                                        esse cillum dolore eu fugiat nulla pariatur. Excepteur sint 
+                                        occaecat cupidatat non proident, sunt in culpa qui officia 
+                                        deserunt mollit anim id est laborum.
+                                    </TextBlock>
+                                </ScrollViewer>
+                            </Expander.Content>
+                        </Expander>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
