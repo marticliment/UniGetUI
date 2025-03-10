@@ -15,6 +15,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public string IconId { get; }
         public string ManagerName { get; }
         public string ManagerDisplayName { get; }
+        public IconType ManagerIconId { get; }
         public string SourceName { get; }
         public Uri SourceUrl { get; }
         public IconType SourceIconId { get; }
@@ -34,6 +35,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             IconId = Package.GetPackageIconId(Source.Id, Source.Manager.Name, Source.Source.Name);
             ManagerName = Source.Manager.Name;
             ManagerDisplayName = Source.Manager.DisplayName;
+            ManagerIconId = Source.Manager.Properties.IconId;
             SourceName = Source.Source.Name;
             SourceUrl = Source.Source.Url;
             SourceIconId = Source.Source.IconId;
