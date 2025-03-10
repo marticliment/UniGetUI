@@ -42,7 +42,7 @@
                     <DataTemplate x:DataType="local:AdvancedOperationHistoryEntry">
                         <widgets:SettingsEntry
                             Text="{x:Bind Title}"
-                            UnderText="{updated} on {March 10, 2025} at {11:27 AM}"
+                            UnderText="[updated] on [March 10, 2025] at [11:27 AM]"
                             x:Name="InterfaceSettingsExpander"
                             Icon="interactive"
                             Margin="8">
