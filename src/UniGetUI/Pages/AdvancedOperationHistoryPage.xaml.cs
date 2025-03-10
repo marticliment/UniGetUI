@@ -4,22 +4,10 @@ using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Enums;
-using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.Interface.Pages
 {
-    public class AdvancedOperationHistoryEntry(
-        IPackage Source,
-        OperationType Type,
-        OperationStatus Status,
-        string Logs
-    ) : SimplePackage(Source)
-    {
-        public OperationType Type { get; } = Type;
-        public OperationStatus Status { get; } = Status;
-        public string Logs { get; } = Logs;
-    };
 
     public partial class AdvancedOperationHistoryPage : IKeyboardShortcutListener, IEnterLeaveListener
     {

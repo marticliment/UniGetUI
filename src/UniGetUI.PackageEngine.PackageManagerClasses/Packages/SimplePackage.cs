@@ -1,4 +1,5 @@
 using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.PackageClasses
@@ -38,4 +39,16 @@ namespace UniGetUI.PackageEngine.PackageClasses
             SourceIconId = Source.Source.IconId;
         }
     }
+
+    public class AdvancedOperationHistoryEntry(
+        IPackage Source,
+        OperationType Type,
+        OperationStatus Status,
+        string Logs
+    ) : SimplePackage(Source)
+    {
+        public OperationType Type { get; } = Type;
+        public OperationStatus Status { get; } = Status;
+        public string Logs { get; } = Logs;
+    };
 }
