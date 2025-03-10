@@ -4,42 +4,21 @@ using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.PackageClasses
 {
-    public class SimplePackage
+    public class SimplePackage(IPackage Source)
     {
-        public string Description { get; }
-        public string[] Tags { get; }
-        public string Name { get; }
-        public string Id { get; }
-        public string VersionString { get; }
-        public string NewVersionString { get; }
-        public string IconId { get; }
-        public string ManagerName { get; }
-        public string ManagerDisplayName { get; }
-        public IconType ManagerIconId { get; }
-        public string SourceName { get; }
-        public Uri SourceUrl { get; }
-        public IconType SourceIconId { get; }
-
-        public SimplePackage(IPackage Source)
-        {
-            // Load the details first
-            Source.Details.Load();
-
-            // Now assign the values
-            Description = Source.Details.Description ?? "No description";
-            Tags = Source.Details.Tags;
-            Name = Source.Name;
-            Id = Source.Id;
-            VersionString = Source.VersionString;
-            NewVersionString = Source.NewVersionString;
-            IconId = Package.GetPackageIconId(Source.Id, Source.Manager.Name, Source.Source.Name);
-            ManagerName = Source.Manager.Name;
-            ManagerDisplayName = Source.Manager.DisplayName;
-            ManagerIconId = Source.Manager.Properties.IconId;
-            SourceName = Source.Source.Name;
-            SourceUrl = Source.Source.Url;
-            SourceIconId = Source.Source.IconId;
-        }
+        public string Description { get; } = "Not loaded";
+        public string[] Tags { get; } = [];
+        public string Name { get; } = Source.Name;
+        public string Id { get; } = Source.Id;
+        public string VersionString { get; } = Source.VersionString;
+        public string NewVersionString { get; } = Source.NewVersionString;
+        public string IconId { get; } = Package.GetPackageIconId(Source.Id, Source.Manager.Name, Source.Source.Name);
+        public string ManagerName { get; } = Source.Manager.Name;
+        public string ManagerDisplayName { get; } = Source.Manager.DisplayName;
+        public IconType ManagerIconId { get; } = Source.Manager.Properties.IconId;
+        public string SourceName { get; } = Source.Source.Name;
+        public Uri SourceUrl { get; } = Source.Source.Url;
+        public IconType SourceIconId { get; } = Source.Source.IconId;
     }
 
     public class AdvancedOperationHistoryEntry(
