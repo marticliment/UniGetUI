@@ -39,8 +39,13 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="local:OperationHistoryEntry">
-                        <widgets:SettingsEntry Text="{x:Bind Title}" Margin="8">
+                    <DataTemplate x:DataType="local:AdvancedOperationHistoryEntry">
+                        <widgets:SettingsEntry
+                            Text="{x:Bind Title}"
+                            UnderText="{updated} on {March 10, 2025} at {11:27 AM}"
+                            x:Name="InterfaceSettingsExpander"
+                            Icon="interactive"
+                            Margin="8">
                             <Toolkit:SettingsExpander.Items>
                                 <widgets:TranslatedTextBlock Text="{x:Bind Content}" Margin="8" />
                             </Toolkit:SettingsExpander.Items>
