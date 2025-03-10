@@ -4,7 +4,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniGetUI.Interface.Pages"
-    xmlns:packages="using:UniGetUI.PackageEngine.PackageClasses"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:animations="using:CommunityToolkit.WinUI.Animations"
@@ -40,7 +39,7 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="packages:SimplePackage">
+                    <DataTemplate x:DataType="local:AdvancedOperationHistoryEntry">
                         <widgets:SettingsEntry
                             Text="{x:Bind Name}"
                             UnderText="[updated] on [March 10, 2025] at [11:27 AM]"
