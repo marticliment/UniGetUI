@@ -55,68 +55,97 @@ namespace UniGetUI.Core.Language
 
         private static ReadOnlyDictionary<string, string> LoadTranslationPercentages()
         {
-            if (JsonNode.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "TranslatedPercentages.json"))) is JsonObject val)
-            {
-                return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("404%" + x.Key)).ToString()));
-            }
+            try {
+                if (JsonNode.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "TranslatedPercentages.json"))) is JsonObject val)
+                {
+                    return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("404%" + x.Key)).ToString()));
+                }
 
-            return new(new Dictionary<string, string>());
+                return new(new Dictionary<string, string>());
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Could not load TranslatedPercentages.json from disk");
+                Logger.Error(ex);
+                return new(new Dictionary<string, string>());
+            }
         }
 
         private static ReadOnlyDictionary<string, string> LoadLanguageReference()
         {
-            if (JsonNode.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "LanguagesReference.json"))) is JsonObject val)
+            try
             {
-                return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("NoNameLang_" + x.Key)).ToString()));
-            }
+                if (JsonNode.Parse(File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data",
+                        "LanguagesReference.json"))) is JsonObject val)
+                {
+                    return new(val.ToDictionary(x => x.Key, x => (x.Value ?? ("NoNameLang_" + x.Key)).ToString()));
+                }
 
-            return new(new Dictionary<string, string>());
+                return new(new Dictionary<string, string>());
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Could not load LanguagesReference.json from disk");
+                Logger.Error(ex);
+                return new(new Dictionary<string, string>());
+            }
         }
 
         private static Person[] LoadLanguageTranslatorList()
         {
-            string JsonContents = File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data", "Translators.json"));
-
-            if (JsonNode.Parse(JsonContents) is not JsonObject TranslatorsInfo)
+            try
             {
-                return [];
-            }
+                string JsonContents = File.ReadAllText(Path.Join(CoreData.UniGetUIExecutableDirectory, "Assets", "Data",
+                    "Translators.json"));
 
-            List<Person> result = [];
-            foreach (KeyValuePair<string, JsonNode?> langKey in TranslatorsInfo)
-            {
-                if (!LanguageReference.ContainsKey(langKey.Key))
+                if (JsonNode.Parse(JsonContents) is not JsonObject TranslatorsInfo)
                 {
-                    Logger.Warn($"Language {langKey.Key} not in list, maybe has not been added yet?");
-                    continue;
+                    return [];
                 }
 
-                JsonArray TranslatorsForLang = (langKey.Value ?? new JsonArray()).AsArray();
-                bool LangShown = false;
-                foreach (JsonNode? translator in TranslatorsForLang)
+                List<Person> result = [];
+                foreach (KeyValuePair<string, JsonNode?> langKey in TranslatorsInfo)
                 {
-                    if (translator is null)
+                    if (!LanguageReference.ContainsKey(langKey.Key))
                     {
+                        Logger.Warn($"Language {langKey.Key} not in list, maybe has not been added yet?");
                         continue;
                     }
 
-                    Uri? url = null;
-                    if (translator["link"] is not null && translator["link"]?.ToString() != "")
+                    JsonArray TranslatorsForLang = (langKey.Value ?? new JsonArray()).AsArray();
+                    bool LangShown = false;
+                    foreach (JsonNode? translator in TranslatorsForLang)
                     {
-                        url = new Uri((translator["link"] ?? "").ToString());
-                    }
+                        if (translator is null)
+                        {
+                            continue;
+                        }
 
-                    Person person = new(
-                        Name: (url is not null ? "@" : "") + (translator["name"] ?? "").ToString(),
-                        ProfilePicture: url is not null ? new Uri(url.ToString() + ".png") : null,
-                        GitHubUrl: url,
-                        Language: !LangShown ? LanguageData.LanguageReference[langKey.Key] : ""
-                    );
-                    LangShown = true;
-                    result.Add(person);
+                        Uri? url = null;
+                        if (translator["link"] is not null && translator["link"]?.ToString() != "")
+                        {
+                            url = new Uri((translator["link"] ?? "").ToString());
+                        }
+
+                        Person person = new(
+                            Name: (url is not null ? "@" : "") + (translator["name"] ?? "").ToString(),
+                            ProfilePicture: url is not null ? new Uri(url.ToString() + ".png") : null,
+                            GitHubUrl: url,
+                            Language: !LangShown ? LanguageData.LanguageReference[langKey.Key] : ""
+                        );
+                        LangShown = true;
+                        result.Add(person);
+                    }
                 }
+
+                return result.ToArray();
             }
-            return result.ToArray();
+            catch (Exception ex)
+            {
+                Logger.Error("Could not load Translators.json from disk");
+                Logger.Error(ex);
+                return [];
+            }
         }
     }
 

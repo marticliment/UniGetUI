@@ -1,53 +1,78 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="UniGetUI.Interface.AboutUniGetUI"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UniGetUI.Interface"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    mc:Ignorable="d"
-    Height="500"
+    xmlns:local="using:UniGetUI.Interface"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets"
     Width="650"
-    >
+    Height="500"
+    mc:Ignorable="d">
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <SelectorBar Grid.Row="0" x:Name="SelectorBar" SelectionChanged="SelectorBar_SelectionChanged" HorizontalAlignment="Center">
-            <SelectorBarItem x:Name="SelectorBarItemPage1" IsSelected="True"  >
+        <SelectorBar
+            x:Name="SelectorBar"
+            Grid.Row="0"
+            HorizontalAlignment="Center"
+            SelectionChanged="SelectorBar_SelectionChanged">
+            <SelectorBarItem x:Name="SelectorBarItemPage1" IsSelected="True">
                 <SelectorBarItem.Icon>
-                    <FontIcon Glyph="&#xE946;" FontSize="16" VerticalAlignment="Center"/>
+                    <FontIcon
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Glyph="&#xE946;" />
                 </SelectorBarItem.Icon>
             </SelectorBarItem>
-            <SelectorBarItem x:Name="SelectorBarItemPage2"  >
+            <SelectorBarItem x:Name="SelectorBarItemPage2">
                 <SelectorBarItem.Icon>
-                    <FontIcon Glyph="&#xE8A5;" FontSize="16" VerticalAlignment="Center"/>
+                    <FontIcon
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Glyph="&#xE8A5;" />
                 </SelectorBarItem.Icon>
             </SelectorBarItem>
-            <SelectorBarItem x:Name="SelectorBarItemPage3"  >
+            <SelectorBarItem x:Name="SelectorBarItemPage3">
                 <SelectorBarItem.Icon>
-                    <FontIcon Glyph="&#xEBDA;" FontSize="16" VerticalAlignment="Center"/>
+                    <FontIcon
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Glyph="&#xEBDA;" />
                 </SelectorBarItem.Icon>
             </SelectorBarItem>
-            <SelectorBarItem x:Name="SelectorBarItemPage4"  >
+            <SelectorBarItem x:Name="SelectorBarItemPage4">
                 <SelectorBarItem.Icon>
-                    <FontIcon Glyph="&#xF2B7;" FontSize="16" VerticalAlignment="Center"/>
+                    <FontIcon
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Glyph="&#xF2B7;" />
                 </SelectorBarItem.Icon>
             </SelectorBarItem>
-            <SelectorBarItem x:Name="SelectorBarItemPage5" >
+            <SelectorBarItem x:Name="SelectorBarItemPage5">
                 <SelectorBarItem.Icon>
-                    <FontIcon Glyph="&#xED56;" FontSize="16" VerticalAlignment="Center"/>
+                    <FontIcon
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Glyph="&#xED56;" />
                 </SelectorBarItem.Icon>
             </SelectorBarItem>
         </SelectorBar>
 
-        <Frame Grid.Row="1" x:Name="ContentFrame" IsNavigationStackEnabled="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0"/>
+        <Frame
+            x:Name="ContentFrame"
+            Grid.Row="1"
+            Margin="10,0,10,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            IsNavigationStackEnabled="False" />
 
-        <!-- Close Button -->
-        <widgets:DialogCloseButton Margin="0,-24,-24,0" Click="CloseButton_Click"/>
+        <!--  Close Button  -->
+        <widgets:DialogCloseButton Margin="0,-24,-24,0" Click="CloseButton_Click" />
     </Grid>
 
 </Page>

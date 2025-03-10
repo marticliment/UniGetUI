@@ -14,6 +14,8 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 {
     public abstract class BaseNuGet : PackageManager
     {
+        public static Dictionary<long, string> Manifests = new();
+
         public sealed override void Initialize()
         {
             if (DetailsHelper is not BaseNuGetDetailsHelper)
@@ -39,6 +41,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             public string version;
             public CoreTools.Version version_float;
             public string id;
+            public string manifest;
         }
 
         protected sealed override IReadOnlyList<Package> FindPackages_UnSafe(string query)
@@ -58,20 +61,23 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
 
             foreach(IManagerSource source in sources)
             {
-                string sortingPiece = "&$orderby=Published%20desc";
-                if (source.Url.Host == "www.powershellgallery.com") sortingPiece = "";
-                Uri SearchUrl = new($"{source.Url}/Search()?searchTerm=%27{HttpUtility.UrlEncode(query)}%27&targetFramework=%27%27&includePrerelease=false{sortingPiece}");
+                Uri? SearchUrl = new($"{source.Url}/Search()?$filter=IsLatestVersion&$orderby=Id&searchTerm='{HttpUtility.UrlEncode(query)}'&targetFramework=''&includePrerelease=false&$skip=0&$top=50&semVerLevel=2.0.0");
+                // Uri SearchUrl = new($"{source.Url}/Search()?$filter=IsLatestVersion&searchTerm=%27{HttpUtility.UrlEncode(query)}%27&targetFramework=%27%27&includePrerelease=false");
                 logger.Log($"Begin package search with url={SearchUrl} on manager {Name}");
                 Dictionary<string, SearchResult> AlreadyProcessedPackages = [];
 
 
                 using HttpClient client = new(CoreData.GenericHttpClientParameters);
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
+
+                while (SearchUrl is not null)
+                {
                     HttpResponseMessage response = client.GetAsync(SearchUrl).GetAwaiter().GetResult();
 
                     if (!response.IsSuccessStatusCode)
                     {
                         logger.Error($"Failed to fetch api at Url={SearchUrl} with status code {response.StatusCode}");
+                        SearchUrl = null;
                         continue;
                     }
 
@@ -90,19 +96,30 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                         var float_version = CoreTools.VersionStringToStruct(version);
                         // Match title = Regex.Match(match.Value, "<title[ \\\"\\=A-Za-z0-9]+>([^<>]+)<\\/title>");
 
-                        if (AlreadyProcessedPackages.TryGetValue(id, out var value) &&
-                            value.version_float >= float_version)
+                        if (AlreadyProcessedPackages.TryGetValue(id, out var value) && value.version_float >= float_version)
                         {
                             continue;
                         }
 
-                        AlreadyProcessedPackages[id] = new SearchResult { id = id, version = version, version_float = float_version };
+                        AlreadyProcessedPackages[id] =
+                            new SearchResult { id = id, version = version, version_float = float_version, manifest = match.Value };
                     }
+
+                    SearchUrl = null;
+                    Match next = Regex.Match(SearchResults, "<link rel=\"next\" href=\"([^\"]+)\" ?\\/>");
+                    if (next.Success)
+                    {
+                        SearchUrl = new Uri(next.Groups[1].Value.Replace("&amp;", "&"));
+                        logger.Log($"Adding extra info from URL={SearchUrl}");
+                    }
+                }
 
                 foreach (SearchResult package in AlreadyProcessedPackages.Values)
                 {
                     logger.Log($"Found package {package.id} version {package.version} on source {source.Name}");
-                    Packages.Add(new Package(CoreTools.FormatAsName(package.id), package.id, package.version, source, this));
+                    var nativePackage = new Package(CoreTools.FormatAsName(package.id), package.id, package.version, source, this);
+                    Packages.Add(nativePackage);
+                    Manifests[nativePackage.GetHash()] = package.manifest;
                 }
             }
 
@@ -169,7 +186,10 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                         // Match title = Regex.Match(match.Value, "<title[ \\\"\\=A-Za-z0-9]+>([^<>]+)<\\/title>");
 
                         logger.Log($"Found package {id} version {new_version} on source {pair.Key.Name}");
-                        Packages.Add(new Package(CoreTools.FormatAsName(id), id, packageIdVersion[id.ToLower()], new_version, pair.Key, this));
+
+                        var nativePackage = new Package(CoreTools.FormatAsName(id), id, packageIdVersion[id.ToLower()], new_version, pair.Key, this);
+                        Packages.Add(nativePackage);
+                        Manifests[nativePackage.GetHash()] = match.Value;
                     }
                 }
             }

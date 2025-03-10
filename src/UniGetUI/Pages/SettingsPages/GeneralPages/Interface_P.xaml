@@ -1,71 +1,75 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="UniGetUI.Pages.SettingsPages.GeneralPages.Interface_P"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    mc:Ignorable="d"
-    Background="Transparent">
+    xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    Background="Transparent"
+    mc:Ignorable="d">
 
-    <StackPanel Orientation="Vertical">
-        <widgets:ComboboxCard
-            x:Name="ThemeSelector"
-            Text="Application theme:"
-            SettingName="PreferredTheme"
-            ValueChanged="ThemeSelector_ValueChanged"
-            CornerRadius="8,8,0,0"
-            />
-        <widgets:ComboboxCard
-            x:Name="StartupPageSelector"
-            Text="UniGetUI startup page:"
-            SettingName="StartupPage"
-            CornerRadius="0,0,8,8"
-            BorderThickness="1,0,1,1"
-            />
+    <ScrollViewer
+        x:Name="Scroller"
+        Margin="0,0,-8,0"
+        Padding="0,0,8,0"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Center"
+        VerticalContentAlignment="Center">
+        <StackPanel Orientation="Vertical">
+            <widgets:ComboboxCard
+                x:Name="ThemeSelector"
+                CornerRadius="8,8,0,0"
+                SettingName="PreferredTheme"
+                Text="Application theme:"
+                ValueChanged="ThemeSelector_ValueChanged" />
+            <widgets:ComboboxCard
+                x:Name="StartupPageSelector"
+                BorderThickness="1,0,1,1"
+                CornerRadius="0,0,8,8"
+                SettingName="StartupPage"
+                Text="UniGetUI startup page:" />
 
-        <UserControl Height="16"/>
+            <UserControl Height="16" />
 
-        <widgets:CheckboxCard
-            Text="Close UniGetUI to the system tray"
-            SettingName="DisableSystemTray"
-            x:Name="DisableSystemTray"
-            StateChanged="DisableSystemTray_StateChanged"
-            CornerRadius="8"
-            />
+            <widgets:CheckboxCard
+                x:Name="DisableSystemTray"
+                CornerRadius="8"
+                SettingName="DisableSystemTray"
+                StateChanged="DisableSystemTray_StateChanged"
+                Text="Close UniGetUI to the system tray" />
 
-        <UserControl Height="16"/>
-        <widgets:CheckboxCard
-            Text="Show package icons on package lists"
-            SettingName="DisableIconsOnPackageLists"
-            x:Name="DisableIconsOnPackageLists"
-            StateChanged="ShowRestartBanner"
-            CornerRadius="8,8,0,0"
-            />
-        <widgets:ButtonCard
-            Text="Clear the local icon cache"
-            ButtonText="Clear cache"
-            x:Name="ResetIconCache"
-            Click="ResetIconCache_OnClick"
-            CornerRadius="0,0,8,8" BorderThickness="1,0,1,1"
-            />
+            <UserControl Height="16" />
+            <widgets:CheckboxCard
+                x:Name="DisableIconsOnPackageLists"
+                CornerRadius="8,8,0,0"
+                SettingName="DisableIconsOnPackageLists"
+                StateChanged="ShowRestartBanner"
+                Text="Show package icons on package lists" />
+            <widgets:ButtonCard
+                x:Name="ResetIconCache"
+                BorderThickness="1,0,1,1"
+                ButtonText="Clear cache"
+                Click="ResetIconCache_OnClick"
+                CornerRadius="0,0,8,8"
+                Text="Clear the local icon cache" />
 
-        <UserControl Height="16"/>
-        <widgets:CheckboxCard
-            Name="DisableSelectingUpdatesByDefault"
-            Text="Select upgradable packages by default"
-            SettingName="DisableSelectingUpdatesByDefault"
-            StateChanged="ShowRestartBanner"
-            CornerRadius="8"
-            />
+            <UserControl Height="16" />
+            <widgets:CheckboxCard
+                Name="DisableSelectingUpdatesByDefault"
+                CornerRadius="8"
+                SettingName="DisableSelectingUpdatesByDefault"
+                StateChanged="ShowRestartBanner"
+                Text="Select upgradable packages by default" />
 
-        <UserControl Height="16"/>
-        <widgets:CheckboxCard
-            ForceInversion="True"
-            Text="Clear successful operations from the operation list after a 5 second delay"
-            SettingName="MaintainSuccessfulInstalls"
-            CornerRadius="8"
-            />
-    </StackPanel>
+            <UserControl Height="16" />
+            <widgets:CheckboxCard
+                CornerRadius="8"
+                ForceInversion="True"
+                SettingName="MaintainSuccessfulInstalls"
+                Text="Clear successful operations from the operation list after a 5 second delay" />
+        </StackPanel>
+    </ScrollViewer>
 </Page>

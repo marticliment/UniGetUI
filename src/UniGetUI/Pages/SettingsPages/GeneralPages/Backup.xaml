@@ -1,89 +1,95 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="UniGetUI.Pages.SettingsPages.GeneralPages.Backup"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
+    xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets" xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
-    mc:Ignorable="d"
-    Background="Transparent">
+    xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    Background="Transparent"
+    mc:Ignorable="d">
 
-    <StackPanel Orientation="Vertical" >
-        <widgets:CheckboxCard
-            Text="Periodically perform a backup of the installed packages"
-            x:Name="EnablePackageBackupCheckBox"
-            StateChanged="ShowRestartBanner"
-            SettingName="EnablePackageBackup"
-            CornerRadius="8,8,0,0"
-            />
-        <Toolkit:SettingsCard
-            BorderThickness="1,0,1,1"
-            CornerRadius="0,0,8,8"
-            >
-            <Toolkit:SettingsCard.Description>
-                <StackPanel Orientation="Vertical">
-                    <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will include the complete list of the installed packages and their installation options. Ignored updates and skipped versions will also be saved." />
-                    <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will NOT include any binary file nor any program's saved data." />
-                    <widgets:TranslatedTextBlock Prefix=" ● " Text="The size of the backup is estimated to be less than 1MB." />
-                    <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will be performed after login." />
-                </StackPanel>
-            </Toolkit:SettingsCard.Description>
-        </Toolkit:SettingsCard>
+    <ScrollViewer
+        x:Name="Scroller"
+        Margin="0,0,-8,0"
+        Padding="0,0,8,0"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Center"
+        VerticalContentAlignment="Center">
+        <StackPanel Orientation="Vertical">
+            <widgets:CheckboxCard
+                x:Name="EnablePackageBackupCheckBox"
+                CornerRadius="8,8,0,0"
+                SettingName="EnablePackageBackup"
+                StateChanged="ShowRestartBanner"
+                Text="Periodically perform a backup of the installed packages" />
+            <Toolkit:SettingsCard BorderThickness="1,0,1,1" CornerRadius="0,0,8,8">
+                <Toolkit:SettingsCard.Description>
+                    <StackPanel Orientation="Vertical">
+                        <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will include the complete list of the installed packages and their installation options. Ignored updates and skipped versions will also be saved." />
+                        <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will NOT include any binary file nor any program's saved data." />
+                        <widgets:TranslatedTextBlock Prefix=" ● " Text="The size of the backup is estimated to be less than 1MB." />
+                        <widgets:TranslatedTextBlock Prefix=" ● " Text="The backup will be performed after login." />
+                    </StackPanel>
+                </Toolkit:SettingsCard.Description>
+            </Toolkit:SettingsCard>
 
-        <UserControl Height="16"/>
-
-
-        <widgets:ButtonCard
-            Text="Perform a backup now"
-            ButtonText="Backup"
-            x:Name="BackupNowButton"
-            CornerRadius="8"
-            Click="DoBackup_Click"
-            IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"/>
-
-        <UserControl Height="16"/>
+            <UserControl Height="16" />
 
 
-        <widgets:ButtonCard
-            Text="Change backup output directory"
-            ButtonText="Select"
-            CornerRadius="8"
-            x:Name="ChangeBackupDirectory"
-            Click="ChangeBackupDirectory_Click"
-            IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}">
-            <Toolkit:SettingsCard.Description>
-                <StackPanel Orientation="Horizontal" Spacing="5">
-                    <TextBlock Name="BackupDirectoryLabel" VerticalAlignment="Center"/>
-                    <HyperlinkButton Name="ResetBackupDirectory" Click="ResetBackupPath_Click" />
-                    <HyperlinkButton Name="OpenBackupDirectory" Click="OpenBackupPath_Click" />
-                </StackPanel>
-            </Toolkit:SettingsCard.Description>
-        </widgets:ButtonCard>
+            <widgets:ButtonCard
+                x:Name="BackupNowButton"
+                ButtonText="Backup"
+                Click="DoBackup_Click"
+                CornerRadius="8"
+                IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"
+                Text="Perform a backup now" />
 
-        <UserControl Height="16"/>
+            <UserControl Height="16" />
 
 
+            <widgets:ButtonCard
+                x:Name="ChangeBackupDirectory"
+                ButtonText="Select"
+                Click="ChangeBackupDirectory_Click"
+                CornerRadius="8"
+                IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"
+                Text="Change backup output directory">
+                <Toolkit:SettingsCard.Description>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <TextBlock Name="BackupDirectoryLabel" VerticalAlignment="Center" />
+                        <HyperlinkButton Name="ResetBackupDirectory" Click="ResetBackupPath_Click" />
+                        <HyperlinkButton Name="OpenBackupDirectory" Click="OpenBackupPath_Click" />
+                    </StackPanel>
+                </Toolkit:SettingsCard.Description>
+            </widgets:ButtonCard>
 
-        <widgets:TextboxCard
-            Text="Set a custom backup file name"
-            Placeholder="Leave empty for default"
-            SettingName="ChangeBackupFileName"
-            x:Name="ChangeBackupFileNameTextBox"
-            CornerRadius="8,8,0,0"
-            IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"
-            />
-
-        <widgets:CheckboxCard
-            Text="Add a timestamp to the backup file names"
-            x:Name="EnableBackupTimestampingCheckBox"
-            SettingName="EnableBackupTimestamping"
-            CornerRadius="0,0,8,8" BorderThickness="1,0,1,1"
-            IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"
-            />
+            <UserControl Height="16" />
 
 
-            
 
-    </StackPanel>
+            <widgets:TextboxCard
+                x:Name="ChangeBackupFileNameTextBox"
+                CornerRadius="8,8,0,0"
+                IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"
+                Placeholder="Leave empty for default"
+                SettingName="ChangeBackupFileName"
+                Text="Set a custom backup file name" />
+
+            <widgets:CheckboxCard
+                x:Name="EnableBackupTimestampingCheckBox"
+                BorderThickness="1,0,1,1"
+                CornerRadius="0,0,8,8"
+                IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"
+                SettingName="EnableBackupTimestamping"
+                Text="Add a timestamp to the backup file names" />
+
+
+
+
+        </StackPanel>
+    </ScrollViewer>
 </Page>

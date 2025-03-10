@@ -1,25 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="UniGetUI.Interface.Dialogs.ReleaseNotes"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UniGetUI.Interface.Dialogs"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    xmlns:local="using:UniGetUI.Interface.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    mc:Ignorable="d"
-    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch"
+    mc:Ignorable="d">
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Border CornerRadius="6" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="0" Grid.Column="0">
-            <controls:WebView2 Name="WebView" Source="https://www.google.com/"/>
+        <Border
+            Grid.Row="0"
+            Grid.Column="0"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            CornerRadius="6">
+            <controls:WebView2 Name="WebView" Source="https://www.google.com/" />
         </Border>
-        <ProgressBar IsIndeterminate="True" Name="ProgressBar" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Stretch" CornerRadius="4,4,0,0"/>
-        <widgets:DialogCloseButton Margin="0,-63,-24,0" Click="CloseButton_Click"/>
+        <ProgressBar
+            Name="ProgressBar"
+            Grid.Row="0"
+            Grid.Column="0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            CornerRadius="4,4,0,0"
+            IsIndeterminate="True" />
+        <widgets:DialogCloseButton Margin="0,-63,-24,0" Click="CloseButton_Click" />
     </Grid>
 </Page>

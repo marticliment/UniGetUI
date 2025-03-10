@@ -59,19 +59,19 @@ namespace UniGetUI.Pages.SettingsPages
             if (page is null) throw new InvalidCastException("Settings page does not inherit from ISettingsPage");
 
             BackButton.Visibility = page.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
-            AnnouncerBorder.Visibility = BackButton.Visibility is Visibility.Collapsed? Visibility.Visible : Visibility.Collapsed;
+            // AnnouncerBorder.Visibility = BackButton.Visibility is Visibility.Collapsed? Visibility.Visible : Visibility.Collapsed;
             SettingsTitle.Text = page.ShortTitle;
             page.NavigationRequested += Page_NavigationRequested;
             page.RestartRequired += Page_RestartRequired;
             if (page is PackageManagerPage pmpage) pmpage.ReapplyProperties += SettingsBasePage_ReapplyProperties;
 
-            Scroller.ChangeView(0, 0, 1, true);
+            // Scroller.ChangeView(0, 0, 1, true);
         }
 
         private void SettingsBasePage_ReapplyProperties(object? sender, EventArgs e)
         {
             BackButton.Visibility = ((MainNavigationFrame.Content as ISettingsPage)?.CanGoBack ?? true) ? Visibility.Visible : Visibility.Collapsed;
-            AnnouncerBorder.Visibility = BackButton.Visibility is Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+            // AnnouncerBorder.Visibility = BackButton.Visibility is Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
             SettingsTitle.Text = (MainNavigationFrame.Content as ISettingsPage)?.ShortTitle ?? "INVALID CONTENT PAGE!";
         }
 
@@ -84,11 +84,11 @@ namespace UniGetUI.Pages.SettingsPages
         {
             if(e.IsSubclassOf(typeof(PackageManager)))
             {
-                MainNavigationFrame.Navigate(typeof(PackageManagerPage), e, new DrillInNavigationTransitionInfo());
+                MainNavigationFrame.Navigate(typeof(PackageManagerPage), e, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight} );
             }
             else
             {
-                MainNavigationFrame.Navigate(e, null, new DrillInNavigationTransitionInfo());
+                MainNavigationFrame.Navigate(e, null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight} );
             }
         }
 
@@ -99,7 +99,7 @@ namespace UniGetUI.Pages.SettingsPages
 
         public void OnLeave()
         {
-            
+
         }
     }
 }

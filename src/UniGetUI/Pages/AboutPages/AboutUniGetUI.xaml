@@ -1,32 +1,58 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="UniGetUI.Interface.Pages.AboutPages.AboutUniGetUI"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UniGetUI.Interface.Pages.AboutPages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    mc:Ignorable="d"
+    xmlns:local="using:UniGetUI.Interface.Pages.AboutPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets"
     NavigationCacheMode="Required"
-    >
+    mc:Ignorable="d">
 
-    <ScrollView Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="8">
-        <StackPanel Orientation="Vertical" Padding="0,0,0,0" Spacing="4">
+    <ScrollView
+        Margin="0,10,0,0"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        CornerRadius="8">
+        <StackPanel
+            Padding="0,0,0,0"
+            Orientation="Vertical"
+            Spacing="4">
 
-            <widgets:TranslatedTextBlock x:Name="AboutHeader" Text="About WingetUI" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
-            <widgets:TranslatedTextBlock Text="WingetUI is an application that makes managing your software easier, by providing an all-in-one graphical interface for your command-line package managers."/>
-            <TextBlock Margin="0,10,0,10" x:Name="VersionText" Text="" FontWeight="SemiBold" FontSize="15"/>
-            <InfoBar Margin="0,10,0,10" Severity="Warning" Name="DisclaimerBanner" IsOpen="True" IsClosable="False"/>
+            <widgets:TranslatedTextBlock
+                x:Name="AboutHeader"
+                FontFamily="Segoe UI Variable Display"
+                FontSize="24"
+                FontWeight="Bold"
+                Text="About WingetUI" />
+            <widgets:TranslatedTextBlock Text="WingetUI is an application that makes managing your software easier, by providing an all-in-one graphical interface for your command-line package managers." />
+            <TextBlock
+                x:Name="VersionText"
+                Margin="0,10,0,10"
+                FontSize="15"
+                FontWeight="SemiBold"
+                Text="" />
+            <InfoBar
+                Name="DisclaimerBanner"
+                Margin="0,10,0,10"
+                IsClosable="False"
+                IsOpen="True"
+                Severity="Warning" />
 
-            <widgets:TranslatedTextBlock Text="Useful links" FontSize="24" FontFamily="Segoe UI Variable Display" FontWeight="Bold"/>
-            <HyperlinkButton NavigateUri="https://www.marticliment.com/unigetui" HorizontalAlignment="Stretch">
-                <widgets:TranslatedTextBlock Text="WingetUI Homepage"/>
+            <widgets:TranslatedTextBlock
+                FontFamily="Segoe UI Variable Display"
+                FontSize="24"
+                FontWeight="Bold"
+                Text="Useful links" />
+            <HyperlinkButton HorizontalAlignment="Stretch" NavigateUri="https://www.marticliment.com/unigetui">
+                <widgets:TranslatedTextBlock Text="WingetUI Homepage" />
             </HyperlinkButton>
-            <HyperlinkButton NavigateUri="https://github.com/marticliment/wingetui/issues/new/choose" HorizontalAlignment="Stretch">
-                <widgets:TranslatedTextBlock Text="Report an issue or submit a feature request"/>
+            <HyperlinkButton HorizontalAlignment="Stretch" NavigateUri="https://github.com/marticliment/wingetui/issues/new/choose">
+                <widgets:TranslatedTextBlock Text="Report an issue or submit a feature request" />
             </HyperlinkButton>
-            <HyperlinkButton NavigateUri="https://github.com/marticliment/wingetui/" HorizontalAlignment="Stretch">
-                <widgets:TranslatedTextBlock Text="WingetUI Repository"/>
+            <HyperlinkButton HorizontalAlignment="Stretch" NavigateUri="https://github.com/marticliment/wingetui/">
+                <widgets:TranslatedTextBlock Text="WingetUI Repository" />
             </HyperlinkButton>
 
         </StackPanel>
