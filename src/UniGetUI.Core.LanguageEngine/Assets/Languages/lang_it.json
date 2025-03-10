@@ -180,7 +180,7 @@
   "Do you really want to uninstall {0}?": "Vuoi veramente disinstallare {0}?",
   "Do you want to restart your computer now?": "Vuoi riavviare il computer adesso?",
   "Do you want to translate WingetUI to your language? See how to contribute <a style=\"color:{0}\" href=\"{1}\"a>HERE!</a>": "Vuoi tradurre WingetUI nella tua lingua? Scopri come essere parte attiva del progetto <a style=\"color:{0}\" href=\"{1}\"a>QUI</a>!",
-  "Don't feel like donating? Don't worry, you can always share WingetUI with your friends. Spread the word about WingetUI.": "Non puoi donare? Nessun problema! Puoi comunque sostenermi condividendo WingetUI con i tuoi amici. Facciamo crescere WingetUI!",
+  "Don't feel like donating? Don't worry, you can always share WingetUI with your friends. Spread the word about WingetUI.": "Non ti senti di fare una donazione? Non preoccuparti, puoi sempre condividere WingetUI con i tuoi amici. Spargi la voce su WingetUI.",
   "Donate": "Donazione",
   "Download failed": "Scaricamento non riuscito",
   "Download installer": "Scarica programma di installazione",
