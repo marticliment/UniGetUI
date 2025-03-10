@@ -398,7 +398,7 @@
   "Please wait while {0} is being installed. A black window may show up. Please wait until it closes.": "在安装 {0} 时请等待。可能会显示一个黑色窗口。请等待它自己关闭。",
   "Please wait...": "请稍候……",
   "Portable": "可移植",
-  "Portable mode": "可移动模式",
+  "Portable mode": "便携模式",
   "PowerShell's package manager. Find libraries and scripts to expand PowerShell capabilities<br>Contains: <b>Modules, Scripts, Cmdlets</b>": "PowerShell 的包管理器。可用于寻找扩展 PowerShell 功能的库和脚本。<br>包括：<b>模块、脚本、Cmdlets</b>\n",
   "PreRelease": "预发布",
   "Preparing packages, please wait...": "正在准备软件包，请稍候……",
