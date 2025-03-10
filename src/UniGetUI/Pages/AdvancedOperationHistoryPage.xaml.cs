@@ -9,9 +9,16 @@ using UniGetUI.PackageEngine.PackageClasses;
 
 namespace UniGetUI.Interface.Pages
 {
-    public class AdvancedOperationHistoryEntry(IPackage Source, OperationType Operation) : SimplePackage(Source)
+    public class AdvancedOperationHistoryEntry(
+        IPackage Source,
+        OperationType Type,
+        OperationStatus Status,
+        string Logs
+    ) : SimplePackage(Source)
     {
-        public OperationType Operation { get; } = Operation;
+        public OperationType Type { get; } = Type;
+        public OperationStatus Status { get; } = Status;
+        public string Logs { get; } = Logs;
     };
 
     public partial class AdvancedOperationHistoryPage : IKeyboardShortcutListener, IEnterLeaveListener
