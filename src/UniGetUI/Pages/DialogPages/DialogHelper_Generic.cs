@@ -588,7 +588,7 @@ public static partial class DialogHelper
 
     }
 
-    public static async Task NoDesktopShortcutsFound()
+    public static async Task ManualScanDidNotFoundNewShortcuts()
     {
         var dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("Manual scan");
@@ -601,7 +601,9 @@ public static partial class DialogHelper
     {
         var dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("Are you sure you want to delete all shortcuts?");
-        dialog.Content = CoreTools.Translate("By enabling this, after a package is installed or updated, ANY existing desktop shortcut will be deleted. (Desktop shortcuts unchecked above will be kept). Are you really sure you want to enable this feature?");
+        dialog.Content = CoreTools.Translate("Any new shorcuts created during an install or an update operation will be deleted automatically, instead of showing a confirmation prompt the first time they are detected.")
+                        + " " + CoreTools.Translate("Any shorcuts created or modified outside of UniGetUI will be ignored. You will be able to add them via the {0} button", $"{CoreTools.Translate("Manual scan")}")
+                        + " " + CoreTools.Translate("Are you really sure you want to enable this feature?");
         dialog.PrimaryButtonText = CoreTools.Translate("Yes");
         dialog.CloseButtonText = CoreTools.Translate("No");
         dialog.DefaultButton = ContentDialogButton.Close;

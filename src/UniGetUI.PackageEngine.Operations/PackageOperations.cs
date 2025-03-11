@@ -157,7 +157,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
-                DesktopShortcutsDatabase.TryRemoveNewShortcuts(DesktopShortcutsBeforeStart);
+                DesktopShortcutsDatabase.HandleNewShortcuts(DesktopShortcutsBeforeStart);
             }
             return Task.CompletedTask;
         }
@@ -209,7 +209,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
-                DesktopShortcutsDatabase.TryRemoveNewShortcuts(DesktopShortcutsBeforeStart);
+                DesktopShortcutsDatabase.HandleNewShortcuts(DesktopShortcutsBeforeStart);
             }
 
             if (await Package.HasUpdatesIgnoredAsync() && await Package.GetIgnoredUpdatesVersionAsync() != "*")

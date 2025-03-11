@@ -28,10 +28,13 @@ public static class DesktopShortcutsDatabase
     /// Adds a desktop shortcut to the deletable desktop shortcuts database
     /// </summary>
     /// <param name="shortcutPath">The path of the shortcut to delete</param>
-    /// <param name="deletable">Whether or not to mark this entry as deletable in the database. Defaults to true</param>
-    public static void AddToDatabase(string shortcutPath, bool deletable = true)
+    /// <param name="shortcutStatus">The status to set</param>
+    public static void AddToDatabase(string shortcutPath, Status shortcutStatus)
     {
-        Settings.SetDictionaryItem("DeletableDesktopShortcuts", shortcutPath, deletable);
+        if (shortcutStatus is Status.Unknown)
+            Settings.RemoveDictionaryKey<string, bool>("DeletableDesktopShortcuts", shortcutPath);
+        else
+            Settings.SetDictionaryItem<string, bool>("DeletableDesktopShortcuts", shortcutPath, shortcutStatus is Status.Delete);
     }
 
     /// <summary>
@@ -51,28 +54,6 @@ public static class DesktopShortcutsDatabase
 
         // Do nothing if the entry was not there
         Logger.Warn($"Attempted to remove from deletable desktop shortcuts a shortcut {{shortcutPath={shortcutPath}}} that was not found there");
-        return false;
-    }
-
-    /// <summary>
-    /// Attempts to reset the configuration of a given shortcut path from the database.
-    /// This will make it so the user is asked about it the next time it is discovered.
-    /// Different from `Remove` as Remove simply marks it as non-deletable, whereas this removes the configuration entirely.
-    /// </summary>
-    /// <param name="shortcutPath">The path of the shortcut to delete</param>
-    /// <returns>True if the shortcut was completely removed, false if it was not there from the beginning</returns>
-    public static bool ResetShortcut(string shortcutPath)
-    {
-        // Remove the entry if present
-        if (Settings.DictionaryContainsKey<string, bool>("DeletableDesktopShortcuts", shortcutPath))
-        {
-            // Remove the entry and propagate changes to disk
-            Settings.RemoveDictionaryKey<string, bool>("DeletableDesktopShortcuts", shortcutPath);
-            return true;
-        }
-
-        // Do nothing if the entry was not there
-        Logger.Warn($"Attempted to reset a deletable desktop shortcut {{shortcutPath={shortcutPath}}} that was not found there");
         return false;
     }
 
@@ -103,7 +84,7 @@ public static class DesktopShortcutsDatabase
     /// until a choice is given to the user and they explicitly request that it be deleted.
     /// </summary>
     /// <param name="shortcutPath">The path of the shortcut to be deleted</param>
-    /// <returns>True if the package is ignored, false otherwhise</returns>
+    /// <returns>The status of a shortcut</returns>
     public static Status GetStatus(string shortcutPath)
     {
         // Check if the package is ignored
@@ -149,78 +130,46 @@ public static class DesktopShortcutsDatabase
         return UnknownShortcuts;
     }
 
-    /// <summary>
-    /// Will attempt to remove new desktop shortcuts, if applicable.
-    /// </summary>
-    /// <param name="PreviousShortCutList">The shortcuts that already existed</param>
-    public static void TryRemoveNewShortcuts(IReadOnlyList<string> PreviousShortCutList, bool AllowAutoDelete = true)
-    {
-        HashSet<string> ShortcutSet = [.. PreviousShortCutList];
-        List<string> CurrentShortcutList = GetShortcuts();
-        foreach (string shortcut in CurrentShortcutList)
-        {
-            Logger.Debug("Shortcut found: " + shortcut);
-            if (ShortcutSet.Contains(shortcut) && !(AllowAutoDelete && Settings.Get("RemoveAllDesktopShortcuts"))) continue;
-            switch (GetStatus(shortcut))
-            {
-                case Status.Delete:
-                    DeleteFromDisk(shortcut);
-                    break;
-                case Status.Maintain:
-                    Logger.Debug("Refraining from deleting new shortcut " + shortcut + ": user disabled its deletion");
-                    break;
-                case Status.Unknown:
-                    if (AllowAutoDelete && Settings.Get("RemoveAllDesktopShortcuts"))
-                    {
-                        AddToDatabase(shortcut, true);
-                        DeleteFromDisk(shortcut);
-                        RemoveFromUnknownShortcuts(shortcut);
-                    }
-                    else if (!UnknownShortcuts.Contains(shortcut))
-                    {
-                        Logger.Info("Marking the shortcut " + shortcut + " to be asked to be deleted");
-                        UnknownShortcuts.Add(shortcut);
-                    }
-                    break;
-            }
-        }
-    }
 
     /// <summary>
-    /// Will attempt to remove all desktop shortcuts, deleting them automatically if the user has that setting enabled, otherwise asking the user.
-    /// If the setting is not enabled and a previous shortcut list is passed, it will pass that on to TryRemoveNewShortcuts and ask about those shortcuts.
+    /// Will handle the removal, if applicable, of any shortcut that is not present on the given PreviousShortCutList.
     /// </summary>
-    /// <param name="PreviousShortCutList">The shortcuts that already existed. If null, the method will try to remove all shortcuts.</param>
-    public static void TryRemoveAllShortcuts(bool AllowAutoDelete = true, IReadOnlyList<string>? PreviousShortCutList = null)
+    /// <param name="PreviousShortCutList">The shortcuts that already existed</param>
+    public static void HandleNewShortcuts(IReadOnlyList<string> PreviousShortCutList)
     {
-        if (AllowAutoDelete && Settings.Get("RemoveAllDesktopShortcuts"))
+        bool DeleteUnknownShortcuts = Settings.Get("DeleteAllNewShortcuts");
+
+        HashSet<string> PreviousShortcuts = [.. PreviousShortCutList];
+        List<string> CurrentShortcuts = GetShortcuts();
+        foreach (string shortcut in CurrentShortcuts)
         {
-            List<string> CurrentShortcutList = GetShortcuts();
-            foreach (string shortcut in CurrentShortcutList)
+            // If this shortcut already existed, skip it.
+            if (PreviousShortcuts.Contains(shortcut))
+                continue;
+
+            var status = GetStatus(shortcut);
+            if (status is Status.Maintain)
             {
-                switch (GetStatus(shortcut))
+                // Don't delete this shortcut, it has been set to be kept
+            }
+            else if (status is Status.Delete)
+            {
+                DeleteFromDisk(shortcut);
+            }
+            else if (status is Status.Unknown && DeleteUnknownShortcuts)
+            {
+                Logger.Warn($"New shortcut {shortcut} will be set for deletion (This shortcut was never seen before)");
+                AddToDatabase(shortcut, Status.Delete);
+                DeleteFromDisk(shortcut);
+            }
+            else /* status is Status.Unknown && !DeleteUnknownShortcuts */
+            {
+                if (!UnknownShortcuts.Contains(shortcut))
                 {
-                    case Status.Delete:
-                        DeleteFromDisk(shortcut);
-                        break;
-                    case Status.Maintain:
-                        Logger.Debug("Refraining from deleting new shortcut " + shortcut + ": user disabled its deletion");
-                        break;
-                    case Status.Unknown:
-                        AddToDatabase(shortcut, true);
-                        DeleteFromDisk(shortcut);
-                        RemoveFromUnknownShortcuts(shortcut);
-                        break;
+                    Logger.Info($"Marking the shortcut {shortcut} to be asked to be deleted");
+                    UnknownShortcuts.Add(shortcut);
                 }
             }
-        }
-        else if (PreviousShortCutList == null)
-        {
-            TryRemoveNewShortcuts([], AllowAutoDelete);
-        }
-        else
-        {
-            TryRemoveNewShortcuts(PreviousShortCutList, AllowAutoDelete);
         }
     }
 }

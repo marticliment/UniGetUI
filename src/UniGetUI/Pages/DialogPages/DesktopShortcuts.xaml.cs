@@ -71,7 +71,7 @@ namespace UniGetUI.Interface
                         throw new InvalidOperationException();
                     }
 
-                    DesktopShortcutsDatabase.ResetShortcut(sh.ShortcutPath);
+                    DesktopShortcutsDatabase.AddToDatabase(sh.ShortcutPath, DesktopShortcutsDatabase.Status.Unknown);
                     desktopShortcuts.Remove(sh);
                 };
             }
@@ -88,18 +88,24 @@ namespace UniGetUI.Interface
 
         private async void ManualScanButton_Click(object sender, RoutedEventArgs e)
         {
-            // Manual scan should ask the user about _all_ shortcuts
             SaveChangesAndClose();
-            DesktopShortcutsDatabase.TryRemoveAllShortcuts(false);
-
-            var shortcuts = DesktopShortcutsDatabase.GetUnknownShortcuts();
-            if (shortcuts.Any())
+            var shortcutsOnDesktop = DesktopShortcutsDatabase.GetShortcuts();
+            List<string> UnknownShortcuts = new();
+            foreach (var shortcut in shortcutsOnDesktop)
             {
-                await DialogHelper.ManageDesktopShortcuts(shortcuts);
+                if(DesktopShortcutsDatabase.GetStatus(shortcut) is DesktopShortcutsDatabase.Status.Unknown)
+                {
+                    UnknownShortcuts.Add(shortcut);
+                }
             }
-            else if (!Settings.Get("RemoveAllDesktopShortcuts"))
+            if (UnknownShortcuts.Any())
             {
-                await DialogHelper.NoDesktopShortcutsFound();
+                await DialogHelper.ManageDesktopShortcuts(UnknownShortcuts);
+            }
+            else
+            {
+                await DialogHelper.ManualScanDidNotFoundNewShortcuts();
+                await DialogHelper.ManageDesktopShortcuts();
             }
         }
 
@@ -144,11 +150,13 @@ namespace UniGetUI.Interface
             Close?.Invoke(this, EventArgs.Empty);
             foreach (var shortcut in desktopShortcuts)
             {
-                DesktopShortcutsDatabase.AddToDatabase(shortcut.ShortcutPath, shortcut.IsChecked);
+                DesktopShortcutsDatabase.AddToDatabase(shortcut.ShortcutPath, shortcut.IsChecked? DesktopShortcutsDatabase.Status.Maintain: DesktopShortcutsDatabase.Status.Delete);
+
                 if (shortcut.IsChecked && File.Exists(shortcut.ShortcutPath))
                 {
                     DesktopShortcutsDatabase.DeleteFromDisk(shortcut.ShortcutPath);
                 }
+
                 DesktopShortcutsDatabase.RemoveFromUnknownShortcuts(shortcut.ShortcutPath);
             }
         }
