@@ -8,8 +8,8 @@ public static class DesktopShortcutsDatabase
     public enum Status
     {
         Maintain, // The user has explicitly requested this shortcut not be deleted
-        Delete, // The user has allowed the shortcut to be deleted
         Unknown, // The user has not said whether they want this shortcut to be deleted
+        Delete, // The user has allowed the shortcut to be deleted
     }
 
     private static readonly List<string> UnknownShortcuts = [];
@@ -130,7 +130,6 @@ public static class DesktopShortcutsDatabase
         return UnknownShortcuts;
     }
 
-
     /// <summary>
     /// Will handle the removal, if applicable, of any shortcut that is not present on the given PreviousShortCutList.
     /// </summary>
@@ -138,15 +137,11 @@ public static class DesktopShortcutsDatabase
     public static void HandleNewShortcuts(IReadOnlyList<string> PreviousShortCutList)
     {
         bool DeleteUnknownShortcuts = Settings.Get("DeleteAllNewShortcuts");
-
         HashSet<string> PreviousShortcuts = [.. PreviousShortCutList];
         List<string> CurrentShortcuts = GetShortcuts();
+
         foreach (string shortcut in CurrentShortcuts)
         {
-            // If this shortcut already existed, skip it.
-            if (PreviousShortcuts.Contains(shortcut))
-                continue;
-
             var status = GetStatus(shortcut);
             if (status is Status.Maintain)
             {
@@ -154,20 +149,32 @@ public static class DesktopShortcutsDatabase
             }
             else if (status is Status.Delete)
             {
+                // If a shortcut is set to be deleted, delete it,
+                // even when it was not created during an UniGetUI operation
                 DeleteFromDisk(shortcut);
             }
-            else if (status is Status.Unknown && DeleteUnknownShortcuts)
+            else if (status is Status.Unknown)
             {
-                Logger.Warn($"New shortcut {shortcut} will be set for deletion (This shortcut was never seen before)");
-                AddToDatabase(shortcut, Status.Delete);
-                DeleteFromDisk(shortcut);
-            }
-            else /* status is Status.Unknown && !DeleteUnknownShortcuts */
-            {
-                if (!UnknownShortcuts.Contains(shortcut))
+                // If a shortcut has not been detected yet, and it
+                // existed before an operation started, then do nothing.
+                if(PreviousShortcuts.Contains(shortcut))
+                    continue;
+
+                if (DeleteUnknownShortcuts)
+                {   // If the shortcut was created during an operation
+                    // and autodelete is enabled, delete that icon
+                    Logger.Warn($"New shortcut {shortcut} will be set for deletion (This shortcut was never seen before)");
+                    AddToDatabase(shortcut, Status.Delete);
+                    DeleteFromDisk(shortcut);
+                }
+                else
                 {
-                    Logger.Info($"Marking the shortcut {shortcut} to be asked to be deleted");
-                    UnknownShortcuts.Add(shortcut);
+                    // Mark the shortcut as unknown and prompt the user.
+                    if (!UnknownShortcuts.Contains(shortcut))
+                    {
+                        Logger.Info($"Marking the shortcut {shortcut} to be asked to be deleted");
+                        UnknownShortcuts.Add(shortcut);
+                    }
                 }
             }
         }
