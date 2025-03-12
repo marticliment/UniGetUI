@@ -190,7 +190,7 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </ScrollViewer>
-            <CheckBox Name="AutoDeleteShortcutsCheckbox" Content="Automatically delete newly detected shortcuts instead of showing this dialog." />
+            <CheckBox Name="AutoDeleteShortcutsCheckbox" Content="When new shortcuts are detected, delete them automatically instead of showing this dialog." />
         </StackPanel>
         <!--  Close Button  -->
         <widgets:DialogCloseButton Margin="0,-63,-24,0" Click="CloseButton_Click" />
