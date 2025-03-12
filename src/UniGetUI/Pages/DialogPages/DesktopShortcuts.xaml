@@ -7,8 +7,7 @@
     xmlns:local="using:UniGetUI.Interface"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    Width="900"
-    MaxWidth="1100"
+    MaxWidth="950"
     mc:Ignorable="d">
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -30,7 +29,7 @@
                     VerticalAlignment="Bottom"
                     Orientation="Vertical"
                     Spacing="4">
-                    <Button Margin="10,0,0,0" HorizontalAlignment="Stretch">
+                    <!--Button Margin="10,0,0,0" HorizontalAlignment="Stretch">
                         <widgets:TranslatedTextBlock Text="Manual scan" />
                         <Button.Flyout>
                             <Flyout
@@ -49,11 +48,11 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock
+                                    <widgets:TranslatedTextBlock
                                         Grid.ColumnSpan="2"
                                         Margin="0,0,0,0"
                                         Text="Existing shortcuts on your desktop will be scanned, and you will need to pick which ones to keep and which ones to remove."
-                                        TextWrapping="WrapWholeWords" />
+                                        WrappingMode="WrapWholeWords" />
                                     <Button
                                         Grid.Row="1"
                                         Grid.Column="1"
@@ -65,7 +64,7 @@
                                 </Grid>
                             </Flyout>
                         </Button.Flyout>
-                    </Button>
+                    </Button-->
                     <Button Margin="10,0,0,0" HorizontalAlignment="Stretch">
                         <widgets:TranslatedTextBlock Text="Reset list" />
                         <Button.Flyout>
@@ -85,11 +84,11 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock
+                                    <widgets:TranslatedTextBlock
                                         Grid.ColumnSpan="2"
                                         Margin="0,0,0,0"
                                         Text="Do you really want to reset this list? This action cannot be reverted."
-                                        TextWrapping="WrapWholeWords" />
+                                        WrappingMode="WrapWholeWords" />
                                     <Button
                                         Grid.Row="1"
                                         Grid.Column="1"
@@ -115,49 +114,75 @@
                 <ListView
                     Name="DeletableDesktopShortcutsList"
                     Height="350"
-                    Padding="2,4,2,4"
+                    Padding="0,4,2,4"
                     HorizontalAlignment="Stretch"
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                     CornerRadius="6"
-                    DoubleTapped="DeletableDesktopShortcutsList_DoubleTapped">
+                    ItemsSource="{x:Bind Shortcuts}">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local:ShortcutEntry">
-                            <Grid ColumnSpacing="4">
+                            <Grid Margin="-4,2,0,2" ColumnSpacing="4">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="2" />
+                                    <ColumnDefinition Width="24" />
+                                    <ColumnDefinition Width="*" MaxWidth="200" />
                                     <ColumnDefinition Width="24" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <CheckBox Grid.Column="0" IsChecked="{x:Bind IsChecked, Mode=TwoWay}" />
+                                <Border
+                                    Grid.Column="0"
+                                    Width="20"
+                                    HorizontalAlignment="Center">
+                                    <CheckBox
+                                        MaxWidth="10"
+                                        Margin="0,8,0,0"
+                                        IsChecked="{x:Bind IsDeletable, Mode=TwoWay}" />
+                                </Border>
+                                <widgets:TranslatedTextBlock
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Top"
+                                    FontSize="10"
+                                    Text="Delete?" />
                                 <FontIcon
-                                    Grid.Column="1"
+                                    Grid.Column="2"
                                     Width="24"
                                     Height="24"
                                     Glyph="&#xECAA;" />
                                 <TextBlock
-                                    Grid.Column="2"
-                                    VerticalAlignment="Center"
-                                    Text="{x:Bind ShortcutPath}" />
-                                <Button
                                     Grid.Column="3"
+                                    VerticalAlignment="Center"
+                                    Text="{x:Bind Name}" />
+                                <FontIcon
+                                    Grid.Column="4"
+                                    Width="24"
+                                    Height="24"
+                                    Glyph="&#xE71B;" />
+                                <TextBlock
+                                    Grid.Column="5"
+                                    VerticalAlignment="Center"
+                                    Text="{x:Bind Path}" />
+                                <Button
+                                    Grid.Column="6"
                                     Width="32"
                                     Height="32"
                                     Padding="0"
                                     Click="{x:Bind OpenShortcutPath}"
-                                    IsEnabled="{x:Bind ShortcutExists}">
+                                    IsEnabled="{x:Bind ExistsOnDisk}">
                                     <widgets:LocalIcon
                                         Width="24"
                                         Height="24"
                                         Icon="launch" />
                                 </Button>
                                 <Button
-                                    Grid.Column="4"
+                                    Grid.Column="7"
                                     Width="32"
                                     Height="32"
                                     Padding="0"
-                                    Click="{x:Bind ResetConfiguration}">
+                                    Click="{x:Bind ResetShortcut}">
                                     <FontIcon FontSize="16" Glyph="&#xE74D;" />
                                 </Button>
                             </Grid>
@@ -165,6 +190,7 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </ScrollViewer>
+            <CheckBox Name="AutoDeleteShortcutsCheckbox" Content="When new shortcuts are detected, delete them automatically instead of showing this dialog." />
         </StackPanel>
         <!--  Close Button  -->
         <widgets:DialogCloseButton Margin="0,-63,-24,0" Click="CloseButton_Click" />

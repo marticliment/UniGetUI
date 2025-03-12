@@ -7,6 +7,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.Pages.DialogPages;
+using UniGetUI.Core.SettingsEngine;
+using UniGetUI.Core.Logging;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -19,81 +21,62 @@ namespace UniGetUI.Interface
     public sealed partial class DesktopShortcutsManager : Page
     {
         public event EventHandler? Close;
-        private readonly ObservableCollection<ShortcutEntry> desktopShortcuts = [];
+        private readonly ObservableCollection<ShortcutEntry> Shortcuts = [];
 
-        private readonly bool NewOnly;
-
-        public DesktopShortcutsManager(List<string>? NewShortcuts)
+        public DesktopShortcutsManager()
         {
-            if (NewShortcuts is not null)
-            {
-                NewOnly = true;
-            }
-
             InitializeComponent();
-            DeletableDesktopShortcutsList.ItemsSource = desktopShortcuts;
-            DeletableDesktopShortcutsList.DoubleTapped += DeletableDesktopShortcutsList_DoubleTapped;
-            UpdateData(NewShortcuts);
+            DeletableDesktopShortcutsList.ItemsSource = Shortcuts;
+
+            AutoDeleteShortcutsCheckbox.IsChecked = Settings.Get("RemoveAllDesktopShortcuts");
+            AutoDeleteShortcutsCheckbox.Checked += HandleAllDesktop_Checked;
+            AutoDeleteShortcutsCheckbox.Unchecked += HandleAllDesktop_Unchecked;
         }
 
-        private void UpdateData(List<string>? NewShortcuts)
+        public void LoadShortcuts(IReadOnlyList<string> NewShortcuts)
         {
-            desktopShortcuts.Clear();
-
-            if (NewShortcuts is not null)
+            Shortcuts.Clear();
+            List<ShortcutEntry> items = new();
+            foreach (var shortcut in NewShortcuts)
             {
-                foreach (var path in NewShortcuts)
+                var status = DesktopShortcutsDatabase.GetStatus(shortcut);
+                var entry = new ShortcutEntry(shortcut, status is DesktopShortcutsDatabase.Status.Delete);
+                entry.OnReset += (_, _) => Shortcuts.Remove(entry);
+                items.Add(entry);
+            }
+
+            foreach (var item in items.OrderBy(s => s.Name))
+            {
+                Shortcuts.Add(item);
+            }
+        }
+
+        /*private async void ManualScanButton_Click(object sender, RoutedEventArgs e)
+        {
+            SaveChanges();
+            var shortcutsOnDesktop = DesktopShortcutsDatabase.GetShortcutsOnDisk();
+            List<string> UnknownShortcuts = new();
+
+            foreach (var shortcut in shortcutsOnDesktop)
+            {
+                if(DesktopShortcutsDatabase.GetStatus(shortcut) is DesktopShortcutsDatabase.Status.Unknown)
                 {
-                    desktopShortcuts.Add(new(path, false));
+                    UnknownShortcuts.Add(shortcut);
                 }
+            }
+            if (UnknownShortcuts.Any())
+            {
+                LoadShortcuts(UnknownShortcuts);
+                ManualScanFlyout.Hide();
             }
             else
             {
-                foreach (var (shortcutPath, shortcutEnabled) in DesktopShortcutsDatabase.GetDatabase())
-                {
-                    var shortcutEntry = new ShortcutEntry(shortcutPath, shortcutEnabled);
-                    desktopShortcuts.Add(shortcutEntry);
-                }
+                ManualScanFlyout.Hide();
+                Close?.Invoke(this, EventArgs.Empty);
+                await DialogHelper.ManualScanDidNotFoundNewShortcuts();
+                _ = DialogHelper.ManageDesktopShortcuts();
             }
-
-            foreach (var shortcut in desktopShortcuts)
-            {
-                shortcut.OnReset += (sender, path) =>
-                {
-                    if (sender is not ShortcutEntry sh)
-                    {
-                        throw new InvalidOperationException();
-                    }
-
-                    DesktopShortcutsDatabase.ResetShortcut(sh.ShortcutPath);
-                    desktopShortcuts.Remove(sh);
-                };
-            }
-        }
-
-        private void DeletableDesktopShortcutsList_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            if (DeletableDesktopShortcutsList.SelectedItem is ShortcutEntry shortcut)
-            {
-                shortcut.ResetConfiguration();
-                desktopShortcuts.Remove(shortcut);
-            }
-        }
-
-        private async void ManualScanButton_Click(object sender, RoutedEventArgs e)
-        {
-            DesktopShortcutsDatabase.TryRemoveNewShortcuts([]);
-            Close?.Invoke(this, EventArgs.Empty);
-            var shortcuts = DesktopShortcutsDatabase.GetUnknownShortcuts();
-            if (shortcuts.Any())
-            {
-                await DialogHelper.ManageDesktopShortcuts(shortcuts);
-            }
-            else
-            {
-                await DialogHelper.NoDesktopShortcutsFound();
-            }
-        }
+        }*/
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
@@ -102,11 +85,10 @@ namespace UniGetUI.Interface
 
         private void YesResetButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (ShortcutEntry shortcut in desktopShortcuts.ToArray())
+            foreach (ShortcutEntry shortcut in Shortcuts.ToArray())
             {
-                shortcut.ResetConfiguration();
+                shortcut.ResetShortcut();
             }
-            desktopShortcuts.Clear();
             ConfirmResetFlyout.Hide();
         }
 
@@ -115,54 +97,72 @@ namespace UniGetUI.Interface
             ConfirmResetFlyout.Hide();
         }
 
-        public void SaveChangesAndClose()
+        private async void HandleAllDesktop_Checked(object sender, RoutedEventArgs e)
         {
-            Close?.Invoke(this, EventArgs.Empty);
-            foreach (var shortcut in desktopShortcuts)
+            SaveChanges();
+            Close?.Invoke(this, new());
+            await DialogHelper.ConfirmSetDeleteAllShortcutsSetting();
+            await DialogHelper.ManageDesktopShortcuts();
+        }
+
+        private void HandleAllDesktop_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Settings.Set("RemoveAllDesktopShortcuts", false);
+        }
+
+        public void SaveChanges()
+        {
+            foreach (var shortcut in Shortcuts)
             {
-                DesktopShortcutsDatabase.AddToDatabase(shortcut.ShortcutPath, shortcut.IsChecked);
-                if (shortcut.IsChecked && File.Exists(shortcut.ShortcutPath))
+                DesktopShortcutsDatabase.AddToDatabase(shortcut.Path, shortcut.IsDeletable? DesktopShortcutsDatabase.Status.Delete: DesktopShortcutsDatabase.Status.Maintain);
+                DesktopShortcutsDatabase.RemoveFromUnknownShortcuts(shortcut.Path);
+
+                if (shortcut.IsDeletable && File.Exists(shortcut.Path))
                 {
-                    DesktopShortcutsDatabase.DeleteFromDisk(shortcut.ShortcutPath);
+                    DesktopShortcutsDatabase.DeleteFromDisk(shortcut.Path);
                 }
-                DesktopShortcutsDatabase.RemoveFromUnknownShortcuts(shortcut.ShortcutPath);
             }
         }
     }
 
     public class ShortcutEntry : INotifyPropertyChanged
     {
-        public event EventHandler<EventArgs>? OnReset;
+        public event EventHandler? OnReset;
 
-        public string ShortcutPath { get; }
-        private bool _enabled;
-        public bool IsChecked
+        public string Path { get; }
+        public string Name { get; }
+        private bool _deletable;
+
+        public bool IsDeletable
         {
-            get =>  _enabled;
+            get =>  _deletable;
             set
             {
-                _enabled = value;
+                _deletable = value;
                 OnPropertyChanged();
             }
         }
-        public bool ShortcutExists
+
+        public bool ExistsOnDisk
         {
-            get => File.Exists(ShortcutPath);
+            get => File.Exists(Path);
         }
 
-        public ShortcutEntry(string shortcutPath, bool enabled)
+        public ShortcutEntry(string path, bool isDeletable)
         {
-            ShortcutPath = shortcutPath;
-            IsChecked = enabled;
+            Path = path;
+            Name = string.Join('.', path.Split("\\")[^1].Split('.')[..^1]);
+            IsDeletable = isDeletable;
         }
 
         public void OpenShortcutPath()
         {
-            Process.Start("explorer.exe", "/select," + $"\"{ShortcutPath}\"");
+            Process.Start("explorer.exe", "/select," + $"\"{Path}\"");
         }
 
-        public void ResetConfiguration()
+        public void ResetShortcut()
         {
+            DesktopShortcutsDatabase.AddToDatabase(this.Path, DesktopShortcutsDatabase.Status.Unknown);
             OnReset?.Invoke(this, EventArgs.Empty);
         }
 
@@ -171,18 +171,6 @@ namespace UniGetUI.Interface
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-            {
-                return false;
-            }
-
-            field = value;
-            OnPropertyChanged(propertyName);
-            return true;
         }
     }
 }

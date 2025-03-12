@@ -283,18 +283,19 @@ public static partial class DialogHelper
         await Window.ShowDialogAsync(dialog);
     }
 
-    public static async Task ManageDesktopShortcuts(List<string>? NewShortucts = null)
+    public static async Task ManageDesktopShortcuts(IReadOnlyList<string>? NewShortucts  = null)
     {
         ContentDialog dialog = DialogFactory.Create(1400, 1000);
 
-        DesktopShortcutsManager DesktopShortcutsPage = new(NewShortucts);
+        DesktopShortcutsManager DesktopShortcutsPage = new();
+        DesktopShortcutsPage.LoadShortcuts(NewShortucts ?? DesktopShortcutsDatabase.GetAllShortcuts());
         DesktopShortcutsPage.Close += (_, _) => dialog.Hide();
 
         dialog.Title = CoreTools.Translate("Automatic desktop shortcut remover");
         dialog.Content = DesktopShortcutsPage;
         dialog.SecondaryButtonText = CoreTools.Translate("Save and close");
         dialog.DefaultButton = ContentDialogButton.None;
-        dialog.SecondaryButtonClick += (_, _) => DesktopShortcutsPage.SaveChangesAndClose();
+        dialog.SecondaryButtonClick += (_, _) => DesktopShortcutsPage.SaveChanges();
 
         await Window.ShowDialogAsync(dialog);
     }
@@ -588,13 +589,29 @@ public static partial class DialogHelper
 
     }
 
-    public static async Task NoDesktopShortcutsFound()
+    public static async Task ConfirmSetDeleteAllShortcutsSetting()
+    {
+        var dialog = DialogFactory.Create();
+        dialog.Title = CoreTools.Translate("Are you sure you want to delete all shortcuts?");
+        dialog.Content = CoreTools.Translate("Any new shorcuts created during an install or an update operation will be deleted automatically, instead of showing a confirmation prompt the first time they are detected.")
+                        + " " + CoreTools.Translate("Any shorcuts created or modified outside of UniGetUI will be ignored. You will be able to add them via the {0} button.", $"{CoreTools.Translate("Manual scan")}")
+                        + " " + CoreTools.Translate("Are you really sure you want to enable this feature?");
+        dialog.PrimaryButtonText = CoreTools.Translate("Yes");
+        dialog.CloseButtonText = CoreTools.Translate("No");
+        dialog.DefaultButton = ContentDialogButton.Close;
+        if (await Window.ShowDialogAsync(dialog) is ContentDialogResult.Primary)
+        {
+            Settings.Set("RemoveAllDesktopShortcuts", true);
+        }
+    }
+
+    /*public static async Task ManualScanDidNotFoundNewShortcuts()
     {
         var dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("Manual scan");
         dialog.Content = CoreTools.Translate("No new shortcuts were found during the scan.");
-        dialog.CloseButtonText = CoreTools.Translate("Close");
+        dialog.PrimaryButtonText = CoreTools.Translate("Ok");
+        dialog.DefaultButton = ContentDialogButton.Primary;
         await Window.ShowDialogAsync(dialog);
-    }
+    }*/
 }
-
