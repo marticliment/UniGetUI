@@ -177,7 +177,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
-                DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcuts();
+                DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcutsOnDisk();
             }
         }
     }
@@ -231,7 +231,7 @@ namespace UniGetUI.PackageEngine.Operations
 
             if (Settings.Get("AskToDeleteNewDesktopShortcuts"))
             {
-                DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcuts();
+                DesktopShortcutsBeforeStart = DesktopShortcutsDatabase.GetShortcutsOnDisk();
             }
         }
     }

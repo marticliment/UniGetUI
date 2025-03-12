@@ -48,11 +48,11 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock
+                                    <widgets:TranslatedTextBlock
                                         Grid.ColumnSpan="2"
                                         Margin="0,0,0,0"
                                         Text="Existing shortcuts on your desktop will be scanned, and you will need to pick which ones to keep and which ones to remove."
-                                        TextWrapping="WrapWholeWords" />
+                                        WrappingMode="WrapWholeWords" />
                                     <Button
                                         Grid.Row="1"
                                         Grid.Column="1"
@@ -84,11 +84,11 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock
+                                    <widgets:TranslatedTextBlock
                                         Grid.ColumnSpan="2"
                                         Margin="0,0,0,0"
                                         Text="Do you really want to reset this list? This action cannot be reverted."
-                                        TextWrapping="WrapWholeWords" />
+                                        WrappingMode="WrapWholeWords" />
                                     <Button
                                         Grid.Row="1"
                                         Grid.Column="1"
@@ -118,18 +118,20 @@
                     HorizontalAlignment="Stretch"
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                     CornerRadius="6"
-                    DoubleTapped="DeletableDesktopShortcutsList_DoubleTapped">
+                    ItemsSource="{x:Bind Shortcuts}">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local:ShortcutEntry">
                             <Grid ColumnSpacing="4">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="50" />
                                     <ColumnDefinition Width="24" />
+                                    <ColumnDefinition Width="*" MaxWidth="200" />
+                                    <ColumnDefinition Width="24" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <CheckBox Grid.Column="0" IsChecked="{x:Bind IsChecked, Mode=TwoWay}" />
+                                <CheckBox Grid.Column="0" IsChecked="{x:Bind IsDeletable, Mode=TwoWay}" />
                                 <FontIcon
                                     Grid.Column="1"
                                     Width="24"
@@ -138,25 +140,34 @@
                                 <TextBlock
                                     Grid.Column="2"
                                     VerticalAlignment="Center"
-                                    Text="{x:Bind ShortcutPath}" />
-                                <Button
+                                    Text="{x:Bind Name}" />
+                                <FontIcon
                                     Grid.Column="3"
+                                    Width="24"
+                                    Height="24"
+                                    Glyph="&#xE71B;" />
+                                <TextBlock
+                                    Grid.Column="4"
+                                    VerticalAlignment="Center"
+                                    Text="{x:Bind Path}" />
+                                <Button
+                                    Grid.Column="5"
                                     Width="32"
                                     Height="32"
                                     Padding="0"
                                     Click="{x:Bind OpenShortcutPath}"
-                                    IsEnabled="{x:Bind ShortcutExists}">
+                                    IsEnabled="{x:Bind ExistsOnDisk}">
                                     <widgets:LocalIcon
                                         Width="24"
                                         Height="24"
                                         Icon="launch" />
                                 </Button>
                                 <Button
-                                    Grid.Column="4"
+                                    Grid.Column="6"
                                     Width="32"
                                     Height="32"
                                     Padding="0"
-                                    Click="{x:Bind ResetConfiguration}">
+                                    Click="{x:Bind ResetShortcut}">
                                     <FontIcon FontSize="16" Glyph="&#xE74D;" />
                                 </Button>
                             </Grid>
@@ -165,10 +176,8 @@
                 </ListView>
             </ScrollViewer>
             <CheckBox
-                Content="Delete all desktop shortcuts after an install or upgrade."
-                IsChecked="{x:Bind DeleteAllShortcuts}"
-                Checked="HandleAllDesktop_Checked"
-                Unchecked="HandleAllDesktop_Unchecked" />
+                Content="Automatically delete newly detected shortcuts instead of showing this dialog."
+                Name="AutoDeleteShortcutsCheckbox"/>
         </StackPanel>
         <!--  Close Button  -->
         <widgets:DialogCloseButton Margin="0,-63,-24,0" Click="CloseButton_Click" />

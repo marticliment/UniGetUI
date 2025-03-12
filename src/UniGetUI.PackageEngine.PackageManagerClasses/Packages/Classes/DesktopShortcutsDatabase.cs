@@ -101,13 +101,30 @@ public static class DesktopShortcutsDatabase
     /// Get a list of shortcuts (.lnk files only) currently on the user's desktop
     /// </summary>
     /// <returns>A list of desktop shortcut paths</returns>
-    public static List<string> GetShortcuts()
+    public static List<string> GetShortcutsOnDisk()
     {
         List<string> shortcuts = [];
         string UserDesktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
         string CommonDesktop = Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory);
         shortcuts.AddRange(Directory.EnumerateFiles(UserDesktop, "*.lnk"));
         shortcuts.AddRange(Directory.EnumerateFiles(CommonDesktop, "*.lnk"));
+        return shortcuts;
+    }
+
+    /// <summary>
+    /// Gets all the shortcuts exist on disk or/and on the database
+    /// </summary>
+    /// <returns></returns>
+    public static List<string> GetAllShortcuts()
+    {
+        var shortcuts = GetShortcutsOnDisk();
+
+        foreach (var item in Settings.GetDictionary<string, bool>("DeletableDesktopShortcuts"))
+        {
+            if (!shortcuts.Contains(item.Key))
+                shortcuts.Add(item.Key);
+        }
+
         return shortcuts;
     }
 
@@ -138,7 +155,7 @@ public static class DesktopShortcutsDatabase
     {
         bool DeleteUnknownShortcuts = Settings.Get("DeleteAllNewShortcuts");
         HashSet<string> PreviousShortcuts = [.. PreviousShortCutList];
-        List<string> CurrentShortcuts = GetShortcuts();
+        List<string> CurrentShortcuts = GetShortcutsOnDisk();
 
         foreach (string shortcut in CurrentShortcuts)
         {
@@ -163,7 +180,7 @@ public static class DesktopShortcutsDatabase
                 if (DeleteUnknownShortcuts)
                 {   // If the shortcut was created during an operation
                     // and autodelete is enabled, delete that icon
-                    Logger.Warn($"New shortcut {shortcut} will be set for deletion (This shortcut was never seen before)");
+                    Logger.Warn($"New shortcut {shortcut} will be set for deletion (this shortcut was never seen before)");
                     AddToDatabase(shortcut, Status.Delete);
                     DeleteFromDisk(shortcut);
                 }
