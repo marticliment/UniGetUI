@@ -3,8 +3,8 @@
         "total": 11803,
         "done": 5273,
         "packages_with_icon": 5273,
-        "packages_with_screenshot": 626,
-        "total_screenshots": 1961
+        "packages_with_screenshot": 627,
+        "total_screenshots": 1963
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -36304,7 +36304,10 @@
         },
         "screentogif": {
             "icon": "https://community.chocolatey.org/content/packageimages/screentogif.2.41.0.png",
-            "images": []
+            "images": [
+                "https://www.screentogif.com/img/Startup.81fa6bd3.png",
+                "https://camo.githubusercontent.com/192d4a63fa660bdeaee93bf4d0832cd2d8b01c7edad9c0f625a652c464a6e4f8/68747470733a2f2f7777772e73637265656e746f6769662e636f6d2f6d656469612f5265636f726465722e706e67"
+            ]
         },
         "screenview": {
             "icon": "",
