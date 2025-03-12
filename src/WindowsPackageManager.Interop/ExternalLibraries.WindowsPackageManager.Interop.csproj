@@ -22,7 +22,7 @@
   <ItemGroup>
     <CsWinRTInputs Include="$(TargetDir)\Microsoft.Management.Deployment.winmd" />
     <Content Include="$(TargetDir)\Microsoft.Management.Deployment.winmd" Link="Microsoft.Management.Deployment.winmd" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="$(TargetDir)\winrtact.dll" Link="winrtact.dll" CopyToOutputDirectory="PreserveNewest" />
+    <!--Content Include="$(TargetDir)\winrtact.dll" Link="winrtact.dll" CopyToOutputDirectory="PreserveNewest" /-->
   </ItemGroup>
 
   <ItemGroup>
@@ -43,14 +43,14 @@
     - Feed the $(TargetDir)\WINMD path to CsWinRT in order to generate the projected classes
     NOTE: Suppressing the warning only is not enough as this will cause CoreClrInitFailure (0x80008089) error.
     -->
-    <PackageReference Include="Microsoft.WindowsPackageManager.ComInterop" Version="1.9.25180">
+    <PackageReference Include="Microsoft.WindowsPackageManager.ComInterop" Version="1.10.340">
       <NoWarn>NU1701</NoWarn>
       <GeneratePathProperty>true</GeneratePathProperty>
       <IncludeAssets>none</IncludeAssets>
       <WindowsAppSdkUndockedRegFreeWinRTInitialize>false</WindowsAppSdkUndockedRegFreeWinRTInitialize>
     </PackageReference>
 
-    <PackageReference Include="Microsoft.WindowsPackageManager.InProcCom" Version="1.9.25180">
+    <PackageReference Include="Microsoft.WindowsPackageManager.InProcCom" Version="1.10.340">
       <NoWarn>NU1701</NoWarn>
       <GeneratePathProperty>true</GeneratePathProperty>
       <IncludeAssets>none</IncludeAssets>
@@ -59,6 +59,6 @@
 
   <Target Name="CopyWinmdToTargetDir" BeforeTargets="BeforeBuild">
     <Copy SourceFiles="$(PkgMicrosoft_WindowsPackageManager_InProcCom)\lib\Microsoft.Management.Deployment.winmd" DestinationFolder="$(TargetDir)" />
-    <Copy SourceFiles="$(PkgMicrosoft_WindowsPackageManager_ComInterop)\runtimes\win10-$(Platform)\native\winrtact.dll" DestinationFolder="$(TargetDir)" />
+    <!--Copy SourceFiles="$(PkgMicrosoft_WindowsPackageManager_ComInterop)\runtimes\win10-$(Platform)\native\winrtact.dll" DestinationFolder="$(TargetDir)" /-->
   </Target>
 </Project>
