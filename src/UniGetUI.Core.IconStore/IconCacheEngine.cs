@@ -1,3 +1,4 @@
+extern alias DrawingCommon;
 using System.Collections.ObjectModel;
 using System.Security.Cryptography;
 using PhotoSauce.MagicScaler;
@@ -238,7 +239,7 @@ namespace UniGetUI.Core.IconEngine
                 int width, height;
 
                 using (var fileStream = new FileStream(cachedIconFile, FileMode.Open, FileAccess.Read, FileShare.Read))
-                using (var image = System.Drawing.Image.FromStream(fileStream, false, false))
+                using (var image = DrawingCommon.System.Drawing.Image.FromStream(fileStream, false, false))
                 {
                     height = image.Height;
                     width = image.Width;

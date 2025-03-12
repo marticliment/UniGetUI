@@ -27,10 +27,10 @@ namespace UniGetUI.Controls.OperationWidgets;
 public class OperationControl: INotifyPropertyChanged
 {
     public AbstractOperation Operation;
-    private bool ErrorTooltipShown;
     public BetterMenu OpMenu;
     public OperationStatus? MenuStateOnLoaded;
     public ObservableCollection<OperationBadge> Badges = [];
+    private int _errorCount = 0;
 
     public OperationControl(AbstractOperation operation)
     {
@@ -123,6 +123,18 @@ public class OperationControl: INotifyPropertyChanged
         // Remove progress notification (if any)
         AppNotificationManager.Default.RemoveByTagAsync(Operation.Metadata.Identifier + "progress");
 
+        if (Operation.Status is OperationStatus.Failed)
+        {
+            _errorCount++;
+            MainApp.Tooltip.ErrorsOccurred++;
+        }
+        else
+        {
+            MainApp.Tooltip.ErrorsOccurred -= _errorCount;
+            _errorCount = 0;
+        }
+        MainApp.Instance.MainWindow.UpdateSystemTrayStatus();
+
         // Generate process output
         List<string> rawOutput =
         [
@@ -207,18 +219,6 @@ public class OperationControl: INotifyPropertyChanged
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(newStatus), newStatus, null);
-        }
-
-        // Handle error tooltip counter
-        if (!ErrorTooltipShown && newStatus is OperationStatus.Failed)
-        {
-            MainApp.Tooltip.ErrorsOccurred++;
-            ErrorTooltipShown = true;
-        }
-        else if (ErrorTooltipShown && newStatus is not OperationStatus.Failed)
-        {
-            MainApp.Tooltip.ErrorsOccurred--;
-            ErrorTooltipShown = false;
         }
     }
 
@@ -321,11 +321,9 @@ public class OperationControl: INotifyPropertyChanged
 
     public void Close()
     {
-        if (ErrorTooltipShown && Operation.Status is OperationStatus.Failed)
-        {
-            MainApp.Tooltip.ErrorsOccurred--;
-            ErrorTooltipShown = false;
-        }
+        MainApp.Tooltip.ErrorsOccurred -= _errorCount;
+        _errorCount = 0;
+        MainApp.Instance.MainWindow.UpdateSystemTrayStatus();
 
         MainApp.Operations._operationList.Remove(this);
         while(AbstractOperation.OperationQueue.Remove(Operation));

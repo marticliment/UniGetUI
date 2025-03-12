@@ -1,3 +1,4 @@
+extern alias DrawingCommon;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -7,7 +8,6 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
@@ -626,7 +626,7 @@ namespace UniGetUI.Interface
                     LastTrayIcon = FullIconPath;
                     if (File.Exists(FullIconPath))
                     {
-                        TrayIcon.SetValue(TaskbarIcon.IconSourceProperty, new BitmapImage { UriSource = new Uri(FullIconPath) });
+                        TrayIcon.Icon = new DrawingCommon.System.Drawing.Icon(FullIconPath, 32, 32);
                     }
                 }
 
