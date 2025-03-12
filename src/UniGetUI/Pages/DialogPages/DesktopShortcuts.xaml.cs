@@ -51,7 +51,7 @@ namespace UniGetUI.Interface
             }
         }
 
-        private async void ManualScanButton_Click(object sender, RoutedEventArgs e)
+        /*private async void ManualScanButton_Click(object sender, RoutedEventArgs e)
         {
             SaveChanges();
             var shortcutsOnDesktop = DesktopShortcutsDatabase.GetShortcutsOnDisk();
@@ -73,11 +73,10 @@ namespace UniGetUI.Interface
             {
                 ManualScanFlyout.Hide();
                 Close?.Invoke(this, EventArgs.Empty);
-                // TODO: Needs no new shorcuts found message
                 await DialogHelper.ManualScanDidNotFoundNewShortcuts();
                 _ = DialogHelper.ManageDesktopShortcuts();
             }
-        }
+        }*/
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {

@@ -29,7 +29,7 @@
                     VerticalAlignment="Bottom"
                     Orientation="Vertical"
                     Spacing="4">
-                    <Button Margin="10,0,0,0" HorizontalAlignment="Stretch">
+                    <!--Button Margin="10,0,0,0" HorizontalAlignment="Stretch">
                         <widgets:TranslatedTextBlock Text="Manual scan" />
                         <Button.Flyout>
                             <Flyout
@@ -64,7 +64,7 @@
                                 </Grid>
                             </Flyout>
                         </Button.Flyout>
-                    </Button>
+                    </Button-->
                     <Button Margin="10,0,0,0" HorizontalAlignment="Stretch">
                         <widgets:TranslatedTextBlock Text="Reset list" />
                         <Button.Flyout>

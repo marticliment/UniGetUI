@@ -605,7 +605,7 @@ public static partial class DialogHelper
         }
     }
 
-    public static async Task ManualScanDidNotFoundNewShortcuts()
+    /*public static async Task ManualScanDidNotFoundNewShortcuts()
     {
         var dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("Manual scan");
@@ -613,5 +613,5 @@ public static partial class DialogHelper
         dialog.PrimaryButtonText = CoreTools.Translate("Ok");
         dialog.DefaultButton = ContentDialogButton.Primary;
         await Window.ShowDialogAsync(dialog);
-    }
+    }*/
 }
