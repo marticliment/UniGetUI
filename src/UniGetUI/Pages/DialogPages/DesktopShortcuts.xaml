@@ -114,16 +114,17 @@
                 <ListView
                     Name="DeletableDesktopShortcutsList"
                     Height="350"
-                    Padding="2,4,2,4"
+                    Padding="0,4,2,4"
                     HorizontalAlignment="Stretch"
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                     CornerRadius="6"
                     ItemsSource="{x:Bind Shortcuts}">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local:ShortcutEntry">
-                            <Grid ColumnSpacing="4">
+                            <Grid Margin="-4,2,0,2" ColumnSpacing="4">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="2" />
                                     <ColumnDefinition Width="24" />
                                     <ColumnDefinition Width="*" MaxWidth="200" />
                                     <ColumnDefinition Width="24" />
@@ -131,27 +132,41 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <CheckBox Grid.Column="0" IsChecked="{x:Bind IsDeletable, Mode=TwoWay}" />
+                                <Border
+                                    Grid.Column="0"
+                                    Width="20"
+                                    HorizontalAlignment="Center">
+                                    <CheckBox
+                                        MaxWidth="10"
+                                        Margin="0,8,0,0"
+                                        IsChecked="{x:Bind IsDeletable, Mode=TwoWay}" />
+                                </Border>
+                                <widgets:TranslatedTextBlock
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Top"
+                                    FontSize="10"
+                                    Text="Delete?" />
                                 <FontIcon
-                                    Grid.Column="1"
+                                    Grid.Column="2"
                                     Width="24"
                                     Height="24"
                                     Glyph="&#xECAA;" />
                                 <TextBlock
-                                    Grid.Column="2"
+                                    Grid.Column="3"
                                     VerticalAlignment="Center"
                                     Text="{x:Bind Name}" />
                                 <FontIcon
-                                    Grid.Column="3"
+                                    Grid.Column="4"
                                     Width="24"
                                     Height="24"
                                     Glyph="&#xE71B;" />
                                 <TextBlock
-                                    Grid.Column="4"
+                                    Grid.Column="5"
                                     VerticalAlignment="Center"
                                     Text="{x:Bind Path}" />
                                 <Button
-                                    Grid.Column="5"
+                                    Grid.Column="6"
                                     Width="32"
                                     Height="32"
                                     Padding="0"
@@ -163,7 +178,7 @@
                                         Icon="launch" />
                                 </Button>
                                 <Button
-                                    Grid.Column="6"
+                                    Grid.Column="7"
                                     Width="32"
                                     Height="32"
                                     Padding="0"
@@ -175,9 +190,7 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </ScrollViewer>
-            <CheckBox
-                Content="Automatically delete newly detected shortcuts instead of showing this dialog."
-                Name="AutoDeleteShortcutsCheckbox"/>
+            <CheckBox Name="AutoDeleteShortcutsCheckbox" Content="Automatically delete newly detected shortcuts instead of showing this dialog." />
         </StackPanel>
         <!--  Close Button  -->
         <widgets:DialogCloseButton Margin="0,-63,-24,0" Click="CloseButton_Click" />
