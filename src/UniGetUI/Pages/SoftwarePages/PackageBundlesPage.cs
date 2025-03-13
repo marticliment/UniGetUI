@@ -175,6 +175,7 @@ namespace UniGetUI.Interface.SoftwarePages
             AppBarButton InstallSkipHash = new();
             AppBarButton RemoveSelected = new();
             AppBarButton SaveBundle = new();
+            AppBarButton AddPackagesToBundle = new();
             AppBarButton PackageDetails = new();
             AppBarButton SharePackage = new();
             AppBarButton HelpButton = new();
@@ -183,12 +184,13 @@ namespace UniGetUI.Interface.SoftwarePages
             ToolBar.PrimaryCommands.Add(OpenBundle);
             ToolBar.PrimaryCommands.Add(SaveBundle);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
+            ToolBar.PrimaryCommands.Add(AddPackagesToBundle);
+            ToolBar.PrimaryCommands.Add(RemoveSelected);
+            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(InstallPackages);
             ToolBar.PrimaryCommands.Add(InstallAsAdmin);
             ToolBar.PrimaryCommands.Add(InstallInteractive);
             ToolBar.PrimaryCommands.Add(InstallSkipHash);
-            ToolBar.PrimaryCommands.Add(new AppBarSeparator());
-            ToolBar.PrimaryCommands.Add(RemoveSelected);
             ToolBar.PrimaryCommands.Add(new AppBarSeparator());
             ToolBar.PrimaryCommands.Add(PackageDetails);
             ToolBar.PrimaryCommands.Add(SharePackage);
@@ -198,17 +200,18 @@ namespace UniGetUI.Interface.SoftwarePages
             Dictionary<AppBarButton, string> Labels = new()
                 { // Entries with a trailing space are collapsed
                   // Their texts will be used as the tooltip
-                    { NewBundle,              CoreTools.Translate("New bundle") },
-                    { InstallPackages,        CoreTools.Translate("Install selection") },
+                    { NewBundle,                CoreTools.Translate("New bundle") },
+                    { InstallPackages,          CoreTools.Translate("Install selection") },
                     { InstallAsAdmin,     " " + CoreTools.Translate("Install as administrator") },
                     { InstallInteractive, " " + CoreTools.Translate("Interactive installation") },
-                    { InstallSkipHash, " " + CoreTools.Translate("Skip integrity checks") },
-                    { OpenBundle,             CoreTools.Translate("Open existing bundle") },
-                    { RemoveSelected,         CoreTools.Translate("Remove selection from bundle") },
-                    { SaveBundle,           CoreTools.Translate("Save bundle as") },
-                    { PackageDetails,         " " + CoreTools.Translate("Package details") },
-                    { SharePackage,           " " + CoreTools.Translate("Share") },
-                    { HelpButton,             CoreTools.Translate("Help") }
+                    { InstallSkipHash,    " " + CoreTools.Translate("Skip integrity checks") },
+                    { OpenBundle,               CoreTools.Translate("Open existing bundle") },
+                    { RemoveSelected,           CoreTools.Translate("Remove selection from bundle") },
+                    { SaveBundle,               CoreTools.Translate("Save bundle as") },
+                    { AddPackagesToBundle,      CoreTools.Translate("Add packages to bundle") },
+                    { PackageDetails,     " " + CoreTools.Translate("Package details") },
+                    { SharePackage,       " " + CoreTools.Translate("Share") },
+                    { HelpButton,               CoreTools.Translate("Help") }
                 };
 
             foreach (AppBarButton toolButton in Labels.Keys)
@@ -228,7 +231,8 @@ namespace UniGetUI.Interface.SoftwarePages
                     { InstallSkipHash,        IconType.Checksum },
                     { OpenBundle,             IconType.OpenFolder },
                     { RemoveSelected,         IconType.Delete},
-                    { SaveBundle,           IconType.SaveAs },
+                    { SaveBundle,             IconType.SaveAs },
+                    { AddPackagesToBundle,    IconType.AddTo },
                     { PackageDetails,         IconType.Info_Round },
                     { SharePackage,           IconType.Share },
                     { HelpButton,             IconType.Help }
@@ -278,6 +282,8 @@ namespace UniGetUI.Interface.SoftwarePages
                 IPackage? package = SelectedItem;
                 if (package is not null) MainApp.Instance.MainWindow.SharePackage(package);
             };
+
+            AddPackagesToBundle.Click += (_, _) => _ = DialogHelper.HowToAddPackagesToBundle();
 
         }
 

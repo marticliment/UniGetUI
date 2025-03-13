@@ -614,4 +614,22 @@ public static partial class DialogHelper
         dialog.DefaultButton = ContentDialogButton.Primary;
         await Window.ShowDialogAsync(dialog);
     }*/
+
+    public static async Task HowToAddPackagesToBundle()
+    {
+        var dialog = DialogFactory.Create();
+        dialog.Title = CoreTools.Translate("How to add packages to a bundle");
+        dialog.Content = CoreTools.Translate("In order to add packages to a bundle, you will need to: ")
+                         + "\n   " + CoreTools.Translate("1. Navigate to the \"{0}\" or \"{1}\" page.", CoreTools.Translate("Discover packages"), CoreTools.Translate("Installed packages"))
+                         + "\n   " + CoreTools.Translate("2. Locate the package(s) you want to add to the bundle, and select their leftmost checkbox.")
+                         + "\n   " + CoreTools.Translate("3. When the packages you want to add to the bundle are selected, find and click the option \"{0}\" on the toolbar.", CoreTools.Translate("Add selection to bundle"))
+                         + "\n   " + CoreTools.Translate("4. Your packages will have been added to the bundle. You can continue adding packages, or export the bundle.");
+        dialog.PrimaryButtonText = CoreTools.Translate("Discover packages");
+        dialog.SecondaryButtonText = CoreTools.Translate("Installed packages");
+        dialog.CloseButtonText = CoreTools.Translate("Close");
+        dialog.DefaultButton = ContentDialogButton.None;
+        var result = await Window.ShowDialogAsync(dialog);
+        if(result is ContentDialogResult.Primary) Window.NavigationPage.NavigateTo(PageType.Discover);
+        else if(result is ContentDialogResult.Secondary) Window.NavigationPage.NavigateTo(PageType.Installed);
+    }
 }
