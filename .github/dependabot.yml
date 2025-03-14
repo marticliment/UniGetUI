@@ -4,7 +4,16 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      actions-deps:
+        patterns:
+          - "*"
   - package-ecosystem: "nuget"
-    directory: "/src"
+    directories:
+      - "src/*"
     schedule:
       interval: "weekly"
+    groups:
+      all-nuget-updates:
+        patterns:
+          - "*"
