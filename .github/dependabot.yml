@@ -10,7 +10,7 @@ updates:
           - "*"
   - package-ecosystem: "nuget"
     directories:
-      - "src/*"
+      - "/src/*"
     schedule:
       interval: "weekly"
     groups:
