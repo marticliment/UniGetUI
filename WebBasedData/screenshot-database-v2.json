@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11803,
-        "done": 5273,
-        "packages_with_icon": 5273,
-        "packages_with_screenshot": 627,
-        "total_screenshots": 1963
+        "total": 11804,
+        "done": 5274,
+        "packages_with_icon": 5274,
+        "packages_with_screenshot": 628,
+        "total_screenshots": 1965
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -49808,6 +49808,13 @@
         "orcaslicer": {
             "icon": "https://cdn.meowcat285.com/unigeticons/OrcaSlicer.png",
             "images": []
+        },
+        "sonicwall-netextender\n": {
+            "icon": "https://paulstsmith.github.io/images/netextender-icon.png",
+            "images": [
+                "https://paulstsmith.github.io/images/netextender-screenshot-connected.png",
+                "https://paulstsmith.github.io/images/netextender-screenShot-disconnected.png"
+            ]
         }
     }
 }
