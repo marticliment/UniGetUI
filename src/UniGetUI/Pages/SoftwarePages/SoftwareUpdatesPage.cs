@@ -1,7 +1,9 @@
+using Windows.Networking.Connectivity;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
+using Microsoft.Windows.System.Power;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
@@ -345,9 +347,31 @@ namespace UniGetUI.Interface.SoftwarePages
                     return;
 
                 bool EnableAutoUpdate = Settings.Get("AutomaticallyUpdatePackages");
-                EnableAutoUpdate |= Environment.GetCommandLineArgs().Contains("--updateapps");
 
                 if (EnableAutoUpdate)
+                {
+                    var connectionCost = NetworkInformation.GetInternetConnectionProfile()?.GetConnectionCost().NetworkCostType;
+                    if (connectionCost is NetworkCostType.Fixed or NetworkCostType.Variable && Settings.Get("DisableAUPOnMeteredConnections"))
+                    {
+                        Logger.Warn("Updates will not be installed automatically because the current internet connection is metered.");
+                        EnableAutoUpdate = false;
+                    }
+
+                    if (PowerManager.EnergySaverStatus is EnergySaverStatus.On && Settings.Get("DisableAUPOnBatterySaver"))
+                    {
+                        Logger.Warn("Updates will not be installed automatically because battery saver is enabled.");
+                        EnableAutoUpdate = false;
+                    }
+                }
+
+                if (Environment.GetCommandLineArgs().Contains("--updateapps"))
+                {
+                    Logger.Warn("Automatic install of updates has been enabled via Command Line (user settings have been overriden)");
+                    EnableAutoUpdate = true;
+                }
+
+
+                if(EnableAutoUpdate)
                     UpdateAll();
 
                 if (Settings.AreUpdatesNotificationsDisabled())
