@@ -3,6 +3,7 @@
     x:Class="UniGetUI.Pages.SettingsPages.GeneralPages.Operations"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -20,6 +21,11 @@
         VerticalContentAlignment="Center">
         <StackPanel Orientation="Vertical">
 
+            <TextBlock
+                Padding="4,32,4,8"
+                Style="{ThemeResource NavigationViewItemHeaderTextStyle}"
+                Text="Update checking" />
+
             <widgets:CheckboxCard
                 x:Name="DisableAutoCheckForUpdates"
                 CornerRadius="8,8,0,0"
@@ -29,19 +35,29 @@
             <widgets:ComboboxCard
                 x:Name="UpdatesCheckIntervalSelector"
                 BorderThickness="1,0"
-                CornerRadius="0"
+                CornerRadius="0,0,8,8"
                 IsEnabled="{x:Bind DisableAutoCheckForUpdates._checkbox.IsOn, Mode=OneWay}"
                 SettingName="UpdatesCheckInterval"
                 Text="Check for updates every:"
                 ValueChanged="ShowRestartBanner" />
 
+            <TextBlock
+                Padding="4,32,4,8"
+                Style="{ThemeResource NavigationViewItemHeaderTextStyle}"
+                Text="Automatic updates" />
+
             <widgets:CheckboxCard
-                CornerRadius="0,0,8,8"
+                x:Name="AutomaticallyUpdatePackages"
+                CornerRadius="8,8,0,0"
                 IsEnabled="{x:Bind DisableAutoCheckForUpdates._checkbox.IsOn, Mode=OneWay}"
                 SettingName="AutomaticallyUpdatePackages"
                 Text="Install available updates automatically" />
 
-            <UserControl Height="16" />
+
+            <TextBlock
+                Padding="4,32,4,8"
+                Style="{ThemeResource NavigationViewItemHeaderTextStyle}"
+                Text="Other" />
 
             <widgets:ComboboxCard
                 x:Name="ParallelOperationCount"

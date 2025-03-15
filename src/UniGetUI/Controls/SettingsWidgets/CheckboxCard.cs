@@ -44,28 +44,17 @@ namespace UniGetUI.Interface.Widgets
         {
             _checkbox = new ToggleSwitch()
             {
-                Margin = new Thickness(-8, 0, 0, 0)
+                Margin = new Thickness(0, 0, 8, 0)
             };
             _textblock = new TextBlock()
             {
                 VerticalAlignment = VerticalAlignment.Center,
-                Margin = new(12, 0, 8, 0),
+                Margin = new Thickness(0, 0, 0, 0),
                 TextWrapping = TextWrapping.Wrap
             };
-
-            _checkbox.OnContent = _checkbox.OffContent = "";
             IS_INVERTED = false;
-
-            ContentAlignment = ContentAlignment.Left;
-            HorizontalAlignment = HorizontalAlignment.Stretch;
-
-            Grid g = new Grid();
-            g.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
-            g.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            g.Children.Add(_checkbox);
-            g.Children.Add(_textblock);
-            Grid.SetColumn(_textblock, 1);
-            Content = g;
+            Content = _checkbox;
+            Header = _textblock;
 
             _checkbox.HorizontalAlignment = HorizontalAlignment.Stretch;
             _checkbox.Toggled += _checkbox_Toggled;
