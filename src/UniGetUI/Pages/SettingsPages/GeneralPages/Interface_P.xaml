@@ -19,6 +19,13 @@
         HorizontalContentAlignment="Center"
         VerticalContentAlignment="Center">
         <StackPanel Orientation="Vertical">
+
+
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Appearance" />
+
             <widgets:ComboboxCard
                 x:Name="ThemeSelector"
                 CornerRadius="8,8,0,0"
@@ -32,16 +39,31 @@
                 SettingName="StartupPage"
                 Text="UniGetUI startup page:" />
 
-            <UserControl Height="16" />
+
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="UniGetUI on the background and system tray" />
 
             <widgets:CheckboxCard
                 x:Name="DisableSystemTray"
-                CornerRadius="8"
+                CornerRadius="8,8,0,0"
                 SettingName="DisableSystemTray"
                 StateChanged="DisableSystemTray_StateChanged"
                 Text="Close UniGetUI to the system tray" />
+            <widgets:ButtonCard
+                BorderThickness="1,0,1,1"
+                ButtonText="Open"
+                Click="EditAutostartSettings_Click"
+                CornerRadius="0,0,8,8"
+                Text="Manage WingetUI autostart behaviour from the Settings app" />
 
-            <UserControl Height="16" />
+
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Package lists" />
+
             <widgets:CheckboxCard
                 x:Name="DisableIconsOnPackageLists"
                 CornerRadius="8,8,0,0"
@@ -65,11 +87,6 @@
                 Text="Select upgradable packages by default" />
 
             <UserControl Height="16" />
-            <widgets:CheckboxCard
-                CornerRadius="8"
-                ForceInversion="True"
-                SettingName="MaintainSuccessfulInstalls"
-                Text="Clear successful operations from the operation list after a 5 second delay" />
         </StackPanel>
     </ScrollViewer>
 </Page>

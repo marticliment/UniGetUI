@@ -124,6 +124,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             Logger.Error(ex);
         }
 
+        parameters.Add(WinGet.GetProxyArgument());
         return parameters;
     }
 

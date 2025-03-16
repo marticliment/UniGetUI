@@ -135,7 +135,7 @@ namespace UniGetUI.Core.Language
             {
                 Uri NewFile = new("https://raw.githubusercontent.com/marticliment/UniGetUI/main/src/UniGetUI.Core.LanguageEngine/Assets/Languages/lang_" + LangKey + ".json");
 
-                HttpClient client = new(CoreData.GenericHttpClientParameters);
+                HttpClient client = new();
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                 string fileContents = await client.GetStringAsync(NewFile);
 

@@ -2,9 +2,10 @@ using System.Diagnostics;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
+using UniGetUI.PackageEngine.Managers.ChocolateyManager;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 
-namespace UniGetUI.PackageEngine.Managers.Chocolatey
+namespace UniGetUI.PackageEngine.Managers.Choco
 {
     public class ChocolateyDetailsHelper : BaseNuGetDetailsHelper
     {
@@ -18,7 +19,7 @@ namespace UniGetUI.PackageEngine.Managers.Chocolatey
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Manager.Status.ExecutablePath,
-                    Arguments = Manager.Properties.ExecutableCallArgs + $" search {package.Id} --exact --all-versions",
+                    Arguments = Manager.Properties.ExecutableCallArgs + $" search {package.Id} --exact --all-versions " + Chocolatey.GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

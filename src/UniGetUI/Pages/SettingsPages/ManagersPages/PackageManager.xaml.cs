@@ -72,6 +72,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             EnableManager.SettingName = Manager.Name;
             EnableManager.Text = CoreTools.Translate("Enable {pm}").Replace("{pm}", Manager.DisplayName);
 
+            SettingsTitle.Text = CoreTools.Translate("{0} settings", Manager.DisplayName);
+            StatusTitle.Text = CoreTools.Translate("{0} status", Manager.DisplayName);
+
             var AlwaysElevateManagerOP = new CheckboxCard_Dict()
             {
                 Text = CoreTools.Translate("Always run {pm} operations with administrator rights").Replace("{pm}", Manager.DisplayName),
@@ -155,7 +158,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                     Text = CoreTools.Translate("Enable an [experimental] improved WinGet troubleshooter"),
                     SettingName = "DisableNewWinGetTroubleshooter",
                     CornerRadius = new CornerRadius(0),
-                    BorderThickness = new Thickness(1,0,1,0),
+                    BorderThickness = new Thickness(1, 0, 1, 0),
                 };
                 WinGet_EnableTroubleshooter_v2.StateChanged += (_, _) =>
                 {
@@ -168,7 +171,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 {
                     Text = CoreTools.Translate("Add updates that fail with a 'no applicable update found' to the ignored updates list"),
                     SettingName = "IgnoreUpdatesNotApplicable",
-                    CornerRadius = new CornerRadius(0,0,8,8)
+                    CornerRadius = new CornerRadius(0, 0, 8, 8)
                 };
                 ExtraControls.Children.Add(WinGet_HideNonApplicableUpdates);
             }
@@ -202,7 +205,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                     Text = CoreTools.AutoTranslated("Uninstall Scoop (and its packages)"),
                     ButtonText = CoreTools.AutoTranslated("Uninstall"),
                     CornerRadius = new CornerRadius(0),
-                    BorderThickness = new Thickness(1,0,1,0)
+                    BorderThickness = new Thickness(1, 0, 1, 0)
                 };
                 Scoop_Uninstall.Click += (_, _) =>
                 {
@@ -217,7 +220,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 {
                     Text = CoreTools.AutoTranslated("Run cleanup and clear cache"),
                     ButtonText = CoreTools.AutoTranslated("Run"),
-                    CornerRadius = new CornerRadius(0, 0, 8, 8),
+                    CornerRadius = new CornerRadius(0),
                 };
                 Scoop_ResetAppCache.Click += (_, _) =>
                 {
@@ -227,7 +230,14 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 };
                 ExtraControls.Children.Add(Scoop_ResetAppCache);
 
-
+                CheckboxCard Scoop_CleanupOnStart = new()
+                {
+                    CornerRadius = new CornerRadius(0, 0, 8, 8),
+                    BorderThickness = new Thickness(1, 0, 1, 1),
+                    SettingName = "EnableScoopCleanup",
+                    Text = "Enable Scoop cleanup on launch",
+                };
+                ExtraControls.Children.Add(Scoop_CleanupOnStart);
             }
             // ----------------------------- CHOCO EXTRA SETTINGS ------------------------------
 
@@ -242,7 +252,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 {
                     Text = CoreTools.AutoTranslated("Use system Chocolatey"),
                     SettingName = "UseSystemChocolatey",
-                    CornerRadius = new CornerRadius(0,0,8,8)
+                    CornerRadius = new CornerRadius(0, 0, 8, 8)
                 };
                 Chocolatey_SystemChoco.StateChanged += (_, _) => RestartRequired?.Invoke(this, new());
                 ExtraControls.Children.Add(Chocolatey_SystemChoco);
@@ -276,8 +286,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 {
                     Text = "Change vcpkg root location",
                     ButtonText = "Select",
-                    CornerRadius = new CornerRadius(0,0,8,8),
-                    BorderThickness = new Thickness(1,0,1,1)
+                    CornerRadius = new CornerRadius(0, 0, 8, 8),
+                    BorderThickness = new Thickness(1, 0, 1, 1)
                 };
                 StackPanel p = new() { Orientation = Orientation.Horizontal, Spacing = 5, };
                 var VcPkgRootLabel = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
@@ -329,7 +339,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             // -------------------------------- DEFAULT EXTRA SETTINGS --------------------------------------
             else
             {
-                DisableNotifsCard.CornerRadius = new CornerRadius(0,0,8,8);
+                DisableNotifsCard.CornerRadius = new CornerRadius(0, 0, 8, 8);
                 DisableNotifsCard.BorderThickness = new Thickness(1, 1, 1, 1);
                 ExtraControls.Children.Add(AlwaysElevateManagerOP);
                 ExtraControls.Children.Add(DisableNotifsCard);

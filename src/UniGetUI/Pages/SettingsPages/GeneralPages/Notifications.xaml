@@ -19,6 +19,12 @@
         HorizontalContentAlignment="Center"
         VerticalContentAlignment="Center">
         <StackPanel Orientation="Vertical">
+
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Notification preferences" />
+
             <widgets:TranslatedTextBlock
                 x:Name="ToolbarText"
                 Margin="0,0,0,8"
@@ -32,7 +38,12 @@
                 SettingName="DisableNotifications"
                 Text="Enable WingetUI notifications" />
 
-            <UserControl Height="16" />
+
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Notification types" />
+
             <widgets:CheckboxCard
                 x:Name="DisableUpdatesNotifications"
                 CornerRadius="8,8,0,0"

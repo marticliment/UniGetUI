@@ -86,6 +86,8 @@ namespace UniGetUI.Interface
             AddToSubtitle(CoreTools.Translate("DEBUG BUILD"));
 #endif
 
+            ApplyProxyVariableToProcess();
+
             var panel = new StackPanel
             {
                 Width = 400,
@@ -158,6 +160,37 @@ namespace UniGetUI.Interface
             {
                 Activate();
             }
+        }
+
+        public static void ApplyProxyVariableToProcess()
+        {
+            var proxyUri = Settings.GetProxyUrl();
+            if (proxyUri is null || !Settings.Get("EnableProxy"))
+            {
+                Environment.SetEnvironmentVariable("HTTP_PROXY", "", EnvironmentVariableTarget.Process);
+                return;
+            }
+
+            string content;
+            if (Settings.Get("EnableProxyAuth") is false)
+            {
+                content = proxyUri.ToString();
+            }
+            else
+            {
+                var creds = Settings.GetProxyCredentials();
+                if (creds is null)
+                {
+                    content = $"--proxy {proxyUri.ToString()}";
+                }
+                else
+                {
+                    content = $"{proxyUri.Scheme}://{Uri.EscapeDataString(creds.UserName)}" +
+                              $":{Uri.EscapeDataString(creds.Password)}" +
+                              $"@{proxyUri.AbsoluteUri.Replace($"{proxyUri.Scheme}://", "")}";
+                }
+            }
+            Environment.SetEnvironmentVariable("HTTP_PROXY", content, EnvironmentVariableTarget.Process);
         }
 
         private void AddToSubtitle(string line)

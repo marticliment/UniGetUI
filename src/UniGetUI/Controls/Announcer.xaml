@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:UniGetUI.Interface.Widgets"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    MaxHeight="200"
     mc:Ignorable="d">
 
     <Grid TabIndex="99">

@@ -87,6 +87,23 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             MicrosoftStoreSource = new(this, "Microsoft Store", IconType.MsStore);
         }
 
+        public static string GetProxyArgument()
+        {
+            if (!Settings.Get("EnableProxy")) return "";
+            var proxyUri = Settings.GetProxyUrl();
+            if (proxyUri is null) return "";
+
+            if (Settings.Get("EnableProxyAuth") is false)
+                return $"--proxy {proxyUri.ToString()}";
+
+            var creds = Settings.GetProxyCredentials();
+            if(creds is null)
+                return $"--proxy {proxyUri.ToString()}";
+
+            return $"--proxy {proxyUri.Scheme}://{Uri.EscapeDataString(creds.UserName)}:{Uri.EscapeDataString(creds.Password)}" +
+                   $"@{proxyUri.AbsoluteUri.Replace($"{proxyUri.Scheme}://", "")}";
+        }
+
         protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
         {
             return WinGetHelper.Instance.FindPackages_UnSafe(query);
@@ -332,7 +349,7 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " source update --disable-interactivity",
+                    Arguments = Properties.ExecutableCallArgs + " source update --disable-interactivity " + WinGet.GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
