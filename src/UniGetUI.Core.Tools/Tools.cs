@@ -25,16 +25,23 @@ namespace UniGetUI.Core.Tools
         {
             get
             {
+                Uri? proxyUri = null;
                 IWebProxy? proxy = null;
-                if (Settings.Get("EnableProxy")) proxy = new WebProxy()
+                ICredentials? creds = null;
+
+                if (Settings.Get("EnableProxy")) proxyUri = Settings.GetProxyUrl();
+                if (Settings.Get("EnableProxyAuth")) creds = Settings.GetProxyCredentials();
+                if (proxyUri is not null) proxy = new WebProxy()
                 {
-                    Address = new Uri(Settings.GetValue("ProxyURL")),
+                    Address = proxyUri,
+                    Credentials = creds
                 };
 
                 return new()
                 {
                     AutomaticDecompression = DecompressionMethods.All,
                     AllowAutoRedirect = true,
+                    UseProxy = (proxy is not null),
                     Proxy = proxy,
                 };
             }
