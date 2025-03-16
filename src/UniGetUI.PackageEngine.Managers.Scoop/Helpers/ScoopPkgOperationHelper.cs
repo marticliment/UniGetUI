@@ -42,7 +42,10 @@ internal sealed class ScoopPkgOperationHelper : PackagePkgOperationHelper
         {
             if (options.SkipHashCheck)
                 parameters.Add("--skip-hash-check");
+        }
 
+        if(operation is OperationType.Install)
+        {
             parameters.AddRange(options.Architecture switch
             {
                 Architecture.X64 => ["--arch", "64bit"],
