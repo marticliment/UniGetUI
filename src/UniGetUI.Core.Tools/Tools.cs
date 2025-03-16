@@ -704,5 +704,24 @@ Crash Traceback:
 
             return $"{number} Bytes";
         }
+
+        public static async void ShowFileOnExplorer(string path)
+        {
+            if (!File.Exists(path)) throw new FileNotFoundException($"The file {path} was not found");
+
+            Process p = new()
+            {
+                StartInfo = new()
+                {
+                    FileName = "explorer.exe",
+                    Arguments = $"/select, \"{path}\"",
+                    UseShellExecute = true,
+                    CreateNoWindow = true,
+                }
+            };
+            p.Start();
+            await p.WaitForExitAsync();
+            p.Dispose();
+        }
     }
 }

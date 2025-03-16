@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Language;
+using UniGetUI.Core.SettingsEngine;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -60,31 +61,16 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         private void ManageTelemetrySettings_Click(object sender, EventArgs e)
             => DialogHelper.ShowTelemetryDialog();
 
-        private void ImportSettings(object sender, EventArgs e)
+        private async void ImportSettings(object sender, EventArgs e)
         {
             ExternalLibraries.Pickers.FileOpenPicker picker = new(MainApp.Instance.MainWindow.GetWindowHandle());
             string file = picker.Show(["*.json"]);
 
             if (file != string.Empty)
             {
-                if (Path.GetDirectoryName(file) == CoreData.UniGetUIDataDirectory)
-                {
-                    Directory.CreateDirectory(Path.Join(CoreData.UniGetUIDataDirectory, "import-temp"));
-                    File.Copy(file, Path.Join(CoreData.UniGetUIDataDirectory, "import-temp", Path.GetFileName(file)));
-                    file = Path.Join(CoreData.UniGetUIDataDirectory, "import-temp", Path.GetFileName(file));
-                }
-                ResetWingetUI(sender, e);
-                Dictionary<string, string> settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(file)) ?? [];
-                foreach (KeyValuePair<string, string> entry in settings)
-                {
-                    File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, entry.Key), entry.Value);
-                }
-
-                if (Directory.Exists(Path.Join(CoreData.UniGetUIDataDirectory, "import-temp")))
-                {
-                    Directory.Delete(Path.Join(CoreData.UniGetUIDataDirectory, "import-temp"), true);
-                }
-
+                DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
+                await Task.Run(() => Settings.ImportFromJSON(file));
+                DialogHelper.HideLoadingDialog();
                 ShowRestartBanner(this, new());
             }
         }
@@ -99,23 +85,9 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
                 if (file != string.Empty)
                 {
                     DialogHelper.ShowLoadingDialog(CoreTools.Translate("Please wait..."));
-
-                    string[] IgnoredSettings = ["OperationHistory", "CurrentSessionToken", "OldWindowGeometry"];
-
-                    Dictionary<string, string> settings = [];
-                    foreach (string path in Directory.EnumerateFiles(CoreData.UniGetUIDataDirectory))
-                    {
-                        if (IgnoredSettings.Contains(Path.GetFileName(path)))
-                        {
-                            continue;
-                        }
-
-                        settings.Add(Path.GetFileName(path), await File.ReadAllTextAsync(path));
-                    }
-
-                    await File.WriteAllTextAsync(file, JsonConvert.SerializeObject(settings));
-
+                    await Task.Run(() => Settings.ExportToJSON(file));
                     DialogHelper.HideLoadingDialog();
+                    CoreTools.ShowFileOnExplorer(file);
                 }
             }
             catch (Exception ex)
@@ -130,10 +102,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         {
             try
             {
-                foreach (string path in Directory.EnumerateFiles(CoreData.UniGetUIDataDirectory))
-                {
-                    File.Delete(path);
-                }
+                Settings.ResetSettings();
             }
             catch (Exception ex)
             {
