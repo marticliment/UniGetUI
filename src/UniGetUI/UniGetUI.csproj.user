@@ -28,7 +28,7 @@
     <Page Update="Pages\SettingsPages\GeneralPages\Backup.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Pages\SettingsPages\GeneralPages\Startup.xaml">
+    <Page Update="Pages\SettingsPages\GeneralPages\Updates.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Pages\SettingsPages\GeneralPages\Notifications.xaml">

@@ -18,28 +18,6 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         {
             this.InitializeComponent();
 
-            Dictionary<string, string> updates_dict = new()
-                {
-                    { CoreTools.Translate("{0} minutes", 10), "600" },
-                    { CoreTools.Translate("{0} minutes", 30), "1800" },
-                    { CoreTools.Translate("1 hour"), "3600" },
-                    { CoreTools.Translate("{0} hours", 2), "7200" },
-                    { CoreTools.Translate("{0} hours", 4), "14400" },
-                    { CoreTools.Translate("{0} hours", 8), "28800" },
-                    { CoreTools.Translate("{0} hours", 12), "43200" },
-                    { CoreTools.Translate("1 day"), "86400" },
-                    { CoreTools.Translate("{0} days", 2), "172800" },
-                    { CoreTools.Translate("{0} days", 3), "259200" },
-                    { CoreTools.Translate("1 week"), "604800" }
-                };
-
-            foreach (KeyValuePair<string, string> entry in updates_dict)
-            {
-                UpdatesCheckIntervalSelector.AddItem(entry.Key, entry.Value, false);
-            }
-
-            UpdatesCheckIntervalSelector.ShowAddedItems();
-
             for (int i = 1; i <= 10; i++)
             {
                 ParallelOperationCount.AddItem(i.ToString(), i.ToString(), false);
@@ -60,7 +38,7 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             => _ = DialogHelper.ManageDesktopShortcuts();
 
         public bool CanGoBack => true;
-        public string ShortTitle => CoreTools.Translate("Install and update preferences");
+        public string ShortTitle => CoreTools.Translate("Package operation preferences");
 
         public event EventHandler? RestartRequired;
         public event EventHandler<Type>? NavigationRequested;
@@ -71,6 +49,16 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             {
                 AbstractOperation.MAX_OPERATIONS = value;
             }
+        }
+
+        private void UpdatesSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationRequested?.Invoke(this, typeof(Updates));
+        }
+
+        private void AdminButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationRequested?.Invoke(this, typeof(Administrator));
         }
     }
 }

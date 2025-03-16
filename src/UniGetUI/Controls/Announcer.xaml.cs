@@ -123,6 +123,7 @@ namespace UniGetUI.Interface.Widgets
                 paragraph.Inlines.Add(new Run { Text = line });
                 paragraph.Inlines.Add(new LineBreak());
             }
+
             _textblock.Blocks.Clear();
             _textblock.Blocks.Add(paragraph);
         }

@@ -21,67 +21,31 @@
         VerticalContentAlignment="Center">
         <StackPanel Orientation="Vertical">
 
-            <TextBlock
-                Padding="4,32,4,8"
-                Style="{ThemeResource NavigationViewItemHeaderTextStyle}"
-                Text="Update checking" />
-
-            <widgets:CheckboxCard
-                x:Name="DisableAutoCheckForUpdates"
-                CornerRadius="8,8,0,0"
-                SettingName="DisableAutoCheckforUpdates"
-                Text="Check for package updates periodically" />
-
-            <widgets:ComboboxCard
-                x:Name="UpdatesCheckIntervalSelector"
-                BorderThickness="1,0"
-                CornerRadius="0,0,8,8"
-                IsEnabled="{x:Bind DisableAutoCheckForUpdates._checkbox.IsOn, Mode=OneWay}"
-                SettingName="UpdatesCheckInterval"
-                Text="Check for updates every:"
-                ValueChanged="ShowRestartBanner" />
-
-            <TextBlock
-                Padding="4,32,4,8"
-                Style="{ThemeResource NavigationViewItemHeaderTextStyle}"
-                Text="Automatic updates" />
-
-            <widgets:CheckboxCard
-                x:Name="AutomaticallyUpdatePackages"
-                CornerRadius="8,8,0,0"
-                IsEnabled="{x:Bind DisableAutoCheckForUpdates._checkbox.IsOn, Mode=OneWay}"
-                SettingName="AutomaticallyUpdatePackages"
-                Text="Install available updates automatically" />
-
-            <widgets:CheckboxCard
-                BorderThickness="1,0"
-                CornerRadius="0"
-                ForceInversion="True"
-                IsEnabled="{x:Bind AutomaticallyUpdatePackages._checkbox.IsOn, Mode=OneWay}"
-                SettingName="DisableAUPOnMeteredConnections"
-                Text="Do not automatically install updates when the network connection is metered" />
-
-            <widgets:CheckboxCard
-                CornerRadius="0,0,8,8"
-                ForceInversion="True"
-                IsEnabled="{x:Bind AutomaticallyUpdatePackages._checkbox.IsOn, Mode=OneWay}"
-                SettingName="DisableAUPOnBatterySaver"
-                Text="Do not automatically install updates when the battery saver is on" />
-
-
-            <TextBlock
-                Padding="4,32,4,8"
-                Style="{ThemeResource NavigationViewItemHeaderTextStyle}"
-                Text="Other" />
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Concurrency and execution" />
 
             <widgets:ComboboxCard
                 x:Name="ParallelOperationCount"
-                CornerRadius="8"
+                CornerRadius="8,8,0,0"
                 SettingName="ParallelOperationCount"
                 Text="Choose how many operations shouls be performed in parallel"
                 ValueChanged="ParallelOperationCount_OnValueChanged" />
 
-            <UserControl Height="16" />
+            <widgets:CheckboxCard
+                BorderThickness="1,0,1,1"
+                CornerRadius="0,0,8,8"
+                ForceInversion="True"
+                SettingName="MaintainSuccessfulInstalls"
+                Text="Clear successful operations from the operation list after a 5 second delay" />
+
+
+
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Automatic desktop shortcut remover" />
 
             <widgets:CheckboxButtonCard
                 ButtonText="Manage shortcuts"
@@ -89,6 +53,43 @@
                 Click="ManageDesktopShortcutsButton_Click"
                 CornerRadius="8"
                 SettingName="AskToDeleteNewDesktopShortcuts" />
+
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Related settings" />
+
+            <controls:SettingsCard
+                Click="UpdatesSettingsButton_Click"
+                CornerRadius="8,8,0,0"
+                IsClickEnabled="True">
+                <controls:SettingsCard.Header>
+                    <widgets:TranslatedTextBlock Text="Package update preferences" />
+                </controls:SettingsCard.Header>
+                <controls:SettingsCard.Description>
+                    <widgets:TranslatedTextBlock Text="Update check frequency, automatically install updates, etc." />
+                </controls:SettingsCard.Description>
+                <controls:SettingsCard.HeaderIcon>
+                    <widgets:LocalIcon Icon="Package" />
+                </controls:SettingsCard.HeaderIcon>
+            </controls:SettingsCard>
+
+            <controls:SettingsCard
+                BorderThickness="1,0,1,1"
+                Click="AdminButton_Click"
+                CornerRadius="0,0,8,8"
+                IsClickEnabled="True">
+                <controls:SettingsCard.Header>
+                    <widgets:TranslatedTextBlock Text="Administrator privileges preferences" />
+                </controls:SettingsCard.Header>
+                <controls:SettingsCard.Description>
+                    <widgets:TranslatedTextBlock Text="Ask once or always for administrator rights, elevate installations by default" />
+                </controls:SettingsCard.Description>
+                <controls:SettingsCard.HeaderIcon>
+                    <widgets:LocalIcon Icon="UAC" />
+                </controls:SettingsCard.HeaderIcon>
+            </controls:SettingsCard>
+
 
         </StackPanel>
     </ScrollViewer>

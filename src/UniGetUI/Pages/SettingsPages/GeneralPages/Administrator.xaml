@@ -24,21 +24,27 @@
         HorizontalContentAlignment="Center"
         VerticalContentAlignment="Center">
         <StackPanel>
-            <widgets:CheckboxCard
-                x:Name="DoCacheAdminRights"
-                BorderThickness="1,1,1,0"
-                CornerRadius="8,8,0,0"
-                SettingName="DoCacheAdminRights"
-                StateChanged="RestartCache"
-                Text="Ask only once for administrator privileges (not recommended)" />
+
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Change how operations request administrator rights" />
 
             <widgets:CheckboxCard
                 x:Name="DoCacheAdminRightsForBatches"
-                CornerRadius="0,0,8,8"
+                BorderThickness="1,1,1,0"
+                CornerRadius="8,8,0,0"
                 IsEnabled="{x:Bind DoCacheAdminRights._checkbox.IsOn, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                 SettingName="DoCacheAdminRightsForBatches"
                 StateChanged="RestartCache"
                 Text="Ask for administrator privileges once for each batch of operations" />
+
+            <widgets:CheckboxCard
+                x:Name="DoCacheAdminRights"
+                CornerRadius="0,0,8,8"
+                SettingName="DoCacheAdminRights"
+                StateChanged="RestartCache"
+                Text="Ask only once for administrator privileges (not recommended)" />
         </StackPanel>
     </ScrollViewer>
 </Page>

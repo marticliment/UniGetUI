@@ -20,6 +20,13 @@
         HorizontalContentAlignment="Center"
         VerticalContentAlignment="Center">
         <StackPanel Orientation="Vertical">
+
+
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Package backup" />
+
             <widgets:CheckboxCard
                 x:Name="EnablePackageBackupCheckBox"
                 CornerRadius="8,8,0,0"
@@ -48,8 +55,11 @@
                 IsEnabled="{x:Bind EnablePackageBackupCheckBox._checkbox.IsOn, Mode=OneWay}"
                 Text="Perform a backup now" />
 
-            <UserControl Height="16" />
 
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Backup location" />
 
             <widgets:ButtonCard
                 x:Name="ChangeBackupDirectory"
@@ -67,9 +77,10 @@
                 </Toolkit:SettingsCard.Description>
             </widgets:ButtonCard>
 
-            <UserControl Height="16" />
-
-
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Advanced options" />
 
             <widgets:TextboxCard
                 x:Name="ChangeBackupFileNameTextBox"

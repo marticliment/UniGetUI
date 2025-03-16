@@ -142,5 +142,10 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             }
             ShowRestartBanner(this, new());
         }
+
+        private void InterfaceSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationRequested?.Invoke(this, typeof(Interface_P));
+        }
     }
 }

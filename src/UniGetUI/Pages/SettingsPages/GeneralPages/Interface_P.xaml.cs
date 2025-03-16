@@ -5,6 +5,7 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Core.SettingsEngine;
+using System.Diagnostics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -89,5 +90,19 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
 
         private void ThemeSelector_ValueChanged(object sender, EventArgs e)
             => MainApp.Instance.MainWindow.ApplyTheme();
+
+        private void EditAutostartSettings_Click(object sender, EventArgs e)
+        {
+            using Process p = new()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "ms-settings:startupapps",
+                    UseShellExecute = true,
+                    CreateNoWindow = true
+                }
+            };
+            p.Start();
+        }
     }
 }

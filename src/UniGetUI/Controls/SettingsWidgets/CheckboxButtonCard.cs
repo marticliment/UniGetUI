@@ -1,6 +1,7 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
@@ -15,7 +16,7 @@ namespace UniGetUI.Interface.Widgets
     {
         public ToggleSwitch _checkbox;
         public TextBlock _textblock;
-        public HyperlinkButton Button;
+        public ButtonBase Button;
         private bool IS_INVERTED;
 
         private string setting_name = "";
@@ -61,13 +62,18 @@ namespace UniGetUI.Interface.Widgets
 
         public CheckboxButtonCard()
         {
-            Button = new HyperlinkButton();
+            Button = new Button()
+            {
+                Margin = new Thickness(0, 8, 0, 0)
+
+            };
             _checkbox = new ToggleSwitch()
             {
                  Margin = new Thickness(0, 0, 8, 0)
             };
             _textblock = new TextBlock()
             {
+                Margin = new Thickness(2,0,0,0),
                 VerticalAlignment = VerticalAlignment.Center,
                 TextWrapping = TextWrapping.Wrap,
                 Style = (Style)Application.Current.Resources["BaseTextBlockStyle"],
