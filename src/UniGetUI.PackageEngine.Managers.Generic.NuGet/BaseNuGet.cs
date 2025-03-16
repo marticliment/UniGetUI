@@ -67,7 +67,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                 Dictionary<string, SearchResult> AlreadyProcessedPackages = [];
 
 
-                using HttpClient client = new(CoreData.GenericHttpClientParameters);
+                using HttpClient client = new(CoreTools.GenericHttpClientParameters);
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
 
                 while (SearchUrl is not null)
@@ -163,7 +163,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
                                 $"&versions=%27{HttpUtility.UrlEncode(packageVers.ToString().Trim('|'))}%27" +
                                 $"&includePrerelease=0&includeAllVersions=0";
 
-                using HttpClient client = new(CoreData.GenericHttpClientParameters);
+                using HttpClient client = new(CoreTools.GenericHttpClientParameters);
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
                 HttpResponseMessage response = client.GetAsync(SearchUrl).GetAwaiter().GetResult();
 

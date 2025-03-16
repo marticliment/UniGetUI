@@ -114,6 +114,9 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Internet.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="SettingsTab\Widgets\SourceManager.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

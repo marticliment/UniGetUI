@@ -94,6 +94,19 @@
                 Icon="uac"
                 Text="Administrator privileges preferences"
                 UnderText="Ask once or always for administrator rights, elevate installations by default" />
+            <UserControl Height="16" />
+
+            <widgets:SettingsPageButton
+                x:Name="InternetSettings"
+                Click="Internet"
+                CornerRadius="8"
+                Icon="Search"
+                Text="Internet connection settings"
+                UnderText="Proxy settings, etc." >
+                <widgets:SettingsPageButton.HeaderIcon>
+                    <FontIcon Glyph="&#xE839;" FontSize="12"/>
+                </widgets:SettingsPageButton.HeaderIcon>
+            </widgets:SettingsPageButton>
 
             <UserControl Height="16" />
 

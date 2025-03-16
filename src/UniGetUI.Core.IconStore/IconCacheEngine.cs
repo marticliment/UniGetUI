@@ -169,7 +169,7 @@ namespace UniGetUI.Core.IconEngine
             DeteteCachedFiles(iconLocation);
 
             // After discarding the cache, regenerate it
-            using HttpClient client = new(CoreData.GenericHttpClientParameters);
+            using HttpClient client = new(CoreTools.GenericHttpClientParameters);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             HttpResponseMessage response = client.GetAsync(icon.Url).GetAwaiter().GetResult();
             if (!response.IsSuccessStatusCode)

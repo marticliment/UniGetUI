@@ -1,8 +1,11 @@
-﻿using System.Diagnostics;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using UniGetUI.Core.Logging;
+using Windows.Networking.Connectivity;
+using Windows.Services.Maps;
 
 namespace UniGetUI.Core.Data
 {
@@ -14,18 +17,6 @@ namespace UniGetUI.Core.Data
         public const int BuildNumber = 84; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
-
-        public static HttpClientHandler GenericHttpClientParameters
-        {
-            get
-            {
-                return new()
-                {
-                    AutomaticDecompression = DecompressionMethods.All,
-                    AllowAutoRedirect = true,
-                };
-            }
-        }
 
         private static bool? IS_PORTABLE;
         private static string? PORTABLE_PATH;

@@ -99,7 +99,7 @@ public static class TelemetryHandler
             request.Headers.Add("activeSettings", SettingsMagicValue.ToString());
             request.Headers.Add("language", LanguageEngine.SelectedLocale);
 
-            HttpClient _httpClient = new(CoreData.GenericHttpClientParameters);
+            HttpClient _httpClient = new(CoreTools.GenericHttpClientParameters);
             HttpResponseMessage response = await _httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
@@ -157,7 +157,7 @@ public static class TelemetryHandler
             if(result is not null) request.Headers.Add("operationResult", result.ToString());
             if(eventSource is not null) request.Headers.Add("eventSource", eventSource);
 
-            HttpClient _httpClient = new(CoreData.GenericHttpClientParameters);
+            HttpClient _httpClient = new(CoreTools.GenericHttpClientParameters);
             HttpResponseMessage response = await _httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
@@ -198,7 +198,7 @@ public static class TelemetryHandler
             request.Headers.Add("clientId", ID);
             request.Headers.Add("bundleType", type.ToString());
 
-            HttpClient _httpClient = new(CoreData.GenericHttpClientParameters);
+            HttpClient _httpClient = new(CoreTools.GenericHttpClientParameters);
             HttpResponseMessage response = await _httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)

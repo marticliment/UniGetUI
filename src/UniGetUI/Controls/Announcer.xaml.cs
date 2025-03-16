@@ -23,7 +23,7 @@ namespace UniGetUI.Interface.Widgets
 
         private readonly DependencyProperty UrlProperty;
 
-        private static readonly HttpClient NetClient = new(CoreData.GenericHttpClientParameters);
+        private static readonly HttpClient NetClient = new(CoreTools.GenericHttpClientParameters);
         public Announcer()
         {
             NetClient.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);

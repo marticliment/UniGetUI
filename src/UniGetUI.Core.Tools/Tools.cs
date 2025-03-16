@@ -21,6 +21,25 @@ namespace UniGetUI.Core.Tools
             AutomaticDecompression = DecompressionMethods.All
         };
 
+        public static HttpClientHandler GenericHttpClientParameters
+        {
+            get
+            {
+                IWebProxy? proxy = null;
+                if (Settings.Get("EnableProxy")) proxy = new WebProxy()
+                {
+                    Address = new Uri(Settings.GetValue("ProxyURL")),
+                };
+
+                return new()
+                {
+                    AutomaticDecompression = DecompressionMethods.All,
+                    AllowAutoRedirect = true,
+                    Proxy = proxy,
+                };
+            }
+        }
+
         private static LanguageEngine LanguageEngine = new();
 
         /// <summary>
