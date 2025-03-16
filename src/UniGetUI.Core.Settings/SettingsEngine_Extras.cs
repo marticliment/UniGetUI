@@ -1,5 +1,4 @@
 using System.Net;
-using System.Security;
 using Windows.Security.Credentials;
 using UniGetUI.Core.Logging;
 
