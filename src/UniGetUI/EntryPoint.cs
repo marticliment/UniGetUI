@@ -34,6 +34,21 @@ namespace UniGetUI
                     int ret = CLIHandler.ExportSettings();
                     Environment.Exit(ret);
                 }
+                else if (args.Contains(CLIHandler.ENABLE_SETTING))
+                {
+                    int ret = CLIHandler.EnableSetting();
+                    Environment.Exit(ret);
+                }
+                else if (args.Contains(CLIHandler.DISABLE_SETTING))
+                {
+                    int ret = CLIHandler.DisableSetting();
+                    Environment.Exit(ret);
+                }
+                else if (args.Contains(CLIHandler.SET_SETTING_VAL))
+                {
+                    int ret = CLIHandler.SetSettingsValue();
+                    Environment.Exit(ret);
+                }
                 else
                 {
                     CoreData.WasDaemon = CoreData.IsDaemon = args.Contains(CLIHandler.DAEMON);
