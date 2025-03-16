@@ -10,7 +10,7 @@ using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.Managers.Chocolatey;
+using UniGetUI.PackageEngine.Managers.Choco;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -63,6 +63,23 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             OperationHelper = new ChocolateyPkgOperationHelper(this);
         }
 
+        public static string GetProxyArgument()
+        {
+            if (!Settings.Get("EnableProxy")) return "";
+            var proxyUri = Settings.GetProxyUrl();
+            if (proxyUri is null) return "";
+
+            if (Settings.Get("EnableProxyAuth") is false)
+                return $"--proxy {proxyUri.ToString()}";
+
+            var creds = Settings.GetProxyCredentials();
+            if(creds is null)
+                return $"--proxy {proxyUri.ToString()}";
+
+            return $"--proxy={proxyUri.ToString()} --proxy-user={Uri.EscapeDataString(creds.UserName)}" +
+                   $" --proxy-password={Uri.EscapeDataString(creds.Password)}";
+        }
+
         protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
             using Process p = new()
@@ -70,7 +87,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " outdated",
+                    Arguments = Properties.ExecutableCallArgs + " outdated " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
@@ -124,7 +141,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list",
+                    Arguments = Properties.ExecutableCallArgs + " list " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
@@ -290,7 +307,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = "--version",
+                    Arguments = "--version " + GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
