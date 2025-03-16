@@ -172,13 +172,13 @@ public static class DesktopShortcutsDatabase
             }
             else if (status is Status.Unknown)
             {
+                // If a shortcut has not been detected yet, and it
+                // existed before an operation started, then do nothing.
+                if(PreviousShortcuts.Contains(shortcut))
+                    continue;
+
                 if (DeleteUnknownShortcuts)
                 {
-                    // If a shortcut has not been detected yet, and it
-                    // existed before an operation started, then do nothing.
-                    if(PreviousShortcuts.Contains(shortcut))
-                        continue;
-
                     // If the shortcut was created during an operation
                     // and autodelete is enabled, delete that icon
                     Logger.Warn($"New shortcut {shortcut} will be set for deletion (this shortcut was never seen before)");
