@@ -9,6 +9,10 @@
 | `--uninstall-unigetui` | Will unregister UniGetUI from the notification panel, and silently quit | 3.1.0+ |
 | `--migrate-wingetui-to-unigetui` | Will migrate WingetUI data folders and shortcuts to UniGetUI (if possible), and silently quit | 3.1.0+ |
 | `X:\Path\To\file` | Provided that the file is a valid bundle, will load the bundle into the Package Bundles page. Compatible bundle files include the following extensions: `.ubundle`, `.json`, `.yaml`, `.xml` | 3.1.2+ |
+| `--help` | Opens this page | 3.1.9+ |
+| `--import-settings settings_file` | Imports UniGetUI settings from json file _settings_file_. The file must exist | 3.1.9+ |
+| `--export-settings settings_file` |  Exports UniGetUI settings to json file _settings_file_. The file will be created or overwritten | 3.1.9+ |
+
 
 <br><br>
 # `unigetui://` deep link

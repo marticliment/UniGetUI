@@ -14,21 +14,29 @@ namespace UniGetUI
             // Having an async main method breaks WebView2
             try
             {
-                CoreData.IsDaemon = args.Contains("--daemon");
-                CoreData.WasDaemon = CoreData.IsDaemon;
-
-                if (args.Contains("--uninstall-unigetui") || args.Contains("--uninstall-wingetui"))
+                if (args.Contains(CLIHandler.HELP))
                 {
-                    // If the app is being uninstalled, run the cleaner and exit
-                    return;
+                    CLIHandler.Help();
+                    Environment.Exit(0);
                 }
-                else if (args.Contains("--migrate-wingetui-to-unigetui"))
+                else if (args.Contains(CLIHandler.MIGRATE_WINGETUI_TO_UNIGETUI))
                 {
-                    WingetUIToUniGetUIMigrator();
+                    int ret = CLIHandler.WingetUIToUniGetUIMigrator();
+                    Environment.Exit(ret);
+                }
+                else if (args.Contains(CLIHandler.IMPORT_SETTINGS))
+                {
+                    int ret = CLIHandler.ImportSettings();
+                    Environment.Exit(ret);
+                }
+                else if (args.Contains(CLIHandler.EXPORT_SETTINGS))
+                {
+                    int ret = CLIHandler.ExportSettings();
+                    Environment.Exit(ret);
                 }
                 else
                 {
-                    // Otherwise, run UniGetUI as normal
+                    CoreData.WasDaemon = CoreData.IsDaemon = args.Contains(CLIHandler.DAEMON);
                     _ = AsyncMain();
                 }
             }
@@ -117,64 +125,6 @@ namespace UniGetUI
             {
                 Logger.Warn(e);
                 return false;
-            }
-        }
-
-        // This method shall be ran as administrator
-        private static void WingetUIToUniGetUIMigrator()
-        {
-            try
-            {
-                string[] BasePaths =
-                [
-                    // User desktop icon
-                    Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
-
-                    // User start menu icon
-                    Environment.GetFolderPath(Environment.SpecialFolder.StartMenu),
-
-                    // Common desktop icon
-                    Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory),
-
-                    // User start menu icon
-                    Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu),
-                ];
-
-                foreach (string path in BasePaths)
-                {
-                    foreach (string old_wingetui_icon in new[] { "WingetUI.lnk", "WingetUI .lnk", "UniGetUI (formerly WingetUI) .lnk", "UniGetUI (formerly WingetUI).lnk" })
-                    {
-                        try
-                        {
-                            string old_file = Path.Join(path, old_wingetui_icon);
-                            string new_file = Path.Join(path, "UniGetUI.lnk");
-                            if (!File.Exists(old_file))
-                            {
-                                continue;
-                            }
-
-                            if (File.Exists(old_file) && File.Exists(new_file))
-                            {
-                                Logger.Info("Deleting shortcut " + old_file + " since new shortcut already exists");
-                                File.Delete(old_file);
-                            }
-                            else if (File.Exists(old_file) && !File.Exists(new_file))
-                            {
-                                Logger.Info("Moving shortcut to " + new_file);
-                                File.Move(old_file, new_file);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Warn($"An error occurred while migrating the shortcut {Path.Join(path, old_wingetui_icon)}");
-                            Logger.Warn(ex);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
             }
         }
     }
