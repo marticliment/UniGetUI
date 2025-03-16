@@ -71,8 +71,16 @@ public partial class Settings
 
     public static void SetProxyCredentials(string username, string password)
     {
-        var vault = new PasswordVault();
-        Settings.SetValue("ProxyUsername", username);
-        vault.Add(new PasswordCredential(PROXY_RES_ID, username, password));
+        try
+        {
+            var vault = new PasswordVault();
+            Settings.SetValue("ProxyUsername", username);
+            vault.Add(new PasswordCredential(PROXY_RES_ID, username, password));
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Cannot save Proxy credentials");
+            Logger.Error(ex);
+        }
     }
 }

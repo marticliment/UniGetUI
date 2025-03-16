@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using UniGetUI.Interface;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,12 +39,30 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
         public void ShowRestartBanner(object sender, EventArgs e)
             => RestartRequired?.Invoke(this, e);
 
-        private void UsernameBox_TextChanged(object sender, RoutedEventArgs e)
+        private async void UsernameBox_TextChanged(object sender, RoutedEventArgs e)
         {
+            SavingUserName.Opacity = 1;
+            string oldusername = UsernameBox.Text;
+            string oldpassword = PasswordBox.Password;
+            await Task.Delay(500);
+            if (oldusername != UsernameBox.Text) return;
+            if (oldpassword != PasswordBox.Password) return;
             Settings.SetProxyCredentials(UsernameBox.Text, PasswordBox.Password);
+            MainWindow.ApplyProxyVariableToProcess();
+            SavingUserName.Opacity = 0;
         }
 
         private void UsernameBox_TextChanged(object sender, TextChangedEventArgs e)
             => UsernameBox_TextChanged(sender, new RoutedEventArgs());
+
+        private void EnableProxy_OnStateChanged(object? sender, EventArgs e)
+        {
+            MainWindow.ApplyProxyVariableToProcess();
+        }
+
+        private void TextboxCard_OnValueChanged(object? sender, EventArgs e)
+        {
+            MainWindow.ApplyProxyVariableToProcess();
+        }
     }
 }

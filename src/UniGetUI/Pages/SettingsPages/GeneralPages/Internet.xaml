@@ -36,6 +36,7 @@
                 x:Name="EnableProxy"
                 CornerRadius="8,8,0,0"
                 SettingName="EnableProxy"
+                StateChanged="EnableProxy_OnStateChanged"
                 Text="Connect the internet using a custom proxy">
                 <widgets:CheckboxCard.Description>
                     <widgets:TranslatedTextBlock Text="Please note that not all package managers may fully support this feature" />
@@ -48,7 +49,8 @@
                 IsEnabled="{x:Bind EnableProxy._checkbox.IsOn, Mode=OneWay}"
                 Placeholder="Enter proxy URL here"
                 SettingName="ProxyURL"
-                Text="Proxy URL" />
+                Text="Proxy URL"
+                ValueChanged="TextboxCard_OnValueChanged" />
 
             <UserControl Height="16" />
 
@@ -57,6 +59,7 @@
                 CornerRadius="8,8,0,0"
                 IsEnabled="{x:Bind EnableProxy._checkbox.IsOn, Mode=OneWay}"
                 SettingName="EnableProxyAuth"
+                StateChanged="EnableProxy_OnStateChanged"
                 Text="Authenticate to the proxy with an user and a password">
                 <widgets:CheckboxCard.Description>
                     <widgets:TranslatedTextBlock Text="Please note that not all package managers may fully support this feature" />
@@ -74,10 +77,17 @@
                     <widgets:TranslatedTextBlock Text="It is not guaranteed that the provided credentials will be stored safely, so you may as well not use the credentials of your bank account" />
                 </controls:SettingsCard.Description>
                 <controls:SettingsCard.Content>
-                    <StackPanel Orientation="Vertical" Spacing="4">
+                    <StackPanel Orientation="Vertical" Spacing="0">
+                        <ProgressBar
+                            x:Name="SavingUserName"
+                            Margin="0,-8,0,0"
+                            IsIndeterminate="True"
+                            Opacity="0"
+                            Visibility="Visible" />
                         <TextBox
                             x:Name="UsernameBox"
                             MinWidth="200"
+                            Margin="0,0,0,4"
                             TextChanged="UsernameBox_TextChanged" />
                         <PasswordBox
                             x:Name="PasswordBox"
