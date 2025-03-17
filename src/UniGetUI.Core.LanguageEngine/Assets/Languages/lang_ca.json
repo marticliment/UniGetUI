@@ -775,7 +775,7 @@
   "WingetUI wouldn't have been possible without the help of the contributors. Thank you all \uD83E\uDD73": "L'UniGetUI no hagués estat possible sense l'ajuda dels contribuïdors. Moltes gràcies a tots \uD83E\uDD73",
   "WingetUI {0} is ready to be installed.": "L'UniGetUI {0} està llest per a ser instal·lat.",
   "Yes": "Sí",
-  "You have currently version {0} installed": "Actualment teniu instal·lat l'UniGetUI versió {0}",
+  "You have currently version {0} installed": "Actualment teniu instal·lada la versió {0}",
   "You have installed WingetUI Version {0}": "Teniu instal·lat l'UniGetUI versió {0}",
   "You may need to install {pm} in order to use it with WingetUI.": "Potser heu d'instal·lar el {pm} si el voleu utilitzar a través l'UniGetUI.",
   "You may restart your computer later if you wish": "Podeu reiniciar el vostre ordinador més tard si així ho preferiu",
