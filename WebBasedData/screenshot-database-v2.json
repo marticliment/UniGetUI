@@ -3,8 +3,8 @@
         "total": 11804,
         "done": 5274,
         "packages_with_icon": 5274,
-        "packages_with_screenshot": 628,
-        "total_screenshots": 1965
+        "packages_with_screenshot": 629,
+        "total_screenshots": 1967
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -20255,7 +20255,7 @@
             "images": []
         },
         "itunes": {
-            "icon": "https://www.apple.com/v/itunes/home/k/images/overview/itunes_logo__dwjkvx332d0m_large.png",
+            "icon": "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSf4d1j8PzARqiSTo3v8UBHIdlOwWsVeK71Y5Z",
             "images": []
         },
         "itunesfusion": {
@@ -21198,7 +21198,10 @@
         },
         "kawaii-player": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSG47vnNlXuI0GKjDFqPw9kgdCraEfzZe1lLOt",
+                "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSFQrW9cVtiaGEPnZIjVfXlJQO9vd1k64UbFDe"
+            ]
         },
         "kawanime": {
             "icon": "https://community.chocolatey.org/content/packageimages/kawanime.0.4.3.png",
