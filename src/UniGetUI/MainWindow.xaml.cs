@@ -195,15 +195,15 @@ namespace UniGetUI.Interface
 
         private void AddToSubtitle(string line)
         {
-            if (AppSubTitle.Text.Length > 0)
-                AppSubTitle.Text += " - ";
-            AppSubTitle.Text += line;
-            Title = "UniGetUI - " + AppSubTitle.Text;
+            if (AppTitleBar.Subtitle.Length > 0)
+                AppTitleBar.Subtitle += " - ";
+            AppTitleBar.Subtitle += line;
+            Title = "UniGetUI - " + AppTitleBar.Subtitle;
         }
 
         private void ClearSubtitle()
         {
-            AppSubTitle.Text = "";
+            AppTitleBar.Subtitle = "";
             Title = "UniGetUI";
         }
 
@@ -682,8 +682,8 @@ namespace UniGetUI.Interface
 
         public void SwitchToInterface()
         {
-            __app_titlebar.Visibility = Visibility.Visible;
-            SetTitleBar(__app_titlebar);
+            AppTitleBar.Visibility = Visibility.Visible;
+            SetTitleBar(AppTitleBar);
 
             NavigationPage = new MainView();
 
@@ -738,11 +738,11 @@ namespace UniGetUI.Interface
             {
                 if (MainApp.Instance.ThemeListener.CurrentTheme == ApplicationTheme.Light)
                 {
-                    AppWindow.TitleBar.ButtonForegroundColor = Colors.Black;
+                    AppWindow.TitleBar.PreferredTheme = TitleBarTheme.Light;
                 }
                 else
                 {
-                    AppWindow.TitleBar.ButtonForegroundColor = Colors.White;
+                    AppWindow.TitleBar.PreferredTheme = TitleBarTheme.Dark;
                 }
             }
             else
