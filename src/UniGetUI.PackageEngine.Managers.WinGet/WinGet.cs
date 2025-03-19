@@ -55,7 +55,9 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
                     KnowsPackageCount = false,
                     KnowsUpdateDate = true,
                     MustBeInstalledAsAdmin = true,
-                }
+                },
+                SupportsProxy = ProxySupport.Partially,
+                SupportsProxyAuth = false
             };
 
             Properties = new ManagerProperties

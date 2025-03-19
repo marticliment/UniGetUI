@@ -31,7 +31,6 @@
                 FontWeight="SemiBold"
                 Text="Proxy settings" />
 
-
             <widgets:CheckboxCard
                 x:Name="EnableProxy"
                 CornerRadius="8,8,0,0"
@@ -66,6 +65,7 @@
                 </widgets:CheckboxCard.Description>
             </widgets:CheckboxCard>
 
+
             <controls:SettingsCard
                 BorderThickness="1,0,1,1"
                 CornerRadius="0,0,8,8"
@@ -96,6 +96,64 @@
                             PasswordRevealMode="Peek" />
                     </StackPanel>
                 </controls:SettingsCard.Content>
+            </controls:SettingsCard>
+
+            <UserControl Height="16" />
+
+            <controls:SettingsCard Name="ProxyCompatTable" CornerRadius="8">
+                <controls:SettingsCard.Header>
+                    <widgets:TranslatedTextBlock Text="Proxy compatibility table" />
+                </controls:SettingsCard.Header>
+                <controls:SettingsCard.Description>
+                    <Grid Margin="0,16,0,0" ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="16" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <widgets:TranslatedTextBlock
+                            Grid.Column="1"
+                            FontWeight="Bold"
+                            Text="Package manager"
+                            WrappingMode="WrapWholeWords" />
+                        <widgets:TranslatedTextBlock
+                            Grid.Column="2"
+                            FontWeight="Bold"
+                            Text="Compatible with proxy"
+                            WrappingMode="WrapWholeWords" />
+                        <widgets:TranslatedTextBlock
+                            Grid.Column="3"
+                            FontWeight="Bold"
+                            Text="Compatible with authentication"
+                            WrappingMode="WrapWholeWords" />
+
+                        <StackPanel
+                            Name="ManagersPanel"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Orientation="Vertical"
+                            Spacing="6" />
+                        <StackPanel
+                            Name="ProxyPanel"
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Orientation="Vertical"
+                            Spacing="6" />
+                        <StackPanel
+                            Name="AuthPanel"
+                            Grid.Row="2"
+                            Grid.Column="3"
+                            Orientation="Vertical"
+                            Spacing="6" />
+                    </Grid>
+                </controls:SettingsCard.Description>
             </controls:SettingsCard>
 
 

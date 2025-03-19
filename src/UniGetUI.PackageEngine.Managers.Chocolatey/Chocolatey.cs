@@ -39,7 +39,9 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 {
                     KnowsPackageCount = false,
                     KnowsUpdateDate = false,
-                }
+                },
+                SupportsProxy = ProxySupport.Yes,
+                SupportsProxyAuth = true
             };
 
             Properties = new ManagerProperties

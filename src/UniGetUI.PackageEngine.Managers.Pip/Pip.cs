@@ -52,6 +52,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 SupportsCustomScopes = true,
                 CanDownloadInstaller = true,
                 SupportsPreRelease = true,
+                SupportsProxy = ProxySupport.Yes,
+                SupportsProxyAuth = true
             };
 
             Properties = new ManagerProperties
