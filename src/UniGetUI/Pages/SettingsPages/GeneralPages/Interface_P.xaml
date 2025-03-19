@@ -43,7 +43,7 @@
             <widgets:TranslatedTextBlock
                 Margin="4,32,4,8"
                 FontWeight="SemiBold"
-                Text="UniGetUI on the background and system tray" />
+                Text="UniGetUI on the background, taskbar and system tray icon" />
 
             <widgets:CheckboxCard
                 x:Name="DisableSystemTray"
@@ -57,6 +57,14 @@
                 Click="EditAutostartSettings_Click"
                 CornerRadius="0,0,8,8"
                 Text="Manage WingetUI autostart behaviour from the Settings app" />
+
+
+            <widgets:CheckboxCard
+                x:Name="DisableStatusBadge"
+                CornerRadius="8,8,0,0"
+                SettingName="DisableStatusBadge"
+                StateChanged="DisableStatusBadge_OnStateChanged"
+                Text="Show a badge on UniGetUI's taskbar icon" />
 
 
             <widgets:TranslatedTextBlock

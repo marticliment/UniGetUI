@@ -18,6 +18,8 @@ using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Interfaces;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Notifications;
+using Microsoft.Windows.BadgeNotifications;
 using H.NotifyIcon.EfficiencyMode;
 using Microsoft.Windows.AppNotifications;
 using UniGetUI.Core.Classes;
@@ -591,6 +593,37 @@ namespace UniGetUI.Interface
         private string LastTrayIcon  = "";
         public void UpdateSystemTrayStatus()
         {
+            try
+            {
+                if (Settings.Get("DisableStatusBadge"))
+                {
+                    BadgeNotificationManager.Current.ClearBadge();
+                }
+                else if (MainApp.Operations.AreThereRunningOperations())
+                {
+                    BadgeNotificationManager.Current.SetBadgeAsGlyph(BadgeNotificationGlyph.Activity);
+                }
+                else if (MainApp.Tooltip.ErrorsOccurred > 0 || MainApp.Tooltip.RestartRequired)
+                {
+                    BadgeNotificationManager.Current.SetBadgeAsGlyph(BadgeNotificationGlyph.Attention);
+                }
+                else if (MainApp.Tooltip.AvailableUpdates > 0)
+                {
+                    uint value = (uint)MainApp.Tooltip.AvailableUpdates;
+                    BadgeNotificationManager.Current.SetBadgeAsCount(value);
+                }
+                else
+                {
+                    BadgeNotificationManager.Current.ClearBadge();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Could not update taskbar badge");
+                Logger.Error(ex);
+            }
+
+
             try
             {
                 string modifier = "_empty";

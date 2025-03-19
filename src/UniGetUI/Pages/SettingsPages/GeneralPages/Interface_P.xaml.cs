@@ -6,6 +6,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Core.SettingsEngine;
 using System.Diagnostics;
+using UniGetUI.Interface;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -104,5 +105,8 @@ namespace UniGetUI.Pages.SettingsPages.GeneralPages
             };
             p.Start();
         }
+
+        private void DisableStatusBadge_OnStateChanged(object? sender, EventArgs e)
+            => MainApp.Instance.MainWindow.UpdateSystemTrayStatus();
     }
 }
