@@ -93,15 +93,12 @@ namespace UniGetUI.PackageEngine.Managers.WingetManager
             var proxyUri = Settings.GetProxyUrl();
             if (proxyUri is null) return "";
 
-            if (Settings.Get("EnableProxyAuth") is false)
-                return $"--proxy {proxyUri.ToString()}";
-
-            var creds = Settings.GetProxyCredentials();
-            if(creds is null)
-                return $"--proxy {proxyUri.ToString()}";
-
-            return $"--proxy {proxyUri.Scheme}://{Uri.EscapeDataString(creds.UserName)}:{Uri.EscapeDataString(creds.Password)}" +
-                   $"@{proxyUri.AbsoluteUri.Replace($"{proxyUri.Scheme}://", "")}";
+            if (Settings.Get("EnableProxyAuth"))
+            {
+                Logger.Warn("Proxy is enabled, but WinGet does not support proxy authentication, so the proxy setting will be ignored");
+                return "";
+            }
+            return $"--proxy {proxyUri.ToString()[..^1]}";
         }
 
         protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
