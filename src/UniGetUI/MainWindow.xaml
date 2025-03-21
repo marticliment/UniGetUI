@@ -26,7 +26,16 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Border
+        <TitleBar
+            x:Name="AppTitleBar"
+            Title="UniGetUI"
+            Grid.Row="0"
+            Visibility="Collapsed">
+            <TitleBar.IconSource>
+                <ImageIconSource ImageSource="/Assets/Images/icon.ico" />
+            </TitleBar.IconSource>
+        </TitleBar>
+        <!--Border
             x:Name="__app_titlebar"
             Grid.Row="0"
             Height="36"
@@ -61,7 +70,7 @@
                     FontSize="12"
                     Opacity="0.8" />
             </StackPanel>
-        </Border>
+        </Border-->
         <StackPanel
             Grid.Row="1"
             Margin="0,-4,0,0"
