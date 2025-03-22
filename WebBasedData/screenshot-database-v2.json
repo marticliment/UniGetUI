@@ -3,8 +3,8 @@
         "total": 11804,
         "done": 5274,
         "packages_with_icon": 5274,
-        "packages_with_screenshot": 629,
-        "total_screenshots": 1967
+        "packages_with_screenshot": 630,
+        "total_screenshots": 1968
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -27220,7 +27220,9 @@
         },
         "netextender": {
             "icon": "https://postimg.cc/qtZcPS5b",
-            "images": []
+            "images": [
+                "https://postimg.cc/8sJsMDBD"
+            ]
         },
         "netfoxdetective": {
             "icon": "",
