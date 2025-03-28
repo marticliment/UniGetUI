@@ -8,7 +8,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: vedantmgoyal9/winget-releaser@f7efa6288d37219838d58cb2d953d35b71ebc5d3
+      - uses: vedantmgoyal9/winget-releaser@3e78d7ff0f525445bca5d6a989d31cdca383372e
         with:
           identifier: MartiCliment.UniGetUI
           installers-regex: 'UniGetUI\.Installer\.exe$'

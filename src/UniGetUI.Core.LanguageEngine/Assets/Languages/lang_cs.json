@@ -157,7 +157,7 @@
   "Custom arguments:": "Vlastní argumenty:",
   "Custom command-line arguments:": "Vlastní parametry příkazové řádky:",
   "Customize WingetUI - for hackers and advanced users only": "Přizpůsobení UniGetUI - pouze pro hackery a pokročilé uživatele",
-  "DEBUG BUILD": null,
+  "DEBUG BUILD": "DEBUG BUILD",
   "DISCLAIMER: WE ARE NOT RESPONSIBLE FOR THE DOWNLOADED PACKAGES. PLEASE MAKE SURE TO INSTALL ONLY TRUSTED SOFTWARE.": "ODMÍTNUTÍ ODPOVĚDNOSTI: ZA STAŽENÉ BALÍČKY NENESEME ODPOVĚDNOST. DBEJTE PROSÍM NA TO, ABYSTE INSTALOVALI POUZE DŮVĚRYHODNÝ SOFTWARE.",
   "Dark": "Tmavý",
   "Decline": "Odmítnout",

@@ -1,10 +1,10 @@
 {
     "package_count": {
-        "total": 11804,
-        "done": 5274,
-        "packages_with_icon": 5274,
-        "packages_with_screenshot": 629,
-        "total_screenshots": 1967
+        "total": 11805,
+        "done": 5275,
+        "packages_with_icon": 5275,
+        "packages_with_screenshot": 631,
+        "total_screenshots": 1972
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -27220,7 +27220,9 @@
         },
         "netextender": {
             "icon": "https://postimg.cc/qtZcPS5b",
-            "images": []
+            "images": [
+                "https://postimg.cc/8sJsMDBD"
+            ]
         },
         "netfoxdetective": {
             "icon": "",
@@ -49817,6 +49819,15 @@
             "images": [
                 "https://paulstsmith.github.io/images/netextender-screenshot-connected.png",
                 "https://paulstsmith.github.io/images/netextender-screenShot-disconnected.png"
+            ]
+        },
+        "ScooterSoftware-BeyondCompare-5": {
+            "icon": "https://www.scootersoftware.com/bc_icon.png",
+            "images": [
+                "https://www.scootersoftware.com/shot_FolderCompare_Dark.png",
+                "https://www.scootersoftware.com/shot_TextCompare_Dark.png",
+                "https://www.scootersoftware.com/shot_FolderMerge_Dark.png",
+                "https://www.scootersoftware.com/shot_TextMerge_Dark.png"
             ]
         }
     }
