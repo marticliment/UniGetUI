@@ -24,6 +24,7 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
+using Windows.Gaming.Input.ForceFeedback;
 
 namespace UniGetUI.Interface
 {
@@ -46,7 +47,6 @@ namespace UniGetUI.Interface
         public int LoadingDialogCount;
 
         public List<ContentDialog> DialogQueue = [];
-        public List<NavButton> NavButtonList = [];
 
         public static readonly ObservableQueue<string> ParametersToProcess = new();
 
@@ -989,6 +989,12 @@ namespace UniGetUI.Interface
             return true;
         }
 
+        private void NavPaneToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(NavigationPage is not null)
+            {
+            }
+        }
     }
 
     public static class NativeHelpers

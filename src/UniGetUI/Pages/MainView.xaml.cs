@@ -16,6 +16,8 @@ using UniGetUI.Pages.DialogPages;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageOperations;
 using UniGetUI.Pages.SettingsPages;
+using UniGetUI.Controls;
+using ABI.Windows.Graphics.Imaging;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -136,7 +138,7 @@ namespace UniGetUI.Interface
             NavigateTo(type);
         }
 
-        private void DiscoverNavButton_Click(object sender, EventArgs e)
+        /*private void DiscoverNavButton_Click(object sender, EventArgs e)
             => NavigateTo(PageType.Discover);
 
         private void InstalledNavButton_Click(object sender, EventArgs e)
@@ -153,7 +155,7 @@ namespace UniGetUI.Interface
             SelectNavButtonForPage(PageType.OwnLog);
             (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
             MoreNavButtonMenu.ShowAt(MoreNavButton, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Standard });
-        }
+        }*/
 
         private Page GetPageForType(PageType type)
             => type switch
@@ -220,13 +222,24 @@ namespace UniGetUI.Interface
 
         private void SelectNavButtonForPage(PageType page)
         {
-            DiscoverNavButton.IsChecked = page is PageType.Discover;
+            NavView.SelectedItem = page switch
+            {
+                PageType.Discover => DiscoverNavBtn,
+                PageType.Updates => UpdatesNavBtn,
+                PageType.Installed => InstalledNavBtn,
+                PageType.Bundles => BundlesNavBtn,
+                PageType.Settings => SettingsNavBtn,
+                PageType.Managers => ManagersNavBtn,
+                _ => MoreNavBtn,
+            };
+
+            /*DiscoverNavButton.IsChecked = page is PageType.Discover;
             UpdatesNavButton.IsChecked = page is PageType.Updates;
             InstalledNavButton.IsChecked = page is PageType.Installed;
             BundlesNavButton.IsChecked = page is PageType.Bundles;
             ManagersNavButton.IsChecked = page is PageType.Managers;
             SettingsNavButton.IsChecked = page is PageType.Settings;
-            MoreNavButton.IsChecked = page is PageType.Help or PageType.ManagerLog or PageType.OperationHistory or PageType.OwnLog;
+            MoreNavButton.IsChecked = page is PageType.Help or PageType.ManagerLog or PageType.OperationHistory or PageType.OwnLog;*/
         }
 
         private async void AboutNavButton_Click(object sender, RoutedEventArgs e)
@@ -388,6 +401,26 @@ namespace UniGetUI.Interface
                 if (operation.Status is OperationStatus.Succeeded)
                     widget.Close();
             }
+        }
+
+        private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        {
+            if(args.SelectedItem is CustomNavViewItem item)
+            {
+                if(item.Tag is PageType.Null)
+                {
+                }
+                else
+                {
+                    NavigateTo(item.Tag);
+                }
+            }
+        }
+
+        private void MoreNavBtn_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
+            MoreNavButtonMenu.ShowAt(sender as FrameworkElement);
         }
     }
 }
