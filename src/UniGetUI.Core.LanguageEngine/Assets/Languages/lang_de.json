@@ -72,7 +72,7 @@
   "Any shorcuts created or modified outside of UniGetUI will be ignored. You will be able to add them via the {0} button.": "Alle Shortcuts, die außerhalb von UniGetUI erstellt oder geändert wurden, werden ignoriert. Sie können sie über die Schaltfläche {0} hinzufügen.",
   "Any unsaved changes will be lost": "Nicht gespeicherte Änderungen gehen verloren",
   "App Name": "Anwendungsname",
-  "Application theme, startup page, package icons, clear successful installs automatically": "Farbschema, Startseite, Paket-Icons, erfolgreiche Installationen automatisch löschen",
+  "Application theme, startup page, package icons, clear successful installs automatically": "Farbschema, Startseite, Paket-Icons, erfolgreiche Installationen automatisch leeren",
   "Application theme:": "Farbschema:",
   "Architecture to install:": "Zu installierende Architektur:",
   "Are these screenshots wron or blurry?": "Sind diese Screenshots falsch oder verschwommen?",
