@@ -1017,6 +1017,18 @@ namespace UniGetUI.Interface
             FilteringPanel.DisplayMode = SplitViewDisplayMode.Inline;
             FilteringPanel.IsPaneOpen = true;
             ToggleFiltersButton.IsChecked = true;
+
+            int finalWidth = 250;
+            try
+            {
+                finalWidth = Settings.GetDictionaryItem<string, int>("SidepanelWidths", PAGE_NAME);
+            }
+            catch
+            {
+                Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, 250);
+            }
+            FilteringPanel.OpenPaneLength = finalWidth;
+
             /*if (PaneIsAnimated) return;
 
             PaneIsAnimated = true;
@@ -1024,15 +1036,7 @@ namespace UniGetUI.Interface
             BodyGrid.ColumnSpacing = 12;
             InAnimation_FiltersPane.Start();
 
-            int final_width = 250;
-            try
-            {
-                final_width = Settings.GetDictionaryItem<string, int>("SidepanelWidths", PAGE_NAME);
-            }
-            catch
-            {
-                Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, 250);
-            }
+            
 
             if (!skipAnimation)
             {

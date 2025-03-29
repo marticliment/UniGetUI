@@ -1218,17 +1218,19 @@
                     Visibility="Visible" />
 
                 <!--  Filters/Packages Splitter  -->
-                <Toolkit:GridSplitter
+                <Toolkit:PropertySizer
                     x:Name="FiltersResizer"
                     Width="10"
                     Margin="0,1,0,1"
-                    Padding="-2,0,-2,0"
+                    Padding="0,0,0,0"
                     HorizontalAlignment="Left"
-                    CornerRadius="2">
-                    <Toolkit:GridSplitter.RenderTransform>
+                    Binding="{x:Bind FilteringPanel.OpenPaneLength, Mode=TwoWay}"
+                    CornerRadius="2"
+                    Visibility="{x:Bind FilteringPanel.IsPaneOpen, Mode=OneWay}">
+                    <Toolkit:PropertySizer.RenderTransform>
                         <TranslateTransform X="-11" />
-                    </Toolkit:GridSplitter.RenderTransform>
-                </Toolkit:GridSplitter>
+                    </Toolkit:PropertySizer.RenderTransform>
+                </Toolkit:PropertySizer>
 
                 <!--  ACTUAL PACKAGE LIST  -->
                 <Grid
