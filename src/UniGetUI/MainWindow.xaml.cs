@@ -13,7 +13,6 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Interfaces;
@@ -24,7 +23,6 @@ using UniGetUI.Core.Classes;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
-using Windows.Gaming.Input.ForceFeedback;
 
 namespace UniGetUI.Interface
 {
@@ -195,15 +193,15 @@ namespace UniGetUI.Interface
 
         private void AddToSubtitle(string line)
         {
-            if (AppSubTitle.Text.Length > 0)
-                AppSubTitle.Text += " - ";
-            AppSubTitle.Text += line;
-            Title = "UniGetUI - " + AppSubTitle.Text;
+            if (TitleBar.Subtitle.Length > 0)
+                TitleBar.Subtitle += " - ";
+            TitleBar.Subtitle += line;
+            Title = "UniGetUI - " + TitleBar.Subtitle;
         }
 
         private void ClearSubtitle()
         {
-            AppSubTitle.Text = "";
+            TitleBar.Subtitle = "";
             Title = "UniGetUI";
         }
 
@@ -682,8 +680,8 @@ namespace UniGetUI.Interface
 
         public void SwitchToInterface()
         {
-            __app_titlebar.Visibility = Visibility.Visible;
-            SetTitleBar(__app_titlebar);
+            TitleBar.Visibility = Visibility.Visible;
+            SetTitleBar(TitleBar);
 
             NavigationPage = new MainView();
 
@@ -994,6 +992,11 @@ namespace UniGetUI.Interface
             if(NavigationPage is not null)
             {
             }
+        }
+
+        private void TitleBar_PaneToggleRequested(WinUIEx.TitleBar sender, object args)
+        {
+            if(NavigationPage is not null) NavigationPage.NavView.IsPaneOpen = !NavigationPage.NavView.IsPaneOpen;
         }
     }
 

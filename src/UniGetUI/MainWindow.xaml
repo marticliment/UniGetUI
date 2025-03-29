@@ -8,6 +8,7 @@
     xmlns:local="using:UniGetUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    xmlns:winex="using:WinUIEx"
     Title="UniGetUI"
     mc:Ignorable="d">
 
@@ -26,54 +27,21 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Border
-            x:Name="__app_titlebar"
+
+        <winex:TitleBar
+            Name="TitleBar"
+            Title="UniGetUI"
             Grid.Row="0"
-            Height="36"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
+            IsPaneToggleButtonVisible="True"
+            PaneToggleRequested="TitleBar_PaneToggleRequested"
             Visibility="Collapsed">
-            <StackPanel
-                Margin="0,0,12,0"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Top" 
-                Orientation="Horizontal" Height="40"
-                Spacing="10">
-                <Button
-                    x:Name="NavPaneToggleButton"
-                    Margin="4" Width="40"
-                    CornerRadius="4" BorderThickness="0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Stretch" Background="Transparent"
-                    Click="NavPaneToggleButton_Click">
-                    <FontIcon Glyph="&#xE700;" FontSize="15" />
-                </Button>
-                <Image
-                    Width="16"
-                    Height="16"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Stretch">
-                    <Image.Source>
-                        <BitmapImage DecodePixelHeight="16" UriSource="ms-appx:///Assets/Images/icon.png" />
-                    </Image.Source>
-                </Image>
-                <TextBlock
-                    x:Name="AppTitle"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontSize="12"
-                    Text="UniGetUI" />
-                <TextBlock
-                    x:Name="AppSubTitle"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    FontSize="12"
-                    Opacity="0.8" />
-            </StackPanel>
-        </Border>
+            <winex:TitleBar.IconSource>
+                <ImageIconSource ImageSource="ms-appx:///Assets/Images/icon.png" />
+            </winex:TitleBar.IconSource>
+        </winex:TitleBar>
         <StackPanel
             Grid.Row="1"
-            Margin="0,-4,0,0"
+            Margin="0,0,0,0"
             Padding="0"
             Spacing="0">
             <InfoBar

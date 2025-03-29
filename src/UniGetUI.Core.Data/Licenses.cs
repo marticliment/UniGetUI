@@ -13,6 +13,7 @@ namespace UniGetUI.Core.Data
             {"NancyFx",                 "MIT"},
             {"PhotoSauce.MagicScaler",  "MIT"},
             {"YamlDotNet",              "MIT"},
+            {"WinUIEx",                 "MIT"},
             {"InnoDependencyInstaller", "CPOL 1.02" },
 
             // Package managers and related
@@ -47,6 +48,7 @@ namespace UniGetUI.Core.Data
             {"NancyFx",                 new Uri("https://github.com/NancyFx/Nancy/blob/master/license.txt")},
             {"PhotoSauce.MagicScaler",  new Uri("https://github.com/saucecontrol/PhotoSauce/blob/master/license")},
             {"YamlDotNet",              new Uri("https://github.com/aaubry/YamlDotNet/blob/master/LICENSE.txt") },
+            {"WinUIEx",                 new Uri("https://github.com/dotMorten/WinUIEx/blob/main/LICENSE") },
             {"InnoDependencyInstaller", new Uri("https://github.com/DomGries/InnoDependencyInstaller/blob/master/LICENSE.md") },
 
             // Package managers and related
@@ -81,6 +83,7 @@ namespace UniGetUI.Core.Data
             {"NancyFx",                 new Uri("https://github.com/NancyFx/Nancy/")},
             {"PhotoSauce.MagicScaler",  new Uri("https://github.com/saucecontrol/PhotoSauce/")},
             {"YamlDotNet",              new Uri("https://github.com/aaubry/YamlDotNet/") },
+            {"WinUIEx",                 new Uri("https://github.com/dotMorten/WinUIEx/") },
             {"InnoDependencyInstaller", new Uri("https://github.com/DomGries/InnoDependencyInstaller")},
 
             // Package managers and related

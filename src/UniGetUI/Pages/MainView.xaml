@@ -12,6 +12,7 @@
     xmlns:operations="using:UniGetUI.PackageOperations"
     xmlns:pages="using:UniGetUI.Interface"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    xmlns:winex="using:WinUIEx"
     MinWidth="200"
     MinHeight="200"
     mc:Ignorable="d">
@@ -232,185 +233,180 @@
 
     </UserControl.Resources>
 
-    <Grid ColumnSpacing="0" RowSpacing="4">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <NavigationView
+        Name="NavView"
+        Grid.Row="2"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        x:FieldModifier="public"
+        CompactModeThresholdWidth="400"
+        ExpandedModeThresholdWidth="1000"
+        IsBackButtonVisible="Collapsed"
+        IsPaneToggleButtonVisible="False"
+        IsSettingsVisible="False"
+        SelectionChanged="NavigationView_SelectionChanged">
+        <NavigationView.Resources>
+            <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+            <Thickness x:Key="NavigationViewContentGridBorderThickness">0,0,0,0</Thickness>
+        </NavigationView.Resources>
 
+        <NavigationView.MenuItems>
+            <controls1:CustomNavViewItem
+                x:Name="DiscoverNavBtn"
+                Content="Discover Packages"
+                GlyphIcon="&#xF6FA;"
+                Tag="Discover" />
+            <controls1:CustomNavViewItem
+                x:Name="UpdatesNavBtn"
+                GlyphIcon="&#xE895;"
+                Tag="Updates">
+                <Grid>
+                    <widgets:TranslatedTextBlock Text="Software Updates" />
+                    <InfoBadge
+                        Name="UpdatesBadge"
+                        Height="16"
+                        Margin="0,1.5,1.5,0"
+                        Padding="0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        x:FieldModifier="public"
+                        Visibility="Collapsed"
+                        Value="0" />
+                </Grid>
+            </controls1:CustomNavViewItem>
+            <controls1:CustomNavViewItem
+                x:Name="InstalledNavBtn"
+                Content="Installed Packages"
+                GlyphIcon="&#xE977;"
+                Tag="Installed" />
+            <controls1:CustomNavViewItem
+                x:Name="BundlesNavBtn"
+                GlyphIcon="&#xF133;"
+                Tag="Bundles">
+                <Grid>
+                    <widgets:TranslatedTextBlock Text="Package Bundles" />
+                    <Border
+                        Name="BundlesBadge"
+                        Width="16"
+                        Height="16"
+                        Margin="0,1.5,1.5,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        x:FieldModifier="public"
+                        Background="{ThemeResource SystemFillColorCautionBrush}"
+                        CornerRadius="8"
+                        Visibility="Collapsed">
+                        <TextBlock
+                            Margin="0,0,0,-5"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="24"
+                            Foreground="{ThemeResource SystemFillColorCautionBackground}">
+                            *
+                        </TextBlock>
+                    </Border>
+                </Grid>
+            </controls1:CustomNavViewItem>
+        </NavigationView.MenuItems>
+        <NavigationView.FooterMenuItems>
+            <controls1:CustomNavViewItem
+                x:Name="SettingsNavBtn"
+                Content="Settings"
+                Icon="Setting"
+                Tag="Settings" />
+            <controls1:CustomNavViewItem
+                x:Name="ManagersNavBtn"
+                Content="Package managers"
+                GlyphIcon="&#xE835;"
+                Tag="Managers" />
+            <controls1:CustomNavViewItem
+                x:Name="MoreNavBtn"
+                Content="More"
+                Icon="More"
+                Tag="Null"
+                Tapped="MoreNavBtn_Tapped" />
+        </NavigationView.FooterMenuItems>
 
-        <NavigationView
-            Name="NavView"
+        <Grid
+            Name="ContentGrid"
+            Grid.Row="0"
             Grid.Column="1"
-            CompactModeThresholdWidth="400"
-            ExpandedModeThresholdWidth="1000"
-            IsSettingsVisible="False"
-            SelectionChanged="NavigationView_SelectionChanged">
-            <NavigationView.Resources>
-                <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
-                <Thickness x:Key="NavigationViewContentGridBorderThickness">0,0,0,0</Thickness>
-            </NavigationView.Resources>
-
-            <NavigationView.MenuItems>
-                <controls1:CustomNavViewItem
-                    x:Name="DiscoverNavBtn"
-                    Content="Discover Packages"
-                    GlyphIcon="&#xF6FA;"
-                    Tag="Discover" />
-                <controls1:CustomNavViewItem
-                    x:Name="UpdatesNavBtn"
-                    GlyphIcon="&#xE895;"
-                    Tag="Updates">
-                    <Grid>
-                        <widgets:TranslatedTextBlock Text="Software Updates" />
-                        <InfoBadge
-                            Name="UpdatesBadge"
-                            Height="16"
-                            Margin="0,1.5,1.5,0"
-                            Padding="0"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top"
-                            x:FieldModifier="public"
-                            Visibility="Collapsed"
-                            Value="0" />
-                    </Grid>
-                </controls1:CustomNavViewItem>
-                <controls1:CustomNavViewItem
-                    x:Name="InstalledNavBtn"
-                    Content="Installed Packages"
-                    GlyphIcon="&#xE977;"
-                    Tag="Installed" />
-                <controls1:CustomNavViewItem
-                    x:Name="BundlesNavBtn"
-                    GlyphIcon="&#xF133;"
-                    Tag="Bundles">
-                    <Grid>
-                        <widgets:TranslatedTextBlock Text="Package Bundles" />
-                        <Border
-                            Name="BundlesBadge"
-                            Width="16"
-                            Height="16"
-                            Margin="0,1.5,1.5,0"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top"
-                            x:FieldModifier="public"
-                            Background="{ThemeResource SystemFillColorCautionBrush}"
-                            CornerRadius="8"
-                            Visibility="Collapsed">
-                            <TextBlock
-                                Margin="0,0,0,-5"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="24"
-                                Foreground="{ThemeResource SystemFillColorCautionBackground}">
-                                *
-                            </TextBlock>
-                        </Border>
-                    </Grid>
-                </controls1:CustomNavViewItem>
-            </NavigationView.MenuItems>
-            <NavigationView.FooterMenuItems>
-                <controls1:CustomNavViewItem
-                    x:Name="SettingsNavBtn"
-                    Content="Settings"
-                    Icon="Setting"
-                    Tag="Settings" />
-                <controls1:CustomNavViewItem
-                    x:Name="ManagersNavBtn"
-                    Content="Package managers"
-                    GlyphIcon="&#xE835;"
-                    Tag="Managers" />
-                <controls1:CustomNavViewItem
-                    x:Name="MoreNavBtn"
-                    Content="More"
-                    Icon="More"
-                    Tag="Null"
-                    Tapped="MoreNavBtn_Tapped" />
-            </NavigationView.FooterMenuItems>
-
-            <Grid
-                Name="ContentGrid"
+            Margin="0,0,8,8"
+            RowSpacing="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="16" />
+                <RowDefinition
+                    Height="Auto"
+                    MinHeight="0"
+                    MaxHeight="200" />
+            </Grid.RowDefinitions>
+            <Frame
+                Name="ContentFrame"
                 Grid.Row="0"
-                Grid.Column="1"
-                Margin="0,0,8,8"
-                RowSpacing="0">
+                Grid.Column="0" />
+            
+            <controls:GridSplitter
+                x:Name="OperationSplitter"
+                Grid.Row="1"
+                Grid.Column="0"
+                Height="12"
+                Margin="1,0,1,0"
+                Padding="0,0,0,0"
+                CornerRadius="4"
+                Orientation="Horizontal" />
+            <Grid Grid.Row="1" Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="15" />
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="16" />
-                    <RowDefinition
-                        Height="Auto"
-                        MinHeight="0"
-                        MaxHeight="200" />
-                </Grid.RowDefinitions>
-                <Frame
-                    Name="ContentFrame"
-                    Grid.Row="0"
-                    Grid.Column="0" />
-                <controls:GridSplitter
-                    x:Name="OperationSplitter"
-                    Grid.Row="1"
-                    Grid.Column="0"
+                <HyperlinkButton
+                    Name="ExpandCollapseOpList"
+                    Grid.Column="1"
                     Height="12"
-                    Margin="1,0,1,0"
-                    Padding="0,0,0,0"
+                    Padding="12,0,12,0"
+                    Click="ExpandCollapseOpList_Click"
                     CornerRadius="4"
-                    Orientation="Horizontal" />
-                <Grid Grid.Row="1" Grid.Column="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="15" />
-                    </Grid.ColumnDefinitions>
-                    <HyperlinkButton
-                        Name="ExpandCollapseOpList"
-                        Grid.Column="1"
-                        Height="12"
-                        Padding="12,0,12,0"
-                        Click="ExpandCollapseOpList_Click"
-                        CornerRadius="4"
-                        Foreground="{ThemeResource ScrollBarButtonPointerOverBackgroundThemeBrush}">
-                        <FontIcon FontSize="14" Glyph="&#xE96E;" />
-                    </HyperlinkButton>
-                    <HyperlinkButton
-                        Name="OperationSplitterMenuButton"
-                        Grid.Column="2"
-                        Height="12"
-                        Padding="12,0,12,0"
-                        Click="OperationSplitterMenuButton_Click"
-                        CornerRadius="4"
-                        Foreground="{ThemeResource ScrollBarButtonPointerOverBackgroundThemeBrush}">
-                        <FontIcon FontSize="24" Glyph="&#xE712;" />
-                    </HyperlinkButton>
-                </Grid>
-                <ListView
-                    Name="OperationList"
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    Margin="0,0,0,0"
-                    Padding="0,0,0,0"
-                    x:FieldModifier="public"
-                    ItemTemplate="{StaticResource OperationTemplate}"
-                    SelectionMode="None"
-                    SizeChanged="OperationScrollView_SizeChanged">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Vertical" Spacing="8" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ListView.Resources>
-                        <SolidColorBrush x:Key="ItemContainerPointerOverBackground" Color="Transparent" />
-                        <SolidColorBrush x:Key="ItemContainerPressedBackground" Color="Transparent" />
-                    </ListView.Resources>
-                </ListView>
+                    Foreground="{ThemeResource ScrollBarButtonPointerOverBackgroundThemeBrush}">
+                    <FontIcon FontSize="14" Glyph="&#xE96E;" />
+                </HyperlinkButton>
+                <HyperlinkButton
+                    Name="OperationSplitterMenuButton"
+                    Grid.Column="2"
+                    Height="12"
+                    Padding="12,0,12,0"
+                    Click="OperationSplitterMenuButton_Click"
+                    CornerRadius="4"
+                    Foreground="{ThemeResource ScrollBarButtonPointerOverBackgroundThemeBrush}">
+                    <FontIcon FontSize="24" Glyph="&#xE712;" />
+                </HyperlinkButton>
             </Grid>
+            <ListView
+                Name="OperationList"
+                Grid.Row="2"
+                Grid.Column="0"
+                Margin="0,0,0,0"
+                Padding="0,0,0,0"
+                x:FieldModifier="public"
+                ItemTemplate="{StaticResource OperationTemplate}"
+                SelectionMode="None"
+                SizeChanged="OperationScrollView_SizeChanged">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" Spacing="8" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ListView.Resources>
+                    <SolidColorBrush x:Key="ItemContainerPointerOverBackground" Color="Transparent" />
+                    <SolidColorBrush x:Key="ItemContainerPressedBackground" Color="Transparent" />
+                </ListView.Resources>
+            </ListView>
+        </Grid>
 
-        </NavigationView>
-    </Grid>
+    </NavigationView>
 </UserControl>
