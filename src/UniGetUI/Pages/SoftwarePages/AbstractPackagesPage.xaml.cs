@@ -987,10 +987,12 @@ namespace UniGetUI.Interface
 
         private async void HideFilteringPane(bool skipAnimation = false)
         {
-            if (PaneIsAnimated) return;
+            FilteringPanel.DisplayMode = SplitViewDisplayMode.Overlay;
+            FilteringPanel.IsPaneOpen = false;
+            ToggleFiltersButton.IsChecked = false;
+            /*if (PaneIsAnimated) return;
 
             PaneIsAnimated = true;
-            ToggleFiltersButton.IsChecked = false;
 
             if (!skipAnimation)
             {
@@ -1007,15 +1009,17 @@ namespace UniGetUI.Interface
             FiltersResizer.Visibility = SidePanel.Visibility = Visibility.Collapsed;
             BodyGrid.ColumnDefinitions[0].Width = new GridLength(0);
             BodyGrid.ColumnSpacing = 0;
-            PaneIsAnimated = false;
+            PaneIsAnimated = false;*/
         }
 
         private async void ShowFilteringPane(bool skipAnimation = false)
         {
-            if (PaneIsAnimated) return;
+            FilteringPanel.DisplayMode = SplitViewDisplayMode.Inline;
+            FilteringPanel.IsPaneOpen = true;
+            ToggleFiltersButton.IsChecked = true;
+            /*if (PaneIsAnimated) return;
 
             PaneIsAnimated = true;
-            ToggleFiltersButton.IsChecked = true;
             FiltersResizer.Visibility = SidePanel.Visibility = Visibility.Visible;
             BodyGrid.ColumnSpacing = 12;
             InAnimation_FiltersPane.Start();
@@ -1042,7 +1046,7 @@ namespace UniGetUI.Interface
             }
 
             BodyGrid.ColumnDefinitions[0].Width = new GridLength(final_width);
-            PaneIsAnimated = false;
+            PaneIsAnimated = false;*/
         }
 
         private async Task LoadIconsForNewPackages()

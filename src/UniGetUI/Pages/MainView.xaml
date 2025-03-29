@@ -280,17 +280,17 @@
                 GlyphIcon="&#xF133;"
                 Tag="Bundles">
                 <controls1:CustomNavViewItem.InfoBadge>
-                    <controls1:CustomInfoBadge
+                    <InfoBadge
                         x:Name="BundlesBadge"
                         Width="16"
                         Height="16"
                         x:FieldModifier="public"
                         Background="{ThemeResource SystemFillColorCautionBrush}"
                         Visibility="Collapsed">
-                        <controls1:CustomInfoBadge.IconSource>
+                        <InfoBadge.IconSource>
                             <FontIconSource Glyph="&#xEDB1;" />
-                        </controls1:CustomInfoBadge.IconSource>
-                    </controls1:CustomInfoBadge>
+                        </InfoBadge.IconSource>
+                    </InfoBadge>
                 </controls1:CustomNavViewItem.InfoBadge>
             </controls1:CustomNavViewItem>
         </NavigationView.MenuItems>
