@@ -987,36 +987,14 @@ namespace UniGetUI.Interface
 
         private async void HideFilteringPane(bool skipAnimation = false)
         {
-            FilteringPanel.DisplayMode = SplitViewDisplayMode.Overlay;
+            // FilteringPanel.DisplayMode = SplitViewDisplayMode.Overlay;
             FilteringPanel.IsPaneOpen = false;
             ToggleFiltersButton.IsChecked = false;
-            /*if (PaneIsAnimated) return;
-
-            PaneIsAnimated = true;
-
-            if (!skipAnimation)
-            {
-                OutAnimation_FiltersPane.Start();
-                double width = BodyGrid.ColumnDefinitions[0].Width.Value;
-                while (width > 0)
-                {
-                    BodyGrid.ColumnDefinitions[0].Width = new GridLength(width);
-                    await Task.Delay(10);
-                    width -= 40;
-                }
-            }
-
-            FiltersResizer.Visibility = SidePanel.Visibility = Visibility.Collapsed;
-            BodyGrid.ColumnDefinitions[0].Width = new GridLength(0);
-            BodyGrid.ColumnSpacing = 0;
-            PaneIsAnimated = false;*/
         }
 
         private async void ShowFilteringPane(bool skipAnimation = false)
         {
-            FilteringPanel.DisplayMode = SplitViewDisplayMode.Inline;
-            FilteringPanel.IsPaneOpen = true;
-            ToggleFiltersButton.IsChecked = true;
+            // FilteringPanel.DisplayMode = SplitViewDisplayMode.Inline;
 
             int finalWidth = 250;
             try
@@ -1029,28 +1007,9 @@ namespace UniGetUI.Interface
             }
             FilteringPanel.OpenPaneLength = finalWidth;
 
-            /*if (PaneIsAnimated) return;
 
-            PaneIsAnimated = true;
-            FiltersResizer.Visibility = SidePanel.Visibility = Visibility.Visible;
-            BodyGrid.ColumnSpacing = 12;
-            InAnimation_FiltersPane.Start();
-
-            
-
-            if (!skipAnimation)
-            {
-                double width = 0;
-                while (width < final_width)
-                {
-                    BodyGrid.ColumnDefinitions[0].Width = new GridLength(width);
-                    await Task.Delay(10);
-                    width += 40;
-                }
-            }
-
-            BodyGrid.ColumnDefinitions[0].Width = new GridLength(final_width);
-            PaneIsAnimated = false;*/
+            FilteringPanel.IsPaneOpen = true;
+            ToggleFiltersButton.IsChecked = true;
         }
 
         private async Task LoadIconsForNewPackages()

@@ -944,7 +944,6 @@
             Grid.Row="2"
             Grid.Column="1"
             DisplayMode="Inline"
-            IsPaneOpen="True"
             PaneBackground="Transparent"
             PanePlacement="Left">
             <SplitView.Pane>
@@ -1228,12 +1227,13 @@
                     CornerRadius="2"
                     Visibility="{x:Bind FilteringPanel.IsPaneOpen, Mode=OneWay}">
                     <Toolkit:PropertySizer.RenderTransform>
-                        <TranslateTransform X="-11" />
+                        <TranslateTransform X="-8" />
                     </Toolkit:PropertySizer.RenderTransform>
                 </Toolkit:PropertySizer>
 
                 <!--  ACTUAL PACKAGE LIST  -->
                 <Grid
+                    Margin="4,0,0,0"
                     Padding="4,6,4,6"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
