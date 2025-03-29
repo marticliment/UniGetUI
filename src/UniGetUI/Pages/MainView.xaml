@@ -258,21 +258,16 @@
                 Tag="Discover" />
             <controls1:CustomNavViewItem
                 x:Name="UpdatesNavBtn"
+                Content="Software Updates"
                 GlyphIcon="&#xE895;"
                 Tag="Updates">
-                <Grid>
-                    <widgets:TranslatedTextBlock Text="Software Updates" />
+                <controls1:CustomNavViewItem.InfoBadge>
                     <InfoBadge
                         Name="UpdatesBadge"
-                        Height="16"
-                        Margin="0,1.5,1.5,0"
-                        Padding="0"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top"
                         x:FieldModifier="public"
                         Visibility="Collapsed"
                         Value="0" />
-                </Grid>
+                </controls1:CustomNavViewItem.InfoBadge>
             </controls1:CustomNavViewItem>
             <controls1:CustomNavViewItem
                 x:Name="InstalledNavBtn"
@@ -281,31 +276,22 @@
                 Tag="Installed" />
             <controls1:CustomNavViewItem
                 x:Name="BundlesNavBtn"
+                Content="Package Bundles"
                 GlyphIcon="&#xF133;"
                 Tag="Bundles">
-                <Grid>
-                    <widgets:TranslatedTextBlock Text="Package Bundles" />
-                    <Border
-                        Name="BundlesBadge"
+                <controls1:CustomNavViewItem.InfoBadge>
+                    <controls1:CustomInfoBadge
+                        x:Name="BundlesBadge"
                         Width="16"
                         Height="16"
-                        Margin="0,1.5,1.5,0"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top"
                         x:FieldModifier="public"
                         Background="{ThemeResource SystemFillColorCautionBrush}"
-                        CornerRadius="8"
                         Visibility="Collapsed">
-                        <TextBlock
-                            Margin="0,0,0,-5"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="24"
-                            Foreground="{ThemeResource SystemFillColorCautionBackground}">
-                            *
-                        </TextBlock>
-                    </Border>
-                </Grid>
+                        <controls1:CustomInfoBadge.IconSource>
+                            <FontIconSource Glyph="&#xEDB1;" />
+                        </controls1:CustomInfoBadge.IconSource>
+                    </controls1:CustomInfoBadge>
+                </controls1:CustomNavViewItem.InfoBadge>
             </controls1:CustomNavViewItem>
         </NavigationView.MenuItems>
         <NavigationView.FooterMenuItems>
@@ -348,7 +334,7 @@
                 Name="ContentFrame"
                 Grid.Row="0"
                 Grid.Column="0" />
-            
+
             <controls:GridSplitter
                 x:Name="OperationSplitter"
                 Grid.Row="1"

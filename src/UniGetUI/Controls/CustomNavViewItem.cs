@@ -38,3 +38,20 @@ internal class CustomNavViewItem: NavigationViewItem
         get => _pageType;
     }
 }
+
+
+public class CustomInfoBadge : InfoBadge
+{
+    public string Text
+    {
+        set
+        {
+            Console.WriteLine(base.Template);  
+        }
+    }
+
+    public CustomInfoBadge(): base()
+    {
+
+    }
+}
