@@ -945,9 +945,11 @@
             Grid.Column="1"
             DisplayMode="Inline"
             PaneBackground="Transparent"
-            PanePlacement="Left">
+            PaneClosing="FilteringPanel_PaneClosing"
+            PanePlacement="Left"
+            SizeChanged="FilteringPanel_SizeChanged">
             <SplitView.Pane>
-                <ScrollView
+                <ScrollViewer
                     Name="SidePanel"
                     Grid.Row="1"
                     Grid.Column="0"
@@ -1204,7 +1206,7 @@
                             </Expander.Content>
                         </Expander>
                     </Grid>
-                </ScrollView>
+                </ScrollViewer>
             </SplitView.Pane>
             <Grid Margin="8,0,0,0">
                 <ProgressBar

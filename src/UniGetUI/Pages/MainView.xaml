@@ -239,8 +239,9 @@
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
         x:FieldModifier="public"
-        CompactModeThresholdWidth="400"
-        ExpandedModeThresholdWidth="1000"
+        CompactModeThresholdWidth="800"
+        CompactPaneLength="68"
+        ExpandedModeThresholdWidth="2000"
         IsBackButtonVisible="Collapsed"
         IsPaneToggleButtonVisible="False"
         IsSettingsVisible="False"
@@ -254,11 +255,15 @@
             <controls1:CustomNavViewItem
                 x:Name="DiscoverNavBtn"
                 Content="Discover Packages"
+                FontSize="16"
+                FontWeight="SemiBold"
                 GlyphIcon="&#xF6FA;"
                 Tag="Discover" />
             <controls1:CustomNavViewItem
                 x:Name="UpdatesNavBtn"
                 Content="Software Updates"
+                FontSize="16"
+                FontWeight="SemiBold"
                 GlyphIcon="&#xE895;"
                 Tag="Updates">
                 <controls1:CustomNavViewItem.InfoBadge>
@@ -271,12 +276,16 @@
             </controls1:CustomNavViewItem>
             <controls1:CustomNavViewItem
                 x:Name="InstalledNavBtn"
+                Height="60"
                 Content="Installed Packages"
+                FontWeight="SemiBold"
                 GlyphIcon="&#xE977;"
                 Tag="Installed" />
             <controls1:CustomNavViewItem
                 x:Name="BundlesNavBtn"
                 Content="Package Bundles"
+                FontSize="16"
+                FontWeight="SemiBold"
                 GlyphIcon="&#xF133;"
                 Tag="Bundles">
                 <controls1:CustomNavViewItem.InfoBadge>
@@ -299,16 +308,19 @@
                 x:Name="SettingsNavBtn"
                 Content="Settings"
                 Icon="Setting"
+                IconSize="20"
                 Tag="Settings" />
             <controls1:CustomNavViewItem
                 x:Name="ManagersNavBtn"
                 Content="Package managers"
                 GlyphIcon="&#xE835;"
+                IconSize="20"
                 Tag="Managers" />
             <controls1:CustomNavViewItem
                 x:Name="MoreNavBtn"
                 Content="More"
                 Icon="More"
+                IconSize="20"
                 Tag="Null"
                 Tapped="MoreNavBtn_Tapped" />
         </NavigationView.FooterMenuItems>
