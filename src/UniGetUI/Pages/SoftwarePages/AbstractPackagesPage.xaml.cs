@@ -20,6 +20,7 @@ using UniGetUI.Pages.DialogPages;
 using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
+using Windows.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -995,6 +996,7 @@ namespace UniGetUI.Interface
         private async void HideFilteringPane()
         {
             FilteringPanel.IsPaneOpen = false;
+            PackagesListGrid.Margin = new Thickness(0, 0, 0, 0);
         }
 
         private async void ShowFilteringPane()
@@ -1011,6 +1013,7 @@ namespace UniGetUI.Interface
                     Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, 250);
                 }
                 FilteringPanel.OpenPaneLength = finalWidth;
+                PackagesListGrid.Margin = new Thickness(12, 0, 0, 0);
             }
             else
             {
@@ -1130,26 +1133,39 @@ namespace UniGetUI.Interface
             if (FilteringPanel.ActualWidth < 1000 && FilteringPanel.DisplayMode is not SplitViewDisplayMode.Overlay)
             {
                 FilteringPanel.DisplayMode = SplitViewDisplayMode.Overlay;
-                FilteringPanel.PaneBackground = (Brush)Application.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"];
+                FilteringPanel.Shadow = new ThemeShadow();
+
+                // SidePanel.Background = new SolidColorBrush(Colors.Transparent);
+                FiltersResizer.Opacity = 0;
+                SidePanel.Background = new AcrylicBrush() {
+                    TintColor = Color.FromArgb(255, 20, 20, 20),
+                    TintOpacity = 0.4,
+                    FallbackColor = Color.FromArgb(255, 20, 20, 20),
+                    TintLuminosityOpacity = 0.8
+                };
+
+
+
                 if (FilteringPanel.Pane is ScrollViewer filters)
                 {
                     filters.Padding = new Thickness(8);
-                    filters.CornerRadius = new CornerRadius(8);
-                    filters.Margin = new Thickness(0, 0, 0, 0);
+                    filters.Margin = new Thickness(0, 1, 0, 1);
                 }
+                PackagesListGrid.Margin = new Thickness(0, 0, 0, 0);
+
                 HideFilteringPane();
                 ToggleFiltersButton.IsChecked = false;
             }
             else if (FilteringPanel.ActualWidth >= 1000 && FilteringPanel.DisplayMode is not SplitViewDisplayMode.Inline)
             {
                 FilteringPanel.DisplayMode = SplitViewDisplayMode.Inline;
-                FilteringPanel.PaneBackground = new SolidColorBrush(Colors.Transparent);
+                SidePanel.Background = new SolidColorBrush(Colors.Transparent);
+                FiltersResizer.Opacity = 1;
 
                 if (FilteringPanel.Pane is ScrollViewer filters)
                 {
                     filters.Padding = new Thickness(0);
-                    filters.CornerRadius = new CornerRadius(0);
-                    filters.Margin = new Thickness(8,0,0,0);
+                    filters.Margin = new Thickness(0, 0, 0, 0);
                 }
 
                 if (!Settings.GetDictionaryItem<string, bool>("HideToggleFilters", PAGE_NAME))

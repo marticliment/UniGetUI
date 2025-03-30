@@ -800,7 +800,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid Padding="0" BorderThickness="1,1,0,0">
+    <Grid Padding="0" BorderThickness="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -984,6 +984,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
+
                         <!--  Sources Expander  -->
                         <Expander
                             Grid.Row="0"
@@ -1208,7 +1209,7 @@
                     </Grid>
                 </ScrollViewer>
             </SplitView.Pane>
-            <Grid Margin="8,0,0,0">
+            <Grid Name="PackagesListGrid" Margin="0">
                 <ProgressBar
                     x:Name="LoadingProgressBar"
                     Margin="1,-6,1,0"
@@ -1218,24 +1219,8 @@
                     IsIndeterminate="True"
                     Visibility="Visible" />
 
-                <!--  Filters/Packages Splitter  -->
-                <Toolkit:PropertySizer
-                    x:Name="FiltersResizer"
-                    Width="10"
-                    Margin="0,1,0,1"
-                    Padding="0,0,0,0"
-                    HorizontalAlignment="Left"
-                    Binding="{x:Bind FilteringPanel.OpenPaneLength, Mode=TwoWay}"
-                    CornerRadius="2"
-                    Visibility="{x:Bind FilteringPanel.IsPaneOpen, Mode=OneWay}">
-                    <Toolkit:PropertySizer.RenderTransform>
-                        <TranslateTransform X="-8" />
-                    </Toolkit:PropertySizer.RenderTransform>
-                </Toolkit:PropertySizer>
-
                 <!--  ACTUAL PACKAGE LIST  -->
                 <Grid
-                    Margin="4,0,0,0"
                     Padding="4,6,4,6"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -1359,6 +1344,21 @@
                     </Grid>
 
                 </Grid>
+
+                <!--  Filters/Packages Splitter  -->
+                <Toolkit:PropertySizer
+                    x:Name="FiltersResizer"
+                    Width="12"
+                    Margin="-12,0,0,0"
+                    Padding="0,0,0,0"
+                    HorizontalAlignment="Left"
+                    Binding="{x:Bind FilteringPanel.OpenPaneLength, Mode=TwoWay}"
+                    CornerRadius="2"
+                    Visibility="{x:Bind FilteringPanel.IsPaneOpen, Mode=OneWay}">
+                    <Toolkit:PropertySizer.RenderTransform>
+                        <TranslateTransform X="0" />
+                    </Toolkit:PropertySizer.RenderTransform>
+                </Toolkit:PropertySizer>
 
 
                 <!--  MEGA QUERY BLOCK  -->
