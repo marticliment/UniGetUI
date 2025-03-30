@@ -241,10 +241,11 @@
         x:FieldModifier="public"
         CompactModeThresholdWidth="800"
         CompactPaneLength="68"
-        ExpandedModeThresholdWidth="2000"
+        ExpandedModeThresholdWidth="1600"
         IsBackButtonVisible="Collapsed"
         IsPaneToggleButtonVisible="False"
         IsSettingsVisible="False"
+        OpenPaneLength="250"
         SelectionChanged="NavigationView_SelectionChanged">
         <NavigationView.Resources>
             <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
@@ -276,8 +277,8 @@
             </controls1:CustomNavViewItem>
             <controls1:CustomNavViewItem
                 x:Name="InstalledNavBtn"
-                Height="60"
                 Content="Installed Packages"
+                FontSize="16"
                 FontWeight="SemiBold"
                 GlyphIcon="&#xE977;"
                 Tag="Installed" />

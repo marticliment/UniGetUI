@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using UniGetUI.Core.Tools;
@@ -44,7 +45,7 @@ internal class CustomNavViewItem : NavigationViewItem
     {
         set
         {
-            if (value is string text) base.Content = CoreTools.Translate(text);
+            if (value is string text) base.Content = new TextBlock() { Text = CoreTools.Translate(text), TextWrapping = TextWrapping.WrapWholeWords };
             else base.Content = value;
         }
     }
