@@ -38,11 +38,15 @@
             <winex:TitleBar.IconSource>
                 <ImageIconSource ImageSource="ms-appx:///Assets/Images/icon.png" />
             </winex:TitleBar.IconSource>
+            <winex:TitleBar.Content>
+                <UserControl Height="10" />
+            </winex:TitleBar.Content>
         </winex:TitleBar>
         <StackPanel
             Grid.Row="1"
-            Margin="0,0,0,0"
+            Margin="0"
             Padding="0"
+            BorderThickness="0"
             Spacing="0">
             <InfoBar
                 Name="UpdatesBanner"
@@ -77,7 +81,8 @@
                 BorderThickness="0,1,0,1"
                 CornerRadius="0"
                 IsOpen="False"
-                Severity="Informational" />
+                Severity="Informational"
+                Visibility="Collapsed" />
         </StackPanel>
         <Frame Name="MainContentFrame" Grid.Row="2">
             <Grid Background="{StaticResource ProgressBarBorderThemeBrush}" Visibility="Visible">

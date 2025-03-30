@@ -236,6 +236,7 @@
     <NavigationView
         Name="NavView"
         Grid.Row="2"
+        Margin="0,-4,0,0"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
         x:FieldModifier="public"
@@ -243,6 +244,7 @@
         CompactPaneLength="68"
         ExpandedModeThresholdWidth="1600"
         IsBackButtonVisible="Collapsed"
+        IsPaneOpen="False"
         IsPaneToggleButtonVisible="False"
         IsSettingsVisible="False"
         OpenPaneLength="250"

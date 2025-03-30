@@ -122,6 +122,11 @@ namespace UniGetUI.Interface
             {
                 DialogHelper.ShowTelemetryBanner();
             }
+
+            if (!Settings.Get("CollapseNavMenuOnWideScreen"))
+            {
+                NavView.IsPaneOpen = true;
+            }
         }
 
         public void LoadDefaultPage()

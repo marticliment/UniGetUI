@@ -685,6 +685,7 @@ namespace UniGetUI.Interface
 
             NavigationPage = new MainView();
 
+
             object? control = MainContentFrame.Content as Grid;
             if (control is Grid loadingWindow)
             {
@@ -703,6 +704,7 @@ namespace UniGetUI.Interface
                     MainContentFrame.Content = NavigationPage;
             };
 
+            
         }
 
         public void ApplyTheme()
@@ -996,7 +998,14 @@ namespace UniGetUI.Interface
 
         private void TitleBar_PaneToggleRequested(WinUIEx.TitleBar sender, object args)
         {
-            if(NavigationPage is not null) NavigationPage.NavView.IsPaneOpen = !NavigationPage.NavView.IsPaneOpen;
+            if (NavigationPage is not null)
+            {
+                if(this.AppWindow.Size.Width >= 1600)
+                {
+                    Settings.Set("CollapseNavMenuOnWideScreen", NavigationPage.NavView.IsPaneOpen);
+                }
+                NavigationPage.NavView.IsPaneOpen = !NavigationPage.NavView.IsPaneOpen;
+            }
         }
     }
 
