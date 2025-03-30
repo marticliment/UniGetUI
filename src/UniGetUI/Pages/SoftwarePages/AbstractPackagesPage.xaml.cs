@@ -1135,7 +1135,6 @@ namespace UniGetUI.Interface
                 FilteringPanel.DisplayMode = SplitViewDisplayMode.Overlay;
                 FilteringPanel.Shadow = new ThemeShadow();
 
-                // SidePanel.Background = new SolidColorBrush(Colors.Transparent);
                 FiltersResizer.Opacity = 0;
                 SidePanel.Background = new AcrylicBrush() {
                     TintColor = Color.FromArgb(255, 20, 20, 20),
@@ -1143,8 +1142,6 @@ namespace UniGetUI.Interface
                     FallbackColor = Color.FromArgb(255, 20, 20, 20),
                     TintLuminosityOpacity = 0.8
                 };
-
-
 
                 if (FilteringPanel.Pane is ScrollViewer filters)
                 {

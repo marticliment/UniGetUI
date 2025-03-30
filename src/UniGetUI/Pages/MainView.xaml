@@ -329,7 +329,7 @@
             Name="ContentGrid"
             Grid.Row="0"
             Grid.Column="1"
-            Margin="0,0,8,8"
+            Margin="8,8,8,8"
             RowSpacing="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />

@@ -822,9 +822,9 @@
                 <ColumnDefinition Width="*" MaxWidth="390" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="16" />
-                <RowDefinition Height="24" />
-                <RowDefinition Height="24" />
+                <RowDefinition Height="Auto" MinHeight="16" />
+                <RowDefinition Height="Auto" MinHeight="24" />
+                <RowDefinition Height="Auto" MinHeight="24" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <FontIcon
@@ -833,7 +833,7 @@
                 Grid.RowSpan="3"
                 Grid.Column="0"
                 Width="60"
-                Height="60"
+                MinHeight="60"
                 FontSize="50"
                 FontWeight="Normal" />
             <TextBlock
@@ -841,13 +841,13 @@
                 Grid.Row="0"
                 Grid.RowSpan="2"
                 Grid.Column="1"
-                Height="48"
+                MinHeight="48"
                 HorizontalAlignment="Left"
                 x:FieldModifier="protected"
                 FontFamily="Segoe UI Variable Display"
                 FontSize="30"
                 FontWeight="Bold"
-                Text="" />
+                TextWrapping="Wrap" />
             <TextBlock
                 x:Name="MainSubtitle"
                 Grid.Row="2"
@@ -858,7 +858,7 @@
                 FontSize="11"
                 FontWeight="Normal"
                 Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"
-                Text="" />
+                TextWrapping="Wrap" />
             <Grid
                 Grid.Row="0"
                 Grid.RowSpan="3"
@@ -870,18 +870,6 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-
-                <ToggleButton
-                    x:Name="ToggleFiltersButton"
-                    Grid.Column="0"
-                    Width="32"
-                    Height="32"
-                    Margin="0,0,6,0"
-                    Padding="4"
-                    x:FieldModifier="protected"
-                    Click="ToggleFiltersButton_Click">
-                    <FontIcon FontSize="16" Glyph="&#xE71C;" />
-                </ToggleButton>
 
                 <TextBox
                     x:Name="QueryBlock"
@@ -924,14 +912,39 @@
                 </Button>
             </Grid>
 
-            <CommandBar
-                Name="ToolBar"
+            <Grid
                 Grid.Row="3"
                 Grid.Column="0"
-                Grid.ColumnSpan="3"
-                HorizontalAlignment="Stretch"
-                x:FieldModifier="protected"
-                DefaultLabelPosition="Right" />
+                Grid.ColumnSpan="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <ToggleButton
+                    x:Name="ToggleFiltersButton"
+                    Grid.Column="0"
+                    Height="36"
+                    Margin="1,4"
+                    Padding="8,4"
+                    x:FieldModifier="protected"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Click="ToggleFiltersButton_Click"
+                    CornerRadius="4">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="22" Glyph="&#xE71C;" />
+                        <widgets:TranslatedTextBlock Text="Filters" />
+                    </StackPanel>
+                </ToggleButton>
+
+                <CommandBar
+                    Name="ToolBar"
+                    Grid.Column="2"
+                    HorizontalAlignment="Stretch"
+                    x:FieldModifier="protected"
+                    DefaultLabelPosition="Right" />
+            </Grid>
         </Grid>
 
 
@@ -943,6 +956,7 @@
             Name="FilteringPanel"
             Grid.Row="2"
             Grid.Column="1"
+            BorderThickness="0"
             DisplayMode="Inline"
             PaneBackground="Transparent"
             PaneClosing="FilteringPanel_PaneClosing"
@@ -959,22 +973,6 @@
                     CornerRadius="8"
                     HorizontalScrollMode="Disabled"
                     SizeChanged="SidepanelWidth_SizeChanged">
-                    <animations:Explicit.Animations>
-                        <animations:AnimationSet x:Name="OutAnimation_FiltersPane">
-                            <animations:OpacityAnimation
-                                EasingMode="EaseOut"
-                                From="1"
-                                To="0"
-                                Duration="0:0:0.15" />
-                        </animations:AnimationSet>
-                        <animations:AnimationSet x:Name="InAnimation_FiltersPane">
-                            <animations:OpacityAnimation
-                                EasingMode="EaseIn"
-                                From="0"
-                                To="1"
-                                Duration="0:0:0.15" />
-                        </animations:AnimationSet>
-                    </animations:Explicit.Animations>
                     <Grid Name="SidePanelGrid" RowSpacing="8">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
