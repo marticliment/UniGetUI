@@ -957,7 +957,7 @@
             Grid.Row="2"
             Grid.Column="1"
             BorderThickness="0"
-            CornerRadius="8,0,0,8"
+            CornerRadius="0,0,0,0"
             DisplayMode="Inline"
             PaneBackground="Transparent"
             PaneClosing="FilteringPanel_PaneClosing"
