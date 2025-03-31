@@ -957,6 +957,7 @@
             Grid.Row="2"
             Grid.Column="1"
             BorderThickness="0"
+            CornerRadius="8,0,0,8"
             DisplayMode="Inline"
             PaneBackground="Transparent"
             PaneClosing="FilteringPanel_PaneClosing"
@@ -969,8 +970,8 @@
                     Grid.Column="0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    BorderThickness="0"
-                    CornerRadius="8"
+                    BorderBrush="{ThemeResource SystemColorControlAccentBrush}"
+                    CornerRadius="0,8,8,0"
                     HorizontalScrollMode="Disabled"
                     SizeChanged="SidepanelWidth_SizeChanged">
                     <Grid Name="SidePanelGrid" RowSpacing="8">

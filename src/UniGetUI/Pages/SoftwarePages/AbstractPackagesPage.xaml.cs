@@ -1128,14 +1128,19 @@ namespace UniGetUI.Interface
         }
 
 
-        private void ChangeFilteringPaneLayout()
+        private async void ChangeFilteringPaneLayout()
         {
             if (FilteringPanel.ActualWidth < 1000 && FilteringPanel.DisplayMode is not SplitViewDisplayMode.Overlay)
             {
                 FilteringPanel.DisplayMode = SplitViewDisplayMode.Overlay;
-                FilteringPanel.Shadow = new ThemeShadow();
-
+                HideFilteringPane();
                 FiltersResizer.Opacity = 0;
+                ToggleFiltersButton.IsChecked = false;
+
+                await Task.Delay(200);
+                FilteringPanel.Shadow = new ThemeShadow();
+                SidePanel.BorderThickness = new Thickness(0, 1, 1, 1);
+
                 SidePanel.Background = new AcrylicBrush() {
                     TintColor = Color.FromArgb(255, 20, 20, 20),
                     TintOpacity = 0.4,
@@ -1146,23 +1151,20 @@ namespace UniGetUI.Interface
                 if (FilteringPanel.Pane is ScrollViewer filters)
                 {
                     filters.Padding = new Thickness(8);
-                    filters.Margin = new Thickness(0, 1, 0, 1);
+                    filters.Margin = new Thickness(0,1,0,1);
                 }
-                PackagesListGrid.Margin = new Thickness(0, 0, 0, 0);
-
-                HideFilteringPane();
-                ToggleFiltersButton.IsChecked = false;
             }
             else if (FilteringPanel.ActualWidth >= 1000 && FilteringPanel.DisplayMode is not SplitViewDisplayMode.Inline)
             {
                 FilteringPanel.DisplayMode = SplitViewDisplayMode.Inline;
                 SidePanel.Background = new SolidColorBrush(Colors.Transparent);
                 FiltersResizer.Opacity = 1;
+                SidePanel.BorderThickness = new Thickness(0);
 
                 if (FilteringPanel.Pane is ScrollViewer filters)
                 {
                     filters.Padding = new Thickness(0);
-                    filters.Margin = new Thickness(0, 0, 0, 0);
+                    filters.Margin = new Thickness(0);
                 }
 
                 if (!Settings.GetDictionaryItem<string, bool>("HideToggleFilters", PAGE_NAME))

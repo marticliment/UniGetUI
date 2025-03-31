@@ -45,7 +45,12 @@ internal class CustomNavViewItem : NavigationViewItem
     {
         set
         {
-            if (value is string text) base.Content = new TextBlock() { Text = CoreTools.Translate(text), TextWrapping = TextWrapping.WrapWholeWords };
+            if (value is string text) base.Content = new TextBlock()
+            {
+                Text = CoreTools.Translate(text).Trim('\n').Trim(' '),
+                TextWrapping = TextWrapping.WrapWholeWords,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
             else base.Content = value;
         }
     }
