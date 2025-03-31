@@ -970,7 +970,7 @@
                     Grid.Column="0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    BorderBrush="{ThemeResource SystemColorControlAccentBrush}"
+                    BorderBrush="{ThemeResource AccentAAFillColorDefaultBrush}"
                     CornerRadius="0,8,8,0"
                     HorizontalScrollMode="Disabled"
                     SizeChanged="SidepanelWidth_SizeChanged">
