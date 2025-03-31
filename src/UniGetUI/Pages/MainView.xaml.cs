@@ -143,25 +143,6 @@ namespace UniGetUI.Interface
             NavigateTo(type);
         }
 
-        /*private void DiscoverNavButton_Click(object sender, EventArgs e)
-            => NavigateTo(PageType.Discover);
-
-        private void InstalledNavButton_Click(object sender, EventArgs e)
-            => NavigateTo(PageType.Installed);
-
-        private void UpdatesNavButton_Click(object sender, EventArgs e)
-            => NavigateTo(PageType.Updates);
-
-        private void BundlesNavButton_Click(object sender, EventArgs e)
-            => NavigateTo(PageType.Bundles);
-
-        private void MoreNavButton_Click(object sender, EventArgs e)
-        {
-            SelectNavButtonForPage(PageType.OwnLog);
-            (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
-            MoreNavButtonMenu.ShowAt(MoreNavButton, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Standard });
-        }*/
-
         private Page GetPageForType(PageType type)
             => type switch
             {
@@ -237,14 +218,6 @@ namespace UniGetUI.Interface
                 PageType.Managers => ManagersNavBtn,
                 _ => MoreNavBtn,
             };
-
-            /*DiscoverNavButton.IsChecked = page is PageType.Discover;
-            UpdatesNavButton.IsChecked = page is PageType.Updates;
-            InstalledNavButton.IsChecked = page is PageType.Installed;
-            BundlesNavButton.IsChecked = page is PageType.Bundles;
-            ManagersNavButton.IsChecked = page is PageType.Managers;
-            SettingsNavButton.IsChecked = page is PageType.Settings;
-            MoreNavButton.IsChecked = page is PageType.Help or PageType.ManagerLog or PageType.OperationHistory or PageType.OwnLog;*/
         }
 
         private async void AboutNavButton_Click(object sender, RoutedEventArgs e)
