@@ -3,8 +3,8 @@
         "total": 11805,
         "done": 5275,
         "packages_with_icon": 5275,
-        "packages_with_screenshot": 631,
-        "total_screenshots": 1972
+        "packages_with_screenshot": 632,
+        "total_screenshots": 1973
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -26996,7 +26996,9 @@
         },
         "neofetch": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSu7FpAit2c9F5IJV04zYrBXaySm7AGhM1vkEU"
+            ]
         },
         "neoload": {
             "icon": "",
