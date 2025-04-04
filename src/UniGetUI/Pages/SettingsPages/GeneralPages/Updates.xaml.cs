@@ -1,6 +1,5 @@
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Tools;
-using System.Diagnostics;
 using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,

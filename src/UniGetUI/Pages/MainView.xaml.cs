@@ -17,7 +17,6 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageOperations;
 using UniGetUI.Pages.SettingsPages;
 using UniGetUI.Controls;
-using ABI.Windows.Graphics.Imaging;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

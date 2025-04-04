@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
 using Microsoft.Management.Deployment;
 using UniGetUI.Core.Logging;
 using UniGetUI.PackageEngine.Enums;

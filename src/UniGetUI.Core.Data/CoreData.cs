@@ -1,11 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using UniGetUI.Core.Logging;
-using Windows.Networking.Connectivity;
-using Windows.Services.Maps;
 
 namespace UniGetUI.Core.Data
 {
