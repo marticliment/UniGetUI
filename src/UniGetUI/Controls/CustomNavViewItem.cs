@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI.Text;
@@ -11,15 +12,17 @@ using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
+using UniGetUI.PackageEngine.Managers.WingetManager;
 using Windows.ApplicationModel.VoiceCommands;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.UI.WebUI;
 using YamlDotNet.Core.Tokens;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace UniGetUI.Controls;
 internal class CustomNavViewItem : NavigationViewItem
 {
-
+    int _iconSize = 28;
     public IconType LocalIcon
     {
         set => base.Icon = new LocalIcon(value);
@@ -28,32 +31,35 @@ internal class CustomNavViewItem : NavigationViewItem
     public string GlyphIcon
     {
         set => base.Icon = new FontIcon() { Glyph = value };
-
     }
-
     public new IconElement Icon
     {
         set => base.Icon = value;
     }
 
-    public int IconSize
-    {
-        set => this.Resources["NavigationViewItemOnLeftIconBoxHeight"] = value;
-    }
-
-    public new object Content
+    public bool IsLoading
     {
         set
         {
-            if (value is string text) base.Content = new TextBlock()
-            {
-                Text = CoreTools.Translate(text).Trim('\n').Trim(' '),
-                TextWrapping = TextWrapping.WrapWholeWords,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-            else base.Content = value;
+            // Resources["NavigationViewItemOnLeftIconBoxHeight"] = value? 16: _iconSize;
+            int s = value ? 6 : 0;
+            base.Icon.Margin = new Thickness(s);
+            _progressRing.Visibility = value? Visibility.Visible: Visibility.Collapsed;
         }
     }
+
+    public int IconSize
+    {
+        set => Resources["NavigationViewItemOnLeftIconBoxHeight"] = _iconSize = value;
+    }
+
+    public string Text
+    {
+        set => _textBlock.Text = CoreTools.Translate(value);
+    }
+
+    private readonly TextBlock _textBlock;
+    private readonly ProgressRing _progressRing;
 
     private PageType _pageType;
     public new PageType Tag
@@ -65,6 +71,27 @@ internal class CustomNavViewItem : NavigationViewItem
     public CustomNavViewItem()
     {
         Height = 60;
-        IconSize = 28;
+        Resources["NavigationViewItemOnLeftIconBoxHeight"] = _iconSize;
+        Resources["NavigationViewItemContentPresenterMargin"] = new Thickness(0);
+
+        var grid = new Grid { Height = 50 };
+
+        _progressRing = new ProgressRing
+        {
+            Margin = new Thickness(-46, 0, 0, 0),
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Center,
+            IsIndeterminate = true,
+            Visibility = Visibility.Collapsed,
+        };
+
+        _textBlock = new TextBlock
+        {
+            VerticalAlignment = VerticalAlignment.Center,
+        };
+
+        grid.Children.Add(_progressRing);
+        grid.Children.Add(_textBlock);
+        base.Content = grid;
     }
 }

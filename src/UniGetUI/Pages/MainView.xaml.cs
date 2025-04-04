@@ -18,6 +18,8 @@ using UniGetUI.PackageOperations;
 using UniGetUI.Pages.SettingsPages;
 using UniGetUI.Controls;
 using ABI.Windows.Graphics.Imaging;
+using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.PackageLoader;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -106,6 +108,19 @@ namespace UniGetUI.Interface
                     (currentPage as IKeyboardShortcutListener)?.SelectAllTriggered();
                 }
             };
+
+
+            foreach(var pair in new Dictionary<CustomNavViewItem, AbstractPackageLoader>
+            {
+                {  DiscoverNavBtn,  PEInterface.DiscoveredPackagesLoader },
+                {  UpdatesNavBtn,  PEInterface.UpgradablePackagesLoader },
+                {  InstalledNavBtn,  PEInterface.InstalledPackagesLoader },
+            })
+            {
+                pair.Value.FinishedLoading += (_, _) => MainApp.Dispatcher.TryEnqueue(() => pair.Key.IsLoading = false);
+                pair.Value.StartedLoading += (_, _) => MainApp.Dispatcher.TryEnqueue(() => pair.Key.IsLoading = true);
+                pair.Key.IsLoading = pair.Value.IsLoading;
+            }
 
             LoadDefaultPage();
 
