@@ -800,7 +800,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid Padding="0" BorderThickness="1,1,0,0">
+    <Grid Padding="0" BorderThickness="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -822,9 +822,9 @@
                 <ColumnDefinition Width="*" MaxWidth="390" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="16" />
-                <RowDefinition Height="24" />
-                <RowDefinition Height="24" />
+                <RowDefinition Height="Auto" MinHeight="16" />
+                <RowDefinition Height="Auto" MinHeight="24" />
+                <RowDefinition Height="Auto" MinHeight="24" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <FontIcon
@@ -833,7 +833,7 @@
                 Grid.RowSpan="3"
                 Grid.Column="0"
                 Width="60"
-                Height="60"
+                MinHeight="60"
                 FontSize="50"
                 FontWeight="Normal" />
             <TextBlock
@@ -841,13 +841,13 @@
                 Grid.Row="0"
                 Grid.RowSpan="2"
                 Grid.Column="1"
-                Height="48"
+                MinHeight="48"
                 HorizontalAlignment="Left"
                 x:FieldModifier="protected"
                 FontFamily="Segoe UI Variable Display"
                 FontSize="30"
                 FontWeight="Bold"
-                Text="" />
+                TextWrapping="Wrap" />
             <TextBlock
                 x:Name="MainSubtitle"
                 Grid.Row="2"
@@ -858,7 +858,7 @@
                 FontSize="11"
                 FontWeight="Normal"
                 Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"
-                Text="" />
+                TextWrapping="Wrap" />
             <Grid
                 Grid.Row="0"
                 Grid.RowSpan="3"
@@ -870,18 +870,6 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-
-                <ToggleButton
-                    x:Name="ToggleFiltersButton"
-                    Grid.Column="0"
-                    Width="32"
-                    Height="32"
-                    Margin="0,0,6,0"
-                    Padding="4"
-                    x:FieldModifier="protected"
-                    Click="ToggleFiltersButton_Click">
-                    <FontIcon FontSize="16" Glyph="&#xE71C;" />
-                </ToggleButton>
 
                 <TextBox
                     x:Name="QueryBlock"
@@ -924,503 +912,505 @@
                 </Button>
             </Grid>
 
-            <CommandBar
-                Name="ToolBar"
+            <Grid
                 Grid.Row="3"
                 Grid.Column="0"
-                Grid.ColumnSpan="3"
-                HorizontalAlignment="Stretch"
-                x:FieldModifier="protected"
-                DefaultLabelPosition="Right" />
+                Grid.ColumnSpan="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <ToggleButton
+                    x:Name="ToggleFiltersButton"
+                    Grid.Column="0"
+                    Height="36"
+                    Margin="1,4"
+                    Padding="8,4"
+                    x:FieldModifier="protected"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Click="ToggleFiltersButton_Click"
+                    CornerRadius="4">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="22" Glyph="&#xE71C;" />
+                        <widgets:TranslatedTextBlock Text="Filters" />
+                    </StackPanel>
+                </ToggleButton>
+
+                <CommandBar
+                    Name="ToolBar"
+                    Grid.Column="2"
+                    HorizontalAlignment="Stretch"
+                    x:FieldModifier="protected"
+                    DefaultLabelPosition="Right" />
+            </Grid>
         </Grid>
 
 
         <!--  NON-HEADER CONTENT  -->
-        <Grid
-            Name="BodyGrid"
+
+        <!--  FILTERING PANE  -->
+
+        <SplitView
+            Name="FilteringPanel"
             Grid.Row="2"
             Grid.Column="1"
-            ColumnSpacing="12"
-            RowSpacing="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition
-                    Width="250"
-                    MinWidth="0"
-                    MaxWidth="400" />
-                <ColumnDefinition MinWidth="200" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="0" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <ProgressBar
-                x:Name="LoadingProgressBar"
-                Grid.Row="1"
-                Grid.Column="1"
-                Grid.ColumnSpan="1"
-                Margin="1,-6,1,0"
-                VerticalAlignment="Top"
-                x:FieldModifier="protected"
-                IsIndeterminate="True"
-                Visibility="Visible" />
-
-            <!--  FILTERING PANE  -->
-            <ScrollView
-                Name="SidePanel"
-                Grid.Row="1"
-                Grid.Column="0"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                BorderThickness="0"
-                CornerRadius="8"
-                HorizontalScrollMode="Disabled"
-                SizeChanged="SidepanelWidth_SizeChanged">
-                <animations:Explicit.Animations>
-                    <animations:AnimationSet x:Name="OutAnimation_FiltersPane">
-                        <animations:OpacityAnimation
-                            EasingMode="EaseOut"
-                            From="1"
-                            To="0"
-                            Duration="0:0:0.15" />
-                    </animations:AnimationSet>
-                    <animations:AnimationSet x:Name="InAnimation_FiltersPane">
-                        <animations:OpacityAnimation
-                            EasingMode="EaseIn"
-                            From="0"
-                            To="1"
-                            Duration="0:0:0.15" />
-                    </animations:AnimationSet>
-                </animations:Explicit.Animations>
-                <Grid Name="SidePanelGrid" RowSpacing="8">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <!--  Sources Expander  -->
-                    <Expander
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Padding="4,4,4,8"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"
-                        AutomationProperties.Name="Filter by sources"
-                        Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
-                        CornerRadius="8"
-                        IsExpanded="True">
-                        <Expander.Header>
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon FontSize="20" Glyph="&#xE74C;" />
-                                <widgets:TranslatedTextBlock
-                                    VerticalAlignment="Center"
-                                    FontWeight="SemiBold"
-                                    Text="Sources" />
-                            </StackPanel>
-                        </Expander.Header>
-                        <Expander.Content>
-                            <StackPanel Orientation="Vertical">
-                                <widgets:TranslatedTextBlock
-                                    x:Name="SourcesPlaceholderText"
-                                    MinHeight="60"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
-                                    FontSize="15"
-                                    FontWeight="Bold"
-                                    Opacity="0.5"
-                                    Text="Search for packages to start"
-                                    WrappingMode="Wrap" />
-                                <Grid
-                                    Name="SourcesTreeViewGrid"
-                                    HorizontalAlignment="Stretch"
-                                    ColumnSpacing="4"
-                                    RowSpacing="4"
-                                    Visibility="Collapsed">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <HyperlinkButton
-                                        Name="SelectAllSourcesButton"
-                                        Grid.Column="0"
-                                        Padding="2"
-                                        HorizontalAlignment="Stretch"
-                                        HorizontalContentAlignment="Center"
-                                        Click="SelectAllSourcesButton_Click">
-                                        <widgets:TranslatedTextBlock
-                                            FontSize="12"
-                                            FontWeight="SemiBold"
-                                            Text="Select all" />
-                                    </HyperlinkButton>
-                                    <HyperlinkButton
-                                        Name="ClearSourceSelectionButton"
-                                        Grid.Column="1"
-                                        Padding="2"
-                                        HorizontalAlignment="Stretch"
-                                        HorizontalContentAlignment="Center"
-                                        Click="ClearSourceSelectionButton_Click">
-                                        <widgets:TranslatedTextBlock
-                                            FontSize="12"
-                                            FontWeight="SemiBold"
-                                            Text="Clear selection" />
-                                    </HyperlinkButton>
-                                    <TreeView
-                                        Name="SourcesTreeView"
-                                        Grid.Row="1"
-                                        Grid.Column="0"
-                                        Grid.ColumnSpan="2"
-                                        Padding="0"
-                                        HorizontalAlignment="Stretch"
-                                        SelectionChanged="SourcesTreeView_SelectionChanged"
-                                        SelectionMode="Multiple" />
-                                </Grid>
-
-                            </StackPanel>
-                        </Expander.Content>
-                    </Expander>
-                    <!--  Filter Options Expander  -->
-                    <Expander
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Padding="16,8,16,8"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"
-                        AutomationProperties.Name="Filter options"
-                        Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
-                        CornerRadius="8"
-                        IsExpanded="False">
-                        <Expander.Header>
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon FontSize="20" Glyph="&#xE71C;" />
-                                <widgets:TranslatedTextBlock
-                                    VerticalAlignment="Center"
-                                    FontWeight="SemiBold"
-                                    Text="Filters" />
-                            </StackPanel>
-                        </Expander.Header>
-                        <Expander.Content>
-                            <StackPanel
-                                HorizontalAlignment="Stretch"
-                                Orientation="Vertical"
-                                Spacing="0">
-                                <CheckBox
-                                    x:Name="InstantSearchCheckbox"
-                                    x:FieldModifier="protected"
-                                    Checked="InstantSearchValueChanged"
-                                    Unchecked="InstantSearchValueChanged">
-                                    <CheckBox.Content>
-                                        <widgets:TranslatedTextBlock Text="Instant search" WrappingMode="Wrap" />
-                                    </CheckBox.Content>
-                                </CheckBox>
-                                <CheckBox
-                                    x:Name="UpperLowerCaseCheckbox"
-                                    Checked="FilterOptionsChanged"
-                                    Unchecked="FilterOptionsChanged">
-                                    <CheckBox.Content>
-                                        <widgets:TranslatedTextBlock Text="Distinguish between uppercase and lowercase" WrappingMode="Wrap" />
-                                    </CheckBox.Content>
-                                </CheckBox>
-                                <CheckBox
-                                    x:Name="IgnoreSpecialCharsCheckbox"
-                                    Checked="FilterOptionsChanged"
-                                    IsChecked="True"
-                                    Unchecked="FilterOptionsChanged">
-                                    <CheckBox.Content>
-                                        <widgets:TranslatedTextBlock Text="Ignore special characters" WrappingMode="Wrap" />
-                                    </CheckBox.Content>
-                                </CheckBox>
-                            </StackPanel>
-                        </Expander.Content>
-                    </Expander>
-                    <!--  Search mode expander  -->
-                    <Expander
-                        Grid.Row="2"
-                        Grid.Column="0"
-                        Padding="16,8,16,8"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"
-                        AutomationProperties.Name="Search mode"
-                        Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
-                        CornerRadius="8"
-                        IsExpanded="True">
-                        <Expander.Header>
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon FontSize="20" Glyph="&#xE773;" />
-                                <widgets:TranslatedTextBlock
-                                    VerticalAlignment="Center"
-                                    FontWeight="SemiBold"
-                                    Text="Search mode" />
-                            </StackPanel>
-                        </Expander.Header>
-                        <Expander.Content>
-                            <StackPanel
-                                HorizontalAlignment="Stretch"
-                                Orientation="Vertical"
-                                Spacing="0">
-                                <RadioButtons
-                                    Name="QueryOptionsGroup"
-                                    Margin="0,-4,0,6"
-                                    x:FieldModifier="protected"
-                                    CharacterSpacing="0"
-                                    SelectionChanged="FilterOptionsChanged">
-                                    <RadioButton
-                                        x:Name="QueryNameRadio"
-                                        Height="30"
-                                        Margin="0,-2,0,-2"
-                                        x:FieldModifier="protected">
-                                        <RadioButton.Content>
-                                            <widgets:TranslatedTextBlock Text="Package Name" WrappingMode="Wrap" />
-                                        </RadioButton.Content>
-                                    </RadioButton>
-                                    <RadioButton
-                                        x:Name="QueryIdRadio"
-                                        Height="30"
-                                        Margin="0,-2,0,-2"
-                                        x:FieldModifier="protected">
-                                        <RadioButton.Content>
-                                            <widgets:TranslatedTextBlock Text="Package ID" WrappingMode="Wrap" />
-                                        </RadioButton.Content>
-                                    </RadioButton>
-                                    <RadioButton
-                                        x:Name="QueryBothRadio"
-                                        Height="30"
-                                        Margin="0,-2,0,-2"
-                                        x:FieldModifier="protected"
-                                        IsChecked="True">
-                                        <RadioButton.Content>
-                                            <widgets:TranslatedTextBlock Text="Both" WrappingMode="Wrap" />
-                                        </RadioButton.Content>
-                                    </RadioButton>
-                                    <RadioButton
-                                        x:Name="QueryExactMatch"
-                                        Height="30"
-                                        Margin="0,-2,0,-2"
-                                        x:FieldModifier="protected">
-                                        <RadioButton.Content>
-                                            <widgets:TranslatedTextBlock Text="Exact match" WrappingMode="Wrap" />
-                                        </RadioButton.Content>
-                                    </RadioButton>
-                                    <RadioButton
-                                        x:Name="QuerySimilarResultsRadio"
-                                        Height="30"
-                                        Margin="0,-2,0,-2"
-                                        x:FieldModifier="protected">
-                                        <RadioButton.Content>
-                                            <widgets:TranslatedTextBlock Text="Show similar packages" WrappingMode="Wrap" />
-                                        </RadioButton.Content>
-                                    </RadioButton>
-                                </RadioButtons>
-                            </StackPanel>
-                        </Expander.Content>
-                    </Expander>
-                </Grid>
-            </ScrollView>
-
-
-            <!--  Filters/Packages Splitter  -->
-            <Toolkit:GridSplitter
-                x:Name="FiltersResizer"
-                Grid.Row="1"
-                Grid.Column="1"
-                Width="10"
-                Margin="0,1,0,1"
-                Padding="-2,0,-2,0"
-                HorizontalAlignment="Left"
-                CornerRadius="2">
-                <Toolkit:GridSplitter.RenderTransform>
-                    <TranslateTransform X="-11" />
-                </Toolkit:GridSplitter.RenderTransform>
-            </Toolkit:GridSplitter>
-
-            <!--  ACTUAL PACKAGE LIST  -->
-            <Grid
-                Grid.Row="1"
-                Grid.Column="1"
-                Padding="4,6,4,6"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
-                BorderBrush="{StaticResource ExpanderContentBorderBrush}"
-                BorderThickness="1"
-                CornerRadius="8">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="37" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid
-                    Grid.Row="0"
-                    Margin="4,2,4,5"
-                    ColumnSpacing="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="8" />
-                        <ColumnDefinition Width="32" />
-                        <ColumnDefinition Width="28" />
-                        <ColumnDefinition Width="*" MinWidth="100" />
-                        <ColumnDefinition Width="32" />
-                        <ColumnDefinition Width="*" MinWidth="100" />
-                        <ColumnDefinition Width="32" />
-                        <ColumnDefinition Width="*" MaxWidth="125" />
-                        <ColumnDefinition Width="32" MaxWidth="{x:Bind NewVersionIconWidth}" />
-                        <ColumnDefinition Width="*" MaxWidth="{x:Bind NewVersionLabelWidth}" />
-                        <ColumnDefinition Width="32" />
-                        <ColumnDefinition Width="*" MaxWidth="150" />
-                        <ColumnDefinition Width="11" />
-                    </Grid.ColumnDefinitions>
-                    <Button
-                        Name="CheckboxHeader"
-                        Grid.Column="0"
-                        Grid.ColumnSpan="3"
-                        Padding="0"
-                        HorizontalAlignment="Stretch"
-                        BorderThickness="0"
-                        CornerRadius="4,0,0,4">
-                        <CheckBox
-                            Name="SelectAllCheckBox"
-                            Margin="12,4,4,4"
-                            Checked="SelectAllCheckBox_ValueChanged"
-                            Unchecked="SelectAllCheckBox_ValueChanged" />
-                    </Button>
-                    <Button
-                        Name="NameHeader"
-                        Grid.Column="3"
-                        Grid.ColumnSpan="1"
-                        HorizontalAlignment="Stretch"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-                    <Button
-                        Name="IdHeader"
-                        Grid.Column="4"
-                        Grid.ColumnSpan="2"
-                        HorizontalAlignment="Stretch"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-                    <Button
-                        Name="VersionHeader"
-                        Grid.Column="6"
-                        Grid.ColumnSpan="2"
-                        HorizontalAlignment="Stretch"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-                    <Button
-                        Name="NewVersionHeader"
-                        Grid.Column="8"
-                        Grid.ColumnSpan="2"
-                        HorizontalAlignment="Stretch"
-                        BorderThickness="0"
-                        CornerRadius="0"
-                        Visibility="{x:Bind RoleIsUpdateLike}" />
-                    <Button
-                        Name="SourceHeader"
-                        Grid.Column="10"
-                        Grid.ColumnSpan="3"
-                        HorizontalAlignment="Stretch"
-                        BorderThickness="0"
-                        CornerRadius="0,4,4,0" />
-                </Grid>
-
-                <ItemsView
-                    x:Name="PackageList"
+            BorderThickness="0"
+            CornerRadius="0,0,0,0"
+            DisplayMode="Inline"
+            PaneBackground="Transparent"
+            PaneClosing="FilteringPanel_PaneClosing"
+            PanePlacement="Left"
+            SizeChanged="FilteringPanel_SizeChanged">
+            <SplitView.Pane>
+                <ScrollViewer
+                    Name="SidePanel"
                     Grid.Row="1"
-                    Padding="4,0,4,0"
+                    Grid.Column="0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    BorderBrush="{ThemeResource AccentAAFillColorDefaultBrush}"
+                    CornerRadius="0,8,8,0"
+                    HorizontalScrollMode="Disabled"
+                    SizeChanged="SidepanelWidth_SizeChanged">
+                    <Grid Name="SidePanelGrid" RowSpacing="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  Sources Expander  -->
+                        <Expander
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Padding="4,4,4,8"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            AutomationProperties.Name="Filter by sources"
+                            Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
+                            CornerRadius="8"
+                            IsExpanded="True">
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon FontSize="20" Glyph="&#xE74C;" />
+                                    <widgets:TranslatedTextBlock
+                                        VerticalAlignment="Center"
+                                        FontWeight="SemiBold"
+                                        Text="Sources" />
+                                </StackPanel>
+                            </Expander.Header>
+                            <Expander.Content>
+                                <StackPanel Orientation="Vertical">
+                                    <widgets:TranslatedTextBlock
+                                        x:Name="SourcesPlaceholderText"
+                                        MinHeight="60"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        FontSize="15"
+                                        FontWeight="Bold"
+                                        Opacity="0.5"
+                                        Text="Search for packages to start"
+                                        WrappingMode="Wrap" />
+                                    <Grid
+                                        Name="SourcesTreeViewGrid"
+                                        HorizontalAlignment="Stretch"
+                                        ColumnSpacing="4"
+                                        RowSpacing="4"
+                                        Visibility="Collapsed">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <HyperlinkButton
+                                            Name="SelectAllSourcesButton"
+                                            Grid.Column="0"
+                                            Padding="2"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center"
+                                            Click="SelectAllSourcesButton_Click">
+                                            <widgets:TranslatedTextBlock
+                                                FontSize="12"
+                                                FontWeight="SemiBold"
+                                                Text="Select all" />
+                                        </HyperlinkButton>
+                                        <HyperlinkButton
+                                            Name="ClearSourceSelectionButton"
+                                            Grid.Column="1"
+                                            Padding="2"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center"
+                                            Click="ClearSourceSelectionButton_Click">
+                                            <widgets:TranslatedTextBlock
+                                                FontSize="12"
+                                                FontWeight="SemiBold"
+                                                Text="Clear selection" />
+                                        </HyperlinkButton>
+                                        <TreeView
+                                            Name="SourcesTreeView"
+                                            Grid.Row="1"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2"
+                                            Padding="0"
+                                            HorizontalAlignment="Stretch"
+                                            SelectionChanged="SourcesTreeView_SelectionChanged"
+                                            SelectionMode="Multiple" />
+                                    </Grid>
+
+                                </StackPanel>
+                            </Expander.Content>
+                        </Expander>
+                        <!--  Filter Options Expander  -->
+                        <Expander
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Padding="16,8,16,8"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            AutomationProperties.Name="Filter options"
+                            Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
+                            CornerRadius="8"
+                            IsExpanded="False">
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon FontSize="20" Glyph="&#xE71C;" />
+                                    <widgets:TranslatedTextBlock
+                                        VerticalAlignment="Center"
+                                        FontWeight="SemiBold"
+                                        Text="Filters" />
+                                </StackPanel>
+                            </Expander.Header>
+                            <Expander.Content>
+                                <StackPanel
+                                    HorizontalAlignment="Stretch"
+                                    Orientation="Vertical"
+                                    Spacing="0">
+                                    <CheckBox
+                                        x:Name="InstantSearchCheckbox"
+                                        x:FieldModifier="protected"
+                                        Checked="InstantSearchValueChanged"
+                                        Unchecked="InstantSearchValueChanged">
+                                        <CheckBox.Content>
+                                            <widgets:TranslatedTextBlock Text="Instant search" WrappingMode="Wrap" />
+                                        </CheckBox.Content>
+                                    </CheckBox>
+                                    <CheckBox
+                                        x:Name="UpperLowerCaseCheckbox"
+                                        Checked="FilterOptionsChanged"
+                                        Unchecked="FilterOptionsChanged">
+                                        <CheckBox.Content>
+                                            <widgets:TranslatedTextBlock Text="Distinguish between uppercase and lowercase" WrappingMode="Wrap" />
+                                        </CheckBox.Content>
+                                    </CheckBox>
+                                    <CheckBox
+                                        x:Name="IgnoreSpecialCharsCheckbox"
+                                        Checked="FilterOptionsChanged"
+                                        IsChecked="True"
+                                        Unchecked="FilterOptionsChanged">
+                                        <CheckBox.Content>
+                                            <widgets:TranslatedTextBlock Text="Ignore special characters" WrappingMode="Wrap" />
+                                        </CheckBox.Content>
+                                    </CheckBox>
+                                </StackPanel>
+                            </Expander.Content>
+                        </Expander>
+                        <!--  Search mode expander  -->
+                        <Expander
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Padding="16,8,16,8"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            AutomationProperties.Name="Search mode"
+                            Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
+                            CornerRadius="8"
+                            IsExpanded="True">
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon FontSize="20" Glyph="&#xE773;" />
+                                    <widgets:TranslatedTextBlock
+                                        VerticalAlignment="Center"
+                                        FontWeight="SemiBold"
+                                        Text="Search mode" />
+                                </StackPanel>
+                            </Expander.Header>
+                            <Expander.Content>
+                                <StackPanel
+                                    HorizontalAlignment="Stretch"
+                                    Orientation="Vertical"
+                                    Spacing="0">
+                                    <RadioButtons
+                                        Name="QueryOptionsGroup"
+                                        Margin="0,-4,0,6"
+                                        x:FieldModifier="protected"
+                                        CharacterSpacing="0"
+                                        SelectionChanged="FilterOptionsChanged">
+                                        <RadioButton
+                                            x:Name="QueryNameRadio"
+                                            Height="30"
+                                            Margin="0,-2,0,-2"
+                                            x:FieldModifier="protected">
+                                            <RadioButton.Content>
+                                                <widgets:TranslatedTextBlock Text="Package Name" WrappingMode="Wrap" />
+                                            </RadioButton.Content>
+                                        </RadioButton>
+                                        <RadioButton
+                                            x:Name="QueryIdRadio"
+                                            Height="30"
+                                            Margin="0,-2,0,-2"
+                                            x:FieldModifier="protected">
+                                            <RadioButton.Content>
+                                                <widgets:TranslatedTextBlock Text="Package ID" WrappingMode="Wrap" />
+                                            </RadioButton.Content>
+                                        </RadioButton>
+                                        <RadioButton
+                                            x:Name="QueryBothRadio"
+                                            Height="30"
+                                            Margin="0,-2,0,-2"
+                                            x:FieldModifier="protected"
+                                            IsChecked="True">
+                                            <RadioButton.Content>
+                                                <widgets:TranslatedTextBlock Text="Both" WrappingMode="Wrap" />
+                                            </RadioButton.Content>
+                                        </RadioButton>
+                                        <RadioButton
+                                            x:Name="QueryExactMatch"
+                                            Height="30"
+                                            Margin="0,-2,0,-2"
+                                            x:FieldModifier="protected">
+                                            <RadioButton.Content>
+                                                <widgets:TranslatedTextBlock Text="Exact match" WrappingMode="Wrap" />
+                                            </RadioButton.Content>
+                                        </RadioButton>
+                                        <RadioButton
+                                            x:Name="QuerySimilarResultsRadio"
+                                            Height="30"
+                                            Margin="0,-2,0,-2"
+                                            x:FieldModifier="protected">
+                                            <RadioButton.Content>
+                                                <widgets:TranslatedTextBlock Text="Show similar packages" WrappingMode="Wrap" />
+                                            </RadioButton.Content>
+                                        </RadioButton>
+                                    </RadioButtons>
+                                </StackPanel>
+                            </Expander.Content>
+                        </Expander>
+                    </Grid>
+                </ScrollViewer>
+            </SplitView.Pane>
+            <Grid Name="PackagesListGrid" Margin="0">
+                <ProgressBar
+                    x:Name="LoadingProgressBar"
+                    Margin="1,-6,1,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top"
+                    x:FieldModifier="protected"
+                    IsIndeterminate="True"
+                    Visibility="Visible" />
+
+                <!--  ACTUAL PACKAGE LIST  -->
+                <Grid
+                    Padding="4,6,4,6"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
+                    BorderBrush="{StaticResource ExpanderContentBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="37" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid
+                        Grid.Row="0"
+                        Margin="4,2,4,5"
+                        ColumnSpacing="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="32" />
+                            <ColumnDefinition Width="28" />
+                            <ColumnDefinition Width="*" MinWidth="100" />
+                            <ColumnDefinition Width="32" />
+                            <ColumnDefinition Width="*" MinWidth="100" />
+                            <ColumnDefinition Width="32" />
+                            <ColumnDefinition Width="*" MaxWidth="125" />
+                            <ColumnDefinition Width="32" MaxWidth="{x:Bind NewVersionIconWidth}" />
+                            <ColumnDefinition Width="*" MaxWidth="{x:Bind NewVersionLabelWidth}" />
+                            <ColumnDefinition Width="32" />
+                            <ColumnDefinition Width="*" MaxWidth="150" />
+                            <ColumnDefinition Width="11" />
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            Name="CheckboxHeader"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="3"
+                            Padding="0"
+                            HorizontalAlignment="Stretch"
+                            BorderThickness="0"
+                            CornerRadius="4,0,0,4">
+                            <CheckBox
+                                Name="SelectAllCheckBox"
+                                Margin="12,4,4,4"
+                                Checked="SelectAllCheckBox_ValueChanged"
+                                Unchecked="SelectAllCheckBox_ValueChanged" />
+                        </Button>
+                        <Button
+                            Name="NameHeader"
+                            Grid.Column="3"
+                            Grid.ColumnSpan="1"
+                            HorizontalAlignment="Stretch"
+                            BorderThickness="0"
+                            CornerRadius="0" />
+                        <Button
+                            Name="IdHeader"
+                            Grid.Column="4"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Stretch"
+                            BorderThickness="0"
+                            CornerRadius="0" />
+                        <Button
+                            Name="VersionHeader"
+                            Grid.Column="6"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Stretch"
+                            BorderThickness="0"
+                            CornerRadius="0" />
+                        <Button
+                            Name="NewVersionHeader"
+                            Grid.Column="8"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Stretch"
+                            BorderThickness="0"
+                            CornerRadius="0"
+                            Visibility="{x:Bind RoleIsUpdateLike}" />
+                        <Button
+                            Name="SourceHeader"
+                            Grid.Column="10"
+                            Grid.ColumnSpan="3"
+                            HorizontalAlignment="Stretch"
+                            BorderThickness="0"
+                            CornerRadius="0,4,4,0" />
+                    </Grid>
+
+                    <ItemsView
+                        x:Name="PackageList"
+                        Grid.Row="1"
+                        Padding="4,0,4,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        x:FieldModifier="protected"
+                        CanBeScrollAnchor="False"
+                        CharacterReceived="{x:Bind PackageList_CharacterReceived}"
+                        ItemTemplate="{StaticResource PackageTemplate}"
+                        ItemsSource="{x:Bind FilteredPackages, Mode=OneWay}">
+                        <ItemsView.Layout>
+                            <StackLayout Spacing="3" />
+                        </ItemsView.Layout>
+                    </ItemsView>
+
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            x:Name="BackgroundText"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            FontFamily="Segoe UI Variable Display"
+                            FontSize="30"
+                            FontWeight="Bold"
+                            Opacity="0.5"
+                            Text="Hello World Lorem Ipsum dolor sit amet"
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
+                    </Grid>
+
+                </Grid>
+
+                <!--  Filters/Packages Splitter  -->
+                <Toolkit:PropertySizer
+                    x:Name="FiltersResizer"
+                    Width="12"
+                    Margin="-12,0,0,0"
+                    Padding="0,0,0,0"
+                    HorizontalAlignment="Left"
+                    Binding="{x:Bind FilteringPanel.OpenPaneLength, Mode=TwoWay}"
+                    CornerRadius="2"
+                    Visibility="{x:Bind FilteringPanel.IsPaneOpen, Mode=OneWay}">
+                    <Toolkit:PropertySizer.RenderTransform>
+                        <TranslateTransform X="0" />
+                    </Toolkit:PropertySizer.RenderTransform>
+                </Toolkit:PropertySizer>
+
+
+                <!--  MEGA QUERY BLOCK  -->
+                <Grid
+                    x:Name="MegaQueryBlockGrid"
+                    Grid.Row="1"
+                    Grid.Column="1"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     x:FieldModifier="protected"
-                    CanBeScrollAnchor="False"
-                    CharacterReceived="{x:Bind PackageList_CharacterReceived}"
-                    ItemTemplate="{StaticResource PackageTemplate}"
-                    ItemsSource="{x:Bind FilteredPackages, Mode=OneWay}">
-                    <ItemsView.Layout>
-                        <StackLayout Spacing="3" />
-                    </ItemsView.Layout>
-                </ItemsView>
-
-                <Grid Grid.Row="1">
+                    Visibility="Collapsed">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="80" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8*" MaxWidth="800" />
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock
-                        x:Name="BackgroundText"
+                    <TextBox
+                        x:Name="MegaQueryBlock"
                         Grid.Row="1"
                         Grid.Column="1"
-                        VerticalAlignment="Center"
-                        FontFamily="Segoe UI Variable Display"
-                        FontSize="30"
-                        FontWeight="Bold"
-                        Opacity="0.5"
-                        Text="Hello World Lorem Ipsum dolor sit amet"
-                        TextAlignment="Center"
-                        TextWrapping="Wrap" />
+                        Padding="20,11,10,11"
+                        x:FieldModifier="protected"
+                        CornerRadius="8,0,0,8"
+                        FontSize="40"
+                        FontWeight="SemiBold" />
+                    <Button
+                        x:Name="MegaFindButton"
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Width="80"
+                        Height="80"
+                        Padding="12"
+                        x:FieldModifier="protected"
+                        AutomationProperties.HelpText="Search"
+                        CornerRadius="0,8,8,0">
+                        <AnimatedIcon>
+                            <AnimatedIcon.Source>
+                                <animatedvisuals:AnimatedFindVisualSource />
+                            </AnimatedIcon.Source>
+                            <AnimatedIcon.FallbackIconSource>
+                                <SymbolIconSource Symbol="Find" />
+                            </AnimatedIcon.FallbackIconSource>
+                        </AnimatedIcon>
+                    </Button>
+
                 </Grid>
-
             </Grid>
-
-
-            <!--  MEGA QUERY BLOCK  -->
-            <Grid
-                x:Name="MegaQueryBlockGrid"
-                Grid.Row="1"
-                Grid.Column="1"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                x:FieldModifier="protected"
-                Visibility="Collapsed">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="80" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="8*" MaxWidth="800" />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <TextBox
-                    x:Name="MegaQueryBlock"
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Padding="20,11,10,11"
-                    x:FieldModifier="protected"
-                    CornerRadius="8,0,0,8"
-                    FontSize="40"
-                    FontWeight="SemiBold" />
-                <Button
-                    x:Name="MegaFindButton"
-                    Grid.Row="1"
-                    Grid.Column="2"
-                    Width="80"
-                    Height="80"
-                    Padding="12"
-                    x:FieldModifier="protected"
-                    AutomationProperties.HelpText="Search"
-                    CornerRadius="0,8,8,0">
-                    <AnimatedIcon>
-                        <AnimatedIcon.Source>
-                            <animatedvisuals:AnimatedFindVisualSource />
-                        </AnimatedIcon.Source>
-                        <AnimatedIcon.FallbackIconSource>
-                            <SymbolIconSource Symbol="Find" />
-                        </AnimatedIcon.FallbackIconSource>
-                    </AnimatedIcon>
-                </Button>
-
-            </Grid>
-        </Grid>
+        </SplitView>
     </Grid>
-
 </Page>

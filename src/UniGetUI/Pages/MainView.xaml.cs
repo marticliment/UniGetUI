@@ -16,6 +16,10 @@ using UniGetUI.Pages.DialogPages;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageOperations;
 using UniGetUI.Pages.SettingsPages;
+using UniGetUI.Controls;
+using ABI.Windows.Graphics.Imaging;
+using UniGetUI.PackageEngine;
+using UniGetUI.PackageEngine.PackageLoader;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -105,6 +109,19 @@ namespace UniGetUI.Interface
                 }
             };
 
+
+            foreach(var pair in new Dictionary<CustomNavViewItem, AbstractPackageLoader>
+            {
+                {  DiscoverNavBtn,  PEInterface.DiscoveredPackagesLoader },
+                {  UpdatesNavBtn,  PEInterface.UpgradablePackagesLoader },
+                {  InstalledNavBtn,  PEInterface.InstalledPackagesLoader },
+            })
+            {
+                pair.Value.FinishedLoading += (_, _) => MainApp.Dispatcher.TryEnqueue(() => pair.Key.IsLoading = false);
+                pair.Value.StartedLoading += (_, _) => MainApp.Dispatcher.TryEnqueue(() => pair.Key.IsLoading = true);
+                pair.Key.IsLoading = pair.Value.IsLoading;
+            }
+
             LoadDefaultPage();
 
             if (CoreTools.IsAdministrator() && !Settings.Get("AlreadyWarnedAboutAdmin"))
@@ -120,6 +137,11 @@ namespace UniGetUI.Interface
             {
                 DialogHelper.ShowTelemetryBanner();
             }
+
+            if (!Settings.Get("CollapseNavMenuOnWideScreen"))
+            {
+                NavView.IsPaneOpen = true;
+            }
         }
 
         public void LoadDefaultPage()
@@ -134,25 +156,6 @@ namespace UniGetUI.Interface
                 _ => MainApp.Tooltip.AvailableUpdates > 0 ? PageType.Updates : PageType.Discover
             };
             NavigateTo(type);
-        }
-
-        private void DiscoverNavButton_Click(object sender, EventArgs e)
-            => NavigateTo(PageType.Discover);
-
-        private void InstalledNavButton_Click(object sender, EventArgs e)
-            => NavigateTo(PageType.Installed);
-
-        private void UpdatesNavButton_Click(object sender, EventArgs e)
-            => NavigateTo(PageType.Updates);
-
-        private void BundlesNavButton_Click(object sender, EventArgs e)
-            => NavigateTo(PageType.Bundles);
-
-        private void MoreNavButton_Click(object sender, EventArgs e)
-        {
-            SelectNavButtonForPage(PageType.OwnLog);
-            (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
-            MoreNavButtonMenu.ShowAt(MoreNavButton, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Standard });
         }
 
         private Page GetPageForType(PageType type)
@@ -220,13 +223,16 @@ namespace UniGetUI.Interface
 
         private void SelectNavButtonForPage(PageType page)
         {
-            DiscoverNavButton.IsChecked = page is PageType.Discover;
-            UpdatesNavButton.IsChecked = page is PageType.Updates;
-            InstalledNavButton.IsChecked = page is PageType.Installed;
-            BundlesNavButton.IsChecked = page is PageType.Bundles;
-            ManagersNavButton.IsChecked = page is PageType.Managers;
-            SettingsNavButton.IsChecked = page is PageType.Settings;
-            MoreNavButton.IsChecked = page is PageType.Help or PageType.ManagerLog or PageType.OperationHistory or PageType.OwnLog;
+            NavView.SelectedItem = page switch
+            {
+                PageType.Discover => DiscoverNavBtn,
+                PageType.Updates => UpdatesNavBtn,
+                PageType.Installed => InstalledNavBtn,
+                PageType.Bundles => BundlesNavBtn,
+                PageType.Settings => SettingsNavBtn,
+                PageType.Managers => ManagersNavBtn,
+                _ => MoreNavBtn,
+            };
         }
 
         private async void AboutNavButton_Click(object sender, RoutedEventArgs e)
@@ -388,6 +394,26 @@ namespace UniGetUI.Interface
                 if (operation.Status is OperationStatus.Succeeded)
                     widget.Close();
             }
+        }
+
+        private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        {
+            if(args.SelectedItem is CustomNavViewItem item)
+            {
+                if(item.Tag is PageType.Null)
+                {
+                }
+                else
+                {
+                    NavigateTo(item.Tag);
+                }
+            }
+        }
+
+        private void MoreNavBtn_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
+            MoreNavButtonMenu.ShowAt(sender as FrameworkElement);
         }
     }
 }

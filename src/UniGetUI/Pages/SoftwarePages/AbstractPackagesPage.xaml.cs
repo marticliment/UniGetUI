@@ -18,6 +18,9 @@ using UniGetUI.Interface.Pages;
 using UniGetUI.Interface.Telemetry;
 using UniGetUI.Pages.DialogPages;
 using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority;
+using Microsoft.UI;
+using Microsoft.UI.Xaml.Media;
+using Windows.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -280,13 +283,14 @@ namespace UniGetUI.Interface
                 BackgroundText.Visibility = Visibility.Collapsed;
             }
 
+            ChangeFilteringPaneLayout();
             if (Settings.GetDictionaryItem<string, bool>("HideToggleFilters", PAGE_NAME))
             {
-                HideFilteringPane(skipAnimation: true);
+                HideFilteringPane();
             }
             else
             {
-                ShowFilteringPane(skipAnimation: true);
+                ShowFilteringPane();
             }
 
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
@@ -891,7 +895,7 @@ namespace UniGetUI.Interface
                 return;
             }
 
-            if ((int)e.NewSize.Width < 30)
+            if ((int)e.NewSize.Width < 100)
             {
                 HideFilteringPane();
                 Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, 250);
@@ -974,7 +978,11 @@ namespace UniGetUI.Interface
 
         private void ToggleFiltersButton_Click(object sender, RoutedEventArgs e)
         {
-            Settings.SetDictionaryItem("HideToggleFilters", PAGE_NAME, !ToggleFiltersButton.IsChecked ?? false);
+            if(FilteringPanel.DisplayMode is SplitViewDisplayMode.Inline)
+            {
+                Settings.SetDictionaryItem("HideToggleFilters", PAGE_NAME, !ToggleFiltersButton.IsChecked ?? false);
+            }
+
             if (ToggleFiltersButton.IsChecked ?? false)
             {
                 ShowFilteringPane();
@@ -985,64 +993,34 @@ namespace UniGetUI.Interface
             }
         }
 
-        private async void HideFilteringPane(bool skipAnimation = false)
+        private async void HideFilteringPane()
         {
-            if (PaneIsAnimated) return;
-
-            PaneIsAnimated = true;
-            ToggleFiltersButton.IsChecked = false;
-
-            if (!skipAnimation)
-            {
-                OutAnimation_FiltersPane.Start();
-                double width = BodyGrid.ColumnDefinitions[0].Width.Value;
-                while (width > 0)
-                {
-                    BodyGrid.ColumnDefinitions[0].Width = new GridLength(width);
-                    await Task.Delay(10);
-                    width -= 40;
-                }
-            }
-
-            FiltersResizer.Visibility = SidePanel.Visibility = Visibility.Collapsed;
-            BodyGrid.ColumnDefinitions[0].Width = new GridLength(0);
-            BodyGrid.ColumnSpacing = 0;
-            PaneIsAnimated = false;
+            FilteringPanel.IsPaneOpen = false;
+            PackagesListGrid.Margin = new Thickness(0, 0, 0, 0);
         }
 
-        private async void ShowFilteringPane(bool skipAnimation = false)
+        private async void ShowFilteringPane()
         {
-            if (PaneIsAnimated) return;
-
-            PaneIsAnimated = true;
-            ToggleFiltersButton.IsChecked = true;
-            FiltersResizer.Visibility = SidePanel.Visibility = Visibility.Visible;
-            BodyGrid.ColumnSpacing = 12;
-            InAnimation_FiltersPane.Start();
-
-            int final_width = 250;
-            try
+            if (FilteringPanel.DisplayMode is SplitViewDisplayMode.Inline)
             {
-                final_width = Settings.GetDictionaryItem<string, int>("SidepanelWidths", PAGE_NAME);
-            }
-            catch
-            {
-                Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, 250);
-            }
-
-            if (!skipAnimation)
-            {
-                double width = 0;
-                while (width < final_width)
+                int finalWidth = 250;
+                try
                 {
-                    BodyGrid.ColumnDefinitions[0].Width = new GridLength(width);
-                    await Task.Delay(10);
-                    width += 40;
+                    finalWidth = Settings.GetDictionaryItem<string, int>("SidepanelWidths", PAGE_NAME);
                 }
+                catch
+                {
+                    Settings.SetDictionaryItem("SidepanelWidths", PAGE_NAME, 250);
+                }
+                FilteringPanel.OpenPaneLength = finalWidth;
+                PackagesListGrid.Margin = new Thickness(12, 0, 0, 0);
             }
-
-            BodyGrid.ColumnDefinitions[0].Width = new GridLength(final_width);
-            PaneIsAnimated = false;
+            else
+            {
+                FilteringPanel.OpenPaneLength = 250;
+            }
+            FilteringPanel.IsPaneOpen = true;
+            ToggleFiltersButton.IsChecked = true;
         }
 
         private async Task LoadIconsForNewPackages()
@@ -1147,6 +1125,67 @@ namespace UniGetUI.Interface
                 package.IsChecked = !package.IsChecked;
                 e.Handled = true;
             }
+        }
+
+        private async void ChangeFilteringPaneLayout()
+        {
+            if (FilteringPanel.ActualWidth == 0)
+            {
+                FilteringPanel.DisplayMode = SplitViewDisplayMode.CompactInline;
+            }
+            else if (FilteringPanel.ActualWidth < 1000 && FilteringPanel.DisplayMode is not SplitViewDisplayMode.Overlay)
+            {
+                FilteringPanel.DisplayMode = SplitViewDisplayMode.Overlay;
+                HideFilteringPane();
+                FiltersResizer.Opacity = 0;
+                ToggleFiltersButton.IsChecked = false;
+
+                await Task.Delay(200);
+                FilteringPanel.Shadow = new ThemeShadow();
+                SidePanel.BorderThickness = new Thickness(0, 1, 1, 1);
+
+                SidePanel.Background = new AcrylicBrush()
+                {
+                    TintColor = Color.FromArgb(255, 20, 20, 20),
+                    TintOpacity = 0.4,
+                    FallbackColor = Color.FromArgb(255, 20, 20, 20),
+                    TintLuminosityOpacity = 0.8
+                };
+
+                if (FilteringPanel.Pane is ScrollViewer filters)
+                {
+                    filters.Padding = new Thickness(8);
+                    filters.Margin = new Thickness(0, 1, 0, 1);
+                }
+            }
+            else if (FilteringPanel.ActualWidth >= 1000 && FilteringPanel.DisplayMode is not SplitViewDisplayMode.Inline)
+            {
+                FilteringPanel.DisplayMode = SplitViewDisplayMode.Inline;
+                SidePanel.Background = new SolidColorBrush(Colors.Transparent);
+                FiltersResizer.Opacity = 1;
+                SidePanel.BorderThickness = new Thickness(0);
+
+                if (FilteringPanel.Pane is ScrollViewer filters)
+                {
+                    filters.Padding = new Thickness(0);
+                    filters.Margin = new Thickness(0);
+                }
+
+                if (!Settings.GetDictionaryItem<string, bool>("HideToggleFilters", PAGE_NAME))
+                {
+                    ShowFilteringPane();
+                }
+            }
+        }
+
+        private void FilteringPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ChangeFilteringPaneLayout();
+        }
+
+        private void FilteringPanel_PaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
+        {
+            ToggleFiltersButton.IsChecked = false;
         }
     }
 }

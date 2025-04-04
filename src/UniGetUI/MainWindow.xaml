@@ -8,6 +8,7 @@
     xmlns:local="using:UniGetUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    xmlns:winex="using:WinUIEx"
     Title="UniGetUI"
     mc:Ignorable="d">
 
@@ -26,46 +27,26 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Border
-            x:Name="__app_titlebar"
+
+        <winex:TitleBar
+            x:Name="TitleBar"
+            Title="UniGetUI"
             Grid.Row="0"
-            Height="36"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
+            IsPaneToggleButtonVisible="True"
+            PaneToggleRequested="TitleBar_PaneToggleRequested"
             Visibility="Collapsed">
-            <StackPanel
-                Margin="12,8,12,8"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Top"
-                Orientation="Horizontal"
-                Spacing="10">
-                <Image
-                    Width="16"
-                    Height="16"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Stretch">
-                    <Image.Source>
-                        <BitmapImage DecodePixelHeight="16" UriSource="ms-appx:///Assets/Images/icon.png" />
-                    </Image.Source>
-                </Image>
-                <TextBlock
-                    x:Name="AppTitle"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Stretch"
-                    FontSize="12"
-                    Text="UniGetUI" />
-                <TextBlock
-                    x:Name="AppSubTitle"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    FontSize="12"
-                    Opacity="0.8" />
-            </StackPanel>
-        </Border>
+            <winex:TitleBar.IconSource>
+                <ImageIconSource ImageSource="ms-appx:///Assets/Images/icon.png" />
+            </winex:TitleBar.IconSource>
+            <winex:TitleBar.Content>
+                <UserControl Height="10" />
+            </winex:TitleBar.Content>
+        </winex:TitleBar>
         <StackPanel
             Grid.Row="1"
-            Margin="0,-4,0,0"
+            Margin="0"
             Padding="0"
+            BorderThickness="0"
             Spacing="0">
             <InfoBar
                 Name="UpdatesBanner"
@@ -100,7 +81,8 @@
                 BorderThickness="0,1,0,1"
                 CornerRadius="0"
                 IsOpen="False"
-                Severity="Informational" />
+                Severity="Informational"
+                Visibility="Collapsed" />
         </StackPanel>
         <Frame Name="MainContentFrame" Grid.Row="2">
             <Grid Background="{StaticResource ProgressBarBorderThemeBrush}" Visibility="Visible">

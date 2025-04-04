@@ -13,7 +13,6 @@ using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Interfaces;
@@ -46,7 +45,6 @@ namespace UniGetUI.Interface
         public int LoadingDialogCount;
 
         public List<ContentDialog> DialogQueue = [];
-        public List<NavButton> NavButtonList = [];
 
         public static readonly ObservableQueue<string> ParametersToProcess = new();
 
@@ -195,15 +193,15 @@ namespace UniGetUI.Interface
 
         private void AddToSubtitle(string line)
         {
-            if (AppSubTitle.Text.Length > 0)
-                AppSubTitle.Text += " - ";
-            AppSubTitle.Text += line;
-            Title = "UniGetUI - " + AppSubTitle.Text;
+            if (TitleBar.Subtitle.Length > 0)
+                TitleBar.Subtitle += " - ";
+            TitleBar.Subtitle += line;
+            Title = "UniGetUI - " + TitleBar.Subtitle;
         }
 
         private void ClearSubtitle()
         {
-            AppSubTitle.Text = "";
+            TitleBar.Subtitle = "";
             Title = "UniGetUI";
         }
 
@@ -682,10 +680,11 @@ namespace UniGetUI.Interface
 
         public void SwitchToInterface()
         {
-            __app_titlebar.Visibility = Visibility.Visible;
-            SetTitleBar(__app_titlebar);
+            TitleBar.Visibility = Visibility.Visible;
+            SetTitleBar(TitleBar);
 
             NavigationPage = new MainView();
+
 
             object? control = MainContentFrame.Content as Grid;
             if (control is Grid loadingWindow)
@@ -705,6 +704,7 @@ namespace UniGetUI.Interface
                     MainContentFrame.Content = NavigationPage;
             };
 
+            
         }
 
         public void ApplyTheme()
@@ -989,6 +989,17 @@ namespace UniGetUI.Interface
             return true;
         }
 
+        private void TitleBar_PaneToggleRequested(WinUIEx.TitleBar sender, object args)
+        {
+            if (NavigationPage is not null)
+            {
+                if(this.AppWindow.Size.Width >= 1600)
+                {
+                    Settings.Set("CollapseNavMenuOnWideScreen", NavigationPage.NavView.IsPaneOpen);
+                }
+                NavigationPage.NavView.IsPaneOpen = !NavigationPage.NavView.IsPaneOpen;
+            }
+        }
     }
 
     public static class NativeHelpers
