@@ -41,9 +41,7 @@ internal class CustomNavViewItem : NavigationViewItem
     {
         set
         {
-            // Resources["NavigationViewItemOnLeftIconBoxHeight"] = value? 16: _iconSize;
-            int s = value ? 6 : 0;
-            base.Icon.Margin = new Thickness(s);
+            base.Icon.Margin = new Thickness(value ? 6 : 0);
             _progressRing.Visibility = value? Visibility.Visible: Visibility.Collapsed;
         }
     }
