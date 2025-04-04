@@ -283,6 +283,7 @@ namespace UniGetUI.Interface
                 BackgroundText.Visibility = Visibility.Collapsed;
             }
 
+            ChangeFilteringPaneLayout();
             if (Settings.GetDictionaryItem<string, bool>("HideToggleFilters", PAGE_NAME))
             {
                 HideFilteringPane();
@@ -291,7 +292,6 @@ namespace UniGetUI.Interface
             {
                 ShowFilteringPane();
             }
-            ChangeFilteringPaneLayout();
 
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
             MegaQueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
