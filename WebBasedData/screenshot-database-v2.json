@@ -3,8 +3,8 @@
         "total": 11805,
         "done": 5275,
         "packages_with_icon": 5275,
-        "packages_with_screenshot": 631,
-        "total_screenshots": 1972
+        "packages_with_screenshot": 633,
+        "total_screenshots": 1977
     },
     "icons_and_screenshots": {
         "__test_entry_DO_NOT_EDIT_PLEASE": {
@@ -8242,8 +8242,13 @@
             "images": []
         },
         "compactgui": {
-            "icon": "https://postimg.cc/23Nn3b75",
-            "images": []
+            "icon": "https://i.imgur.com/NHhZtxp.png",
+            "images": [
+                "https://i.imgur.com/VsswHJ2.png",
+                "https://i.imgur.com/9CcHxub.png",
+                "https://i.imgur.com/HavsEnA.png",
+                "https://i.imgur.com/a5epFFP.png"
+            ]
         },
         "compactor": {
             "icon": "https://community.chocolatey.org/content/packageimages/compactor.0.10.1.png",
@@ -26996,7 +27001,9 @@
         },
         "neofetch": {
             "icon": "",
-            "images": []
+            "images": [
+                "https://zv915ylvcs.ufs.sh/f/fYIgEizARqiSu7FpAit2c9F5IJV04zYrBXaySm7AGhM1vkEU"
+            ]
         },
         "neoload": {
             "icon": "",
