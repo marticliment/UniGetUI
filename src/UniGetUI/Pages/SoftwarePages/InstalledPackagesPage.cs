@@ -5,13 +5,12 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.Managers.WingetManager;
-using UniGetUI.PackageEngine.Operations;
-using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
@@ -122,7 +121,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 Text = CoreTools.AutoTranslated("Download installer"),
                 IconName = IconType.Download
             };
-            MenuDownloadInstaller.Click += (_, _) => MainApp.Operations.AskLocationAndDownload(SelectedItem);
+            MenuDownloadInstaller.Click += (_, _) => _ = MainApp.Operations.AskLocationAndDownload(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
             menu.Items.Add(MenuDownloadInstaller);
 
             menu.Items.Add(new MenuFlyoutSeparator());
@@ -251,7 +250,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
             }
 
-            PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem);
+            PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
 
             ExportSelection.Click += ExportSelection_Click;
             HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
@@ -260,11 +259,13 @@ namespace UniGetUI.Interface.SoftwarePages
             IgnoreSelected.Click += async (_, _) =>
             {
                 foreach (IPackage package in FilteredPackages.GetCheckedPackages())
-                    if(!package.Source.IsVirtualManager)
+                {
+                    if (!package.Source.IsVirtualManager)
                     {
                         PEInterface.UpgradablePackagesLoader.Remove(package);
                         await package.AddToIgnoredUpdatesAsync();
                     }
+                }
             };
 
             UninstallSelected.Click += (_, _) => MainApp.Operations.ConfirmAndUninstall(FilteredPackages.GetCheckedPackages());
@@ -288,13 +289,13 @@ namespace UniGetUI.Interface.SoftwarePages
                 }
             }
 
-            if(WinGet.NO_PACKAGES_HAVE_BEEN_LOADED && !Settings.Get("DisableWinGetMalfunctionDetector"))
+            if (WinGet.NO_PACKAGES_HAVE_BEEN_LOADED && !Settings.Get("DisableWinGetMalfunctionDetector"))
             {
                 var infoBar = MainApp.Instance.MainWindow.WinGetWarningBanner;
                 infoBar.IsOpen = true;
                 infoBar.Title = CoreTools.Translate("WinGet malfunction detected");
                 infoBar.Message = CoreTools.Translate("It looks like WinGet is not working properly. Do you want to attempt to repair WinGet?");
-                var button = new Button() { Content = CoreTools.Translate("Repair WinGet") };
+                var button = new Button { Content = CoreTools.Translate("Repair WinGet") };
                 infoBar.ActionButton = button;
                 button.Click += (_, _) => DialogHelper.HandleBrokenWinGet();
             }
@@ -338,12 +339,12 @@ namespace UniGetUI.Interface.SoftwarePages
                 if (await package.HasUpdatesIgnoredAsync())
                 {
                     MenuIgnoreUpdates.Text = CoreTools.Translate("Do not ignore updates for this package anymore");
-                    MenuIgnoreUpdates.Icon = new FontIcon() { Glyph = "\uE77A" };
+                    MenuIgnoreUpdates.Icon = new FontIcon { Glyph = "\uE77A" };
                 }
                 else
                 {
                     MenuIgnoreUpdates.Text = CoreTools.Translate("Ignore updates for this package");
-                    MenuIgnoreUpdates.Icon = new FontIcon() { Glyph = "\uE718" };
+                    MenuIgnoreUpdates.Icon = new FontIcon { Glyph = "\uE718" };
                 }
                 MenuIgnoreUpdates.IsEnabled = true;
             }
@@ -370,7 +371,7 @@ namespace UniGetUI.Interface.SoftwarePages
                     packagesToExport.Add(package);
                 }
 
-                string BackupContents = await PackageBundlesPage.CreateBundle(packagesToExport.ToArray(), BundleFormatType.JSON);
+                string BackupContents = await PackageBundlesPage.CreateBundle(packagesToExport.ToArray(), BundleFormatType.UBUNDLE);
 
                 string dirName = Settings.GetValue("ChangeBackupOutputDirectory");
                 if (dirName == "")
@@ -421,12 +422,12 @@ namespace UniGetUI.Interface.SoftwarePages
             => MainApp.Operations.ConfirmAndUninstall(SelectedItem, remove_data: true);
 
         private void MenuReinstall_Invoked(object sender, RoutedEventArgs args)
-            => MainApp.Operations.Install(SelectedItem);
+            => _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
 
-        private void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
+        private async void MenuUninstallThenReinstall_Invoked(object sender, RoutedEventArgs args)
         {
-            MainApp.Operations.Uninstall(SelectedItem, ignoreParallel: true);
-            MainApp.Operations.Install(SelectedItem, ignoreParallel: true);
+            var op = await MainApp.Operations.Uninstall(SelectedItem, ignoreParallel: true);
+            _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED, ignoreParallel: true, req: op);
         }
 
         private async void MenuIgnorePackage_Invoked(object sender, RoutedEventArgs args)
@@ -434,7 +435,7 @@ namespace UniGetUI.Interface.SoftwarePages
             IPackage? package = SelectedItem;
             if (package is null) return;
 
-            if(await package.HasUpdatesIgnoredAsync())
+            if (await package.HasUpdatesIgnoredAsync())
                 await package.RemoveFromIgnoredUpdatesAsync();
             else
             {
@@ -455,7 +456,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs args)
         {
-            ShowDetailsForPackage(SelectedItem);
+            ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.ALREADY_INSTALLED);
         }
 
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)

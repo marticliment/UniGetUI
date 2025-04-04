@@ -34,12 +34,12 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             }
 
             string packageId;
-            if(details.Package.Source.Name.Contains("..."))
+            if (details.Package.Source.Name.Contains("..."))
                 packageId = $"{details.Package.Id}";
             else
                 packageId = $"{details.Package.Source.Name}/{details.Package.Id}";
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -70,7 +70,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             {
                 details.Description = "";
                 foreach (var line in descriptionList)
+                {
                     details.Description += line + "\n";
+                }
             }
             else
             {
@@ -88,7 +90,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             {
                 details.HomepageUrl = homepageUrl;
 
-                if(homepageUrl.ToString().StartsWith("https://github.com/"))
+                if (homepageUrl.ToString().StartsWith("https://github.com/"))
                     details.Author = homepageUrl.ToString().Replace("https://github.com/", "").Split("/")[0];
                 else
                     details.Author = homepageUrl.Host.Split(".")[^2];
@@ -99,7 +101,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             {
                 details.ReleaseNotes = "";
                 foreach (var line in notesList)
+                {
                     details.ReleaseNotes += line + "\n";
+                }
             }
             else
             {
@@ -134,7 +138,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
 
                 details.InstallerHash = contents?["hash"]?.ToString();
             }
-            else if(contents?["architecture"] is JsonObject archNode)
+            else if (contents?["architecture"] is JsonObject archNode)
             {
                 // Architecture-based installer
                 string arch = archNode.ContainsKey("64bit") ? "64bit" : archNode.First().Key;
@@ -161,7 +165,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             throw new NotImplementedException();
         }
 
-        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
+        protected override IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
@@ -172,7 +176,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 package.Id, "current");
         }
 
-        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
+        protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             throw new InvalidOperationException("Scoop does not support custom package versions");
         }

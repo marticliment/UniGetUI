@@ -7,7 +7,7 @@ internal sealed class PowerShellPkgOperationHelper : PackagePkgOperationHelper
 {
     public PowerShellPkgOperationHelper(PowerShell manager) : base(manager) { }
 
-    protected override IEnumerable<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
         List<string> parameters = [operation switch {
             OperationType.Install => Manager.Properties.InstallVerb,
@@ -15,12 +15,12 @@ internal sealed class PowerShellPkgOperationHelper : PackagePkgOperationHelper
             OperationType.Uninstall => Manager.Properties.UninstallVerb,
             _ => throw new InvalidDataException("Invalid package operation")
         }];
-        parameters.AddRange(["-Name", package.Id, "-Confirm:$false", "-Force"]);
+        parameters.AddRange(["-NonInteractive","-Name", package.Id, "-Confirm:$false", "-Force"]);
 
         if (options.CustomParameters is not null)
             parameters.AddRange(options.CustomParameters);
 
-        if(operation is not OperationType.Uninstall)
+        if (operation is not OperationType.Uninstall)
         {
             if (options.PreRelease)
                 parameters.Add("-AllowPrerelease");
@@ -35,7 +35,7 @@ internal sealed class PowerShellPkgOperationHelper : PackagePkgOperationHelper
             }
         }
 
-        if(operation is OperationType.Install)
+        if (operation is OperationType.Install)
         {
             if (options.SkipHashCheck)
                 parameters.Add("-SkipPublisherCheck");
@@ -50,12 +50,13 @@ internal sealed class PowerShellPkgOperationHelper : PackagePkgOperationHelper
     protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
-        IEnumerable<string> processOutput,
+        IReadOnlyList<string> processOutput,
         int returnCode)
     {
         string output_string = string.Join("\n", processOutput);
 
-        if (!package.OverridenOptions.RunAsAdministrator != true && output_string.Contains("AdminPrivilegesAreRequired"))
+        if (package.OverridenOptions.RunAsAdministrator is not true &&
+            (output_string.Contains("AdminPrivilegesAreRequired") || output_string.Contains("AdminPrivilegeRequired")))
         {
             package.OverridenOptions.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;

@@ -121,7 +121,7 @@ namespace UniGetUI.Interface.Dialogs
             if (Options.CustomInstallLocation == "") CustomInstallLocation.Text = packageInstallLocation;
             else CustomInstallLocation.Text = Options.CustomInstallLocation;
 
-            if (Options.CustomParameters.Any())
+            if (Options.CustomParameters.Count != 0)
             {
                 CustomParameters.Text = string.Join(' ', Options.CustomParameters);
             }
@@ -139,7 +139,7 @@ namespace UniGetUI.Interface.Dialogs
             IgnoreUpdatesCheckbox.IsChecked = await Package.HasUpdatesIgnoredAsync();
             VersionComboBox.IsEnabled = false;
 
-            IEnumerable<string> versions = await Task.Run(() => Package.Manager.DetailsHelper.GetVersions(Package));
+            IReadOnlyList<string> versions = await Task.Run(() => Package.Manager.DetailsHelper.GetVersions(Package));
             foreach (string ver in versions)
             {
                 VersionComboBox.Items.Add(ver);

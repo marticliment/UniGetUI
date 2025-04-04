@@ -16,8 +16,8 @@ namespace UniGetUI.Core.SettingsEngine
                 return result ^ invert;
             }
 
-            // Otherwhise, load the value from disk and cache that setting
-            result = File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting));
+            // Otherwise, load the value from disk and cache that setting
+            result = File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting));
             booleanSettings[setting] = result;
             return result ^ invert;
         }
@@ -30,17 +30,17 @@ namespace UniGetUI.Core.SettingsEngine
                 booleanSettings[setting] = value;
 
                 // Update changes on disk if applicable
-                if (value && !File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+                if (value && !File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting)))
                 {
-                    File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), "");
+                    File.WriteAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting), "");
                 }
                 else if (!value)
                 {
                     valueSettings[setting] = "";
 
-                    if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+                    if (File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting)))
                     {
-                        File.Delete(Path.Join(CoreData.UniGetUIDataDirectory, setting));
+                        File.Delete(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting));
                     }
                 }
 
@@ -59,11 +59,11 @@ namespace UniGetUI.Core.SettingsEngine
                 return value;
             }
 
-            // Otherwhise, load the setting from disk and cache that setting
+            // Otherwise, load the setting from disk and cache that setting
             value = "";
-            if (File.Exists(Path.Join(CoreData.UniGetUIDataDirectory, setting)))
+            if (File.Exists(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting)))
             {
-                value = File.ReadAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting));
+                value = File.ReadAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting));
             }
 
             valueSettings[setting] = value;
@@ -83,7 +83,7 @@ namespace UniGetUI.Core.SettingsEngine
                 }
                 else
                 {
-                    File.WriteAllText(Path.Join(CoreData.UniGetUIDataDirectory, setting), value);
+                    File.WriteAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, setting), value);
                     booleanSettings[setting] = true;
                     valueSettings[setting] = value;
                 }
@@ -93,41 +93,6 @@ namespace UniGetUI.Core.SettingsEngine
                 Logger.Error($"CANNOT SET SETTING VALUE FOR setting={setting} enabled={value}");
                 Logger.Error(e);
             }
-        }
-
-        /*
-         *
-         *
-         */
-
-        public static bool AreNotificationsDisabled()
-        {
-            return Get("DisableSystemTray") || Get("DisableNotifications");
-        }
-
-        public static bool AreUpdatesNotificationsDisabled()
-        {
-            return AreNotificationsDisabled() || Get("DisableUpdatesNotifications");
-        }
-
-        /*public static bool AreShortcutsNotificationsDisabled()
-        {
-            return AreNotificationsDisabled() || Get("DisableShortcutNotifications");
-        }*/
-
-        public static bool AreErrorNotificationsDisabled()
-        {
-            return AreNotificationsDisabled() || Get("DisableErrorNotifications");
-        }
-
-        public static bool AreSuccessNotificationsDisabled()
-        {
-            return AreNotificationsDisabled() || Get("DisableSuccessNotifications");
-        }
-
-        public static bool AreProgressNotificationsDisabled()
-        {
-            return AreNotificationsDisabled() || Get("DisableProgressNotifications");
         }
     }
 }

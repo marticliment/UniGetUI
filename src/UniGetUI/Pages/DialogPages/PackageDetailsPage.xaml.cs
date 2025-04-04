@@ -1,7 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using Windows.Storage;
-using Windows.Storage.Pickers;
 using Windows.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -9,20 +6,14 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Documents;
 using Windows.UI.Text;
-using UniGetUI.Core.Data;
-using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
-using UniGetUI.PackageEngine.Managers.PowerShellManager;
-using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.Interface.Enums;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.Pages.DialogPages;
-using FileSavePicker = Windows.Storage.Pickers.FileSavePicker;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -39,7 +30,6 @@ namespace UniGetUI.Interface.Dialogs
         public IPackage? UpgradablePackage;
         public IPackage? InstalledPackage;
 
-
         private readonly InstallOptionsPage InstallOptionsPage;
         public event EventHandler? Close;
         private readonly OperationType OperationRole;
@@ -54,12 +44,15 @@ namespace UniGetUI.Interface.Dialogs
             Unset
         }
 
+        private TEL_InstallReferral InstallReferral;
+
         private LayoutMode __layout_mode = LayoutMode.Unset;
-        public PackageDetailsPage(IPackage package, OperationType role)
+        public PackageDetailsPage(IPackage package, OperationType role, TEL_InstallReferral referral)
         {
             if (role == OperationType.None)
                 role = OperationType.Install;
 
+            InstallReferral = referral;
             OperationRole = role;
             Package = package;
 
@@ -113,46 +106,56 @@ namespace UniGetUI.Interface.Dialogs
             InstallOptionsPage = new InstallOptionsPage(package, OperationRole, options);
             InstallOptionsExpander.Content = InstallOptionsPage;
 
+            MainActionButton.Padding = new Thickness(0);
+            var textBlock = new TextBlock()
+            {
+                TextWrapping = TextWrapping.WrapWholeWords,
+                Padding = new Thickness(0),
+                TextAlignment = TextAlignment.Center
+            };
+            MainActionButton.Content = textBlock;
             if (OperationRole is OperationType.Install)
             {
-                MainActionButton.Content = CoreTools.Translate("Install");
+                textBlock.Text = CoreTools.Translate("Install");
                 SetTextToItem(Version_Label, CoreTools.Translate("Version"));
-                SetTextToItem(Version_Content, AvailablePackage?.Version ?? "NULL");
+                SetTextToItem(Version_Content, AvailablePackage?.VersionString ?? "NULL");
                 SetUpActionButtonAsInstall();
             }
             else if (OperationRole is OperationType.Update)
             {
-                MainActionButton.Content = CoreTools.Translate("Update to version {0}", UpgradablePackage?.NewVersion ?? "NULL");
+                textBlock.Text = CoreTools.Translate("Update to version {0}", UpgradablePackage?.NewVersionString ?? "NULL");
                 SetTextToItem(Version_Label, CoreTools.Translate("Installed Version"));
-                SetTextToItem(Version_Content, (UpgradablePackage?.Version ?? "NULL")
-                                               + $" - {CoreTools.Translate("Update to {0} available", UpgradablePackage?.NewVersion ?? "NULL")}");
+                SetTextToItem(Version_Content, (UpgradablePackage?.VersionString ?? "NULL")
+                                               + $" - {CoreTools.Translate("Update to {0} available", UpgradablePackage?.NewVersionString ?? "NULL")}");
                 SetUpActionButtonAsUpdate();
             }
             else /* OperationRole is OperationType.Uninstall */
             {
-                MainActionButton.Content = CoreTools.Translate("Uninstall");
+                textBlock.Text = CoreTools.Translate("Uninstall");
                 SetTextToItem(Version_Label, CoreTools.Translate("Installed Version"));
-                SetTextToItem(Version_Content, InstalledPackage?.Version ?? "NULL");
+                SetTextToItem(Version_Content, InstalledPackage?.VersionString ?? "NULL");
                 SetUpActionButtonAsUninstall();
             }
             _ = LoadInformation();
+
+            TelemetryHandler.PackageDetails(package, referral.ToString());
         }
 
         public void SetUpActionButtonAsInstall()
         {
-            var AsAdmin = new BetterMenuItem()
+            var AsAdmin = new BetterMenuItem
             {
                 Text = CoreTools.Translate("Install as administrator"),
                 IconName = IconType.UAC,
                 IsEnabled = Package.Manager.Capabilities.CanRunAsAdmin
             };
-            var Interactive = new BetterMenuItem()
+            var Interactive = new BetterMenuItem
             {
                 Text = CoreTools.Translate("Interactive installation"),
                 IconName = IconType.Interactive,
                 IsEnabled = Package.Manager.Capabilities.CanRunInteractively
             };
-            var SkipHash = new BetterMenuItem()
+            var SkipHash = new BetterMenuItem
             {
                 Text = CoreTools.Translate("Skip hash check"),
                 IconName = IconType.Checksum,
@@ -167,13 +170,12 @@ namespace UniGetUI.Interface.Dialogs
             ExtendedActionsMenu.Items.Add(Interactive);
             ExtendedActionsMenu.Items.Add(SkipHash);
 
-
             if (UpgradablePackage is not null)
             {
                 ExtendedActionsMenu.Items.Add(new MenuFlyoutSeparator());
-                var Upgrade = new BetterMenuItem()
+                var Upgrade = new BetterMenuItem
                 {
-                    Text = CoreTools.Translate("Update to version {0}", UpgradablePackage.NewVersion),
+                    Text = CoreTools.Translate("Update to version {0}", UpgradablePackage.NewVersionString),
                     IconName = IconType.Update
                 };
                 Upgrade.Click += (_, _) => DoAction(UpgradablePackage, OperationType.Update);
@@ -183,7 +185,7 @@ namespace UniGetUI.Interface.Dialogs
             if (InstalledPackage is not null)
             {
                 ExtendedActionsMenu.Items.Add(new MenuFlyoutSeparator());
-                var Uninstall = new BetterMenuItem()
+                var Uninstall = new BetterMenuItem
                 {
                     Text = CoreTools.Translate("Uninstall"),
                     IconName = IconType.Delete
@@ -195,19 +197,19 @@ namespace UniGetUI.Interface.Dialogs
 
         public void SetUpActionButtonAsUpdate()
         {
-            var AsAdmin = new BetterMenuItem()
+            var AsAdmin = new BetterMenuItem
             {
                 Text = CoreTools.Translate("Update as administrator"),
                 IconName = IconType.UAC,
                 IsEnabled = Package.Manager.Capabilities.CanRunAsAdmin
             };
-            var Interactive = new BetterMenuItem()
+            var Interactive = new BetterMenuItem
             {
                 Text = CoreTools.Translate("Interactive update"),
                 IconName = IconType.Interactive,
                 IsEnabled = Package.Manager.Capabilities.CanRunInteractively
             };
-            var SkipHash = new BetterMenuItem()
+            var SkipHash = new BetterMenuItem
             {
                 Text = CoreTools.Translate("Skip hash check"),
                 IconName = IconType.Checksum,
@@ -225,7 +227,7 @@ namespace UniGetUI.Interface.Dialogs
             if (InstalledPackage is not null)
             {
                 ExtendedActionsMenu.Items.Add(new MenuFlyoutSeparator());
-                var Uninstall = new BetterMenuItem()
+                var Uninstall = new BetterMenuItem
                 {
                     Text = CoreTools.Translate("Uninstall"), IconName = IconType.Delete
                 };
@@ -234,7 +236,7 @@ namespace UniGetUI.Interface.Dialogs
             }
 
             ExtendedActionsMenu.Items.Add(new MenuFlyoutSeparator());
-            var Reinstall = new BetterMenuItem()
+            var Reinstall = new BetterMenuItem
             {
                 Text = CoreTools.Translate("Reinstall"),
                 IconName = IconType.Download
@@ -245,19 +247,19 @@ namespace UniGetUI.Interface.Dialogs
 
         public void SetUpActionButtonAsUninstall()
         {
-            var AsAdmin = new BetterMenuItem()
+            var AsAdmin = new BetterMenuItem
             {
                 Text = CoreTools.Translate("Uninstall as administrator"),
                 IconName = IconType.UAC,
                 IsEnabled = Package.Manager.Capabilities.CanRunAsAdmin
             };
-            var Interactive = new BetterMenuItem()
+            var Interactive = new BetterMenuItem
             {
                 Text = CoreTools.Translate("Interactive uninstall"),
                 IconName = IconType.Interactive,
                 IsEnabled = Package.Manager.Capabilities.CanRunInteractively
             };
-            var RemoveData = new BetterMenuItem()
+            var RemoveData = new BetterMenuItem
             {
                 Text = CoreTools.Translate("Uninstall and remove data"),
                 IconName = IconType.Close_Round,
@@ -275,9 +277,9 @@ namespace UniGetUI.Interface.Dialogs
             if (UpgradablePackage is not null)
             {
                 ExtendedActionsMenu.Items.Add(new MenuFlyoutSeparator());
-                var Upgrade = new BetterMenuItem()
+                var Upgrade = new BetterMenuItem
                 {
-                    Text = CoreTools.Translate("Update to version {0}", UpgradablePackage.NewVersion),
+                    Text = CoreTools.Translate("Update to version {0}", UpgradablePackage.NewVersionString),
                     IconName = IconType.Update
                 };
                 Upgrade.Click += (_, _) => DoAction(UpgradablePackage, OperationType.Update);
@@ -285,7 +287,7 @@ namespace UniGetUI.Interface.Dialogs
             }
 
             ExtendedActionsMenu.Items.Add(new MenuFlyoutSeparator());
-            var Reinstall = new BetterMenuItem()
+            var Reinstall = new BetterMenuItem
             {
                 Text = CoreTools.Translate("Reinstall"), IconName = IconType.Download
             };
@@ -397,7 +399,7 @@ namespace UniGetUI.Interface.Dialogs
             if (u is null)
             {
                 h.Inlines.Clear();
-                h.Inlines.Add(new Run()
+                h.Inlines.Add(new Run
                 {
                     Text = CoreTools.Translate("Not available"),
                     TextDecorations = TextDecorations.None,
@@ -429,7 +431,7 @@ namespace UniGetUI.Interface.Dialogs
 
         public async void LoadScreenshots()
         {
-            IEnumerable<Uri> screenshots = await Task.Run(Package.GetScreenshots);
+            IReadOnlyList<Uri> screenshots = await Task.Run(Package.GetScreenshots);
             PackageHasScreenshots = screenshots.Any();
             if (PackageHasScreenshots)
             {
@@ -456,7 +458,7 @@ namespace UniGetUI.Interface.Dialogs
         {
             if (!Package.Manager.Capabilities.CanDownloadInstaller) return;
             Close?.Invoke(this, EventArgs.Empty);
-            MainApp.Operations.AskLocationAndDownload(Package);
+            _ = MainApp.Operations.AskLocationAndDownload(Package, InstallReferral);
         }
 
         public void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -590,7 +592,7 @@ namespace UniGetUI.Interface.Dialogs
 
             if (action is OperationType.Install)
             {
-                MainApp.Operations.Install(package, AsAdmin, Interactive, SkipHash);
+                _ = MainApp.Operations.Install(package, InstallReferral, AsAdmin, Interactive, SkipHash);
             }
             else if (action is OperationType.Uninstall)
             {
@@ -598,7 +600,7 @@ namespace UniGetUI.Interface.Dialogs
             }
             else if (action is OperationType.Update)
             {
-                MainApp.Operations.Update(package, AsAdmin, Interactive, SkipHash);
+                _ = MainApp.Operations.Update(package, AsAdmin, Interactive, SkipHash);
             }
             else
             {

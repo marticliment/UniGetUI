@@ -1,29 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageOperations;
-using Windows.Foundation.Metadata;
-using ExternalLibraries.Pickers;
-using UniGetUI.PackageEngine.Managers.PowerShellManager;
 
 namespace UniGetUI.PackageEngine.Operations;
 public class DownloadOperation : AbstractOperation
 {
-    private IPackage _package;
-    private string downloadLocation;
+    private readonly IPackage _package;
+    private readonly string downloadLocation;
     public string DownloadLocation
     {
         get => downloadLocation;
     }
     private bool canceled;
 
-    public DownloadOperation(IPackage package, string downloadPath): base(true)
+    public DownloadOperation(IPackage package, string downloadPath): base(true, null)
     {
         downloadLocation = downloadPath;
         _package = package;
@@ -68,7 +59,7 @@ public class DownloadOperation : AbstractOperation
                 return OperationVeredict.Failure;
             }
 
-            using var httpClient = new HttpClient();
+            using var httpClient = new HttpClient(CoreTools.HttpClientConfig);
             using var response = await httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
 
             response.EnsureSuccessStatusCode();

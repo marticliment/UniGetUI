@@ -6,9 +6,18 @@
 | `--welcome` | Shows the user the Setup Wizard | up to 2.2.0 |
 | `--updateapps` | Force enable automatic installation of available updates | 1.6.0+ |
 | `--report-all-errors` | Will force UniGetUI to show the error report page on any crash when loading | 3.0.0+ |
-| `--uninstall-unigetui` | Will unregister UniGetUI from the notification panel, and silently quit | 3.1.0+ |
+| `--uninstall-unigetui` | Will unregister UniGetUI from the notification panel, and silently quit | from 3.1.0 to 3.1.8 |
 | `--migrate-wingetui-to-unigetui` | Will migrate WingetUI data folders and shortcuts to UniGetUI (if possible), and silently quit | 3.1.0+ |
-| `X:\Path\To\file` | Provided that the file is a valid bundle, will load the bundle into the Package Bundles page. Compatible bundle files include the following extensions: `.ubundle`, `.json`, `.yaml`, `.xml` | 3.1.2+ |
+| `UniGetUI.exe file` | Provided that the file is a valid bundle, will load the bundle into the Package Bundles page. Compatible bundle files include the following extensions: `.ubundle`, `.json`, `.yaml`, `.xml` | 3.1.2+ |
+| `--help` | Opens this page | 3.1.9+ |
+| `--import-settings file` | Imports UniGetUI settings from json file _file_. The file must exist. The old settings will be lost* | 3.1.9+ |
+| `--export-settings file` |  Exports UniGetUI settings to json file _file_. The file will be created or overwritten* | 3.1.9+ |
+| `--enable-setting key` | Enables the boolean setting _key_* | 3.1.9+ |
+| `--disable-setting key` |  Disables the boolean setting _key_* | 3.1.9+ |
+| `--set-setting-value key value` | Sets the value _value_ to the non-boolean setting _key_. To clear a non-boolean setting, `--disable-setting` can be used* | 3.1.9+ |
+
+
+\*After modifying the settings, you must ensure that any running instance of UniGetUI is restarted for the changes to take effect
 
 <br><br>
 # `unigetui://` deep link

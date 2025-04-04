@@ -1,24 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <UserControl
     x:Class="UniGetUI.Interface.Widgets.Announcer"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UniGetUI.Interface.Widgets"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:UniGetUI.Interface.Widgets"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    MaxHeight="200"
     mc:Ignorable="d">
 
     <Grid TabIndex="99">
-        <Grid x:Name="g">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="80"/>
-            </Grid.RowDefinitions>
+        <Grid x:Name="g" ColumnSpacing="8">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
-            <RichTextBlock x:Name="_textblock" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
-            <Image x:Name="_image" Grid.Column="1" Grid.Row="0" Width="80" Height="80"></Image>
+            <RichTextBlock
+                x:Name="_textblock"
+                Grid.Row="0"
+                Grid.Column="0"
+                VerticalAlignment="Center" />
+            <Image
+                x:Name="_image"
+                Grid.Row="0"
+                Grid.Column="1"
+                Width="80" />
         </Grid>
     </Grid>
 </UserControl>

@@ -1,15 +1,15 @@
 using System.Collections;
 using System.Diagnostics;
-using System.Globalization;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
+using Windows.Networking.Connectivity;
 using UniGetUI.Core.Classes;
 using UniGetUI.Core.Data;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 
 namespace UniGetUI.Core.Tools
 {
@@ -20,6 +20,32 @@ namespace UniGetUI.Core.Tools
         {
             AutomaticDecompression = DecompressionMethods.All
         };
+
+        public static HttpClientHandler GenericHttpClientParameters
+        {
+            get
+            {
+                Uri? proxyUri = null;
+                IWebProxy? proxy = null;
+                ICredentials? creds = null;
+
+                if (Settings.Get("EnableProxy")) proxyUri = Settings.GetProxyUrl();
+                if (Settings.Get("EnableProxyAuth")) creds = Settings.GetProxyCredentials();
+                if (proxyUri is not null) proxy = new WebProxy()
+                {
+                    Address = proxyUri,
+                    Credentials = creds
+                };
+
+                return new()
+                {
+                    AutomaticDecompression = DecompressionMethods.All,
+                    AllowAutoRedirect = true,
+                    UseProxy = (proxy is not null),
+                    Proxy = proxy,
+                };
+            }
+        }
 
         private static LanguageEngine LanguageEngine = new();
 
@@ -87,6 +113,12 @@ namespace UniGetUI.Core.Tools
         {
             command = command.Replace(";", "").Replace("&", "").Trim();
             Logger.Debug($"Begin \"which\" search for command {command}");
+
+            string PATH = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User) + ";";
+            PATH += Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine) + ";";
+            PATH += Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
+            PATH = PATH.Replace(";;", ";").Trim(';');
+
             Process process = new()
             {
                 StartInfo = new ProcessStartInfo
@@ -105,6 +137,7 @@ namespace UniGetUI.Core.Tools
             {
                 process.StartInfo = UpdateEnvironmentVariables(process.StartInfo);
             }
+            process.StartInfo.Environment["PATH"] = PATH;
 
             try
             {
@@ -187,19 +220,45 @@ namespace UniGetUI.Core.Tools
             }
 
             string Error_String = $@"
-                        OS: {Environment.OSVersion.Platform}
-                   Version: {Environment.OSVersion.VersionString}
-           OS Architecture: {Environment.Is64BitOperatingSystem}
-          APP Architecture: {Environment.Is64BitProcess}
+           Windows version: {Environment.OSVersion.VersionString}
                   Language: {LangName}
                APP Version: {CoreData.VersionName}
+          APP Build number: {CoreData.BuildNumber}
                 Executable: {Environment.ProcessPath}
 
-Crash HResult: {(uint)e.HResult}
+Crash HResult: 0x{(uint)e.HResult:X} ({(uint)e.HResult}, {e.HResult})
 Crash Message: {e.Message}
 
 Crash Traceback:
 {e.StackTrace}";
+
+            try
+            {
+                int i = 0;
+                while (e.InnerException is not null)
+                {
+                    i++;
+                    e = e.InnerException;
+                    Error_String += $@"
+
+
+---------------------
+Inner exception ({i}):
+Crash HResult: 0x{(uint)e.HResult:X} ({(uint)e.HResult}, {e.HResult})
+Crash Message: {e.Message}
+
+Crash Traceback:
+{e.StackTrace}";
+                }
+
+                if (i == 0)
+                {
+                    Error_String += $"\n\n\nNo inner exceptions found";
+                }
+            } catch
+            {
+                // ignore
+            }
 
             Console.WriteLine(Error_String);
 
@@ -229,7 +288,7 @@ Crash Traceback:
         /// <param name="RunAsAdmin">Whether the batch file should be launched elevated or not</param>
         public static async void LaunchBatchFile(string path, string WindowTitle = "", bool RunAsAdmin = false)
         {
-            Process p = new();
+            using Process p = new();
             p.StartInfo.FileName = "cmd.exe";
             p.StartInfo.Arguments = "/C start \"" + WindowTitle + "\" \"" + path + "\"";
             p.StartInfo.UseShellExecute = true;
@@ -307,53 +366,104 @@ Crash Traceback:
             return 0;
         }
 
+
+        public struct Version: IComparable
+        {
+            public static readonly Version Null = new(-1, -1, -1, -1);
+
+            public readonly int Major;
+            public readonly int Minor;
+            public readonly int Patch;
+            public readonly int Remainder;
+
+            public Version(int major, int minor = 0, int patch = 0, int remainder = 0)
+            {
+                Major = major;
+                Minor = minor;
+                Patch = patch;
+                Remainder = remainder;
+            }
+
+            public int CompareTo(object? other_)
+            {
+                if (other_ is not Version other) return 0;
+
+                int major = Major.CompareTo(other.Major);
+                if (major != 0) return major;
+
+                int minor = Minor.CompareTo(other.Minor);
+                if (minor != 0) return minor;
+
+                int patch = Patch.CompareTo(other.Patch);
+                if (patch != 0) return patch;
+
+                return Remainder.CompareTo(other.Remainder);
+            }
+
+            public static bool operator ==(Version left, Version right)
+                => left.CompareTo(right) == 0;
+
+            public static bool operator !=(Version left, Version right)
+                => left.CompareTo(right) != 0;
+
+            public static bool operator >=(Version left, Version right)
+                => left.CompareTo(right) >= 0;
+
+            public static bool operator <=(Version left, Version right)
+                => left.CompareTo(right) <= 0;
+
+            public static bool operator >(Version left, Version right)
+                => left.CompareTo(right) > 0;
+
+            public static bool operator <(Version left, Version right)
+                => left.CompareTo(right) < 0;
+
+            public bool Equals(Version other)
+                => Major == other.Major && Minor == other.Minor && Patch == other.Patch && Remainder == other.Remainder;
+
+            public override bool Equals(object? obj)
+                => obj is Version other && Equals(other);
+
+            public override int GetHashCode()
+                => HashCode.Combine(Major, Minor, Patch, Remainder);
+        }
+
         /// <summary>
         /// Converts a string into a double floating-point number.
         /// </summary>
         /// <param name="Version">Any string</param>
         /// <returns>The best approximation of the string as a Version</returns>
-        public static double GetVersionStringAsFloat(string Version)
+        public static Version VersionStringToStruct(string Version)
         {
             try
             {
-                string _ver = "";
-                bool _dotAdded = false;
-                foreach (char _char in Version)
+                char[] separators = ['.', '-', '/', '#'];
+                string[] versionItems = ["", "", "", ""];
+
+                int dotCount = 0;
+                bool first = true;
+
+                foreach (char c in Version)
                 {
-                    if (char.IsDigit(_char))
-                    {
-                        _ver += _char;
-                    }
-                    else if (_char == '.')
-                    {
-                        if (!_dotAdded)
-                        {
-                            _ver += _char;
-                            _dotAdded = true;
-                        }
-                    }
+                    if (char.IsDigit(c)) versionItems[dotCount] += c;
+                    else if (!first && separators.Contains(c)) if (dotCount < 3) dotCount++;
+                    first = false;
                 }
 
-                double res = -1;
-                if (_ver is not "" and not ".")
+                int[] numbers = { 0, 0, 0, 0 };
+                for (int i = 0; i < 4; i++)
                 {
-                    try
-                    {
-                        double val = double.Parse(_ver, CultureInfo.InvariantCulture);
-                        return val;
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
+                    if (int.TryParse(versionItems[i], out int val))
+                        numbers[i] = val;
                 }
 
-                return res;
+                var ver = new Version(numbers[0], numbers[1], numbers[2], numbers[3]);
+                return ver;
             }
             catch
             {
                 Logger.Warn($"Failed to parse version {Version} to float");
-                return -1;
+                return CoreTools.Version.Null;
             }
         }
 
@@ -415,11 +525,11 @@ Crash Traceback:
         public static async Task CacheUACForCurrentProcess()
         {
             Logger.Info("Caching admin rights for process id " + Environment.ProcessId);
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = CoreData.GSudoPath,
+                    FileName = CoreData.ElevatorPath,
                     Arguments = "cache on --pid " + Environment.ProcessId + " -d 1",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -439,11 +549,11 @@ Crash Traceback:
         public static async Task ResetUACForCurrentProcess()
         {
             Logger.Info("Resetting administrator rights cache for process id " + Environment.ProcessId);
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = CoreData.GSudoPath,
+                    FileName = CoreData.ElevatorPath,
                     Arguments = "cache off --pid " + Environment.ProcessId,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -462,7 +572,7 @@ Crash Traceback:
         /// The long integer is built with the first half of the MD5 sum of the given string
         /// </summary>
         /// <param name="inputString">A non-empty string</param>
-        /// <returns>A long integer containing the first half of the bytes resulting from MD5suming inputString</returns>
+        /// <returns>A long integer containing the first half of the bytes resulting from MD5 summing inputString</returns>
         public static long HashStringAsLong(string inputString)
         {
             byte[] bytes = MD5.HashData(Encoding.UTF8.GetBytes(inputString));
@@ -554,41 +664,27 @@ Crash Traceback:
         /// Pings the update server and 3 well-known sites to check for internet availability
         /// </summary>
         public static async Task WaitForInternetConnection()
-            => await (await TaskRecycler<Task>.RunOrAttachAsync(_waitForInternetConnection));
+            => await TaskRecycler<int>.RunOrAttachAsync_VOID(_waitForInternetConnection);
 
-        public static async Task _waitForInternetConnection()
+        public static void _waitForInternetConnection()
         {
-            Logger.Debug(
-                "Checking for internet connectivity. Pinging google.com, microsoft.com, couldflare.com and marticliment.com");
-            string[] hosts = ["google.com", "microsoft.com", "cloudflare.com", "marticliment.com"];
-            while (true)
+            if (Settings.Get("DisableWaitForInternetConnection")) return;
+
+            Logger.Debug("Checking for internet connectivity...");
+            bool internetLost = false;
+
+            var profile = NetworkInformation.GetInternetConnectionProfile();
+            while (profile is null || profile.GetNetworkConnectivityLevel() is not NetworkConnectivityLevel.InternetAccess)
             {
-                foreach (var host in hosts)
+                Thread.Sleep(1000);
+                profile = NetworkInformation.GetInternetConnectionProfile();
+                if (!internetLost)
                 {
-                    using (var pinger = new Ping())
-                    {
-                        try
-                        {
-                            PingReply reply = await pinger.SendPingAsync(host, 10);
-                            if (reply.Status is IPStatus.Success)
-                            {
-                                Logger.Debug(
-                                    $"{host} responded successfully to ping, internet connection was validated.");
-                                return;
-                            }
-
-                            Logger.Debug($"Could not ping {host}!");
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Debug(
-                                $"Could not ping {host} with error {ex.Message}. Are you connected to the internet?");
-                        }
-                    }
+                    Logger.Warn("User is not connected to the internet, waiting for an internet connectio to be available...");
+                    internetLost = true;
                 }
-
-                await Task.Delay(TimeSpan.FromSeconds(5));
             }
+            Logger.Debug("Internet connectivity was established.");
         }
 
         public static string TextProgressGenerator(int length, int progressPercent, string? extra)
@@ -616,22 +712,42 @@ Crash Traceback:
             {
                 return $"{(number / TeraByte).ToString($"F{decimals}")} TB";
             }
-            else if (number >= GigaByte)
+
+            if (number >= GigaByte)
             {
                 return $"{(number / GigaByte).ToString($"F{decimals}")} GB";
             }
-            else if (number >= MegaByte)
+
+            if (number >= MegaByte)
             {
                 return $"{(number / MegaByte).ToString($"F{decimals}")} MB";
             }
-            else if (number >= KiloByte)
+
+            if (number >= KiloByte)
             {
                 return $"{(number / KiloByte).ToString($"F{decimals}")} KB";
             }
-            else
+
+            return $"{number} Bytes";
+        }
+
+        public static async void ShowFileOnExplorer(string path)
+        {
+            if (!File.Exists(path)) throw new FileNotFoundException($"The file {path} was not found");
+
+            Process p = new()
             {
-                return $"{number} Bytes";
-            }
+                StartInfo = new()
+                {
+                    FileName = "explorer.exe",
+                    Arguments = $"/select, \"{path}\"",
+                    UseShellExecute = true,
+                    CreateNoWindow = true,
+                }
+            };
+            p.Start();
+            await p.WaitForExitAsync();
+            p.Dispose();
         }
     }
 }

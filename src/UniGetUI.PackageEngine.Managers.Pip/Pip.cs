@@ -1,11 +1,12 @@
 using System.Diagnostics;
+using System.Net;
 using System.Text.RegularExpressions;
-using UniGetUI.Core.Logging;
+using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Manager;
-using UniGetUI.PackageEngine.Classes.Manager.Classes;
 using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
@@ -51,6 +52,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 SupportsCustomScopes = true,
                 CanDownloadInstaller = true,
                 SupportsPreRelease = true,
+                SupportsProxy = ProxySupport.Yes,
+                SupportsProxyAuth = true
             };
 
             Properties = new ManagerProperties
@@ -73,7 +76,24 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             OperationHelper = new PipPkgOperationHelper(this);
         }
 
-        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
+        public static string GetProxyArgument()
+        {
+            if (!Settings.Get("EnableProxy")) return "";
+            var proxyUri = Settings.GetProxyUrl();
+            if (proxyUri is null) return "";
+
+            if (Settings.Get("EnableProxyAuth") is false)
+                return $"--proxy {proxyUri.ToString()}";
+
+            var creds = Settings.GetProxyCredentials();
+            if(creds is null)
+                return $"--proxy {proxyUri.ToString()}";
+
+            return $"--proxy {proxyUri.Scheme}://{Uri.EscapeDataString(creds.UserName)}:{Uri.EscapeDataString(creds.Password)}" +
+                   $"@{proxyUri.AbsoluteUri.Replace($"{proxyUri.Scheme}://", "")}";
+        }
+
+        protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];
 
@@ -85,7 +105,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = Status.ExecutablePath,
-                        Arguments = Properties.ExecutableCallArgs + " install parse_pip_search",
+                        Arguments = Properties.ExecutableCallArgs + " install parse_pip_search " + GetProxyArgument(),
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
@@ -103,12 +123,12 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 path = "parse_pip_search.exe";
             }
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = path,
-                    Arguments = "\"" + query + "\"",
+                    Arguments = "\"" + query + "\" " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -161,14 +181,14 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
+        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list --outdated",
+                    Arguments = Properties.ExecutableCallArgs + " list --outdated " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -222,15 +242,15 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+        protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
         {
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list",
+                    Arguments = Properties.ExecutableCallArgs + " list " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -302,7 +322,7 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " --version",
+                    Arguments = Properties.ExecutableCallArgs + " --version " + GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -319,6 +339,8 @@ namespace UniGetUI.PackageEngine.Managers.PipManager
                 return status;
             }
 
+
+            Environment.SetEnvironmentVariable("PIP_REQUIRE_VIRTUALENV", "false", EnvironmentVariableTarget.Process);
             return status;
         }
     }

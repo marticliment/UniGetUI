@@ -26,7 +26,7 @@ namespace UniGetUI.PackageEngine.Classes.Manager
         public IMultiSourceHelper SourcesHelper { get; }
         public IPackageDetailsHelper DetailsHelper { get; }
         public IPackageOperationHelper OperationHelper { get; }
-        public IEnumerable<ManagerDependency> Dependencies { get; }
+        public IReadOnlyList<ManagerDependency> Dependencies { get; }
 
         public NullPackageManager()
         {
@@ -60,11 +60,11 @@ namespace UniGetUI.PackageEngine.Classes.Manager
             Dependencies = [];
         }
 
-        public IEnumerable<IPackage> FindPackages(string query) => throw new NotImplementedException();
+        public IReadOnlyList<IPackage> FindPackages(string query) => throw new NotImplementedException();
 
-        public IEnumerable<IPackage> GetAvailableUpdates() => throw new NotImplementedException();
+        public IReadOnlyList<IPackage> GetAvailableUpdates() => throw new NotImplementedException();
 
-        public IEnumerable<IPackage> GetInstalledPackages() => throw new NotImplementedException();
+        public IReadOnlyList<IPackage> GetInstalledPackages() => throw new NotImplementedException();
 
         public void Initialize() => throw new NotImplementedException();
 
@@ -89,28 +89,28 @@ namespace UniGetUI.PackageEngine.Classes.Manager
 
         public OperationVeredict GetRemoveOperationVeredict(IManagerSource source, int ReturnCode, string[] Output) => throw new NotImplementedException();
 
-        public IEnumerable<IManagerSource> GetSources() => throw new NotImplementedException();
+        public IReadOnlyList<IManagerSource> GetSources() => throw new NotImplementedException();
     }
 
     internal sealed class NullPkgDetailsHelper : IPackageDetailsHelper
     {
         public void GetDetails(IPackageDetails details) => throw new NotImplementedException();
 
-        public IEnumerable<string> GetVersions(IPackage package) => throw new NotImplementedException();
+        public IReadOnlyList<string> GetVersions(IPackage package) => throw new NotImplementedException();
 
         public CacheableIcon? GetIcon(IPackage package) => throw new NotImplementedException();
 
-        public IEnumerable<Uri> GetScreenshots(IPackage package) => throw new NotImplementedException();
+        public IReadOnlyList<Uri> GetScreenshots(IPackage package) => throw new NotImplementedException();
 
         public string? GetInstallLocation(IPackage package) => throw new NotImplementedException();
     }
 
     internal sealed class NullPkgOperationHelper : IPackageOperationHelper
     {
-        public IEnumerable<string> GetParameters(IPackage package, IInstallationOptions options, OperationType operation)
+        public IReadOnlyList<string> GetParameters(IPackage package, IInstallationOptions options, OperationType operation)
             => throw new NotImplementedException();
 
-        public OperationVeredict GetResult(IPackage package, OperationType operation, IEnumerable<string> processOutput, int returnCode)
+        public OperationVeredict GetResult(IPackage package, OperationType operation, IReadOnlyList<string> processOutput, int returnCode)
             => throw new NotImplementedException();
     }
 }

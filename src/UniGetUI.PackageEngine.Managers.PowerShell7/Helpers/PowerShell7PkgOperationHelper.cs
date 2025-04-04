@@ -7,7 +7,7 @@ internal sealed class PowerShell7PkgOperationHelper : PackagePkgOperationHelper
 {
     public PowerShell7PkgOperationHelper(PowerShell7 manager) : base(manager) { }
 
-    protected override IEnumerable<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
         List<string> parameters = [operation switch {
             OperationType.Install => Manager.Properties.InstallVerb,
@@ -21,7 +21,7 @@ internal sealed class PowerShell7PkgOperationHelper : PackagePkgOperationHelper
         if (options.CustomParameters is not null)
             parameters.AddRange(options.CustomParameters);
 
-        if(operation is not OperationType.Uninstall)
+        if (operation is not OperationType.Uninstall)
         {
             parameters.AddRange(["-TrustRepository", "-AcceptLicense"]);
 
@@ -35,7 +35,7 @@ internal sealed class PowerShell7PkgOperationHelper : PackagePkgOperationHelper
                 parameters.AddRange(["-Scope", "CurrentUser"]);
         }
 
-        if(operation is OperationType.Install)
+        if (operation is OperationType.Install)
         {
             if (options.Version != "")
                 parameters.AddRange(["-Version", options.Version]);
@@ -47,12 +47,13 @@ internal sealed class PowerShell7PkgOperationHelper : PackagePkgOperationHelper
     protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
-        IEnumerable<string> processOutput,
+        IReadOnlyList<string> processOutput,
         int returnCode)
     {
         string output_string = string.Join("\n", processOutput);
 
-        if (!package.OverridenOptions.RunAsAdministrator != true && output_string.Contains("AdminPrivilegesAreRequired"))
+        if (package.OverridenOptions.RunAsAdministrator is not true &&
+            (output_string.Contains("AdminPrivilegesAreRequired") || output_string.Contains("AdminPrivilegeRequired")))
         {
             package.OverridenOptions.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;

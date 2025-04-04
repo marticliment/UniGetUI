@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using UniGetUI.Core.Tools;
 using UniGetUI.Interface.Enums;
 using UniGetUI.PackageEngine.Classes.Serializable;
 using UniGetUI.PackageEngine.Structs;
@@ -12,18 +13,18 @@ namespace UniGetUI.PackageEngine.Interfaces
         public bool IsChecked { get; set; }
         public string Name { get; }
         public string Id { get; }
-        public string Version { get; }
-        public double VersionAsFloat { get; }
-        public double NewVersionAsFloat { get; }
+        public string VersionString { get; }
+        public CoreTools.Version NormalizedVersion { get; }
+        public CoreTools.Version NormalizedNewVersion { get; }
         public IManagerSource Source { get; }
         public IPackageManager Manager { get; }
-        public string NewVersion { get; }
+        public string NewVersionString { get; }
         public bool IsUpgradable { get; }
         public ref OverridenInstallationOptions OverridenOptions { get; }
         public string AutomationName { get; }
 
         /// <summary>
-        /// Returns an identifier that can be used to compare different packahe instances that refer to the same package.
+        /// Returns an identifier that can be used to compare different package instances that refer to the same package.
         /// What is taken into account:
         ///    - Manager and Source
         ///    - Package Identifier
@@ -32,7 +33,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         public long GetHash();
 
         /// <summary>
-        /// Returns an identifier that can be used to compare different packahe instances that refer to the same package.
+        /// Returns an identifier that can be used to compare different package instances that refer to the same package.
         /// What is taken into account:
         ///    - Manager and Source
         ///    - Package Identifier
@@ -85,7 +86,7 @@ namespace UniGetUI.PackageEngine.Interfaces
         /// <summary>
         /// Retrieves a list og URIs representing the available screenshots for this package.
         /// </summary>
-        public IEnumerable<Uri> GetScreenshots();
+        public IReadOnlyList<Uri> GetScreenshots();
 
         /// <summary>
         /// Adds the package to the ignored updates list. If no version is provided, all updates are ignored.

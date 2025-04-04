@@ -8,8 +8,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
     {
         private readonly IPackageManager Manager;
 
-        private readonly List<TaskLogger> operations = new();
-        public IEnumerable<ITaskLogger> Operations { get => (IEnumerable<ITaskLogger>)operations; }
+        private readonly List<TaskLogger> operations = [];
+        public IReadOnlyList<ITaskLogger> Operations { get => (IReadOnlyList<ITaskLogger>)operations; }
 
         public ManagerLogger(IPackageManager manager)
         {
@@ -42,8 +42,8 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         protected DateTime? EndTime;
         protected bool isComplete;
         protected bool isOpen;
-        protected IEnumerable<string>? CachedMessage;
-        protected IEnumerable<string>? CachedVerboseMessage;
+        protected IReadOnlyList<string>? CachedMessage;
+        protected IReadOnlyList<string>? CachedVerboseMessage;
 
         private const int RETURNCODE_UNSET = -200;
         protected int ReturnCode = -200;
@@ -82,7 +82,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
         ///   4. Green
         ///   5. Yellow
         /// </summary>
-        public abstract IEnumerable<string> AsColoredString(bool verbose = false);
+        public abstract IReadOnlyList<string> AsColoredString(bool verbose = false);
     }
 
     public class ProcessTaskLogger : TaskLogger, IProcessTaskLogger
@@ -112,7 +112,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             }
         }
 
-        public void AddToStdIn(IEnumerable<string> lines)
+        public void AddToStdIn(IReadOnlyList<string> lines)
         {
             if (!isOpen)
             {
@@ -136,7 +136,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             }
         }
 
-        public void AddToStdOut(IEnumerable<string> lines)
+        public void AddToStdOut(IReadOnlyList<string> lines)
         {
             if (!isOpen)
             {
@@ -160,7 +160,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             }
         }
 
-        public void AddToStdErr(IEnumerable<string> lines)
+        public void AddToStdErr(IReadOnlyList<string> lines)
         {
             if (!isOpen)
             {
@@ -176,7 +176,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             }
         }
 
-        public override IEnumerable<string> AsColoredString(bool verbose = false)
+        public override IReadOnlyList<string> AsColoredString(bool verbose = false)
         {
             if (!verbose && CachedMessage is not null && isComplete)
             {
@@ -253,7 +253,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             }
             else
             {
-                result.Add($"2Return code: FAILED ({ReturnCode})");
+                result.Add($"2Return code: FAILED (0x{(uint)ReturnCode:X}, {(uint)ReturnCode}, {ReturnCode})");
             }
 
             result.Add("0");
@@ -283,7 +283,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             Manager = manager;
         }
 
-        public void Log(IEnumerable<string> lines)
+        public void Log(IReadOnlyList<string> lines)
         {
             if (!isOpen)
             {
@@ -307,7 +307,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             }
         }
 
-        public void Error(IEnumerable<string> lines)
+        public void Error(IReadOnlyList<string> lines)
         {
             if (!isOpen)
             {
@@ -339,7 +339,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             }
         }
 
-        public override IEnumerable<string> AsColoredString(bool verbose = false)
+        public override IReadOnlyList<string> AsColoredString(bool verbose = false)
         {
             if (!verbose && CachedMessage is not null && isComplete)
             {
@@ -398,7 +398,7 @@ namespace UniGetUI.PackageEngine.ManagerClasses.Classes
             }
             else
             {
-                result.Add($"2The task reported a failure ({ReturnCode})");
+                result.Add($"2The task reported a failure (0x{(uint)ReturnCode:X}, {(uint)ReturnCode}, {ReturnCode})");
             }
 
             result.Add("0");

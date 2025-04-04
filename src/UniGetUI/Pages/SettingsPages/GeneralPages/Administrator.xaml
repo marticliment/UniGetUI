@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="UniGetUI.Pages.SettingsPages.GeneralPages.Administrator"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:CommunityToolkit.WinUI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:UniGetUI.Pages.SettingsPages.GeneralPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:widgets="using:UniGetUI.Interface.Widgets"
+    Background="Transparent"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:BoolNegationConverter x:Key="BoolNegationConverter" />
+    </Page.Resources>
+
+    <ScrollViewer
+        x:Name="Scroller"
+        Margin="0,0,-8,0"
+        Padding="0,0,8,0"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Center"
+        VerticalContentAlignment="Center">
+        <StackPanel>
+
+            <widgets:TranslatedTextBlock
+                Margin="4,32,4,8"
+                FontWeight="SemiBold"
+                Text="Change how operations request administrator rights" />
+
+            <widgets:CheckboxCard
+                x:Name="DoCacheAdminRightsForBatches"
+                BorderThickness="1,1,1,0"
+                CornerRadius="8,8,0,0"
+                IsEnabled="{x:Bind DoCacheAdminRights._checkbox.IsOn, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                SettingName="DoCacheAdminRightsForBatches"
+                StateChanged="RestartCache"
+                Text="Ask for administrator privileges once for each batch of operations" />
+
+            <widgets:CheckboxCard
+                x:Name="DoCacheAdminRights"
+                CornerRadius="0,0,8,8"
+                SettingName="DoCacheAdminRights"
+                StateChanged="RestartCache"
+                Text="Ask only once for administrator privileges (not recommended)" />
+        </StackPanel>
+    </ScrollViewer>
+</Page>

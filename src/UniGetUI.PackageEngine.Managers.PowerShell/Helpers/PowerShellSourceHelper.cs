@@ -38,11 +38,11 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             return ReturnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
         }
 
-        protected override IEnumerable<IManagerSource> GetSources_UnSafe()
+        protected override IReadOnlyList<IManagerSource> GetSources_UnSafe()
         {
             List<ManagerSource> sources = [];
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new()
                 {

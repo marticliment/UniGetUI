@@ -98,7 +98,7 @@ namespace UniGetUI.Core.IconEngine.Tests
             Assert.NotNull(path);
             DateTime newNewModificationDate = File.GetLastWriteTime(path);
 
-            Assert.NotEqual(oldModificationDate, newNewModificationDate);
+            Assert.Equal(oldModificationDate, newNewModificationDate);
             Assert.Equal(expectedFile, path);
             Assert.True(File.Exists(path));
         }
@@ -158,7 +158,7 @@ namespace UniGetUI.Core.IconEngine.Tests
             string managerName = "TestManager";
             string packageId = "Package3";
 
-            // Clear any cache for reproducable data
+            // Clear any cache for reproducible data
             string extension = ICON_1.ToString().Split(".")[^1];
             string expectedFile = Path.Join(CoreData.UniGetUICacheDirectory_Icons, managerName, packageId, $"icon.{extension}");
             if (File.Exists(expectedFile))

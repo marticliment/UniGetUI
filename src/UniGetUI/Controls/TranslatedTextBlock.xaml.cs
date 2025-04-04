@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using UniGetUI.Core.Logging;
 using UniGetUI.Core.Tools;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -12,23 +13,23 @@ namespace UniGetUI.Interface.Widgets
         public string __text = "";
         public string Text
         {
-            set { __text = CoreTools.Translate(value); ApplyText(); }
+            set => ApplyText(value);
         }
 
         public string __suffix = "";
         public string Suffix
         {
-            set { __suffix = value; ApplyText(); }
+            set { __suffix = value; ApplyText(null); }
         }
         public string __prefix = "";
         public string Prefix
         {
-            set { __prefix = value; ApplyText(); }
+            set { __prefix = value; ApplyText(null); }
         }
 
         public TextWrapping WrappingMode
         {
-            set => __textblock.TextWrapping = value;
+            set => _textBlock.TextWrapping = value;
         }
 
         public TranslatedTextBlock()
@@ -36,10 +37,20 @@ namespace UniGetUI.Interface.Widgets
             InitializeComponent();
         }
 
-        public void ApplyText()
+        public void ApplyText(string? text)
         {
-            if(__textblock is not null)
-                __textblock.Text = __prefix + __text + __suffix;
+            try
+            {
+                if (text is not null) __text = CoreTools.Translate(text);
+                if (_textBlock is not null)
+                {
+                    _textBlock.Text = __prefix + __text + __suffix;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
     }
 }

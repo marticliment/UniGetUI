@@ -26,16 +26,31 @@ public partial class Cargo : PackageManager
     public Cargo()
     {
         Dependencies = [
-            // cargo-update is required to check for and update installed packages
+            // cargo-update is required to check for installed and upgradable packages
             new ManagerDependency(
                 "cargo-update",
                 Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
-                "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {cargo install cargo-update; if($error.count -ne 0){pause}}\"",
+                "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {cargo install cargo-update; if ($error.count -ne 0){pause}}\"",
                 "cargo install cargo-update",
                 async () => (await CoreTools.WhichAsync("cargo-install-update.exe")).Item1),
+            // Cargo-binstall is required to install and update cargo binaries
+            new ManagerDependency(
+                "cargo-binstall",
+                Path.Join(Environment.SystemDirectory, "windowspowershell\\v1.0\\powershell.exe"),
+                "-ExecutionPolicy Bypass -NoLogo -NoProfile -Command \"& {Set-ExecutionPolicy Unrestricted -Scope Process; iex (iwr \\\"https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.ps1\\\").Content; if ($error.count -ne 0){pause}}\"",
+                "Set-ExecutionPolicy Unrestricted -Scope Process; iex (iwr \"https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.ps1\").Content",
+                async () => (await CoreTools.WhichAsync("cargo-binstall.exe")).Item1)
         ];
 
-        Capabilities = new ManagerCapabilities { };
+        Capabilities = new ManagerCapabilities
+        {
+            CanRunAsAdmin = true,
+            CanSkipIntegrityChecks = true,
+            SupportsCustomVersions = true,
+            SupportsCustomLocations = true,
+            SupportsProxy = ProxySupport.Partially,
+            SupportsProxyAuth = true
+        };
 
         var cratesIo = new ManagerSource(this, "crates.io", new Uri("https://index.crates.io/"));
 
@@ -46,9 +61,9 @@ public partial class Cargo : PackageManager
             IconId = IconType.Rust,
             ColorIconId = "cargo_color",
             ExecutableFriendlyName = "cargo.exe",
-            InstallVerb = "install",
+            InstallVerb = "binstall",
             UninstallVerb = "uninstall",
-            UpdateVerb = "install-update",
+            UpdateVerb = "binstall",
             ExecutableCallArgs = "",
             DefaultSource = cratesIo,
             KnownSources = [cratesIo]
@@ -58,9 +73,9 @@ public partial class Cargo : PackageManager
         OperationHelper = new CargoPkgOperationHelper(this);
     }
 
-    protected override IEnumerable<Package> FindPackages_UnSafe(string query)
+    protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
     {
-        Process p = GetProcess(Status.ExecutablePath, "search -q --color=never " + query);
+        using Process p = GetProcess(Status.ExecutablePath, "search -q --color=never " + query);
         IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.FindPackages, p);
         p.Start();
 
@@ -90,7 +105,7 @@ public partial class Cargo : PackageManager
             var package = Packages[i];
             try
             {
-                var versionInfo = CratesIOClient.GetManifestVersion(package.Id, package.Version);
+                var versionInfo = CratesIOClient.GetManifestVersion(package.Id, package.VersionString);
                 if (versionInfo.bin_names?.Length > 0)
                 {
                     BinPackages.Add(package);
@@ -111,12 +126,12 @@ public partial class Cargo : PackageManager
         return [.. BinPackages];
     }
 
-    protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
+    protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
     {
         return GetPackages(LoggableTaskType.ListUpdates);
     }
 
-    protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+    protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
     {
         return GetPackages(LoggableTaskType.ListInstalledPackages);
     }
@@ -129,7 +144,7 @@ public partial class Cargo : PackageManager
             return new(){ ExecutablePath = executablePath, Found = false, Version = ""};
         }
 
-        Process p = GetProcess(executablePath, "--version");
+        using Process p = GetProcess(executablePath, "--version");
         p.Start();
         string version = p.StandardOutput.ReadToEnd().Trim();
         string error = p.StandardError.ReadToEnd();
@@ -141,7 +156,7 @@ public partial class Cargo : PackageManager
         return new() { ExecutablePath = executablePath, Found = found, Version = version };
     }
 
-    private IEnumerable<Package> GetPackages(LoggableTaskType taskType)
+    private IReadOnlyList<Package> GetPackages(LoggableTaskType taskType)
     {
         List<Package> Packages = [];
         foreach(var match in TaskRecycler<List<Match>>.RunOrAttach(GetInstalledCommandOutput, 15))
@@ -150,9 +165,9 @@ public partial class Cargo : PackageManager
             var name = CoreTools.FormatAsName(id);
             var oldVersion = match.Groups[2]?.Value?.Trim() ?? "";
             var newVersion = match.Groups[3]?.Value?.Trim() ?? "";
-            if(taskType is LoggableTaskType.ListUpdates && oldVersion != newVersion)
+            if (taskType is LoggableTaskType.ListUpdates && oldVersion != newVersion)
                 Packages.Add(new Package(name, id, oldVersion, newVersion, DefaultSource, this));
-            else if(taskType is LoggableTaskType.ListInstalledPackages)
+            else if (taskType is LoggableTaskType.ListInstalledPackages)
                 Packages.Add(new Package(name, id, oldVersion, DefaultSource, this));
         }
         return Packages;
@@ -160,8 +175,8 @@ public partial class Cargo : PackageManager
 
     private List<Match> GetInstalledCommandOutput()
     {
-        List<Match> output = new();
-        Process p = GetProcess(Status.ExecutablePath, "install-update --list");
+        List<Match> output = [];
+        using Process p = GetProcess(Status.ExecutablePath, "install-update --list");
         IProcessTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.OtherTask, p);
         logger.AddToStdOut("Other task: Call the install-update command");
         p.Start();

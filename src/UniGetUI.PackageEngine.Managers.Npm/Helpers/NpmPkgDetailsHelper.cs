@@ -51,12 +51,12 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
 
                 details.Publisher = (contents?["maintainers"] as JsonArray)?[0]?.ToString();
                 details.Author = contents?["author"]?.ToString();
-                details.UpdateDate = contents?["time"]?[contents?["dist-tags"]?["latest"]?.ToString() ?? details.Package.Version]?.ToString();
+                details.UpdateDate = contents?["time"]?[contents?["dist-tags"]?["latest"]?.ToString() ?? details.Package.VersionString]?.ToString();
 
                 if (Uri.TryCreate(contents?["dist"]?["tarball"]?.ToString() ?? "", UriKind.RelativeOrAbsolute, out var installerUrl))
                     details.InstallerUrl = installerUrl;
 
-                if(int.TryParse(contents?["dist"]?["unpackedSize"]?.ToString() ?? "", NumberStyles.Any, CultureInfo.InvariantCulture, out int installerSize))
+                if (int.TryParse(contents?["dist"]?["unpackedSize"]?.ToString() ?? "", NumberStyles.Any, CultureInfo.InvariantCulture, out int installerSize))
                     details.InstallerSize = installerSize / 1048576d;
 
                 details.InstallerHash = contents?["dist"]?["integrity"]?.ToString();
@@ -78,7 +78,7 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             throw new NotImplementedException();
         }
 
-        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
+        protected override IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
@@ -87,14 +87,13 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
         {
             if (package.OverridenOptions.Scope is PackageScope.Local)
                 return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "node_modules", package.Id);
-            else
-                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Roaming", "npm",
-                    "node_modules", package.Id);
+            return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Roaming", "npm",
+                "node_modules", package.Id);
         }
 
-        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
+        protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
         {
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -118,10 +117,12 @@ namespace UniGetUI.PackageEngine.Managers.NpmManager
             logger.AddToStdOut(strContents);
             JsonArray? rawVersions = JsonNode.Parse(strContents) as JsonArray;
 
-            List<string> versions = new();
+            List<string> versions = [];
             foreach(JsonNode? raw_ver in rawVersions ?? [])
-                if(raw_ver is not null)
+            {
+                if (raw_ver is not null)
                     versions.Add(raw_ver.ToString());
+            }
 
             logger.AddToStdErr(p.StandardError.ReadToEnd());
             p.WaitForExit();

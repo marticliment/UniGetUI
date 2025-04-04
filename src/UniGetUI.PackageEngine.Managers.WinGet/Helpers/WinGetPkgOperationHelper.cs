@@ -4,6 +4,7 @@ using UniGetUI.Core.Logging;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
 using UniGetUI.PackageEngine.Classes.Manager.BaseProviders;
+using UniGetUI.PackageEngine.Classes.Packages.Classes;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 
@@ -12,7 +13,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
 {
     public static string GetIdNamePiece(IPackage package)
     {
-        if(!package.Id.EndsWith("…"))
+        if (!package.Id.EndsWith("…"))
             return $"--id \"{package.Id.TrimEnd('…')}\" --exact";
 
         if (!package.Name.EndsWith("…"))
@@ -23,7 +24,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
 
     public WinGetPkgOperationHelper(WinGet manager) : base(manager) { }
 
-    protected override IEnumerable<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
+    protected override IReadOnlyList<string> _getOperationParameters(IPackage package, IInstallationOptions options, OperationType operation)
     {
         List<string> parameters = [operation switch {
             OperationType.Install => Manager.Properties.InstallVerb,
@@ -43,9 +44,9 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             _ => []
         });
 
-        if (operation is OperationType.Uninstall && package.Version != "Unknown")
+        if (operation is OperationType.Uninstall && package.VersionString != "Unknown" && package.OverridenOptions.WinGet_SpecifyVersion is not false)
         {
-            parameters.AddRange(["--version", $"\"{package.Version}\""]);
+            parameters.AddRange(["--version", $"\"{package.VersionString}\""]);
         }
         else if (operation is OperationType.Install && options.Version != "")
         {
@@ -55,7 +56,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
         parameters.Add(options.InteractiveInstallation ? "--interactive" : "--silent");
         parameters.AddRange(options.CustomParameters);
 
-        if(operation is OperationType.Update)
+        if (operation is OperationType.Update)
         {
             if (package.Name.Contains("64-bit") || package.Id.ToLower().Contains("x64"))
             {
@@ -68,7 +69,7 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
             parameters.Add("--include-unknown");
         }
 
-        if(operation is not OperationType.Uninstall)
+        if (operation is not OperationType.Uninstall)
         {
             parameters.AddRange(["--accept-package-agreements", "--force"]);
 
@@ -89,10 +90,10 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
 
         try
         {
-            var installOptions = NativePackageHandler.GetInstallationOptions(package, operation);
-            if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationRequired
-                or ElevationRequirement.ElevatesSelf)
+            var installOptions = NativePackageHandler.GetInstallationOptions(package, options, operation);
+            if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationRequired or ElevationRequirement.ElevatesSelf)
             {
+                Logger.Info($"WinGet package {package.Id} requires elevation, forcing administrator rights...");
                 package.OverridenOptions.RunAsAdministrator = true;
             }
             else if (installOptions?.ElevationRequirement is ElevationRequirement.ElevationProhibited)
@@ -106,77 +107,90 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
                     throw new UnauthorizedAccessException(
                         CoreTools.Translate("This package cannot be installed from an elevated context.")
                         + CoreTools.Translate("Please check the installation options for this package and try again"));
+
                 package.OverridenOptions.RunAsAdministrator = false;
+            }
+            else if(installOptions?.Scope is PackageInstallerScope.System/* or PackageInstallerScope.Unknown*/)
+            {
+                Logger.Info($"WinGet package {package.Id} is installed on a system-wide scope, forcing administrator rights...");
+                package.OverridenOptions.RunAsAdministrator = true;
             }
         }
         catch (Exception ex)
         {
+            if (ex is UnauthorizedAccessException) throw;
+
             Logger.Error("Recovered from fatal WinGet exception:");
             Logger.Error(ex);
         }
 
-
+        parameters.Add(WinGet.GetProxyArgument());
         return parameters;
     }
 
     protected override OperationVeredict _getOperationResult(
         IPackage package,
         OperationType operation,
-        IEnumerable<string> processOutput,
+        IReadOnlyList<string> processOutput,
         int returnCode)
     {
         // See https://github.com/microsoft/winget-cli/blob/master/doc/windows/package-manager/winget/returnCodes.md for reference
         uint uintCode = (uint)returnCode;
 
-        if (uintCode == 0x8A150109)
-        {
-            // If the user is required to restart the system to complete the installation
-            if(operation is OperationType.Update) MarkUpgradeAsDone(package);
-            //return OperationVeredict.RestartRequired;
+        if (uintCode is 0x8A150109)
+        {   // TODO: Restart required to finish installation
+            if (operation is OperationType.Update) MarkUpgradeAsDone(package);
             return OperationVeredict.Success;
         }
 
-        if (uintCode == 0x8A150077 || uintCode == 0x8A15010C || uintCode == 0x8A150005)
-        {
+        if (uintCode is 0x8A150077 or 0x8A15010C or 0x8A150005)
+        {   // At some point, the user clicked cancel or Ctrl+C
             return OperationVeredict.Canceled;
         }
 
-        if (uintCode == 0x8A150011)
-        {
-            // TODO: Needs skip checksum
+        if (operation is OperationType.Uninstall && uintCode is 0x8A150017 && package.OverridenOptions.WinGet_SpecifyVersion is not false)
+        {   // No manifest found matching criteria
+            package.OverridenOptions.WinGet_SpecifyVersion = false;
+            return OperationVeredict.AutoRetry;
+        }
+
+        if (uintCode is 0x8A150011)
+        {   // TODO: Integrity failed
             return OperationVeredict.Failure;
         }
 
-		if (uintCode == 0x8A15002B)
-		{
-			return OperationVeredict.Failure;
-		}
-
-        if (uintCode == 0x8A15010D || uintCode == 0x8A15004F || uintCode == 0x8A15010E)
+        if (uintCode is 0x8A15002B)
         {
-            // Application is already installed
-            if(operation is OperationType.Update) MarkUpgradeAsDone(package);
+            if (Settings.Get("IgnoreUpdatesNotApplicable"))
+            {
+                Logger.Warn($"Ignoring update {package.Id} as the update is not applicable to the platform, and the user has enabled IgnoreUpdatesNotApplicable");
+                IgnoredUpdatesDatabase.Add(IgnoredUpdatesDatabase.GetIgnoredIdForPackage(package), package.VersionString);
+                return OperationVeredict.Success;
+            }
+            return OperationVeredict.Failure;
+        }
+
+        if (uintCode is 0x8A15010D or 0x8A15004F or 0x8A15010E)
+        {   // Application is already installed
+            if (operation is OperationType.Update) MarkUpgradeAsDone(package);
             return OperationVeredict.Success;
         }
 
-        if (returnCode == 0)
-        {
-            // Operation succeeded
-            if(operation is OperationType.Update) MarkUpgradeAsDone(package);
+        if (returnCode is 0)
+        {   // Operation succeeded
+            if (operation is OperationType.Update) MarkUpgradeAsDone(package);
             return OperationVeredict.Success;
         }
 
-        if(uintCode == 0x8A150056 && package.OverridenOptions.RunAsAdministrator != false && !CoreTools.IsAdministrator())
-        {
-            // Installer can't run elevated
+        if (uintCode is 0x8A150056 && package.OverridenOptions.RunAsAdministrator is not false && !CoreTools.IsAdministrator())
+        {   // Installer can't run elevated, but this condition hasn't been forced on UniGetUI
             package.OverridenOptions.RunAsAdministrator = false;
             return OperationVeredict.AutoRetry;
         }
 
-        if ((uintCode is 0x8A150019 or 0x80073D28) && package.OverridenOptions.RunAsAdministrator != true)
-        {
+        if ((uintCode is 0x8A150019 or 0x80073D28) && package.OverridenOptions.RunAsAdministrator is not true)
+        {   // Installer needs to run elevated, handle autoelevation
             // Code 0x80073D28 was added after https://github.com/marticliment/UniGetUI/issues/3093
-            // Installer needs to run elevated
             package.OverridenOptions.RunAsAdministrator = true;
             return OperationVeredict.AutoRetry;
         }
@@ -186,11 +200,11 @@ internal sealed class WinGetPkgOperationHelper : PackagePkgOperationHelper
 
     private static void MarkUpgradeAsDone(IPackage package)
     {
-        Settings.SetDictionaryItem<string, string>("WinGetAlreadyUpgradedPackages", package.Id, package.NewVersion);
+        Settings.SetDictionaryItem<string, string>("WinGetAlreadyUpgradedPackages", package.Id, package.NewVersionString);
     }
 
     public static bool UpdateAlreadyInstalled(IPackage package)
     {
-        return Settings.GetDictionaryItem<string, string>("WinGetAlreadyUpgradedPackages", package.Id) == package.NewVersion;
+        return Settings.GetDictionaryItem<string, string>("WinGetAlreadyUpgradedPackages", package.Id) == package.NewVersionString;
     }
 }

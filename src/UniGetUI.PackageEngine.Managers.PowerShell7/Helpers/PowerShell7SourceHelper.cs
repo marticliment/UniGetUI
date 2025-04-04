@@ -38,11 +38,11 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
             return ReturnCode == 0 ? OperationVeredict.Success : OperationVeredict.Failure;
         }
 
-        protected override IEnumerable<IManagerSource> GetSources_UnSafe()
+        protected override IReadOnlyList<IManagerSource> GetSources_UnSafe()
         {
             List<IManagerSource> sources = [];
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new()
                 {
@@ -87,7 +87,7 @@ namespace UniGetUI.PackageEngine.Managers.PowerShell7Manager
                         if (parts.Length >= 2)
                         {
                             string uri = Regex.Match(line, "https?:\\/\\/([\\w%-]+\\.)+[\\w%-]+(\\/[\\w%-]+)+\\/?").Value;
-                            if(uri == "") continue;
+                            if (uri == "") continue;
                             sources.Add(new ManagerSource(Manager, parts[0].Trim(), new Uri(uri)));
                         }
                     }

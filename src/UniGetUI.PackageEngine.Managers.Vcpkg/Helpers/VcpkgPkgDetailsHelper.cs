@@ -25,7 +25,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             string PackageName = PackagePrefix.Split("[")[0];
 
             string JsonString;
-            HttpClient client = new(CoreData.GenericHttpClientParameters);
+            HttpClient client = new(CoreTools.GenericHttpClientParameters);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
             JsonString = client.GetStringAsync($"https://raw.githubusercontent.com/{VCPKG_REPO}/refs/heads/{VCPKG_PORT_PATH}/{PackageName}/{VCPKG_PORT_FILE}").GetAwaiter().GetResult();
 
@@ -43,7 +43,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             // https://api.github.com/repos/{VCPKG_REPO}/commits/{CommitHash}
 
             List<string> Tags = [];
-            // TODO: the "features" and "dependencies" keys could also be good candgidates for tags, however their type specifications are all over -
+            // TODO: the "features" and "dependencies" keys could also be good candidates for tags, however their type specifications are all over -
             // strings, dictionaries, arrays - so one would first have to figure out how to handle that.
             // See https://learn.microsoft.com/en-us/vcpkg/reference/vcpkg-json
             if (PackagePrefix.Contains('['))
@@ -62,7 +62,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             throw new NotImplementedException();
         }
 
-        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
+        protected override IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
@@ -81,7 +81,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Directory.Exists(PackagePath) ? PackagePath : (Directory.Exists(VcpkgInstalledPath) ? VcpkgInstalledPath : Path.GetDirectoryName(PackageId));
         }
 
-        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
+        protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }

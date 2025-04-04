@@ -59,7 +59,9 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 {
                     KnowsPackageCount = true,
                     KnowsUpdateDate = true
-                }
+                },
+                SupportsProxy = ProxySupport.No,
+                SupportsProxyAuth = false
             };
 
             Properties = new ManagerProperties
@@ -91,7 +93,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             OperationHelper = new ScoopPkgOperationHelper(this);
         }
 
-        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
+        protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
         {
             List<Package> Packages = [];
 
@@ -119,7 +121,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 path = "scoop-search.exe";
             }
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -180,20 +182,20 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
+        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
             Dictionary<string, IPackage> InstalledPackages = [];
             foreach (IPackage InstalledPackage in GetInstalledPackages())
             {
-                if (!InstalledPackages.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.Version))
+                if (!InstalledPackages.ContainsKey(InstalledPackage.Id + "." + InstalledPackage.VersionString))
                 {
-                    InstalledPackages.Add(InstalledPackage.Id + "." + InstalledPackage.Version, InstalledPackage);
+                    InstalledPackages.Add(InstalledPackage.Id + "." + InstalledPackage.VersionString, InstalledPackage);
                 }
             }
 
             List<Package> Packages = [];
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -266,13 +268,13 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
-            => TaskRecycler<IEnumerable<Package>>.RunOrAttach(_getInstalledPackages_UnSafe, 15);
-        private IEnumerable<Package> _getInstalledPackages_UnSafe()
+        protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
+            => TaskRecycler<IReadOnlyList<Package>>.RunOrAttach(_getInstalledPackages_UnSafe, 15);
+        private IReadOnlyList<Package> _getInstalledPackages_UnSafe()
         {
             List<Package> Packages = [];
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -349,7 +351,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
                 return;
             }
             LastScoopSourceUpdateTime = DateTime.Now.Ticks;
-            Process p = new();
+            using Process p = new();
             ProcessStartInfo StartInfo = new()
             {
                 FileName = Status.ExecutablePath,
@@ -408,7 +410,7 @@ namespace UniGetUI.PackageEngine.Managers.ScoopManager
             Logger.Info("Starting scoop cleanup...");
             foreach (string command in new[] { " cache rm *", " cleanup --all --cache", " cleanup --all --global --cache" })
             {
-                Process p = new()
+                using Process p = new()
                 {
                     StartInfo = new ProcessStartInfo
                     {

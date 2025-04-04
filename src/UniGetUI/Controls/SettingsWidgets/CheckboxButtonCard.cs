@@ -1,8 +1,11 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
 using UniGetUI.Core.SettingsEngine;
 using UniGetUI.Core.Tools;
+using Windows.UI.Text;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -11,8 +14,9 @@ namespace UniGetUI.Interface.Widgets
 {
     public sealed partial class CheckboxButtonCard : SettingsCard
     {
-        public CheckBox CheckBox;
-        public Button Button;
+        public ToggleSwitch _checkbox;
+        public TextBlock _textblock;
+        public ButtonBase Button;
         private bool IS_INVERTED;
 
         private string setting_name = "";
@@ -21,8 +25,9 @@ namespace UniGetUI.Interface.Widgets
             set {
                 setting_name = value;
                 IS_INVERTED = value.StartsWith("Disable");
-                CheckBox.IsChecked = Settings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
-                Button.IsEnabled = (CheckBox.IsChecked ?? false) || _buttonAlwaysOn ;
+                _checkbox.IsOn = Settings.Get(setting_name) ^ IS_INVERTED ^ ForceInversion;
+                _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
+                Button.IsEnabled = (_checkbox.IsOn) || _buttonAlwaysOn ;
             }
         }
 
@@ -30,14 +35,14 @@ namespace UniGetUI.Interface.Widgets
 
         public bool Checked
         {
-            get => CheckBox.IsChecked ?? false;
+            get => _checkbox.IsOn;
         }
         public event EventHandler<EventArgs>? StateChanged;
         public new event EventHandler<RoutedEventArgs>? Click;
 
         public string CheckboxText
         {
-            set => CheckBox.Content = CoreTools.Translate(value);
+            set => _textblock.Text = CoreTools.Translate(value);
         }
 
         public string ButtonText
@@ -48,39 +53,46 @@ namespace UniGetUI.Interface.Widgets
         private bool _buttonAlwaysOn;
         public bool ButtonAlwaysOn
         {
-            set => _buttonAlwaysOn = value;
+            set
+            {
+                _buttonAlwaysOn = value;
+                Button.IsEnabled = (_checkbox.IsOn) || _buttonAlwaysOn ;
+            }
         }
-
 
         public CheckboxButtonCard()
         {
-            Button = new Button();
-            CheckBox = new CheckBox();
+            Button = new Button()
+            {
+                Margin = new Thickness(0, 8, 0, 0)
+
+            };
+            _checkbox = new ToggleSwitch()
+            {
+                 Margin = new Thickness(0, 0, 8, 0)
+            };
+            _textblock = new TextBlock()
+            {
+                Margin = new Thickness(2,0,0,0),
+                VerticalAlignment = VerticalAlignment.Center,
+                TextWrapping = TextWrapping.Wrap,
+                Style = (Style)Application.Current.Resources["BaseTextBlockStyle"],
+                FontWeight = new FontWeight(450),
+                Foreground = (SolidColorBrush)Application.Current.Resources["ButtonForeground"]
+            };
             IS_INVERTED = false;
 
-            //ContentAlignment = ContentAlignment.Left;
-            //HorizontalAlignment = HorizontalAlignment.Stretch;
-
-            DefaultStyleKey = typeof(CheckboxCard);
-            Description = CheckBox;
-            Content = Button;
-            CheckBox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            CheckBox.Checked += (_, _) =>
+            Content = _checkbox;
+            Header = _textblock;
+            Description = Button;
+            _checkbox.Toggled += (_, _) =>
             {
-                Settings.Set(setting_name, true ^ IS_INVERTED ^ ForceInversion);
+                Settings.Set(setting_name, _checkbox.IsOn ^ IS_INVERTED ^ ForceInversion);
                 StateChanged?.Invoke(this, EventArgs.Empty);
-                Button.IsEnabled = true;
+                Button.IsEnabled = _checkbox.IsOn ? true : _buttonAlwaysOn;
+                _textblock.Opacity = _checkbox.IsOn ? 1 : 0.7;
             };
 
-            CheckBox.Unchecked += (_, _) =>
-            {
-                Settings.Set(setting_name, false ^ IS_INVERTED ^ ForceInversion);
-                StateChanged?.Invoke(this, EventArgs.Empty);
-                Button.IsEnabled = _buttonAlwaysOn;
-            };
-
-
-            Button.MinWidth = 200;
             Button.Click += (s, e) => Click?.Invoke(s, e);
         }
     }

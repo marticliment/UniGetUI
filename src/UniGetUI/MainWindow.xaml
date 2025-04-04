@@ -1,109 +1,198 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Window
     x:Class="UniGetUI.Interface.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UniGetUI"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:UniGetUI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    mc:Ignorable="d"
-    Title="UniGetUI">
+    xmlns:winex="using:WinUIEx"
+    Title="UniGetUI"
+    mc:Ignorable="d">
 
     <Window.SystemBackdrop>
-        <MicaBackdrop Kind="Base"/>
+        <MicaBackdrop Kind="Base" />
     </Window.SystemBackdrop>
-
-    <Grid Name="ContentRoot" x:FieldModifier="public">
+    <Grid
+        x:Name="MainContentGrid"
+        x:FieldModifier="public"
+        Visibility="Visible">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="SplashScreenColumn" Width="*"/>
-            <ColumnDefinition x:Name="ContentColumn" Width="0"/>
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Grid.Column="1" x:Name="MainContentGrid" Visibility="Visible" x:FieldModifier="public">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="36"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Border Grid.Row="0" Grid.Column="0" x:Name="__app_titlebar" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="12,8,12,8" Spacing="10">
-                    <Image VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="16" Height="16" >
-                        <Image.Source>
-                            <BitmapImage DecodePixelHeight="16" UriSource="ms-appx:///Assets/Images/icon.png"/>
-                        </Image.Source>
-                    </Image>
-                    <widgets:TranslatedTextBlock x:Name="AppTitle" Text="WingetUI" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="12"/>
-                </StackPanel>
-            </Border>
-            <InfoBar Name="UpdatesBanner" x:FieldModifier="public" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" IsOpen="False" Visibility="{x:Bind UpdatesBanner.IsOpen, Mode=OneWay}" Margin="0,0,0,4" CornerRadius="0" BorderThickness="0,1,0,1"/>
-            <InfoBar Name="ErrorBanner" x:FieldModifier="public" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" IsOpen="False" Visibility="{x:Bind ErrorBanner.IsOpen, Mode=OneWay}" Margin="0,0,0,4" Severity="Error" CornerRadius="0" BorderThickness="0,1,0,1"/>
-            <InfoBar Name="WinGetWarningBanner" x:FieldModifier="public" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsOpen="False" Visibility="{x:Bind WinGetWarningBanner.IsOpen, Mode=OneWay}" Margin="0,0,0,4" Severity="Warning" CornerRadius="0" BorderThickness="0,1,0,1"/>
-        </Grid>
-        <Grid Grid.Row="0" Grid.Column="0" x:Name="LoadingWindow" Visibility="Visible"
-              Background="{StaticResource ProgressBarBorderThemeBrush}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Canvas x:Name="LaunchBackground" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Grid.ColumnSpan="3"/>
-            <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Padding="0,20,0,20">
-                <Border Canvas.ZIndex="1" BorderThickness="500,0,0,0" Margin="-500,0,20,0" BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                    <animations:Explicit.Animations>
-                        <animations:AnimationSet x:Name="InAnimation_Border">
-                            <animations:TranslationAnimation From="225,0" To="0,0" Duration="0:0:0.7" EasingMode="EaseOut"/>
-                        </animations:AnimationSet>
-                        <animations:AnimationSet x:Name="OutAnimation_Border">
-                            <animations:TranslationAnimation From="0,0" To="225,0" Duration="0:0:0.4" EasingMode="EaseIn"/>
-                        </animations:AnimationSet>
-                    </animations:Explicit.Animations>
-                    <Image Width="87">
-                        <Image.Source>
-                            <BitmapImage UriSource="ms-appx:///Assets/Images/icon_unsquare.png"/>
-                        </Image.Source>
-                    </Image>
-                </Border>
-                <Border HorizontalAlignment="Right" Margin="0,0,0,0">
-                    <animations:Explicit.Animations>
-                        <animations:AnimationSet x:Name="InAnimation_Text">
-                            <animations:TranslationAnimation From="-225,0" To="0,0" Duration="0:0:0.7" EasingMode="EaseOut"/>
-                            <animations:OpacityAnimation From="0" To="1" Duration="0:0:0.7" EasingMode="EaseOut"/>
-                        </animations:AnimationSet>
-                        <animations:AnimationSet x:Name="OutAnimation_Text">
-                            <animations:TranslationAnimation From="0,0" To="-250,0" Duration="0:0:0.4" EasingMode="EaseIn"/>
-                            <animations:OpacityAnimation From="1" To="0" Duration="0:0:0.4" EasingMode="EaseIn"/>
-                        </animations:AnimationSet>
-                    </animations:Explicit.Animations>
 
-                    <Grid>
-                    <TextBlock Text="UniGetUI" VerticalAlignment="Center" FontWeight="ExtraBlack"
-                        HorizontalAlignment="Right" HorizontalTextAlignment="Right" Padding="0,0,0,10"
-                        FontFamily="Segoe UI Variable Display" FontSize="90" Name="UniGetUITitle"/>
-                        <widgets:TranslatedTextBlock Text="Formerly known as WingetUI" VerticalAlignment="Bottom"
-                        HorizontalAlignment="Center"
-                        FontFamily="Segoe UI Variable Text" FontSize="20" />
-                    </Grid>
-                </Border>
-            </StackPanel>
-            <ProgressBar
-                Foreground="#08a9c3" Margin="0,0,5,0"
-                Grid.Column="1" IsIndeterminate="True" Name="LoadingIndicator"
-                Grid.Row="1" VerticalAlignment="Bottom" Visibility="Collapsed"
-                />
-        </Grid>
+        <winex:TitleBar
+            Name="TitleBar"
+            Title="UniGetUI"
+            Grid.Row="0"
+            IsPaneToggleButtonVisible="True"
+            PaneToggleRequested="TitleBar_PaneToggleRequested"
+            Visibility="Collapsed">
+            <winex:TitleBar.IconSource>
+                <ImageIconSource ImageSource="ms-appx:///Assets/Images/icon.png" />
+            </winex:TitleBar.IconSource>
+            <winex:TitleBar.Content>
+                <UserControl Height="10" />
+            </winex:TitleBar.Content>
+        </winex:TitleBar>
+        <StackPanel
+            Grid.Row="1"
+            Margin="0"
+            Padding="0"
+            BorderThickness="0"
+            Spacing="0">
+            <InfoBar
+                Name="UpdatesBanner"
+                Margin="0,0,0,4"
+                x:FieldModifier="public"
+                BorderThickness="0,1,0,1"
+                CornerRadius="0"
+                IsOpen="False"
+                Visibility="{x:Bind UpdatesBanner.IsOpen, Mode=OneWay}" />
+            <InfoBar
+                Name="ErrorBanner"
+                Margin="0,0,0,4"
+                x:FieldModifier="public"
+                BorderThickness="0,1,0,1"
+                CornerRadius="0"
+                IsOpen="False"
+                Severity="Error"
+                Visibility="{x:Bind ErrorBanner.IsOpen, Mode=OneWay}" />
+            <InfoBar
+                Name="WinGetWarningBanner"
+                Margin="0,0,0,4"
+                x:FieldModifier="public"
+                BorderThickness="0,1,0,1"
+                CornerRadius="0"
+                IsOpen="False"
+                Severity="Warning"
+                Visibility="{x:Bind WinGetWarningBanner.IsOpen, Mode=OneWay}" />
+            <InfoBar
+                Name="TelemetryWarner"
+                Margin="0,0,0,4"
+                x:FieldModifier="public"
+                BorderThickness="0,1,0,1"
+                CornerRadius="0"
+                IsOpen="False"
+                Severity="Informational"
+                Visibility="Collapsed" />
+        </StackPanel>
+        <Frame Name="MainContentFrame" Grid.Row="2">
+            <Grid Background="{StaticResource ProgressBarBorderThemeBrush}" Visibility="Visible">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Canvas
+                    x:Name="LaunchBackground"
+                    Grid.Row="0"
+                    Grid.RowSpan="5"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="3"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Padding="0,20,0,20"
+                    Orientation="Horizontal">
+                    <Border
+                        Margin="-500,0,20,0"
+                        BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                        BorderThickness="500,0,0,0"
+                        Canvas.ZIndex="1">
+                        <animations:Explicit.Animations>
+                            <animations:AnimationSet x:Name="InAnimation_Border">
+                                <animations:TranslationAnimation
+                                    EasingMode="EaseOut"
+                                    From="225,0"
+                                    To="0,0"
+                                    Duration="0:0:0.7" />
+                            </animations:AnimationSet>
+                            <animations:AnimationSet x:Name="OutAnimation_Border">
+                                <animations:TranslationAnimation
+                                    EasingMode="EaseIn"
+                                    From="0,0"
+                                    To="225,0"
+                                    Duration="0:0:0.4" />
+                            </animations:AnimationSet>
+                        </animations:Explicit.Animations>
+                        <Image Width="87">
+                            <Image.Source>
+                                <BitmapImage UriSource="ms-appx:///Assets/Images/icon_unsquare.png" />
+                            </Image.Source>
+                        </Image>
+                    </Border>
+                    <Border Margin="0,0,0,0" HorizontalAlignment="Right">
+                        <animations:Explicit.Animations>
+                            <animations:AnimationSet x:Name="InAnimation_Text">
+                                <animations:TranslationAnimation
+                                    EasingMode="EaseOut"
+                                    From="-225,0"
+                                    To="0,0"
+                                    Duration="0:0:0.7" />
+                                <animations:OpacityAnimation
+                                    EasingMode="EaseOut"
+                                    From="0"
+                                    To="1"
+                                    Duration="0:0:0.7" />
+                            </animations:AnimationSet>
+                            <animations:AnimationSet x:Name="OutAnimation_Text">
+                                <animations:TranslationAnimation
+                                    EasingMode="EaseIn"
+                                    From="0,0"
+                                    To="-250,0"
+                                    Duration="0:0:0.4" />
+                                <animations:OpacityAnimation
+                                    EasingMode="EaseIn"
+                                    From="1"
+                                    To="0"
+                                    Duration="0:0:0.4" />
+                            </animations:AnimationSet>
+                        </animations:Explicit.Animations>
+
+                        <Grid>
+                            <TextBlock
+                                Name="UniGetUITitle"
+                                Padding="0,0,0,10"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe UI Variable Display"
+                                FontSize="90"
+                                FontWeight="ExtraBlack"
+                                HorizontalTextAlignment="Right"
+                                Text="UniGetUI" />
+                            <widgets:TranslatedTextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom"
+                                FontFamily="Segoe UI Variable Text"
+                                FontSize="20"
+                                Text="Formerly known as WingetUI" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+                <ProgressBar
+                    Name="LoadingIndicator"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="0,0,5,0"
+                    VerticalAlignment="Bottom"
+                    Foreground="#08a9c3"
+                    IsIndeterminate="True"
+                    Visibility="Collapsed" />
+            </Grid>
+        </Frame>
     </Grid>
 </Window>

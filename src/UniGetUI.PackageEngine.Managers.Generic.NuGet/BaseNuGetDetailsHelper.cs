@@ -136,22 +136,22 @@ namespace UniGetUI.PackageEngine.Managers.PowerShellManager
             }
 
             // Logger.Debug($"A native icon with Url={possibleIconUrl.Groups[1].Value} was found");
-            return new CacheableIcon(new Uri(possibleIconUrl.Groups[1].Value), package.Version);
+            return new CacheableIcon(new Uri(possibleIconUrl.Groups[1].Value), package.VersionString);
         }
 
-        protected override IEnumerable<Uri> GetScreenshots_UnSafe(IPackage package)
+        protected override IReadOnlyList<Uri> GetScreenshots_UnSafe(IPackage package)
         {
             throw new NotImplementedException();
         }
 
-        protected override IEnumerable<string> GetInstallableVersions_UnSafe(IPackage package)
+        protected override IReadOnlyList<string> GetInstallableVersions_UnSafe(IPackage package)
         {
             Uri SearchUrl = new($"{package.Source.Url}/FindPackagesById()?id='{package.Id}'");
             Logger.Debug($"Begin package version search with url={SearchUrl} on manager {Manager.Name}");
 
             List<string> results = [];
 
-            HttpClient client = new(CoreData.GenericHttpClientParameters);
+            HttpClient client = new(CoreTools.GenericHttpClientParameters);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(CoreData.UserAgentString);
 
             HttpResponseMessage response = client.GetAsync(SearchUrl).GetAwaiter().GetResult();

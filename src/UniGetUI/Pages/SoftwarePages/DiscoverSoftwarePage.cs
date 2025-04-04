@@ -9,6 +9,7 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.Interfaces;
 using UniGetUI.PackageEngine.PackageLoader;
 using Windows.System;
+using UniGetUI.Interface.Telemetry;
 using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
@@ -108,7 +109,7 @@ namespace UniGetUI.Interface.SoftwarePages
                 Text = CoreTools.AutoTranslated("Download installer"),
                 IconName = IconType.Download
             };
-            MenuDownloadInstaller.Click += (_, _) => MainApp.Operations.AskLocationAndDownload(SelectedItem);
+            MenuDownloadInstaller.Click += (_, _) => _ = MainApp.Operations.AskLocationAndDownload(SelectedItem, TEL_InstallReferral.DIRECT_SEARCH);
             menu.Items.Add(MenuDownloadInstaller);
 
             menu.Items.Add(new MenuFlyoutSeparator { Height = 5 });
@@ -206,15 +207,15 @@ namespace UniGetUI.Interface.SoftwarePages
                 toolButton.Icon = new LocalIcon(Icons[toolButton]);
             }
 
-            PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem);
+            PackageDetails.Click += (_, _) => ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.DIRECT_SEARCH);
             ExportSelection.Click += ExportSelection_Click;
             HelpButton.Click += (_, _) => MainApp.Instance.MainWindow.NavigationPage.ShowHelp();
             InstallationSettings.Click += (_, _) => ShowInstallationOptionsForPackage(SelectedItem);
 
-            InstallSelected.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages());
-            InstallAsAdmin.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), elevated: true);
-            InstallSkipHash.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), no_integrity: true);
-            InstallInteractive.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), interactive: true);
+            InstallSelected.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.DIRECT_SEARCH);
+            InstallAsAdmin.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.DIRECT_SEARCH, elevated: true);
+            InstallSkipHash.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.DIRECT_SEARCH, no_integrity: true);
+            InstallInteractive.Click += (_, _) => MainApp.Operations.Install(FilteredPackages.GetCheckedPackages(), TEL_InstallReferral.DIRECT_SEARCH, interactive: true);
 
             SharePackage.Click += (_, _) => MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
@@ -269,7 +270,7 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuDetails_Invoked(object sender, RoutedEventArgs e)
         {
-            ShowDetailsForPackage(SelectedItem);
+            ShowDetailsForPackage(SelectedItem, TEL_InstallReferral.DIRECT_SEARCH);
         }
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs e)
@@ -283,16 +284,16 @@ namespace UniGetUI.Interface.SoftwarePages
         }
 
         private void MenuInstall_Invoked(object sender, RoutedEventArgs e)
-            => MainApp.Operations.Install(SelectedItem);
+            => _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.DIRECT_SEARCH);
 
         private void MenuSkipHash_Invoked(object sender, RoutedEventArgs e)
-            => MainApp.Operations.Install(SelectedItem, no_integrity: true);
+            => _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.DIRECT_SEARCH, no_integrity: true);
 
         private void MenuInteractive_Invoked(object sender, RoutedEventArgs e)
-            => MainApp.Operations.Install(SelectedItem, interactive: true);
+            => _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.DIRECT_SEARCH, interactive: true);
 
         private void MenuAsAdmin_Invoked(object sender, RoutedEventArgs e)
-            => MainApp.Operations.Install(SelectedItem, elevated: true);
+            => _ = MainApp.Operations.Install(SelectedItem, TEL_InstallReferral.DIRECT_SEARCH, elevated: true);
 
         private void MenuInstallSettings_Invoked(object sender, RoutedEventArgs e)
             => ShowInstallationOptionsForPackage(SelectedItem);
@@ -303,16 +304,25 @@ namespace UniGetUI.Interface.SoftwarePages
             string managerName = contents[0];
             string sourceName = "";
             if (contents.Length > 1) sourceName = contents[1];
-            ShowSharedPackage_ThreadSafe(id, managerName, sourceName);
+            _showSharedPackage(id, managerName, sourceName, "LEGACY_COMBINEDSOURCE");
         }
 
         public void ShowSharedPackage_ThreadSafe(string id, string managerName, string sourceName)
         {
-            MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(async () =>
+            MainApp.Instance.MainWindow.DispatcherQueue.TryEnqueue(() =>
             {
-                IPackage? package = await GetPackageFromIdAndManager(id, managerName, sourceName);
-                if (package is not null) ShowDetailsForPackage(package);
+                _showSharedPackage(id, managerName, sourceName, "DEFAULT");
             });
+        }
+
+        private async void _showSharedPackage(string id, string manager, string source, string eventSource)
+        {
+            IPackage? package = await GetPackageFromIdAndManager(id, manager, source);
+            if (package is not null)
+            {
+                TelemetryHandler.SharedPackage(package, eventSource);
+                ShowDetailsForPackage(package, TEL_InstallReferral.FROM_WEB_SHARE);
+            }
         }
 
         private static async Task<IPackage?> GetPackageFromIdAndManager(string id, string managerName, string sourceName)
@@ -339,10 +349,10 @@ namespace UniGetUI.Interface.SoftwarePages
                     throw new ArgumentException(CoreTools.Translate("The package manager \"{0}\" was not found", managerName));
                 }
 
-                if(!manager.IsEnabled())
+                if (!manager.IsEnabled())
                     throw new ArgumentException(CoreTools.Translate("The package manager \"{0}\" is disabled", manager.DisplayName));
 
-                if(!manager.Status.Found)
+                if (!manager.Status.Found)
                     throw new ArgumentException(CoreTools.Translate("There is an error with the configuration of the package manager \"{0}\"", manager.DisplayName));
 
                 var results = await Task.Run(() => manager.FindPackages(id));
@@ -358,8 +368,10 @@ namespace UniGetUI.Interface.SoftwarePages
                 // Get package from best source
                 if (candidates.Length >= 1 && manager.Capabilities.SupportsCustomSources)
                     foreach (var candidate in candidates)
+                    {
                         if (candidate.Source.Name == sourceName)
                             package = candidate;
+                    }
 
                 Logger.ImportantInfo($"Found package {package.Id} on manager {package.Manager.Name}, showing it...");
                 DialogHelper.HideLoadingDialog();

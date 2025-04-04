@@ -27,7 +27,6 @@ namespace UniGetUI.Interface.Widgets
         {
             _button.MinWidth = 200;
             _button.Click += (_, _) => { Click?.Invoke(this, EventArgs.Empty); };
-            DefaultStyleKey = typeof(ButtonCard);
             Content = _button;
         }
     }

@@ -1,15 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <ImplicitUsings>enable</ImplicitUsings>
     <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
     <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
     <Platforms>ARM64;x64</Platforms>
     <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
-    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-    <Authors>Martí Climent and the contributors</Authors>
-    <PublisherName>Martí Climent</PublisherName>
-    <Nullable>enable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Configurations>Debug;Release</Configurations>
     <OutputType>WinExe</OutputType>
@@ -24,7 +19,6 @@
 
     <!-- .NET & AppSdk publish options -->
     <PublishSelfContained>true</PublishSelfContained>
-    <SdkVersion>8.0.404</SdkVersion>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
     <WindowsPackageType>None</WindowsPackageType>
@@ -69,6 +63,14 @@
     <None Remove="Interface\Widgets\NavButton.xaml" />
     <None Remove="MainWindow.xaml" />
     <None Remove="PackageEngine\OperationControl.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\Administrator.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\Backup.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\Experimental.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\General.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\Notifications.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\Operations.xaml" />
+    <None Remove="Pages\SettingsPages\GeneralPages\PackageManager.xaml" />
+    <None Remove="Pages\SettingsPages\SettingsHomepage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -77,16 +79,19 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.1.240916" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.1.240916" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.1.240916" />
-    <PackageReference Include="H.NotifyIcon.WinUI" Version="2.2.0" />
+    <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.1.240916" />
+    <PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.250108002" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250310001" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="PhotoSauce.MagicScaler" Version="0.15.0" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.3" Aliases="DrawingCommon" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageReference Include="YamlDotNet" Version="16.2.1" />
+    <PackageReference Include="WinUIEx" Version="2.5.1" />
+    <PackageReference Include="YamlDotNet" Version="16.3.0" />
 
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
@@ -108,6 +113,9 @@
     </Page>
     <Page Update="Interface\SoftwareUpdates.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Internet.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="SettingsTab\Widgets\SourceManager.xaml">
@@ -177,6 +185,39 @@
     <None Update="Assets\Utilities\uninstall_scoop.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Pages\SettingsPages\GeneralPages\PackageManager.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Experimental.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Administrator.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Operations.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Backup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Updates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Notifications.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\Interface_P.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\GeneralPages\General.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\SettingsHomepage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingsPages\SettingsBasePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Interface\Dialogs\PackageDetailsPage.xaml">
@@ -230,6 +271,7 @@
     <ProjectReference Include="..\UniGetUI.Core.Tools\UniGetUI.Core.Tools.csproj" />
     <ProjectReference Include="..\UniGetUI.Interface.BackgroundApi\UniGetUI.Interface.BackgroundApi.csproj" />
     <ProjectReference Include="..\UniGetUI.Interface.Enums\UniGetUI.Interface.Enums.csproj" />
+    <ProjectReference Include="..\UniGetUI.Interface.Telemetry\UniGetUI.Interface.Telemetry.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Enums\UniGetUI.PackageEngine.Structs.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Cargo\UniGetUI.PackageEngine.Managers.Cargo.csproj" />
     <ProjectReference Include="..\UniGetUI.PackageEngine.Managers.Chocolatey\UniGetUI.PackageEngine.Managers.Chocolatey.csproj" />

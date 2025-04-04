@@ -21,6 +21,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
         public Dictionary<string, ManagerSource> TripletSourceMap;
         public static Uri URI_VCPKG_IO = new Uri("https://vcpkg.io/");
 
+        private bool hasBeenBootstrapped;
+
         public Vcpkg()
         {
             Dependencies = [
@@ -38,6 +40,8 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             {
                 CanRunAsAdmin = true,
                 SupportsCustomSources = true,
+                SupportsProxy = ProxySupport.No,
+                SupportsProxyAuth = false,
             };
 
             string DefaultTriplet = GetDefaultTriplet();
@@ -79,11 +83,11 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             OperationHelper = new VcpkgPkgOperationHelper(this);
         }
 
-        protected override IEnumerable<Package> FindPackages_UnSafe(string query)
+        protected override IReadOnlyList<Package> FindPackages_UnSafe(string query)
         {
             string Triplet = GetDefaultTriplet();
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -105,7 +109,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
             p.Start();
 
-            Dictionary<string, string> PackageVersions = new();
+            Dictionary<string, string> PackageVersions = [];
             string optionString = CoreTools.Translate("option");
             string unknownVersion = CoreTools.Translate("Unknown");
             while ((line = p.StandardOutput.ReadLine()) is not null)
@@ -162,11 +166,11 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
+        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
         {
             List<Package> Packages = [];
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -191,7 +195,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 // Sample line:
                 // (spaces) package name: package triplet   current -> latest
                 //         brotli:x64-mingw-dynamic         1.0.9#5 -> 1.1.0#1
-                if (line.StartsWith("\t"))
+                if (line.StartsWith('\t'))
                 {
                     line = line.Substring(1);
                     string[] PackageData = Regex.Replace(line, @"\s+", " ").Split(' ');
@@ -218,15 +222,15 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+        protected override IReadOnlyList<Package> GetInstalledPackages_UnSafe()
         {
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
                     Arguments = Properties.ExecutableCallArgs + " list",
-                    // vcpkg has an --x-json flag that would list installed packages in JSON, but it's expiremental
+                    // vcpkg has an --x-json flag that would list installed packages in JSON, but it's experimental
                     // TODO: Once --x-json is stable migrate to --x-json
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -242,7 +246,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
 
             p.Start();
 
-            Dictionary<string, string> PackageVersions = new();
+            Dictionary<string, string> PackageVersions = [];
             while ((line = p.StandardOutput.ReadLine()) is not null)
             {
                 logger.AddToStdOut(line);
@@ -343,18 +347,18 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             var (vcpkgRootFound, vcpkgRoot) = GetVcpkgRoot();
             var (gitFound, gitPath) = CoreTools.Which("git");
 
-            if (!found || !gitFound || !vcpkgRootFound || Settings.Get("DisableUpdateVcpkgGitPorts"))
+            if (!found || !gitFound || !vcpkgRootFound)
             {
                 INativeTaskLogger logger = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes);
-                if(Settings.Get("DisableUpdateVcpkgGitPorts")) logger.Error("User has disabled updating sources");
-                if(!found) logger.Error("Vcpkg was not found???");
-                if(!gitFound) logger.Error("Vcpkg sources won't be updated since git was not found");
-                if(!vcpkgRootFound) logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable / the custom vcpkg root setting were not set");
-                logger.Close(Settings.Get("DisableUpdateVcpkgGitPorts")? 0: 1);
+                if (Settings.Get("DisableUpdateVcpkgGitPorts")) logger.Error("User has disabled updating sources");
+                if (!found) logger.Error("Vcpkg was not found???");
+                if (!gitFound) logger.Error("Vcpkg sources won't be updated since git was not found");
+                if (!vcpkgRootFound) logger.Error("Cannot update vcpkg port files as requested: the VCPKG_ROOT environment variable or custom vcpkg root setting was not set");
+                logger.Close(Settings.Get("DisableUpdateVcpkgGitPorts") ? 0 : 1);
                 return;
             }
 
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -373,6 +377,30 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             processLogger.AddToStdOut(p.StandardOutput.ReadToEnd());
             processLogger.AddToStdErr(p.StandardError.ReadToEnd());
             processLogger.Close(p.ExitCode);
+
+            if (!hasBeenBootstrapped)
+            {
+                using Process p2 = new()
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "cmd.exe",
+                        WorkingDirectory = vcpkgRoot,
+                        Arguments = "/C .\\bootstrap-vcpkg.bat",
+                        UseShellExecute = false,
+                        // RedirectStandardOutput = true,
+                        // RedirectStandardError = true,
+                        CreateNoWindow = true
+                    }
+                };
+                IProcessTaskLogger processLogger2 = TaskLogger.CreateNew(LoggableTaskType.RefreshIndexes, p);
+                p2.Start();
+                p2.WaitForExit();
+                // processLogger2.AddToStdOut(p2.StandardOutput.ReadToEnd());
+                // processLogger2.AddToStdErr(p2.StandardError.ReadToEnd());
+                processLogger2.Close(p2.ExitCode);
+                hasBeenBootstrapped = true;
+            }
         }
 
         public static Tuple<bool, string> GetVcpkgPath()
@@ -404,9 +432,10 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
             {
                 vcpkgRoot = Environment.GetEnvironmentVariable("VCPKG_ROOT");
             }
+
             if (vcpkgRoot == null)
             {
-                // Unfortuanately, we can't use `GetVcpkgPath` for this
+                // Unfortunately, we can't use `GetVcpkgPath` for this
                 // as it would become a bunch of functions calling each other
                 var (found, path) = CoreTools.Which("vcpkg");
                 path = Path.GetDirectoryName(path);
@@ -461,6 +490,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                 {
                     Logger.Warn($"The built-in triplet directory {tripletLocation} does not exist; triplets will not be loaded.");
                 }
+
                 if (Path.Exists(communityTripletLocation))
                 {
                     tripletFiles = tripletFiles.Concat(Directory.EnumerateFiles(communityTripletLocation));
@@ -476,6 +506,7 @@ namespace UniGetUI.PackageEngine.Managers.VcpkgManager
                     Triplets.Add(triplet);
                 }
             }
+
             return Triplets;
         }
     }

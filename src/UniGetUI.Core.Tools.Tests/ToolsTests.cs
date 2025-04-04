@@ -114,19 +114,24 @@ namespace UniGetUI.Core.Tools.Tests
         }
 
         [Theory]
-        [InlineData("1000.0", 1000.0, 0.0)]
-        [InlineData("2.4", 2.4, 0.001)]
-        [InlineData("33a.12-beta", 33.12, 0.0)]
-        [InlineData("0", 0.0, 0.0)]
-        [InlineData("", -1, 0.0)]
-        [InlineData("dfgfdsgdfg", -1, 0.0)]
-        [InlineData("-12", 12.0, 0.0)]
-        [InlineData("4.0.0.1.0", 4.001, 0.01)]
-        [InlineData("2024.30.04.1223", 2024.30041223, 0.0)]
-        [InlineData("0.0", 0.0, 0.0)]
-        public void TestGetVersionStringAsFloat(string version, double expected, double tolerance)
+        [InlineData("1000.0", 1000, 0, 0, 0)]
+        [InlineData("2.4", 2, 4, 0, 0)]
+        [InlineData("33a.12-beta5", 33, 12, 5, 0)]
+        [InlineData("0", 0,0,0,0)]
+        [InlineData("", 0,0,0,0)]
+        [InlineData("dfgfdsgdfg", 0,0,0,0)]
+        [InlineData("-12", 12,0,0,0)]
+        [InlineData("4.0.0.1.0", 4,0,0,10)]
+        [InlineData("4.0.0.1.05", 4,0,0,105)]
+        [InlineData("2024.30.04.1223", 2024, 30, 4, 1223)]
+        [InlineData("0.0", 0,0,0,0)]
+        public void TestGetVersionStringAsFloat(string version, int i1, int i2, int i3, int i4)
         {
-            Assert.Equal(expected, CoreTools.GetVersionStringAsFloat(version), tolerance);
+            CoreTools.Version v = CoreTools.VersionStringToStruct(version);
+            Assert.Equal(i1, v.Major);
+            Assert.Equal(i2, v.Minor);
+            Assert.Equal(i3, v.Patch);
+            Assert.Equal(i4, v.Remainder);
         }
 
         [Theory]

@@ -67,7 +67,6 @@ namespace UniGetUI.Interface.Widgets
             s.Children.Add(_helpbutton);
             s.Children.Add(_textbox);
 
-            DefaultStyleKey = typeof(TextboxCard);
             Content = s;
         }
 

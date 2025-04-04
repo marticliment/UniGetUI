@@ -10,7 +10,7 @@ using UniGetUI.PackageEngine.Classes.Manager.ManagerHelpers;
 using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageEngine.ManagerClasses.Classes;
 using UniGetUI.PackageEngine.ManagerClasses.Manager;
-using UniGetUI.PackageEngine.Managers.Chocolatey;
+using UniGetUI.PackageEngine.Managers.Choco;
 using UniGetUI.PackageEngine.Managers.PowerShellManager;
 using UniGetUI.PackageEngine.PackageClasses;
 
@@ -19,7 +19,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
     public class Chocolatey : BaseNuGet
     {
         public static new string[] FALSE_PACKAGE_IDS = ["Directory", "", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "Output is package name ", "operable", "Invalid"];
-        public static new string[] FALSE_PACKAGE_VERSIONS = ["", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"];
+        public static new string[] FALSE_PACKAGE_VERSIONS = ["", "of", "Did", "Features?", "Validation", "-", "being", "It", "Error", "L'accs", "Maximum", "This", "packages", "current version", "installed version", "is", "program", "validations", "argument", "no"];
 
         public Chocolatey()
         {
@@ -39,7 +39,9 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 {
                     KnowsPackageCount = false,
                     KnowsUpdateDate = false,
-                }
+                },
+                SupportsProxy = ProxySupport.Yes,
+                SupportsProxyAuth = true
             };
 
             Properties = new ManagerProperties
@@ -63,14 +65,31 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             OperationHelper = new ChocolateyPkgOperationHelper(this);
         }
 
-        protected override IEnumerable<Package> GetAvailableUpdates_UnSafe()
+        public static string GetProxyArgument()
         {
-            Process p = new()
+            if (!Settings.Get("EnableProxy")) return "";
+            var proxyUri = Settings.GetProxyUrl();
+            if (proxyUri is null) return "";
+
+            if (Settings.Get("EnableProxyAuth") is false)
+                return $"--proxy {proxyUri.ToString()}";
+
+            var creds = Settings.GetProxyCredentials();
+            if(creds is null)
+                return $"--proxy {proxyUri.ToString()}";
+
+            return $"--proxy={proxyUri.ToString()} --proxy-user={Uri.EscapeDataString(creds.UserName)}" +
+                   $" --proxy-password={Uri.EscapeDataString(creds.Password)}";
+        }
+
+        protected override IReadOnlyList<Package> GetAvailableUpdates_UnSafe()
+        {
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " outdated",
+                    Arguments = Properties.ExecutableCallArgs + " outdated " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
@@ -117,14 +136,14 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             return Packages;
         }
 
-        protected override IEnumerable<Package> GetInstalledPackages_UnSafe()
+        protected override IReadOnlyList<Package> _getInstalledPackages_UnSafe()
         {
-            Process p = new()
+            using Process p = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Status.ExecutablePath,
-                    Arguments = Properties.ExecutableCallArgs + " list",
+                    Arguments = Properties.ExecutableCallArgs + " list " + GetProxyArgument(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
@@ -290,7 +309,7 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = status.ExecutablePath,
-                    Arguments = "--version",
+                    Arguments = "--version " + GetProxyArgument(),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -302,7 +321,9 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
             status.Version = process.StandardOutput.ReadToEnd().Trim();
 
             // If the user is running bundled chocolatey and chocolatey is not in path, add chocolatey to path
-            if (/*Settings.Get("ShownWelcomeWizard") && */!Settings.Get("UseSystemChocolatey") && !File.Exists(@"C:\ProgramData\Chocolatey\bin\choco.exe"))
+            if (!Settings.Get("UseSystemChocolatey")
+                && !File.Exists("C:\\ProgramData\\Chocolatey\\bin\\choco.exe"))
+                /* && Settings.Get("ShownWelcomeWizard")) */
             {
                 string? path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User);
                 if (!path?.Contains(status.ExecutablePath.Replace("\\choco.exe", "\\bin")) ?? false)
@@ -310,6 +331,10 @@ namespace UniGetUI.PackageEngine.Managers.ChocolateyManager
                     Logger.ImportantInfo("Adding chocolatey to path since it was not on path.");
                     Environment.SetEnvironmentVariable("PATH", $"{status.ExecutablePath.Replace("\\choco.exe", "\\bin")};{path}", EnvironmentVariableTarget.User);
                     Environment.SetEnvironmentVariable("chocolateyinstall", Path.GetDirectoryName(status.ExecutablePath), EnvironmentVariableTarget.User);
+                }
+                else
+                {
+                    Logger.Info("UniGetUI Chocolatey was found in the path");
                 }
             }
 
