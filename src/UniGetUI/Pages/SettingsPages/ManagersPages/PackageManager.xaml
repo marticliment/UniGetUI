@@ -99,7 +99,7 @@
                 Text="Related settings" />
 
             <controls:SettingsCard
-                Name="ManagerLogs"
+                x:Name="ManagerLogs"
                 Click="ManagerLogs_Click"
                 CornerRadius="8"
                 IsClickEnabled="True">

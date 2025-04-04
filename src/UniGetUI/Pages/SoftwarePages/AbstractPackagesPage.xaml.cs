@@ -1127,10 +1127,13 @@ namespace UniGetUI.Interface
             }
         }
 
-
         private async void ChangeFilteringPaneLayout()
         {
-            if (FilteringPanel.ActualWidth < 1000 && FilteringPanel.DisplayMode is not SplitViewDisplayMode.Overlay)
+            if (FilteringPanel.ActualWidth == 0)
+            {
+                FilteringPanel.DisplayMode = SplitViewDisplayMode.CompactInline;
+            }
+            else if (FilteringPanel.ActualWidth < 1000 && FilteringPanel.DisplayMode is not SplitViewDisplayMode.Overlay)
             {
                 FilteringPanel.DisplayMode = SplitViewDisplayMode.Overlay;
                 HideFilteringPane();
@@ -1141,7 +1144,8 @@ namespace UniGetUI.Interface
                 FilteringPanel.Shadow = new ThemeShadow();
                 SidePanel.BorderThickness = new Thickness(0, 1, 1, 1);
 
-                SidePanel.Background = new AcrylicBrush() {
+                SidePanel.Background = new AcrylicBrush()
+                {
                     TintColor = Color.FromArgb(255, 20, 20, 20),
                     TintOpacity = 0.4,
                     FallbackColor = Color.FromArgb(255, 20, 20, 20),
@@ -1151,7 +1155,7 @@ namespace UniGetUI.Interface
                 if (FilteringPanel.Pane is ScrollViewer filters)
                 {
                     filters.Padding = new Thickness(8);
-                    filters.Margin = new Thickness(0,1,0,1);
+                    filters.Margin = new Thickness(0, 1, 0, 1);
                 }
             }
             else if (FilteringPanel.ActualWidth >= 1000 && FilteringPanel.DisplayMode is not SplitViewDisplayMode.Inline)

@@ -100,7 +100,7 @@
 
             <UserControl Height="16" />
 
-            <controls:SettingsCard Name="ProxyCompatTable" CornerRadius="8">
+            <controls:SettingsCard x:Name="ProxyCompatTable" CornerRadius="8">
                 <controls:SettingsCard.Header>
                     <widgets:TranslatedTextBlock Text="Proxy compatibility table" />
                 </controls:SettingsCard.Header>

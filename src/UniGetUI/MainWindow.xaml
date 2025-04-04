@@ -29,7 +29,7 @@
         </Grid.RowDefinitions>
 
         <winex:TitleBar
-            Name="TitleBar"
+            x:Name="TitleBar"
             Title="UniGetUI"
             Grid.Row="0"
             IsPaneToggleButtonVisible="True"
