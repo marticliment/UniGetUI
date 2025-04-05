@@ -12,7 +12,7 @@ using Windows.UI.Text;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public sealed class CheckboxButtonCard : SettingsCard
+    public sealed partial class CheckboxButtonCard : SettingsCard
     {
         public ToggleSwitch _checkbox;
         public TextBlock _textblock;

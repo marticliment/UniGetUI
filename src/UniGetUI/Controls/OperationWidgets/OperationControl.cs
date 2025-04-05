@@ -24,7 +24,7 @@ using UniGetUI.PackageEngine;
 
 namespace UniGetUI.Controls.OperationWidgets;
 
-public class OperationControl: INotifyPropertyChanged
+public partial class OperationControl: INotifyPropertyChanged
 {
     public AbstractOperation Operation;
     public BetterMenu OpMenu;

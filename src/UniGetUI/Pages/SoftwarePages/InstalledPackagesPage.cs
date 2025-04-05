@@ -15,7 +15,7 @@ using UniGetUI.Pages.DialogPages;
 
 namespace UniGetUI.Interface.SoftwarePages
 {
-    public class InstalledPackagesPage : AbstractPackagesPage
+    public partial class InstalledPackagesPage : AbstractPackagesPage
     {
         private bool HasDoneBackup;
 

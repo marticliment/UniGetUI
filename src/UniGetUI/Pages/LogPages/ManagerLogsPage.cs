@@ -8,7 +8,7 @@ using UniGetUI.PackageEngine.ManagerClasses.Classes;
 
 namespace UniGetUI.Interface.Pages.LogPage
 {
-    public class ManagerLogsPage : BaseLogPage
+    public partial class ManagerLogsPage : BaseLogPage
     {
 
         public ManagerLogsPage() : base(true)

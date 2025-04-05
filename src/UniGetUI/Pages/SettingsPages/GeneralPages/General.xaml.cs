@@ -2,8 +2,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Tools;
 using UniGetUI.Pages.DialogPages;
-using Newtonsoft.Json;
-using UniGetUI.Core.Data;
 using UniGetUI.Core.Logging;
 using UniGetUI.Core.Language;
 using UniGetUI.Core.SettingsEngine;

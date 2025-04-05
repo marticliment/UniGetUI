@@ -703,8 +703,6 @@ namespace UniGetUI.Interface
                 if(e.WindowActivationState is WindowActivationState.CodeActivated or WindowActivationState.PointerActivated)
                     MainContentFrame.Content = NavigationPage;
             };
-
-            
         }
 
         public void ApplyTheme()

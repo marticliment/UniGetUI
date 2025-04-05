@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
 using UniGetUI.Interface.Enums;
@@ -20,7 +19,7 @@ using YamlDotNet.Core.Tokens;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace UniGetUI.Controls;
-internal class CustomNavViewItem : NavigationViewItem
+internal partial class CustomNavViewItem : NavigationViewItem
 {
     int _iconSize = 28;
     public IconType LocalIcon

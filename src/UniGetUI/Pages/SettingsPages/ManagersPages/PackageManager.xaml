@@ -109,7 +109,7 @@
 
                 <controls:SettingsCard.Description>
                     <TextBlock
-                        Name="ManagerLogsLabel"
+                        x:Name="ManagerLogsLabel"
                         FontFamily="Consolas"
                         FontSize="14"
                         TextWrapping="Wrap" />

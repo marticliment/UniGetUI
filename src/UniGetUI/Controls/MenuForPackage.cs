@@ -1,3 +1,4 @@
+
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Tools;
@@ -5,7 +6,7 @@ using UniGetUI.Interface.Enums;
 
 namespace UniGetUI.Interface.Widgets
 {
-    public class BetterMenu : MenuFlyout
+    public partial class BetterMenu : MenuFlyout
     {
         private readonly Style menuyStyle = (Style)Application.Current.Resources["BetterContextMenu"];
         public BetterMenu()
@@ -14,7 +15,7 @@ namespace UniGetUI.Interface.Widgets
         }
     }
 
-    public class BetterMenuItem : MenuFlyoutItem
+    public partial class BetterMenuItem : MenuFlyoutItem
     {
         private readonly Style menuStyle = (Style)Application.Current.Resources["BetterMenuItem"];
 

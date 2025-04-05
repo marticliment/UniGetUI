@@ -1,9 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Runtime.InteropServices;
-using WinRT;
-
 namespace WindowsPackageManager.Interop;
 
 /// <summary>
