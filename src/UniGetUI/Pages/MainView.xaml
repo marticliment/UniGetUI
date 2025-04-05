@@ -3,6 +3,7 @@
     x:Class="UniGetUI.Interface.MainView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:controls1="using:UniGetUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -263,10 +264,6 @@
                 Tag="Discover"
                 Text="Discover Packages" />
 
-            <!--
-                Content="Software Updates"
-            -->
-
             <controls1:CustomNavViewItem
                 x:Name="UpdatesNavBtn"
                 FontSize="16"
@@ -314,10 +311,20 @@
         <NavigationView.FooterMenuItems>
             <controls1:CustomNavViewItem
                 x:Name="SettingsNavBtn"
-                Icon="Setting"
                 IconSize="20"
                 Tag="Settings"
-                Text="Settings" />
+                Text="Settings">
+                <controls1:CustomNavViewItem.Icon>
+                    <AnimatedIcon>
+                        <AnimatedIcon.Source>
+                            <animatedvisuals:AnimatedSettingsVisualSource />
+                        </AnimatedIcon.Source>
+                        <AnimatedIcon.FallbackIconSource>
+                            <FontIconSource Glyph="&#xE713;" />
+                        </AnimatedIcon.FallbackIconSource>
+                    </AnimatedIcon>
+                </controls1:CustomNavViewItem.Icon>
+            </controls1:CustomNavViewItem>
             <controls1:CustomNavViewItem
                 x:Name="ManagersNavBtn"
                 GlyphIcon="&#xE835;"

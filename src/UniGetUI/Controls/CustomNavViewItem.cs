@@ -15,6 +15,7 @@ using UniGetUI.PackageEngine.Managers.WingetManager;
 using Windows.ApplicationModel.VoiceCommands;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.UI.WebUI;
+using WinRT.UniGetUIGenericHelpers;
 using YamlDotNet.Core.Tokens;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -40,8 +41,9 @@ internal partial class CustomNavViewItem : NavigationViewItem
     {
         set
         {
-            base.Icon.Margin = new Thickness(value ? 6 : 0);
-            _progressRing.Visibility = value? Visibility.Visible: Visibility.Collapsed;
+            if (value) _ = increaseMargins();
+            else _ = decreaseMargins();
+            _progressRing.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 
@@ -90,5 +92,25 @@ internal partial class CustomNavViewItem : NavigationViewItem
         grid.Children.Add(_progressRing);
         grid.Children.Add(_textBlock);
         base.Content = grid;
+    }
+
+    public async Task increaseMargins()
+    {
+        for(int i = (int)base.Icon.Margin.Left; i < 6; i += 2)
+        {
+            base.Icon.Margin = new Thickness(i);
+            await Task.Delay(15);
+        }
+        base.Icon.Margin = new Thickness(6);
+    }
+
+    public async Task decreaseMargins()
+    {
+        for (int i = (int)base.Icon.Margin.Left; i > 0; i -= 2)
+        {
+            base.Icon.Margin = new Thickness(i);
+            await Task.Delay(15);
+        }
+        base.Icon.Margin = new Thickness(0);
     }
 }
