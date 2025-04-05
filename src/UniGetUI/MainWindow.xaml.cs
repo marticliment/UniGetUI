@@ -987,13 +987,6 @@ namespace UniGetUI.Interface
             return true;
         }
 
-        private void NavPaneToggleButton_Click(object sender, RoutedEventArgs e)
-        {
-            if(NavigationPage is not null)
-            {
-            }
-        }
-
         private void TitleBar_PaneToggleRequested(WinUIEx.TitleBar sender, object args)
         {
             if (NavigationPage is not null)
