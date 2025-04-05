@@ -257,7 +257,6 @@ namespace UniGetUI.Core.SettingsEngine.Tests
             Assert.True(Settings.DictionaryContainsValue<string, SerializableTest?>(SettingName, test[keyArray[2]]));
 
             Assert.Equal(
-
                 JsonSerializer.Serialize(Settings.GetDictionary<string, SerializableTest>(SettingName), CoreData.SerializingOptions),
                 File.ReadAllText(Path.Join(CoreData.UniGetUIUserConfigurationDirectory, $"{SettingName}.json"))
             );
