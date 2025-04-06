@@ -132,17 +132,17 @@ namespace UniGetUI.PackageEngine.PackageClasses
 
             ListedNameTooltip = Package.Tag switch
             {
-                PackageTag.Default => Package.Name,
-                PackageTag.AlreadyInstalled => CoreTools.Translate("This package is already installed"),
+                PackageTag.Default => "",
+                PackageTag.AlreadyInstalled => CoreTools.Translate("This package is already installed") + " - ",
                 PackageTag.IsUpgradable => CoreTools.Translate("This package can be upgraded to version {0}",
-                    Package.GetUpgradablePackage()?.NewVersionString ?? "-1"),
-                PackageTag.Pinned => CoreTools.Translate("Updates for this package are ignored"),
-                PackageTag.OnQueue => CoreTools.Translate("This package is on the queue"),
-                PackageTag.BeingProcessed => CoreTools.Translate("This package is being processed"),
-                PackageTag.Failed => CoreTools.Translate("An error occurred while processing this package"),
-                PackageTag.Unavailable => CoreTools.Translate("This package is not available"),
+                    Package.GetUpgradablePackage()?.NewVersionString ?? "-1") + " - ",
+                PackageTag.Pinned => CoreTools.Translate("Updates for this package are ignored") + " - ",
+                PackageTag.OnQueue => CoreTools.Translate("This package is on the queue" + " - "),
+                PackageTag.BeingProcessed => CoreTools.Translate("This package is being processed") + " - ",
+                PackageTag.Failed => CoreTools.Translate("An error occurred while processing this package") + " - ",
+                PackageTag.Unavailable => CoreTools.Translate("This package is not available") + " - ",
                 _ => throw new ArgumentException($"Unknown tag {Package.Tag}"),
-            } + " - " + Package.Name;
+            } + Package.Name;
 
             ListedOpacity = Package.Tag switch
             {

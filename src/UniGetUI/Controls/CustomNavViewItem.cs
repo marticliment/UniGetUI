@@ -54,7 +54,13 @@ internal partial class CustomNavViewItem : NavigationViewItem
 
     public string Text
     {
-        set => _textBlock.Text = CoreTools.Translate(value);
+        set
+        {
+            string text = CoreTools.Translate(value);
+            _textBlock.Text = text;
+            ToolTipService.SetToolTip(this, text);
+        }
+
     }
 
     private readonly TextBlock _textBlock;

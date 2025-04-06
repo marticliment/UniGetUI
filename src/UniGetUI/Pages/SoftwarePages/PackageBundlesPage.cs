@@ -220,7 +220,10 @@ namespace UniGetUI.Interface.SoftwarePages
                 toolButton.IsCompact = Labels[toolButton][0] == ' ';
                 if (toolButton.IsCompact)
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
-                toolButton.Label = Labels[toolButton].Trim();
+
+                string text = Labels[toolButton].Trim();
+                toolButton.Label = text;
+                ToolTipService.SetToolTip(toolButton, text);
             }
 
             Dictionary<AppBarButton, IconType> Icons = new()

@@ -275,7 +275,9 @@ namespace UniGetUI.Interface.SoftwarePages
                     toolButton.LabelPosition = CommandBarLabelPosition.Collapsed;
                 }
 
-                toolButton.Label = Labels[toolButton].Trim();
+                string text = Labels[toolButton].Trim();
+                toolButton.Label = text;
+                ToolTipService.SetToolTip(toolButton, text);
             }
 
             Dictionary<AppBarButton, IconType> Icons = new()

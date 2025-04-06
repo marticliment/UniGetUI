@@ -690,12 +690,14 @@
                         FontSize="24"
                         FontWeight="ExtraLight"
                         Icon="Package"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind ShowDefaultPackageIcon, Mode=OneWay}" />
                     <Image
                         Grid.Row="0"
                         Grid.Column="1"
                         VerticalAlignment="Center"
                         Source="{x:Bind MainIconSource, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}" />
 
                     <!--  Package tag icon  -->
@@ -711,6 +713,7 @@
                         FontWeight="ExtraLight"
                         Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
                         Icon="{x:Bind AlternateIconId, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
                     <widgets:LocalIcon
                         Grid.Row="0"
@@ -723,6 +726,7 @@
                         FontSize="20"
                         FontWeight="ExtraLight"
                         Icon="{x:Bind MainIconId, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
 
                     <TextBlock
@@ -739,7 +743,8 @@
                         VerticalAlignment="Center"
                         FontSize="24"
                         FontWeight="ExtraLight"
-                        Icon="Id" />
+                        Icon="Id"
+                        ToolTipService.ToolTip="{x:Bind Package.Id}" />
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="4"
@@ -754,7 +759,8 @@
                         VerticalAlignment="Center"
                         FontSize="24"
                         FontWeight="ExtraLight"
-                        Icon="version" />
+                        Icon="version"
+                        ToolTipService.ToolTip="{x:Bind Package.VersionString}" />
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="6"
@@ -770,6 +776,7 @@
                         FontSize="24"
                         FontWeight="ExtraLight"
                         Icon="download"
+                        ToolTipService.ToolTip="{x:Bind Package.NewVersionString}"
                         Visibility="{x:Bind Package.IsUpgradable}" />
                     <TextBlock
                         Grid.Row="0"
@@ -786,7 +793,8 @@
                         VerticalAlignment="Center"
                         FontSize="24"
                         FontWeight="ExtraLight"
-                        Icon="{x:Bind Package.Source.IconId}" />
+                        Icon="{x:Bind Package.Source.IconId}"
+                        ToolTipService.ToolTip="{x:Bind Package.Source.AsString_DisplayName}" />
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="10"
