@@ -25,7 +25,7 @@
     </animations:Implicit.ShowAnimations>
 
 
-    <Grid RowSpacing="12">
+    <Grid RowSpacing="8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="1000*" MaxWidth="800" />
@@ -34,19 +34,18 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <InfoBar
             Name="RestartRequired"
-            Grid.Row="1"
+            Grid.Row="0"
             Grid.Column="1"
             CornerRadius="8"
             Severity="Warning" />
 
         <Grid
             Name="SettingsHeaderGrid"
-            Grid.Row="2"
+            Grid.Row="1"
             Grid.Column="1"
             ColumnSpacing="10">
             <Grid.ColumnDefinitions>
@@ -82,7 +81,7 @@
         </Grid>
         <Frame
             Name="MainNavigationFrame"
-            Grid.Row="3"
+            Grid.Row="2"
             Grid.Column="1"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch" />
