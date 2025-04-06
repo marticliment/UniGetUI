@@ -33,14 +33,15 @@ namespace UniGetUI.Interface.SoftwarePages
         private BetterMenuItem? MenuSkipHash;
         private BetterMenuItem? MenuDownloadInstaller;
 
+        public event EventHandler<EventArgs>? UnsavedChangesStateChanged;
+
         private bool _hasUnsavedChanges;
-        private bool HasUnsavedChanges
+        public bool HasUnsavedChanges
         {
             get => _hasUnsavedChanges;
-            set
+            private set
             {
-                MainApp.Instance.MainWindow.NavigationPage.BundlesBadge.Visibility =
-                    value ? Visibility.Visible : Visibility.Collapsed;
+                UnsavedChangesStateChanged?.Invoke(this, EventArgs.Empty);
                 _hasUnsavedChanges = value;
             }
         }

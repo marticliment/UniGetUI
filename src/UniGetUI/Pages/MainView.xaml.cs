@@ -63,10 +63,7 @@ namespace UniGetUI.Interface
             OperationList.ItemContainerTransitions = null;
             OperationList.ItemsSource = MainApp.Operations._operationList;
             DiscoverPage = new DiscoverSoftwarePage();
-            UpdatesPage = new SoftwareUpdatesPage
-            {
-                ExternalCountBadge = UpdatesBadge
-            };
+            UpdatesPage = new SoftwareUpdatesPage();
             InstalledPage = new InstalledPackagesPage();
             BundlesPage = new PackageBundlesPage();
 
@@ -109,7 +106,9 @@ namespace UniGetUI.Interface
                 }
             };
 
-
+            /*
+             * Connect different loaders and UI Sections to bundles page
+             */
             foreach(var pair in new Dictionary<CustomNavViewItem, AbstractPackageLoader>
             {
                 {  DiscoverNavBtn,  PEInterface.DiscoveredPackagesLoader },
@@ -121,6 +120,24 @@ namespace UniGetUI.Interface
                 pair.Value.StartedLoading += (_, _) => MainApp.Dispatcher.TryEnqueue(() => pair.Key.IsLoading = true);
                 pair.Key.IsLoading = pair.Value.IsLoading;
             }
+
+            PEInterface.UpgradablePackagesLoader.PackagesChanged += (_, _) => MainApp.Dispatcher.TryEnqueue(() =>
+            {
+                UpdatesBadge.Value = PEInterface.UpgradablePackagesLoader.Count();
+                UpdatesBadge.Visibility = UpdatesBadge.Value > 0 ? Visibility.Visible : Visibility.Collapsed;
+            });
+            UpdatesBadge.Value = PEInterface.UpgradablePackagesLoader.Count();
+            UpdatesBadge.Visibility = UpdatesBadge.Value > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            BundlesPage.UnsavedChangesStateChanged += (_, _) => MainApp.Dispatcher.TryEnqueue(() =>
+            {
+                BundlesBadge.Visibility = BundlesPage.HasUnsavedChanges ? Visibility.Visible : Visibility.Collapsed;
+            });
+            BundlesBadge.Visibility = BundlesPage.HasUnsavedChanges ? Visibility.Visible : Visibility.Collapsed;
+
+            /*
+             * End connecting stuff together
+             */
 
             LoadDefaultPage();
 

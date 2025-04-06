@@ -274,7 +274,6 @@
                 <controls1:CustomNavViewItem.InfoBadge>
                     <InfoBadge
                         Name="UpdatesBadge"
-                        x:FieldModifier="public"
                         Visibility="Collapsed"
                         Value="0" />
                 </controls1:CustomNavViewItem.InfoBadge>
@@ -298,7 +297,6 @@
                         x:Name="BundlesBadge"
                         Width="16"
                         Height="16"
-                        x:FieldModifier="public"
                         Background="{ThemeResource SystemFillColorCautionBrush}"
                         Visibility="Collapsed">
                         <InfoBadge.IconSource>

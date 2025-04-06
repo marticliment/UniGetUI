@@ -82,7 +82,6 @@ namespace UniGetUI.Interface
         protected ConcurrentDictionary<IPackageManager, TreeViewNode> RootNodeForManager = [];
         protected ConcurrentDictionary<IManagerSource, TreeViewNode> NodesForSources = [];
         private readonly TreeViewNode LocalPackagesNode;
-        public InfoBadge? ExternalCountBadge;
 
         public readonly int NewVersionLabelWidth;
         public readonly int NewVersionIconWidth;
@@ -799,12 +798,6 @@ namespace UniGetUI.Interface
                 BackgroundText.Text = NoPackages_BackgroundText;
                 BackgroundText.Visibility = Loader.Any() ? Visibility.Collapsed : Visibility.Visible;
                 MainSubtitle.Text = FoundPackages_SubtitleText;
-            }
-
-            if (ExternalCountBadge is not null)
-            {
-                ExternalCountBadge.Visibility = !Loader.Any() ? Visibility.Collapsed : Visibility.Visible;
-                ExternalCountBadge.Value = Loader.Count();
             }
 
             if (MegaQueryBlockGrid.Visibility == Visibility.Visible)
