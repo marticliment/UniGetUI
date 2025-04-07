@@ -172,104 +172,14 @@ public static partial class DialogHelper
 
     public static async Task ShowLiveLogDialog(AbstractOperation operation)
     {
-        bool LastLineWasProgress = false;
-
-        ContentDialog OutputDialog = DialogFactory.Create(1200, 1000);
-
-        var LiveOutputTextBlock = new RichTextBlock
-        {
-            Margin = new Thickness(8),
-            FontFamily = new FontFamily("Consolas"),
-            TextWrapping = TextWrapping.WrapWholeWords
-        };
-
-        var LiveOutputScrollBar = new ScrollViewer
-        {
-            CornerRadius = new CornerRadius(6),
-            Background = (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"],
-            Height = 400,
-            Width = 600,
-            Content = LiveOutputTextBlock
-        };
-
+        ContentDialog OutputDialog = DialogFactory.Create_AsWindow(hasTitle: true);
+        var viewer = new OperationLiveLogPage(operation);
+        viewer.Close += (_, _) => OutputDialog.Hide();
         OutputDialog.Title = CoreTools.Translate("Live output");
-        OutputDialog.CloseButtonText = CoreTools.Translate("Close");
+        OutputDialog.Content = viewer;
 
-        OutputDialog.SizeChanged += (_, _) =>
-        {
-            LiveOutputScrollBar.MinWidth = MainApp.Instance.MainWindow.NavigationPage.ActualWidth - 400;
-            LiveOutputScrollBar.MinHeight = MainApp.Instance.MainWindow.NavigationPage.ActualHeight - 200;
-        };
-
-        OutputDialog.Content = LiveOutputScrollBar;
-        LiveOutputTextBlock.Blocks.Clear();
-        Paragraph par = new()
-        {
-            LineHeight = 4.8
-        };
-        SolidColorBrush errorColor = (SolidColorBrush)Application.Current.Resources["SystemFillColorCriticalBrush"];
-        SolidColorBrush debugColor = (SolidColorBrush)Application.Current.Resources["SystemFillColorNeutralBrush"];
-
-        foreach (var line in operation.GetOutput())
-        {
-            if (line.Item2 is AbstractOperation.LineType.Information)
-            {
-                par.Inlines.Add(new Run { Text = line.Item1 + "\x0a" });
-            }
-            else if (line.Item2 is AbstractOperation.LineType.VerboseDetails)
-            {
-                par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = debugColor });
-            }
-            else
-            {
-                par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = errorColor });
-            }
-        }
-
-        EventHandler<(string, AbstractOperation.LineType)> AddLineLambda = (_, line) => MainApp.Dispatcher.TryEnqueue(() =>
-        {
-            if (LastLineWasProgress) par.Inlines.RemoveAt(par.Inlines.Count - 1);
-
-            LastLineWasProgress = false;
-            if (line.Item2 is AbstractOperation.LineType.Information)
-            {
-                par.Inlines.Add(new Run { Text = line.Item1 + "\x0a" });
-            }
-            else if (line.Item2 is AbstractOperation.LineType.VerboseDetails)
-            {
-                par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = debugColor });
-            }
-            else if (line.Item2 is AbstractOperation.LineType.Error)
-            {
-                par.Inlines.Add(new Run { Text = line.Item1 + "\x0a", Foreground = errorColor });
-            }
-            else
-            {
-                LastLineWasProgress = true;
-                par.Inlines.Add(new Run { Text = line.Item1 + "\x0a" });
-            }
-
-            LiveOutputTextBlock.Blocks.Clear();
-            LiveOutputTextBlock.Blocks.Add(par);
-            LiveOutputScrollBar.ScrollToVerticalOffset(LiveOutputScrollBar.ScrollableHeight);
-        });
-
-        LiveOutputTextBlock.Blocks.Add(par);
-
-        operation.LogLineAdded += AddLineLambda;
-        if (await MainApp.Instance.MainWindow.ShowDialogAsync(OutputDialog) == ContentDialogResult.Secondary)
-        {
-            LiveOutputScrollBar.ScrollToVerticalOffset(LiveOutputScrollBar.ScrollableHeight);
-            string text = "";
-            foreach (var line in par.Inlines)
-            {
-                if (line is Run run)
-                    text += run + "\n";
-            }
-
-            WindowsClipboard.SetText(text);
-        }
-
-        operation.LogLineAdded -= AddLineLambda;
+        operation.LogLineAdded += viewer.AddLine_ThreadSafe;
+        await MainApp.Instance.MainWindow.ShowDialogAsync(OutputDialog);
+        operation.LogLineAdded -= viewer.AddLine_ThreadSafe;
     }
 }
