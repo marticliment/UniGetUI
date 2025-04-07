@@ -33,15 +33,6 @@ public static partial class DialogHelper
             };
             return dialog;
         }
-        public static ContentDialog Create(int maxWidth, int maxHeight)
-        {
-            var dialog = Create();
-            // dialog.Margin = new Thickness(0, 30, 0, 0);
-            dialog.Resources["ContentDialogMaxWidth"] = maxWidth;
-            dialog.Resources["ContentDialogMaxHeight"] = maxHeight;
-            dialog.Margin = new Thickness(0, 24, 0, 0);
-            return dialog;
-        }
 
         public static ContentDialog Create_AsWindow(bool hasTitle, bool hasButtons = false)
         {
