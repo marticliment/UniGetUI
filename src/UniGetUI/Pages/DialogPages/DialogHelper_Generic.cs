@@ -39,6 +39,7 @@ public static partial class DialogHelper
             // dialog.Margin = new Thickness(0, 30, 0, 0);
             dialog.Resources["ContentDialogMaxWidth"] = maxWidth;
             dialog.Resources["ContentDialogMaxHeight"] = maxHeight;
+            dialog.Margin = new Thickness(0, 24, 0, 0);
             return dialog;
         }
 
@@ -49,7 +50,7 @@ public static partial class DialogHelper
             dialog.Resources["ContentDialogMaxHeight"] = 4096;
             dialog.SizeChanged += (_, _) =>
             {
-                if (dialog.Content is Page page)
+                if (dialog.Content is FrameworkElement page)
                 {
                     double maxW, maxH;
                     int tresholdW = 1300, tresholdH = 1300;
@@ -271,10 +272,10 @@ public static partial class DialogHelper
 
     public static async Task ManageIgnoredUpdates()
     {
-        ContentDialog dialog = DialogFactory.Create(1400, 1000);
+        ContentDialog dialog = DialogFactory.Create_AsWindow(true);
 
-        dialog.SecondaryButtonText = CoreTools.Translate("Close");
-        dialog.DefaultButton = ContentDialogButton.None;
+        // dialog.SecondaryButtonText = CoreTools.Translate("Close");
+        // dialog.DefaultButton = ContentDialogButton.None;
         dialog.Title = CoreTools.Translate("Manage ignored updates");
 
         IgnoredUpdatesManager IgnoredUpdatesPage = new();
