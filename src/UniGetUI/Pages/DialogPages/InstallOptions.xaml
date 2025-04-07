@@ -8,26 +8,33 @@
     xmlns:local="using:UniGetUI.Interface.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
-    HorizontalAlignment="Stretch"
+    MaxWidth="700"
     mc:Ignorable="d">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ScrollView
+        <ScrollViewer
+            Name="Scroller"
             Grid.Row="0"
             Grid.Column="0"
-            HorizontalAlignment="Stretch">
-            <StackPanel
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Orientation="Vertical"
-                Spacing="16">
-                <widgets:TranslatedTextBlock Text="The following settings will be applied each time this package is installed, updated or removed." />
+            SizeChanged="LayoutGrid_SizeChanged">
+            <Grid
+                Name="LayoutGrid"
+                RowSpacing="16"
+                SizeChanged="LayoutGrid_SizeChanged">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <widgets:TranslatedTextBlock Grid.Row="1" Text="The following settings will be applied each time this package is installed, updated or removed." />
                 <Border
+                    Grid.Row="2"
                     Padding="16,12,16,12"
                     Background="{ThemeResource ControlFillColorInputActiveBrush}"
                     CornerRadius="8">
@@ -63,6 +70,7 @@
                     </StackPanel>
                 </Border>
                 <Border
+                    Grid.Row="3"
                     Padding="16,12,16,12"
                     Background="{ThemeResource ControlFillColorInputActiveBrush}"
                     CornerRadius="8">
@@ -105,6 +113,7 @@
                 </Border>
 
                 <Border
+                    Grid.Row="4"
                     Padding="16,12,16,12"
                     Background="{ThemeResource ControlFillColorInputActiveBrush}"
                     CornerRadius="8">
@@ -157,15 +166,17 @@
                                 Name="CustomInstallLocation"
                                 Grid.Row="2"
                                 Grid.ColumnSpan="3"
+                                MaxWidth="700"
                                 VerticalAlignment="Center"
                                 FontFamily="Consolas"
-                                Opacity="0.6" MaxWidth="700"
+                                Opacity="0.6"
                                 TextWrapping="Wrap" />
                         </Grid>
                     </StackPanel>
                 </Border>
 
                 <Border
+                    Grid.Row="5"
                     Padding="16,12,16,12"
                     Background="{ThemeResource ControlFillColorInputActiveBrush}"
                     CornerRadius="8">
@@ -191,6 +202,7 @@
                 </Border>
 
                 <Border
+                    Grid.Row="6"
                     Padding="16,12,16,12"
                     Background="{ThemeResource ControlFillColorInputActiveBrush}"
                     CornerRadius="8">
@@ -211,9 +223,9 @@
                         </Border>
                     </StackPanel>
                 </Border>
-            </StackPanel>
-        </ScrollView>
+            </Grid>
+        </ScrollViewer>
+        <widgets:DialogCloseButton Margin="0,-64,-24,0" Click="CloseButton_Click" />
         <!--  Close Button  -->
-        <widgets:DialogCloseButton Margin="0,-63,-24,0" Click="CloseButton_Click" />
     </Grid>
 </Page>

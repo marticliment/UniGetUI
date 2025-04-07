@@ -43,7 +43,7 @@ public static partial class DialogHelper
             return dialog;
         }
 
-        public static ContentDialog Create_AsWindow(bool hasTitle)
+        public static ContentDialog Create_AsWindow(bool hasTitle, bool hasButtons = false)
         {
             var dialog = Create();
             dialog.Resources["ContentDialogMaxWidth"] = 8192;
@@ -58,9 +58,9 @@ public static partial class DialogHelper
                     else if (Window.NavigationPage.ActualWidth >= tresholdW + 200) maxW = 300;
                     else maxW = Window.NavigationPage.ActualWidth - (tresholdW - 100);
 
-                    if (Window.NavigationPage.ActualHeight < tresholdH) maxH = (hasTitle? 120: 80);
-                    else if (Window.NavigationPage.ActualHeight >= tresholdH + 200) maxH = (hasTitle ? 320 : 280);
-                    else maxH = Window.NavigationPage.ActualHeight - (tresholdH - (hasTitle ? 120 : 80));
+                    if (Window.NavigationPage.ActualHeight < tresholdH) maxH = (hasTitle? 104: 64) + (hasButtons? 80: 0);
+                    else if (Window.NavigationPage.ActualHeight >= tresholdH + 200) maxH = (hasTitle ? 320 : 280) + (hasButtons ? 80 : 0);
+                    else maxH = Window.NavigationPage.ActualHeight - (tresholdH - (hasTitle ? 120 : 80)) + (hasButtons ? 80 : 0);
 
                     page.Width = Math.Min(Math.Abs(Window.NavigationPage.ActualWidth - maxW), 8192);
                     page.Height = Math.Min(Math.Abs(Window.NavigationPage.ActualHeight - maxH), 4096);

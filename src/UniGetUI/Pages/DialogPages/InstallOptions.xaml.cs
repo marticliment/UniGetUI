@@ -258,5 +258,10 @@ namespace UniGetUI.Interface.Dialogs
             var commandline = await Task.Run(() => Package.Manager.OperationHelper.GetParameters(Package, io, op));
             CommandBox.Text = Package.Manager.Properties.ExecutableFriendlyName + " " + string.Join(" ", commandline);
         }
+
+        private void LayoutGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if(LayoutGrid.ActualSize.Y > 1 && LayoutGrid.ActualSize.Y < double.PositiveInfinity) MaxHeight = LayoutGrid.ActualSize.Y;
+        }
     }
 }

@@ -55,7 +55,7 @@ public static partial class DialogHelper
     {
         InstallOptionsPage OptionsPage = new(package, operation, options);
 
-        ContentDialog OptionsDialog = DialogFactory.Create(1200, 1000);
+        ContentDialog OptionsDialog = DialogFactory.Create_AsWindow(true, true);
 
         OptionsDialog.SecondaryButtonText = operation switch
         {
