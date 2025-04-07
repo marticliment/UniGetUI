@@ -380,10 +380,10 @@ public static partial class DialogHelper
 
     public static async Task ShowAboutUniGetUI()
     {
-        ContentDialog AboutDialog = DialogFactory.Create(1200, 1000);
+        ContentDialog AboutDialog = DialogFactory.Create_AsWindow(false, false);
         AboutUniGetUI AboutPage = new();
         AboutDialog.Content = AboutPage;
-        AboutDialog.PrimaryButtonText = CoreTools.Translate("Close");
+        // AboutDialog.PrimaryButtonText = CoreTools.Translate("Close");
         AboutPage.Close += (_, _) => AboutDialog.Hide();
 
         await Window.ShowDialogAsync(AboutDialog);
