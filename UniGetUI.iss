@@ -52,7 +52,7 @@ UsePreviousPrivileges=yes
 UsePreviousAppDir=yes
 ChangesEnvironment=yes
 RestartIfNeededByRun=no
-Uninstallable=IsTaskSelected('regularinstall')
+Uninstallable=WizardIsTaskSelected('regularinstall')
 
 
 [Languages]
@@ -243,5 +243,5 @@ Filename: "{app}\{#MyAppExeName}"; Parameters: "--migrate-wingetui-to-unigetui";
 [UninstallRun]    
 ; Remove WingetUI Notification registries
 ; Filename: "{app}\{#MyAppExeName}"; Parameters: "--uninstall-unigetui"; Flags: skipifdoesntexist runhidden;
-Filename: {sys}\taskkill.exe; Parameters: "/f /im WingetUI.exe"; Flags: skipifdoesntexist runhidden;
-Filename: {sys}\taskkill.exe; Parameters: "/f /im UniGetUI.exe"; Flags: skipifdoesntexist runhidden;
+Filename: {sys}\taskkill.exe; Parameters: "/f /im WingetUI.exe"; Flags: skipifdoesntexist runhidden; RunOnceId: "KillWingetUI"
+Filename: {sys}\taskkill.exe; Parameters: "/f /im UniGetUI.exe"; Flags: skipifdoesntexist runhidden; RunOnceId: "KillUniGetUI"
