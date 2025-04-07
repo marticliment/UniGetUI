@@ -105,9 +105,9 @@ public static partial class DialogHelper
             return false;
         }
 
-        if (packages.Count() == 1)
+        if (packages.Count == 1)
         {
-            return await ConfirmUninstallation(packages.First());
+            return await ConfirmUninstallation(packages[0]);
         }
 
         ContentDialog dialog = DialogFactory.Create();
@@ -121,7 +121,7 @@ public static partial class DialogHelper
         p.Children.Add(new TextBlock
         {
             Text = CoreTools.Translate("Do you really want to uninstall the following {0} packages?",
-                packages.Count()),
+                packages.Count),
             Margin = new Thickness(0, 0, 0, 5)
         });
 

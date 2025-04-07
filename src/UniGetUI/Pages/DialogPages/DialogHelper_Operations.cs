@@ -1,12 +1,6 @@
-using ExternalLibraries.Clipboard;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Media;
 using UniGetUI.Controls.OperationWidgets;
 using UniGetUI.Core.Tools;
-using UniGetUI.Interface.Enums;
-using UniGetUI.Interface.Widgets;
 using UniGetUI.PackageOperations;
 
 namespace UniGetUI.Pages.DialogPages;

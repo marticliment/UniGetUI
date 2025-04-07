@@ -1,23 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using UniGetUI.Core.Tools;
 using UniGetUI.Interface;
 using UniGetUI.Interface.Enums;
 using UniGetUI.Interface.Widgets;
-using UniGetUI.PackageEngine.Managers.WingetManager;
-using Windows.ApplicationModel.VoiceCommands;
-using Windows.Devices.Bluetooth.Advertisement;
-using Windows.UI.WebUI;
-using WinRT.UniGetUIGenericHelpers;
-using YamlDotNet.Core.Tokens;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace UniGetUI.Controls;
 internal partial class CustomNavViewItem : NavigationViewItem

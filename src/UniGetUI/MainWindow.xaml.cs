@@ -830,7 +830,7 @@ namespace UniGetUI.Interface
         public async Task HandleMissingDependencies(IReadOnlyList<ManagerDependency> dependencies)
         {
             int current = 1;
-            int total = dependencies.Count();
+            int total = dependencies.Count;
             foreach (ManagerDependency dependency in dependencies)
             {
                 await DialogHelper.ShowMissingDependency(dependency.Name, dependency.InstallFileName,

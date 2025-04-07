@@ -167,6 +167,6 @@ public static class NativePackageHandler
         }
 
         // Return the Native Package
-        return SearchResult.Result.Matches.First().CatalogPackage;
+        return SearchResult.Result.Matches[0].CatalogPackage;
     }
 }

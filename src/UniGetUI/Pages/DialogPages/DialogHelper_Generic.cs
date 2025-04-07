@@ -265,8 +265,6 @@ public static partial class DialogHelper
     {
         ContentDialog dialog = DialogFactory.Create_AsWindow(true);
 
-        // dialog.SecondaryButtonText = CoreTools.Translate("Close");
-        // dialog.DefaultButton = ContentDialogButton.None;
         dialog.Title = CoreTools.Translate("Manage ignored updates");
 
         IgnoredUpdatesManager IgnoredUpdatesPage = new();
@@ -285,9 +283,6 @@ public static partial class DialogHelper
 
         dialog.Title = CoreTools.Translate("Automatic desktop shortcut remover");
         dialog.Content = DesktopShortcutsPage;
-        // dialog.SecondaryButtonText = CoreTools.Translate("Save and close");
-        // dialog.DefaultButton = ContentDialogButton.None;
-        // dialog.SecondaryButtonClick += (_, _) => DesktopShortcutsPage.SaveChanges();
 
         await Window.ShowDialogAsync(dialog);
     }
@@ -374,7 +369,6 @@ public static partial class DialogHelper
         ContentDialog AboutDialog = DialogFactory.Create_AsWindow(false, false);
         AboutUniGetUI AboutPage = new();
         AboutDialog.Content = AboutPage;
-        // AboutDialog.PrimaryButtonText = CoreTools.Translate("Close");
         AboutPage.Close += (_, _) => AboutDialog.Hide();
 
         await Window.ShowDialogAsync(AboutDialog);
@@ -384,7 +378,6 @@ public static partial class DialogHelper
     {
         ContentDialog NotesDialog = DialogFactory.Create_AsWindow(true);
 
-        // NotesDialog.CloseButtonText = CoreTools.Translate("Close");
         NotesDialog.Title = CoreTools.Translate("Release notes");
         ReleaseNotes notes = new();
         notes.Close += (_, _) => NotesDialog.Hide();

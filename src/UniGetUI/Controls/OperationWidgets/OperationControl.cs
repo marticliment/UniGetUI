@@ -87,7 +87,7 @@ public partial class OperationControl: INotifyPropertyChanged
         };
 
         _title = Operation.Metadata.Title;
-        _liveLine = operation.GetOutput().Any()? operation.GetOutput().Last().Item1 : CoreTools.Translate("Please wait...");
+        _liveLine = operation.GetOutput().Any()? operation.GetOutput()[operation.GetOutput().Count - 1].Item1 : CoreTools.Translate("Please wait...");
         _buttonText = "";
         OnOperationStatusChanged(this, operation.Status);
         LoadIcon();

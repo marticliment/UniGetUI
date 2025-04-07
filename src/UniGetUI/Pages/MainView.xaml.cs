@@ -17,7 +17,6 @@ using UniGetUI.PackageEngine.Enums;
 using UniGetUI.PackageOperations;
 using UniGetUI.Pages.SettingsPages;
 using UniGetUI.Controls;
-using ABI.Windows.Graphics.Imaging;
 using UniGetUI.PackageEngine;
 using UniGetUI.PackageEngine.PackageLoader;
 
