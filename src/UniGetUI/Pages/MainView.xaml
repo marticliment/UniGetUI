@@ -401,15 +401,13 @@
                 Name="OperationList"
                 Grid.Row="2"
                 Grid.Column="0"
-                Margin="0,0,0,0"
-                Padding="0,0,0,0"
                 x:FieldModifier="public"
                 ItemTemplate="{StaticResource OperationTemplate}"
                 SelectionMode="None"
                 SizeChanged="OperationScrollView_SizeChanged">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical" Spacing="8" />
+                        <StackPanel Orientation="Vertical" Spacing="8" Margin="-16,0,-12,0" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ListView.Resources>
