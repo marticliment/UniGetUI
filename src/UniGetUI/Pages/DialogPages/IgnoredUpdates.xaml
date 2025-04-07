@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     MaxWidth="1100"
-    MaxHeight="400"
+    MaxHeight="500"
     mc:Ignorable="d">
 
     <Grid
@@ -110,7 +110,8 @@
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
-                                Text="{x:Bind Name}" />
+                                Text="{x:Bind Name}"
+                                ToolTipService.ToolTip="{x:Bind Name}" />
                             <widgets:LocalIcon
                                 Grid.Column="2"
                                 Width="24"
@@ -119,7 +120,8 @@
                             <TextBlock
                                 Grid.Column="3"
                                 VerticalAlignment="Center"
-                                Text="{x:Bind Id}" />
+                                Text="{x:Bind Id}"
+                                ToolTipService.ToolTip="{x:Bind Id}" />
                             <widgets:LocalIcon
                                 Grid.Column="4"
                                 Width="24"
@@ -128,7 +130,8 @@
                             <TextBlock
                                 Grid.Column="5"
                                 VerticalAlignment="Center"
-                                Text="{x:Bind Version}" />
+                                Text="{x:Bind Version}"
+                                ToolTipService.ToolTip="{x:Bind Version}" />
                             <widgets:LocalIcon
                                 Grid.Column="6"
                                 Width="24"
@@ -137,7 +140,8 @@
                             <TextBlock
                                 Grid.Column="7"
                                 VerticalAlignment="Center"
-                                Text="{x:Bind NewVersion}" />
+                                Text="{x:Bind NewVersion}"
+                                ToolTipService.ToolTip="{x:Bind NewVersion}" />
                             <widgets:LocalIcon
                                 Grid.Column="8"
                                 Width="24"
@@ -146,7 +150,8 @@
                             <TextBlock
                                 Grid.Column="9"
                                 VerticalAlignment="Center"
-                                Text="{x:Bind Manager.DisplayName}" />
+                                Text="{x:Bind Manager.DisplayName}"
+                                ToolTipService.ToolTip="{x:Bind Manager.DisplayName}" />
                             <Button
                                 Grid.Column="10"
                                 Width="32"

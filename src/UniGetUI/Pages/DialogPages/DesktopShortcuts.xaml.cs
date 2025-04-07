@@ -99,8 +99,7 @@ namespace UniGetUI.Interface
         {
             SaveChanges();
             Close?.Invoke(this, new());
-            await DialogHelper.ConfirmSetDeleteAllShortcutsSetting();
-            await DialogHelper.ManageDesktopShortcuts();
+            _ = DialogHelper.ConfirmSetDeleteAllShortcutsSetting();
         }
 
         private void HandleAllDesktop_Unchecked(object sender, RoutedEventArgs e)
@@ -120,6 +119,12 @@ namespace UniGetUI.Interface
                     DesktopShortcutsDatabase.DeleteFromDisk(shortcut.Path);
                 }
             }
+        }
+
+        private void CloseSaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            SaveChanges();
+            Close?.Invoke(this, EventArgs.Empty);
         }
     }
 

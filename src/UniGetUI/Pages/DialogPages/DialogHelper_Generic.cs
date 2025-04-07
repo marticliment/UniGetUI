@@ -286,7 +286,7 @@ public static partial class DialogHelper
 
     public static async Task ManageDesktopShortcuts(IReadOnlyList<string>? NewShortucts  = null)
     {
-        ContentDialog dialog = DialogFactory.Create(1400, 1000);
+        ContentDialog dialog = DialogFactory.Create_AsWindow(true);
 
         DesktopShortcutsManager DesktopShortcutsPage = new();
         DesktopShortcutsPage.LoadShortcuts(NewShortucts ?? DesktopShortcutsDatabase.GetAllShortcuts());
@@ -294,9 +294,9 @@ public static partial class DialogHelper
 
         dialog.Title = CoreTools.Translate("Automatic desktop shortcut remover");
         dialog.Content = DesktopShortcutsPage;
-        dialog.SecondaryButtonText = CoreTools.Translate("Save and close");
-        dialog.DefaultButton = ContentDialogButton.None;
-        dialog.SecondaryButtonClick += (_, _) => DesktopShortcutsPage.SaveChanges();
+        // dialog.SecondaryButtonText = CoreTools.Translate("Save and close");
+        // dialog.DefaultButton = ContentDialogButton.None;
+        // dialog.SecondaryButtonClick += (_, _) => DesktopShortcutsPage.SaveChanges();
 
         await Window.ShowDialogAsync(dialog);
     }
@@ -595,7 +595,7 @@ public static partial class DialogHelper
         var dialog = DialogFactory.Create();
         dialog.Title = CoreTools.Translate("Are you sure you want to delete all shortcuts?");
         dialog.Content = CoreTools.Translate("Any new shorcuts created during an install or an update operation will be deleted automatically, instead of showing a confirmation prompt the first time they are detected.")
-                        + " " + CoreTools.Translate("Any shorcuts created or modified outside of UniGetUI will be ignored. You will be able to add them via the {0} button.", $"{CoreTools.Translate("Manual scan")}")
+                            + " " + CoreTools.Translate("Any shorcuts created or modified outside of UniGetUI will be ignored. You will be able to add them via the {0} button.", $"\"{CoreTools.Translate("Manual scan")}\"")
                         + " " + CoreTools.Translate("Are you really sure you want to enable this feature?");
         dialog.PrimaryButtonText = CoreTools.Translate("Yes");
         dialog.CloseButtonText = CoreTools.Translate("No");
@@ -604,6 +604,7 @@ public static partial class DialogHelper
         {
             Settings.Set("RemoveAllDesktopShortcuts", true);
         }
+        _ = DialogHelper.ManageDesktopShortcuts();
     }
 
     /*public static async Task ManualScanDidNotFoundNewShortcuts()
