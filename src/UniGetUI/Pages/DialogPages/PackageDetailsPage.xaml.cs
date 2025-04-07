@@ -308,9 +308,6 @@ namespace UniGetUI.Interface.Dialogs
                 await details.Load();
             }
 
-            CommandTextBlock.Text = Package.Manager.Properties.ExecutableFriendlyName + " " +
-                string.Join(' ', Package.Manager.OperationHelper.GetParameters(Package, await InstallationOptions.FromPackageAsync(Package), OperationRole));
-
             LoadingIndicator.Visibility = Visibility.Collapsed;
 
             // Basic details section
@@ -468,7 +465,7 @@ namespace UniGetUI.Interface.Dialogs
 
         public void PackageDetailsPage_SizeChanged(object? sender = null, SizeChangedEventArgs? e = null)
         {
-            if (MainApp.Instance.MainWindow.AppWindow.Size.Width < 1050)
+            if (MainApp.Instance.MainWindow.AppWindow.Size.Width < 950)
             {
                 if (__layout_mode != LayoutMode.Normal)
                 {
@@ -522,7 +519,7 @@ namespace UniGetUI.Interface.Dialogs
                     __layout_mode = LayoutMode.Wide;
 
                     MainGrid.ColumnDefinitions.Clear();
-                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star), MinWidth = 550 });
+                    MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
                     MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
                     Grid.SetColumn(LeftPanel, 0);
                     Grid.SetColumn(RightPanel, 1);

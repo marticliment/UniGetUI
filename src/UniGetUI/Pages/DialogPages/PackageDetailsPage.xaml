@@ -195,18 +195,6 @@
                             </DropDownButton.Flyout>
                         </DropDownButton>
                     </Grid>
-
-
-                    <TextBox
-                        Name="CommandTextBlock"
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Grid.ColumnSpan="3"
-                        Padding="12,6,12,6"
-                        CornerRadius="8"
-                        FontFamily="Consolas"
-                        IsReadOnly="True"
-                        TextWrapping="Wrap" />
                 </Grid>
 
                 <!--  Screenshots  -->

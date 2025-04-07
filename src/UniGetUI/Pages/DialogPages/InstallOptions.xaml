@@ -29,7 +29,7 @@
                 <widgets:TranslatedTextBlock Text="The following settings will be applied each time this package is installed, updated or removed." />
                 <Border
                     Padding="16,12,16,12"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    Background="{ThemeResource ControlFillColorInputActiveBrush}"
                     CornerRadius="8">
                     <StackPanel Spacing="8">
                         <Grid>
@@ -46,16 +46,17 @@
                                 Grid.Column="1"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
-                                SelectedIndex="0" />
+                                SelectedIndex="0"
+                                SelectionChanged="ArchitectureComboBox_SelectionChanged" />
                         </Grid>
                         <controls:WrapPanel HorizontalSpacing="16" VerticalSpacing="0">
-                            <CheckBox Name="AdminCheckBox">
+                            <CheckBox Name="AdminCheckBox" Click="AdminCheckBox_Click">
                                 <widgets:TranslatedTextBlock Text="Run as admin" />
                             </CheckBox>
-                            <CheckBox Name="InteractiveCheckBox">
+                            <CheckBox Name="InteractiveCheckBox" Click="InteractiveCheckBox_Click">
                                 <widgets:TranslatedTextBlock Text="Interactive installation" />
                             </CheckBox>
-                            <CheckBox Name="HashCheckbox">
+                            <CheckBox Name="HashCheckbox" Click="HashCheckbox_Click">
                                 <widgets:TranslatedTextBlock HorizontalAlignment="Stretch" Text="Skip hash check" />
                             </CheckBox>
                         </controls:WrapPanel>
@@ -63,7 +64,7 @@
                 </Border>
                 <Border
                     Padding="16,12,16,12"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    Background="{ThemeResource ControlFillColorInputActiveBrush}"
                     CornerRadius="8">
                     <StackPanel Spacing="8">
                         <Grid>
@@ -80,7 +81,8 @@
                                 Name="VersionComboBox"
                                 Grid.Column="1"
                                 HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                SelectionChanged="VersionComboBox_SelectionChanged" />
 
                             <ProgressBar
                                 Name="VersionProgress"
@@ -92,11 +94,10 @@
                                 Visibility="Visible" />
                         </Grid>
                         <controls:WrapPanel HorizontalSpacing="16" VerticalSpacing="0">
-
-                            <CheckBox Name="IgnoreUpdatesCheckbox" Grid.Column="0">
+                            <CheckBox Name="IgnoreUpdatesCheckbox">
                                 <widgets:TranslatedTextBlock Text="Ignore future updates for this package" />
                             </CheckBox>
-                            <CheckBox Name="SkipMinorUpdatesCheckbox" Grid.Column="2">
+                            <CheckBox Name="SkipMinorUpdatesCheckbox">
                                 <widgets:TranslatedTextBlock Text="Skip minor updates for this package" />
                             </CheckBox>
                         </controls:WrapPanel>
@@ -105,7 +106,7 @@
 
                 <Border
                     Padding="16,12,16,12"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    Background="{ThemeResource ControlFillColorInputActiveBrush}"
                     CornerRadius="8">
                     <StackPanel Spacing="8">
                         <Grid>
@@ -121,7 +122,8 @@
                                 Name="ScopeCombo"
                                 Grid.Column="1"
                                 HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                SelectionChanged="ScopeCombo_SelectionChanged" />
                         </Grid>
                         <Grid ColumnSpacing="8">
                             <Grid.ColumnDefinitions>
@@ -157,8 +159,7 @@
                                 Grid.ColumnSpan="3"
                                 VerticalAlignment="Center"
                                 FontFamily="Consolas"
-                                Opacity="0.6"
-                                Text="C:\SomeRandomPath\HelloWorld"
+                                Opacity="0.6" MaxWidth="700"
                                 TextWrapping="Wrap" />
                         </Grid>
                     </StackPanel>
@@ -166,7 +167,7 @@
 
                 <Border
                     Padding="16,12,16,12"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    Background="{ThemeResource ControlFillColorInputActiveBrush}"
                     CornerRadius="8">
                     <StackPanel Spacing="8">
                         <Grid ColumnSpacing="8">
@@ -183,8 +184,31 @@
                                 Grid.Column="1"
                                 Padding="5,7,5,5"
                                 FontFamily="Consolas"
+                                TextChanged="CustomParameters_TextChanged"
                                 TextWrapping="Wrap" />
                         </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Padding="16,12,16,12"
+                    Background="{ThemeResource ControlFillColorInputActiveBrush}"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <widgets:TranslatedTextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Text="Command-line to run:" />
+                        <Border Background="{ThemeResource ControlFillColorSecondaryBrush}" CornerRadius="4">
+                            <TextBlock
+                                Name="CommandBox"
+                                MaxWidth="700"
+                                Padding="8"
+                                HorizontalAlignment="Stretch"
+                                FontFamily="Consolas"
+                                IsTextSelectionEnabled="True"
+                                TextWrapping="Wrap" />
+                        </Border>
                     </StackPanel>
                 </Border>
             </StackPanel>
