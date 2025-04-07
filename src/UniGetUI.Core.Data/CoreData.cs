@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using UniGetUI.Core.Logging;
@@ -9,8 +9,8 @@ namespace UniGetUI.Core.Data
     {
         private static int? __code_page;
         public static int CODE_PAGE { get => __code_page ??= GetCodePage(); }
-        public const string VersionName = "3.1.8"; // Do not modify this line, use file scripts/apply_versions.py
-        public const int BuildNumber = 84; // Do not modify this line, use file scripts/apply_versions.py
+        public const string VersionName = "3.2.0-beta1"; // Do not modify this line, use file scripts/apply_versions.py
+        public const int BuildNumber = 85; // Do not modify this line, use file scripts/apply_versions.py
 
         public const string UserAgentString = $"UniGetUI/{VersionName} (https://marticliment.com/unigetui/; contact@marticliment.com)";
 

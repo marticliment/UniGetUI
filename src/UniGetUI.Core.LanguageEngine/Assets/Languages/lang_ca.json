@@ -69,7 +69,7 @@
   "Android Subsystem": "Subsistema Android",
   "Another source": "Una altra font",
   "Any new shorcuts created during an install or an update operation will be deleted automatically, instead of showing a confirmation prompt the first time they are detected.": "Qualsevol icona creada durant una instal·lació o una actualització s'eliminarà automàticament, en comptes de mostrar un diàleg de confirmació el primer cop que es detecti.",
-  "Any shorcuts created or modified outside of UniGetUI will be ignored. You will be able to add them via the {0} button.": "Qualsevol icona creada o modificada fora de l'UniGetUI s'ignorarà. Les podreu afegir mitjançant el botó d'{0}",
+  "Any shorcuts created or modified outside of UniGetUI will be ignored. You will be able to add them via the {0} button.": "Qualsevol icona creada o modificada fora de l'UniGetUI s'ignorarà. Les podreu afegir mitjançant el botó d' {0}",
   "Any unsaved changes will be lost": "Es perdrà qualsevol canvi no desat",
   "App Name": "Nom de l'app",
   "Application theme, startup page, package icons, clear successful installs automatically": "Tema de l'aplicació, pàgina d'inici, icones als paquets, neteja les instal·lacions exitoses automàticament",
