@@ -292,9 +292,6 @@
       <Content Update="Assets\Utilities\getfilesiginforedist.dll">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Update="Assets\Utilities\gsudo.exe">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
     <Content Update="Assets\Utilities\install_scoop.cmd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
