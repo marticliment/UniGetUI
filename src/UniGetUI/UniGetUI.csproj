@@ -13,8 +13,8 @@
     <!-- .NET & AppSdk publish options -->
     <WindowsAppSDKWinUI>true</WindowsAppSDKWinUI>
     <WindowsPackageType>None</WindowsPackageType>
-    <!--WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion-->
 
+    <!--PublishAot>true</PublishAot-->
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>

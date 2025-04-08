@@ -22,6 +22,10 @@
 
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <Optimize>true</Optimize>
+        <WholeProgramOptimization>true</WholeProgramOptimization>
+        <TieredCompilation>true</TieredCompilation>
+        <PublishReadyToRun>true</PublishReadyToRun>
+        <EnableProfileOptimization>true</EnableProfileOptimization>
     </PropertyGroup>
 
     <PropertyGroup>

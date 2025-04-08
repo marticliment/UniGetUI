@@ -261,7 +261,7 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         List<ManagerSource> sources = [];
         INativeTaskLogger logger = Manager.TaskLogger.CreateNew(LoggableTaskType.ListSources);
 
-        foreach (PackageCatalogReference catalog in WinGetManager.GetPackageCatalogs().ToArray())
+        foreach (PackageCatalogReference catalog in WinGetManager.GetPackageCatalogs().ToList())
         {
             try
             {
