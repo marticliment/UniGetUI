@@ -1245,6 +1245,8 @@
                                     HorizontalAlignment="Stretch"
                                     Orientation="Vertical"
                                     Spacing="0">
+                                    <Button Name="GridView" Click="GridView_Click">GRID VIEW</Button>
+                                    <Button Name="ListView" Click="ListView_Click">LIST VIEW</Button>
                                     <CheckBox
                                         x:Name="InstantSearchCheckbox"
                                         x:FieldModifier="protected"
@@ -1464,11 +1466,7 @@
                         x:FieldModifier="protected"
                         CanBeScrollAnchor="False"
                         CharacterReceived="{x:Bind PackageList_CharacterReceived}"
-                        ItemTemplate="{StaticResource PackageTemplate_Grid}"
                         ItemsSource="{x:Bind FilteredPackages, Mode=OneWay}">
-                        <ItemsView.Layout>
-                            <UniformGridLayout MinColumnSpacing="8" MinRowSpacing="8" ItemsStretch="Fill" />
-                        </ItemsView.Layout>
                     </ItemsView>
 
                     <Grid Grid.Row="1">

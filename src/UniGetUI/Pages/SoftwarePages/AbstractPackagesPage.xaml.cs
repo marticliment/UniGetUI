@@ -121,6 +121,7 @@ namespace UniGetUI.Interface
         protected AbstractPackagesPage(PackagesPageData data)
         {
             InitializeComponent();
+            LoadListLayout();
 
             Loader = data.Loader;
 
@@ -1188,6 +1189,29 @@ namespace UniGetUI.Interface
         private void FilteringPanel_PaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
         {
             ToggleFiltersButton.IsChecked = false;
+        }
+
+        private void GridView_Click(object sender, RoutedEventArgs e)
+            => LoadGridLayout();
+
+        private void ListView_Click(object sender, RoutedEventArgs e)
+            => LoadListLayout();
+
+        private void LoadListLayout()
+        {
+            PackageList.ItemTemplate = (DataTemplate)this.Resources["PackageTemplate"];
+            PackageList.Layout = new StackLayout() { Spacing = 3 };
+        }
+
+        private void LoadGridLayout()
+        {
+            PackageList.ItemTemplate = (DataTemplate)this.Resources["PackageTemplate_Grid"];
+            PackageList.Layout = new UniformGridLayout()
+            {
+                ItemsStretch = UniformGridLayoutItemsStretch.Fill,
+                MinColumnSpacing = 8,
+                MinRowSpacing = 8,
+            };
         }
     }
 }
