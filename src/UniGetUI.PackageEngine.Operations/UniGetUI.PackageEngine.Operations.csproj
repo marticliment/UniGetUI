@@ -1,13 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
-        <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
-        <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
-        <Platforms>x64</Platforms>
-        <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-        <PublishSelfContained>true</PublishSelfContained>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    </PropertyGroup>
+
 
     <ItemGroup>
         <ProjectReference Include="..\ExternalLibraries.FilePickers\ExternalLibraries.FilePickers.csproj" />
