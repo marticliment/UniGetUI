@@ -924,12 +924,21 @@ namespace UniGetUI.Interface
         { PackageList.Focus(FocusState.Programmatic); }
 
         private void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
+            => PackageItemContainer_RightTapped(sender, new RoutedEventArgs());
+
+        private void PackageItemContainer_RightTapped(object sender, RoutedEventArgs e)
         {
             if (sender is PackageItemContainer container && container.Package is not null)
             {
                 PackageList.Select(container.Wrapper.Index);
                 container.Focus(FocusState.Keyboard);
                 WhenShowingContextMenu(container.Package);
+            }
+            else if((((sender as Button)?.Parent as StackPanel)?.Parent as Grid)?.Parent is PackageItemContainer container2 && container2.Package is not null)
+            {
+                PackageList.Select(container2.Wrapper.Index);
+                container2.Focus(FocusState.Keyboard);
+                WhenShowingContextMenu(container2.Package);
             }
         }
 

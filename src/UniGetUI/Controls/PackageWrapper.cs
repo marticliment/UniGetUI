@@ -32,6 +32,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
         public bool AlternateIdIconVisible;
         public bool ShowCustomPackageIcon;
         public bool ShowDefaultPackageIcon = true;
+        public string VersionComboString;
         public IconType MainIconId = IconType.Id;
         public IconType AlternateIconId = IconType.Id;
         public ImageSource? MainIconSource;
@@ -64,6 +65,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
             WhenTagHasChanged();
             Package.PropertyChanged += Package_PropertyChanged;
             UpdatePackageIcon();
+            VersionComboString = package.IsUpgradable ? $"{package.VersionString} -> {package.NewVersionString}" : package.VersionString;
         }
 
         public void Package_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -167,7 +169,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 MainIconSource = new BitmapImage
                 {
                     UriSource = icon,
-                    DecodePixelWidth = 24,
+                    DecodePixelWidth = 48,
                     DecodePixelType = DecodePixelType.Logical,
                 };
                 ShowCustomPackageIcon = true;
