@@ -41,10 +41,11 @@ jobs:
       working-directory: src
       run: dotnet restore
 
+    - name: Test build
+      working-directory: src
+      run: dotnet build --configuration Release
+
     - name: Run Tests
       working-directory: src
       run: dotnet test --no-restore --verbosity q --nologo
 
-    - name: Test publish
-      working-directory: src
-      run: dotnet publish --configuration Release --no-restore
