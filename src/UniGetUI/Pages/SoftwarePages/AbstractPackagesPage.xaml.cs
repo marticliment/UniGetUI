@@ -120,16 +120,8 @@ namespace UniGetUI.Interface
 
         protected AbstractPackagesPage(PackagesPageData data)
         {
-            InitializeComponent();
-
-            // Selection of grid view mode
-            int viewMode = Settings.GetDictionaryItem<string, int>("PackageListViewMode", PAGE_NAME);
-            if (viewMode < 0 || viewMode >= ViewModeSelector.Items.Count) viewMode = 0;
-            ViewModeSelector.SelectedIndex = viewMode;
-
-
-            Loader = data.Loader;
-
+            // Load page attributes
+            PAGE_NAME = data.PageName;
             DISABLE_AUTOMATIC_PACKAGE_LOAD_ON_START = data.DisableAutomaticPackageLoadOnStart;
             DISABLE_FILTER_ON_QUERY_CHANGE = data.DisableFilterOnQueryChange;
             MEGA_QUERY_BOX_ENABLED = data.MegaQueryBlockEnabled;
@@ -140,19 +132,24 @@ namespace UniGetUI.Interface
             NewVersionLabelWidth = RoleIsUpdateLike ? 125 : 0;
             NewVersionIconWidth = RoleIsUpdateLike ? 24 : 0;
 
-            Loader = data.Loader;
-
-            PAGE_NAME = data.PageName;
-
-            MainTitle.Text = data.PageTitle;
-            HeaderIcon.Glyph = data.Glyph;
-
             NoPackages_BackgroundText = data.NoPackages_BackgroundText;
             NoPackages_SourcesText = data.NoPackages_SourcesText;
             NoPackages_SubtitleText_Base = data.NoPackages_SubtitleText_Base;
             MainSubtitle_StillLoading = data.MainSubtitle_StillLoading;
 
             NoMatches_BackgroundText = data.NoMatches_BackgroundText;
+            Loader = data.Loader;
+
+            // Load UI
+            InitializeComponent();
+
+            // Selection of grid view mode
+            int viewMode = Settings.GetDictionaryItem<string, int>("PackageListViewMode", PAGE_NAME);
+            if (viewMode < 0 || viewMode >= ViewModeSelector.Items.Count) viewMode = 0;
+            ViewModeSelector.SelectedIndex = viewMode;
+
+            MainTitle.Text = data.PageTitle;
+            HeaderIcon.Glyph = data.Glyph;
 
             SelectAllCheckBox.IsChecked = data.PackagesAreCheckedByDefault;
             QuerySimilarResultsRadio.IsEnabled = !data.DisableSuggestedResultsRadio;
