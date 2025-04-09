@@ -912,7 +912,8 @@
                             Padding="0"
                             Background="Transparent"
                             BorderThickness="0"
-                            Click="PackageItemContainer_RightTapped">
+                            Click="{x:Bind RightClick}"
+                            Tapped="ContextMenuButton_Tapped">
                             <SymbolIcon Symbol="More" />
                         </Button>
                     </StackPanel>
@@ -1015,9 +1016,9 @@
                 Grid.Row="0"
                 Grid.RowSpan="3"
                 Grid.Column="2"
+                Margin="0,0,4,0"
                 HorizontalAlignment="Stretch"
                 Orientation="Vertical"
-                Margin="0,0,4,0"
                 Spacing="8">
 
                 <Grid HorizontalAlignment="Stretch">
@@ -1482,7 +1483,7 @@
                     <ItemsView
                         x:Name="PackageList"
                         Grid.Row="1"
-                        Padding="4,0,4,0"
+                        Padding="4,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         x:FieldModifier="protected"

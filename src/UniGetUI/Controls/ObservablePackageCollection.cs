@@ -1,4 +1,5 @@
 using UniGetUI.Core.Classes;
+using UniGetUI.Interface;
 using UniGetUI.PackageEngine.Interfaces;
 
 namespace UniGetUI.PackageEngine.PackageClasses
@@ -26,9 +27,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// <summary>
         /// Add a package to the collection
         /// </summary>
-        public void Add(IPackage p)
+        public void Add(IPackage p, AbstractPackagesPage page)
         {
-            base.Add(new PackageWrapper(p));
+            base.Add(new PackageWrapper(p, page));
         }
 
         /// <summary>

@@ -22,6 +22,9 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
 using Windows.Graphics.Printing.PrintSupport;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using Microsoft.UI.Xaml.Controls.Primitives;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -335,6 +338,7 @@ namespace UniGetUI.Interface
             if (!Settings.Get("DisableIconsOnPackageLists"))
                 _ = LoadIconsForNewPackages();
         }
+
 
         private void Loader_FinishedLoading(object? sender, EventArgs e)
         {
@@ -732,7 +736,7 @@ namespace UniGetUI.Interface
             {
                 if (VisibleSources.Contains(match.Source) || (!match.Manager.Capabilities.SupportsCustomSources && VisibleManagers.Contains(match.Manager)))
                 {
-                    FilteredPackages.Add(match);
+                    FilteredPackages.Add(match, this);
                 }
             }
             FilteredPackages.BlockSorting = false;
@@ -919,6 +923,16 @@ namespace UniGetUI.Interface
 
         public void FocusPackageList()
         { PackageList.Focus(FocusState.Programmatic); }
+
+
+        public async Task ShowContextMenu(PackageWrapper wrapper)
+        {
+            PackageList.Select(wrapper.Index);
+            await Task.Delay(20);
+            if(_lastContextMenuButtonTapped is not null)
+                (PackageList.ContextFlyout as BetterMenu)?.ShowAt(_lastContextMenuButtonTapped, new FlyoutShowOptions { Placement = FlyoutPlacementMode.RightEdgeAlignedTop });
+            WhenShowingContextMenu(wrapper.Package);
+        }
 
         private void PackageItemContainer_RightTapped(object sender, RightTappedRoutedEventArgs e)
             => PackageItemContainer_RightTapped(sender, new RoutedEventArgs());
@@ -1246,6 +1260,13 @@ namespace UniGetUI.Interface
                 LoadGridLayout();
             else if (ViewModeSelector.SelectedIndex == 2)
                 LoadGridLayout();
+        }
+
+        FrameworkElement _lastContextMenuButtonTapped = null;
+        private void ContextMenuButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (sender is FrameworkElement el)
+                _lastContextMenuButtonTapped = el;
         }
     }
 }
