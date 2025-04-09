@@ -1010,9 +1010,9 @@ namespace UniGetUI.Interface
                 {
                     SidePanel.Background = new AcrylicBrush()
                     {
-                        TintColor = Color.FromArgb(255, 20, 20, 20),
+                        TintColor = Color.FromArgb(0, 20, 20, 20),
                         TintOpacity = 0.4,
-                        FallbackColor = Color.FromArgb(255, 20, 20, 20),
+                        FallbackColor = Color.FromArgb(0, 20, 20, 20),
                         TintLuminosityOpacity = 0.8
                     };
                 }
@@ -1020,9 +1020,9 @@ namespace UniGetUI.Interface
                 {
                     SidePanel.Background = new AcrylicBrush()
                     {
-                        TintColor = Color.FromArgb(255, 240, 240, 240),
+                        TintColor = Color.FromArgb(0, 250, 250, 250),
                         TintOpacity = 0.4,
-                        FallbackColor = Color.FromArgb(255, 240, 240, 240),
+                        FallbackColor = Color.FromArgb(0, 250, 250, 250),
                         TintLuminosityOpacity = 0.8
                     };
                 }
