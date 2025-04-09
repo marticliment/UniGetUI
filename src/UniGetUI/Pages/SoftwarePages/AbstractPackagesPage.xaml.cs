@@ -121,7 +121,12 @@ namespace UniGetUI.Interface
         protected AbstractPackagesPage(PackagesPageData data)
         {
             InitializeComponent();
-            LoadListLayout();
+
+            // Selection of grid view mode
+            int viewMode = Settings.GetDictionaryItem<string, int>("PackageListViewMode", PAGE_NAME);
+            if (viewMode < 0 || viewMode >= ViewModeSelector.Items.Count) viewMode = 0;
+            ViewModeSelector.SelectedIndex = viewMode;
+
 
             Loader = data.Loader;
 
@@ -292,6 +297,7 @@ namespace UniGetUI.Interface
             {
                 ShowFilteringPane();
             }
+
 
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
             MegaQueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
@@ -1191,12 +1197,6 @@ namespace UniGetUI.Interface
             ToggleFiltersButton.IsChecked = false;
         }
 
-        private void GridView_Click(object sender, RoutedEventArgs e)
-            => LoadGridLayout();
-
-        private void ListView_Click(object sender, RoutedEventArgs e)
-            => LoadListLayout();
-
         private void LoadListLayout()
         {
             PackageList.ItemTemplate = (DataTemplate)this.Resources["PackageTemplate"];
@@ -1212,6 +1212,17 @@ namespace UniGetUI.Interface
                 MinColumnSpacing = 8,
                 MinRowSpacing = 8,
             };
+        }
+
+        private void ViewModeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Settings.SetDictionaryItem("PackageListViewMode", PAGE_NAME, ViewModeSelector.SelectedIndex);
+            if (ViewModeSelector.SelectedIndex == 0)
+                LoadListLayout();
+            else if (ViewModeSelector.SelectedIndex == 1)
+                LoadGridLayout();
+            else if (ViewModeSelector.SelectedIndex == 2)
+                LoadGridLayout();
         }
     }
 }

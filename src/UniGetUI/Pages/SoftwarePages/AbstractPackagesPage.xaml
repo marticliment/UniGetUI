@@ -10,6 +10,7 @@
     xmlns:local="using:UniGetUI.Interface"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pkgClasses="using:UniGetUI.PackageEngine.PackageClasses"
+    xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     Name="ABSTRACT_PAGE"
     NavigationCacheMode="Required"
@@ -1009,58 +1010,80 @@
                 FontWeight="Normal"
                 Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"
                 TextWrapping="Wrap" />
-            <Grid
+
+            <StackPanel
                 Grid.Row="0"
                 Grid.RowSpan="3"
                 Grid.Column="2"
-                HorizontalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+                HorizontalAlignment="Stretch"
+                Orientation="Vertical"
+                Spacing="8">
 
-                <TextBox
-                    x:Name="QueryBlock"
-                    Grid.Column="1"
-                    Height="30"
-                    Padding="7,5,5,5"
-                    VerticalContentAlignment="Center"
-                    x:FieldModifier="protected"
-                    CornerRadius="4,0,0,4" />
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <Button
-                    x:Name="FindButton"
-                    Grid.Column="2"
-                    Width="32"
-                    Height="32"
-                    Padding="4"
-                    x:FieldModifier="protected"
-                    AutomationProperties.HelpText="Search"
-                    CornerRadius="0,4,4,0">
-                    <AnimatedIcon>
-                        <AnimatedIcon.Source>
-                            <animatedvisuals:AnimatedFindVisualSource />
-                        </AnimatedIcon.Source>
-                        <AnimatedIcon.FallbackIconSource>
-                            <SymbolIconSource Symbol="Find" />
-                        </AnimatedIcon.FallbackIconSource>
-                    </AnimatedIcon>
-                </Button>
-                <Button
-                    x:Name="ReloadButton"
-                    Grid.Column="3"
-                    Width="32"
-                    Height="32"
-                    Margin="6,0,4,0"
-                    Padding="0"
-                    x:FieldModifier="protected"
-                    AutomationProperties.HelpText="Reload packages"
-                    CornerRadius="4">
-                    <FontIcon FontSize="16" Glyph="&#xE72C;" />
-                </Button>
-            </Grid>
+
+                    <TextBox
+                        x:Name="QueryBlock"
+                        Grid.Column="1"
+                        Height="30"
+                        Padding="7,5,5,5"
+                        VerticalContentAlignment="Center"
+                        x:FieldModifier="protected"
+                        CornerRadius="4,0,0,4" />
+
+                    <Button
+                        x:Name="FindButton"
+                        Grid.Column="2"
+                        Width="32"
+                        Height="32"
+                        Padding="4"
+                        x:FieldModifier="protected"
+                        AutomationProperties.HelpText="Search"
+                        CornerRadius="0,4,4,0">
+                        <AnimatedIcon>
+                            <AnimatedIcon.Source>
+                                <animatedvisuals:AnimatedFindVisualSource />
+                            </AnimatedIcon.Source>
+                            <AnimatedIcon.FallbackIconSource>
+                                <SymbolIconSource Symbol="Find" />
+                            </AnimatedIcon.FallbackIconSource>
+                        </AnimatedIcon>
+                    </Button>
+
+                    <Button
+                        x:Name="ReloadButton"
+                        Grid.Column="3"
+                        Width="32"
+                        Height="32"
+                        Margin="6,0,4,0"
+                        Padding="0"
+                        x:FieldModifier="protected"
+                        AutomationProperties.HelpText="Reload packages"
+                        CornerRadius="4">
+                        <FontIcon FontSize="16" Glyph="&#xE72C;" />
+                    </Button>
+                </Grid>
+                <StackPanel
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="View mode:" />
+                    <Toolkit:Segmented
+                        Name="ViewModeSelector"
+                        SelectionChanged="ViewModeSelector_SelectionChanged"
+                        SelectionMode="Single">
+                        <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xE8FD;}" ToolTipService.ToolTip="List" />
+                        <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF168;}" ToolTipService.ToolTip="Mixed" />
+                        <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF0E2;}" ToolTipService.ToolTip="Grid" />
+                    </Toolkit:Segmented>
+                </StackPanel>
+            </StackPanel>
 
             <Grid
                 Grid.Row="3"
@@ -1245,8 +1268,6 @@
                                     HorizontalAlignment="Stretch"
                                     Orientation="Vertical"
                                     Spacing="0">
-                                    <Button Name="GridView" Click="GridView_Click">GRID VIEW</Button>
-                                    <Button Name="ListView" Click="ListView_Click">LIST VIEW</Button>
                                     <CheckBox
                                         x:Name="InstantSearchCheckbox"
                                         x:FieldModifier="protected"
@@ -1466,8 +1487,7 @@
                         x:FieldModifier="protected"
                         CanBeScrollAnchor="False"
                         CharacterReceived="{x:Bind PackageList_CharacterReceived}"
-                        ItemsSource="{x:Bind FilteredPackages, Mode=OneWay}">
-                    </ItemsView>
+                        ItemsSource="{x:Bind FilteredPackages, Mode=OneWay}" />
 
                     <Grid Grid.Row="1">
                         <Grid.RowDefinitions>

@@ -3,7 +3,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
         <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-        <WindowsSdkPackageVersion>10.0.26100.57</WindowsSdkPackageVersion>
+        <WindowsSdkPackageVersion>10.0.26100.56</WindowsSdkPackageVersion>
         <SdkVersion>8.0.407</SdkVersion>
         <Authors>Martí Climent and the contributors</Authors>
         <PublisherName>Martí Climent</PublisherName>
