@@ -21,6 +21,7 @@ using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
+using Windows.Graphics.Printing.PrintSupport;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -85,6 +86,7 @@ namespace UniGetUI.Interface
 
         public readonly int NewVersionLabelWidth;
         public readonly int NewVersionIconWidth;
+        private SplitViewDisplayMode _filterPanelCurrentMode = SplitViewDisplayMode.CompactInline;
 
         protected abstract void WhenPackagesLoaded(ReloadReason reason);
         protected abstract void WhenPackageCountUpdated();
@@ -986,13 +988,13 @@ namespace UniGetUI.Interface
             }
         }
 
-        private async void HideFilteringPane()
+        private void HideFilteringPane()
         {
             FilteringPanel.IsPaneOpen = false;
             PackagesListGrid.Margin = new Thickness(0, 0, 0, 0);
         }
 
-        private async void ShowFilteringPane()
+        private void ShowFilteringPane()
         {
             if (FilteringPanel.DisplayMode is SplitViewDisplayMode.Inline)
             {
@@ -1120,54 +1122,73 @@ namespace UniGetUI.Interface
             }
         }
 
-        private async void ChangeFilteringPaneLayout()
+
+        private async void SetFilterMode_Overlay()
         {
-            if (FilteringPanel.ActualWidth == 0)
+            if (_filterPanelCurrentMode == SplitViewDisplayMode.Overlay)
+                return;
+
+            _filterPanelCurrentMode = SplitViewDisplayMode.Overlay;
+            FilteringPanel.DisplayMode = SplitViewDisplayMode.Overlay;
+            HideFilteringPane();
+            FiltersResizer.Opacity = 0;
+            ToggleFiltersButton.IsChecked = false;
+
+            await Task.Delay(200);
+            FilteringPanel.Shadow = new ThemeShadow();
+            SidePanel.BorderThickness = new Thickness(0, 1, 1, 1);
+
+            SidePanel.Background = new AcrylicBrush()
+            /*{
+                TintColor = Color.FromArgb(255, 20, 20, 20),
+                TintOpacity = 0.4,
+                FallbackColor = Color.FromArgb(255, 20, 20, 20),
+                TintLuminosityOpacity = 0.8
+            }*/;
+
+            if (FilteringPanel.Pane is ScrollViewer filters)
             {
-                FilteringPanel.DisplayMode = SplitViewDisplayMode.CompactInline;
+                filters.Padding = new Thickness(8);
+                filters.Margin = new Thickness(0, 1, 0, 1);
             }
-            else if (FilteringPanel.ActualWidth < 1000 && FilteringPanel.DisplayMode is not SplitViewDisplayMode.Overlay)
+        }
+
+        private void SetFilterMode_Inline()
+        {
+            if (_filterPanelCurrentMode == SplitViewDisplayMode.Inline)
+                return;
+
+            _filterPanelCurrentMode = SplitViewDisplayMode.Inline;
+            FilteringPanel.DisplayMode = SplitViewDisplayMode.Inline;
+            SidePanel.Background = new SolidColorBrush(Colors.Transparent);
+            FiltersResizer.Opacity = 1;
+            SidePanel.BorderThickness = new Thickness(0);
+
+            if (FilteringPanel.Pane is ScrollViewer filters)
             {
-                FilteringPanel.DisplayMode = SplitViewDisplayMode.Overlay;
-                HideFilteringPane();
-                FiltersResizer.Opacity = 0;
-                ToggleFiltersButton.IsChecked = false;
-
-                await Task.Delay(200);
-                FilteringPanel.Shadow = new ThemeShadow();
-                SidePanel.BorderThickness = new Thickness(0, 1, 1, 1);
-
-                SidePanel.Background = new AcrylicBrush()
-                {
-                    TintColor = Color.FromArgb(255, 20, 20, 20),
-                    TintOpacity = 0.4,
-                    FallbackColor = Color.FromArgb(255, 20, 20, 20),
-                    TintLuminosityOpacity = 0.8
-                };
-
-                if (FilteringPanel.Pane is ScrollViewer filters)
-                {
-                    filters.Padding = new Thickness(8);
-                    filters.Margin = new Thickness(0, 1, 0, 1);
-                }
+                filters.Padding = new Thickness(0);
+                filters.Margin = new Thickness(0);
             }
-            else if (FilteringPanel.ActualWidth >= 1000 && FilteringPanel.DisplayMode is not SplitViewDisplayMode.Inline)
+
+            if (!Settings.GetDictionaryItem<string, bool>("HideToggleFilters", PAGE_NAME))
             {
-                FilteringPanel.DisplayMode = SplitViewDisplayMode.Inline;
-                SidePanel.Background = new SolidColorBrush(Colors.Transparent);
-                FiltersResizer.Opacity = 1;
-                SidePanel.BorderThickness = new Thickness(0);
+                ShowFilteringPane();
+            }
+        }
 
-                if (FilteringPanel.Pane is ScrollViewer filters)
-                {
-                    filters.Padding = new Thickness(0);
-                    filters.Margin = new Thickness(0);
-                }
-
-                if (!Settings.GetDictionaryItem<string, bool>("HideToggleFilters", PAGE_NAME))
-                {
-                    ShowFilteringPane();
-                }
+        private void ChangeFilteringPaneLayout()
+        {
+            if (FilteringPanel.ActualWidth <= 0)
+            {
+                // Nothing, panel is not loaded yet
+            }
+            else if (FilteringPanel.ActualWidth < 1000)
+            {
+                SetFilterMode_Overlay();
+            }
+            else /*(FilteringPanel.ActualWidth >= 1000)*/
+            {
+                SetFilterMode_Overlay();
             }
         }
 
