@@ -1005,6 +1005,28 @@ namespace UniGetUI.Interface
             else
             {
                 FilteringPanel.OpenPaneLength = 250;
+
+                if (this.ActualTheme is ElementTheme.Dark)
+                {
+                    SidePanel.Background = new AcrylicBrush()
+                    {
+                        TintColor = Color.FromArgb(255, 20, 20, 20),
+                        TintOpacity = 0.4,
+                        FallbackColor = Color.FromArgb(255, 20, 20, 20),
+                        TintLuminosityOpacity = 0.8
+                    };
+                }
+                else
+                {
+                    SidePanel.Background = new AcrylicBrush()
+                    {
+                        TintColor = Color.FromArgb(255, 240, 240, 240),
+                        TintOpacity = 0.4,
+                        FallbackColor = Color.FromArgb(255, 240, 240, 240),
+                        TintLuminosityOpacity = 0.8
+                    };
+                }
+
             }
             FilteringPanel.IsPaneOpen = true;
             ToggleFiltersButton.IsChecked = true;
@@ -1129,16 +1151,6 @@ namespace UniGetUI.Interface
             await Task.Delay(200);
             FilteringPanel.Shadow = new ThemeShadow();
             SidePanel.BorderThickness = new Thickness(0, 1, 1, 1);
-
-            SidePanel.Background = (Brush)Application.Current.Resources["AcrylicBackgroundFillColorDefaultBrush"];
-
-            /*SidePanel.Background = new AcrylicBrush()
-            {
-                TintColor = Color.FromArgb(255, 20, 20, 20),
-                TintOpacity = 0.4,
-                FallbackColor = Color.FromArgb(255, 20, 20, 20),
-                TintLuminosityOpacity = 0.8
-            };*/
 
             if (FilteringPanel.Pane is ScrollViewer filters)
             {
