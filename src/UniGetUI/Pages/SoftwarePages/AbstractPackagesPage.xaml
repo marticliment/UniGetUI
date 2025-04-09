@@ -1017,6 +1017,7 @@
                 Grid.Column="2"
                 HorizontalAlignment="Stretch"
                 Orientation="Vertical"
+                Margin="0,0,4,0"
                 Spacing="8">
 
                 <Grid HorizontalAlignment="Stretch">
@@ -1061,7 +1062,7 @@
                         Grid.Column="3"
                         Width="32"
                         Height="32"
-                        Margin="6,0,4,0"
+                        Margin="6,0,0,0"
                         Padding="0"
                         x:FieldModifier="protected"
                         AutomationProperties.HelpText="Reload packages"
@@ -1075,7 +1076,7 @@
                     Spacing="8">
                     <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="View mode:" />
                     <Toolkit:Segmented
-                        Name="ViewModeSelector"
+                        x:Name="ViewModeSelector"
                         SelectionChanged="ViewModeSelector_SelectionChanged"
                         SelectionMode="Single">
                         <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xE8FD;}" ToolTipService.ToolTip="List" />
