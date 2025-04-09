@@ -72,9 +72,9 @@ namespace UniGetUI.PackageEngine.PackageClasses
             VersionComboString = package.IsUpgradable ? $"{package.VersionString} -> {package.NewVersionString}" : package.VersionString;
         }
 
-        public void RightClick()
+        public async void RightClick()
         {
-            _page.ShowContextMenu(this);
+            await _page.ShowContextMenu(this);
         }
 
         public void Package_PropertyChanged(object? sender, PropertyChangedEventArgs e)
