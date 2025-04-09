@@ -284,16 +284,6 @@ namespace UniGetUI.Interface
                 BackgroundText.Visibility = Visibility.Collapsed;
             }
 
-            ChangeFilteringPaneLayout();
-            if (Settings.GetDictionaryItem<string, bool>("HideToggleFilters", PAGE_NAME))
-            {
-                HideFilteringPane();
-            }
-            else
-            {
-                ShowFilteringPane();
-            }
-
             QueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
             MegaQueryBlock.PlaceholderText = CoreTools.Translate("Search for packages");
             InstantSearchCheckbox.IsChecked = !Settings.GetDictionaryItem<string, bool>("DisableInstantSearch", PAGE_NAME);
@@ -313,6 +303,8 @@ namespace UniGetUI.Interface
 
             GenerateToolBar();
             PackageList.ContextFlyout = GenerateContextMenu();
+
+            Loaded += (_, _) => ChangeFilteringPaneLayout();
         }
 
         private void Loader_PackagesChanged(object? sender, EventArgs e)
@@ -1138,13 +1130,15 @@ namespace UniGetUI.Interface
             FilteringPanel.Shadow = new ThemeShadow();
             SidePanel.BorderThickness = new Thickness(0, 1, 1, 1);
 
-            SidePanel.Background = new AcrylicBrush()
-            /*{
+            SidePanel.Background = (Brush)Application.Current.Resources["AcrylicBackgroundFillColorDefaultBrush"];
+
+            /*SidePanel.Background = new AcrylicBrush()
+            {
                 TintColor = Color.FromArgb(255, 20, 20, 20),
                 TintOpacity = 0.4,
                 FallbackColor = Color.FromArgb(255, 20, 20, 20),
                 TintLuminosityOpacity = 0.8
-            }*/;
+            };*/
 
             if (FilteringPanel.Pane is ScrollViewer filters)
             {
@@ -1188,7 +1182,7 @@ namespace UniGetUI.Interface
             }
             else /*(FilteringPanel.ActualWidth >= 1000)*/
             {
-                SetFilterMode_Overlay();
+                SetFilterMode_Inline();
             }
         }
 
