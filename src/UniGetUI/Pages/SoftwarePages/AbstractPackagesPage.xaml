@@ -570,8 +570,8 @@
                         SelectionChanged="ViewModeSelector_SelectionChanged"
                         SelectionMode="Single">
                         <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xE8FD;}" ToolTipService.ToolTip="List" />
-                        <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF168;}" ToolTipService.ToolTip="Mixed" />
-                        <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF0E2;}" ToolTipService.ToolTip="Grid" />
+                        <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF168;}" ToolTipService.ToolTip="Grid" />
+                        <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF0E2;}" ToolTipService.ToolTip="Icons" />
                     </Toolkit:Segmented>
                 </StackPanel>
             </StackPanel>
