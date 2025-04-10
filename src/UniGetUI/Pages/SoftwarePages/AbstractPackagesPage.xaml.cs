@@ -1230,6 +1230,16 @@ namespace UniGetUI.Interface
             PackageList.ItemTemplate = (DataTemplate)this.Resources["PackageTemplate_List"];
             PackageList.Layout = new StackLayout() { Spacing = 3 };
         }
+        private void LoadIconsLayout()
+        {
+            PackageList.ItemTemplate = (DataTemplate)this.Resources["PackageTemplate_Icons"];
+            PackageList.Layout = new UniformGridLayout()
+            {
+                ItemsStretch = UniformGridLayoutItemsStretch.Fill,
+                MinColumnSpacing = 8,
+                MinRowSpacing = 8,
+            };
+        }
 
         private void LoadGridLayout()
         {
@@ -1252,7 +1262,7 @@ namespace UniGetUI.Interface
             else if (ViewModeSelector.SelectedIndex == 1)
                 LoadGridLayout();
             else if (ViewModeSelector.SelectedIndex == 2)
-                LoadGridLayout();
+                LoadIconsLayout();
         }
 
         FrameworkElement _lastContextMenuButtonTapped = null;

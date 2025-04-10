@@ -320,6 +320,121 @@
                 </Grid>
             </widgets:PackageItemContainer>
         </DataTemplate>
+
+        <DataTemplate x:Key="PackageTemplate_Icons" x:DataType="pkgClasses:PackageWrapper">
+            <widgets:PackageItemContainer
+                AutomationProperties.Name="{x:Bind Package.AutomationName}"
+                Background="{ThemeResource ControlFillColorDefaultBrush}"
+                CornerRadius="4"
+                DoubleTapped="PackageItemContainer_DoubleTapped"
+                Package="{x:Bind Package}"
+                PreviewKeyDown="PackageItemContainer_PreviewKeyDown"
+                RightTapped="PackageItemContainer_RightTapped"
+                Wrapper="{x:Bind Self}">
+
+                <Grid
+                    Padding="4,4,4,4"
+                    HorizontalAlignment="Stretch"
+                    Opacity="{x:Bind ListedOpacity, Mode=OneWay}"
+                    RowSpacing="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" MaxHeight="12" />
+                        <RowDefinition Height="Auto" MaxHeight="12" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--  Regular or package icon  -->
+                    <widgets:LocalIcon
+                        Grid.Row="1"
+                        Height="64"
+                        Margin="0,-8,0,8"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="74"
+                        FontWeight="ExtraLight"
+                        Icon="Package"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Visibility="{x:Bind ShowDefaultPackageIcon, Mode=OneWay}" />
+
+                    <Image
+                        Grid.Row="1"
+                        Width="64"
+                        Height="64"
+                        Margin="0,-8,0,8"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Source="{x:Bind MainIconSource, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}" />
+
+                    <widgets:LocalIcon
+                        Grid.Row="1"
+                        Margin="0,0,-4,-2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        FontSize="30"
+                        FontWeight="ExtraLight"
+                        Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
+                        Icon="{x:Bind AlternateIconId, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
+
+                    <widgets:LocalIcon
+                        Grid.Row="1"
+                        Margin="0,0,-4,-2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        FontSize="30"
+                        FontWeight="ExtraLight"
+                        Icon="{x:Bind MainIconId, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
+                        Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
+
+                    <CheckBox
+                        Grid.Row="0"
+                        Margin="1,-4,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        IsChecked="{x:Bind IsChecked, Mode=TwoWay}" />
+                    <Button
+                        Grid.Row="0"
+                        Width="22"
+                        Height="22"
+                        Padding="0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Click="{x:Bind RightClick}"
+                        Tapped="ContextMenuButton_Tapped">
+                        <SymbolIcon Symbol="More" />
+                    </Button>
+
+                    <TextBlock
+                        Grid.Row="2"
+                        HorizontalAlignment="Center"
+                        FontFamily="Segoe UI Variable Text"
+                        FontSize="13"
+                        FontWeight="SemiBold"
+                        Text="{x:Bind Package.Name}"
+                        TextWrapping="Wrap"
+                        ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}" />
+
+                    <TextBlock
+                        Grid.Row="3"
+                        HorizontalAlignment="Center"
+                        FontFamily="Segoe UI Variable Text"
+                        FontSize="11"
+                        Opacity="0.5"
+                        Text="{x:Bind VersionComboString, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind Package.VersionString}" />
+                </Grid>
+            </widgets:PackageItemContainer>
+        </DataTemplate>
     </Page.Resources>
 
     <Grid Padding="0" BorderThickness="0">
