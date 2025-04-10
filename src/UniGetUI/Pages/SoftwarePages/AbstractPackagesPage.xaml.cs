@@ -1227,7 +1227,7 @@ namespace UniGetUI.Interface
 
         private void LoadListLayout()
         {
-            PackageList.ItemTemplate = (DataTemplate)this.Resources["PackageTemplate"];
+            PackageList.ItemTemplate = (DataTemplate)this.Resources["PackageTemplate_List"];
             PackageList.Layout = new StackLayout() { Spacing = 3 };
         }
 
@@ -1240,6 +1240,7 @@ namespace UniGetUI.Interface
                 MinColumnSpacing = 8,
                 MinRowSpacing = 8,
                 MinItemWidth = 275,
+                MinItemHeight = 56, // Add this - should match your row height plus padding
             };
         }
 

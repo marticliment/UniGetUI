@@ -30,7 +30,7 @@
 
 
     <Page.Resources>
-        <DataTemplate x:Key="PackageTemplate" x:DataType="pkgClasses:PackageWrapper">
+        <DataTemplate x:Key="PackageTemplate_List" x:DataType="pkgClasses:PackageWrapper">
             <widgets:PackageItemContainer
                 AutomationProperties.Name="{x:Bind Package.AutomationName}"
                 CornerRadius="4"
@@ -850,16 +850,23 @@
                             CornerRadius="0,4,4,0" />
                     </Grid>
 
-                    <ItemsView
-                        x:Name="PackageList"
+                    <ItemsRepeaterScrollHost
                         Grid.Row="1"
-                        Padding="4,0"
                         HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        x:FieldModifier="protected"
-                        CanBeScrollAnchor="False"
-                        CharacterReceived="{x:Bind PackageList_CharacterReceived}"
-                        ItemsSource="{x:Bind FilteredPackages, Mode=OneWay}" />
+                        VerticalAlignment="Stretch">
+                        <ScrollViewer>
+                            <ItemsView
+                                x:Name="PackageList"
+                                Padding="4,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                x:FieldModifier="protected"
+                                CanBeScrollAnchor="False"
+                                CharacterReceived="{x:Bind PackageList_CharacterReceived}"
+                                ItemsSource="{x:Bind FilteredPackages, Mode=OneWay}" />
+                        </ScrollViewer>
+                    </ItemsRepeaterScrollHost>
+
 
                     <Grid Grid.Row="1">
                         <Grid.RowDefinitions>
