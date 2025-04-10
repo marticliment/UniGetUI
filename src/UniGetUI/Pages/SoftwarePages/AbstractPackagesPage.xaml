@@ -14,6 +14,7 @@
     xmlns:widgets="using:UniGetUI.Interface.Widgets"
     Name="ABSTRACT_PAGE"
     NavigationCacheMode="Required"
+    SizeChanged="ABSTRACT_PAGE_SizeChanged"
     mc:Ignorable="d">
     <!--  PreviewKeyDown="{x:Bind PackageList_PreviewKeyDown}"  -->
 
@@ -460,50 +461,46 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" MaxWidth="390" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" MinHeight="16" />
-                <RowDefinition Height="Auto" MinHeight="24" />
-                <RowDefinition Height="Auto" MinHeight="24" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <FontIcon
                 x:Name="HeaderIcon"
                 Grid.Row="0"
-                Grid.RowSpan="3"
                 Grid.Column="0"
                 Width="60"
                 MinHeight="60"
                 FontSize="50"
                 FontWeight="Normal" />
-            <TextBlock
-                x:Name="MainTitle"
-                Grid.Row="0"
-                Grid.RowSpan="2"
+
+            <StackPanel
                 Grid.Column="1"
-                MinHeight="48"
-                HorizontalAlignment="Left"
-                x:FieldModifier="protected"
-                FontFamily="Segoe UI Variable Display"
-                FontSize="30"
-                FontWeight="Bold"
-                TextWrapping="Wrap" />
-            <TextBlock
-                x:Name="MainSubtitle"
-                Grid.Row="2"
-                Grid.Column="1"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                x:FieldModifier="protected"
-                FontSize="11"
-                FontWeight="Normal"
-                Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"
-                TextWrapping="Wrap" />
+                VerticalAlignment="Center"
+                Orientation="Vertical"
+                Spacing="0">
+                <TextBlock
+                    x:Name="MainTitle"
+                    HorizontalAlignment="Left"
+                    x:FieldModifier="protected"
+                    FontFamily="Segoe UI Variable Display"
+                    FontSize="30"
+                    FontWeight="Bold"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    x:Name="MainSubtitle"
+                    HorizontalAlignment="Left"
+                    x:FieldModifier="protected"
+                    FontSize="11"
+                    FontWeight="Normal"
+                    Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
 
             <StackPanel
                 Grid.Row="0"
-                Grid.RowSpan="3"
                 Grid.Column="2"
                 Margin="0,0,4,0"
                 HorizontalAlignment="Stretch"
@@ -512,7 +509,6 @@
 
                 <Grid HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
@@ -521,7 +517,7 @@
 
                     <TextBox
                         x:Name="QueryBlock"
-                        Grid.Column="1"
+                        Grid.Column="0"
                         Height="30"
                         Padding="7,5,5,5"
                         VerticalContentAlignment="Center"
@@ -530,7 +526,7 @@
 
                     <Button
                         x:Name="FindButton"
-                        Grid.Column="2"
+                        Grid.Column="1"
                         Width="32"
                         Height="32"
                         Padding="4"
@@ -549,7 +545,7 @@
 
                     <Button
                         x:Name="ReloadButton"
-                        Grid.Column="3"
+                        Grid.Column="2"
                         Width="32"
                         Height="32"
                         Margin="6,0,0,0"
@@ -560,19 +556,46 @@
                         <FontIcon FontSize="16" Glyph="&#xE72C;" />
                     </Button>
                 </Grid>
+
+
                 <StackPanel
+                    Name="SearchBoxPanel"
                     HorizontalAlignment="Right"
-                    Orientation="Horizontal"
+                    Orientation="Vertical"
                     Spacing="8">
-                    <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="View mode:" />
-                    <Toolkit:Segmented
-                        x:Name="ViewModeSelector"
-                        SelectionChanged="ViewModeSelector_SelectionChanged"
-                        SelectionMode="Single">
-                        <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xE8FD;}" ToolTipService.ToolTip="List" />
-                        <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF168;}" ToolTipService.ToolTip="Grid" />
-                        <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF0E2;}" ToolTipService.ToolTip="Icons" />
-                    </Toolkit:Segmented>
+
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="Order by:" />
+                        <DropDownButton x:Name="OrderByButton">
+                            <DropDownButton.Flyout>
+                                <widgets:BetterMenu Placement="Bottom">
+                                    <widgets:BetterToggleMenuItem x:Name="OrderByName_Menu" Text="Name" />
+                                    <widgets:BetterToggleMenuItem x:Name="OrderById_Menu" Text="Id" />
+                                    <widgets:BetterToggleMenuItem x:Name="OrderByVer_Menu" Text="Version" />
+                                    <widgets:BetterToggleMenuItem
+                                        x:Name="OrderByNewVer_Menu"
+                                        Text="New version"
+                                        Visibility="{x:Bind RoleIsUpdateLike}" />
+                                    <widgets:BetterToggleMenuItem x:Name="OrderBySrc_Menu" Text="Source" />
+                                    <MenuFlyoutSeparator />
+                                    <widgets:BetterToggleMenuItem x:Name="OrderAsc_Menu" Text="Ascendant" />
+                                    <widgets:BetterToggleMenuItem x:Name="OrderDesc_Menu" Text="Descendant" />
+                                </widgets:BetterMenu>
+                            </DropDownButton.Flyout>
+                        </DropDownButton>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+
+                        <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="View mode:" />
+                        <Toolkit:Segmented
+                            x:Name="ViewModeSelector"
+                            SelectionChanged="ViewModeSelector_SelectionChanged"
+                            SelectionMode="Single">
+                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xE8FD;}" ToolTipService.ToolTip="List" />
+                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF168;}" ToolTipService.ToolTip="Grid" />
+                            <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF0E2;}" ToolTipService.ToolTip="Icons" />
+                        </Toolkit:Segmented>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
 
@@ -936,6 +959,7 @@
                             Grid.Column="3"
                             Grid.ColumnSpan="1"
                             HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             BorderThickness="0"
                             CornerRadius="0" />
                         <Button
@@ -943,6 +967,7 @@
                             Grid.Column="4"
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             BorderThickness="0"
                             CornerRadius="0" />
                         <Button
@@ -950,6 +975,7 @@
                             Grid.Column="6"
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             BorderThickness="0"
                             CornerRadius="0" />
                         <Button
@@ -957,6 +983,7 @@
                             Grid.Column="8"
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             BorderThickness="0"
                             CornerRadius="0"
                             Visibility="{x:Bind RoleIsUpdateLike}" />
@@ -965,6 +992,7 @@
                             Grid.Column="10"
                             Grid.ColumnSpan="3"
                             HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             BorderThickness="0"
                             CornerRadius="0,4,4,0" />
                     </Grid>

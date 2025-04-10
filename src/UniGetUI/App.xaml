@@ -22,6 +22,15 @@
                 <Setter Property="Height" Value="36" />
             </Style>
 
+            <Style
+                x:Key="BetterToggleMenuItem"
+                BasedOn="{StaticResource DefaultToggleMenuFlyoutItemStyle}"
+                TargetType="ToggleMenuFlyoutItem">
+                <Setter Property="CornerRadius" Value="4" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Height" Value="36" />
+            </Style>
+
             <FontFamily x:Key="SymbolFont">/Assets/Symbols/Font/fonts/UniGetUI-Symbols.ttf#UniGetUI-Symbols</FontFamily>
 
 
@@ -48,30 +57,30 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="TreeViewItem">
                             <Grid
-                            x:Name="ContentPresenterGrid"
-                            Margin="{ThemeResource TreeViewItemPresenterMargin}"
-                            Padding="{ThemeResource TreeViewItemPresenterPadding}"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}">
+                                x:Name="ContentPresenterGrid"
+                                Margin="{ThemeResource TreeViewItemPresenterMargin}"
+                                Padding="{ThemeResource TreeViewItemPresenterPadding}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}">
                                 <Rectangle
-                                x:Name="SelectionIndicator"
-                                Width="3"
-                                Height="16"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Fill="{ThemeResource TreeViewItemSelectionIndicatorForeground}"
-                                Opacity="0"
-                                RadiusX="2"
-                                RadiusY="2" />
+                                    x:Name="SelectionIndicator"
+                                    Width="3"
+                                    Height="16"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Fill="{ThemeResource TreeViewItemSelectionIndicatorForeground}"
+                                    Opacity="0"
+                                    RadiusX="2"
+                                    RadiusY="2" />
                                 <Grid
-                                x:Name="MultiSelectGrid"
-                                Margin="{ThemeResource TreeViewItemMultiSelectSelectedItemBorderMargin}"
-                                Padding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.Indentation}"
-                                BorderBrush="Transparent"
-                                BorderThickness="{ThemeResource TreeViewItemBorderThemeThickness}"
-                                CornerRadius="{ThemeResource ControlCornerRadius}">
+                                    x:Name="MultiSelectGrid"
+                                    Margin="{ThemeResource TreeViewItemMultiSelectSelectedItemBorderMargin}"
+                                    Padding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.Indentation}"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="{ThemeResource TreeViewItemBorderThemeThickness}"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
 
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -80,84 +89,84 @@
                                     </Grid.ColumnDefinitions>
                                     <Grid Grid.Column="0">
                                         <CheckBox
-                                        x:Name="MultiSelectCheckBox"
-                                        Width="24"
-                                        MinWidth="24"
-                                        MinHeight="{ThemeResource TreeViewItemMultiSelectCheckBoxMinHeight}"
-                                        Margin="10,0,0,0"
-                                        VerticalAlignment="Center"
-                                        AutomationProperties.AccessibilityView="Raw"
-                                        IsTabStop="False"
-                                        Visibility="Collapsed" />
-                                        <Border
-                                        x:Name="MultiArrangeOverlayTextBorder"
-                                        Height="20"
-                                        MinWidth="20"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                        BorderBrush="{ThemeResource SystemControlBackgroundChromeWhiteBrush}"
-                                        BorderThickness="1"
-                                        CornerRadius="{ThemeResource ControlCornerRadius}"
-                                        IsHitTestVisible="False"
-                                        Visibility="Collapsed">
-                                            <TextBlock
-                                            x:Name="MultiArrangeOverlayText"
-                                            HorizontalAlignment="Center"
+                                            x:Name="MultiSelectCheckBox"
+                                            Width="24"
+                                            MinWidth="24"
+                                            MinHeight="{ThemeResource TreeViewItemMultiSelectCheckBoxMinHeight}"
+                                            Margin="10,0,0,0"
                                             VerticalAlignment="Center"
                                             AutomationProperties.AccessibilityView="Raw"
-                                            Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                                            IsTabStop="False"
+                                            Visibility="Collapsed" />
+                                        <Border
+                                            x:Name="MultiArrangeOverlayTextBorder"
+                                            Height="20"
+                                            MinWidth="20"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                            BorderBrush="{ThemeResource SystemControlBackgroundChromeWhiteBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="{ThemeResource ControlCornerRadius}"
                                             IsHitTestVisible="False"
-                                            Style="{ThemeResource CaptionTextBlockStyle}"
-                                            Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.DragItemsCount}" />
+                                            Visibility="Collapsed">
+                                            <TextBlock
+                                                x:Name="MultiArrangeOverlayText"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                AutomationProperties.AccessibilityView="Raw"
+                                                Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                                                IsHitTestVisible="False"
+                                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                                Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.DragItemsCount}" />
                                         </Border>
                                     </Grid>
                                     <Grid
-                                    x:Name="ExpandCollapseChevron"
-                                    Grid.Column="1"
-                                    Width="20"
-                                    Padding="0,0,0,0"
-                                    Background="Transparent"
-                                    Opacity="{TemplateBinding GlyphOpacity}">
+                                        x:Name="ExpandCollapseChevron"
+                                        Grid.Column="1"
+                                        Width="20"
+                                        Padding="0,0,0,0"
+                                        Background="Transparent"
+                                        Opacity="{TemplateBinding GlyphOpacity}">
                                         <TextBlock
-                                        x:Name="CollapsedGlyph"
-                                        Width="12"
-                                        Height="12"
-                                        Padding="2"
-                                        VerticalAlignment="Center"
-                                        AutomationProperties.AccessibilityView="Raw"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        FontSize="{TemplateBinding GlyphSize}"
-                                        Foreground="{TemplateBinding GlyphBrush}"
-                                        IsHitTestVisible="False"
-                                        IsTextScaleFactorEnabled="False"
-                                        Text="{TemplateBinding CollapsedGlyph}"
-                                        Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.CollapsedGlyphVisibility}" />
+                                            x:Name="CollapsedGlyph"
+                                            Width="12"
+                                            Height="12"
+                                            Padding="2"
+                                            VerticalAlignment="Center"
+                                            AutomationProperties.AccessibilityView="Raw"
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="{TemplateBinding GlyphSize}"
+                                            Foreground="{TemplateBinding GlyphBrush}"
+                                            IsHitTestVisible="False"
+                                            IsTextScaleFactorEnabled="False"
+                                            Text="{TemplateBinding CollapsedGlyph}"
+                                            Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.CollapsedGlyphVisibility}" />
                                         <TextBlock
-                                        x:Name="ExpandedGlyph"
-                                        Width="12"
-                                        Height="12"
-                                        Padding="2"
-                                        VerticalAlignment="Center"
-                                        AutomationProperties.AccessibilityView="Raw"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        FontSize="{TemplateBinding GlyphSize}"
-                                        Foreground="{TemplateBinding GlyphBrush}"
-                                        IsHitTestVisible="False"
-                                        IsTextScaleFactorEnabled="False"
-                                        Text="{TemplateBinding ExpandedGlyph}"
-                                        Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.ExpandedGlyphVisibility}" />
+                                            x:Name="ExpandedGlyph"
+                                            Width="12"
+                                            Height="12"
+                                            Padding="2"
+                                            VerticalAlignment="Center"
+                                            AutomationProperties.AccessibilityView="Raw"
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="{TemplateBinding GlyphSize}"
+                                            Foreground="{TemplateBinding GlyphBrush}"
+                                            IsHitTestVisible="False"
+                                            IsTextScaleFactorEnabled="False"
+                                            Text="{TemplateBinding ExpandedGlyph}"
+                                            Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TreeViewItemTemplateSettings.ExpandedGlyphVisibility}" />
                                     </Grid>
                                     <ContentPresenter
-                                    x:Name="ContentPresenter"
-                                    Grid.Column="2"
-                                    MinHeight="{ThemeResource TreeViewItemContentHeight}"
-                                    Margin="{TemplateBinding Padding}"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    Content="{TemplateBinding Content}"
-                                    ContentTemplate="{TemplateBinding ContentTemplate}"
-                                    ContentTransitions="{TemplateBinding ContentTransitions}" />
+                                        x:Name="ContentPresenter"
+                                        Grid.Column="2"
+                                        MinHeight="{ThemeResource TreeViewItemContentHeight}"
+                                        Margin="{TemplateBinding Padding}"
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        Content="{TemplateBinding Content}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                        ContentTransitions="{TemplateBinding ContentTransitions}" />
 
                                 </Grid>
 

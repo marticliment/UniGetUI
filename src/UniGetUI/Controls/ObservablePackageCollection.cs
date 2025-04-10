@@ -18,9 +18,11 @@ namespace UniGetUI.PackageEngine.PackageClasses
             NewVersion,
             Source,
         }
+        public Sorter CurrentSorter { get; private set; }
 
         public ObservablePackageCollection()
         {
+            CurrentSorter = Sorter.Name;
             SortingSelector = x => x.Package.Name;
         }
 
@@ -36,8 +38,10 @@ namespace UniGetUI.PackageEngine.PackageClasses
         /// Sets the property with which to filter the package and sorts the collection
         /// </summary>
         /// <param name="field">The field with which to sort the collection</param>
+        ///
         public void SetSorter(Sorter field)
         {
+            CurrentSorter = field;
             switch (field)
             {
                 case Sorter.Checked:

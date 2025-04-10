@@ -307,10 +307,20 @@ namespace UniGetUI.Interface
             NewVersionHeader.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.NewVersion);
             SourceHeader.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Source);
 
+            OrderByName_Menu.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Name);
+            OrderById_Menu.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Id);
+            OrderByVer_Menu.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Version);
+            OrderByNewVer_Menu.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.NewVersion);
+            OrderBySrc_Menu.Click += (_, _) => SortPackagesBy(ObservablePackageCollection.Sorter.Source);
+
+            OrderAsc_Menu.Click += (_, _) => SortPackagesBy(ascendent: true);
+            OrderDesc_Menu.Click += (_, _) => SortPackagesBy(ascendent: false);
+
             GenerateToolBar();
             PackageList.ContextFlyout = GenerateContextMenu();
 
             Loaded += (_, _) => ChangeFilteringPaneLayout();
+            UpdateSortingMenu();
         }
 
         private void Loader_PackagesChanged(object? sender, EventArgs e)
@@ -815,9 +825,39 @@ namespace UniGetUI.Interface
         /// <param name="sorter">The information with which to sort the packages</param>
         public void SortPackagesBy(ObservablePackageCollection.Sorter sorter)
         {
-            FilteredPackages.Descending = !FilteredPackages.Descending;
+            if(sorter == FilteredPackages.CurrentSorter) FilteredPackages.Descending = !FilteredPackages.Descending;
             FilteredPackages.SetSorter(sorter);
             FilteredPackages.Sort();
+            UpdateSortingMenu();
+        }
+
+        public void SortPackagesBy(bool ascendent)
+        {
+            FilteredPackages.Descending = !ascendent;
+            FilteredPackages.Sort();
+            UpdateSortingMenu();
+        }
+
+        private void UpdateSortingMenu()
+        {
+            OrderByName_Menu.IsChecked = FilteredPackages.CurrentSorter is ObservablePackageCollection.Sorter.Name;
+            OrderById_Menu.IsChecked = FilteredPackages.CurrentSorter is ObservablePackageCollection.Sorter.Id;
+            OrderByVer_Menu.IsChecked = FilteredPackages.CurrentSorter is ObservablePackageCollection.Sorter.Version;
+            OrderByNewVer_Menu.IsChecked = FilteredPackages.CurrentSorter is ObservablePackageCollection.Sorter.NewVersion;
+            OrderBySrc_Menu.IsChecked = FilteredPackages.CurrentSorter is ObservablePackageCollection.Sorter.Source;
+
+            OrderAsc_Menu.IsChecked = !FilteredPackages.Descending;
+            OrderDesc_Menu.IsChecked = FilteredPackages.Descending;
+
+            OrderByButton.Content = FilteredPackages.CurrentSorter switch
+            {
+                ObservablePackageCollection.Sorter.Name => CoreTools.Translate("Name"),
+                ObservablePackageCollection.Sorter.Id => CoreTools.Translate("Id"),
+                ObservablePackageCollection.Sorter.Version => CoreTools.Translate("Version"),
+                ObservablePackageCollection.Sorter.NewVersion => CoreTools.Translate("New version"),
+                ObservablePackageCollection.Sorter.Source => CoreTools.Translate("Source"),
+                _ => throw new InvalidDataException()
+            };
         }
 
         protected void SelectAllSourcesButton_Click(object sender, RoutedEventArgs e)
@@ -1264,13 +1304,60 @@ namespace UniGetUI.Interface
                 LoadGridLayout();
             else if (ViewModeSelector.SelectedIndex == 2)
                 LoadIconsLayout();
+
+            if(ViewModeSelector.SelectedIndex == 0)
+            {
+                NameHeader.Content = CoreTools.Translate("Package Name");
+                IdHeader.Content = CoreTools.Translate("Package ID");
+                VersionHeader.Content = CoreTools.Translate("Version");
+                NewVersionHeader.Content = CoreTools.Translate("New version");
+                SourceHeader.Content = CoreTools.Translate("Source");
+                foreach (var item in new Button[] { NameHeader, IdHeader, VersionHeader, NewVersionHeader, SourceHeader })
+                {
+                    item.IsEnabled = true;
+                }
+            }
+            else
+            {
+                foreach (var item in new Button[] { NameHeader, IdHeader, VersionHeader, NewVersionHeader, SourceHeader })
+                {
+                    item.Content = "";
+                    item.IsEnabled = false;
+                }
+            }
         }
 
-        FrameworkElement _lastContextMenuButtonTapped = null;
+        FrameworkElement _lastContextMenuButtonTapped = null!;
         private void ContextMenuButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             if (sender is FrameworkElement el)
                 _lastContextMenuButtonTapped = el;
+        }
+
+        private bool? _pageIsWide; 
+        private void ABSTRACT_PAGE_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if(ActualWidth < 700)
+            {
+                if (_pageIsWide != false)
+                {
+                    SearchBoxPanel.Orientation = Orientation.Vertical;
+                    _pageIsWide = false;
+                }
+            }
+            else
+            {
+                if (_pageIsWide != true)
+                {
+                    SearchBoxPanel.Orientation = Orientation.Horizontal;
+                    _pageIsWide = true;
+                }
+            }
+        }
+
+        private void OrderBy_Menu_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

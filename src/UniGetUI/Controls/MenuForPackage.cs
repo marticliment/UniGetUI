@@ -38,4 +38,28 @@ namespace UniGetUI.Interface.Widgets
             Style = menuStyle;
         }
     }
+
+    public partial class BetterToggleMenuItem : ToggleMenuFlyoutItem
+    {
+        private readonly Style menuStyle = (Style)Application.Current.Resources["BetterToggleMenuItem"];
+
+        public IconType IconName
+        {
+            set
+            {
+                var icon = new LocalIcon(value) { FontSize = 24 };
+                Icon = icon;
+            }
+        }
+
+        public new string Text
+        {
+            set => base.Text = CoreTools.Translate(value);
+        }
+
+        public BetterToggleMenuItem()
+        {
+            Style = menuStyle;
+        }
+    }
 }
