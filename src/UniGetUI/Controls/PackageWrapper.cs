@@ -178,7 +178,7 @@ namespace UniGetUI.PackageEngine.PackageClasses
                 MainIconSource = new BitmapImage
                 {
                     UriSource = icon,
-                    DecodePixelWidth = 48,
+                    DecodePixelWidth = 64,
                     DecodePixelType = DecodePixelType.Logical,
                 };
                 ShowCustomPackageIcon = true;

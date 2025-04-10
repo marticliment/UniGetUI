@@ -1235,7 +1235,8 @@ namespace UniGetUI.Interface
             PackageList.ItemTemplate = (DataTemplate)this.Resources["PackageTemplate_Icons"];
             PackageList.Layout = new UniformGridLayout()
             {
-                ItemsStretch = UniformGridLayoutItemsStretch.Fill,
+                ItemsStretch = UniformGridLayoutItemsStretch.None,
+                ItemsJustification = UniformGridLayoutItemsJustification.Start,
                 MinColumnSpacing = 8,
                 MinRowSpacing = 8,
             };

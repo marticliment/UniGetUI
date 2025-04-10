@@ -336,22 +336,22 @@
                     Padding="4,4,4,4"
                     HorizontalAlignment="Stretch"
                     Opacity="{x:Bind ListedOpacity, Mode=OneWay}"
-                    RowSpacing="4">
+                    RowSpacing="0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" MaxHeight="12" />
-                        <RowDefinition Height="Auto" MaxHeight="12" />
+                        <RowDefinition Height="22" />
+                        <RowDefinition Height="60" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="15" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="120" />
                     </Grid.ColumnDefinitions>
 
                     <!--  Regular or package icon  -->
                     <widgets:LocalIcon
                         Grid.Row="1"
                         Height="64"
-                        Margin="0,-8,0,8"
+                        Margin="0,-8,0,4"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontSize="74"
@@ -364,7 +364,7 @@
                         Grid.Row="1"
                         Width="64"
                         Height="64"
-                        Margin="0,-8,0,8"
+                        Margin="0,-8,0,4"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Source="{x:Bind MainIconSource, Mode=OneWay}"
@@ -373,10 +373,10 @@
 
                     <widgets:LocalIcon
                         Grid.Row="1"
-                        Margin="0,0,-4,-2"
+                        Margin="0,0,20,-2"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
-                        FontSize="30"
+                        FontSize="40"
                         FontWeight="ExtraLight"
                         Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
                         Icon="{x:Bind AlternateIconId, Mode=OneWay}"
@@ -385,10 +385,10 @@
 
                     <widgets:LocalIcon
                         Grid.Row="1"
-                        Margin="0,0,-4,-2"
+                        Margin="0,0,20,-2"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
-                        FontSize="30"
+                        FontSize="40"
                         FontWeight="ExtraLight"
                         Icon="{x:Bind MainIconId, Mode=OneWay}"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
@@ -416,10 +416,14 @@
 
                     <TextBlock
                         Grid.Row="2"
+                        MaxWidth="120"
+                        MaxHeight="30"
                         HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
                         FontFamily="Segoe UI Variable Text"
-                        FontSize="13"
+                        FontSize="12"
                         FontWeight="SemiBold"
+                        HorizontalTextAlignment="Left"
                         Text="{x:Bind Package.Name}"
                         TextWrapping="Wrap"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}" />
