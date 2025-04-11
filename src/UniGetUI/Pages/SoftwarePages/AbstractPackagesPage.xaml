@@ -440,6 +440,23 @@
                 </Grid>
             </widgets:PackageItemContainer>
         </DataTemplate>
+
+        <UniformGridLayout
+            x:Key="Layout_Grid"
+            ItemsStretch="Fill"
+            MinColumnSpacing="8"
+            MinItemHeight="56"
+            MinItemWidth="275"
+            MinRowSpacing="8" />
+
+        <UniformGridLayout
+            x:Key="Layout_Icons"
+            ItemsJustification="Start"
+            MinColumnSpacing="8"
+            MinRowSpacing="8" />
+
+        <StackLayout x:Key="Layout_List" Spacing="3" />
+
     </Page.Resources>
 
     <Grid Padding="0" BorderThickness="0">
@@ -587,10 +604,7 @@
                     <StackPanel Orientation="Horizontal" Spacing="4">
 
                         <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="View mode:" />
-                        <Toolkit:Segmented
-                            x:Name="ViewModeSelector"
-                            SelectionChanged="ViewModeSelector_SelectionChanged"
-                            SelectionMode="Single">
+                        <Toolkit:Segmented x:Name="ViewModeSelector" SelectionMode="Single">
                             <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xE8FD;}" ToolTipService.ToolTip="List" />
                             <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF168;}" ToolTipService.ToolTip="Grid" />
                             <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF0E2;}" ToolTipService.ToolTip="Icons" />
@@ -997,22 +1011,52 @@
                             CornerRadius="0,4,4,0" />
                     </Grid>
 
-                    <ItemsRepeaterScrollHost
+                    <Toolkit:SwitchPresenter
                         Grid.Row="1"
                         HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch">
-                        <ScrollViewer>
+                        VerticalAlignment="Stretch"
+                        TargetType="x:Int32"
+                        Value="{x:Bind ViewModeSelector.SelectedIndex, Mode=OneWay}">
+                        <Toolkit:Case IsDefault="True" Value="0">
                             <ItemsView
-                                x:Name="PackageList"
+                                x:Name="PackageList_List"
                                 Padding="4,0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 x:FieldModifier="protected"
                                 CanBeScrollAnchor="False"
-                                CharacterReceived="{x:Bind PackageList_CharacterReceived}"
-                                ItemsSource="{x:Bind FilteredPackages, Mode=OneWay}" />
-                        </ScrollViewer>
-                    </ItemsRepeaterScrollHost>
+                                CharacterReceived="PackageList_CharacterReceived"
+                                ItemTemplate="{StaticResource PackageTemplate_List}"
+                                ItemsSource="{x:Bind FilteredPackages}"
+                                Layout="{StaticResource Layout_List}" />
+                        </Toolkit:Case>
+                        <Toolkit:Case Value="1">
+                            <ItemsView
+                                x:Name="PackageList_Grid"
+                                Padding="4,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                x:FieldModifier="protected"
+                                CanBeScrollAnchor="False"
+                                CharacterReceived="PackageList_CharacterReceived"
+                                ItemTemplate="{StaticResource PackageTemplate_Grid}"
+                                ItemsSource="{x:Bind FilteredPackages}"
+                                Layout="{StaticResource Layout_Grid}" />
+                        </Toolkit:Case>
+                        <Toolkit:Case Value="2">
+                            <ItemsView
+                                x:Name="PackageList_Icons"
+                                Padding="4,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                x:FieldModifier="protected"
+                                CanBeScrollAnchor="False"
+                                CharacterReceived="PackageList_CharacterReceived"
+                                ItemTemplate="{StaticResource PackageTemplate_Icons}"
+                                ItemsSource="{x:Bind FilteredPackages}"
+                                Layout="{StaticResource Layout_Icons}" />
+                        </Toolkit:Case>
+                    </Toolkit:SwitchPresenter>
 
 
                     <Grid Grid.Row="1">

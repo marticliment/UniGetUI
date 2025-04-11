@@ -277,10 +277,8 @@ namespace UniGetUI.Interface.SoftwarePages
 
         private void MenuShare_Invoked(object sender, RoutedEventArgs e)
         {
-            if (PackageList.SelectedItem is null)
-            {
+            if (SelectedItem is null)
                 return;
-            }
 
             MainApp.Instance.MainWindow.SharePackage(SelectedItem);
         }
