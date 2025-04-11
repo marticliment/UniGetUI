@@ -63,15 +63,15 @@
                         IsChecked="{x:Bind IsChecked, Mode=TwoWay}" />
 
                     <!--  Regular or package icon  -->
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Row="0"
                         Grid.Column="1"
                         Width="24"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
+                        widgets:IconBuilder.Icon="Package"
                         FontSize="24"
                         FontWeight="ExtraLight"
-                        Icon="Package"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind ShowDefaultPackageIcon, Mode=OneWay}" />
 
@@ -86,7 +86,7 @@
                         Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}" />
 
                     <!--  Package tag icon  -->
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Row="0"
                         Grid.Column="1"
                         Width="20"
@@ -94,14 +94,14 @@
                         Margin="8,0,-4,-2"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
+                        widgets:IconBuilder.Icon="{x:Bind AlternateIconId, Mode=OneWay}"
                         FontSize="20"
                         FontWeight="ExtraLight"
                         Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
-                        Icon="{x:Bind AlternateIconId, Mode=OneWay}"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
 
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Row="0"
                         Grid.Column="1"
                         Width="20"
@@ -109,9 +109,9 @@
                         Margin="8,0,-4,-2"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
+                        widgets:IconBuilder.Icon="{x:Bind MainIconId, Mode=OneWay}"
                         FontSize="20"
                         FontWeight="ExtraLight"
-                        Icon="{x:Bind MainIconId, Mode=OneWay}"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
 
@@ -124,14 +124,14 @@
                         Text="{x:Bind Package.Name}"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}" />
 
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Row="0"
                         Grid.Column="2"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
+                        widgets:IconBuilder.Icon="Id"
                         FontSize="24"
                         FontWeight="ExtraLight"
-                        Icon="Id"
                         ToolTipService.ToolTip="{x:Bind Package.Id}" />
 
                     <TextBlock
@@ -143,14 +143,14 @@
                         Text="{x:Bind Package.Id}"
                         ToolTipService.ToolTip="{x:Bind Package.Id}" />
 
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Row="0"
                         Grid.Column="3"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
+                        widgets:IconBuilder.Icon="version"
                         FontSize="24"
                         FontWeight="ExtraLight"
-                        Icon="version"
                         ToolTipService.ToolTip="{x:Bind Package.VersionString}" />
 
                     <TextBlock
@@ -162,14 +162,14 @@
                         Text="{x:Bind Package.VersionString, Mode=OneWay}"
                         ToolTipService.ToolTip="{x:Bind Package.VersionString}" />
 
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Row="0"
                         Grid.Column="4"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
+                        widgets:IconBuilder.Icon="download"
                         FontSize="24"
                         FontWeight="ExtraLight"
-                        Icon="download"
                         ToolTipService.ToolTip="{x:Bind Package.NewVersionString}"
                         Visibility="{x:Bind Package.IsUpgradable}" />
 
@@ -183,14 +183,14 @@
                         ToolTipService.ToolTip="{x:Bind Package.NewVersionString}"
                         Visibility="{x:Bind Package.IsUpgradable}" />
 
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Row="0"
                         Grid.Column="5"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
+                        widgets:IconBuilder.Icon="{x:Bind Package.Source.IconId}"
                         FontSize="24"
                         FontWeight="ExtraLight"
-                        Icon="{x:Bind Package.Source.IconId}"
                         ToolTipService.ToolTip="{x:Bind Package.Source.AsString_DisplayName}" />
 
                     <TextBlock
@@ -231,13 +231,13 @@
                     </Grid.ColumnDefinitions>
 
                     <!--  Regular or package icon  -->
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Column="0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
+                        widgets:IconBuilder.Icon="Package"
                         FontSize="48"
                         FontWeight="ExtraLight"
-                        Icon="Package"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind ShowDefaultPackageIcon, Mode=OneWay}" />
 
@@ -250,26 +250,26 @@
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}" />
 
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Column="0"
                         Margin="0,0,-4,-2"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
+                        widgets:IconBuilder.Icon="{x:Bind AlternateIconId, Mode=OneWay}"
                         FontSize="30"
                         FontWeight="ExtraLight"
                         Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
-                        Icon="{x:Bind AlternateIconId, Mode=OneWay}"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
 
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Column="0"
                         Margin="0,0,-4,-2"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
+                        widgets:IconBuilder.Icon="{x:Bind MainIconId, Mode=OneWay}"
                         FontSize="30"
                         FontWeight="ExtraLight"
-                        Icon="{x:Bind MainIconId, Mode=OneWay}"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
 
@@ -279,6 +279,7 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         IsChecked="{x:Bind IsChecked, Mode=TwoWay}" />
+
                     <Button
                         Grid.Column="2"
                         Width="22"
@@ -289,7 +290,7 @@
                         BorderThickness="0"
                         Click="{x:Bind RightClick}"
                         Tapped="ContextMenuButton_Tapped">
-                        <SymbolIcon Symbol="More" />
+                        <TextBlock widgets:IconBuilder.Glyph="&#xE712;" FontSize="18" />
                     </Button>
 
                     <TextBlock
@@ -349,15 +350,15 @@
                     </Grid.ColumnDefinitions>
 
                     <!--  Regular or package icon  -->
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Row="1"
                         Height="64"
                         Margin="0,-8,0,4"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
+                        widgets:IconBuilder.Icon="Package"
                         FontSize="74"
                         FontWeight="ExtraLight"
-                        Icon="Package"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind ShowDefaultPackageIcon, Mode=OneWay}" />
 
@@ -372,26 +373,26 @@
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind ShowCustomPackageIcon, Mode=OneWay}" />
 
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Row="1"
                         Margin="0,0,20,-2"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
+                        widgets:IconBuilder.Icon="{x:Bind AlternateIconId, Mode=OneWay}"
                         FontSize="40"
                         FontWeight="ExtraLight"
                         Foreground="{ThemeResource AccentAAFillColorTertiaryBrush}"
-                        Icon="{x:Bind AlternateIconId, Mode=OneWay}"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
 
-                    <widgets:LocalIcon
+                    <TextBlock
                         Grid.Row="1"
                         Margin="0,0,20,-2"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
+                        widgets:IconBuilder.Icon="{x:Bind MainIconId, Mode=OneWay}"
                         FontSize="40"
                         FontWeight="ExtraLight"
-                        Icon="{x:Bind MainIconId, Mode=OneWay}"
                         ToolTipService.ToolTip="{x:Bind ListedNameTooltip, Mode=OneWay}"
                         Visibility="{x:Bind AlternateIdIconVisible, Mode=OneWay}" />
 
@@ -412,7 +413,7 @@
                         BorderThickness="0"
                         Click="{x:Bind RightClick}"
                         Tapped="ContextMenuButton_Tapped">
-                        <SymbolIcon Symbol="More" />
+                        <TextBlock widgets:IconBuilder.Glyph="&#xE712;" FontSize="18" />
                     </Button>
 
                     <TextBlock
@@ -604,7 +605,10 @@
                     <StackPanel Orientation="Horizontal" Spacing="4">
 
                         <widgets:TranslatedTextBlock VerticalAlignment="Center" Text="View mode:" />
-                        <Toolkit:Segmented x:Name="ViewModeSelector" SelectionMode="Single">
+                        <Toolkit:Segmented
+                            x:Name="ViewModeSelector"
+                            SelectionChanged="ViewModeSelector_SelectionChanged"
+                            SelectionMode="Single">
                             <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xE8FD;}" ToolTipService.ToolTip="List" />
                             <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF168;}" ToolTipService.ToolTip="Grid" />
                             <Toolkit:SegmentedItem Icon="{ui:FontIcon Glyph=&#xF0E2;}" ToolTipService.ToolTip="Icons" />

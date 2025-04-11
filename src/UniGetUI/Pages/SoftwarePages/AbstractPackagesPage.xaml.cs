@@ -1269,68 +1269,10 @@ namespace UniGetUI.Interface
         {
             ToggleFiltersButton.IsChecked = false;
         }
-
-        /*private void LoadListLayout()
-        {
-            PackageList.ItemTemplate = (DataTemplate)this.Resources["PackageTemplate_List"];
-            PackageList.Layout = new StackLayout() { Spacing = 3 };
-        }
-        private void LoadIconsLayout()
-        {
-            PackageList.ItemTemplate = (DataTemplate)this.Resources["PackageTemplate_Icons"];
-            PackageList.Layout = new UniformGridLayout()
-            {
-                ItemsStretch = UniformGridLayoutItemsStretch.None,
-                ItemsJustification = UniformGridLayoutItemsJustification.Start,
-                MinColumnSpacing = 8,
-                MinRowSpacing = 8,
-            };
-        }
-
-        private void LoadGridLayout()
-        {
-            PackageList.ItemTemplate = (DataTemplate)this.Resources["PackageTemplate_Grid"];
-            PackageList.Layout = new UniformGridLayout()
-            {
-                ItemsStretch = UniformGridLayoutItemsStretch.Fill,
-                MinColumnSpacing = 8,
-                MinRowSpacing = 8,
-                MinItemWidth = 275,
-                MinItemHeight = 56, // Add this - should match your row height plus padding
-            };
-        }
-
         private void ViewModeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Settings.SetDictionaryItem("PackageListViewMode", PAGE_NAME, ViewModeSelector.SelectedIndex);
-            if (ViewModeSelector.SelectedIndex == 0)
-                LoadListLayout();
-            else if (ViewModeSelector.SelectedIndex == 1)
-                LoadGridLayout();
-            else if (ViewModeSelector.SelectedIndex == 2)
-                LoadIconsLayout();
-
-            if(ViewModeSelector.SelectedIndex == 0)
-            {
-                NameHeader.Content = CoreTools.Translate("Package Name");
-                IdHeader.Content = CoreTools.Translate("Package ID");
-                VersionHeader.Content = CoreTools.Translate("Version");
-                NewVersionHeader.Content = CoreTools.Translate("New version");
-                SourceHeader.Content = CoreTools.Translate("Source");
-                foreach (var item in new Button[] { NameHeader, IdHeader, VersionHeader, NewVersionHeader, SourceHeader })
-                {
-                    item.IsEnabled = true;
-                }
-            }
-            else
-            {
-                foreach (var item in new Button[] { NameHeader, IdHeader, VersionHeader, NewVersionHeader, SourceHeader })
-                {
-                    item.Content = "";
-                    item.IsEnabled = false;
-                }
-            }
-        }*/
+        }
 
         FrameworkElement _lastContextMenuButtonTapped = null!;
         private void ContextMenuButton_Tapped(object sender, TappedRoutedEventArgs e)

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -22,6 +23,38 @@ namespace UniGetUI.Interface.Widgets
         public LocalIcon(IconType icon) : this()
         {
             Glyph = $"{(char)icon}";
+        }
+    }
+
+    public static class IconBuilder
+    {
+        private static FontFamily customFont = null!;
+        private static FontFamily symbolFont = null!;
+
+        public static IconType SetIcon(this TextBlock block, IconType icon)
+        {
+            customFont ??= (FontFamily)Application.Current.Resources["SymbolFont"];
+            block.Text = $"{(char)icon}";
+            block.FontFamily = customFont;
+            return icon;
+        }
+
+        public static IconType GetIcon(this TextBlock block)
+        {
+            return IconType.Help;
+        }
+
+        public static string SetGlyph(this TextBlock block, string glyph)
+        {
+            symbolFont ??= new FontFamily("Segoe Fluent Icons");
+            block.Text = glyph;
+            block.FontFamily = symbolFont;
+            return glyph;
+        }
+
+        public static string GetGlyph(this TextBlock block)
+        {
+            return block.Text;
         }
     }
 
