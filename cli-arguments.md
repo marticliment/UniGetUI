@@ -1,7 +1,7 @@
 # UniGetUI Command-line parameters
 
-| Parameter                                           | Description | Compatible versions |
-| --------------------------------------------------- | ---------- | ------- |
+| Parameter ____________________________________ | Description | Compatible versions  ______________  |
+| ---------------------- | ---------- | ------- |
 | `--daemon` | Start UniGetUI without spawning a new window. UniGetUI will run minimized on the system tray. UniGetUI is called with this parameter when launched at startup. **Autostart UniGetUI in the notifications area must be enabled for this parameter to work.** | 1.0+ |
 | `--welcome` | Shows the user the Setup Wizard | up to 2.2.0 |
 | `--updateapps` | Force enable automatic installation of available updates | 1.6.0+ |
