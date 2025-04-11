@@ -194,9 +194,10 @@ internal sealed class NativeWinGetHelper : IWinGetManagerHelper
         foreach (var nativePackage in TaskRecycler<IReadOnlyList<CatalogPackage>>.RunOrAttach(GetLocalWinGetPackages, 15))
         {
             IManagerSource source;
-            if (nativePackage.DefaultInstallVersion is not null && nativePackage.DefaultInstallVersion.PackageCatalog is not null)
+            var availableVersions = nativePackage.AvailableVersions?.ToArray() ?? [];
+            if (availableVersions.Length > 0)
             {
-                source = Manager.SourcesHelper.Factory.GetSourceOrDefault(nativePackage.DefaultInstallVersion.PackageCatalog.Info.Name);
+                 source = Manager.SourcesHelper.Factory.GetSourceOrDefault(nativePackage.InstalledVersion.PackageCatalog.Info.Name);
             }
             else
             {
