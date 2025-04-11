@@ -42,10 +42,10 @@ namespace UniGetUI.Interface
 
     public sealed partial class MainView : UserControl
     {
-        public DiscoverSoftwarePage DiscoverPage;
-        public SoftwareUpdatesPage UpdatesPage;
-        public InstalledPackagesPage InstalledPage;
-        public PackageBundlesPage BundlesPage;
+        private DiscoverSoftwarePage DiscoverPage;
+        private SoftwareUpdatesPage UpdatesPage;
+        private InstalledPackagesPage InstalledPage;
+        private PackageBundlesPage BundlesPage;
         private SettingsBasePage? SettingsPage;
         private SettingsBasePage? ManagersPage;
         private UniGetUILogPage? UniGetUILogPage;
@@ -430,6 +430,12 @@ namespace UniGetUI.Interface
         {
             (VersionMenuItem as MenuFlyoutItem).Text = CoreTools.Translate("WingetUI Version {0}", CoreData.VersionName);
             MoreNavButtonMenu.ShowAt(sender as FrameworkElement);
+        }
+
+        internal void LoadBundleFile(string param)
+        {
+            NavigateTo(PageType.Bundles);
+            BundlesPage?.OpenFromFile(param);
         }
     }
 }

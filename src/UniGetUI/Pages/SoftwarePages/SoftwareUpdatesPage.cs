@@ -325,15 +325,6 @@ namespace UniGetUI.Interface.SoftwarePages
             MainApp.Tooltip.AvailableUpdates = Loader.Count();
         }
 
-        public void UpdateAll()
-        {
-            foreach (IPackage package in Loader.Packages)
-            {
-                if (package.Tag is not PackageTag.BeingProcessed and not PackageTag.OnQueue)
-                    _ = MainApp.Operations.Update(package);
-            }
-        }
-
         protected override void WhenPackagesLoaded(ReloadReason reason)
         {
             List<IPackage> upgradablePackages = [];
@@ -374,12 +365,14 @@ namespace UniGetUI.Interface.SoftwarePages
 
 
                 if(EnableAutoUpdate)
-                    UpdateAll();
+                {
+                    MainApp.Operations.UpdateAll();
+                }
 
                 if (Settings.AreUpdatesNotificationsDisabled())
                     return;
 
-                AppNotificationManager.Default.RemoveByTagAsync(CoreData.UpdatesAvailableNotificationTag.ToString());
+                _ = AppNotificationManager.Default.RemoveByTagAsync(CoreData.UpdatesAvailableNotificationTag.ToString());
 
                 AppNotification notification;
                 if (upgradablePackages.Count == 1)
@@ -536,29 +529,17 @@ namespace UniGetUI.Interface.SoftwarePages
             PEInterface.UpgradablePackagesLoader.IgnoredPackages[package.Id] = package;
         }
 
+
+        public void UpdateAll()
+        {
+        }
+
         public void UpdatePackageForId(string id)
         {
-            foreach (IPackage package in Loader.Packages)
-            {
-                if (package.Id == id)
-                {
-                    _ = MainApp.Operations.Update(package);
-                    Logger.Info($"[WIDGETS] Updating package with id {id}");
-                    break;
-                }
-            }
-
-            Logger.Warn($"[WIDGETS] No package with id={id} was found");
         }
 
         public async void UpdateAllPackagesForManager(string manager)
         {
-            foreach (IPackage package in Loader.Packages)
-            {
-                if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed)
-                    if (package.Manager.Name == manager || package.Manager.DisplayName == manager)
-                        await MainApp.Operations.Update(package);
-            }
         }
     }
 }

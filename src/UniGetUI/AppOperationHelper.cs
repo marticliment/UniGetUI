@@ -15,6 +15,8 @@ using UniGetUI.PackageEngine.Operations;
 using UniGetUI.PackageEngine.PackageClasses;
 using UniGetUI.PackageOperations;
 using UniGetUI.Pages.DialogPages;
+using UniGetUI.Interface.Enums;
+using UniGetUI.PackageEngine;
 
 namespace UniGetUI;
 
@@ -161,6 +163,38 @@ public partial class MainApp
             {
                 _ = Update(package, elevated, interactive, no_integrity);
             }
+        }
+
+        public static async void UpdateAll()
+        {
+            foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
+                if (package.Tag is not PackageTag.BeingProcessed and not PackageTag.OnQueue)
+                    await Update(package);
+        }
+
+        public static async void UpdateAllForManager(string managerName)
+        {
+            foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
+            {
+                if (package.Tag is not PackageTag.OnQueue and not PackageTag.BeingProcessed
+                    && package.Manager.Name == managerName || package.Manager.DisplayName == managerName)
+                    await Update(package);
+            }
+        }
+
+        public static async void UpdateForId(string packageId)
+        {
+            foreach (IPackage package in PEInterface.UpgradablePackagesLoader.Packages)
+            {
+                if (package.Id == packageId)
+                {
+                    await Update(package);
+                    Logger.Info($"[WIDGETS] Updating package with id {packageId}");
+                    return;
+                }
+            }
+
+            Logger.Warn($"[WIDGETS] No package with id={packageId} was found");
         }
 
         /*
